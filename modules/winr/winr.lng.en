@@ -1,0 +1,4 @@
+﻿winr_lng_short = "Context sensitive Windows+R"
+winr_lng_description = "WinR adds some funktionality to the default shortcut Windows+R. By default it pops up the Run dialog. If you have paths to files or folders selected it opens up those or if you have internet URLs selected  they pop up in your browser."
+winr_lng_moveWindowToCursor = "Place Run window at mouse pointer"
+winr_lng_TLDs = "top level domains"

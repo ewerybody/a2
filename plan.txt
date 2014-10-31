@@ -1,0 +1,117 @@
+a2:
+* promotes self written scripts
+	. tries to alert you about mistakes when scripting for it
+	. maybe offers a script wizard to help you along
+	. has exessively commented and structured code
+* has decoupled ui and script core
+* works together with an a2 website where scripts can be down/uploaded, updated, rated, discussed
+* settings are database driven
+* has built-in sophisticated hotkey handling
+	. multiple hotkeys for the same function
+	. built-in program exclusion/inclusion handling
+	. multi computer aware (if you use a2 portably)
+	. makes use of window groups and has all window detection features available with a comfortable script- and ui-interface
+		. ahk_class, ahk_exe...
+		. title matching helper
+* only includes necessary script files
+	. no enabling/disabling of extra parts
+	. language handling
+	. gets rid of:
+		. redundant code
+		. unused/disabled code and variables in ram
+		. extra loading times
+	
+a2 UI:
+* enable/disable modules on click
+	. writes according include files (or triggers a2 to do so) (rather first, runtime doesn't need such a function)
+	. reloads a2
+	. without interrupting the interface
+* communicates with a2 to change variables
+* writes settings to db
+	. if settings are in db take those
+	. otherwise scan module folder
+	. otherwise run helper to create default files
+* is not bound to a2 core code
+	. thus can be as big/complex as it wants
+* is searchable
+	. and comes with tags
+		. builtin ones: active, inactive, online (which are dynamic, but also static developer defined ones:)
+			file, windows, text, coding, mouse, gfx, control, lookup ...
+* is scalable / font sizable
+* is connected to its online home (to commit script changes, get updates, news, report bugs, upload user config...)
+* for developing scripts:
+	* offers to edit a module
+	* create a module folder
+	* scan your script
+		* for executable functions and labels
+		* variables
+		* to create options and hotkey interface in the ui
+		* to create default files for hotkeys, variables
+	* helps to create startup inits
+* acts on press (no OK, Apply/Übernehmen shit)
+* but has Undo!
+	. each click or change is passed to a method that handles: writing current values to undo stack, writing the include files, saving to db
+	. undo gets last entry from undo stack, writes current settings to redo stack and then writes includes and db...
+* features a row of tabs/buttons that filter the modules
+	. active modules/inactive modules
+	. local/online modules
+	. combine a number of tags to cook down the shown modules
+	. show all button clears tags
+	. filter for hotkey functions:
+		. tags for modifier keys show the resulting ones
+		. single letter in search field shows corresponding ones
+			. e.g. "a" shows global Win+A, but also Ctrl+Shift+A in Explorer
+	
+a2 structure:
+* Autohotkey
+	. with Autohotkey_L
+* modules
+	. ahk script files
+	. gfx, icons
+	. language files one file per language
+		. similar to ac'tivAid lng mode but without the extra code included at runtime
+		. use lng_scriptname_name variables in the script
+		. lng-file feeds variables for runtime with according text
+		. ui-lng file thats not used in the runtime with longer text for items/tooltips and stuff
+		. documentation
+	(. temp files ?)
+	. default files:
+		. hotkey (default suggestion (F2 to rename files) or hardwired (override delete))
+		. variables (default suggestions or hardwired)
+		. environment (default suggestions (forbid surrounder in cmd) or hardwired (Explorer Hotkeys))
+	. ui script for more complex ui
+* lib
+	. helper executables
+	. a2 lib files
+	. external lib files
+* ui
+	. ui library
+	. ui executable or scripts however it is written
+* settings
+	. include files
+	. database
+a2start
+. include module file - which is written on demand when changing modules
+
+
+a2UI : When I click to enable a script
+. scans folder for default files
+
+
+
+ui: hotkey, variables possibilities
+[x] arbitrary global hotkey - may exclude.../may include only...
+[x] arbitrary local hotkey - restricted to a listof win/class/process
+[x] certain hotkey - hardcoded - restricted to a list of win/class/process
+[x] module on/off
+[x] module part on/off
+[x] bool var
+[123] int var
+[123,456] float var
+[#5f53a4] color var
+['lorem'] string var
+['lorem','ipsum','bla'] string list var
+['x:/bla'] string path var
+[bla, bli, blub ^] drop down list
+[bla, bli, _____ ^] combo box
+

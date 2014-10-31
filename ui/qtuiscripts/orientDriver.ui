@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>dlgOrientDriver</class>
+ <widget class="QDialog" name="dlgOrientDriver">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>379</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>OrientDrivers</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>0</y>
+     <width>581</width>
+     <height>371</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>3</number>
+   </property>
+   <widget class="QWidget" name="Create">
+    <attribute name="title">
+     <string>Create OrientDriver</string>
+    </attribute>
+    <widget class="QLineEdit" name="edDriverJoint">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>20</y>
+       <width>405</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bDriverJoint">
+     <property name="geometry">
+      <rect>
+       <x>485</x>
+       <y>20</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get &lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Driver Joint</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>45</y>
+       <width>66</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Parent Joint</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bParentJoint">
+     <property name="geometry">
+      <rect>
+       <x>485</x>
+       <y>45</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get &lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edParentJoint">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>45</y>
+       <width>405</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bCreateOrientDriver">
+     <property name="geometry">
+      <rect>
+       <x>365</x>
+       <y>95</y>
+       <width>115</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edName">
+     <property name="geometry">
+      <rect>
+       <x>75</x>
+       <y>70</y>
+       <width>405</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>70</y>
+       <width>36</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Name</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>OrientDrivers Settings</string>
+    </attribute>
+    <widget class="QListWidget" name="lOrientDriverList">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>10</y>
+       <width>341</width>
+       <height>271</height>
+      </rect>
+     </property>
+     <property name="currentRow">
+      <number>-1</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bDelete">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>290</y>
+       <width>341</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bSceneRefresh">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>315</y>
+       <width>341</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Refresh OrientDrivers List</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>5</y>
+       <width>206</width>
+       <height>170</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Properties</string>
+     </property>
+     <widget class="QDoubleSpinBox" name="spMinAngle">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>55</y>
+        <width>56</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <double>180.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>55</y>
+        <width>56</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Min Angle</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="spMaxWeightClamp">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>130</y>
+        <width>56</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>80</y>
+        <width>56</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Max Angle</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="spMinWeightClamp">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>105</y>
+        <width>56</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>0.100000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>105</y>
+        <width>90</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Min Weight Clamp</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="spMaxAngle">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>80</y>
+        <width>56</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <double>180.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>130</y>
+        <width>90</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Max Weight Clamp</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>30</y>
+        <width>56</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Local Aim</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="cbLocalAim">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>30</y>
+        <width>55</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>X</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Y</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Z</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>180</y>
+       <width>206</width>
+       <height>65</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Visual properties</string>
+     </property>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>35</x>
+        <y>25</y>
+        <width>56</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Scale</string>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="spScale">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>25</y>
+        <width>56</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <attribute name="title">
+     <string>Driven Joints</string>
+    </attribute>
+    <widget class="QListWidget" name="lTab3OrientDriverList">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>25</y>
+       <width>266</width>
+       <height>281</height>
+      </rect>
+     </property>
+     <property name="currentRow">
+      <number>-1</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>5</y>
+       <width>96</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>OrientDrivers</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3StartTransform">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>205</y>
+       <width>151</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create start transform</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3GetEndLocator">
+     <property name="geometry">
+      <rect>
+       <x>515</x>
+       <y>285</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get &lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3CreateLink">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>315</y>
+       <width>285</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Add</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3DrivenJoint">
+     <property name="geometry">
+      <rect>
+       <x>515</x>
+       <y>115</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get &lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edTab3CtrlGrp">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>175</y>
+       <width>231</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edTab3DrivenJoint">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>115</y>
+       <width>231</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3GetStartLocator">
+     <property name="geometry">
+      <rect>
+       <x>515</x>
+       <y>230</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get &lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edTab3StartLoc">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>230</y>
+       <width>230</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3EndTransform">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>260</y>
+       <width>150</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create end transform</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="edTab3EndLoc">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>285</y>
+       <width>230</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3CreateCtrl">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>150</y>
+       <width>151</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Create controller</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3GetCtrl">
+     <property name="geometry">
+      <rect>
+       <x>515</x>
+       <y>175</y>
+       <width>51</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Get &lt;&lt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_12">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>95</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Driven Joint</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="cbInterpolators">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>25</y>
+       <width>286</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>5</y>
+       <width>111</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Availabe interpolators</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3CreateInterpolator">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>50</y>
+       <width>95</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>New</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3DeleteInterpolator">
+     <property name="geometry">
+      <rect>
+       <x>375</x>
+       <y>50</y>
+       <width>95</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Delete</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3RefreshInterpolator">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>50</y>
+       <width>95</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Refresh</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bTab3SceneRefresh">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>315</y>
+       <width>266</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Refresh OrientDrivers List</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="title">
+     <string>Export OrientDrivers</string>
+    </attribute>
+    <widget class="QPushButton" name="bExport">
+     <property name="geometry">
+      <rect>
+       <x>245</x>
+       <y>310</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Export</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

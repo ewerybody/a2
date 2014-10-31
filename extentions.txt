@@ -1,0 +1,36 @@
+a²
+CalculAid
+
+load main ahk
+
+Hotkey - open up the calculator
+    * default [Ctrl + Alt + R]
+    * default enabled
+    * cannot be disabled
+    * can be changed (any but single letters)
+    * can have multiple hotkeys
+    * calls simple command: main command
+    * scope: systemwide
+        * can be changed to exclude or include
+
+Checkbox - switch numbergrouping
+
+Group - placement
+    Checkbox - place at cursor
+    Checkbox - make always on top
+
+Group - hotkeys in the calculator
+    Hotkey - close the calculator
+        * checkbox
+        * default [Esc, Ctrl + w]
+        * default [disabled, enabled]
+        * calls keystroke: Send !{F4}
+        * scope: Calculator window class
+    Hotkey - submit result
+        * checkbox
+        * default enabled
+        * calls simple command: sub command
+
+CharacterAid
+
+init timer and Input
