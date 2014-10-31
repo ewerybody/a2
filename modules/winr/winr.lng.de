@@ -1,0 +1,4 @@
+﻿winr_lng_short = "Kontextsensitives Windows+R"
+winr_lng_description = "WinR fügt dem Standardkürzel Windows+R situationsabhängige Funktionen hinzu. Standardmäßig kommt der Ausführen Dialog, sind Pfade zu Dateinnamen oder Ordnern als Text gewählt, werden diese geöffnet; markierte Internetadressen öffnen sich im Browser."
+winr_lng_moveWindowToCursor = "Ausführen Fenster am Mauszeiger platzieren"
+winr_lng_TLDs = "Top-Level-Domains"
