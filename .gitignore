@@ -1,0 +1,6 @@
+*.pyc
+/ui/qtuiscripts
+/ui/_dump
+/ui/__pycache__
+/ui/.idea
+/ui/designer - Shortcut.lnk
