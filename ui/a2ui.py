@@ -56,35 +56,61 @@ class A2Window(QtGui.QMainWindow):
         log.info('a2ui initialised!')
 
     def modSelect(self):
+        """
+        updates the mod view to the right of the UI when something different is
+        selected in the module list
+
+        So I tried to just create layouts for each module unhook them from the
+        scroll layout on demand and hook up another one but Qt is spart so it
+        deletes the invisible layout which cannot be hooked up again.
+        We probably need an actual tab layout to do this.
+        But for now we'll try the brute force method of deleting everything and
+        building it over again each time something else is seleceted in the left
+        list
+        """
         name = self.ui.modList.selectedItems()[0].text()
         if name == self.selectedMod:
             return
 
+        # delete stuff of last module
+        if self.selectedMod:
+            last = self.modules[self.selectedMod]
+            if last.ui:
+                print('removing stuff for %s' % self.selectedMod)
+                for u in last.ui:
+                    self.mainlayout.removeWidget(u)
+                    del u
+        else:
+            print('removing welcome text')
+            self.mainlayout.removeWidget(self.ui.welcomeText)
+            del self.ui.welcomeText
+
+        # build stuff for current mod
         self.selectedMod = name
         mod = self.modules[name]
-        if not mod.tab:
-            log.info('creating tab for %s' % mod.name)
-            mod.tab = QtGui.QWidget()
-            mod.tab.setGeometry(QtCore.QRect(0, 0, 1025, 738))
-            #mod.tab.setObjectName('%stab' % mod.name)
-            mod.tablayout = QtGui.QVBoxLayout(mod.tab)
-            #mod.tablayout.setObjectName('%stablayout' % mod.name)
-            mod.tabspacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        # if not mod.tab:
+        #     log.info('creating tab for %s' % mod.name)
+        #     mod.tab = QtGui.QWidget()
+        #     mod.tab.
+        #     mod.tab.setGeometry(QtCore.QRect(0, 0, 1025, 738))
+        #     #mod.tab.setObjectName('%stab' % mod.name)
+        #     mod.tablayout = QtGui.QVBoxLayout(mod.tab)
+        #     #mod.tablayout.setObjectName('%stablayout' % mod.name)
+        #     mod.tabspacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        #self.ui.scrollArea.setWidget(mod.tab)
+        mod.ui = []
+        for p in mod.parts:
+            button = QtGui.QPushButton(p)
+            mod.ui.append(button)
+        self.enlist(mod.ui)
 
-        self.ui.scrollArea.setWidget(mod.tab)
-        button = QtGui.QPushButton(str(mod.parts))
-        self.enlist(button, mod)
-
-    def enlist(self, uiObj, mod=None):
-        if not mod:
-            layout = self.mainlayout
-            spacer = self.ui.spacer
-        else:
-            layout = mod.tablayout
-            spacer = mod.tabspacer
-        #layout.removeItem(spacer)
-        layout.addWidget(uiObj)
-        #layout.addItem(spacer)
+    def enlist(self, uiObj):
+        if not isinstance(uiObj, list):
+            uiObj = [uiObj]
+        self.mainlayout.removeItem(self.ui.spacer)
+        for o in uiObj:
+            self.mainlayout.addWidget(o)
+        self.mainlayout.addItem(self.ui.spacer)
 
     def settingsChanged(self, mod):
         print('mod: ' + str(self.modules[mod]))
@@ -93,15 +119,6 @@ class A2Window(QtGui.QMainWindow):
         self.modules = {}
         for mod in os.listdir(self.a2moddir):
             self.modules[mod] = Mod(mod, self.a2moddir, self.db)
-
-    def buildModList(self):
-        # for mod in self.modules:
-        #     chk = QtGui.QCheckBox()
-        #     chk.setProperty('text', mod)
-        #     chk.clicked.connect(lambda x=mod: self.settingsChanged(x))
-        #     self.moduleLayout.addWidget(chk)
-        #     self.modules[mod].ui = chk
-        pass
 
     def initPaths(self):
         """ makes sure all necessary paths and their variables are available """
@@ -153,7 +170,7 @@ class Mod:
         self.dir = os.path.join(a2moddir, modname)
         self.getParts()
         self.db = db
-        self.tab = None
+        self.ui = None
 
     def enable(self, part):
         """

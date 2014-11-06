@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Fri Oct 31 21:48:56 2014
+# Created: Wed Nov  5 19:33:21 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,6 +56,11 @@ class Ui_a2Widget(QtGui.QWidget):
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.welcomeText = QtGui.QLabel(self.scrollAreaContents)
+        self.welcomeText.setAutoFillBackground(False)
+        self.welcomeText.setWordWrap(True)
+        self.welcomeText.setObjectName("welcomeText")
+        self.verticalLayout_4.addWidget(self.welcomeText)
         self.scrollArea.setWidget(self.scrollAreaContents)
         self.verticalLayout.addWidget(self.scrollArea)
         self.verticalLayout_3.addWidget(self.splitter)
@@ -67,4 +72,5 @@ class Ui_a2Widget(QtGui.QWidget):
         a2Widget.setWindowTitle(QtGui.QApplication.translate("a2Widget", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.moduleBox.setTitle(QtGui.QApplication.translate("a2Widget", "modules", None, QtGui.QApplication.UnicodeUTF8))
         self.settingsBox.setTitle(QtGui.QApplication.translate("a2Widget", "settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.welcomeText.setText(QtGui.QApplication.translate("a2Widget", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
 
