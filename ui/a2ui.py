@@ -1,14 +1,14 @@
 # a2ui
 from PySide import QtGui, QtCore
 import os
+from os.path import exists, join
 import sys
-import fakeLog as logging
+import logging
 import a2dblib
 import a2design_ui
-#import importlib
-#a2design_ui = importlib.import_module('a2design_ui')
+logging.basicConfig()
 log = logging.getLogger('a2ui')
-
+log.setLevel(logging.DEBUG)
 
 class A2Window(QtGui.QMainWindow):
     def __init__(self):
@@ -19,33 +19,29 @@ class A2Window(QtGui.QMainWindow):
         self.setWindowIcon(icon)
 
         self.initPaths()
-        self.db = a2dblib.check(self)
-        sections = self.db.tables()
-        log.info('db sections: %s' % sections)
-        for s in sections:
-            try:
-                keys = self.db.keys(s)
-                log.info('db section %s: %s' % (s, keys))
-            except:
-                pass
-        self.enabledMods = self.db.get('enabled', 'a2')
+        self.dbfile = join(self.a2setdir, 'a2.db')
+        # create db connection: use test\a2dbtest.py to test it
+        self.db = a2dblib.A2db(self.dbfile)
 
+        self.enabledMods = self.db.get('enabled', 'a2')
         log.info('enabledMods: %s' % self.enabledMods)
+
         self.fetchModules()
 
         self.ui = a2design_ui.Ui_a2Widget()
         self.ui.setupUi(self.ui)
 
         self.maintab = self.ui.scrollAreaContents
+        
         self.mainlayout = self.ui.verticalLayout_4
         self.currtab = self.maintab
-
+        #self.ui.tabWidget.hid
         # create a spacer to arrange the layout # NOTE that a spacer is added via addItem! not widget
         self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
 
         self.ui.modList.insertItems(0, list(self.modules.keys()))
-        self.ui.modList.itemClicked.connect(self.modSelect)
+        self.ui.modList.itemSelectionChanged.connect(self.modSelect)
         self.selectedMod = None
 
         self.setCentralWidget(self.ui)
@@ -60,54 +56,43 @@ class A2Window(QtGui.QMainWindow):
         updates the mod view to the right of the UI when something different is
         selected in the module list
 
-        So I tried to just create layouts for each module unhook them from the
+        1. I tried to just create layouts for each module unhook them from the
         scroll layout on demand and hook up another one but Qt is spart so it
         deletes the invisible layout which cannot be hooked up again.
-        We probably need an actual tab layout to do this.
-        But for now we'll try the brute force method of deleting everything and
-        building it over again each time something else is seleceted in the left
-        list
+        2. I tried to brute force delete everything and building it over again each
+        time something else is seleceted in the left list but Qt refuses to
+        delete anything visually with destroy() or removeWidget()
+        3. We probably need an actual tab layout to do this but I can't find how to
+        make the tabs invisible...
+        4. I'll try to create an all new layout, fill it and switch away from the old one: 
         """
         name = self.ui.modList.selectedItems()[0].text()
         if name == self.selectedMod:
             return
 
-        # delete stuff of last module
-        if self.selectedMod:
-            last = self.modules[self.selectedMod]
-            if last.ui:
-                print('removing stuff for %s' % self.selectedMod)
-                for u in last.ui:
-                    self.mainlayout.removeWidget(u)
-                    del u
-        else:
-            print('removing welcome text')
-            self.mainlayout.removeWidget(self.ui.welcomeText)
-            del self.ui.welcomeText
+        log.debug('selected: %s' % name)
 
-        # build stuff for current mod
         self.selectedMod = name
         mod = self.modules[name]
-        # if not mod.tab:
-        #     log.info('creating tab for %s' % mod.name)
-        #     mod.tab = QtGui.QWidget()
-        #     mod.tab.
-        #     mod.tab.setGeometry(QtCore.QRect(0, 0, 1025, 738))
-        #     #mod.tab.setObjectName('%stab' % mod.name)
-        #     mod.tablayout = QtGui.QVBoxLayout(mod.tab)
-        #     #mod.tablayout.setObjectName('%stablayout' % mod.name)
-        #     mod.tabspacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        #self.ui.scrollArea.setWidget(mod.tab)
+        
+        self.mainlayout.removeItem(self.ui.spacer)
+        # create new layout
+        newLayout = QtGui.QWidget(self.ui.scrollArea)
+        newInner = QtGui.QVBoxLayout(newLayout)
         mod.ui = []
         for p in mod.parts:
             button = QtGui.QPushButton(p)
+            newInner.addWidget(button)
             mod.ui.append(button)
-        self.enlist(mod.ui)
 
+        self.mainlayout = newInner
+        self.enlist(mod.ui)
+        
+        self.ui.scrollArea.setWidget(newLayout)
+        
     def enlist(self, uiObj):
         if not isinstance(uiObj, list):
             uiObj = [uiObj]
-        self.mainlayout.removeItem(self.ui.spacer)
         for o in uiObj:
             self.mainlayout.addWidget(o)
         self.mainlayout.addItem(self.ui.spacer)
@@ -127,7 +112,7 @@ class A2Window(QtGui.QMainWindow):
         if not self.a2uidir:
             #self.a2uidir = 'C:/My Files/code/a2/ui'
             cwd = os.getcwd()
-            if os.path.exists(os.path.join(cwd, 'a2ui.py')):
+            if exists(join(cwd, 'a2ui.py')):
                 self.a2uidir = cwd
                 log.info('fetched a2ui dir from cwd... %s' % cwd)
             else:
@@ -141,7 +126,7 @@ class A2Window(QtGui.QMainWindow):
         self.a2moddir = self.a2dir + '/' + 'modules/'
         # test if all necessary directories are present:
         mainItems = [self.a2ahk, self.a2exe, self.a2libdir, self.a2moddir, self.a2setdir, self.a2uidir]
-        missing = [p for p in mainItems if not os.path.exists(p)]
+        missing = [p for p in mainItems if not exists(p)]
         if missing:
             raise Exception('a2ui start interrupted! ' + str(missing) + ' not found in main dir!')
         if not os.access(self.a2setdir, os.W_OK):
@@ -149,7 +134,7 @@ class A2Window(QtGui.QMainWindow):
 
     def getSettingsDir(self):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """
-        return os.path.join(self.a2dir, 'settings')
+        return join(self.a2dir, 'settings')
 
 
 class Mod:
@@ -167,7 +152,7 @@ class Mod:
     def __init__(self, modname, a2moddir, db):
         # gather files from module path in local list
         self.name = modname
-        self.dir = os.path.join(a2moddir, modname)
+        self.dir = join(a2moddir, modname)
         self.getParts()
         self.db = db
         self.ui = None

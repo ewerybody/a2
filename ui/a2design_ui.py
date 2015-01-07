@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Wed Nov  5 19:33:21 2014
+# Created: Sat Jan  3 16:52:55 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

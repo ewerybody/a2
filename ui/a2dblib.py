@@ -2,14 +2,14 @@
 a2dblib - wrapper to the a2 database
 
 Mainly we store key value pairs. So the 'tables' are more or less
-lets see how we deal with 'real' tables in the future... if we need to
-
 id key  value
 -------------
 01 this 0.5
 02 that 'lala'
 03 blib 'something'
 04 blob 'something'
+
+lets see how we deal with 'real' tables in the future... if we need to
 
 this enables us to do simple get/set things like
 
@@ -20,21 +20,22 @@ a2db.rem('tempstuff', 'a2')
 TODO: replace those 'string ' + var + ' string' statements with
     'string % string' % var
 """
-import os
 import sqlite3
-#import logging
-import fakeLog as logging
-log = logging.getLogger(__name__)
+import logging
+logging.basicConfig()
+log = logging.getLogger('a2db')
+log.setLevel(logging.DEBUG)
 
+_defaultTable = 'a2'
 
 class A2db:
     def __init__(self, a2dbFile):
-        self.file = a2dbFile
-        self.con = sqlite3.connect(a2dbFile)
-        self.cur = self.con.cursor()
-        log.info('A2db initialised! (%s)' % self.file)
+        self._file = a2dbFile
+        self._con = sqlite3.connect(a2dbFile)
+        self._cur = self._con.cursor()
+        log.info('database initialised! (%s)' % self._file)
 
-    def get(self, key, table='a2'):
+    def get(self, key, table=_defaultTable):
         """
         Gets you a value from a keyName and tableName.
 
@@ -45,7 +46,7 @@ class A2db:
         :return: string of the data or empty string
         """
         try:
-            data = self.fetch('select value from %s where key="%s"' % (table, key))
+            data = self._fetch('select value from "%s" where key="%s"' % (table, key))
             return data[0][0]
         except:
             if table not in self.tables():
@@ -55,62 +56,75 @@ class A2db:
                 log.error('there is no key "%s" in section "%s"' % (key, table))
                 return ''
 
-    def set(self, key, value, table='a2', check=False):
+    def set(self, key, value, table=_defaultTable, check=False):
         """
-        example:
         update TableName SET valueName=value WHERE key=keyName
+        example:
         """
         try:
             if not key in self.keys(table):
-                statement = ('insert into %s ("key","value") values ("%s", "%s")' % (table, key, value))
+                statement = ('insert into "%s" ("key","value") values ("%s", "%s")' % (table, key, value))
+                log.debug('adding value!\n  %s' % statement)
             else:
-                statement = 'update %s set value="%s" WHERE key="%s"' % (table, value, key)
-            self.execute(statement)
-            self.con.commit()
+                statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, value, key)
+                log.debug('updating value!\n  %s' % statement)
+            self._execute(statement)
+            self._con.commit()
+        #except sqlite3.DatabaseError as error:
         except:
+            log.debug('setting db failed...')
             if not table in self.tables():
-                self.checkTable(table)
+                log.debug('creating table and retry...')
+                self.createTable(table)
+                # TODO: resolve loop:
                 self.set(key, value, table)
             else:
+                #log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s' % (value, key, table, error))
                 log.error('could not set value: "%s" on key:"%s" in section:"%s"' % (value, key, table))
 
     def tables(self):
-        tablelist = self.fetch("SELECT name FROM sqlite_master WHERE type='table'")
+        tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
         return [t[0] for t in tablelist]
 
-    def keys(self, table='a2'):
-        data = self.fetch('select key from %s' % table)
+    def dropTable(self, table):
+        if table not in self.tables():
+            return
+        self._execute('drop table "%s"' % table)
+        self._con.commit()
+
+    def keys(self, table=_defaultTable):
+        data = self._fetch('select key from "%s"' % table)
         return [k[0] for k in data]
 
-    def fetch(self, statement):
-        self.execute(statement)
-        return self.cur.fetchall()
+    def _fetch(self, statement):
+        self._execute(statement)
+        return self._cur.fetchall()
 
-    def checkTable(self, table):
-        if table not in self.tables():
-            dirty = True
-            statement = 'create table "%s" (id integer primary key, key TEXT, value TEXT)' % table
-            self.execute(statement)
-            return False
-        return True
+    def createTable(self, table):
+        if table in self.tables():
+            return
+        statement = 'create table "%s" (id integer primary key, key TEXT, value TEXT)' % table
+        log.debug('createTable statement:\n\t%s' % statement)
+        self._execute(statement)
 
-    def execute(self, statement):
+    def _execute(self, statement):
         try:
-            self.cur.execute(statement)
+            self._cur.execute(statement)
         except Exception as err:
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
+            #log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def all(self):
         tables = self.tables()
         for t in tables:
-            columns = ' - '.join([i[1] for i in self.fetch('PRAGMA table_info("%s")' % t)])
-            print('\ntable: "%s":\n  %s\n  %s\n  %s' % (t, columns, '-'*40,
-                '\n  '.join([str(i)[1:-1] for i in self.fetch('select * from "%s"' % t)])))
+            columns = ' - '.join([i[1] for i in self._fetch('PRAGMA table_info("%s")' % t)])
+            log.info('\ntable: "%s":\n  %s\n  %s\n  %s'
+                  % (t, columns, '-'*40, '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
 
 
     # old crap --------------------------------------------------------
 
-    def oldset(self, data, section, where=('Id', '1')):
+    def _oldset(self, data, section, where=('Id', '1')):
         """
         example:
         INSERT OR REPLACE INTO TableName (Id, key) VALUES (1,value)
@@ -129,9 +143,9 @@ class A2db:
             statement = "UPDATE '" + section + "' SET "
             statement += ", ".join(["'" + k + "'='" + str(data[k]) + "'" for k in data])
             statement += " WHERE " + where[0] + "=" + where[1]
-        self.execute(statement)
+        self._execute(statement)
 
-    def getSqlType(self, element):
+    def _getSqlType(self, element):
         if isinstance(element, str):
             return 'TEXT'
         elif isinstance(element, float):
@@ -141,7 +155,7 @@ class A2db:
         else:
             raise IOError('type of "' + str(element) + '" not handled yet!')
 
-    def oldcheckSections(self, data, section):
+    def _oldcheckSections(self, data, section):
         """
         for longer tables this checks the number of columns so the given data fits
         """
@@ -153,23 +167,23 @@ class A2db:
             for key in data:
                 statement += ', ' + key + ' ' + self.getSqlType(data[key])
             statement += ')'
-            self.execute(statement)
+            self._execute(statement)
         else:
             # according to given data.keys() check for column existance
-            tableNfo = self.fetch('PRAGMA table_info(%s)' % section)
+            tableNfo = self._fetch('PRAGMA table_info(%s)' % section)
             columns = [i[1] for i in tableNfo]
             for key in data:
                 if key in columns:
                     continue
-                self.execute("ALTER TABLE '" + section + "' ADD COLUMN " + key + " " + self.getSqlType(data[key]))
+                self._execute("ALTER TABLE '" + section + "' ADD COLUMN " + key + " " + self.getSqlType(data[key]))
                 isDirty = True
         return isDirty
 
-    def oldget(self, column, section):
+    def _oldget(self, column, section):
         statement = "SELECT %s FROM %s" % (column, section)
         data = []
         try:
-            data = self.fetch(statement)
+            data = self._fetch(statement)
         except:
             log.error('could not get data from db "%s" in section "%s"' % (column, section))
         # if not raw:
@@ -177,7 +191,10 @@ class A2db:
         #		data = [i[0] for i in data]
         return data
 
-    def add(self, data, section):
+    def _add(self, data, section):
+        """
+        depricated
+        """
         self.checkTable(section)
         statement = "INSERT INTO '" + section + "' ("
         statement += ','.join(data.keys()) + ") VALUES "
@@ -185,12 +202,6 @@ class A2db:
 
         "INSERT INTO %s (%s) VALUES (%s)" % ()
 
-        print( 'statement: ' + str(statement) )
-        self.execute(statement)
-        self.con.commit()
-
-
-def check(a2obj):
-    a2dbFile = os.path.join(a2obj.a2setdir, 'a2.db')
-    db = A2db(a2dbFile)
-    return db
+        print('statement: ' + str(statement))
+        self._execute(statement)
+        self._con.commit()
