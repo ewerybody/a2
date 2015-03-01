@@ -1,33 +1,31 @@
 ftpExplorerCopy()
 {
 	WinGet, this_id, ID, A
-	ControlGetText, path, ToolbarWindow322, ahk_id %this_id%
-
-	if (SubStr(path, 1, 9) == "Adresse: ")
-		StringTrimLeft, path, path, 9
+	;legacy: Win 7: ;ControlGetText, path, ToolbarWindow322, ahk_id %this_id%
+    ;Win 8 ;ControlGetText, path, ToolbarWindow323, ahk_id %this_id%
 
 	sel := Explorer_GetSelected(this_id)
-
-	clip =
-
-	; bend ftp paths to http:
-	if Substr(path, 1, 6) == "ftp://"
-	{
-		
-		@ := inStr(path,"@")
-		if @
-		{
-			if sel
-			{
-				loop, parse, sel, `n,`r
-					clip := clip "http://" SubStr(A_LoopField,@ + 1) "`n"
-			}
-		}
-	}
+	clip := ""
+    if sel
+    {
+        loop, parse, sel, `n,`r
+        {
+            if Substr(A_LoopField, 1, 6) == "ftp://"
+            {
+                posAt := InStr(A_LoopField,"@")
+                clip := clip "http://" SubStr(A_LoopField, posAt + 1) "`n"
+            }
+        }
+    }
+    else
+    {
+        tt("Nothing selected!", 1)
+        Return
+    }
 
 	StringTrimRight, clip, clip, 1
 	Clipboard := clip
-	tt(clip,1)
+	tt(clip, 1)
 }
 
 /*
@@ -61,7 +59,7 @@ Explorer_GetPath(hwnd="")
    if (window="desktop")
       return A_Desktop
    path := window.LocationURL
-   path := SubStr(path,InStr(path,"///")+3)
+   ;path := SubStr(path,InStr(path,"///")+3)
    StringReplace, path, path, /, \, All
    
    ; thanks to polyethene
