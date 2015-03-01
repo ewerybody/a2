@@ -4,3 +4,7 @@
 /ui/__pycache__
 /ui/.idea
 /ui/designer - Shortcut.lnk
+
+.project
+.settings/org.eclipse.core.resources.prefs
+.pydevproject

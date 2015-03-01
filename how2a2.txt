@@ -1,9 +1,15 @@
+TODO: roadmap
+	* implement checkbox
+		* to toggle include of an ahk-file
+		* to toggle variable
+	* 
+ 
 a2 runtime:
     a2 starter:
         * uses autohotkey.exe from installer or local a2 bundled autohotkey.exe (optional on a2 install)
         * runs the a2.ahk through this autohotkey.exe
     a2.ahk:
-        * runs includes
+        * runs includes (in that order)
             * variables (non ui ones)
             * libs (a2 libs that might be optional and used by multiple mods)
             * includes (actual scripts from enabled modules)

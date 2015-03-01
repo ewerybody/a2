@@ -1,4 +1,4 @@
-aÂ²
+a²
 CalculAid
 
 load main ahk
@@ -14,6 +14,7 @@ Hotkey - open up the calculator
         * can be changed to exclude or include
 
 Checkbox - switch numbergrouping
+	* toggles variable
 
 Group - placement
     Checkbox - place at cursor
