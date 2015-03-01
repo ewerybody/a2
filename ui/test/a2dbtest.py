@@ -15,7 +15,7 @@ import a2dblib
 
 db = a2dblib.A2db(a2setdir)
 
-log.info('db members:\n\t%s' % [d for d in dir(db) if not d.startswith('_')])
+log.info('db members:\n\t%hhs' % [d for d in dir(db) if not d.startswith('_')])
 testTable = 'TEST table'
 log.info('tables:\n\t%s' % db.tables())
 
@@ -43,4 +43,8 @@ log.info('tables: %s' % db.tables())
 
 db.dropTable(testTable)
 log.debug('testTable: "%s" Deleted: %s' % (testTable, not testTable in db.tables()))
+
+db.dropTable('a3')
+
+db.all()
 log.info('a2dbtest finished!')

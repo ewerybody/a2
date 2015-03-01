@@ -2,20 +2,25 @@
 from PySide import QtGui, QtCore
 import os
 from os.path import exists, join
+from functools import partial
 import sys
 import logging
 import a2dblib
 import a2design_ui
+import json
 logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
+
+
 
 class A2Window(QtGui.QMainWindow):
     def __init__(self):
         super(A2Window, self).__init__()
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
 
         self.initPaths()
@@ -35,9 +40,11 @@ class A2Window(QtGui.QMainWindow):
         
         self.mainlayout = self.ui.verticalLayout_4
         self.currtab = self.maintab
-        #self.ui.tabWidget.hid
-        # create a spacer to arrange the layout # NOTE that a spacer is added via addItem! not widget
-        self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        
+        # create a spacer to arrange the layout
+        # NOTE that a spacer is added via addItem! not widget
+        self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum,
+                                           QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
 
         self.ui.modList.insertItems(0, list(self.modules.keys()))
@@ -51,11 +58,26 @@ class A2Window(QtGui.QMainWindow):
 
         log.info('a2ui initialised!')
 
-    def modSelect(self):
+    def modSelect(self, force=False):
         """
         updates the mod view to the right of the UI when something different is
-        selected in the module list
-
+        selected in the module list 
+        """
+        name = self.ui.modList.selectedItems()[0].text()
+        if name == self.selectedMod and force is False:
+            return
+        
+        log.debug('sel: %s' % name)
+        
+        self.selectedMod = name
+        mod = self.modules[name]
+        
+        self.drawMod(mod)
+        
+    def drawUI(self, controls):
+        """
+        takes list of controls and arranges them in the scroll layout
+        
         1. I tried to just create layouts for each module unhook them from the
         scroll layout on demand and hook up another one but Qt is spart so it
         deletes the invisible layout which cannot be hooked up again.
@@ -64,42 +86,109 @@ class A2Window(QtGui.QMainWindow):
         delete anything visually with destroy() or removeWidget()
         3. We probably need an actual tab layout to do this but I can't find how to
         make the tabs invisible...
-        4. I'll try to create an all new layout, fill it and switch away from the old one: 
+        4. I'll try to create an all new layout,
+            fill it and switch away from the old one:
         """
-        name = self.ui.modList.selectedItems()[0].text()
-        if name == self.selectedMod:
-            return
-
-        log.debug('selected: %s' % name)
-
-        self.selectedMod = name
-        mod = self.modules[name]
-        
+        # to refill the scoll layout:
+        # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
-        # create new layout
-        newLayout = QtGui.QWidget(self.ui.scrollArea)
+        # create widget to host the module's new layout 
+        newLayout = QtGui.QWidget()
+        # create new columnLayout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
-        mod.ui = []
-        for p in mod.parts:
-            button = QtGui.QPushButton(p)
-            newInner.addWidget(button)
-            mod.ui.append(button)
-
+        
+        ### create the contols
+        ##self.drawUI(mod)
+        
+        # make the new inner layout the mainLayout
         self.mainlayout = newInner
-        self.enlist(mod.ui)
-        
-        self.ui.scrollArea.setWidget(newLayout)
-        
-    def enlist(self, uiObj):
-        if not isinstance(uiObj, list):
-            uiObj = [uiObj]
-        for o in uiObj:
-            self.mainlayout.addWidget(o)
+        # add the controls to it
+        for ctrl in controls:
+            self.mainlayout.addWidget(ctrl)
+        # amend the spacer
         self.mainlayout.addItem(self.ui.spacer)
+        # turn scroll layout content to new host widget
+        self.ui.scrollArea.setWidget(newLayout)
+    
+    def drawMod(self, mod):
+        """
+        from the modules config creates the usual display controls and
+        fills them with the saved settings from the database.
+        On change they trigger writing to the db, collect all include info
+        and restart a2.
+        """
+        log.debug('drawing: %s' % mod.name)
+        controls = []
+        if exists(mod.configFile):
+            try:
+                with open(mod.configFile) as fObj:
+                    mod.config = json.load(fObj)
+            except:
+                mod.config = []
+                controls.append(QtGui.QLabel('config.json currently empty. imagine placeholder layout here ...'))
+            
+            log.debug('config: >%s<' % mod.config)
+            buttonText = 'Edit'
+        else:
+            mod.config = []
+            controls.append(QtGui.QLabel('"%s" has no configuration file yet!\n'
+                                         'Would you like to set one up?' % mod.name))
+            buttonText = 'Create'
+        
+        log.debug('creating display controls here...')
+        
+        # add temp edit button. This will goto the menu bar in the future or to a hotkey Ctrl+E?
+        editButton = QtGui.QPushButton(buttonText)
+        editButton.pressed.connect(partial(self.editMod, mod))
+        controls.append(editButton)
+        
+        self.drawUI(controls)
+        
+    def editMod(self, mod):
+        """
+        From the modules config creates controls to edit the config itself.
+        If a header is not found one will be added to the in-edit config.
+        On OK the config data is collected from the UI and written back to the json.
+        On Cancel the in-edit config is discarded and the standard drawMod called
+        to show the UI without change.
+        """
+        log.debug('editing: %s' % mod.name)
+        controls = []
+        
+        s = "Because none existed before this temporary description was created for %s."\
+            "Change it to describe what it does with a couple of words." % mod.name
+        if mod.config == []:
+            config = [{'typ': 'header',
+                       'desc': s,
+                       'display name': '%s' % mod.name,
+                       'author':'your name',
+                       'version': 0.1,
+                       'date': 2015}]
+        
+        log.debug('creating EDIT controls here...')
+        
+        # amend OK, Cancel buttons at the end
+        editFooter = QtGui.QWidget()
+        editFooterLayout = QtGui.QHBoxLayout(editFooter)
+        okButton = QtGui.QPushButton('OK')
+        okButton.pressed.connect(self.editSubmit)
+        cancelBtn = QtGui.QPushButton('Cancel')
+        cancelBtn.pressed.connect(partial(self.drawMod, mod))
+        editFooterLayout.addWidget(okButton)
+        editFooterLayout.addWidget(cancelBtn)
+        controls.append(editFooter)
+        
+        self.drawUI(controls)
+    
+    def editSubmit(self):
+        log.debug('editSubmit...')
 
+    def editCancel(self):
+        log.debug('editCancel...')
+    
     def settingsChanged(self, mod):
         print('mod: ' + str(self.modules[mod]))
-
+    
     def fetchModules(self):
         self.modules = {}
         for mod in os.listdir(self.a2moddir):
@@ -116,7 +205,8 @@ class A2Window(QtGui.QMainWindow):
                 self.a2uidir = cwd
                 log.info('fetched a2ui dir from cwd... %s' % cwd)
             else:
-                raise Exception('a2ui start interrupted! Could not get main Ui dir!')
+                raise Exception('a2ui start interrupted! '
+                                'Could not get main Ui dir!')
 
         self.a2dir = os.path.dirname(self.a2uidir)
         self.a2libdir = self.a2dir + '/' + 'lib/'
@@ -125,37 +215,49 @@ class A2Window(QtGui.QMainWindow):
         self.a2setdir = self.getSettingsDir()
         self.a2moddir = self.a2dir + '/' + 'modules/'
         # test if all necessary directories are present:
-        mainItems = [self.a2ahk, self.a2exe, self.a2libdir, self.a2moddir, self.a2setdir, self.a2uidir]
+        mainItems = [self.a2ahk, self.a2exe, self.a2libdir, self.a2moddir,
+                     self.a2setdir, self.a2uidir]
         missing = [p for p in mainItems if not exists(p)]
         if missing:
-            raise Exception('a2ui start interrupted! ' + str(missing) + ' not found in main dir!')
+            raise Exception('a2ui start interrupted! %s not found in main dir!'
+                            % missing)
         if not os.access(self.a2setdir, os.W_OK):
-            raise Exception('a2ui start interrupted! ' + self.a2setdir + ' inaccessable!')
+            raise Exception('a2ui start interrupted! %s inaccessable!'
+                            % self.a2setdir)
 
     def getSettingsDir(self):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """
         return join(self.a2dir, 'settings')
 
 
-class Mod:
+class Mod(object):
     """
-    WIP! A ui wrapper for an a2 module - the ui creates such a Mod instance when dealing with it
-    from it it gets all information that it displays (hotkey interface, buttons, sliders,
-    checkboxes, text, and the language for that)
+    WIP! A ui wrapper for an a2 module
+    The ui creates such a Mod instance when dealing with it
+    from this it gets all information that it displays (hotkey interface,
+    buttons, sliders, checkboxes, text, and the language for that)
 
     also holds the requirements of the module such as local (in the module folder)
     or global (in the a2/libs folder) libs.
     stores the available parts of the module that can be enabled in the ui.
     also the according variables, hotkeys, defaults, inits
     encapsulates the background functions for enabling/disabling a part
+    
+    config is None at first and filled as soon as the mod is selected in the UI.
+    If there is no configFile yet it will be emptied instead of None.
     """
     def __init__(self, modname, a2moddir, db):
         # gather files from module path in local list
         self.name = modname
         self.dir = join(a2moddir, modname)
-        self.getParts()
+        self.config = None
+        self.configFile = join(self.dir, 'config.json')
         self.db = db
         self.ui = None
+
+    @property
+    def files(self):
+        return self.getFiles()
 
     def enable(self, part):
         """
@@ -173,15 +275,23 @@ class Mod:
         """
         pass
 
-    def getParts(self):
+    def getFiles(self):
         """
         browses the modules folder for files that belong to a module part
         # script file - the filename to be enlisted to the includes
         # defaults file - variable defaults and hotkey suggestions
         # language file - for ui and runtime
         """
-        self.parts = os.listdir(self.dir)
+        return os.listdir(self.dir)
 
+    def createConfig(self, main=None):
+        log.debug('%s config exists: %s' % (self.name, exists(self.configFile)))
+        with open(self.configFile, 'w') as fileObj:
+            fileObj.write('')
+        log.debug('%s config exists: %s' % (self.name, exists(self.configFile)))
+        if main:
+            main.modSelect(True)
+        
 
 class A2Obj(object):
     """
