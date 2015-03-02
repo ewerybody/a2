@@ -186,6 +186,38 @@ paste( byref inputString, sleepTime=50 ){
 	Clipboard := SavedClipboard
 }
 
+; returns a real array of split items
+; TODO: this is built-in already! Replace with StrSplit() !
+split( byref string, sep=" "){
+    ;StringSplit
+    splitList := []
+    Loop, Parse, string, %sep%
+		splitList.insert(A_LoopField)
+	return splitList
+}
+
+; looks up the items of an array object
+; returns index of search string if found
+; returns 0 otherwise
+inArray(byref search, byref array) {
+    ;for i, value in array {
+    Loop % array.MaxIndex() {
+        if (search == array[A_Index])
+            Return A_Index
+    }
+    Return 0
+}
+
+; takes simple array object
+; returns all its pieces concatenated with the sep string
+join(byref array, sep="`n") {
+    text := array[1]
+    for i, value in array {
+        if (i != 1)
+            text := text sep value
+    }
+    Return text
+}
 ; checks for some aspects to assume that the given string is a URL
 ; TODO: this can probably be done much much better!!!...
 isURL(byref str)

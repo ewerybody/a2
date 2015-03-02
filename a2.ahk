@@ -5,10 +5,16 @@
 
 tt("a2 started!",1)
 
-Return ; -------------------------------------------------------------------------------------------
+; TODO: make this optional
+SetTitleMatchMode, 2
 
 ; load variables
 #include settings/variables.ahk
+; init phase
+Gosub, a2Init
+
+Return ; -------------------------------------------------------------------------------------------
+
 ; load libraries
 #include settings/libs.ahk
 ; load the selected functionalities

@@ -1,4 +1,4 @@
-; tt() - aka eZttOff another tiny tooltip script:
+; tt() - aka eZtt another tiny tooltip script:
 ; mouse follow
 ; timeout
 ; adding to the tooltip
@@ -9,7 +9,7 @@
 ; add = shall the text be amended to the tooltip or replaced by it
 ; kill = 1 makes tt sleep until the timeout and throws ExitApp then
 ; font = fontSize,fontStyle
-tt(text="", timeout=0, add=0, kill=0, font="s6,Small Fonts")
+tt(text="", timeout=0, add=0, kill=0, font="s11,Tahoma")
 {
 	Global eZttText, eZttID
 	eZttDelay := 30
