@@ -2,6 +2,8 @@ pasteColor()
 {
 	hexColor := Clipboard
 	
+	tt(hexColor,1)
+	
 	; Check different versions of color Dialogs
 	WinGet, this_id, ID, A
 	; Color tool hast Static13/14/15 as &Red:/&Green:/Bl&ue: labels  ... or Static7/8/9

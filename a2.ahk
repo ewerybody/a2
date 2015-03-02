@@ -11,7 +11,7 @@ SetTitleMatchMode, 2
 ; load variables
 #include settings/variables.ahk
 ; init phase
-Gosub, a2Init
+;Gosub, a2Init
 
 Return ; -------------------------------------------------------------------------------------------
 

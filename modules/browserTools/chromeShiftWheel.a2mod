@@ -1,21 +1,24 @@
 {
-    'nfo':{
+    'nfo': {
         'name': 'chromeShiftWheel',
         'about': 'enables Shift+MouseWheel Up/Down to browse back and forth in Chrome Browser'
         'author': 'ericw'
         'version': 0.1
     },
-    'cfg': {
-        'hotkey':{
+    'cfg': [
+        {
+            'typ': 'hotkey',
             'label': 'Browse Forward',
             'key': '+WheelUp',
             'scope': 'ahk_class Chrome_WidgetWin_1',
             'code': 'Send, {Browser_Forward}'
         },
-        'hotkey':{
+        {
+            'typ': 'hotkey',
             'label': 'Browse Back',
             'key': '+WheelDown',
             'scope': 'ahk_class Chrome_WidgetWin_1',
             'code': 'Send, {Browser_Back}'
-    }
+        }
+    ]
 }

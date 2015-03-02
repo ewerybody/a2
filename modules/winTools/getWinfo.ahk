@@ -20,6 +20,7 @@ getWinfo() {
 	if (ctrlList.MaxIndex()) {
 		numCtrls := ctrlList.MaxIndex()
 		Menu, wInfoMenu, Add, controls: %numCtrls% ( click to show ... ), getWinfoCtrlsHandler
+        Menu, wInfoMenu, Add, copy all control info, getWinfoCopyCtrlsHandler
 	}
 	else {
 		Menu, wInfoMenu, Add, no controls here, getWinfoMenuHandler
@@ -27,11 +28,13 @@ getWinfo() {
 	}
 
 	WinGetPos, X, Y, Width, Height, ahk_id %getWinfoID%
+	MouseGetPos, mouseX, mouseY
 	Menu, wInfoPosMenu, Add, x: %X%, getWinfoMenuHandler
 	Menu, wInfoPosMenu, Add, y: %Y%, getWinfoMenuHandler
 	Menu, wInfoPosMenu, Add, w: %Width%, getWinfoMenuHandler
 	Menu, wInfoPosMenu, Add, h: %Height%, getWinfoMenuHandler
 	Menu, wInfoPosMenu, Add, SetToCursor, getWinfoSetToCursor
+    Menu, wInfoPosMenu, Add, MousePos: %mouseX%`,%mouseY%, getWinfoMenuHandler
 
 	Menu, wInfoMenu, Add, Pos:  %X% x %Y%   Size:  %Width% x %Height%  ..., :wInfoPosMenu
 	
@@ -109,4 +112,21 @@ getWinfoCtrlsHandler(getWinfoID) {
 		thisMenu := menuList[A_Index]
 		Menu, %thisMenu%, DeleteAll
 	}
+}
+
+getWinfoCopyCtrlsHandler:
+    getWinfoCopyCtrlsHandler(getWinfoID)
+Return
+
+getWinfoCopyCtrlsHandler(getWinfoID) {
+    ctrlList := getWinfoCtrls()
+    
+    texttmp := ""
+	for i, ctrl in ctrlList {
+		ControlGet, thisCtrlID, Hwnd,, %ctrl%, ahk_id %getWinfoID%
+		ControlGetText, thisCtrlText, %ctrl%, ahk_id %getWinfoID%
+		StringLeft, thisCtrlText, thisCtrlText, 250
+        texttmp = %texttmp%%ctrl% %thisCtrlID% %thisCtrlText%`n
+	}
+    Clipboard := texttmp
 }
