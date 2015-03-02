@@ -4,9 +4,7 @@
 /ui/__pycache__
 /ui/.idea
 /ui/designer - Shortcut.lnk
-/ui/a2ui
 
 .project
 .settings/org.eclipse.core.resources.prefs
 .pydevproject
-ui/a2ui.spec
