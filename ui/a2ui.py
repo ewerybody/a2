@@ -124,13 +124,13 @@ class A2Window(QtGui.QMainWindow):
                 with open(mod.configFile) as fObj:
                     mod.config = json.load(fObj)
             except:
-                mod.config = []
+                mod.config = {}
                 controls.append(QtGui.QLabel('config.json currently empty. imagine placeholder layout here ...'))
             
             log.debug('config: >%s<' % mod.config)
             buttonText = 'Edit'
         else:
-            mod.config = []
+            mod.config = {}
             controls.append(QtGui.QLabel('"%s" has no configuration file yet!\n'
                                          'Would you like to set one up?' % mod.name))
             buttonText = 'Create'
@@ -157,13 +157,15 @@ class A2Window(QtGui.QMainWindow):
         
         s = "Because none existed before this temporary description was created for %s."\
             "Change it to describe what it does with a couple of words." % mod.name
-        if mod.config == []:
-            config = [{'typ': 'header',
-                       'desc': s,
-                       'display name': '%s' % mod.name,
-                       'author':'your name',
-                       'version': 0.1,
-                       'date': 2015}]
+        config = dict(mod.config)
+        if 'nfo' not in config:
+            config['nfo'] = {'desc': s,
+                             'display name': '%s' % mod.name,
+                             'author': 'your name',
+                             'version': 0.1,
+                             'date': 2015}
+        
+        
         
         log.debug('creating EDIT controls here...')
         
