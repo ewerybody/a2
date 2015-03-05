@@ -13,7 +13,6 @@ log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
 
 
-
 class A2Window(QtGui.QMainWindow):
     def __init__(self):
         super(A2Window, self).__init__()
@@ -155,25 +154,53 @@ class A2Window(QtGui.QMainWindow):
         log.debug('editing: %s' % mod.name)
         controls = []
         
-        s = "Because none existed before this temporary description was created for %s."\
+        s = "Because none existed before this temporary description was created for %s. "\
             "Change it to describe what it does with a couple of words." % mod.name
         config = dict(mod.config)
         if 'nfo' not in config:
-            config['nfo'] = {'desc': s,
+            config['nfo'] = {'description': s,
                              'display name': '%s' % mod.name,
                              'author': 'your name',
-                             'version': 0.1,
-                             'date': 2015}
+                             'version': '0.1',
+                             'date': '2015'}
         
+        ctrlDict = {}
         
+        # create header edit controls
+        def editctrl(nfoDict, keyName, typ, parent, editCtrls):
+            label = QtGui.QLabel('%s:' % keyName)
+            parent.addWidget(label)
+            if typ == 'text':
+                inputctrl = QtGui.QPlainTextEdit()
+                inputctrl.setPlainText(nfoDict.get(keyName) or '')
+            else: 
+                inputctrl = QtGui.QLineEdit()
+                inputctrl.setText(nfoDict.get(keyName) or '')
+            parent.addWidget(inputctrl)
+            editCtrls[keyName] = inputctrl
+            
+        nfo = config.get('nfo')
+        nfoCtrls = {}
+        nfoBox = QtGui.QGroupBox()
+        nfoBox.setTitle('module information:')
+        nfoBoxLayout = QtGui.QVBoxLayout(nfoBox)
         
+        editctrl(nfo, 'display name', 'line', nfoBoxLayout, nfoCtrls)
+        editctrl(nfo, 'description', 'text', nfoBoxLayout, nfoCtrls)
+        editctrl(nfo, 'author', 'line', nfoBoxLayout, nfoCtrls)
+        editctrl(nfo, 'version', 'line', nfoBoxLayout, nfoCtrls)
+        editctrl(nfo, 'date', 'line', nfoBoxLayout, nfoCtrls)
+        
+        controls.append(nfoBox)
         log.debug('creating EDIT controls here...')
+        
+        ctrlDict['nfo'] = nfoCtrls
         
         # amend OK, Cancel buttons at the end
         editFooter = QtGui.QWidget()
         editFooterLayout = QtGui.QHBoxLayout(editFooter)
         okButton = QtGui.QPushButton('OK')
-        okButton.pressed.connect(self.editSubmit)
+        okButton.pressed.connect(partial(self.editSubmit, ctrlDict))
         cancelBtn = QtGui.QPushButton('Cancel')
         cancelBtn.pressed.connect(partial(self.drawMod, mod))
         editFooterLayout.addWidget(okButton)
@@ -182,8 +209,14 @@ class A2Window(QtGui.QMainWindow):
         
         self.drawUI(controls)
     
-    def editSubmit(self):
+    def editSubmit(self, ctrlDict):
         log.debug('editSubmit...')
+        for nme, ctrl in ctrlDict['nfo'].items():
+            if isinstance(ctrl, QtGui.QPlainTextEdit):
+                text = ctrl.toPlainText()
+            else:
+                text = ctrl.text()
+            log.debug('%s: %s' % (nme, text))
 
     def editCancel(self):
         log.debug('editCancel...')
