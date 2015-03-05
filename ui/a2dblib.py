@@ -28,6 +28,7 @@ log.setLevel(logging.DEBUG)
 
 _defaultTable = 'a2'
 
+
 class A2db:
     def __init__(self, a2dbFile):
         self._file = a2dbFile
@@ -62,7 +63,7 @@ class A2db:
         example:
         """
         try:
-            if not key in self.keys(table):
+            if key not in self.keys(table):
                 statement = ('insert into "%s" ("key","value") values ("%s", "%s")' % (table, key, value))
                 log.debug('adding value!\n  %s' % statement)
             else:
@@ -73,7 +74,7 @@ class A2db:
         #except sqlite3.DatabaseError as error:
         except:
             log.debug('setting db failed...')
-            if not table in self.tables():
+            if table not in self.tables():
                 log.debug('creating table and retry...')
                 self.createTable(table)
                 # TODO: resolve loop:
@@ -118,9 +119,7 @@ class A2db:
         tables = self.tables()
         for t in tables:
             columns = ' - '.join([i[1] for i in self._fetch('PRAGMA table_info("%s")' % t)])
-            log.info('\ntable: "%s":\n  %s\n  %s\n  %s'
-                  % (t, columns, '-'*40, '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
-
+            log.info('\ntable: "%s":\n  %s\n  %s\n  %s' % (t, columns, '-' * 40, '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
 
     # old crap --------------------------------------------------------
 
