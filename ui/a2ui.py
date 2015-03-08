@@ -57,6 +57,9 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modVersion.setText('v0.1')
         self.ui.modAuthor.setText('')
         
+        self.ui.modCheck.stateChanged.connect(self.modEnable)
+        self.ui.modInfoButton.clicked.connect(self.modInfo)
+        
         self.setCentralWidget(self.ui)
         self.setWindowTitle("a2")
         #TODO: remember size and window position
@@ -79,9 +82,11 @@ class A2Window(QtGui.QMainWindow):
         
         log.debug('sel: %s' % name)
         
+        # TODO: make selectedMod rather the object? 
         self.selectedMod = name
         mod = self.modules[name]
-
+        
+        # load the module config
         if exists(mod.configFile):
             try:
                 with open(mod.configFile) as fObj:
@@ -208,17 +213,23 @@ class A2Window(QtGui.QMainWindow):
         
         cfgBox = QtGui.QGroupBox()
         cfgBox.setTitle('module setup:')
-        cfgBoxLayout = QtGui.QVBoxLayout(nfoBox)
+        cfgBoxLayout = QtGui.QVBoxLayout(cfgBox)
         cfgBoxLayout.setSpacing(5)
         cfgBoxLayout.setContentsMargins(5, 5, 5, 5)
-        
         controls.append(cfgBox)
+        
         
         log.debug('creating EDIT controls here...')
         
+        
+        a2ctrl.EditAddCtrl(cfgBoxLayout)
+        
+        
+        
         ctrlDict['nfo'] = nfoCtrls
         
-        # amend OK, Cancel buttons at the end
+        # amend OK, Cancel buttons at the end.
+        # TODO: needs to go outside the scroll layout
         editFooter = QtGui.QWidget()
         editFooterLayout = QtGui.QHBoxLayout(editFooter)
         okButton = QtGui.QPushButton('OK')
@@ -248,6 +259,12 @@ class A2Window(QtGui.QMainWindow):
         mod.saveConfig()
         self.modSelect(force=True)
         #self.drawMod(mod)
+    
+    def modEnable(self):
+        log.debug('changing state: %s ...' % self.selectedMod)
+
+    def modInfo(self):
+        log.debug('calling info on: %s ...' % self.selectedMod)
     
     def settingsChanged(self, mod):
         print('mod: ' + str(self.modules[mod]))
