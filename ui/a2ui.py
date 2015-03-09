@@ -7,11 +7,14 @@ import sys
 import logging
 import a2dblib
 import a2design_ui
+import a2ctrl
 import json
 logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
 
+# maybe make this even settable in a dev options dialog?
+jsonIndent = 2
 
 class A2Window(QtGui.QMainWindow):
     def __init__(self):
@@ -30,8 +33,6 @@ class A2Window(QtGui.QMainWindow):
         self.enabledMods = self.db.get('enabled', 'a2')
         log.info('enabledMods: %s' % self.enabledMods)
 
-        self.fetchModules()
-
         self.ui = a2design_ui.Ui_a2Widget()
         self.ui.setupUi(self.ui)
 
@@ -46,16 +47,29 @@ class A2Window(QtGui.QMainWindow):
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
 
-        self.ui.modList.insertItems(0, list(self.modules.keys()))
+        self.fetchModules()
+        self.ui.modList.insertItems(0, list(sorted(self.modules.keys())))
         self.ui.modList.itemSelectionChanged.connect(self.modSelect)
         self.selectedMod = None
-
+        
+        self.ui.modCheck.setVisible(False)
+        self.ui.modName.setText(self.getModTitle('a2'))
+        self.ui.modVersion.setText('v0.1')
+        self.ui.modAuthor.setText('')
+        
+        self.ui.modCheck.stateChanged.connect(self.modEnable)
+        self.ui.modInfoButton.clicked.connect(self.modInfo)
+        
         self.setCentralWidget(self.ui)
         self.setWindowTitle("a2")
         #TODO: remember size and window position
         self.setGeometry(QtCore.QRect(250, 250, 1268, 786))
 
         log.info('a2ui initialised!')
+
+    def getModTitle(self, name):
+        #return '<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">%s</span></p></body></html>' % name
+        return '<span style=\" font-size:10pt; font-weight:600;\">%s</span>' % name
 
     def modSelect(self, force=False):
         """
@@ -68,8 +82,30 @@ class A2Window(QtGui.QMainWindow):
         
         log.debug('sel: %s' % name)
         
+        # TODO: make selectedMod rather the object? 
         self.selectedMod = name
         mod = self.modules[name]
+        
+        # load the module config
+        if exists(mod.configFile):
+            try:
+                with open(mod.configFile) as fObj:
+                    mod.config = json.load(fObj)
+            except:
+                log.error('config exists but could not be loaded!: %s' % mod.configFile)
+                mod.config = {}
+        else:
+            mod.config = None
+
+        self.ui.modCheck.setVisible(True)
+        self.ui.modName.setText(self.getModTitle(name))
+        author = ''
+        version = ''
+        if mod.config and 'nfo' in mod.config:
+            author = mod.config['nfo'].get('author') or ''
+            version = mod.config['nfo'].get('version') or ''
+        self.ui.modAuthor.setText(author)
+        self.ui.modVersion.setText(version)
         
         self.drawMod(mod)
         
@@ -95,10 +131,7 @@ class A2Window(QtGui.QMainWindow):
         newLayout = QtGui.QWidget()
         # create new columnLayout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
-        
-        ### create the contols
-        ##self.drawUI(mod)
-        
+                
         # make the new inner layout the mainLayout
         self.mainlayout = newInner
         # add the controls to it
@@ -118,25 +151,23 @@ class A2Window(QtGui.QMainWindow):
         """
         log.debug('drawing: %s' % mod.name)
         controls = []
-        if exists(mod.configFile):
-            try:
-                with open(mod.configFile) as fObj:
-                    mod.config = json.load(fObj)
-            except:
-                mod.config = {}
-                controls.append(QtGui.QLabel('config.json currently empty. imagine placeholder layout here ...'))
-            
-            log.debug('config: >%s<' % mod.config)
-            buttonText = 'Edit'
-        else:
-            mod.config = {}
+        
+        buttonText = 'Edit'
+        if mod.config == {}:
+            controls.append(QtGui.QLabel('config.json currently empty. imagine placeholder layout here ...'))
+        elif mod.config is None:
             controls.append(QtGui.QLabel('"%s" has no configuration file yet!\n'
                                          'Would you like to set one up?' % mod.name))
             buttonText = 'Create'
+        else:
+            log.debug('creating display controls here...')
+            if 'nfo' in mod.config:
+                description = QtGui.QLabel(mod.config['nfo']['description'])
+                description.setWordWrap(True)
+                controls.append(description)
         
-        log.debug('creating display controls here...')
-        
-        # add temp edit button. This will goto the menu bar in the future or to a hotkey Ctrl+E?
+        # add temp edit button.
+        # This will eventually goto the menu bar and/or to a hotkey Ctrl+E?
         editButton = QtGui.QPushButton(buttonText)
         editButton.pressed.connect(partial(self.editMod, mod))
         controls.append(editButton)
@@ -154,53 +185,55 @@ class A2Window(QtGui.QMainWindow):
         log.debug('editing: %s' % mod.name)
         controls = []
         
-        s = "Because none existed before this temporary description was created for %s. "\
-            "Change it to describe what it does with a couple of words." % mod.name
-        config = dict(mod.config)
+        s = 'Because none existed before this temporary description was created for "%s". '\
+            'Change it to describe what it does with a couple of words.' % mod.name
+        config = dict(mod.config or {})
         if 'nfo' not in config:
             config['nfo'] = {'description': s,
-                             'display name': '%s' % mod.name,
+                             #'display name': '%s' % mod.name,
                              'author': 'your name',
                              'version': '0.1',
                              'date': '2015'}
         
         ctrlDict = {}
         
-        # create header edit controls
-        def editctrl(nfoDict, keyName, typ, parent, editCtrls):
-            label = QtGui.QLabel('%s:' % keyName)
-            parent.addWidget(label)
-            if typ == 'text':
-                inputctrl = QtGui.QPlainTextEdit()
-                inputctrl.setPlainText(nfoDict.get(keyName) or '')
-            else: 
-                inputctrl = QtGui.QLineEdit()
-                inputctrl.setText(nfoDict.get(keyName) or '')
-            parent.addWidget(inputctrl)
-            editCtrls[keyName] = inputctrl
-            
         nfo = config.get('nfo')
         nfoCtrls = {}
         nfoBox = QtGui.QGroupBox()
         nfoBox.setTitle('module information:')
         nfoBoxLayout = QtGui.QVBoxLayout(nfoBox)
+        nfoBoxLayout.setSpacing(5)
+        nfoBoxLayout.setContentsMargins(5, 5, 5, 5)
         
-        editctrl(nfo, 'display name', 'line', nfoBoxLayout, nfoCtrls)
-        editctrl(nfo, 'description', 'text', nfoBoxLayout, nfoCtrls)
-        editctrl(nfo, 'author', 'line', nfoBoxLayout, nfoCtrls)
-        editctrl(nfo, 'version', 'line', nfoBoxLayout, nfoCtrls)
-        editctrl(nfo, 'date', 'line', nfoBoxLayout, nfoCtrls)
-        
+        a2ctrl.EditText('description', nfo, nfoBoxLayout, nfoCtrls)
+        a2ctrl.EditLine('author', nfo, nfoBoxLayout, nfoCtrls)
+        a2ctrl.EditLine('version', nfo, nfoBoxLayout, nfoCtrls)
+        a2ctrl.EditLine('date', nfo, nfoBoxLayout, nfoCtrls)
         controls.append(nfoBox)
+        
+        cfgBox = QtGui.QGroupBox()
+        cfgBox.setTitle('module setup:')
+        cfgBoxLayout = QtGui.QVBoxLayout(cfgBox)
+        cfgBoxLayout.setSpacing(5)
+        cfgBoxLayout.setContentsMargins(5, 5, 5, 5)
+        controls.append(cfgBox)
+        
+        
         log.debug('creating EDIT controls here...')
+        
+        
+        a2ctrl.EditAddCtrl(cfgBoxLayout)
+        
+        
         
         ctrlDict['nfo'] = nfoCtrls
         
-        # amend OK, Cancel buttons at the end
+        # amend OK, Cancel buttons at the end.
+        # TODO: needs to go outside the scroll layout
         editFooter = QtGui.QWidget()
         editFooterLayout = QtGui.QHBoxLayout(editFooter)
         okButton = QtGui.QPushButton('OK')
-        okButton.pressed.connect(partial(self.editSubmit, ctrlDict))
+        okButton.pressed.connect(partial(self.editSubmit, ctrlDict, mod))
         cancelBtn = QtGui.QPushButton('Cancel')
         cancelBtn.pressed.connect(partial(self.drawMod, mod))
         editFooterLayout.addWidget(okButton)
@@ -209,17 +242,29 @@ class A2Window(QtGui.QMainWindow):
         
         self.drawUI(controls)
     
-    def editSubmit(self, ctrlDict):
+    def editSubmit(self, ctrlDict, mod):
+        """
+        loop the given ctrlDict, query ctrls and feed target mod.config
+        """
+        if mod.config is None:
+            mod.config = {'nfo': {}, 'cfg': []}
+        
         log.debug('editSubmit...')
-        for nme, ctrl in ctrlDict['nfo'].items():
-            if isinstance(ctrl, QtGui.QPlainTextEdit):
-                text = ctrl.toPlainText()
-            else:
-                text = ctrl.text()
-            log.debug('%s: %s' % (nme, text))
+        for typNme, data in ctrlDict.items():
+            if typNme not in mod.config:
+                mod.config[typNme] = {}
+            
+            for nme, ctrl in data.items():
+                mod.config[typNme][nme] = ctrl.value
+        mod.saveConfig()
+        self.modSelect(force=True)
+        #self.drawMod(mod)
+    
+    def modEnable(self):
+        log.debug('changing state: %s ...' % self.selectedMod)
 
-    def editCancel(self):
-        log.debug('editCancel...')
+    def modInfo(self):
+        log.debug('calling info on: %s ...' % self.selectedMod)
     
     def settingsChanged(self, mod):
         print('mod: ' + str(self.modules[mod]))
@@ -326,6 +371,10 @@ class Mod(object):
         log.debug('%s config exists: %s' % (self.name, exists(self.configFile)))
         if main:
             main.modSelect(True)
+
+    def saveConfig(self):
+        with open(self.configFile, 'w') as fObj:
+            json.dump(self.config, fObj, indent=jsonIndent)
         
 
 class A2Obj(object):
