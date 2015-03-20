@@ -30,7 +30,7 @@ class A2Window(QtGui.QMainWindow):
         # create db connection: use test\a2dbtest.py to test it
         self.db = a2dblib.A2db(self.dbfile)
 
-        self.enabledMods = self.db.get('enabled', 'a2')
+        self.enabledMods = self.db.gets('enabled')
         log.info('enabledMods: %s' % self.enabledMods)
 
         self.ui = a2design_ui.Ui_a2Widget()
@@ -57,7 +57,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modVersion.setText('v0.1')
         self.ui.modAuthor.setText('')
         
-        self.ui.modCheck.stateChanged.connect(self.modEnable)
+        self.ui.modCheck.clicked.connect(self.modEnable)
         self.ui.modInfoButton.clicked.connect(self.modInfo)
         
         self.setCentralWidget(self.ui)
@@ -80,7 +80,7 @@ class A2Window(QtGui.QMainWindow):
         if name == self.selectedMod and force is False:
             return
         
-        log.debug('sel: %s' % name)
+        self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
         
         # TODO: make selectedMod rather the object? 
         self.selectedMod = name
@@ -261,7 +261,13 @@ class A2Window(QtGui.QMainWindow):
         #self.drawMod(mod)
     
     def modEnable(self):
-        log.debug('changing state: %s ...' % self.selectedMod)
+        if self.ui.modCheck.checkState():
+            log.debug('enabling: %s ...' % self.selectedMod)
+            enabled = self.db.adds('enabled', self.selectedMod)
+        else:
+            log.debug('disabling: %s ...' % self.selectedMod)
+            enabled = self.db.dels('enabled', self.selectedMod)
+        log.debug('now enabled: %s' % enabled)
 
     def modInfo(self):
         log.debug('calling info on: %s ...' % self.selectedMod)

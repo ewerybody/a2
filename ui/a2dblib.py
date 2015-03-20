@@ -19,6 +19,8 @@ a2db.rem('tempstuff', 'a2')
 
 TODO: replace those 'string ' + var + ' string' statements with
     'string % string' % var
+TODO: we have a "set" conflict. It still works because self.set != set.
+    But it`s damn ugly. Make the get/set get/put? 
 """
 import sqlite3
 import logging
@@ -57,6 +59,13 @@ class A2db:
                 log.error('there is no key "%s" in section "%s"' % (key, table))
                 return ''
 
+    def gets(self, key, table=_defaultTable, sep='|'):
+        """
+        returns a separated list from a db string entry
+        """
+        value = self.get(key, table)
+        return set(value.split(sep))
+
     def set(self, key, value, table=_defaultTable, check=False):
         """
         update TableName SET valueName=value WHERE key=keyName
@@ -82,6 +91,33 @@ class A2db:
             else:
                 #log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s' % (value, key, table, error))
                 log.error('could not set value: "%s" on key:"%s" in section:"%s"' % (value, key, table))
+
+    def adds(self, key, value, table=_defaultTable, sep='|'):
+        """
+        appends a string value to a string entry with a separator if its not already in
+        should basically work like built-in set.add
+        """
+        current = self.gets(key, table, sep)
+        
+        if '' in current:
+            current.remove('')
+        
+        if value not in current:
+            current.add(value)
+            self.set(key, sep.join(current), table)
+            log.debug('added "%s" to key:%s - %s' % (value, key, current))
+        return current
+
+    def dels(self, key, value, table=_defaultTable, sep='|'):
+        """
+        deletes a string value from an entry
+        """
+        current = self.gets(key, table, sep)
+        if value in current:
+            current.remove(value)
+            self.set(key, sep.join(current), table)
+            log.debug('deleted "%s" to key:%s - %s' % (value, key, current))
+        return current
 
     def tables(self):
         tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
