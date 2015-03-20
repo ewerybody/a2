@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1040</width>
-    <height>513</height>
+    <width>1219</width>
+    <height>864</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -88,12 +88,70 @@
      </widget>
      <widget class="QGroupBox" name="settingsBox">
       <property name="title">
-       <string>settings</string>
+       <string notr="true"/>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="margin">
         <number>5</number>
        </property>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="modCheck">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="modName">
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;ModName&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="modVersion">
+           <property name="text">
+            <string>v0.0</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="modAuthor">
+           <property name="text">
+            <string>- Author Name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="modInfoButton">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>?</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <widget class="QScrollArea" name="scrollArea">
          <property name="widgetResizable">
@@ -104,8 +162,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>606</width>
-            <height>462</height>
+            <width>785</width>
+            <height>786</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">

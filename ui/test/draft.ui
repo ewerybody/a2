@@ -76,6 +76,9 @@
        <property name="title">
         <string>Module XY</string>
        </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
@@ -106,8 +109,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>800</width>
-                 <height>904</height>
+                 <width>802</width>
+                 <height>906</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -203,9 +206,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
-                 <width>766</width>
-                 <height>1540</height>
+                 <y>-478</y>
+                 <width>768</width>
+                 <height>1628</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -219,12 +222,18 @@
                    </font>
                   </property>
                   <property name="title">
-                   <string>header:</string>
+                   <string>module information:</string>
                   </property>
                   <property name="flat">
                    <bool>false</bool>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_6">
+                   <property name="spacing">
+                    <number>5</number>
+                   </property>
+                   <property name="margin">
+                    <number>1</number>
+                   </property>
                    <item>
                     <widget class="QLabel" name="label_3">
                      <property name="text">
@@ -262,6 +271,40 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;A Text: A description text that mumbles across the window with so called words compromised of &amp;quot;letters&amp;quot; and punctuation. Sometimes it even has a meaning!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                     </widget>
+                   </item>
+                   <item>
+                    <widget class="QPlainTextEdit" name="plainTextEdit">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>100</height>
+                      </size>
+                     </property>
+                     <property name="tabChangesFocus">
+                      <bool>true</bool>
+                     </property>
+                     <property name="plainText">
+                      <string>asdasdf
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout">
+                     <property name="margin">
+                      <number>10</number>
+                     </property>
+                     <item>
+                      <widget class="QLabel" name="label_7">
+                       <property name="text">
+                        <string>TextLabel</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLineEdit" name="lineEdit_5"/>
+                     </item>
+                    </layout>
                    </item>
                    <item>
                     <widget class="QLabel" name="label_5">
@@ -338,6 +381,28 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
+                 <widget class="Line" name="line">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Sunken</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>3</number>
+                  </property>
+                  <property name="midLineWidth">
+                   <number>1</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QGroupBox" name="groupBox_7">
                   <property name="title">
                    <string>new element</string>
@@ -345,6 +410,12 @@ p, li { white-space: pre-wrap; }
                   <layout class="QHBoxLayout" name="horizontalLayout_2">
                    <item>
                     <widget class="QComboBox" name="comboBox_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>40</height>
+                      </size>
+                     </property>
                      <item>
                       <property name="text">
                        <string>Text</string>
@@ -371,12 +442,24 @@ p, li { white-space: pre-wrap; }
                     <widget class="QCommandLinkButton" name="commandLinkButton_2">
                      <property name="maximumSize">
                       <size>
-                       <width>150</width>
-                       <height>16777215</height>
+                       <width>100</width>
+                       <height>60</height>
                       </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>Segoe UI</family>
+                       <pointsize>6</pointsize>
+                      </font>
                      </property>
                      <property name="text">
                       <string>Add</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>

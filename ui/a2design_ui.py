@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Sat Jan  3 16:52:55 2015
+# Created: Fri Mar  6 20:44:27 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2Widget(QtGui.QWidget):
     def setupUi(self, a2Widget):
         a2Widget.setObjectName("a2Widget")
-        a2Widget.resize(1040, 513)
+        a2Widget.resize(1219, 864)
         a2Widget.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.verticalLayout_3 = QtGui.QVBoxLayout(a2Widget)
         self.verticalLayout_3.setSpacing(12)
@@ -44,15 +44,38 @@ class Ui_a2Widget(QtGui.QWidget):
         self.modList.setObjectName("modList")
         self.verticalLayout_2.addWidget(self.modList)
         self.settingsBox = QtGui.QGroupBox(self.splitter)
+        self.settingsBox.setTitle("")
         self.settingsBox.setObjectName("settingsBox")
         self.verticalLayout = QtGui.QVBoxLayout(self.settingsBox)
         self.verticalLayout.setContentsMargins(5, 5, 5, 5)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.modCheck = QtGui.QCheckBox(self.settingsBox)
+        self.modCheck.setText("")
+        self.modCheck.setObjectName("modCheck")
+        self.horizontalLayout.addWidget(self.modCheck)
+        self.modName = QtGui.QLabel(self.settingsBox)
+        self.modName.setObjectName("modName")
+        self.horizontalLayout.addWidget(self.modName)
+        self.modVersion = QtGui.QLabel(self.settingsBox)
+        self.modVersion.setObjectName("modVersion")
+        self.horizontalLayout.addWidget(self.modVersion)
+        self.modAuthor = QtGui.QLabel(self.settingsBox)
+        self.modAuthor.setObjectName("modAuthor")
+        self.horizontalLayout.addWidget(self.modAuthor)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.modInfoButton = QtGui.QPushButton(self.settingsBox)
+        self.modInfoButton.setMaximumSize(QtCore.QSize(40, 40))
+        self.modInfoButton.setObjectName("modInfoButton")
+        self.horizontalLayout.addWidget(self.modInfoButton)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         self.scrollArea = QtGui.QScrollArea(self.settingsBox)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtGui.QWidget()
-        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 606, 462))
+        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 785, 786))
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -71,6 +94,9 @@ class Ui_a2Widget(QtGui.QWidget):
     def retranslateUi(self, a2Widget):
         a2Widget.setWindowTitle(QtGui.QApplication.translate("a2Widget", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.moduleBox.setTitle(QtGui.QApplication.translate("a2Widget", "modules", None, QtGui.QApplication.UnicodeUTF8))
-        self.settingsBox.setTitle(QtGui.QApplication.translate("a2Widget", "settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.modName.setText(QtGui.QApplication.translate("a2Widget", "<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">ModName</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
+        self.modVersion.setText(QtGui.QApplication.translate("a2Widget", "v0.0", None, QtGui.QApplication.UnicodeUTF8))
+        self.modAuthor.setText(QtGui.QApplication.translate("a2Widget", "- Author Name", None, QtGui.QApplication.UnicodeUTF8))
+        self.modInfoButton.setText(QtGui.QApplication.translate("a2Widget", "?", None, QtGui.QApplication.UnicodeUTF8))
         self.welcomeText.setText(QtGui.QApplication.translate("a2Widget", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
 
