@@ -222,7 +222,7 @@ class A2Window(QtGui.QMainWindow):
         log.debug('creating EDIT controls here...')
         
         
-        a2ctrl.EditAddCtrl(cfgBoxLayout)
+        editSelect = a2ctrl.EditAddCtrl(cfgBoxLayout)
         
         
         

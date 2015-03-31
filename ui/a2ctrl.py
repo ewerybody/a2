@@ -22,6 +22,10 @@ Created on Mar 6, 2015
 
 '''
 from PySide import QtGui, QtCore
+import logging
+logging.basicConfig()
+log = logging.getLogger('a2ctrl')
+log.setLevel(logging.DEBUG)
 margin = 5
 labelW = 100
 
@@ -47,6 +51,7 @@ class EditLine(object):
     def value(self):
         return self.inputCtrl.text()
 
+
 class EditText(object):
     def __init__(self, name, dictionary, parent, ctrldict):
         self.name = name
@@ -70,19 +75,23 @@ class EditText(object):
         return self.inputCtrl.toPlainText()
 
 
-class EditAddCtrl(object):
+class EditAddCtrl(QtGui.QWidget):
     """
     to add a control to a module setup. This will probably go into some popup
     later. This way its a little too clunky I think.
+    
+    til: if you don't make this a widget and just a object Qt will forget about
+    any connections you make!
     """
     def __init__(self, parent):
+        super(EditAddCtrl, self).__init__()
         self.parent = parent
-        self.widget = QtGui.QWidget()
-        self.layout = QtGui.QHBoxLayout(self.widget)
+        #self.widget = QtGui.QWidget()
+        self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(margin, margin, margin, margin)
         
-        self.line = QtGui.QFrame(self.widget)
+        self.line = QtGui.QFrame(self)
         self.line.setMinimumSize(QtCore.QSize(0, 20))
         self.line.setFrameShape(QtGui.QFrame.HLine)
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
@@ -94,10 +103,10 @@ class EditAddCtrl(object):
         self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
         self.layout.addWidget(self.labelCtrl)
         
-        self.addControl = QtGui.QComboBox(self.widget)
-        self.addControl.addItems('include checkBox hotkey groupBox textField floatField intField fileField text button comboBox'.split())
-        self.addControl.setMaximumSize(QtCore.QSize(150, 50))
-        self.layout.addWidget(self.addControl)
+        self.comboBox = QtGui.QComboBox(self)
+        self.comboBox.addItems('include checkBox hotkey groupBox textField floatField intField fileField text button comboBox'.split())
+        self.comboBox.setMaximumSize(QtCore.QSize(150, 50))
+        self.layout.addWidget(self.comboBox)
         
         self.button = QtGui.QPushButton('Add')
         self.layout.addWidget(self.button)
@@ -105,4 +114,10 @@ class EditAddCtrl(object):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layout.addItem(spacerItem)
         
-        self.parent.addWidget(self.widget)
+        self.parent.addWidget(self)
+        self.button.clicked.connect(self.addCtrl)
+            
+    def addCtrl(self):
+        x = self.comboBox.currentText()
+        log.debug('adding "%s" to %s' % (x, self.parent))
+        
