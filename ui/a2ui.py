@@ -4,11 +4,12 @@ import os
 from os.path import exists, join
 from functools import partial
 import sys
-import logging
 import a2dblib
-import a2design_ui
 import a2ctrl
 import json
+from a2design_ui import Ui_a2MainWindow
+
+import logging
 logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
@@ -17,8 +18,10 @@ log.setLevel(logging.DEBUG)
 jsonIndent = 2
 
 class A2Window(QtGui.QMainWindow):
-    def __init__(self):
-        super(A2Window, self).__init__()
+    def __init__(self, parent=None, *args):
+        super(A2Window, self).__init__(parent)
+        self.ui = Ui_a2MainWindow()
+        self.ui.setupUi(self)
 
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
@@ -33,8 +36,6 @@ class A2Window(QtGui.QMainWindow):
         self.enabledMods = self.db.gets('enabled')
         log.info('enabledMods: %s' % self.enabledMods)
 
-        self.ui = a2design_ui.Ui_a2Widget()
-        self.ui.setupUi(self.ui)
 
         self.maintab = self.ui.scrollAreaContents
         
@@ -53,28 +54,24 @@ class A2Window(QtGui.QMainWindow):
         self.selectedMod = None
         
         self.ui.modCheck.setVisible(False)
-        self.ui.modName.setText(self.getModTitle('a2'))
+        self.ui.modName.setText('a2')
         self.ui.modVersion.setText('v0.1')
         self.ui.modAuthor.setText('')
         
         self.ui.modCheck.clicked.connect(self.modEnable)
         self.ui.modInfoButton.clicked.connect(self.modInfo)
         
-        self.setCentralWidget(self.ui)
-        self.setWindowTitle("a2")
+        #self.setCentralWidget(self.ui)
+        #self.setWindowTitle("a2")
         #TODO: remember size and window position
         self.setGeometry(QtCore.QRect(250, 250, 1268, 786))
 
         log.info('a2ui initialised!')
 
-    def getModTitle(self, name):
-        #return '<html><head/><body><p><span style=\" font-size:10pt; font-weight:600;\">%s</span></p></body></html>' % name
-        return '<span style=\" font-size:10pt; font-weight:600;\">%s</span>' % name
-
     def modSelect(self, force=False):
         """
-        updates the mod view to the right of the UI when something different is
-        selected in the module list 
+        updates the mod view to the right of the UI
+        when something different is elected in the module list 
         """
         name = self.ui.modList.selectedItems()[0].text()
         if name == self.selectedMod and force is False:
@@ -86,19 +83,8 @@ class A2Window(QtGui.QMainWindow):
         self.selectedMod = name
         mod = self.modules[name]
         
-        # load the module config
-        if exists(mod.configFile):
-            try:
-                with open(mod.configFile) as fObj:
-                    mod.config = json.load(fObj)
-            except:
-                log.error('config exists but could not be loaded!: %s' % mod.configFile)
-                mod.config = {}
-        else:
-            mod.config = None
-
         self.ui.modCheck.setVisible(True)
-        self.ui.modName.setText(self.getModTitle(name))
+        self.ui.modName.setText(name)
         author = ''
         version = ''
         if mod.config and 'nfo' in mod.config:
@@ -153,16 +139,19 @@ class A2Window(QtGui.QMainWindow):
         controls = []
         
         buttonText = 'Edit'
-        if mod.config == {}:
+        if mod.config == []:
             controls.append(QtGui.QLabel('config.json currently empty. imagine placeholder layout here ...'))
         elif mod.config is None:
             controls.append(QtGui.QLabel('"%s" has no configuration file yet!\n'
                                          'Would you like to set one up?' % mod.name))
             buttonText = 'Create'
+        elif isinstance(mod.config, dict):
+            # TODO: convert older dict header to list[] nfo type
+            pass
         else:
             log.debug('creating display controls here...')
-            if 'nfo' in mod.config:
-                description = QtGui.QLabel(mod.config['nfo']['description'])
+            if mod.config[0]['typ'] == 'nfo':
+                description = QtGui.QLabel(mod.config[0]['description'])
                 description.setWordWrap(True)
                 controls.append(description)
         
@@ -178,26 +167,29 @@ class A2Window(QtGui.QMainWindow):
         """
         From the modules config creates controls to edit the config itself.
         If a header is not found one will be added to the in-edit config.
-        On OK the config data is collected from the UI and written back to the json.
-        On Cancel the in-edit config is discarded and the standard drawMod called
-        to show the UI without change.
+        On "OK" the config data is collected from the UI and written back to the json.
+        On Cancel the in-edit config is discarded and drawMod called which draws the
+        UI unchanged.
         """
         log.debug('editing: %s' % mod.name)
         controls = []
         
-        s = 'Because none existed before this temporary description was created for "%s". '\
-            'Change it to describe what it does with a couple of words.' % mod.name
-        config = dict(mod.config or {})
-        if 'nfo' not in config:
-            config['nfo'] = {'description': s,
-                             #'display name': '%s' % mod.name,
-                             'author': 'your name',
-                             'version': '0.1',
-                             'date': '2015'}
+        #if not mod.config: is None or mod.config is []
+        if not len(mod.config):
+            s = 'Because none existed before this temporary description was created for "%s". '\
+                'Change it to describe what it does with a couple of words.' % mod.name
+            newNfo = {'typ': 'nfo',
+                      'description': s,
+                      #'display name': '%s' % mod.name,
+                      'author': 'your name',
+                      'version': '0.1',
+                      'date': '2015'}
+            mod.config.insert(0, newNfo)
+            print('mod.config: %s' % mod.config)
         
         ctrlDict = {}
         
-        nfo = config.get('nfo')
+        nfo = mod.config[0]
         nfoCtrls = {}
         nfoBox = QtGui.QGroupBox()
         nfoBox.setTitle('module information:')
@@ -210,23 +202,22 @@ class A2Window(QtGui.QMainWindow):
         a2ctrl.EditLine('version', nfo, nfoBoxLayout, nfoCtrls)
         a2ctrl.EditLine('date', nfo, nfoBoxLayout, nfoCtrls)
         controls.append(nfoBox)
+        ctrlDict['nfo'] = nfoCtrls
         
+        log.debug('creating EDIT controls here...')
+        # the cfg part is ordered. so its embedded in a list
+        cfg = mod.config[1:]
+        cfgCtrls = []
         cfgBox = QtGui.QGroupBox()
         cfgBox.setTitle('module setup:')
         cfgBoxLayout = QtGui.QVBoxLayout(cfgBox)
         cfgBoxLayout.setSpacing(5)
         cfgBoxLayout.setContentsMargins(5, 5, 5, 5)
+        
         controls.append(cfgBox)
+        ctrlDict['cfg'] = cfgCtrls
         
-        
-        log.debug('creating EDIT controls here...')
-        
-        
-        editSelect = a2ctrl.EditAddCtrl(cfgBoxLayout)
-        
-        
-        
-        ctrlDict['nfo'] = nfoCtrls
+        editSelect = a2ctrl.EditAddElem(cfgBoxLayout, mod, cfgCtrls)
         
         # amend OK, Cancel buttons at the end.
         # TODO: needs to go outside the scroll layout
@@ -247,18 +238,20 @@ class A2Window(QtGui.QMainWindow):
         loop the given ctrlDict, query ctrls and feed target mod.config
         """
         if mod.config is None:
-            mod.config = {'nfo': {}, 'cfg': []}
+            mod.config = {}
+        if 'nfo' not in mod.config:
+            mod.config['nfo'] = {}
+        if 'cfg' not in mod.config:
+            mod.config['cfg'] = []
         
-        log.debug('editSubmit...')
-        for typNme, data in ctrlDict.items():
-            if typNme not in mod.config:
-                mod.config[typNme] = {}
-            
-            for nme, ctrl in data.items():
-                mod.config[typNme][nme] = ctrl.value
+        for nme, ctrl in ctrlDict['nfo'].items():
+            mod.config['nfo'][nme] = ctrl.value
+        
+        for ctrl in ctrlDict['cfg']:
+            print('ctrl: %s' % ctrl)
+        
         mod.saveConfig()
         self.modSelect(force=True)
-        #self.drawMod(mod)
     
     def modEnable(self):
         if self.ui.modCheck.checkState():
@@ -336,14 +329,38 @@ class Mod(object):
         # gather files from module path in local list
         self.name = modname
         self.dir = join(a2moddir, modname)
-        self.config = None
+        self._config = None
         self.configFile = join(self.dir, 'config.json')
         self.db = db
         self.ui = None
-
+        self._files = None
+        self._scripts = None
+    
     @property
-    def files(self):
-        return self.getFiles()
+    def config(self):
+        if self._config is None:
+            self.getConfig()
+        return self._config
+    
+    def getConfig(self):
+        if exists(self.configFile):
+            try:
+                with open(self.configFile) as fobj:
+                    self._config = json.load(fobj)
+                    return
+            except Exception as error:
+                log.error('config exists but could not be loaded!: %s\nerror: %s' % (self.configFile, error))
+        self._config = []
+    
+    @property
+    def scripts(self):
+        if self._scripts is None:
+            self.getScripts()
+        return self._scripts
+    
+    def getScripts(self):
+        self._scripts = [f for f in self.getFiles() if f.lower().endswith('.ahk')]
+        return self._scripts
 
     def enable(self, part):
         """
@@ -361,6 +378,12 @@ class Mod(object):
         """
         pass
 
+    @property
+    def files(self):
+        if self._files is None:
+            self._files = self.getFiles()
+        return self._files
+
     def getFiles(self):
         """
         browses the modules folder for files that belong to a module part
@@ -368,9 +391,13 @@ class Mod(object):
         # defaults file - variable defaults and hotkey suggestions
         # language file - for ui and runtime
         """
-        return os.listdir(self.dir)
+        self._files = os.listdir(self.dir)
+        return self._files
 
     def createConfig(self, main=None):
+        """
+        TODO: not in use. get rid of this
+        """
         log.debug('%s config exists: %s' % (self.name, exists(self.configFile)))
         with open(self.configFile, 'w') as fileObj:
             fileObj.write('')
