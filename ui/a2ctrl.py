@@ -23,8 +23,8 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
 TODO: maybe make the nfo item just always the 0th entry in the config.json
 Then its an nfo-type element that just draws and holds all the author, name,
 version, description info
-
 '''
+
 from PySide import QtGui, QtCore
 import logging
 logging.basicConfig()
@@ -33,12 +33,66 @@ log.setLevel(logging.DEBUG)
 margin = 5
 labelW = 100
 
-class EditLine(object):
-    def __init__(self, name, dictionary, parent, ctrldict):
+def draw(element):
+    """
+    mapper that returns display controls
+    according to the typ keys of a config element
+    """
+    if element['typ'] == 'nfo':
+        return DrawNfo(element)
+    elif element['typ'] == 'check':
+        return DrawCheck(element)
+
+
+class DrawNfo(QtGui.QWidget):
+    def __init__(self, data):
+        super(DrawNfo, self).__init__()
+        
+        self.layout = QtGui.QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.label = QtGui.QLabel(self)
+        self.label.setText(data.get('description') or '')
+        self.label.setWordWrap(True)
+        self.layout.addWidget(self.label)
+
+
+def edit(element):
+    if element['typ'] == 'nfo':
+        return EditNfo(element)
+
+
+class EditNfo(QtGui.QGroupBox):
+    def __init__(self, data):
+        super(EditNfo, self).__init__()
+        log.info('Building EditNfo...')
+        self.typ = data['typ']
+        #self.box = QtGui.QGroupBox(self)
+        self.setTitle('module information:')
+        self.boxLayout = QtGui.QVBoxLayout(self)
+        self.boxLayout.setSpacing(5)
+        self.boxLayout.setContentsMargins(5, 5, 5, 5)
+        #EditText('description', nfo, nfoBoxLayout, nfoCtrls)
+        self.description = EditText('description', data.get('description'), self.boxLayout)
+        self.author = EditLine('author', data.get('author'), self.boxLayout)
+        self.version = EditLine('version', data.get('version'), self.boxLayout)
+        self.date = EditLine('date', data.get('date'), self.boxLayout)
+
+    def getcfg(self):
+        cfg = {'typ': self.typ,
+               'description': self.description.value,
+               'author': self.author.value,
+               'version': self.version.value,
+               'date': self.date.value
+               }
+        return cfg
+
+
+class EditLine(QtGui.QWidget):
+    def __init__(self, name, text, parent=None):
+        super(EditLine, self).__init__()
         self.name = name
         self.parent = parent
-        self.widget = QtGui.QWidget()
-        self.baselayout = QtGui.QHBoxLayout(self.widget)
+        self.baselayout = QtGui.QHBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
@@ -47,32 +101,32 @@ class EditLine(object):
         self.baselayout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QLineEdit()
         self.baselayout.addWidget(self.inputCtrl)
-        self.inputCtrl.setText(dictionary.get(name or ''))
-        parent.addWidget(self.widget)
-        ctrldict[name] = self
+        self.inputCtrl.setText(str(text))
+        if parent:
+            parent.addWidget(self)
     
     @property
     def value(self):
         return self.inputCtrl.text()
 
 
-class EditText(object):
-    def __init__(self, name, dictionary, parent, ctrldict):
+class EditText(QtGui.QWidget):
+    def __init__(self, name, text, parent=None):
+        super(EditText, self).__init__()
         self.name = name
         self.parent = parent
-        self.widget = QtGui.QWidget()
-        self.baselayout = QtGui.QVBoxLayout(self.widget)
+        self.baselayout = QtGui.QVBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
         self.baselayout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QPlainTextEdit()
-        self.inputCtrl.setPlainText(dictionary.get(name) or '')
+        self.inputCtrl.setPlainText(str(text))
         self.inputCtrl.setTabChangesFocus(True)
         self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, 100))
         self.baselayout.addWidget(self.inputCtrl)
-        parent.addWidget(self.widget)
-        ctrldict[name] = self
+        if parent:
+            parent.addWidget(self)
     
     @property
     def value(self):
@@ -95,11 +149,10 @@ class EditAddElem(QtGui.QWidget):
     til: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
-    def __init__(self, parent, mod, ctrlList):
+    def __init__(self, mod, parent):
         super(EditAddElem, self).__init__()
         self.parent = parent
         self.mod = mod
-        #self.widget = QtGui.QWidget()
         self.baselayout = QtGui.QHBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
@@ -126,8 +179,7 @@ class EditAddElem(QtGui.QWidget):
         
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.baselayout.addItem(spacerItem)
-        
-        self.parent.addWidget(self)
+        #self.parent.addWidget(self)
         self.button.clicked.connect(self.addCtrl)
         
     def addCtrl(self):

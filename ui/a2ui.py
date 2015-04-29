@@ -60,9 +60,10 @@ class A2Window(QtGui.QMainWindow):
         
         self.ui.modCheck.clicked.connect(self.modEnable)
         self.ui.modInfoButton.clicked.connect(self.modInfo)
+        self.ui.actionEdit_module.triggered.connect(self.editMod)
+        self.toggleEditCtrls(False)
+        self.ui.editCancelButton.pressed.connect(self.drawMod)
         
-        #self.setCentralWidget(self.ui)
-        #self.setWindowTitle("a2")
         #TODO: remember size and window position
         self.setGeometry(QtCore.QRect(250, 250, 1268, 786))
 
@@ -76,24 +77,14 @@ class A2Window(QtGui.QMainWindow):
         name = self.ui.modList.selectedItems()[0].text()
         if name == self.selectedMod and force is False:
             return
-        
+
+        self.ui.modCheck.setVisible(True)
+        self.ui.modName.setText(name)
         self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
         
         # TODO: make selectedMod rather the object? 
         self.selectedMod = name
-        mod = self.modules[name]
-        
-        self.ui.modCheck.setVisible(True)
-        self.ui.modName.setText(name)
-        author = ''
-        version = ''
-        if mod.config and 'nfo' in mod.config:
-            author = mod.config['nfo'].get('author') or ''
-            version = mod.config['nfo'].get('version') or ''
-        self.ui.modAuthor.setText(author)
-        self.ui.modVersion.setText(version)
-        
-        self.drawMod(mod)
+        self.drawMod()
         
     def drawUI(self, controls):
         """
@@ -117,7 +108,7 @@ class A2Window(QtGui.QMainWindow):
         newLayout = QtGui.QWidget()
         # create new columnLayout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
-                
+        
         # make the new inner layout the mainLayout
         self.mainlayout = newInner
         # add the controls to it
@@ -128,42 +119,39 @@ class A2Window(QtGui.QMainWindow):
         # turn scroll layout content to new host widget
         self.ui.scrollArea.setWidget(newLayout)
     
-    def drawMod(self, mod):
+    def drawMod(self):
         """
         from the modules config creates the usual display controls and
         fills them with the saved settings from the database.
         On change they trigger writing to the db, collect all include info
         and restart a2.
         """
+        mod = self.modules[self.selectedMod]
         log.debug('drawing: %s' % mod.name)
+
+        author = ''
+        version = ''
+        if len(mod.config):
+            if mod.config[0].get('typ') != 'nfo':
+                log.error('First element of config is not typ nfo! %s' % mod.name)
+            author = mod.config[0].get('author') or ''
+            version = mod.config[0].get('version') or ''
+        self.ui.modAuthor.setText(author)
+        self.ui.modVersion.setText(version)
+        
         controls = []
         
-        buttonText = 'Edit'
         if mod.config == []:
-            controls.append(QtGui.QLabel('config.json currently empty. imagine placeholder layout here ...'))
-        elif mod.config is None:
-            controls.append(QtGui.QLabel('"%s" has no configuration file yet!\n'
-                                         'Would you like to set one up?' % mod.name))
-            buttonText = 'Create'
-        elif isinstance(mod.config, dict):
-            # TODO: convert older dict header to list[] nfo type
-            pass
+            controls.append(QtGui.QLabel('config.json currently empty. '
+                                         'imagine awesome layout here ...'))
         else:
-            log.debug('creating display controls here...')
-            if mod.config[0]['typ'] == 'nfo':
-                description = QtGui.QLabel(mod.config[0]['description'])
-                description.setWordWrap(True)
-                controls.append(description)
+            for element in mod.config:
+                controls.append(a2ctrl.draw(element))
         
-        # add temp edit button.
-        # This will eventually goto the menu bar and/or to a hotkey Ctrl+E?
-        editButton = QtGui.QPushButton(buttonText)
-        editButton.pressed.connect(partial(self.editMod, mod))
-        controls.append(editButton)
-        
+        self.toggleEditCtrls(False)
         self.drawUI(controls)
         
-    def editMod(self, mod):
+    def editMod(self):
         """
         From the modules config creates controls to edit the config itself.
         If a header is not found one will be added to the in-edit config.
@@ -171,6 +159,8 @@ class A2Window(QtGui.QMainWindow):
         On Cancel the in-edit config is discarded and drawMod called which draws the
         UI unchanged.
         """
+        mod = self.modules[self.selectedMod]
+        
         log.debug('editing: %s' % mod.name)
         controls = []
         
@@ -187,71 +177,40 @@ class A2Window(QtGui.QMainWindow):
             mod.config.insert(0, newNfo)
             print('mod.config: %s' % mod.config)
         
-        ctrlDict = {}
+        for element in mod.config:
+            controls.append(a2ctrl.edit(element))
         
-        nfo = mod.config[0]
-        nfoCtrls = {}
-        nfoBox = QtGui.QGroupBox()
-        nfoBox.setTitle('module information:')
-        nfoBoxLayout = QtGui.QVBoxLayout(nfoBox)
-        nfoBoxLayout.setSpacing(5)
-        nfoBoxLayout.setContentsMargins(5, 5, 5, 5)
-        
-        a2ctrl.EditText('description', nfo, nfoBoxLayout, nfoCtrls)
-        a2ctrl.EditLine('author', nfo, nfoBoxLayout, nfoCtrls)
-        a2ctrl.EditLine('version', nfo, nfoBoxLayout, nfoCtrls)
-        a2ctrl.EditLine('date', nfo, nfoBoxLayout, nfoCtrls)
-        controls.append(nfoBox)
-        ctrlDict['nfo'] = nfoCtrls
-        
-        log.debug('creating EDIT controls here...')
-        # the cfg part is ordered. so its embedded in a list
-        cfg = mod.config[1:]
-        cfgCtrls = []
         cfgBox = QtGui.QGroupBox()
         cfgBox.setTitle('module setup:')
         cfgBoxLayout = QtGui.QVBoxLayout(cfgBox)
         cfgBoxLayout.setSpacing(5)
         cfgBoxLayout.setContentsMargins(5, 5, 5, 5)
-        
         controls.append(cfgBox)
-        ctrlDict['cfg'] = cfgCtrls
         
-        editSelect = a2ctrl.EditAddElem(cfgBoxLayout, mod, cfgCtrls)
-        
-        # amend OK, Cancel buttons at the end.
-        # TODO: needs to go outside the scroll layout
-        editFooter = QtGui.QWidget()
-        editFooterLayout = QtGui.QHBoxLayout(editFooter)
-        okButton = QtGui.QPushButton('OK')
-        okButton.pressed.connect(partial(self.editSubmit, ctrlDict, mod))
-        cancelBtn = QtGui.QPushButton('Cancel')
-        cancelBtn.pressed.connect(partial(self.drawMod, mod))
-        editFooterLayout.addWidget(okButton)
-        editFooterLayout.addWidget(cancelBtn)
-        controls.append(editFooter)
+        editSelect = a2ctrl.EditAddElem(mod, self.mainlayout)
+        controls.append(editSelect)
         
         self.drawUI(controls)
+        self.toggleEditCtrls(True)
+        self.ui.editOKButton.pressed.connect(partial(self.editSubmit, controls, mod))
     
-    def editSubmit(self, ctrlDict, mod):
+    def editSubmit(self, controls, mod):
         """
         loop the given ctrlDict, query ctrls and feed target mod.config
         """
-        if mod.config is None:
-            mod.config = {}
-        if 'nfo' not in mod.config:
-            mod.config['nfo'] = {}
-        if 'cfg' not in mod.config:
-            mod.config['cfg'] = []
+        newcfg = []
+        for ctrl in controls:
+            if hasattr(ctrl, 'getcfg'):
+                newcfg.append(ctrl.getcfg())
         
-        for nme, ctrl in ctrlDict['nfo'].items():
-            mod.config['nfo'][nme] = ctrl.value
-        
-        for ctrl in ctrlDict['cfg']:
-            print('ctrl: %s' % ctrl)
-        
+        mod._config = newcfg
         mod.saveConfig()
-        self.modSelect(force=True)
+        self.drawMod()
+    
+    def toggleEditCtrls(self, state):
+        for button in [self.ui.editCancelButton, self.ui.editOKButton]:
+            button.setEnabled(state)
+            button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
     
     def modEnable(self):
         if self.ui.modCheck.checkState():
