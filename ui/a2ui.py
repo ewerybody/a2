@@ -36,12 +36,10 @@ class A2Window(QtGui.QMainWindow):
         self.enabledMods = self.db.gets('enabled')
         log.info('enabledMods: %s' % self.enabledMods)
 
-
-        self.maintab = self.ui.scrollAreaContents
-        
-        self.mainlayout = self.ui.verticalLayout_4
-        self.currtab = self.maintab
-        
+        self.mainlayout = self.ui.scrollAreaContents.layout()
+        self.controls = [self.ui.welcomeText]
+        self.ctrlDump = []
+        self.tempConfig = None
         # create a spacer to arrange the layout
         # NOTE that a spacer is added via addItem! not widget
         self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum,
@@ -62,6 +60,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modInfoButton.clicked.connect(self.modInfo)
         self.ui.actionEdit_module.triggered.connect(self.editMod)
         self.toggleEditCtrls(False)
+        self.ui.editOKButton.pressed.connect(self.editSubmit)
         self.ui.editCancelButton.pressed.connect(self.drawMod)
         
         #TODO: remember size and window position
@@ -77,7 +76,8 @@ class A2Window(QtGui.QMainWindow):
         name = self.ui.modList.selectedItems()[0].text()
         if name == self.selectedMod and force is False:
             return
-
+        self.mod = self.modules[name]
+        
         self.ui.modCheck.setVisible(True)
         self.ui.modName.setText(name)
         self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
@@ -86,7 +86,7 @@ class A2Window(QtGui.QMainWindow):
         self.selectedMod = name
         self.drawMod()
         
-    def drawUI(self, controls):
+    def drawUI(self):
         """
         takes list of controls and arranges them in the scroll layout
         
@@ -105,19 +105,20 @@ class A2Window(QtGui.QMainWindow):
         # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout 
-        newLayout = QtGui.QWidget()
+        newLayout = QtGui.QWidget(self)
         # create new columnLayout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
         
-        # make the new inner layout the mainLayout
-        self.mainlayout = newInner
-        # add the controls to it
-        for ctrl in controls:
-            self.mainlayout.addWidget(ctrl)
-        # amend the spacer
-        self.mainlayout.addItem(self.ui.spacer)
         # turn scroll layout content to new host widget
         self.ui.scrollArea.setWidget(newLayout)
+        # make the new inner layout the mainLayout
+        # add the controls to it
+        for ctrl in self.controls:
+            if ctrl:
+                newInner.addWidget(ctrl)
+        # amend the spacer
+        newInner.addItem(self.ui.spacer)
+        self.mainlayout = newInner
     
     def drawMod(self):
         """
@@ -126,30 +127,40 @@ class A2Window(QtGui.QMainWindow):
         On change they trigger writing to the db, collect all include info
         and restart a2.
         """
-        mod = self.modules[self.selectedMod]
-        log.debug('drawing: %s' % mod.name)
+        log.debug('drawing: %s' % self.mod.name)
+        self.tempConfig = None
+
+#        if self.controls:
+#            print('self.controls: %s' % self.controls)
+#         for ctrl in self.controls:
+#             #self.mainlayout.removeItem(self.ui.spacer)
+#             try:
+#                 #self.mainlayout.removeWidget(ctrl)
+#                 #del(ctrl)
+#                 pass
+#             except Exception as ex:
+#                 log.error('self.mainlayout.removeWidget(%s) threw exceptption %s' % (ctrl, ex))
 
         author = ''
         version = ''
-        if len(mod.config):
-            if mod.config[0].get('typ') != 'nfo':
-                log.error('First element of config is not typ nfo! %s' % mod.name)
-            author = mod.config[0].get('author') or ''
-            version = mod.config[0].get('version') or ''
+        if len(self.mod.config):
+            if self.mod.config[0].get('typ') != 'nfo':
+                log.error('First element of config is not typ nfo! %s' % self.mod.name)
+            author = self.mod.config[0].get('author') or ''
+            version = self.mod.config[0].get('version') or ''
         self.ui.modAuthor.setText(author)
         self.ui.modVersion.setText(version)
+        self.controls = []
         
-        controls = []
-        
-        if mod.config == []:
-            controls.append(QtGui.QLabel('config.json currently empty. '
+        if self.mod.config == []:
+            self.controls.append(QtGui.QLabel('config.json currently empty. '
                                          'imagine awesome layout here ...'))
         else:
-            for element in mod.config:
-                controls.append(a2ctrl.draw(element))
+            for element in self.mod.config:
+                self.controls.append(a2ctrl.draw(element))
         
         self.toggleEditCtrls(False)
-        self.drawUI(controls)
+        self.drawUI()
         
     def editMod(self):
         """
@@ -159,52 +170,44 @@ class A2Window(QtGui.QMainWindow):
         On Cancel the in-edit config is discarded and drawMod called which draws the
         UI unchanged.
         """
-        mod = self.modules[self.selectedMod]
+        log.debug('editing: %s' % self.mod.name)
+        self.controls = []
         
-        log.debug('editing: %s' % mod.name)
-        controls = []
+        if self.tempConfig is None:
+            self.tempConfig = list(self.mod.config)
         
         #if not mod.config: is None or mod.config is []
-        if not len(mod.config):
+        if not len(self.tempConfig):
             s = 'Because none existed before this temporary description was created for "%s". '\
-                'Change it to describe what it does with a couple of words.' % mod.name
+                'Change it to describe what it does with a couple of words.' % self.mod.name
             newNfo = {'typ': 'nfo',
-                      'description': s,
+                       'description': s,
                       #'display name': '%s' % mod.name,
                       'author': 'your name',
                       'version': '0.1',
                       'date': '2015'}
-            mod.config.insert(0, newNfo)
-            print('mod.config: %s' % mod.config)
+            self.tempConfig.insert(0, newNfo)
+            print('config: %s' % self.tempConfig)
         
-        for element in mod.config:
-            controls.append(a2ctrl.edit(element))
+        for element in self.tempConfig:
+            self.controls.append(a2ctrl.edit(element, self.mod))
         
-        cfgBox = QtGui.QGroupBox()
-        cfgBox.setTitle('module setup:')
-        cfgBoxLayout = QtGui.QVBoxLayout(cfgBox)
-        cfgBoxLayout.setSpacing(5)
-        cfgBoxLayout.setContentsMargins(5, 5, 5, 5)
-        controls.append(cfgBox)
+        editSelect = a2ctrl.EditAddElem(self.mod, self.tempConfig, self.editMod)
+        self.controls.append(editSelect)
         
-        editSelect = a2ctrl.EditAddElem(mod, self.mainlayout)
-        controls.append(editSelect)
-        
-        self.drawUI(controls)
+        self.drawUI()
         self.toggleEditCtrls(True)
-        self.ui.editOKButton.pressed.connect(partial(self.editSubmit, controls, mod))
     
-    def editSubmit(self, controls, mod):
+    def editSubmit(self):
         """
         loop the given ctrlDict, query ctrls and feed target mod.config
         """
         newcfg = []
-        for ctrl in controls:
-            if hasattr(ctrl, 'getcfg'):
-                newcfg.append(ctrl.getcfg())
+        for ctrl in self.controls:
+            if hasattr(ctrl, 'getCfg'):
+                newcfg.append(ctrl.getCfg())
         
-        mod._config = newcfg
-        mod.saveConfig()
+        self.mod.saveConfig(newcfg)
         self.drawMod()
     
     def toggleEditCtrls(self, state):
@@ -287,9 +290,9 @@ class Mod(object):
     def __init__(self, modname, a2moddir, db):
         # gather files from module path in local list
         self.name = modname
-        self.dir = join(a2moddir, modname)
+        self.path = join(a2moddir, modname)
         self._config = None
-        self.configFile = join(self.dir, 'config.json')
+        self.configFile = join(self.path, 'config.json')
         self.db = db
         self.ui = None
         self._files = None
@@ -321,22 +324,6 @@ class Mod(object):
         self._scripts = [f for f in self.getFiles() if f.lower().endswith('.ahk')]
         return self._scripts
 
-    def enable(self, part):
-        """
-        # enlist filename to settings/includes.ahk
-        # kickoff a2reload
-        # write a2db mod/part list
-        """
-        pass
-
-    def disable(self, part):
-        """
-        # takes filename from settings/includes.ahk
-        # kickoff a2reload
-        # write a2db mod/part list
-        """
-        pass
-
     @property
     def files(self):
         if self._files is None:
@@ -350,7 +337,7 @@ class Mod(object):
         # defaults file - variable defaults and hotkey suggestions
         # language file - for ui and runtime
         """
-        self._files = os.listdir(self.dir)
+        self._files = os.listdir(self.path)
         return self._files
 
     def createConfig(self, main=None):
@@ -364,9 +351,10 @@ class Mod(object):
         if main:
             main.modSelect(True)
 
-    def saveConfig(self):
+    def saveConfig(self, cfgdict):
+        self._config = cfgdict
         with open(self.configFile, 'w') as fObj:
-            json.dump(self.config, fObj, indent=jsonIndent)
+            json.dump(self._config, fObj, indent=jsonIndent)
         
 
 class A2Obj(object):

@@ -27,6 +27,7 @@ version, description info
 
 from PySide import QtGui, QtCore
 import logging
+from functools import partial
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
@@ -56,9 +57,11 @@ class DrawNfo(QtGui.QWidget):
         self.layout.addWidget(self.label)
 
 
-def edit(element):
+def edit(element, mod):
     if element['typ'] == 'nfo':
         return EditNfo(element)
+    elif element['typ'] == 'include':
+        return EditInclude(element, mod)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -77,13 +80,12 @@ class EditNfo(QtGui.QGroupBox):
         self.version = EditLine('version', data.get('version'), self.boxLayout)
         self.date = EditLine('date', data.get('date'), self.boxLayout)
 
-    def getcfg(self):
+    def getCfg(self):
         cfg = {'typ': self.typ,
                'description': self.description.value,
                'author': self.author.value,
                'version': self.version.value,
-               'date': self.date.value
-               }
+               'date': self.date.value}
         return cfg
 
 
@@ -149,48 +151,61 @@ class EditAddElem(QtGui.QWidget):
     til: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
-    def __init__(self, mod, parent):
+    def __init__(self, mod, tempConfig, rebuildFunc):
         super(EditAddElem, self).__init__()
-        self.parent = parent
+        self.tempConfig = tempConfig
+        self.rebuildFunc = rebuildFunc
         self.mod = mod
         self.baselayout = QtGui.QHBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
         
-        self.line = QtGui.QFrame(self)
-        self.line.setMinimumSize(QtCore.QSize(0, 20))
-        self.line.setFrameShape(QtGui.QFrame.HLine)
-        self.line.setFrameShadow(QtGui.QFrame.Sunken)
-        self.line.setLineWidth(3)
-        self.parent.addWidget(self.line)
+        self.addButton = QtGui.QPushButton('add')
+        self.baselayout.addWidget(self.addButton)
         
-        self.labelCtrl = QtGui.QLabel('add element:')
-        #self.labelCtrl.setMaximumSize(QtCore.QSize(16777215, labelW))
-        self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
-        self.baselayout.addWidget(self.labelCtrl)
-        
-        self.comboBox = QtGui.QComboBox(self)
-        self.comboBox.addItems('include checkBox hotkey groupBox textField floatField intField fileField text button comboBox'.split())
-        self.comboBox.setMaximumSize(QtCore.QSize(150, 50))
-        self.baselayout.addWidget(self.comboBox)
-        
-        self.button = QtGui.QPushButton('Add')
-        self.baselayout.addWidget(self.button)
-        
+        self.menu = QtGui.QMenu(self.addButton)
+        self.populateMenu()
+        self.addButton.setMenu(self.menu)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.baselayout.addItem(spacerItem)
-        #self.parent.addWidget(self)
-        self.button.clicked.connect(self.addCtrl)
+
+    def populateMenu(self):
+        self.menu_include = self.menu.addMenu('include')
+        for m in self.mod.scripts:
+            a = QtGui.QAction(self.menu_include)
+            a.setText(m)
+            a.triggered.connect(partial(self.newInclude, m))
+            self.menu_include.addAction(a)
+            
+        newIncludeAction = QtGui.QAction(self.menu_include)
+        newIncludeAction.setText('create new')
+        newIncludeAction.triggered.connect(self.newInclude)
+        self.menu_include.addAction(newIncludeAction)
         
-    def addCtrl(self):
-        typ = self.comboBox.currentText()
-        log.debug('adding "%s" to %s' % (typ, self.parent))
+        for el in 'checkBox hotkey groupBox textField floatField intField '\
+                  'fileField text button comboBox'.split():
+            a = QtGui.QAction(self.menu)
+            a.setText(el)
+            a.triggered.connect(partial(self.addCtrl, el))
+            self.menu.addAction(a)
         
-        if typ == 'include':
-            i = Include(self.mod, self.parent, self.parent.count() - 1)
+    def newInclude(self, name=''):
+        if not name:
+            log.info('creating new file to include at: %s' % self.mod.path)
+        else:
+            log.info('including: %s' % name)
+            self.addCtrl('include', name)
+    
+    def addCtrl(self, typ, name=''):
+        cfg = {'typ': typ}
+        if cfg['typ'] == 'include':
+            cfg['file'] = name
+            self.tempConfig.append(cfg)
+            self.rebuildFunc()
+            #i = Include(self.mod, self.parent, self.parent.count() - 1)
 
 
-class Include(QtGui.QWidget):
+class EditInclude(QtGui.QWidget):
     """
     TODO: An Include control has to know what can be included. Plus a
     'create script' item. If a file was included already then a new
@@ -202,34 +217,33 @@ class Include(QtGui.QWidget):
     in the configuration in the background. 
     """
     #def __init__(self, parent, mod):
-    def __init__(self, mod, parent, cfg=None, index=-1):
-        super(Include, self).__init__()
+    def __init__(self, data, mod):
+        super(EditInclude, self).__init__()
+        self.typ = data['typ']
+        self.file = data['file']
 
-        if cfg is None:
-            self.cfg = {'typ': 'include',
-                        'file': ''}
-        
-        self.parent = parent
-        self.widget = QtGui.QWidget()
-        self.baselayout = QtGui.QHBoxLayout(self.widget)
-        self.baselayout.setSpacing(5)
-        self.baselayout.setContentsMargins(margin, margin, margin, margin)
+        self.layout = QtGui.QHBoxLayout(self)
+        self.layout.setSpacing(5)
+        self.layout.setContentsMargins(margin, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('include script:')
-        #self.labelCtrl.setMaximumSize(QtCore.QSize(16777215, labelW))
         self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
-        self.baselayout.addWidget(self.labelCtrl)
-        self.comboBox = QtGui.QComboBox(self)
-        self.comboBox.addItems(mod.scripts)
-        self.baselayout.addWidget(self.comboBox)
+        self.layout.addWidget(self.labelCtrl)
+        self.button = QtGui.QPushButton(self.file)
+        self.layout.addWidget(self.button)
+        #self.comboBox = QtGui.QComboBox(self)
+        #self.comboBox.addItems(mod.scripts)
+        #self.layout.addWidget(self.comboBox)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.baselayout.addItem(spacerItem)
+        self.layout.addItem(spacerItem)
         
-        parent.insertWidget(index, self.widget)
+        #parent.insertWidget(index, self.widget)
         #ctrldict[name] = self
     
-    @property
-    def value(self):
-        return self.comboBox.currentText()
+    def getCfg(self):
+        cfg = {'typ': self.typ,
+               'file': self.file}
+        return cfg
+
 
 class EditView(QtGui.QWidget):
     """
