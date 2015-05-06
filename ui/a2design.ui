@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1230</width>
-    <height>713</height>
+    <width>668</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,8 +32,17 @@
     </property>
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="opaqueResize">
+       <bool>true</bool>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
       </property>
       <widget class="QGroupBox" name="moduleBox">
        <property name="sizePolicy">
@@ -188,8 +197,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>796</width>
-             <height>524</height>
+             <width>326</width>
+             <height>303</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -251,8 +260,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1230</width>
-     <height>38</height>
+     <width>668</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
