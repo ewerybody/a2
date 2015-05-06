@@ -222,7 +222,12 @@ class A2Window(QtGui.QMainWindow):
         else:
             log.debug('disabling: %s ...' % self.selectedMod)
             enabled = self.db.dels('enabled', self.selectedMod)
-        log.debug('now enabled: %s' % enabled)
+        for e in enabled:
+            for c in self.modules[e].config:
+                if c['typ'] == 'include':
+                    log.info('enabled mod %s file to include: %s' % (e, c['file']))
+        
+        
 
     def modInfo(self):
         log.debug('calling info on: %s ...' % self.selectedMod)
