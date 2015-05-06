@@ -2,7 +2,7 @@
 from PySide import QtGui, QtCore
 import os
 from os.path import exists, join
-from functools import partial
+#from functools import partial
 import sys
 import a2dblib
 import a2ctrl
@@ -16,6 +16,7 @@ log.setLevel(logging.DEBUG)
 
 # maybe make this even settable in a dev options dialog?
 jsonIndent = 2
+
 
 class A2Window(QtGui.QMainWindow):
     def __init__(self, parent=None, *args):
@@ -63,15 +64,15 @@ class A2Window(QtGui.QMainWindow):
         self.ui.editOKButton.pressed.connect(self.editSubmit)
         self.ui.editCancelButton.pressed.connect(self.drawMod)
         
-        #TODO: remember size and window position
-        self.setGeometry(QtCore.QRect(250, 250, 1268, 786))
-
+        #TODO: fck reg! do that with the sql db dumbass!
+        self.settings = QtCore.QSettings("a2", "a2ui")
+        self.restoreA2ui()
         log.info('a2ui initialised!')
-
+    
     def modSelect(self, force=False):
         """
         updates the mod view to the right of the UI
-        when something different is elected in the module list 
+        when something different is elected in the module list
         """
         name = self.ui.modList.selectedItems()[0].text()
         if name == self.selectedMod and force is False:
@@ -82,7 +83,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modName.setText(name)
         self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
         
-        # TODO: make selectedMod rather the object? 
+        # TODO: make selectedMod rather the object?
         self.selectedMod = name
         self.drawMod()
         
@@ -104,7 +105,7 @@ class A2Window(QtGui.QMainWindow):
         # to refill the scoll layout:
         # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
-        # create widget to host the module's new layout 
+        # create widget to host the module's new layout
         newLayout = QtGui.QWidget(self)
         # create new columnLayout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
@@ -154,7 +155,7 @@ class A2Window(QtGui.QMainWindow):
         
         if self.mod.config == []:
             self.controls.append(QtGui.QLabel('config.json currently empty. '
-                                         'imagine awesome layout here ...'))
+                                              'imagine awesome layout here ...'))
         else:
             for element in self.mod.config:
                 self.controls.append(a2ctrl.draw(element))
@@ -181,7 +182,7 @@ class A2Window(QtGui.QMainWindow):
             s = 'Because none existed before this temporary description was created for "%s". '\
                 'Change it to describe what it does with a couple of words.' % self.mod.name
             newNfo = {'typ': 'nfo',
-                       'description': s,
+                      'description': s,
                       #'display name': '%s' % mod.name,
                       'author': 'your name',
                       'version': '0.1',
@@ -275,6 +276,22 @@ class A2Window(QtGui.QMainWindow):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """
         return join(self.a2dir, 'settings')
 
+    def closeEvent(self, event):
+        self.settings.setValue("geometry", self.saveGeometry())
+        self.settings.setValue("splitterPos", self.ui.splitter.sizes())
+        QtGui.QMainWindow.closeEvent(self, event)
+
+    def restoreA2ui(self):
+        #self.setGeometry(QtCore.QRect(250, 250, 1268, 786))
+        self.restoreGeometry(self.settings.value("geometry"))
+        sizes = self.settings.value("splitterPos")
+        if not isinstance(sizes, list):
+            sizes = [200, 200]
+        else:
+            sizes = [int(sizes[0]), int(sizes[1])]
+        self.ui.splitter.setSizes(sizes)
+
+    
 
 class Mod(object):
     """
@@ -378,6 +395,7 @@ class A2Obj(object):
 if __name__ == '__main__':
     # if in main thread, run the ui directly
     app = QtGui.QApplication(sys.argv)
+    app.setStyle(QtGui.QStyleFactory.create("Plastique"))
     a2ui = A2Window()
     a2ui.show()
     exit(app.exec_())
