@@ -191,7 +191,17 @@ class EditAddElem(QtGui.QWidget):
         
     def newInclude(self, name=''):
         if not name:
-            log.info('creating new file to include at: %s' % self.mod.path)
+            text, ok = QtGui.QInputDialog.getText(self, 'new script',
+                                                  'give a name for the new script file:',
+                                                  QtGui.QLineEdit.Normal, 'awesomeScript')
+            if ok and text != '':
+                log.debug('text: %s' % text)
+            
+            x = QtCore.QDir.home().dirName()
+            log.debug('x: "%s"' % x)
+            
+            #self.mod.createScript()
+            #log.info('creating new file to include at: %s' % self.mod.path)
         else:
             log.info('including: %s' % name)
             self.addCtrl('include', name)
@@ -230,14 +240,12 @@ class EditInclude(QtGui.QWidget):
         self.layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.file)
         self.layout.addWidget(self.button)
-        #self.comboBox = QtGui.QComboBox(self)
-        #self.comboBox.addItems(mod.scripts)
-        #self.layout.addWidget(self.comboBox)
+        
+        self.editButton = QtGui.QPushButton('edit script')
+        self.layout.addWidget(self.editButton)
+        
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layout.addItem(spacerItem)
-        
-        #parent.insertWidget(index, self.widget)
-        #ctrldict[name] = self
     
     def getCfg(self):
         cfg = {'typ': self.typ,

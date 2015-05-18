@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>668</width>
-    <height>422</height>
+    <width>1118</width>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -197,8 +197,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>326</width>
-             <height>303</height>
+             <width>702</width>
+             <height>522</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -260,24 +260,25 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>668</width>
-     <height>23</height>
+     <width>1118</width>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout_a2"/>
    </widget>
    <widget class="QMenu" name="menuDev">
     <property name="title">
-     <string>dev</string>
+     <string>&amp;Dev</string>
     </property>
     <addaction name="actionEdit_module"/>
+    <addaction name="actionDisable_all_modules"/>
    </widget>
-   <addaction name="menuHelp"/>
    <addaction name="menuDev"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout_a2">
@@ -288,6 +289,11 @@
   <action name="actionEdit_module">
    <property name="text">
     <string>edit module</string>
+   </property>
+  </action>
+  <action name="actionDisable_all_modules">
+   <property name="text">
+    <string>disable all modules</string>
    </property>
   </action>
  </widget>

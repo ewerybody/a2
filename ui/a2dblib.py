@@ -16,19 +16,15 @@ this enables us to do simple get/set things like
 incls = a2db.get('includes', 'a2')
 a2db.set('includes', 'a2', incls)
 a2db.rem('tempstuff', 'a2')
-
-TODO: replace those 'string ' + var + ' string' statements with
-    'string % string' % var
-TODO: we have a "set" conflict. It still works because self.set != set.
-    But it`s damn ugly. Make the get/set get/put? 
 """
 import sqlite3
 import logging
 logging.basicConfig()
 log = logging.getLogger('a2db')
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 _defaultTable = 'a2'
+_defaultSep = '|'
 
 
 class A2db:
@@ -59,18 +55,24 @@ class A2db:
                 log.error('there is no key "%s" in section "%s"' % (key, table))
                 return ''
 
-    def gets(self, key, table=_defaultTable, sep='|'):
+    def gets(self, key, table=_defaultTable, sep=_defaultSep):
         """
         returns a separated list from a db string entry
         """
         value = self.get(key, table)
+        if not value:
+            return set()
         return set(value.split(sep))
 
-    def set(self, key, value, table=_defaultTable, check=False):
+    def set(self, key, value, table=_defaultTable, sep=_defaultSep, check=False):
         """
         update TableName SET valueName=value WHERE key=keyName
         example:
         """
+        # to accept iterable values make them a string with separators
+        if isinstance(value, (set, list, tuple)):
+            value = sep.join(value)
+        
         try:
             if key not in self.keys(table):
                 statement = ('insert into "%s" ("key","value") values ("%s", "%s")' % (table, key, value))
@@ -92,13 +94,12 @@ class A2db:
                 #log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s' % (value, key, table, error))
                 log.error('could not set value: "%s" on key:"%s" in section:"%s"' % (value, key, table))
 
-    def adds(self, key, value, table=_defaultTable, sep='|'):
+    def adds(self, key, value, table=_defaultTable, sep=_defaultSep):
         """
         appends a string value to a string entry with a separator if its not already in
         should basically work like built-in set.add
         """
         current = self.gets(key, table, sep)
-        
         if '' in current:
             current.remove('')
         
@@ -108,7 +109,7 @@ class A2db:
             log.debug('added "%s" to key:%s - %s' % (value, key, current))
         return current
 
-    def dels(self, key, value, table=_defaultTable, sep='|'):
+    def dels(self, key, value, table=_defaultTable, sep=_defaultSep):
         """
         deletes a string value from an entry
         """

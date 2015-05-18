@@ -9,20 +9,20 @@ tt("a2 started!",1)
 SetTitleMatchMode, 2
 
 ; load variables
-#include settings/variables.ahk
+#include settings\variables.ahk
 ; init phase
 ;Gosub, a2Init
 
 Return ; -------------------------------------------------------------------------------------------
 
 ; load libraries
-#include settings/libs.ahk
+#include settings\libs.ahk
 ; load the selected functionalities
-#include settings/includes.ahk
+#include settings\includes.ahk
 ; load according hotkeys for those ; standard hotkeys configurable through this include too
-#include settings/hotkeys.ahk
+#include settings\hotkeys.ahk
 ; for things that need an initiation phase
-#include settings/init.ahk
+#include settings\init.ahk
 
 a2UI() {
     ; TODO: placeholder. call PySide a2ui when available

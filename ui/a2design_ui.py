@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Wed Apr 29 01:08:28 2015
+# Created: Wed May 13 21:21:52 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2MainWindow(object):
     def setupUi(self, a2MainWindow):
         a2MainWindow.setObjectName("a2MainWindow")
-        a2MainWindow.resize(1230, 713)
+        a2MainWindow.resize(1118, 711)
         self.centralwidget = QtGui.QWidget(a2MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
@@ -20,7 +20,10 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_3.setContentsMargins(5, 5, 5, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.splitter = QtGui.QSplitter(self.centralwidget)
+        self.splitter.setFrameShape(QtGui.QFrame.NoFrame)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setOpaqueResize(True)
+        self.splitter.setChildrenCollapsible(False)
         self.splitter.setObjectName("splitter")
         self.moduleBox = QtGui.QGroupBox(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -84,7 +87,7 @@ class Ui_a2MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtGui.QWidget()
-        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 796, 524))
+        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 702, 522))
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -109,7 +112,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1230, 38))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1118, 38))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
@@ -123,10 +126,13 @@ class Ui_a2MainWindow(object):
         self.actionAbout_a2.setObjectName("actionAbout_a2")
         self.actionEdit_module = QtGui.QAction(a2MainWindow)
         self.actionEdit_module.setObjectName("actionEdit_module")
+        self.actionDisable_all_modules = QtGui.QAction(a2MainWindow)
+        self.actionDisable_all_modules.setObjectName("actionDisable_all_modules")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuDev.addAction(self.actionEdit_module)
-        self.menubar.addAction(self.menuHelp.menuAction())
+        self.menuDev.addAction(self.actionDisable_all_modules)
         self.menubar.addAction(self.menuDev.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(a2MainWindow)
         QtCore.QMetaObject.connectSlotsByName(a2MainWindow)
@@ -140,8 +146,9 @@ class Ui_a2MainWindow(object):
         self.welcomeText.setText(QtGui.QApplication.translate("a2MainWindow", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
         self.editOKButton.setText(QtGui.QApplication.translate("a2MainWindow", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.editCancelButton.setText(QtGui.QApplication.translate("a2MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuHelp.setTitle(QtGui.QApplication.translate("a2MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuDev.setTitle(QtGui.QApplication.translate("a2MainWindow", "dev", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuHelp.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuDev.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Dev", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_a2.setText(QtGui.QApplication.translate("a2MainWindow", "about a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "edit module", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDisable_all_modules.setText(QtGui.QApplication.translate("a2MainWindow", "disable all modules", None, QtGui.QApplication.UnicodeUTF8))
 

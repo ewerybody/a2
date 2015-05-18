@@ -9,6 +9,7 @@ import a2ctrl
 import json
 from a2design_ui import Ui_a2MainWindow
 
+import subprocess
 import logging
 logging.basicConfig()
 log = logging.getLogger('a2ui')
@@ -31,11 +32,11 @@ class A2Window(QtGui.QMainWindow):
 
         self.initPaths()
         self.dbfile = join(self.a2setdir, 'a2.db')
-        # create db connection: use test\a2dbtest.py to test it
         self.db = a2dblib.A2db(self.dbfile)
-
+        
+        self.mod = None
         self.enabledMods = self.db.gets('enabled')
-        log.info('enabledMods: %s' % self.enabledMods)
+        self.editing = False
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.controls = [self.ui.welcomeText]
@@ -60,30 +61,46 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modCheck.clicked.connect(self.modEnable)
         self.ui.modInfoButton.clicked.connect(self.modInfo)
         self.ui.actionEdit_module.triggered.connect(self.editMod)
-        self.toggleEditCtrls(False)
+        self.ui.actionEdit_module.setShortcut("Ctrl+E")
+        self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
+        
+        self.toggleEdit(False)
         self.ui.editOKButton.pressed.connect(self.editSubmit)
         self.ui.editCancelButton.pressed.connect(self.drawMod)
         
         #TODO: fck reg! do that with the sql db dumbass!
         self.settings = QtCore.QSettings("a2", "a2ui")
         self.restoreA2ui()
+    
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
+                        self, self.escape)
+        
         log.info('a2ui initialised!')
+    
+    def escape(self):
+        if self.editing:
+            self.drawMod()
+        else:
+            exit()
     
     def modSelect(self, force=False):
         """
         updates the mod view to the right of the UI
         when something different is elected in the module list
         """
-        name = self.ui.modList.selectedItems()[0].text()
+        sel = self.ui.modList.selectedItems()
+        if not sel:
+            return
+        
+        name = sel[0].text()
         if name == self.selectedMod and force is False:
             return
-        self.mod = self.modules[name]
-        
+
         self.ui.modCheck.setVisible(True)
         self.ui.modName.setText(name)
         self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
         
-        # TODO: make selectedMod rather the object?
+        self.mod = self.modules[name]
         self.selectedMod = name
         self.drawMod()
         
@@ -160,7 +177,7 @@ class A2Window(QtGui.QMainWindow):
             for element in self.mod.config:
                 self.controls.append(a2ctrl.draw(element))
         
-        self.toggleEditCtrls(False)
+        self.toggleEdit(False)
         self.drawUI()
         
     def editMod(self):
@@ -171,6 +188,9 @@ class A2Window(QtGui.QMainWindow):
         On Cancel the in-edit config is discarded and drawMod called which draws the
         UI unchanged.
         """
+        if self.mod is None:
+            return
+        
         log.debug('editing: %s' % self.mod.name)
         self.controls = []
         
@@ -197,7 +217,7 @@ class A2Window(QtGui.QMainWindow):
         self.controls.append(editSelect)
         
         self.drawUI()
-        self.toggleEditCtrls(True)
+        self.toggleEdit(True)
     
     def editSubmit(self):
         """
@@ -209,32 +229,52 @@ class A2Window(QtGui.QMainWindow):
                 newcfg.append(ctrl.getCfg())
         
         self.mod.saveConfig(newcfg)
+        self.settingsChanged()
         self.drawMod()
     
-    def toggleEditCtrls(self, state):
+    def toggleEdit(self, state):
+        self.editing = state
         for button in [self.ui.editCancelButton, self.ui.editOKButton]:
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
     
     def modEnable(self):
-        if self.ui.modCheck.checkState():
+        if self.ui.modCheck.isChecked():
             log.debug('enabling: %s ...' % self.selectedMod)
-            enabled = self.db.adds('enabled', self.selectedMod)
+            self.mod.enable()
+            self.db.adds('enabled', self.selectedMod)
         else:
             log.debug('disabling: %s ...' % self.selectedMod)
-            enabled = self.db.dels('enabled', self.selectedMod)
-        for e in enabled:
-            for c in self.modules[e].config:
-                if c['typ'] == 'include':
-                    log.info('enabled mod %s file to include: %s' % (e, c['file']))
+            self.db.dels('enabled', self.selectedMod)
         
-        
-
+        self.settingsChanged()
+    
+    def modDisableAll(self):
+        self.db.set('enabled', '')
+        self.modSelect(force=True)
+        self.settingsChanged()
+    
     def modInfo(self):
         log.debug('calling info on: %s ...' % self.selectedMod)
     
-    def settingsChanged(self, mod):
-        print('mod: ' + str(self.modules[mod]))
+    def settingsChanged(self):
+        includeAhk = ["; a2 include.ahk - Don't bother editing! - File is generated automatically!"]
+        for modname in self.db.gets('enabled'):
+            includes = self.db.gets('include', modname)
+            includeAhk += ['#include modules\%s\%s' % (modname, i) for i in includes]
+            #log.debug('includes %s: %s' % (e, includes))
+            #for c in self.modules[e].config:
+            #    if c['typ'] == 'include':
+            #        log.info('enabled mod %s file to include: %s' % (e, c['file']))
+        log.debug('includeAhk:\n%s' % includeAhk)
+        #if os.access(os.W_OK)
+        with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:
+            fobj.write('\n'.join(includeAhk))
+        #print('mod: %s' % self.mod.name)
+        
+        tempAHKExe = 'C:/Program Files/AutoHotkey/AutoHotkey.exe'
+        log.debug('self.a2ahk: %s' % self.a2ahk)
+        subprocess.Popen([tempAHKExe, self.a2ahk], cwd=self.a2dir)
     
     def fetchModules(self):
         self.modules = {}
@@ -256,11 +296,11 @@ class A2Window(QtGui.QMainWindow):
                                 'Could not get main Ui dir!')
 
         self.a2dir = os.path.dirname(self.a2uidir)
-        self.a2libdir = self.a2dir + '/' + 'lib/'
-        self.a2exe = self.a2dir + '/a2Starter.exe'
-        self.a2ahk = self.a2dir + '/a2.ahk'
+        self.a2libdir = join(self.a2dir, 'lib')
+        self.a2exe = join(self.a2dir, 'a2Starter.exe') 
+        self.a2ahk = join(self.a2dir, 'a2.ahk')
         self.a2setdir = self.getSettingsDir()
-        self.a2moddir = self.a2dir + '/' + 'modules/'
+        self.a2moddir = join(self.a2dir, 'modules')
         # test if all necessary directories are present:
         mainItems = [self.a2ahk, self.a2exe, self.a2libdir, self.a2moddir,
                      self.a2setdir, self.a2uidir]
@@ -291,7 +331,7 @@ class A2Window(QtGui.QMainWindow):
             sizes = [int(sizes[0]), int(sizes[1])]
         self.ui.splitter.setSizes(sizes)
 
-    
+
 
 class Mod(object):
     """
@@ -336,6 +376,13 @@ class Mod(object):
                 log.error('config exists but could not be loaded!: %s\nerror: %s' % (self.configFile, error))
         self._config = []
     
+    def enable(self):
+        """
+        sets its own db entries 
+        """
+        files = [cfg['file'] for cfg in self.config[1:] if cfg['typ'] == 'include']
+        self.db.set('include', files, self.name)
+    
     @property
     def scripts(self):
         if self._scripts is None:
@@ -377,7 +424,14 @@ class Mod(object):
         self._config = cfgdict
         with open(self.configFile, 'w') as fObj:
             json.dump(self._config, fObj, indent=jsonIndent)
-        
+
+    def createScript(self):
+        text, ok = QtGui.QInputDialog.getText(self, 'new script',
+                                              'give a name for the new script file:',
+                                              QtGui.QLineEdit.Normal, 'awesomeScript')
+        if ok and text != '':
+            log.debug('text: %s' % text)
+
 
 class A2Obj(object):
     """
@@ -395,7 +449,7 @@ class A2Obj(object):
 if __name__ == '__main__':
     # if in main thread, run the ui directly
     app = QtGui.QApplication(sys.argv)
-    app.setStyle(QtGui.QStyleFactory.create("Plastique"))
+    #app.setStyle(QtGui.QStyleFactory.create("Plastique"))
     a2ui = A2Window()
     a2ui.show()
     exit(app.exec_())
