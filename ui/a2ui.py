@@ -81,7 +81,7 @@ class A2Window(QtGui.QMainWindow):
         if self.editing:
             self.drawMod()
         else:
-            exit()
+            self.close()
     
     def modSelect(self, force=False):
         """
@@ -271,10 +271,7 @@ class A2Window(QtGui.QMainWindow):
         with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:
             fobj.write('\n'.join(includeAhk))
         #print('mod: %s' % self.mod.name)
-        
-        tempAHKExe = 'C:/Program Files/AutoHotkey/AutoHotkey.exe'
-        log.debug('self.a2ahk: %s' % self.a2ahk)
-        subprocess.Popen([tempAHKExe, self.a2ahk], cwd=self.a2dir)
+        subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir)
     
     def fetchModules(self):
         self.modules = {}
@@ -311,7 +308,11 @@ class A2Window(QtGui.QMainWindow):
         if not os.access(self.a2setdir, os.W_OK):
             raise Exception('a2ui start interrupted! %s inaccessable!'
                             % self.a2setdir)
-
+    
+        # by default the Autohotkey.exe in the lib should be uses
+        # but we need an option for that a user can put it to whatever he wants
+        self.ahkexe = join(self.a2libdir, 'AutoHotkey', 'AutoHotkey.exe')
+    
     def getSettingsDir(self):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """
         return join(self.a2dir, 'settings')
