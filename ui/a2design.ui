@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1118</width>
-    <height>711</height>
+    <width>1196</width>
+    <height>679</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,7 +80,29 @@
          <number>5</number>
         </property>
         <item>
-         <widget class="QListWidget" name="modList"/>
+         <widget class="QListWidget" name="modList">
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="selectionRectVisible">
+           <bool>false</bool>
+          </property>
+          <property name="currentRow">
+           <number>-1</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -110,6 +132,9 @@
            <widget class="QCheckBox" name="modCheck">
             <property name="text">
              <string/>
+            </property>
+            <property name="tristate">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -197,8 +222,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>702</width>
-             <height>522</height>
+             <width>762</width>
+             <height>523</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -221,6 +246,9 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="editOKCancelLayout">
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
           <item>
            <widget class="QPushButton" name="editOKButton">
             <property name="maximumSize">
@@ -260,7 +288,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1118</width>
+     <width>1196</width>
      <height>38</height>
     </rect>
    </property>
@@ -276,11 +304,13 @@
     </property>
     <addaction name="actionEdit_module"/>
     <addaction name="actionDisable_all_modules"/>
+    <addaction name="actionExplore_to"/>
+    <addaction name="separator"/>
+    <addaction name="actionDev_settings"/>
    </widget>
    <addaction name="menuDev"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout_a2">
    <property name="text">
     <string>about a2</string>
@@ -294,6 +324,16 @@
   <action name="actionDisable_all_modules">
    <property name="text">
     <string>disable all modules</string>
+   </property>
+  </action>
+  <action name="actionExplore_to">
+   <property name="text">
+    <string>explore to ...</string>
+   </property>
+  </action>
+  <action name="actionDev_settings">
+   <property name="text">
+    <string>dev settings...</string>
    </property>
   </action>
  </widget>

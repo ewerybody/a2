@@ -1,12 +1,13 @@
 # a2ui
 from PySide import QtGui, QtCore
 import os
-from os.path import exists, join
+from os.path import exists, join, splitext, dirname
 #from functools import partial
 import sys
 import a2dblib
 import a2ctrl
 import json
+from datetime import datetime
 from a2design_ui import Ui_a2MainWindow
 
 import subprocess
@@ -25,14 +26,12 @@ class A2Window(QtGui.QMainWindow):
         self.ui = Ui_a2MainWindow()
         self.ui.setupUi(self)
 
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.setWindowIcon(icon)
-
         self.initPaths()
         self.dbfile = join(self.a2setdir, 'a2.db')
         self.db = a2dblib.A2db(self.dbfile)
+
+        # TODO: make this optional
+        self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
         
         self.mod = None
         self.enabledMods = self.db.gets('enabled')
@@ -63,6 +62,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionEdit_module.triggered.connect(self.editMod)
         self.ui.actionEdit_module.setShortcut("Ctrl+E")
         self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
+        self.ui.actionExplore_to.triggered.connect(self.exploreMod)
         
         self.toggleEdit(False)
         self.ui.editOKButton.pressed.connect(self.editSubmit)
@@ -74,14 +74,13 @@ class A2Window(QtGui.QMainWindow):
     
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.escape)
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
         
         log.info('a2ui initialised!')
-    
-    def escape(self):
-        if self.editing:
-            self.drawMod()
-        else:
-            self.close()
     
     def modSelect(self, force=False):
         """
@@ -89,19 +88,40 @@ class A2Window(QtGui.QMainWindow):
         when something different is elected in the module list
         """
         sel = self.ui.modList.selectedItems()
-        if not sel:
-            return
+        numsel = len(sel)
+        self.ui.modCheck.setTristate(False)
+        if not numsel:
+            self.ui.modCheck.setVisible(False)
+            self.mod = None
+            self.selectedMod = 'a2'
+            self.ui.modName.setText('a2')
         
-        name = sel[0].text()
-        if name == self.selectedMod and force is False:
-            return
-
-        self.ui.modCheck.setVisible(True)
-        self.ui.modName.setText(name)
-        self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
+        elif numsel == 1:
+            name = sel[0].text()
+            if name == self.selectedMod and force is False:
+                return
+            self.ui.modCheck.setVisible(True)
+            self.ui.modName.setText(name)
+            self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
+            
+            self.mod = self.modules[name]
+            self.selectedMod = name
         
-        self.mod = self.modules[name]
-        self.selectedMod = name
+        else:
+            names = [s.text() for s in sel]
+            self.selectedMod = names
+            log.debug('names: %s' % names)
+            self.ui.modCheck.setVisible(True)
+            self.ui.modName.setText('%i modules' % numsel)
+            numenabled = len([n for n in names if n in self.db.gets('enabled')])
+            if numenabled == 0:
+                self.ui.modCheck.setChecked(False)
+            if numenabled == numsel:
+                self.ui.modCheck.setChecked(True)
+            else:
+                self.ui.modCheck.setTristate(True)
+                self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
+        
         self.drawMod()
         
     def drawUI(self):
@@ -145,7 +165,16 @@ class A2Window(QtGui.QMainWindow):
         On change they trigger writing to the db, collect all include info
         and restart a2.
         """
-        log.debug('drawing: %s' % self.mod.name)
+        if self.mod is None:
+            config = [{'typ': 'nfo',
+                      'description': 'Hello Siggi! Welcome to a2! This is a template '
+                      'introduction Text. So far there is not much to say. I just '
+                      'wanted this to fill up more than one line properly. Voila!',
+                      'author': '',
+                      'version': 'v0.1'}]
+        else:
+            config = self.mod.config
+        
         self.tempConfig = None
 
 #        if self.controls:
@@ -161,20 +190,20 @@ class A2Window(QtGui.QMainWindow):
 
         author = ''
         version = ''
-        if len(self.mod.config):
-            if self.mod.config[0].get('typ') != 'nfo':
+        if len(config):
+            if config[0].get('typ') != 'nfo':
                 log.error('First element of config is not typ nfo! %s' % self.mod.name)
-            author = self.mod.config[0].get('author') or ''
-            version = self.mod.config[0].get('version') or ''
+            author = config[0].get('author') or ''
+            version = config[0].get('version') or ''
         self.ui.modAuthor.setText(author)
         self.ui.modVersion.setText(version)
         self.controls = []
         
-        if self.mod.config == []:
+        if config == []:
             self.controls.append(QtGui.QLabel('config.json currently empty. '
                                               'imagine awesome layout here ...'))
         else:
-            for element in self.mod.config:
+            for element in config:
                 self.controls.append(a2ctrl.draw(element))
         
         self.toggleEdit(False)
@@ -204,14 +233,14 @@ class A2Window(QtGui.QMainWindow):
             newNfo = {'typ': 'nfo',
                       'description': s,
                       #'display name': '%s' % mod.name,
-                      'author': 'your name',
+                      'author': self.getAuthor(),
                       'version': '0.1',
-                      'date': '2015'}
+                      'date': self.getDate()}
             self.tempConfig.insert(0, newNfo)
             print('config: %s' % self.tempConfig)
         
         for element in self.tempConfig:
-            self.controls.append(a2ctrl.edit(element, self.mod))
+            self.controls.append(a2ctrl.edit(element, self.mod, self))
         
         editSelect = a2ctrl.EditAddElem(self.mod, self.tempConfig, self.editMod)
         self.controls.append(editSelect)
@@ -228,7 +257,7 @@ class A2Window(QtGui.QMainWindow):
             if hasattr(ctrl, 'getCfg'):
                 newcfg.append(ctrl.getCfg())
         
-        self.mod.saveConfig(newcfg)
+        self.mod.config = newcfg
         self.settingsChanged()
         self.drawMod()
     
@@ -237,6 +266,7 @@ class A2Window(QtGui.QMainWindow):
         for button in [self.ui.editCancelButton, self.ui.editOKButton]:
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
+            self.ui.editOKCancelLayout.setContentsMargins(-1, -1, -1, 5 if state else 0)
     
     def modEnable(self):
         if self.ui.modCheck.isChecked():
@@ -275,8 +305,8 @@ class A2Window(QtGui.QMainWindow):
     
     def fetchModules(self):
         self.modules = {}
-        for mod in os.listdir(self.a2moddir):
-            self.modules[mod] = Mod(mod, self.a2moddir, self.db)
+        for modname in os.listdir(self.a2moddir):
+            self.modules[modname] = Mod(modname, self)
 
     def initPaths(self):
         """ makes sure all necessary paths and their variables are available """
@@ -292,7 +322,7 @@ class A2Window(QtGui.QMainWindow):
                 raise Exception('a2ui start interrupted! '
                                 'Could not get main Ui dir!')
 
-        self.a2dir = os.path.dirname(self.a2uidir)
+        self.a2dir = dirname(self.a2uidir)
         self.a2libdir = join(self.a2dir, 'lib')
         self.a2exe = join(self.a2dir, 'a2Starter.exe') 
         self.a2ahk = join(self.a2dir, 'a2.ahk')
@@ -313,9 +343,26 @@ class A2Window(QtGui.QMainWindow):
         # but we need an option for that a user can put it to whatever he wants
         self.ahkexe = join(self.a2libdir, 'AutoHotkey', 'AutoHotkey.exe')
     
+    def escape(self):
+        if self.editing:
+            self.drawMod()
+        else:
+            self.close()
+    
+    def exploreMod(self):
+        if isinstance(self.mod, Mod):
+            subprocess.Popen(['explorer.exe', self.mod.path])
+    
     def getSettingsDir(self):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """
         return join(self.a2dir, 'settings')
+
+    def getAuthor(self):
+        return self.db.get('devAuthor') or os.getenv('USERNAME')
+
+    def getDate(self):
+        today = datetime.today()
+        return '%i %i %i' % (today.year, today.month, today.day)
 
     def closeEvent(self, event):
         self.settings.setValue("geometry", self.saveGeometry())
@@ -331,7 +378,6 @@ class A2Window(QtGui.QMainWindow):
         else:
             sizes = [int(sizes[0]), int(sizes[1])]
         self.ui.splitter.setSizes(sizes)
-
 
 
 class Mod(object):
@@ -350,22 +396,27 @@ class Mod(object):
     config is None at first and filled as soon as the mod is selected in the UI.
     If there is no configFile yet it will be emptied instead of None.
     """
-    def __init__(self, modname, a2moddir, db):
+    def __init__(self, modname, main):
         # gather files from module path in local list
         self.name = modname
-        self.path = join(a2moddir, modname)
+        self.path = join(main.a2moddir, modname)
         self._config = None
         self.configFile = join(self.path, 'config.json')
-        self.db = db
+        self.db = main.db
         self.ui = None
-        self._files = None
-        self._scripts = None
+        self.main = main
     
     @property
     def config(self):
         if self._config is None:
             self.getConfig()
         return self._config
+    
+    @config.setter
+    def config(self, cfgdict):
+        self._config = cfgdict
+        with open(self.configFile, 'w') as fObj:
+            json.dump(self._config, fObj, indent=jsonIndent)
     
     def getConfig(self):
         if exists(self.configFile):
@@ -386,29 +437,12 @@ class Mod(object):
     
     @property
     def scripts(self):
-        if self._scripts is None:
-            self.getScripts()
-        return self._scripts
+        return [f for f in self.files if f.lower().endswith('.ahk')]
     
-    def getScripts(self):
-        self._scripts = [f for f in self.getFiles() if f.lower().endswith('.ahk')]
-        return self._scripts
-
     @property
     def files(self):
-        if self._files is None:
-            self._files = self.getFiles()
-        return self._files
-
-    def getFiles(self):
-        """
-        browses the modules folder for files that belong to a module part
-        # script file - the filename to be enlisted to the includes
-        # defaults file - variable defaults and hotkey suggestions
-        # language file - for ui and runtime
-        """
-        self._files = os.listdir(self.path)
-        return self._files
+        """ always browses the path for files"""
+        return os.listdir(self.path)
 
     def createConfig(self, main=None):
         """
@@ -421,53 +455,25 @@ class Mod(object):
         if main:
             main.modSelect(True)
 
-    def saveConfig(self, cfgdict):
-        self._config = cfgdict
-        with open(self.configFile, 'w') as fObj:
-            json.dump(self._config, fObj, indent=jsonIndent)
-
     def createScript(self):
-        text, ok = QtGui.QInputDialog.getText(self, 'new script',
+        scriptName, ok = QtGui.QInputDialog.getText(self.main, 'new script',
                                               'give a name for the new script file:',
                                               QtGui.QLineEdit.Normal, 'awesomeScript')
-        if ok and text != '':
-            log.debug('text: %s' % text)
-
-
-class A2Obj(object):
-    """
-    WIP!: this doesn't really work well... somhow I'd like a console
-    that can talk to the running ui window. Gotta learn more Qt...
-    """
-    def __init__(self):
-        self.app = QtGui.QApplication([])
-        self.ui = A2Window()
-        self.ui.show()
-        log.info('aaaand its gone!')
-        #exit(self.app.exec_())
+        if ok and scriptName != '':
+            # make sure there is lowercase .ahk as extension 
+            scriptName = '%s.ahk' % splitext(scriptName)[0]
+            log.debug('text: %s' % scriptName)
+            with open(join(self.path, scriptName), 'w') as fObj:
+                content = '; %s - %s\n' % (self.name, scriptName)
+                content += '; author: %s\n' % self.main.getAuthor() 
+                content += '; created: %s\n\n' % self.main.getDate()
+                fObj.write(content)
+        return scriptName
 
 
 if __name__ == '__main__':
-    # if in main thread, run the ui directly
     app = QtGui.QApplication(sys.argv)
     #app.setStyle(QtGui.QStyleFactory.create("Plastique"))
     a2ui = A2Window()
     a2ui.show()
     exit(app.exec_())
-else:
-    # otherwise offer a scripting interface
-    log.error('__name__ != "__main__": %s' % __name__)
-    log.info('fetch an A2Obj e.g.:\n\ta2 = a2ui.A2Obj()\n')
-
-
-def a2reload():
-    # engages the a2.ahk runtime to shutdown and restart
-    # preferably in another thread?
-    pass
-
-
-def r():
-    # debug wrapper to reload a2ui in py env
-    __import__(sys.modules['a2ui'])
-    __import__(sys.modules['a2dblib'])
-    return A2Window()

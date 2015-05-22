@@ -28,6 +28,8 @@ version, description info
 from PySide import QtGui, QtCore
 import logging
 from functools import partial
+import subprocess
+from os.path import join
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
@@ -45,6 +47,9 @@ def draw(element):
         return DrawCheck(element)
 
 
+class DrawWelcome(QtGui.QWidget):
+    'Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!'
+
 class DrawNfo(QtGui.QWidget):
     def __init__(self, data):
         super(DrawNfo, self).__init__()
@@ -57,11 +62,11 @@ class DrawNfo(QtGui.QWidget):
         self.layout.addWidget(self.label)
 
 
-def edit(element, mod):
+def edit(element, mod, main):
     if element['typ'] == 'nfo':
         return EditNfo(element)
     elif element['typ'] == 'include':
-        return EditInclude(element, mod)
+        return EditInclude(element, mod, main)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -164,19 +169,25 @@ class EditAddElem(QtGui.QWidget):
         self.baselayout.addWidget(self.addButton)
         
         self.menu = QtGui.QMenu(self.addButton)
-        self.populateMenu()
+        self.menu.aboutToShow.connect(self.populateMenu)
         self.addButton.setMenu(self.menu)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.baselayout.addItem(spacerItem)
 
     def populateMenu(self):
+        self.menu.clear()
         self.menu_include = self.menu.addMenu('include')
-        for m in self.mod.scripts:
-            a = QtGui.QAction(self.menu_include)
-            a.setText(m)
-            a.triggered.connect(partial(self.newInclude, m))
-            self.menu_include.addAction(a)
-            
+        scriptsInUse = set()
+        for element in self.tempConfig:
+            if element['typ'] == 'include':
+                scriptsInUse.add(element['file'])
+        scriptsUnused = set(self.mod.scripts) - scriptsInUse
+        for scriptName in scriptsUnused:
+            action = QtGui.QAction(self.menu_include)
+            action.setText(scriptName)
+            action.triggered.connect(partial(self.newInclude, scriptName))
+            self.menu_include.addAction(action)
+        
         newIncludeAction = QtGui.QAction(self.menu_include)
         newIncludeAction.setText('create new')
         newIncludeAction.triggered.connect(self.newInclude)
@@ -188,23 +199,14 @@ class EditAddElem(QtGui.QWidget):
             a.setText(el)
             a.triggered.connect(partial(self.addCtrl, el))
             self.menu.addAction(a)
-        
+    
     def newInclude(self, name=''):
         if not name:
-            text, ok = QtGui.QInputDialog.getText(self, 'new script',
-                                                  'give a name for the new script file:',
-                                                  QtGui.QLineEdit.Normal, 'awesomeScript')
-            if ok and text != '':
-                log.debug('text: %s' % text)
-            
-            x = QtCore.QDir.home().dirName()
-            log.debug('x: "%s"' % x)
-            
-            #self.mod.createScript()
-            #log.info('creating new file to include at: %s' % self.mod.path)
-        else:
-            log.info('including: %s' % name)
-            self.addCtrl('include', name)
+            name = self.mod.createScript()
+            if not name:
+                return
+        log.info('including: %s' % name)
+        self.addCtrl('include', name)
     
     def addCtrl(self, typ, name=''):
         cfg = {'typ': typ}
@@ -227,10 +229,12 @@ class EditInclude(QtGui.QWidget):
     in the configuration in the background. 
     """
     #def __init__(self, parent, mod):
-    def __init__(self, data, mod):
+    def __init__(self, data, mod, main):
         super(EditInclude, self).__init__()
         self.typ = data['typ']
         self.file = data['file']
+        self.mod = mod
+        self.main = main
 
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
@@ -242,6 +246,7 @@ class EditInclude(QtGui.QWidget):
         self.layout.addWidget(self.button)
         
         self.editButton = QtGui.QPushButton('edit script')
+        self.editButton.pressed.connect(self.editScript)
         self.layout.addWidget(self.editButton)
         
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -251,6 +256,9 @@ class EditInclude(QtGui.QWidget):
         cfg = {'typ': self.typ,
                'file': self.file}
         return cfg
+    
+    def editScript(self):
+        subprocess.Popen([self.main.scriptEditor, join(self.mod.path, self.file)])
 
 
 class EditView(QtGui.QWidget):

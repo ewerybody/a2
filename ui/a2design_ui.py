@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Wed May 13 21:21:52 2015
+# Created: Fri May 22 19:19:55 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2MainWindow(object):
     def setupUi(self, a2MainWindow):
         a2MainWindow.setObjectName("a2MainWindow")
-        a2MainWindow.resize(1118, 711)
+        a2MainWindow.resize(1196, 679)
         self.centralwidget = QtGui.QWidget(a2MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
@@ -40,6 +40,11 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_2.setContentsMargins(5, 5, 5, 5)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.modList = QtGui.QListWidget(self.moduleBox)
+        self.modList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.modList.setAlternatingRowColors(True)
+        self.modList.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.modList.setIconSize(QtCore.QSize(32, 32))
+        self.modList.setSelectionRectVisible(False)
         self.modList.setObjectName("modList")
         self.verticalLayout_2.addWidget(self.modList)
         self.settingsBox = QtGui.QGroupBox(self.splitter)
@@ -87,7 +92,7 @@ class Ui_a2MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtGui.QWidget()
-        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 702, 522))
+        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 762, 523))
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -99,6 +104,7 @@ class Ui_a2MainWindow(object):
         self.scrollArea.setWidget(self.scrollAreaContents)
         self.verticalLayout.addWidget(self.scrollArea)
         self.editOKCancelLayout = QtGui.QHBoxLayout()
+        self.editOKCancelLayout.setContentsMargins(-1, -1, -1, 5)
         self.editOKCancelLayout.setObjectName("editOKCancelLayout")
         self.editOKButton = QtGui.QPushButton(self.settingsBox)
         self.editOKButton.setMaximumSize(QtCore.QSize(16777215, 50))
@@ -112,29 +118,30 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1118, 38))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1196, 38))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         self.menuDev = QtGui.QMenu(self.menubar)
         self.menuDev.setObjectName("menuDev")
         a2MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(a2MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        a2MainWindow.setStatusBar(self.statusbar)
         self.actionAbout_a2 = QtGui.QAction(a2MainWindow)
         self.actionAbout_a2.setObjectName("actionAbout_a2")
         self.actionEdit_module = QtGui.QAction(a2MainWindow)
         self.actionEdit_module.setObjectName("actionEdit_module")
         self.actionDisable_all_modules = QtGui.QAction(a2MainWindow)
         self.actionDisable_all_modules.setObjectName("actionDisable_all_modules")
+        self.actionExplore_to = QtGui.QAction(a2MainWindow)
+        self.actionExplore_to.setObjectName("actionExplore_to")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionDisable_all_modules)
+        self.menuDev.addAction(self.actionExplore_to)
         self.menubar.addAction(self.menuDev.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(a2MainWindow)
+        self.modList.setCurrentRow(-1)
         QtCore.QMetaObject.connectSlotsByName(a2MainWindow)
 
     def retranslateUi(self, a2MainWindow):
@@ -151,4 +158,5 @@ class Ui_a2MainWindow(object):
         self.actionAbout_a2.setText(QtGui.QApplication.translate("a2MainWindow", "about a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "edit module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisable_all_modules.setText(QtGui.QApplication.translate("a2MainWindow", "disable all modules", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExplore_to.setText(QtGui.QApplication.translate("a2MainWindow", "explore to ...", None, QtGui.QApplication.UnicodeUTF8))
 
