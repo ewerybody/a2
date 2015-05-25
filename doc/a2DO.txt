@@ -7,7 +7,6 @@
 * implement available scripts browse function
 * include script selector to browse through available scipts
 * add element > include uses available scipts list
-* make edit elements write to the tempConfig on keystroke!!!
 * make a2 welcome view a mod with config too
 * create a2 settings page (part of welcome already)
 * pack SQLiteSpy to lib
@@ -18,6 +17,7 @@
 * make windowsettings use db
 
 a2DONE:
+* make edit elements write to the tempConfig on keystroke!!!
 * show summary when multiple mods selected
 * show a2 welcome when no mod selected
 * create new script now works and puts mod name, script name, author name, creation date

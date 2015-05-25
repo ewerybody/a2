@@ -12,6 +12,7 @@ from a2design_ui import Ui_a2MainWindow
 
 import subprocess
 import logging
+from copy import deepcopy
 logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
@@ -167,26 +168,15 @@ class A2Window(QtGui.QMainWindow):
         """
         if self.mod is None:
             config = [{'typ': 'nfo',
-                      'description': 'Hello Siggi! Welcome to a2! This is a template '
+                      'description': 'Hello user! Welcome to a2! This is a template '
                       'introduction Text. So far there is not much to say. I just '
                       'wanted this to fill up more than one line properly. Voila!',
                       'author': '',
                       'version': 'v0.1'}]
         else:
             config = self.mod.config
-        
+                
         self.tempConfig = None
-
-#        if self.controls:
-#            print('self.controls: %s' % self.controls)
-#         for ctrl in self.controls:
-#             #self.mainlayout.removeItem(self.ui.spacer)
-#             try:
-#                 #self.mainlayout.removeWidget(ctrl)
-#                 #del(ctrl)
-#                 pass
-#             except Exception as ex:
-#                 log.error('self.mainlayout.removeWidget(%s) threw exceptption %s' % (ctrl, ex))
 
         author = ''
         version = ''
@@ -224,7 +214,7 @@ class A2Window(QtGui.QMainWindow):
         self.controls = []
         
         if self.tempConfig is None:
-            self.tempConfig = list(self.mod.config)
+            self.tempConfig = deepcopy(self.mod.config)
         
         #if not mod.config: is None or mod.config is []
         if not len(self.tempConfig):
@@ -237,7 +227,6 @@ class A2Window(QtGui.QMainWindow):
                       'version': '0.1',
                       'date': self.getDate()}
             self.tempConfig.insert(0, newNfo)
-            print('config: %s' % self.tempConfig)
         
         for element in self.tempConfig:
             self.controls.append(a2ctrl.edit(element, self.mod, self))

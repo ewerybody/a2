@@ -73,44 +73,47 @@ class EditNfo(QtGui.QGroupBox):
     def __init__(self, data):
         super(EditNfo, self).__init__()
         log.info('Building EditNfo...')
+        self.data = data
         self.typ = data['typ']
-        #self.box = QtGui.QGroupBox(self)
         self.setTitle('module information:')
-        self.boxLayout = QtGui.QVBoxLayout(self)
-        self.boxLayout.setSpacing(5)
-        self.boxLayout.setContentsMargins(5, 5, 5, 5)
-        #EditText('description', nfo, nfoBoxLayout, nfoCtrls)
-        self.description = EditText('description', data.get('description'), self.boxLayout)
-        self.author = EditLine('author', data.get('author'), self.boxLayout)
-        self.version = EditLine('version', data.get('version'), self.boxLayout)
-        self.date = EditLine('date', data.get('date'), self.boxLayout)
+        self.layout = QtGui.QVBoxLayout(self)
+        self.layout.setSpacing(5)
+        self.layout.setContentsMargins(5, 5, 5, 5)
+        self.description = EditText('description', data.get('description'), self.layout, self.getCfg)
+        self.author = EditLine('author', data.get('author'), self.layout, self.getCfg)
+        self.version = EditLine('version', data.get('version'), self.layout, self.getCfg)
+        self.date = EditLine('date', data.get('date'), self.layout, self.getCfg)
 
     def getCfg(self):
-        cfg = {'typ': self.typ,
-               'description': self.description.value,
-               'author': self.author.value,
-               'version': self.version.value,
-               'date': self.date.value}
-        return cfg
+        self.data['description'] = self.description.value
+        self.data['author'] = self.author.value
+        self.data['version'] = self.version.value
+        self.data['date'] = self.date.value
+        return self.data
 
 
 class EditLine(QtGui.QWidget):
-    def __init__(self, name, text, parent=None):
+    def __init__(self, name, text, parentLayout=None, updatefunc=None):
         super(EditLine, self).__init__()
         self.name = name
-        self.parent = parent
-        self.baselayout = QtGui.QHBoxLayout(self)
-        self.baselayout.setSpacing(5)
-        self.baselayout.setContentsMargins(margin, margin, margin, margin)
+        self.updatefunc = updatefunc
+        self.parentLayout = parentLayout
+        self.layout = QtGui.QHBoxLayout(self)
+        self.layout.setSpacing(5)
+        self.layout.setContentsMargins(margin, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
-        #self.labelCtrl.setMaximumSize(QtCore.QSize(16777215, labelW))
         self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
-        self.baselayout.addWidget(self.labelCtrl)
+        self.layout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QLineEdit()
-        self.baselayout.addWidget(self.inputCtrl)
         self.inputCtrl.setText(str(text))
-        if parent:
-            parent.addWidget(self)
+        self.inputCtrl.textChanged.connect(self.update)
+        self.layout.addWidget(self.inputCtrl)
+        if parentLayout:
+            parentLayout.addWidget(self)
+    
+    def update(self):
+        if self.updatefunc:
+            self.updatefunc()
     
     @property
     def value(self):
@@ -118,10 +121,11 @@ class EditLine(QtGui.QWidget):
 
 
 class EditText(QtGui.QWidget):
-    def __init__(self, name, text, parent=None):
+    def __init__(self, name, text, parent=None, updatefunc=None):
         super(EditText, self).__init__()
         self.name = name
         self.parent = parent
+        self.updatefunc = updatefunc
         self.baselayout = QtGui.QVBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
@@ -131,9 +135,14 @@ class EditText(QtGui.QWidget):
         self.inputCtrl.setPlainText(str(text))
         self.inputCtrl.setTabChangesFocus(True)
         self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.inputCtrl.textChanged.connect(self.update)
         self.baselayout.addWidget(self.inputCtrl)
         if parent:
             parent.addWidget(self)
+    
+    def update(self):
+        if self.updatefunc:
+            self.updatefunc()
     
     @property
     def value(self):
