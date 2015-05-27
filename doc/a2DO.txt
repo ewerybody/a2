@@ -1,8 +1,6 @@
 ﻿a2DO:
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
-* create functionality to delete edit element 
-    * editElement class from QWidget? Also to shift elements up/down in edit ui
 * connect include buttons with include menu thing
 * implement available scripts browse function
 * include script selector to browse through available scipts
@@ -15,6 +13,8 @@
 * make windowsettings use db
 
 a2DONE:
+* create functionality to delete edit element 
+    * editElement class from QWidget? Also to shift elements up/down in edit ui
 * Ctrl+Enter to OK an edit change
 * pack SQLiteSpy to lib
 * make edit elements write to the tempConfig on keystroke!!!

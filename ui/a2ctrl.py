@@ -30,6 +30,7 @@ import logging
 from functools import partial
 import subprocess
 from os.path import join
+from ctrl_ui import Ui_EditCtrl
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
@@ -76,6 +77,8 @@ class EditNfo(QtGui.QGroupBox):
         self.data = data
         self.typ = data['typ']
         self.setTitle('module information:')
+        self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                             QtGui.QSizePolicy.Maximum))
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(5, 5, 5, 5)
@@ -91,6 +94,37 @@ class EditNfo(QtGui.QGroupBox):
         self.data['date'] = self.date.value
         return self.data
 
+class EditCtrl(QtGui.QWidget):
+    def __init__(self, element, main):
+        super(EditCtrl, self).__init__()
+        self.element = element
+        self.main = main
+        self.ui = Ui_EditCtrl()
+        self.ui.setupUi(self)
+        self.ui.menu = QtGui.QMenu(self)
+        self.ui.ctrlButton.setMenu(self.ui.menu)
+        
+        for item in [('up', partial(self.move, -1)), ('down', partial(self.move, 1)),
+                 ('delete', self.delete)]:
+            action = QtGui.QAction(self.ui.menu)
+            action.setText(item[0])
+            action.triggered.connect(item[1])
+            self.ui.menu.addAction(action)
+    
+    def delete(self):
+        if self.element in self.main.tempConfig:
+            self.main.tempConfig.remove(self.element)
+            self.main.editMod()
+
+    def move(self, value):
+        index = self.main.tempConfig.index(self.element)
+        newindex = index + value
+        if newindex < 1 or newindex >= len(self.main.tempConfig):
+            return
+        element = self.main.tempConfig.pop(index)
+        self.main.tempConfig.insert(newindex, element)
+        self.main.editMod()
+    
 
 class EditLine(QtGui.QWidget):
     def __init__(self, name, text, parentLayout=None, updatefunc=None):
@@ -226,7 +260,7 @@ class EditAddElem(QtGui.QWidget):
             #i = Include(self.mod, self.parent, self.parent.count() - 1)
 
 
-class EditInclude(QtGui.QWidget):
+class EditInclude(EditCtrl):
     """
     TODO: An Include control has to know what can be included. Plus a
     'create script' item. If a file was included already then a new
@@ -238,12 +272,11 @@ class EditInclude(QtGui.QWidget):
     in the configuration in the background. 
     """
     #def __init__(self, parent, mod):
-    def __init__(self, data, mod, main):
-        super(EditInclude, self).__init__()
-        self.typ = data['typ']
-        self.file = data['file']
+    def __init__(self, element, mod, main):
+        super(EditInclude, self).__init__(element, main)
+        self.typ = element['typ']
+        self.file = element['file']
         self.mod = mod
-        self.main = main
 
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
@@ -260,6 +293,7 @@ class EditInclude(QtGui.QWidget):
         
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layout.addItem(spacerItem)
+        self.ui.layout.addLayout(self.layout)
     
     def getCfg(self):
         cfg = {'typ': self.typ,
