@@ -1,6 +1,7 @@
 ﻿a2DO:
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
+* fix: show no or summary page when multiple selected
 * connect include buttons with include menu thing
 * implement available scripts browse function
 * include script selector to browse through available scipts
@@ -11,6 +12,8 @@
 * deselect mod and show a2 welcome on Esc? (optional)
 * optional remember last selected mod
 * make windowsettings use db
+* create hotkey control which writes hotkeys.ahk inlcude
+* create check control which writes variables.ahk inlcude or inlcude.ahk
 
 a2DONE:
 * create functionality to delete edit element 
@@ -18,7 +21,7 @@ a2DONE:
 * Ctrl+Enter to OK an edit change
 * pack SQLiteSpy to lib
 * make edit elements write to the tempConfig on keystroke!!!
-* show summary when multiple mods selected
+* show summary title when multiple mods selected
 * show a2 welcome when no mod selected
 * create new script now works and puts mod name, script name, author name, creation date
 * creating new config.json also makes use of getAuthor and getDate
