@@ -75,6 +75,10 @@ class A2Window(QtGui.QMainWindow):
     
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.escape)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
+                        self, self.editSubmit)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
+                        self, self.editSubmit)
 
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
@@ -241,6 +245,9 @@ class A2Window(QtGui.QMainWindow):
         """
         loop the given ctrlDict, query ctrls and feed target mod.config
         """
+        if not self.editing:
+            return
+        
         newcfg = []
         for ctrl in self.controls:
             if hasattr(ctrl, 'getCfg'):

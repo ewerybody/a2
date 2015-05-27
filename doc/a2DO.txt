@@ -9,14 +9,14 @@
 * add element > include uses available scipts list
 * make a2 welcome view a mod with config too
 * create a2 settings page (part of welcome already)
-* pack SQLiteSpy to lib
 * get icons into the list
 * deselect mod and show a2 welcome on Esc? (optional)
-* Ctrl+Enter to OK an edit change
 * optional remember last selected mod
 * make windowsettings use db
 
 a2DONE:
+* Ctrl+Enter to OK an edit change
+* pack SQLiteSpy to lib
 * make edit elements write to the tempConfig on keystroke!!!
 * show summary when multiple mods selected
 * show a2 welcome when no mod selected
