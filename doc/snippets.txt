@@ -1,0 +1,10 @@
+# actions all in one go including icons!
+self.deleteAction = QtGui.QAction(QtGui.QIcon(':/images/delete.png'),
+                "&Delete", self, shortcut="Delete",
+                statusTip="Delete item from diagram",
+                triggered=self.deleteItem)
+
+# combobox with icons                
+self.typeComboBox.addItem(self.style().standardIcon(
+        QtGui.QStyle.SP_MessageBoxInformation), "Information",
+        QtGui.QSystemTrayIcon.Information)
