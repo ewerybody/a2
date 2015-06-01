@@ -95,6 +95,7 @@ class A2Window(QtGui.QMainWindow):
         sel = self.ui.modList.selectedItems()
         numsel = len(sel)
         self.ui.modCheck.setTristate(False)
+        
         if not numsel:
             self.ui.modCheck.setVisible(False)
             self.mod = None
@@ -107,7 +108,11 @@ class A2Window(QtGui.QMainWindow):
                 return
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText(name)
-            self.ui.modCheck.setChecked(name in self.db.gets('enabled'))
+            enabled = name in self.db.gets('enabled')
+            log.debug('enabled: %s' % enabled)
+            # weird.. need to set false first to fix tristate effect
+            self.ui.modCheck.setChecked(False)
+            self.ui.modCheck.setChecked(enabled)
             
             self.mod = self.modules[name]
             self.selectedMod = name
