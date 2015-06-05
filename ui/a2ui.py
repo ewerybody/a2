@@ -39,8 +39,7 @@ class A2Window(QtGui.QMainWindow):
         self.editing = False
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
-        self.controls = [self.ui.welcomeText]
-        self.ctrlDump = []
+        self.controls = []
         self.tempConfig = None
         # create a spacer to arrange the layout
         # NOTE that a spacer is added via addItem! not widget
@@ -84,6 +83,8 @@ class A2Window(QtGui.QMainWindow):
         icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
+        
+        self.drawMod()
         
         log.info('a2ui initialised!')
     
@@ -182,6 +183,11 @@ class A2Window(QtGui.QMainWindow):
                       'wanted this to fill up more than one line properly. Voila!',
                       'author': '',
                       'version': 'v0.1'}]
+        elif isinstance(self.selectedMod, list):
+            config = [{'typ': 'nfo',
+                      'description': 'Multiple modules selected. Here goes some useful info in the future...',
+                      'author': '',
+                      'version': ''}]
         else:
             config = self.mod.config
                 

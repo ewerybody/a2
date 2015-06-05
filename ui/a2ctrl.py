@@ -46,6 +46,8 @@ def draw(element):
         return DrawNfo(element)
     elif element['typ'] == 'check':
         return DrawCheck(element)
+    elif element['typ'] == 'hotkey':
+        return DrawHotkey(element)
 
 
 class DrawWelcome(QtGui.QWidget):
@@ -62,6 +64,33 @@ class DrawNfo(QtGui.QWidget):
         self.label.setWordWrap(True)
         self.layout.addWidget(self.label)
 
+
+class DrawCheck(QtGui.QWidget):
+    def __init__(self, data):
+        super(DrawCheck, self).__init__()
+        self.layout = QtGui.QVBoxLayout(self)
+
+
+class DrawHotkey(QtGui.QWidget):
+    """
+    cfg['typ'] == 'hotkey':
+    cfg['name'] == 'modnameHotkey1'
+    cfg['label'] == 'Hotkeytest with a MsgBox'
+    cfg['enabled'] = True
+    cfg['disablable'] = True
+    cfg['key'] = 'Win+G'
+    cfg['keyChange'] = True
+    cfg['multiple'] = True
+    cfg['scope'] = ''
+    cfg['scopeChange'] = True
+    # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
+    cfg['mode'] = 'ahk'
+    """
+    def __init__(self, data):
+        super(DrawHotkey, self).__init__()
+        self.layout = QtGui.QVBoxLayout(self)
+        
+         
 
 def edit(element, mod, main):
     if element['typ'] == 'nfo':
@@ -93,6 +122,7 @@ class EditNfo(QtGui.QGroupBox):
         self.data['version'] = self.version.value
         self.data['date'] = self.date.value
         return self.data
+
 
 class EditCtrl(QtGui.QWidget):
     def __init__(self, element, main):
@@ -238,10 +268,10 @@ class EditAddElem(QtGui.QWidget):
         
         for el in 'checkBox hotkey groupBox textField floatField intField '\
                   'fileField text button comboBox'.split():
-            a = QtGui.QAction(self.menu)
-            a.setText(el)
-            a.triggered.connect(partial(self.addCtrl, el))
-            self.menu.addAction(a)
+            action = QtGui.QAction(self.menu)
+            action.setText(el)
+            action.triggered.connect(partial(self.addCtrl, el))
+            self.menu.addAction(action)
     
     def newInclude(self, name=''):
         if not name:
@@ -255,9 +285,19 @@ class EditAddElem(QtGui.QWidget):
         cfg = {'typ': typ}
         if cfg['typ'] == 'include':
             cfg['file'] = name
-            self.tempConfig.append(cfg)
-            self.rebuildFunc()
-            #i = Include(self.mod, self.parent, self.parent.count() - 1)
+        elif cfg['typ'] == 'hotkey':
+            cfg['enabled'] = True
+            cfg['disablable'] = True
+            cfg['key'] = 'Win+G'
+            cfg['keyChange'] = True
+            cfg['multiple'] = True
+            cfg['scope'] = ''
+            cfg['scopeChange'] = True
+            # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
+            cfg['mode'] = 'ahk'
+            
+        self.tempConfig.append(cfg)
+        self.rebuildFunc()
 
 
 class EditInclude(EditCtrl):
