@@ -1,0 +1,9 @@
+QTextEdit {
+	background: url(/images/background.png);
+	font-family: Consolas;
+	font-size: 20px;
+	padding: 10px;
+	border: 5px solid maroon;
+	border-radius: 10px;
+	margin: 10px;
+}

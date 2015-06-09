@@ -1,0 +1,7 @@
+; contents of rot13.plugin
+[Core]
+version = 0.1-alpha.1
+
+[Description]
+name = Rot-13
+author = Stendec

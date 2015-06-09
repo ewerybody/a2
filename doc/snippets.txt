@@ -8,3 +8,6 @@ self.deleteAction = QtGui.QAction(QtGui.QIcon(':/images/delete.png'),
 self.typeComboBox.addItem(self.style().standardIcon(
         QtGui.QStyle.SP_MessageBoxInformation), "Information",
         QtGui.QSystemTrayIcon.Information)
+        
+# use editor set up in registry:
+RegRead, Editor, HKEY_CLASSES_ROOT, AutoHotkeyScript\Shell\Edit\Command
