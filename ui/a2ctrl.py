@@ -293,9 +293,10 @@ class EditAddElem(QtGui.QWidget):
             cfg['multiple'] = True
             cfg['scope'] = ''
             cfg['scopeChange'] = True
-            # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
+            # mode can be: ahk, file, key
+            # to execute code, open up sth, send keystroke
             cfg['mode'] = 'ahk'
-            
+        
         self.tempConfig.append(cfg)
         self.rebuildFunc()
 
