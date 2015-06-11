@@ -295,14 +295,17 @@ class A2Window(QtGui.QMainWindow):
         log.debug('calling info on: %s ...' % self.selectedMod)
     
     def settingsChanged(self):
-        includeAhk = ["; a2 include.ahk - Don't bother editing! - File is generated automatically!"]
+        includeAhk = ["; a2 include.ahk - Don't bother editing! - "
+                      "File is generated automatically!"]
         for modname in self.db.gets('enabled'):
             includes = self.db.gets('include', modname)
-            includeAhk += ['#include modules\%s\%s' % (modname, i) for i in includes]
+            includeAhk += ['#include modules\%s\%s'
+                           % (modname, i) for i in includes]
             #log.debug('includes %s: %s' % (e, includes))
             #for c in self.modules[e].config:
             #    if c['typ'] == 'include':
-            #        log.info('enabled mod %s file to include: %s' % (e, c['file']))
+            #        log.info('enabled mod %s file to include: %s'
+            #                 % (e, c['file']))
         log.debug('includeAhk:\n%s' % includeAhk)
         #if os.access(os.W_OK)
         with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:

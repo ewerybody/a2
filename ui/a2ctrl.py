@@ -20,9 +20,8 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
     parent.addWidget(inputctrl)
     editCtrls[keyName] = inputctrl
 
-TODO: maybe make the nfo item just always the 0th entry in the config.json
-Then its an nfo-type element that just draws and holds all the author, name,
-version, description info
+nfo item is always the 0th entry in the config.json it just draws and holds all
+the author, name, version, description info
 '''
 
 from PySide import QtGui, QtCore
@@ -39,8 +38,8 @@ labelW = 100
 
 def draw(element):
     """
-    mapper that returns display controls
-    according to the typ keys of a config element
+    mapper that returns display control objects
+    according to the 'typ' of a config element
     """
     if element['typ'] == 'nfo':
         return DrawNfo(element)
@@ -73,9 +72,13 @@ class DrawCheck(QtGui.QWidget):
 
 class DrawHotkey(QtGui.QWidget):
     """
+    User ui for a Hotkey control.
+    shows: label, checkbox if disablable, shortcut(s), controls to add, remove
+        additional shortcuts, controls to change scope if that's enabled...
+    
+    cfg['label'] == 'Hotkeytest with a MsgBox'
     cfg['typ'] == 'hotkey':
     cfg['name'] == 'modnameHotkey1'
-    cfg['label'] == 'Hotkeytest with a MsgBox'
     cfg['enabled'] = True
     cfg['disablable'] = True
     cfg['key'] = 'Win+G'
