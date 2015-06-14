@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Fri May 22 19:19:55 2015
+# Created: Sun Jun 14 18:12:50 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,6 +58,7 @@ class Ui_a2MainWindow(object):
         self.settingsHeadLayout.setObjectName("settingsHeadLayout")
         self.modCheck = QtGui.QCheckBox(self.settingsBox)
         self.modCheck.setText("")
+        self.modCheck.setTristate(False)
         self.modCheck.setObjectName("modCheck")
         self.settingsHeadLayout.addWidget(self.modCheck)
         self.modName = QtGui.QLabel(self.settingsBox)
@@ -96,11 +97,6 @@ class Ui_a2MainWindow(object):
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.welcomeText = QtGui.QLabel(self.scrollAreaContents)
-        self.welcomeText.setAutoFillBackground(False)
-        self.welcomeText.setWordWrap(True)
-        self.welcomeText.setObjectName("welcomeText")
-        self.verticalLayout_4.addWidget(self.welcomeText)
         self.scrollArea.setWidget(self.scrollAreaContents)
         self.verticalLayout.addWidget(self.scrollArea)
         self.editOKCancelLayout = QtGui.QHBoxLayout()
@@ -133,10 +129,14 @@ class Ui_a2MainWindow(object):
         self.actionDisable_all_modules.setObjectName("actionDisable_all_modules")
         self.actionExplore_to = QtGui.QAction(a2MainWindow)
         self.actionExplore_to.setObjectName("actionExplore_to")
+        self.actionDev_settings = QtGui.QAction(a2MainWindow)
+        self.actionDev_settings.setObjectName("actionDev_settings")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionExplore_to)
+        self.menuDev.addSeparator()
+        self.menuDev.addAction(self.actionDev_settings)
         self.menubar.addAction(self.menuDev.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
@@ -150,7 +150,6 @@ class Ui_a2MainWindow(object):
         self.modVersion.setText(QtGui.QApplication.translate("a2MainWindow", "v0.0", None, QtGui.QApplication.UnicodeUTF8))
         self.modAuthor.setText(QtGui.QApplication.translate("a2MainWindow", "- Author Name", None, QtGui.QApplication.UnicodeUTF8))
         self.modInfoButton.setText(QtGui.QApplication.translate("a2MainWindow", "?", None, QtGui.QApplication.UnicodeUTF8))
-        self.welcomeText.setText(QtGui.QApplication.translate("a2MainWindow", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
         self.editOKButton.setText(QtGui.QApplication.translate("a2MainWindow", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.editCancelButton.setText(QtGui.QApplication.translate("a2MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
@@ -159,4 +158,5 @@ class Ui_a2MainWindow(object):
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "edit module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisable_all_modules.setText(QtGui.QApplication.translate("a2MainWindow", "disable all modules", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExplore_to.setText(QtGui.QApplication.translate("a2MainWindow", "explore to ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDev_settings.setText(QtGui.QApplication.translate("a2MainWindow", "dev settings...", None, QtGui.QApplication.UnicodeUTF8))
 

@@ -285,6 +285,11 @@ class EditAddElem(QtGui.QWidget):
         self.addCtrl('include', name)
     
     def addCtrl(self, typ, name=''):
+        """
+        TODO: I guess we should put the configuration of the element rather to the
+        very class that builds it instead of writing it all in this wrapper thingy
+        here. Maybe there could be a class method that adds to the tempConfig...
+        """
         cfg = {'typ': typ}
         if cfg['typ'] == 'include':
             cfg['file'] = name
@@ -346,6 +351,33 @@ class EditInclude(EditCtrl):
     
     def editScript(self):
         subprocess.Popen([self.main.scriptEditor, join(self.mod.path, self.file)])
+
+
+class EditHotkey(EditCtrl):
+    """
+    TODO: Oh boy... this has so many implications but it has to be done. Let's do it!
+    First: Have the edit ctrl, then the display one, Then we need checks when a mod
+    config change is about to be comitted. The change will not be able to be OKed as long
+    as there are conflicts with hotkeys, or missing includes or ... 
+
+    elif cfg['typ'] == 'hotkey':
+        cfg['enabled'] = True
+        cfg['disablable'] = True
+        cfg['key'] = 'Win+G'
+        cfg['keyChange'] = True
+        cfg['multiple'] = True
+        cfg['scope'] = ''
+        cfg['scopeChange'] = True
+        # mode can be: ahk, file, key
+        # to execute code, open up sth, send keystroke
+        cfg['mode'] = 'ahk'
+
+    """
+    def __init__(self, element, mod, main):
+        super(EditHotkey, self).__init__(element, main)
+        
+
+
 
 
 class EditView(QtGui.QWidget):
