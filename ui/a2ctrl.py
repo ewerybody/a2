@@ -30,6 +30,7 @@ from functools import partial
 import subprocess
 from os.path import join
 from ctrl_ui import Ui_EditCtrl
+from hotkey_edit_ui import Ui_hotkey_edit
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
@@ -100,6 +101,8 @@ def edit(element, mod, main):
         return EditNfo(element)
     elif element['typ'] == 'include':
         return EditInclude(element, mod, main)
+    elif element['typ'] == 'hotkey':
+        return EditHotkey(element, mod, main)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -132,23 +135,23 @@ class EditCtrl(QtGui.QWidget):
         super(EditCtrl, self).__init__()
         self.element = element
         self.main = main
-        self.ui = Ui_EditCtrl()
-        self.ui.setupUi(self)
-        self.ui.menu = QtGui.QMenu(self)
-        self.ui.ctrlButton.setMenu(self.ui.menu)
+        self.ctrlui = Ui_EditCtrl()
+        self.ctrlui.setupUi(self)
+        self.ctrlui.menu = QtGui.QMenu(self)
+        self.ctrlui.ctrlButton.setMenu(self.ctrlui.menu)
         
         for item in [('up', partial(self.move, -1)), ('down', partial(self.move, 1)),
                  ('delete', self.delete)]:
-            action = QtGui.QAction(self.ui.menu)
+            action = QtGui.QAction(self.ctrlui.menu)
             action.setText(item[0])
             action.triggered.connect(item[1])
-            self.ui.menu.addAction(action)
+            self.ctrlui.menu.addAction(action)
     
     def delete(self):
         if self.element in self.main.tempConfig:
             self.main.tempConfig.remove(self.element)
             self.main.editMod()
-
+    
     def move(self, value):
         index = self.main.tempConfig.index(self.element)
         newindex = index + value
@@ -327,7 +330,8 @@ class EditInclude(EditCtrl):
         self.file = element['file']
         self.mod = mod
 
-        self.layout = QtGui.QHBoxLayout(self)
+        #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
+        self.layout = QtGui.QHBoxLayout()
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(margin, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('include script:')
@@ -342,7 +346,7 @@ class EditInclude(EditCtrl):
         
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layout.addItem(spacerItem)
-        self.ui.layout.addLayout(self.layout)
+        self.ctrlui.layout.addLayout(self.layout)
     
     def getCfg(self):
         cfg = {'typ': self.typ,
@@ -375,10 +379,15 @@ class EditHotkey(EditCtrl):
     """
     def __init__(self, element, mod, main):
         super(EditHotkey, self).__init__(element, main)
+        self.main = main
+        self.ui = Ui_hotkey_edit()
+        print('before')
+        self.ui.setupUi(self)
+        print('after')
+        self.element = element
+        #self.ui.layout.addLayout(self.ui.groupBox)
+        self.ctrlui.layout.addWidget(self.ui.groupBox)
         
-
-
-
 
 class EditView(QtGui.QWidget):
     """
