@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1084</width>
-    <height>636</height>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
      <property name="title">
       <string>hotkey</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0">
       <property name="spacing">
        <number>5</number>
       </property>
@@ -91,6 +91,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="hotkeyLayout" stretch="0,1">
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="hotkeyLabelLayout">
           <item>
@@ -129,6 +132,9 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="hotkeyKeyLayout">
+          <property name="spacing">
+           <number>5</number>
+          </property>
           <property name="sizeConstraint">
            <enum>QLayout::SetMinimumSize</enum>
           </property>
@@ -185,6 +191,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="scopeLayout" stretch="0,1">
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="scopeLabelLayout">
           <item>
@@ -224,7 +233,7 @@
         <item>
          <layout class="QVBoxLayout" name="scopeCtrlLayout">
           <property name="spacing">
-           <number>6</number>
+           <number>5</number>
           </property>
           <property name="bottomMargin">
            <number>0</number>
@@ -285,6 +294,100 @@
              <bool>true</bool>
             </property>
            </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="scopeLayout_2" stretch="0,1">
+        <item>
+         <layout class="QVBoxLayout" name="scopeLabelLayout_2">
+          <item>
+           <widget class="QLabel" name="scopeLabel_2">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>function</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="scopeCtrlLayout_2">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="scopeRowLayout_2" stretch="0,0,0,0">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="scopeEverywhere_2">
+              <property name="text">
+               <string>run code:</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="scopeEnableIn_2">
+              <property name="text">
+               <string>open file:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="scopeDisableIn_2">
+              <property name="text">
+               <string>send keystrokes:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
