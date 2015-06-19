@@ -1,6 +1,8 @@
 ﻿wordCount() {
 	txt := getSelection()
-	StringSplit, parts, txt, %A_Space%`n`r
+    words := StrSplit(txt, [A_Tab, A_Space, "`n", "`r"])
 	StringLen, length, txt
-	tt(length " Zeichen`n" parts0 " Worte",5)
+    
+    lines := StrSplit(txt, "`n")
+	tt(length " Zeichen`n" words.maxIndex() " Worte`n" lines.maxIndex() " Zeilen", 5)
 }
