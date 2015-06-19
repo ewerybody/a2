@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1084</width>
-    <height>665</height>
+    <height>604</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="hotkeyCtrlLayout">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -52,12 +52,12 @@
            </size>
           </property>
           <property name="text">
-           <string>internal name</string>
+           <string>internal name:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="internalName">
+         <widget class="QLineEdit" name="cfg_name">
           <property name="text">
            <string>extensionXhotkey1</string>
           </property>
@@ -76,12 +76,12 @@
            </size>
           </property>
           <property name="text">
-           <string>display label</string>
+           <string>display label:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="displayLabel">
+         <widget class="QLineEdit" name="cfg_label">
           <property name="text">
            <string>make some awesome stuff</string>
           </property>
@@ -111,7 +111,7 @@
              </size>
             </property>
             <property name="text">
-             <string>standard hotkey</string>
+             <string>standard hotkey:</string>
             </property>
            </widget>
           </item>
@@ -146,7 +146,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="hotkeyEnabled">
+           <widget class="QCheckBox" name="cfg_enabled">
             <property name="text">
              <string>enabled by default</string>
             </property>
@@ -156,7 +156,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="hotkeyDisablable">
+           <widget class="QCheckBox" name="cfg_disablable">
             <property name="text">
              <string>can be disabled</string>
             </property>
@@ -166,7 +166,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="hotkeyChangable">
+           <widget class="QCheckBox" name="cfg_keyChange">
             <property name="text">
              <string>can be changed</string>
             </property>
@@ -176,9 +176,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="hotkeyMultiple">
+           <widget class="QCheckBox" name="cfg_multiple">
             <property name="text">
-             <string>allow multiple</string>
+             <string>allow multiple hotkeys</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -283,10 +283,10 @@
            </layout>
           </item>
           <item>
-           <widget class="QListView" name="scopeList"/>
+           <widget class="QListView" name="cfg_scope"/>
           </item>
           <item>
-           <widget class="QCheckBox" name="scopeChangable">
+           <widget class="QCheckBox" name="cfg_scopeChange">
             <property name="text">
              <string>can be changed</string>
             </property>
@@ -300,11 +300,11 @@
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="scopeLayout_2" stretch="0,1">
+       <layout class="QHBoxLayout" name="scopeLayout_3" stretch="0,1">
         <item>
-         <layout class="QVBoxLayout" name="scopeLabelLayout_2">
+         <layout class="QVBoxLayout" name="scopeLabelLayout_3">
           <item>
-           <widget class="QLabel" name="scopeLabel_2">
+           <widget class="QLabel" name="scopeLabel_3">
             <property name="minimumSize">
              <size>
               <width>200</width>
@@ -323,7 +323,7 @@
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_5">
+           <spacer name="verticalSpacer_6">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -338,7 +338,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="scopeCtrlLayout_2">
+         <layout class="QVBoxLayout" name="scopeCtrlLayout_3">
           <property name="spacing">
            <number>6</number>
           </property>
@@ -346,12 +346,12 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="scopeRowLayout_2" stretch="0,0,0,0">
+           <layout class="QHBoxLayout" name="scopeRowLayout_3" stretch="0,0,0,0">
             <property name="topMargin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QRadioButton" name="scopeEverywhere_2">
+             <widget class="QRadioButton" name="scopeEverywhere_3">
               <property name="text">
                <string>run code:</string>
               </property>
@@ -361,21 +361,21 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="scopeEnableIn_2">
+             <widget class="QRadioButton" name="scopeEnableIn_3">
               <property name="text">
                <string>open file:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="scopeDisableIn_2">
+             <widget class="QRadioButton" name="scopeDisableIn_3">
               <property name="text">
                <string>send keystrokes:</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_2">
+             <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>

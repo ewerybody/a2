@@ -29,8 +29,8 @@ import logging
 from functools import partial
 import subprocess
 from os.path import join
-from ctrl_ui import Ui_EditCtrl
 from hotkey_edit_ui import Ui_hotkey_edit
+import inspect
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
@@ -95,7 +95,6 @@ class DrawHotkey(QtGui.QWidget):
         self.layout = QtGui.QVBoxLayout(self)
         
          
-
 def edit(element, mod, main):
     if element['typ'] == 'nfo':
         return EditNfo(element)
@@ -131,21 +130,28 @@ class EditNfo(QtGui.QGroupBox):
 
 
 class EditCtrl(QtGui.QWidget):
-    def __init__(self, element, main):
+    """
+    frame widget for an edit control which enables basic arrangement of the
+    control up & down as well as deleting the control.
+    
+    It's made to work with handwritten and compiled Uis right away.
+    To embedd a compiled ui tell it so addLayout=False in the super()-statement:
+        super(MyNewCtrl, self).__init__(addLayout=False)
+    state the mainWidget in setupUi:
+        self.ui.setupUi(self.mainWidget)
+    and then set the self.mainWidget-layout to your top layout in the compiled ui:
+        self.mainWidget.setLayout(self.ui.mytoplayout)
+    
+    TODO: currently this is embedded as menuitems on a button which is pretty shitty.
+        I'd like to have some actual up/down buttons and an x to indicate delete
+        functionality
+    """
+    def __init__(self, element, main, addLayout=True):
         super(EditCtrl, self).__init__()
         self.element = element
         self.main = main
-        self.ctrlui = Ui_EditCtrl()
-        self.ctrlui.setupUi(self)
-        self.ctrlui.menu = QtGui.QMenu(self)
-        self.ctrlui.ctrlButton.setMenu(self.ctrlui.menu)
-        
-        for item in [('up', partial(self.move, -1)), ('down', partial(self.move, 1)),
-                 ('delete', self.delete)]:
-            action = QtGui.QAction(self.ctrlui.menu)
-            action.setText(item[0])
-            action.triggered.connect(item[1])
-            self.ctrlui.menu.addAction(action)
+        self._setupUi(addLayout)
+        self._getCfgList = []
     
     def delete(self):
         if self.element in self.main.tempConfig:
@@ -157,10 +163,115 @@ class EditCtrl(QtGui.QWidget):
         newindex = index + value
         if newindex < 1 or newindex >= len(self.main.tempConfig):
             return
+
         element = self.main.tempConfig.pop(index)
         self.main.tempConfig.insert(newindex, element)
         self.main.editMod()
+
+    def _setupUi(self, addLayout):
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(sizePolicy)
+        self._ctrlLayout = QtGui.QHBoxLayout(self)
+        self._ctrlLayout.setSpacing(0)
+        self._ctrlLayout.setContentsMargins(5, 5, 5, 5)
+        self.mainWidget = QtGui.QWidget(self)
+        if addLayout:
+            self.mainLayout = QtGui.QVBoxLayout()
+            self.mainLayout.setContentsMargins(5, -1, 5, -1)
+            self.mainWidget.setLayout(self.mainLayout)
+        self._ctrlLayout.addWidget(self.mainWidget)
+        
+        self._ctrlButtonLayout = QtGui.QVBoxLayout()
+        self._ctrlButtonLayout.setSpacing(0)
+        self._ctrlButtonLayout.setObjectName("ctrlButtonLayout")
+        
+        self._ctrlButton = QtGui.QPushButton(self)
+        self._ctrlButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        self._ctrlButton.setText("...")
+        self._ctrlButton.setObjectName("ctrlButton")
+        self._ctrlButtonLayout.addWidget(self._ctrlButton)
+        spacerItem = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
+                                       QtGui.QSizePolicy.Expanding)
+        self._ctrlButtonLayout.addItem(spacerItem)
+        self._ctrlLayout.addLayout(self._ctrlButtonLayout)
+        self._ctrlLayout.setStretch(0, 1)
+        
+        self._ctrlMenu = QtGui.QMenu(self)
+        self._ctrlButton.setMenu(self._ctrlMenu)
+        
+        for item in [('up', partial(self.move, -1)),
+                     ('down', partial(self.move, 1)),
+                     ('delete', self.delete)]:
+            action = QtGui.QAction(self._ctrlMenu)
+            action.setText(item[0])
+            action.triggered.connect(item[1])
+            self._ctrlMenu.addAction(action)
     
+    def getCtrlData(self):
+        for ctrl in self._getCfgList:
+            self.element[ctrl[0]] = ctrl[1]()
+    
+    def getCfg(self):
+        self.getCtrlData()
+        return self.element
+
+    def enlistCfgCtrls(self, uiclass):
+        """
+        already deprecated. You'd have to connect the widgets to the getCfg method
+        anyways and then fetch them there in again...
+        
+        just for historic reasons...
+        browses a given widget class members and according to their type adds
+        them to the _getCfgList which is then looped by getCfg on change.
+        To have a widget listed its name MUST start with 'cfg_'
+        The string after that will be the name of the data piece in the element
+        dictionary. So
+            self.ui.cfg_bananas = QtGui.QCheckBox()
+        will end up as ('bananas', self.ui.cfg_bananas.isChecked) in the list so
+        it can be called to get the value and set in the dict.
+        just if like you wrote
+            self.element['bananas'] = self.ui.cfg_bananas.isChecked()
+        """
+        self._getCfgList = []
+        for ctrl in inspect.getmembers(uiclass):
+            if ctrl[0].startswith('cfg_'):
+                name = ctrl[0][4:]
+                #log.info('ctrl: %s' % str(ctrl))
+                if isinstance(ctrl[1], QtGui.QCheckBox):
+                    self._getCfgList.append((name, ctrl[1].isChecked))
+                    if name in self.element:
+                        ctrl[1].setChecked(self.element[name])
+            #log.info('e.__name__: %s' % e.__name__)
+    
+    def connectCfgCtrls(self, uiclass):
+        for ctrl in inspect.getmembers(uiclass):
+            if not ctrl[0].startswith('cfg_'):
+                continue
+            
+            name = ctrl[0][4:]
+            if isinstance(ctrl[1], QtGui.QCheckBox):
+                ctrl[1].clicked.connect(partial(self._updateCfgData,
+                                                name, ctrl[1].isChecked))
+                if name in self.element:
+                    ctrl[1].setChecked(self.element[name])
+            elif isinstance(ctrl[1], QtGui.QLineEdit):
+                ctrl[1].textChanged.connect(partial(self._updateCfgData, name, None))
+                if name in self.element:
+                    ctrl[1].setText(self.element[name])
+            else:
+                log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
+                          (ctrl[0], type(ctrl[1])))
+    
+    def _updateCfgData(self, name, func, data=None, *args):
+        print('widget sent data: %s' % str(args))
+        if data is not None:
+            self.element[name] = data
+        elif func is not None:
+            self.element[name] = func()        
+
 
 class EditLine(QtGui.QWidget):
     def __init__(self, name, text, parentLayout=None, updatefunc=None):
@@ -325,7 +436,7 @@ class EditInclude(EditCtrl):
     """
     #def __init__(self, parent, mod):
     def __init__(self, element, mod, main):
-        super(EditInclude, self).__init__(element, main)
+        super(EditInclude, self).__init__(element, main, addLayout=False)
         self.typ = element['typ']
         self.file = element['file']
         self.mod = mod
@@ -346,7 +457,7 @@ class EditInclude(EditCtrl):
         
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layout.addItem(spacerItem)
-        self.ctrlui.layout.addLayout(self.layout)
+        self.mainWidget.setLayout(self.layout)
     
     def getCfg(self):
         cfg = {'typ': self.typ,
@@ -374,20 +485,23 @@ class EditHotkey(EditCtrl):
         cfg['scopeChange'] = True
         # mode can be: ahk, file, key
         # to execute code, open up sth, send keystroke
-        cfg['mode'] = 'ahk'
-
+        cfg['mode'] = 'ahk',
+        cfg['name'] = 'someModule_hotkey1',
+        cfg['label'] = 'do awesome stuff on:'
     """
     def __init__(self, element, mod, main):
-        super(EditHotkey, self).__init__(element, main)
+        super(EditHotkey, self).__init__(element, main, addLayout=False)
         self.main = main
-        self.ui = Ui_hotkey_edit()
-        print('before')
-        self.ui.setupUi(self)
-        print('after')
         self.element = element
-        #self.ui.layout.addLayout(self.ui.groupBox)
-        self.ctrlui.layout.addWidget(self.ui.groupBox)
+        self.ui = Ui_hotkey_edit()
+        self.ui.setupUi(self.mainWidget)
+        self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
         
+        self.connectCfgCtrls(self.ui)
+    
+    def getCfg(self):
+        return self.element
+
 
 class EditView(QtGui.QWidget):
     """
