@@ -92,9 +92,36 @@ class DrawHotkey(QtGui.QWidget):
     """
     def __init__(self, data):
         super(DrawHotkey, self).__init__()
-        self.layout = QtGui.QVBoxLayout(self)
+        #self.setStyleSheet('* {background: #eee}')
+        self.ctrllayout = QtGui.QHBoxLayout(self)
+        self.labelBoxLayout = QtGui.QVBoxLayout()
+        self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
+        self.labelLayout = QtGui.QHBoxLayout()
+        if data['disablable']:
+            self.check = QtGui.QCheckBox(self)
+            self.check.setChecked(data['enabled'])
+            self.labelLayout.addWidget(self.check)
+        self.label = QtGui.QLabel(data.get('label') or '', self)
+        self.labelLayout.addWidget(self.label)
+        self.labelBoxLayout.addLayout(self.labelLayout)
+        self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
+                                                      QtGui.QSizePolicy.Expanding))
+        self.ctrllayout.addLayout(self.labelBoxLayout)
         
-         
+        self.hotkeyListLayout = QtGui.QVBoxLayout()
+        self.hotkeyLayout = QtGui.QHBoxLayout()
+        self.hotkeyButton = QtGui.QPushButton(data.get('key') or '')
+        self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 40))
+        self.hotkeyLayout.addWidget(self.hotkeyButton)
+        self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
+                                                    QtGui.QSizePolicy.Minimum))
+        self.hotkeyListLayout.addLayout(self.hotkeyLayout)
+        self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
+                                                        QtGui.QSizePolicy.Expanding))
+        self.ctrllayout.addLayout(self.hotkeyListLayout)
+        
+        
+
 def edit(element, mod, main):
     if element['typ'] == 'nfo':
         return EditNfo(element)
