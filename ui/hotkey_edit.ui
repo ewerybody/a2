@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1084</width>
-    <height>604</height>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -190,6 +190,95 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="functionLayout" stretch="0,1">
+        <item>
+         <layout class="QVBoxLayout" name="functionLabelLayout">
+          <item>
+           <widget class="QLabel" name="functionLabel">
+            <property name="minimumSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>function</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="functionCtrlLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="functionRowLayout" stretch="0,0">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QComboBox" name="functionComboBox">
+              <item>
+               <property name="text">
+                <string>run code</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>open file/url</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>send keystroke</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="scopeLayout" stretch="0,1">
         <property name="bottomMargin">
          <number>10</number>
@@ -239,32 +328,27 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="scopeRowLayout" stretch="0,0,0,0">
+           <layout class="QHBoxLayout" name="scopeRowLayout" stretch="0,0">
             <property name="topMargin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QRadioButton" name="scopeEverywhere">
-              <property name="text">
-               <string>everywhere</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="scopeEnableIn">
-              <property name="text">
-               <string>only in:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="scopeDisableIn">
-              <property name="text">
-               <string>everywhere but:</string>
-              </property>
+             <widget class="QComboBox" name="comboBox">
+              <item>
+               <property name="text">
+                <string>global</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>only in</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>not in</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>
@@ -283,7 +367,14 @@
            </layout>
           </item>
           <item>
-           <widget class="QListView" name="cfg_scope"/>
+           <widget class="QListView" name="cfg_scope">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="cfg_scopeChange">
@@ -294,100 +385,6 @@
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="scopeLayout_3" stretch="0,1">
-        <item>
-         <layout class="QVBoxLayout" name="scopeLabelLayout_3">
-          <item>
-           <widget class="QLabel" name="scopeLabel_3">
-            <property name="minimumSize">
-             <size>
-              <width>200</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>200</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>function</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>0</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="scopeCtrlLayout_3">
-          <property name="spacing">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" name="scopeRowLayout_3" stretch="0,0,0,0">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="scopeEverywhere_3">
-              <property name="text">
-               <string>run code:</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="scopeEnableIn_3">
-              <property name="text">
-               <string>open file:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="scopeDisableIn_3">
-              <property name="text">
-               <string>send keystrokes:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
           </item>
          </layout>
         </item>

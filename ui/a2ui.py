@@ -155,6 +155,8 @@ class A2Window(QtGui.QMainWindow):
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
         newLayout = QtGui.QWidget(self)
+        newLayout.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                                  QtGui.QSizePolicy.Maximum))
         # create new columnLayout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
         
