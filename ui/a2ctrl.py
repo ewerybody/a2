@@ -92,7 +92,6 @@ class DrawHotkey(QtGui.QWidget):
     """
     def __init__(self, data):
         super(DrawHotkey, self).__init__()
-        #self.setStyleSheet('* {background: #eee}')
         self.ctrllayout = QtGui.QHBoxLayout(self)
         self.labelBoxLayout = QtGui.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
@@ -119,7 +118,6 @@ class DrawHotkey(QtGui.QWidget):
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
                                                         QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
-        
         
 
 def edit(element, mod, main):
@@ -279,15 +277,23 @@ class EditCtrl(QtGui.QWidget):
                 continue
             
             name = ctrl[0][4:]
+            
             if isinstance(ctrl[1], QtGui.QCheckBox):
                 ctrl[1].clicked.connect(partial(self._updateCfgData,
                                                 name, ctrl[1].isChecked))
+                # set ctrl according to config or set config from ctrl
                 if name in self.element:
                     ctrl[1].setChecked(self.element[name])
+                else:
+                    self.element[name] = ctrl[1].isChecked()
+            
             elif isinstance(ctrl[1], QtGui.QLineEdit):
                 ctrl[1].textChanged.connect(partial(self._updateCfgData, name, None))
                 if name in self.element:
                     ctrl[1].setText(self.element[name])
+                else:
+                    self.element[name] = ctrl[1].text()
+            
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (ctrl[0], type(ctrl[1])))
