@@ -58,9 +58,15 @@ nppSourceSelection() {
 	}
 	Else If (scriptType = "nsi")
 	{
+        RegRead, NSISpath, HKLM\SOFTWARE\Wow6432Node\NSIS
+        if NSISpath
+            NSISpath = %NSISpath%\makensisw.exe
+        else {
+            MsgBox NSIS not found!
+            Return
+        }
+
         tt("NSIS`n" fileName,1)
-        ;NSISpath := A_ProgramFiles "\NSIS\NSIS.exe"
-        NSISpath := A_ProgramFiles "\NSIS\makensisw.exe"
         IfExist %NSISpath%
             Run, "%NSISpath%" "%fileName%"
         Else

@@ -1,5 +1,4 @@
-﻿
-pasteStuff() {
+﻿pasteStuff() {
 	global pasteStuffVars
 	for index, value in pasteStuffVars {
 		StringReplace, value, value, `n, %A_Space%, All
