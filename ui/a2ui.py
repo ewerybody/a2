@@ -1,18 +1,21 @@
-# a2ui
+"""
+a2ui - setup interface for an Autohotkey environment.
+"""
 from PySide import QtGui, QtCore
 import os
 from os.path import exists, join, splitext, dirname
-#from functools import partial
+#import siding
 import sys
 import a2dblib
 import a2ctrl
 import json
 from datetime import datetime
 from a2design_ui import Ui_a2MainWindow
-
 import subprocess
-import logging
+import webbrowser
 from copy import deepcopy
+import logging
+from _functools import partial
 logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
@@ -24,33 +27,43 @@ jsonIndent = 2
 class A2Window(QtGui.QMainWindow):
     def __init__(self, parent=None, *args):
         super(A2Window, self).__init__(parent)
-        self.ui = Ui_a2MainWindow()
-        self.ui.setupUi(self)
-
+        
+        self.a2url = 'https://github.com/ewerybody/a2'
+        self.ahkurl = 'http://ahkscript.org'
+        #TODO: fck reg! do that with the sql db
+        self.settings = QtCore.QSettings("a2", "a2ui")
+        
         self.initPaths()
-        self.dbfile = join(self.a2setdir, 'a2.db')
         self.db = a2dblib.A2db(self.dbfile)
-
+        self.fetchModules()
+        self.setupUi()
+        
         # TODO: make this optional
         self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
-        
         self.mod = None
         self.enabledMods = self.db.gets('enabled')
         self.editing = False
+        self.tempConfig = None
+        self.selectedMod = None
+        self.toggleEdit(False)
+        
+        self.drawMod()
+        log.info('a2ui initialised!')
+        
+    def setupUi(self):
+        self.ui = Ui_a2MainWindow()
+        self.ui.setupUi(self)
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.controls = []
-        self.tempConfig = None
         # create a spacer to arrange the layout
         # NOTE that a spacer is added via addItem! not widget
         self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum,
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
 
-        self.fetchModules()
         self.ui.modList.insertItems(0, list(sorted(self.modules.keys())))
         self.ui.modList.itemSelectionChanged.connect(self.modSelect)
-        self.selectedMod = None
         
         self.ui.modCheck.setVisible(False)
         self.ui.modName.setText('a2')
@@ -63,13 +76,13 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionEdit_module.setShortcut("Ctrl+E")
         self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
         self.ui.actionExplore_to.triggered.connect(self.exploreMod)
+        self.ui.actionAbout_a2.triggered.connect(partial(self.surfTo, self.a2url))
+        self.ui.actionAbout_Autohotkey.triggered.connect(partial(self.surfTo, self.ahkurl))
+        self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         
-        self.toggleEdit(False)
         self.ui.editOKButton.pressed.connect(self.editSubmit)
         self.ui.editCancelButton.pressed.connect(self.drawMod)
         
-        #TODO: fck reg! do that with the sql db dumbass!
-        self.settings = QtCore.QSettings("a2", "a2ui")
         self.restoreA2ui()
     
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -83,10 +96,6 @@ class A2Window(QtGui.QMainWindow):
         icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
-        
-        self.drawMod()
-        
-        log.info('a2ui initialised!')
     
     def modSelect(self, force=False):
         """
@@ -325,7 +334,6 @@ class A2Window(QtGui.QMainWindow):
         # if run on its own sys.path[0] will be the script dir
         self.a2uidir = sys.path[0]
         if not self.a2uidir:
-            #self.a2uidir = 'C:/My Files/code/a2/ui'
             cwd = os.getcwd()
             if exists(join(cwd, 'a2ui.py')):
                 self.a2uidir = cwd
@@ -354,6 +362,7 @@ class A2Window(QtGui.QMainWindow):
         # by default the Autohotkey.exe in the lib should be uses
         # but we need an option for that a user can put it to whatever he wants
         self.ahkexe = join(self.a2libdir, 'AutoHotkey', 'AutoHotkey.exe')
+        self.dbfile = join(self.a2setdir, 'a2.db')
     
     def escape(self):
         if self.editing:
@@ -364,6 +373,9 @@ class A2Window(QtGui.QMainWindow):
     def exploreMod(self):
         if isinstance(self.mod, Mod):
             subprocess.Popen(['explorer.exe', self.mod.path])
+
+    def exploreA2(self):
+        subprocess.Popen(['explorer.exe', self.a2dir])    
     
     def getSettingsDir(self):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """
@@ -390,6 +402,9 @@ class A2Window(QtGui.QMainWindow):
         else:
             sizes = [int(sizes[0]), int(sizes[1])]
         self.ui.splitter.setSizes(sizes)
+
+    def surfTo(self, url):
+        webbrowser.get().open(url)
 
 
 class Mod(object):

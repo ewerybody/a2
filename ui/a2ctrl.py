@@ -195,9 +195,9 @@ class EditCtrl(QtGui.QWidget):
 
     def _setupUi(self, addLayout):
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+#         sizePolicy.setHorizontalStretch(0)
+#         sizePolicy.setVerticalStretch(0)
+#         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
         self._ctrlLayout = QtGui.QHBoxLayout(self)
         self._ctrlLayout.setSpacing(0)
@@ -205,16 +205,17 @@ class EditCtrl(QtGui.QWidget):
         self.mainWidget = QtGui.QWidget(self)
         if addLayout:
             self.mainLayout = QtGui.QVBoxLayout()
-            self.mainLayout.setContentsMargins(5, -1, 5, -1)
+            self.mainLayout.setContentsMargins(5, 5, 5, 5)
             self.mainWidget.setLayout(self.mainLayout)
         self._ctrlLayout.addWidget(self.mainWidget)
         
         self._ctrlButtonLayout = QtGui.QVBoxLayout()
         self._ctrlButtonLayout.setSpacing(0)
+        self._ctrlButtonLayout.setContentsMargins(5, 0, 0, 0)
         self._ctrlButtonLayout.setObjectName("ctrlButtonLayout")
         
         self._ctrlButton = QtGui.QPushButton(self)
-        self._ctrlButton.setMaximumSize(QtCore.QSize(50, 16777215))
+        self._ctrlButton.setMaximumSize(QtCore.QSize(50, 50))
         self._ctrlButton.setText("...")
         self._ctrlButton.setObjectName("ctrlButton")
         self._ctrlButtonLayout.addWidget(self._ctrlButton)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Sun Jun 14 18:12:50 2015
+# Created: Sat Jun 27 18:35:24 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -131,12 +131,18 @@ class Ui_a2MainWindow(object):
         self.actionExplore_to.setObjectName("actionExplore_to")
         self.actionDev_settings = QtGui.QAction(a2MainWindow)
         self.actionDev_settings.setObjectName("actionDev_settings")
+        self.actionAbout_Autohotkey = QtGui.QAction(a2MainWindow)
+        self.actionAbout_Autohotkey.setObjectName("actionAbout_Autohotkey")
+        self.actionExplore_to_a2_dir = QtGui.QAction(a2MainWindow)
+        self.actionExplore_to_a2_dir.setObjectName("actionExplore_to_a2_dir")
         self.menuHelp.addAction(self.actionAbout_a2)
+        self.menuHelp.addAction(self.actionAbout_Autohotkey)
         self.menuDev.addAction(self.actionEdit_module)
-        self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionExplore_to)
         self.menuDev.addSeparator()
+        self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionDev_settings)
+        self.menuDev.addAction(self.actionExplore_to_a2_dir)
         self.menubar.addAction(self.menuDev.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
@@ -157,6 +163,8 @@ class Ui_a2MainWindow(object):
         self.actionAbout_a2.setText(QtGui.QApplication.translate("a2MainWindow", "about a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "edit module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisable_all_modules.setText(QtGui.QApplication.translate("a2MainWindow", "disable all modules", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionExplore_to.setText(QtGui.QApplication.translate("a2MainWindow", "explore to ...", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionDev_settings.setText(QtGui.QApplication.translate("a2MainWindow", "dev settings...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExplore_to.setText(QtGui.QApplication.translate("a2MainWindow", "explore to module ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDev_settings.setText(QtGui.QApplication.translate("a2MainWindow", "dev settings ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAbout_Autohotkey.setText(QtGui.QApplication.translate("a2MainWindow", "about Autohotkey", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExplore_to_a2_dir.setText(QtGui.QApplication.translate("a2MainWindow", "explore to a2 dir ...", None, QtGui.QApplication.UnicodeUTF8))
 

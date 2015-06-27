@@ -283,16 +283,18 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout_a2"/>
+    <addaction name="actionAbout_Autohotkey"/>
    </widget>
    <widget class="QMenu" name="menuDev">
     <property name="title">
      <string>&amp;Dev</string>
     </property>
     <addaction name="actionEdit_module"/>
-    <addaction name="actionDisable_all_modules"/>
     <addaction name="actionExplore_to"/>
     <addaction name="separator"/>
+    <addaction name="actionDisable_all_modules"/>
     <addaction name="actionDev_settings"/>
+    <addaction name="actionExplore_to_a2_dir"/>
    </widget>
    <addaction name="menuDev"/>
    <addaction name="menuHelp"/>
@@ -314,12 +316,22 @@
   </action>
   <action name="actionExplore_to">
    <property name="text">
-    <string>explore to ...</string>
+    <string>explore to module ...</string>
    </property>
   </action>
   <action name="actionDev_settings">
    <property name="text">
-    <string>dev settings...</string>
+    <string>dev settings ...</string>
+   </property>
+  </action>
+  <action name="actionAbout_Autohotkey">
+   <property name="text">
+    <string>about Autohotkey</string>
+   </property>
+  </action>
+  <action name="actionExplore_to_a2_dir">
+   <property name="text">
+    <string>explore to a2 dir ...</string>
    </property>
   </action>
  </widget>
