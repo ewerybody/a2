@@ -43,13 +43,13 @@ if os.name == 'nt':
     from ctypes.wintypes import DWORD, MAX_PATH
     from ctypes import byref, c_bool, c_wchar_p, GetLastError, windll
 
-    from siding import _aeroglass
+    #from siding import _aeroglass
 
 else:
     import errno
     import fcntl
 
-    _aeroglass = None
+_aeroglass = None
 
 ###############################################################################
 # Constants
@@ -99,7 +99,7 @@ class QSingleApplication(QApplication):
         you *really* wish to use your own string, set ``_app_id``.
     """
 
-    messageReceived = Signal([dict], [list], [bool], [int], [long], [unicode], [float])
+    messageReceived = Signal([dict], [list], [bool], [int], [float])
     compositionChanged = Signal()
 
     # Public Variables
@@ -208,8 +208,8 @@ class QSingleApplication(QApplication):
             # Build the first part of the app_id.
             self.app_id = 'qsingleapp-%s-%s' % (binary, path)
             
-            if isinstance(self.app_id, unicode):
-                self.app_id = self.app_id.encode('utf8')
+#             if isinstance(self.app_id, unicode):
+#                 self.app_id = self.app_id.encode('utf8')
 
         # Now, get the session ID.
         if not self.session:
@@ -224,8 +224,8 @@ class QSingleApplication(QApplication):
             if profile.profile_path:
                 sid = '%s-%s' % (profile.profile_path, sid )
 
-            if isinstance(sid, unicode):
-                sid = sid.encode('utf8')
+#             if isinstance(sid, unicode):
+#                 sid = sid.encode('utf8')
 
             self.session = sid
 
@@ -278,7 +278,7 @@ class QSingleApplication(QApplication):
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             os.write(fd, "%d\n" % os.getpid())
         
-        except (OSError, IOError), e:
+        except (OSError, IOError) as e:
             if e.errno in (errno.EACCES, errno.EAGAIN):
                 return False
             raise

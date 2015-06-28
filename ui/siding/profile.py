@@ -434,7 +434,7 @@ def walk(top, topdown=True, onerror=None, followlinks=False,
     """
     try:
         names = listdir(top, source)
-    except OSError, err:
+    except OSError as err:
         if onerror is not None:
             onerror(err)
         return

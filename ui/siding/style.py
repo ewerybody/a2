@@ -27,7 +27,7 @@ relatively easy hot reloads.
 
 import argparse
 import base64
-import ConfigParser
+import configparser
 import hashlib
 import os
 import urllib
@@ -40,10 +40,10 @@ from PySide.QtGui import QApplication, QIcon, QWidget, QPixmap
 
 from siding import profile
 
-if os.name == 'nt':
-    from siding import _aeroglass
-else:
-    _aeroglass = None
+# if os.name == 'nt':
+#     from siding import _aeroglass
+# else:
+_aeroglass = None
 
 ###############################################################################
 # Logging
@@ -351,7 +351,7 @@ class Style(object):
             log.error('Cannot open style.ini for style: %s' % self.name)
             raise IOError('Cannot open style.ini for style: %s' % self.name)
 
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.SafeConfigParser()
         parser.readfp(file)
         file.close()
 

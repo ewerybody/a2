@@ -31,8 +31,8 @@ else:
 
 # Since we're here, we're the only application. Continue loading as normal.
 # While we're at it, initialize some more of siding.
-siding.style.initialize(True)
-siding.plugins.initialize(True)
+#siding.style.initialize(True)
+#siding.plugins.initialize(True)
 
 # At this point, let's stop for a moment and import our window.
 import main_window
@@ -62,7 +62,7 @@ def got_a_message(argv):
     # Open a window for every file.
     for file in args.files:
         if not os.path.isfile(file):
-            print 'Invalid file: %s' % file
+            print('Invalid file: %s' % file)
             continue
 
         # Make a window.

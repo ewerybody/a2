@@ -27,7 +27,7 @@ application.
 
 import argparse
 import collections
-import ConfigParser
+import configparser
 import functools
 import imp
 import inspect
@@ -277,7 +277,7 @@ class PluginInfo(object):
 
     def load(self):
         """ Load the plugin information from file. """
-        parser = ConfigParser.SafeConfigParser()
+        parser = configparser.SafeConfigParser()
 
         file = profile.get_file(profile.join(self.path, self.file))
         if not file:
@@ -539,7 +539,7 @@ class PluginManager(QObject):
             # Try loading it now.
             try:
                 self._load_plugin(name, use_blacklist)
-            except DependencyError, err:
+            except DependencyError as err:
                 log.error('Unable to load plugin: %s\n%s' %
                     (info.nice_name, err))
             except (ImportError, VersionError):
@@ -589,7 +589,7 @@ class PluginManager(QObject):
             # Now, load the plugin.
             try:
                 self._load_plugin(dname, use_blacklist, new_chain)
-            except DependencyError, err:
+            except DependencyError as err:
                 raise DependencyError("Unsatisfied dependency: %s %s\n%s" %
                                         (dname, match, err))
             except (ImportError, VersionError):
@@ -793,7 +793,7 @@ class PluginManager(QObject):
         matching the given name. Any provided arguments will be sent along
         to those slots.
         """
-        for module, plugins in self._plugins.itervalues():
+        for module, plugins in self._plugins.items():
             for plug in plugins:
                 slot = getattr(plug, name, None)
                 if not plug.is_active or not hasattr(slot, '_slots'):
@@ -975,7 +975,7 @@ def initialize(args=None, **kwargs):
     version = kwargs.get('version', version)
     manager.info_extension = kwargs.get('extension', manager.info_extension)
 
-    if kwargs.has_key('paths'):
+    if 'paths' in kwargs:
         manager.directories = kwargs.get('paths')
     else:
         # Ensure the profile path and root path are in the directories.

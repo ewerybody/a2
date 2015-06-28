@@ -80,7 +80,7 @@ class Version(object):
                 self._prerelease = version._prerelease
                 self._build = version._build
 
-            elif isinstance(version, basestring):
+            elif isinstance(version, str):
                 match = version_match.match(version)
                 if match:
                     self._major = int(match.group(1))

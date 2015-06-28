@@ -81,7 +81,7 @@ class Version(object):
                 self._prerelease = version._prerelease
                 self._build = version._build
 
-            elif isinstance(version, basestring):
+            elif isinstance(version, str):
                 match = version_match.match(version)
                 if match:
                     self._major = int(match.group(1))
@@ -161,7 +161,7 @@ class Version(object):
         return hash(str(self))
 
     def __lt__(self, other):
-        if isinstance(other, basestring):
+        if isinstance(other, str):
             other = Version(other)
 
         if self._major < other._major:

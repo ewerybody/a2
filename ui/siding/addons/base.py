@@ -28,7 +28,7 @@ import errno
 import os
 
 from collections import OrderedDict
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 
 from siding import path, profile
 from siding.addons.version import Version, VersionMatch

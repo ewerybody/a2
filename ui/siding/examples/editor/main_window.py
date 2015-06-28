@@ -1,10 +1,10 @@
 """
 The unnecessarily complex example script!
 """
-
 import os
 
-from siding import addons, profile, style, plugins
+#from siding import addons, profile, style, plugins
+from siding import addons, profile, plugins
 
 from PySide.QtGui import QAction, QKeySequence, QMainWindow, QTextEdit
 from PySide.QtGui import QApplication, QFileDialog, QMessageBox
@@ -26,7 +26,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.editor)
 
         # Style the editor
-        style.apply_stylesheet(self.editor, 'editor.qss')
+        #style.apply_stylesheet(self.editor, 'editor.qss')
         
         # Menus and Stuff!
         self.init_actions()
@@ -39,10 +39,10 @@ class MainWindow(QMainWindow):
 
         # Icons!
         self.reload_icons()
-        style.style_reloaded.connect(self.reload_icons)
+        #style.style_reloaded.connect(self.reload_icons)
 
         # Fancy!
-        style.enable_aero(self)
+        #style.enable_aero(self)
         self.update_title()
 
         # Now, for some plugins.
@@ -51,11 +51,11 @@ class MainWindow(QMainWindow):
     ##### Action Icons! #######################################################
 
     def reload_icons(self):
-        self.setWindowIcon(style.icon('application'))
-
-        a = self.actions
-        for key in a.keys():
-            a[key].setIcon(style.icon(key.lower()))
+        #self.setWindowIcon(style.icon('application'))
+        pass
+#         a = self.actions
+#         for key in a.keys():
+#             a[key].setIcon(style.icon(key.lower()))
 
     ##### Actions! ############################################################
 
@@ -104,10 +104,10 @@ class MainWindow(QMainWindow):
                                 statusTip="Display the Add-ons manager.",
                                 triggered=addons.show)
 
-        a['view-refresh'] = QAction("&Reload Style", self,
-                                shortcut="Ctrl+Shift+R",
-                                statusTip="Reload the style.",
-                                triggered=style.reload)
+#         a['view-refresh'] = QAction("&Reload Style", self,
+#                                 shortcut="Ctrl+Shift+R",
+#                                 statusTip="Reload the style.",
+#                                 triggered=style.reload)
 
     ##### Menus! ##############################################################
 
@@ -129,7 +129,7 @@ class MainWindow(QMainWindow):
 
         tools = self.menuBar().addMenu("&Tools")
         tools.addAction(a['addon-manager'])
-        tools.addAction(a['view-refresh'])
+        #tools.addAction(a['view-refresh'])
 
     ##### Explosions! #########################################################
 
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
         tools = self.addToolBar("Tools")
         tools.setObjectName('toolsbar')
         tools.addAction(a['addon-manager'])
-        tools.addAction(a['view-refresh'])
+        #tools.addAction(a['view-refresh'])
 
     ##### Statusbars! #########################################################
 
