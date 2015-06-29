@@ -1,9 +1,18 @@
 ﻿a2DO:
+in flight:
+* create hotkey control which writes hotkeys.ahk inlcude
+    * dynamic show/hide of scope list
+    * dynamic show/hide of function controls
+    * borrow scope selection and hotkey getter from aA
+    * add multiple hotkey user functionality
+    * allow multiple hotkeys in edit mode
+    * implement hotkey data in change loop
+* resolve settingsChanged bug a2 loads old includes before saving is finished
+* disable Edit mod when multiple selected
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
-* fix: show no or summary page when multiple selected
-* connect include buttons with include menu thing
 * implement available scripts browse function
+* connect include buttons with include menu thing
 * include script selector to browse through available scipts
 * add element > include uses available scipts list
 * make a2 welcome view a mod with config too
@@ -12,10 +21,11 @@
 * deselect mod and show a2 welcome on Esc? (optional)
 * optional remember last selected mod
 * make windowsettings use db
-* create hotkey control which writes hotkeys.ahk inlcude
 * create check control which writes variables.ahk inlcude or inlcude.ahk
 
 a2DONE:
+* no reload on submit when mod is disabled
+* fix: show no or summary page when multiple selected
 * create functionality to delete edit element 
     * editElement class from QWidget? Also to shift elements up/down in edit ui
 * Ctrl+Enter to OK an edit change

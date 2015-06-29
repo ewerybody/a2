@@ -276,7 +276,8 @@ class A2Window(QtGui.QMainWindow):
                 newcfg.append(ctrl.getCfg())
         
         self.mod.config = newcfg
-        self.settingsChanged()
+        if self.mod.name in self.db.gets('enabled'):
+            self.settingsChanged()
         self.drawMod()
     
     def toggleEdit(self, state):
