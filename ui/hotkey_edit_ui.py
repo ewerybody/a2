@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\hotkey_edit.ui'
 #
-# Created: Thu Jun 25 02:01:50 2015
+# Created: Tue Jun 30 01:51:39 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_hotkey_edit(object):
     def setupUi(self, hotkey_edit):
         hotkey_edit.setObjectName("hotkey_edit")
-        hotkey_edit.resize(1084, 606)
+        hotkey_edit.resize(1128, 666)
         self.hotkeyCtrlLayout = QtGui.QVBoxLayout(hotkey_edit)
         self.hotkeyCtrlLayout.setSpacing(0)
         self.hotkeyCtrlLayout.setContentsMargins(0, 0, 0, 0)
@@ -133,12 +133,30 @@ class Ui_hotkey_edit(object):
         self.scopeRowLayout = QtGui.QHBoxLayout()
         self.scopeRowLayout.setContentsMargins(-1, 0, -1, -1)
         self.scopeRowLayout.setObjectName("scopeRowLayout")
-        self.comboBox = QtGui.QComboBox(self.groupBox)
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.scopeRowLayout.addWidget(self.comboBox)
+        self.cfg_scopeMode = QtGui.QComboBox(self.groupBox)
+        self.cfg_scopeMode.setObjectName("cfg_scopeMode")
+        self.cfg_scopeMode.addItem("")
+        self.cfg_scopeMode.addItem("")
+        self.cfg_scopeMode.addItem("")
+        self.scopeRowLayout.addWidget(self.cfg_scopeMode)
+        self.scopePlus = QtGui.QPushButton(self.groupBox)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scopePlus.sizePolicy().hasHeightForWidth())
+        self.scopePlus.setSizePolicy(sizePolicy)
+        self.scopePlus.setMaximumSize(QtCore.QSize(35, 35))
+        self.scopePlus.setObjectName("scopePlus")
+        self.scopeRowLayout.addWidget(self.scopePlus)
+        self.scopeMinus = QtGui.QPushButton(self.groupBox)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scopeMinus.sizePolicy().hasHeightForWidth())
+        self.scopeMinus.setSizePolicy(sizePolicy)
+        self.scopeMinus.setMaximumSize(QtCore.QSize(35, 35))
+        self.scopeMinus.setObjectName("scopeMinus")
+        self.scopeRowLayout.addWidget(self.scopeMinus)
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.scopeRowLayout.addItem(spacerItem4)
         self.scopeCtrlLayout.addLayout(self.scopeRowLayout)
@@ -180,8 +198,10 @@ class Ui_hotkey_edit(object):
         self.functionComboBox.setItemText(1, QtGui.QApplication.translate("hotkey_edit", "open file/url", None, QtGui.QApplication.UnicodeUTF8))
         self.functionComboBox.setItemText(2, QtGui.QApplication.translate("hotkey_edit", "send keystroke", None, QtGui.QApplication.UnicodeUTF8))
         self.scopeLabel.setText(QtGui.QApplication.translate("hotkey_edit", "scope", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(0, QtGui.QApplication.translate("hotkey_edit", "global", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(1, QtGui.QApplication.translate("hotkey_edit", "only in", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(2, QtGui.QApplication.translate("hotkey_edit", "not in", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_scopeMode.setItemText(0, QtGui.QApplication.translate("hotkey_edit", "global", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_scopeMode.setItemText(1, QtGui.QApplication.translate("hotkey_edit", "only in:", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_scopeMode.setItemText(2, QtGui.QApplication.translate("hotkey_edit", "not in:", None, QtGui.QApplication.UnicodeUTF8))
+        self.scopePlus.setText(QtGui.QApplication.translate("hotkey_edit", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.scopeMinus.setText(QtGui.QApplication.translate("hotkey_edit", "-", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_scopeChange.setText(QtGui.QApplication.translate("hotkey_edit", "can be changed", None, QtGui.QApplication.UnicodeUTF8))
 

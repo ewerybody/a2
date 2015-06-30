@@ -278,29 +278,37 @@ class EditCtrl(QtGui.QWidget):
                 continue
             
             name = ctrl[0][4:]
+            control = ctrl[1]
             
-            if isinstance(ctrl[1], QtGui.QCheckBox):
-                ctrl[1].clicked.connect(partial(self._updateCfgData,
-                                                name, ctrl[1].isChecked))
+            if isinstance(control, QtGui.QCheckBox):
+                control.clicked.connect(partial(self._updateCfgData,
+                                                name, control.isChecked))
                 # set ctrl according to config or set config from ctrl
                 if name in self.element:
-                    ctrl[1].setChecked(self.element[name])
+                    control.setChecked(self.element[name])
                 else:
-                    self.element[name] = ctrl[1].isChecked()
+                    self.element[name] = control.isChecked()
             
-            elif isinstance(ctrl[1], QtGui.QLineEdit):
-                ctrl[1].textChanged.connect(partial(self._updateCfgData, name, None))
+            elif isinstance(control, QtGui.QLineEdit):
+                control.textChanged.connect(partial(self._updateCfgData, name, None))
                 if name in self.element:
-                    ctrl[1].setText(self.element[name])
+                    control.setText(self.element[name])
                 else:
-                    self.element[name] = ctrl[1].text()
+                    self.element[name] = control.text()
+            
+            elif isinstance(control, QtGui.QComboBox):
+                control.currentIndexChanged.connect(partial(self._updateCfgData, name, None))
+                if name in self.element:
+                    control.setCurrentIndex(self.element[name])
+                else:
+                    self.element[name] = control.currentIndex()            
             
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
-                          (ctrl[0], type(ctrl[1])))
+                          (ctrl[0], type(control)))
     
     def _updateCfgData(self, name, func, data=None, *args):
-        print('widget sent data: %s' % str(args))
+        #print('widget sent data: %s' % str(args))
         if data is not None:
             self.element[name] = data
         elif func is not None:
@@ -531,11 +539,23 @@ class EditHotkey(EditCtrl):
         self.ui.setupUi(self.mainWidget)
         self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
         
+        self.ui.cfg_scopeMode.currentIndexChanged.connect(self.scopeModeChanged)
+        #QtGui.QComboBox.setCurrentIndex()
         self.connectCfgCtrls(self.ui)
+        self.scopeModeChanged()
+    
+    def scopeModeChanged(self, index=None):
+        if index is None:
+            index = self.ui.cfg_scopeMode.currentIndex()
+        state = index != 0
+        self.ui.cfg_scope.setVisible(state)
+        self.ui.scopePlus.setVisible(state)
+        self.ui.scopeMinus.setVisible(state)
     
     def getCfg(self):
         return self.element
 
+    
 
 class EditView(QtGui.QWidget):
     """

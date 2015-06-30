@@ -1,12 +1,12 @@
 ﻿a2DO:
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
-    * dynamic show/hide of scope list
     * dynamic show/hide of function controls
     * borrow scope selection and hotkey getter from aA
     * add multiple hotkey user functionality
-    * allow multiple hotkeys in edit mode
     * implement hotkey data in change loop
+    * check for hotkey conflicts before submit
+    * allow multiple hotkeys in edit mode
 * resolve settingsChanged bug a2 loads old includes before saving is finished
 * disable Edit mod when multiple selected
 * create dev config page
@@ -24,6 +24,9 @@ in flight:
 * create check control which writes variables.ahk inlcude or inlcude.ahk
 
 a2DONE:
+* added QComboBox to be handled by EditCtrl automatically
+* hotkey stuff
+    * dynamic show/hide of scope list
 * no reload on submit when mod is disabled
 * fix: show no or summary page when multiple selected
 * create functionality to delete edit element 
