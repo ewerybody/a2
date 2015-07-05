@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1128</width>
-    <height>666</height>
+    <width>1188</width>
+    <height>673</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,6 +22,9 @@
    </property>
    <item>
     <widget class="QGroupBox" name="groupBox">
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {font: 10pt};</string>
+     </property>
      <property name="title">
       <string>hotkey</string>
      </property>
@@ -191,6 +194,9 @@
       </item>
       <item>
        <layout class="QHBoxLayout" name="functionLayout" stretch="0,1">
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" name="functionLabelLayout">
           <item>
@@ -208,7 +214,7 @@
              </size>
             </property>
             <property name="text">
-             <string>function</string>
+             <string>function:</string>
             </property>
            </widget>
           </item>
@@ -236,12 +242,12 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="functionRowLayout" stretch="0,0">
+           <layout class="QHBoxLayout" name="functionRowLayout" stretch="0,0,0">
             <property name="topMargin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QComboBox" name="functionComboBox">
+             <widget class="QComboBox" name="cfg_functionMode">
               <item>
                <property name="text">
                 <string>run code</string>
@@ -260,6 +266,19 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="functionButton">
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -273,6 +292,9 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="functionText"/>
           </item>
          </layout>
         </item>
@@ -300,7 +322,7 @@
              </size>
             </property>
             <property name="text">
-             <string>scope</string>
+             <string>scope:</string>
             </property>
            </widget>
           </item>
@@ -361,7 +383,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>35</width>
+                <width>50</width>
                 <height>35</height>
                </size>
               </property>
@@ -380,7 +402,7 @@
               </property>
               <property name="maximumSize">
                <size>
-                <width>35</width>
+                <width>50</width>
                 <height>35</height>
                </size>
               </property>

@@ -25,17 +25,18 @@ the author, name, version, description info
 '''
 
 from PySide import QtGui, QtCore
-import logging
 from functools import partial
 import subprocess
 from os.path import join
 from hotkey_edit_ui import Ui_hotkey_edit
 import inspect
+import logging
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
 margin = 5
 labelW = 100
+
 
 def draw(element):
     """
@@ -53,10 +54,10 @@ def draw(element):
 class DrawWelcome(QtGui.QWidget):
     'Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!'
 
+
 class DrawNfo(QtGui.QWidget):
     def __init__(self, data):
         super(DrawNfo, self).__init__()
-        
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.label = QtGui.QLabel(self)
@@ -92,15 +93,19 @@ class DrawHotkey(QtGui.QWidget):
     """
     def __init__(self, data):
         super(DrawHotkey, self).__init__()
+        self.data = data
+        self._setupUi()
+    
+    def _setupUi(self):
         self.ctrllayout = QtGui.QHBoxLayout(self)
         self.labelBoxLayout = QtGui.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
-        if data['disablable']:
+        if self.data['disablable']:
             self.check = QtGui.QCheckBox(self)
-            self.check.setChecked(data['enabled'])
+            self.check.setChecked(self.data['enabled'])
             self.labelLayout.addWidget(self.check)
-        self.label = QtGui.QLabel(data.get('label') or '', self)
+        self.label = QtGui.QLabel(self.data.get('label') or '', self)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
@@ -109,16 +114,22 @@ class DrawHotkey(QtGui.QWidget):
         
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = QtGui.QPushButton(data.get('key') or '')
+        self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
         self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 40))
         self.hotkeyLayout.addWidget(self.hotkeyButton)
+        self.hotkeyButton.setEnabled(self.data['keyChange'])
+        self.hotkeyButton.pressed.connect(self.hotkeyChange)
+        
         self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
                                                     QtGui.QSizePolicy.Minimum))
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
                                                         QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
-        
+    
+    def hotkeyChange(self):
+        log.info('current key: %s' % self.data['key'])
+
 
 def edit(element, mod, main):
     if element['typ'] == 'nfo':
@@ -132,7 +143,8 @@ def edit(element, mod, main):
 class EditNfo(QtGui.QGroupBox):
     def __init__(self, data):
         super(EditNfo, self).__init__()
-        log.info('Building EditNfo...')
+        self.setStyleSheet("QGroupBox {font: 10pt};")
+        
         self.data = data
         self.typ = data['typ']
         self.setTitle('module information:')
@@ -201,7 +213,7 @@ class EditCtrl(QtGui.QWidget):
         self.setSizePolicy(sizePolicy)
         self._ctrlLayout = QtGui.QHBoxLayout(self)
         self._ctrlLayout.setSpacing(0)
-        self._ctrlLayout.setContentsMargins(5, 5, 5, 5)
+        self._ctrlLayout.setContentsMargins(0, 0, 0, 0)
         self.mainWidget = QtGui.QWidget(self)
         if addLayout:
             self.mainLayout = QtGui.QVBoxLayout()
@@ -281,6 +293,7 @@ class EditCtrl(QtGui.QWidget):
             control = ctrl[1]
             
             if isinstance(control, QtGui.QCheckBox):
+                # checkBox doesn't send state, so we put the func to check
                 control.clicked.connect(partial(self._updateCfgData,
                                                 name, control.isChecked))
                 # set ctrl according to config or set config from ctrl
@@ -302,7 +315,7 @@ class EditCtrl(QtGui.QWidget):
                     control.setCurrentIndex(self.element[name])
                 else:
                     self.element[name] = control.currentIndex()            
-            
+
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (ctrl[0], type(control)))
@@ -538,11 +551,82 @@ class EditHotkey(EditCtrl):
         self.ui = Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
         self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
+
+        self.disablableCheck()
+        self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
+
+        self.functions = ['functionCode', 'functionURL', 'functionSend']
+        self.ui.cfg_functionMode.currentIndexChanged.connect(self.functionSetText)
+        self.functionMenu = QtGui.QMenu(self.ui.functionButton)
+        self.functionMenu.aboutToShow.connect(self.functionMenuBuild)
+        self.ui.functionButton.setMenu(self.functionMenu)
+        self.functionSetText()
+        self.ui.functionText.textChanged.connect(self.functionChanged)
         
         self.ui.cfg_scopeMode.currentIndexChanged.connect(self.scopeModeChanged)
-        #QtGui.QComboBox.setCurrentIndex()
-        self.connectCfgCtrls(self.ui)
         self.scopeModeChanged()
+        
+        self.connectCfgCtrls(self.ui)
+    
+    def functionMenuBuild(self):
+        self.functionMenu.clear()
+        index = self.ui.cfg_functionMode.currentIndex()
+        if index == 0:
+            fsubmenu1 = self.functionMenu.addMenu('local functions')
+            fsubmenu2 = self.functionMenu.addMenu('built-in functions')
+        elif index == 1:
+            for x in [('browse...', self.functionBrowse),
+                      ('explore to...', self.functionExplore)]:
+                action = QtGui.QAction(self.functionMenu)
+                action.setText(x[0])
+                action.triggered.connect(x[1])
+                self.functionMenu.addAction(action)
+        else:
+            fsubmenu1 = self.functionMenu.addMenu('Send Mode')
+            for x in ['Send', 'SendInput', 'SendRaw']:
+                action = QtGui.QAction(fsubmenu1)
+                action.setText(x)
+                action.triggered.connect(partial(self.functionSendMode, x))
+                fsubmenu1.addAction(action)
+            #fsubmenu2 = self.functionMenu.addMenu('built-in variables')
+            for x in [('Help on Send', self.functionSendHelp)]:
+                action = QtGui.QAction(self.functionMenu)
+                action.setText(x[0])
+                action.triggered.connect(x[1])
+                self.functionMenu.addAction(action)
+    
+    def functionSendMode(self, mode):
+        self.element['sendmode'] = mode
+    
+    def functionBrowse(self):
+        """TODO"""
+        log.info('open a browser and all that ...')
+        self.functionSetText(1, 'C:\asasasdf\asdfasdf')
+
+    def functionExplore(self):
+        """TODO: verify"""
+        text = self.ui.functionText.text()
+        subprocess.Popen(['explorer.exe', text])
+    
+    def functionSendHelp(self):
+        self.main.surfTo(self.main.urls.ahksend)
+    
+    def functionChanged(self, text=None):
+        #text = self.ui.functionText.text()
+        index = self.ui.cfg_functionMode.currentIndex()
+        print('text changed %s: %s' % (index, text))
+        print('self.functions[index]: %s' % self.functions[index])
+        self.element[self.functions[index]] = text
+    
+    def functionSetText(self, index=None, text=None):
+        if index is None:
+            index = self.ui.cfg_functionMode.currentIndex()
+        if text is None:
+            text = self.element.get(self.functions[index]) or ''
+        print('mode change: %s' % text)
+        self.ui.functionText.setText(text)
+        # show include thingy
+        #self.ui.scopePlus.setVisible(index == 0)
     
     def scopeModeChanged(self, index=None):
         if index is None:
@@ -551,6 +635,12 @@ class EditHotkey(EditCtrl):
         self.ui.cfg_scope.setVisible(state)
         self.ui.scopePlus.setVisible(state)
         self.ui.scopeMinus.setVisible(state)
+
+    def disablableCheck(self):
+        """would be useless if hotkey is off by default and cannot be changed"""
+        state = self.ui.cfg_disablable.isChecked()
+        self.ui.cfg_enabled.setEnabled(state)
+        self.ui.cfg_enabled.setChecked(True)
     
     def getCfg(self):
         return self.element

@@ -27,7 +27,7 @@ _defaultTable = 'a2'
 _defaultSep = '|'
 
 
-class A2db:
+class A2db(object):
     def __init__(self, a2dbFile):
         self._file = a2dbFile
         self._con = sqlite3.connect(a2dbFile)

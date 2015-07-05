@@ -2,34 +2,41 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 from PySide import QtGui, QtCore
-import os
 from os.path import exists, join, splitext, dirname
-#import siding
-import sys
-import a2dblib
-import a2ctrl
-import json
 from datetime import datetime
-from a2design_ui import Ui_a2MainWindow
+from copy import deepcopy
+from _functools import partial
+import os
+import sys
+import json
 import subprocess
 import webbrowser
-from copy import deepcopy
+import a2dblib
+import a2ctrl
+from a2design_ui import Ui_a2MainWindow
 import logging
-from _functools import partial
 logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
+#import siding
 
 # maybe make this even settable in a dev options dialog?
 jsonIndent = 2
+
+
+class URLs(object):
+    def __init__(self):
+        self.a2 = 'https://github.com/ewerybody/a2'
+        self.ahk = 'http://ahkscript.org'
+        self.ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
 
 
 class A2Window(QtGui.QMainWindow):
     def __init__(self, parent=None, *args):
         super(A2Window, self).__init__(parent)
         
-        self.a2url = 'https://github.com/ewerybody/a2'
-        self.ahkurl = 'http://ahkscript.org'
+        self.urls = URLs()
+        
         #TODO: fck reg! do that with the sql db
         self.settings = QtCore.QSettings("a2", "a2ui")
         
@@ -76,8 +83,8 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionEdit_module.setShortcut("Ctrl+E")
         self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
         self.ui.actionExplore_to.triggered.connect(self.exploreMod)
-        self.ui.actionAbout_a2.triggered.connect(partial(self.surfTo, self.a2url))
-        self.ui.actionAbout_Autohotkey.triggered.connect(partial(self.surfTo, self.ahkurl))
+        self.ui.actionAbout_a2.triggered.connect(partial(self.surfTo, self.urls.a2))
+        self.ui.actionAbout_Autohotkey.triggered.connect(partial(self.surfTo, self.urls.ahk))
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         
         self.ui.editOKButton.pressed.connect(self.editSubmit)
@@ -201,7 +208,7 @@ class A2Window(QtGui.QMainWindow):
                       'version': ''}]
         else:
             config = self.mod.config
-                
+        
         self.tempConfig = None
 
         author = ''
@@ -266,6 +273,9 @@ class A2Window(QtGui.QMainWindow):
     def editSubmit(self):
         """
         loop the given ctrlDict, query ctrls and feed target mod.config
+        editSubmit should also call to collect and verify the mods user db data
+        So that a change in includes, hotkeys and variables is tracked to make
+        only the needed writes
         """
         if not self.editing:
             return
@@ -322,7 +332,9 @@ class A2Window(QtGui.QMainWindow):
         #if os.access(os.W_OK)
         with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:
             fobj.write('\n'.join(includeAhk))
+        
         #print('mod: %s' % self.mod.name)
+        # TODO: do this deferred with a little delay:
         subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir)
     
     def fetchModules(self):
