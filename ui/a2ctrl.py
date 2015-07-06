@@ -550,6 +550,7 @@ class EditHotkey(EditCtrl):
         self.element = element
         self.ui = Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
+        self.ui.hkBtn2 = HotKey('lala', self.ui.hotkeyKeyLayout, main)
         self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
 
         self.disablableCheck()
@@ -645,7 +646,63 @@ class EditHotkey(EditCtrl):
     def getCfg(self):
         return self.element
 
+
+class HotKey(QtGui.QPushButton):
+    def __init__(self, label, parent, main):
+        super(HotKey, self).__init__()
+        self.main = main
+        self.setText(label)
+        parent.addWidget(self)
     
+    def mousePressEvent(self, event):
+        print('event: %s' % event)
+        print('dir(event): %s' % dir(event))
+        self.popup = Popup(self.main, event.globalX(), event.globalY())
+        self.popup.show()
+
+
+class Popup(QtGui.QWidget):
+    """QtCore.Qt.Window
+    | QtCore.Qt.CustomizeWindowHint"""
+    def __init__(self, parent, x, y):
+        print('x: %s' % x)
+        super(Popup, self).__init__()
+        
+        self.textEdit = QtGui.QTextEdit()
+        self.textEdit.setReadOnly(True)
+        self.textEdit.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        
+        closeButton = QtGui.QPushButton("&Close")
+        closeButton.clicked.connect(self.close)
+        
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(self.textEdit)
+        layout.addWidget(closeButton)
+        self.setLayout(layout)
+        
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
+                        self, self.close)
+        
+        self.setWindowTitle("Preview")
+        pos = self.pos()
+        w = self.width()
+        print('w: %s' % w)
+        w = w / 2
+        print('w: %s' % w)
+        print('x: %s' % x)
+        x = x - w
+        print('x: %s' % x)
+        pos.setX(x + (self.width() / 4.0))
+        #pos.setX(x)
+        pos.setY(y - (self.height() / 2))
+        self.move(pos)
+        self.show()
+        
+        
+    def focusOutEvent(self, event):
+        self.close()
+        #self.focusOutEvent()
+        
 
 class EditView(QtGui.QWidget):
     """
