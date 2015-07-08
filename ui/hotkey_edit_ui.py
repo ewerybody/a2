@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\hotkey_edit.ui'
 #
-# Created: Fri Jul  3 19:42:59 2015
+# Created: Tue Jul  7 23:58:58 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,9 +61,6 @@ class Ui_hotkey_edit(object):
         self.hotkeyKeyLayout.setSpacing(5)
         self.hotkeyKeyLayout.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
         self.hotkeyKeyLayout.setObjectName("hotkeyKeyLayout")
-        self.hotkeyButton = QtGui.QPushButton(self.groupBox)
-        self.hotkeyButton.setObjectName("hotkeyButton")
-        self.hotkeyKeyLayout.addWidget(self.hotkeyButton)
         self.cfg_enabled = QtGui.QCheckBox(self.groupBox)
         self.cfg_enabled.setChecked(True)
         self.cfg_enabled.setObjectName("cfg_enabled")
@@ -196,8 +193,7 @@ class Ui_hotkey_edit(object):
         self.cfg_name.setText(QtGui.QApplication.translate("hotkey_edit", "extensionXhotkey1", None, QtGui.QApplication.UnicodeUTF8))
         self.displayLabelLabel.setText(QtGui.QApplication.translate("hotkey_edit", "display label:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_label.setText(QtGui.QApplication.translate("hotkey_edit", "make some awesome stuff", None, QtGui.QApplication.UnicodeUTF8))
-        self.hotkeyLabel.setText(QtGui.QApplication.translate("hotkey_edit", "standard hotkey:", None, QtGui.QApplication.UnicodeUTF8))
-        self.hotkeyButton.setText(QtGui.QApplication.translate("hotkey_edit", "Win+G", None, QtGui.QApplication.UnicodeUTF8))
+        self.hotkeyLabel.setText(QtGui.QApplication.translate("hotkey_edit", "hotkey:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_enabled.setText(QtGui.QApplication.translate("hotkey_edit", "enabled by default", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_disablable.setText(QtGui.QApplication.translate("hotkey_edit", "can be disabled", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_keyChange.setText(QtGui.QApplication.translate("hotkey_edit", "can be changed", None, QtGui.QApplication.UnicodeUTF8))

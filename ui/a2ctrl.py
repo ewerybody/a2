@@ -114,7 +114,8 @@ class DrawHotkey(QtGui.QWidget):
         
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
+        #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
+        self.hotkeyButton = HotKey(self.data.get('key') or '')
         self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 40))
         self.hotkeyLayout.addWidget(self.hotkeyButton)
         self.hotkeyButton.setEnabled(self.data['keyChange'])
@@ -550,7 +551,8 @@ class EditHotkey(EditCtrl):
         self.element = element
         self.ui = Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
-        self.ui.hkBtn2 = HotKey('lala', self.ui.hotkeyKeyLayout, main)
+        self.ui.hotkeyButton = HotKey(element.get('key') or '')
+        self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
 
         self.disablableCheck()
@@ -648,23 +650,24 @@ class EditHotkey(EditCtrl):
 
 
 class HotKey(QtGui.QPushButton):
-    def __init__(self, label, parent, main):
+    def __init__(self, label, parent=None):
         super(HotKey, self).__init__()
-        self.main = main
+        #self.main = main
         self.setText(label)
-        parent.addWidget(self)
+        if parent is not None:
+            parent.addWidget(self)
     
     def mousePressEvent(self, event):
         print('event: %s' % event)
         print('dir(event): %s' % dir(event))
-        self.popup = Popup(self.main, event.globalX(), event.globalY())
+        self.popup = Popup(event.globalX(), event.globalY())
         self.popup.show()
 
 
 class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
     | QtCore.Qt.CustomizeWindowHint"""
-    def __init__(self, parent, x, y):
+    def __init__(self, x, y):
         print('x: %s' % x)
         super(Popup, self).__init__()
         
@@ -694,8 +697,11 @@ class Popup(QtGui.QWidget):
         print('x: %s' % x)
         pos.setX(x + (self.width() / 4.0))
         #pos.setX(x)
-        pos.setY(y - (self.height() / 2))
+        pos.setY(y - (self.height() / 4))
         self.move(pos)
+        
+        self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
+        
         self.show()
         
         
