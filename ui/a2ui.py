@@ -123,7 +123,6 @@ class A2Window(QtGui.QMainWindow):
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText(name)
             enabled = name in self.db.gets('enabled')
-            log.debug('enabled: %s' % enabled)
             # weird.. need to set false first to fix tristate effect
             self.ui.modCheck.setChecked(False)
             self.ui.modCheck.setChecked(enabled)
@@ -134,7 +133,6 @@ class A2Window(QtGui.QMainWindow):
         else:
             names = [s.text() for s in sel]
             self.selectedMod = names
-            log.debug('names: %s' % names)
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText('%i modules' % numsel)
             numenabled = len([n for n in names if n in self.db.gets('enabled')])
@@ -200,7 +198,8 @@ class A2Window(QtGui.QMainWindow):
                       'version': 'v0.1'}]
         elif isinstance(self.selectedMod, list):
             config = [{'typ': 'nfo',
-                      'description': 'Multiple modules selected. Here goes some useful info in the future...',
+                      'description': 'Multiple modules selected. Here goes some '
+                                     'useful info in the future...',
                       'author': '',
                       'version': ''}]
         else:
@@ -223,8 +222,8 @@ class A2Window(QtGui.QMainWindow):
             self.controls.append(QtGui.QLabel('config.json currently empty. '
                                               'imagine awesome layout here ...'))
         else:
-            for element in config:
-                self.controls.append(a2ctrl.draw(element))
+            for cfg in config:
+                self.controls.append(a2ctrl.draw(cfg, self.mod))
         
         self.toggleEdit(False)
         self.drawUI()
@@ -297,12 +296,11 @@ class A2Window(QtGui.QMainWindow):
     def modEnable(self):
         if self.ui.modCheck.isChecked():
             log.debug('enabling: %s ...' % self.selectedMod)
-            self.mod.enable()
+            self.mod.change()
             self.db.adds('enabled', self.selectedMod)
         else:
             log.debug('disabling: %s ...' % self.selectedMod)
             self.db.dels('enabled', self.selectedMod)
-        
         self.settingsChanged()
     
     def modDisableAll(self):
@@ -354,7 +352,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.a2dir = dirname(self.a2uidir)
         self.a2libdir = join(self.a2dir, 'lib')
-        self.a2exe = join(self.a2dir, 'a2Starter.exe') 
+        self.a2exe = join(self.a2dir, 'a2Starter.exe')
         self.a2ahk = join(self.a2dir, 'a2.ahk')
         self.a2setdir = self.getSettingsDir()
         self.a2moddir = join(self.a2dir, 'modules')
@@ -385,7 +383,7 @@ class A2Window(QtGui.QMainWindow):
             subprocess.Popen(['explorer.exe', self.mod.path])
 
     def exploreA2(self):
-        subprocess.Popen(['explorer.exe', self.a2dir])    
+        subprocess.Popen(['explorer.exe', self.a2dir])
     
     def getSettingsDir(self):
         """ TODO: temporary under a2dir!! has to be VARIABLE! """

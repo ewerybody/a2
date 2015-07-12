@@ -38,17 +38,17 @@ margin = 5
 labelW = 100
 
 
-def draw(element):
+def draw(cfg, mod):
     """
     mapper that returns display control objects
     according to the 'typ' of a config element
     """
-    if element['typ'] == 'nfo':
-        return DrawNfo(element)
-    elif element['typ'] == 'check':
-        return DrawCheck(element)
-    elif element['typ'] == 'hotkey':
-        return DrawHotkey(element)
+    if cfg['typ'] == 'nfo':
+        return DrawNfo(cfg)
+    elif cfg['typ'] == 'check':
+        return DrawCheck(cfg)
+    elif cfg['typ'] == 'hotkey':
+        return DrawHotkey(cfg, mod)
 
 
 class DrawWelcome(QtGui.QWidget):
@@ -91,9 +91,10 @@ class DrawHotkey(QtGui.QWidget):
     # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
     cfg['mode'] = 'ahk'
     """
-    def __init__(self, data):
+    def __init__(self, cfg, mod):
         super(DrawHotkey, self).__init__()
-        self.data = data
+        self.cfg = cfg
+        self.mod = mod
         self._setupUi()
     
     def _setupUi(self):
@@ -101,11 +102,12 @@ class DrawHotkey(QtGui.QWidget):
         self.labelBoxLayout = QtGui.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
-        if self.data['disablable']:
+        if self.cfg['disablable']:
             self.check = QtGui.QCheckBox(self)
-            self.check.setChecked(self.data['enabled'])
+            self.check.setChecked(self.cfg['enabled'])
+            self.check.clicked.connect(self.hotkeyCheck)
             self.labelLayout.addWidget(self.check)
-        self.label = QtGui.QLabel(self.data.get('label') or '', self)
+        self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
@@ -115,10 +117,10 @@ class DrawHotkey(QtGui.QWidget):
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
-        self.hotkeyButton = HotKey(self.data.get('key') or '')
+        self.hotkeyButton = HotKey(self.cfg.get('key') or '')
         self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 40))
         self.hotkeyLayout.addWidget(self.hotkeyButton)
-        self.hotkeyButton.setEnabled(self.data['keyChange'])
+        self.hotkeyButton.setEnabled(self.cfg['keyChange'])
         self.hotkeyButton.pressed.connect(self.hotkeyChange)
         
         self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
@@ -127,6 +129,15 @@ class DrawHotkey(QtGui.QWidget):
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
                                                         QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
+    
+    def hotkeyCheck(self):
+        # setUserCfg: subcfg, attributeName, value, ctrlName
+        state = self.check.isChecked()
+        self.mod.setUserCfg(self.cfg, 'enabled', state)
+        self.mod.change()
+#         self.cfg['enabled']
+#         hkUserCfg = self.mod.db.gets(self.cfg['name'])
+#         print('hkUserCfg: %s' % str(hkUserCfg))
     
     def hotkeyChange(self):
         log.info('current key: %s' % self.data['key'])
@@ -315,7 +326,7 @@ class EditCtrl(QtGui.QWidget):
                 if name in self.element:
                     control.setCurrentIndex(self.element[name])
                 else:
-                    self.element[name] = control.currentIndex()            
+                    self.element[name] = control.currentIndex()
 
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
@@ -326,7 +337,7 @@ class EditCtrl(QtGui.QWidget):
         if data is not None:
             self.element[name] = data
         elif func is not None:
-            self.element[name] = func()        
+            self.element[name] = func()
 
 
 class EditLine(QtGui.QWidget):
@@ -658,17 +669,15 @@ class HotKey(QtGui.QPushButton):
             parent.addWidget(self)
     
     def mousePressEvent(self, event):
-        print('event: %s' % event)
-        print('dir(event): %s' % dir(event))
         self.popup = Popup(event.globalX(), event.globalY())
         self.popup.show()
 
 
 class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
-    | QtCore.Qt.CustomizeWindowHint"""
+    | QtCore.Qt.CustomizeWindowHint
+    """
     def __init__(self, x, y):
-        print('x: %s' % x)
         super(Popup, self).__init__()
         
         self.textEdit = QtGui.QTextEdit()
@@ -685,25 +694,16 @@ class Popup(QtGui.QWidget):
         
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.close)
-        
-        self.setWindowTitle("Preview")
         pos = self.pos()
-        w = self.width()
-        print('w: %s' % w)
-        w = w / 2
-        print('w: %s' % w)
-        print('x: %s' % x)
-        x = x - w
-        print('x: %s' % x)
-        pos.setX(x + (self.width() / 4.0))
-        #pos.setX(x)
+        x = x - (self.width() / 2)
+        pos.setX(x + (self.width() / 4))
         pos.setY(y - (self.height() / 4))
         self.move(pos)
-        
         self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
-        
         self.show()
-        
+    
+    def leaveEvent(self, *args, **kwargs):
+        self.close()
         
     def focusOutEvent(self, event):
         self.close()
