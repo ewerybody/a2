@@ -34,7 +34,7 @@ class A2db(object):
         self._cur = self._con.cursor()
         log.info('database initialised! (%s)' % self._file)
 
-    def get(self, key, table=_defaultTable):
+    def get(self, key, table=_defaultTable, check=True):
         """
         Gets you a value from a keyName and tableName.
 
@@ -42,8 +42,12 @@ class A2db(object):
         available. So return [0] fails! And not fetch. But ok thats good :]
         :param key: keyName in the "key" column
         :param table: tableName
+        :param: check: will look for the key in table before even trying to fetch
         :return: string of the data or empty string
         """
+        if check and key not in self.keys(table):
+            return ''
+        
         try:
             data = self._fetch('select value from "%s" where key="%s"' % (table, key))
             return data[0][0]
@@ -72,10 +76,10 @@ class A2db(object):
         # to accept iterable values make them a string with separators
         if isinstance(value, (set, list, tuple)):
             value = sep.join(value)
-        
         try:
             if key not in self.keys(table):
-                statement = ('insert into "%s" ("key","value") values ("%s", "%s")' % (table, key, value))
+                statement = ('insert into "%s" ("key","value") values ("%s", "%s")'
+                             % (table, key, value))
                 log.debug('adding value!\n  %s' % statement)
             else:
                 statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, value, key)
@@ -91,8 +95,10 @@ class A2db(object):
                 # TODO: resolve loop:
                 self.set(key, value, table)
             else:
-                #log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s' % (value, key, table, error))
-                log.error('could not set value: "%s" on key:"%s" in section:"%s"' % (value, key, table))
+                #log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s'
+                #          % (value, key, table, error))
+                log.error('could not set value: "%s" on key:"%s" in section:"%s"'
+                          % (value, key, table))
 
     def adds(self, key, value, table=_defaultTable, sep=_defaultSep):
         """
@@ -156,7 +162,9 @@ class A2db(object):
         tables = self.tables()
         for t in tables:
             columns = ' - '.join([i[1] for i in self._fetch('PRAGMA table_info("%s")' % t)])
-            log.info('\ntable: "%s":\n  %s\n  %s\n  %s' % (t, columns, '-' * 40, '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
+            log.info('\ntable: "%s":\n  %s\n  %s\n  %s'
+                     % (t, columns, '-' * 40,
+                        '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
 
     # old crap --------------------------------------------------------
 
@@ -211,7 +219,8 @@ class A2db(object):
             for key in data:
                 if key in columns:
                     continue
-                self._execute("ALTER TABLE '" + section + "' ADD COLUMN " + key + " " + self.getSqlType(data[key]))
+                self._execute("ALTER TABLE '" + section + "' ADD COLUMN " + key + " " +
+                              self.getSqlType(data[key]))
                 isDirty = True
         return isDirty
 
