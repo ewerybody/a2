@@ -315,7 +315,7 @@ class A2Window(QtGui.QMainWindow):
         includeAhk = ["; a2 include.ahk - Don't bother editing! - "
                       "File is generated automatically!"]
         for modname in self.db.gets('enabled'):
-            includes = self.db.gets('include', modname)
+            includes = self.db.gets('includes', modname)
             includeAhk += ['#include modules\%s\%s'
                            % (modname, i) for i in includes]
             #log.debug('includes %s: %s' % (e, includes))

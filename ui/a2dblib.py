@@ -19,6 +19,7 @@ a2db.rem('tempstuff', 'a2')
 """
 import sqlite3
 import logging
+import json
 logging.basicConfig()
 log = logging.getLogger('a2db')
 log.setLevel(logging.INFO)
@@ -62,11 +63,17 @@ class A2db(object):
     def gets(self, key, table=_defaultTable, sep=_defaultSep):
         """
         returns a separated list from a db string entry
+        TODO: do this with JSON as well!
         """
         value = self.get(key, table)
         if not value:
             return set()
         return set(value.split(sep))
+
+    def getd(self, key, table=_defaultTable):
+        value = self.get(key, table)
+        value = json.loads(value)
+        return value
 
     def set(self, key, value, table=_defaultTable, sep=_defaultSep, check=False):
         """
@@ -76,6 +83,9 @@ class A2db(object):
         # to accept iterable values make them a string with separators
         if isinstance(value, (set, list, tuple)):
             value = sep.join(value)
+        elif isinstance(value, dict):
+            value = json.dumps(value, separators=(',', ':'))
+            value = value.replace('"', '""')
         try:
             if key not in self.keys(table):
                 statement = ('insert into "%s" ("key","value") values ("%s", "%s")'
@@ -87,7 +97,8 @@ class A2db(object):
             self._execute(statement)
             self._con.commit()
         #except sqlite3.DatabaseError as error:
-        except:
+        except Exception as error:
+        #except:
             log.debug('setting db failed...')
             if table not in self.tables():
                 log.debug('creating table and retry...')
@@ -95,10 +106,10 @@ class A2db(object):
                 # TODO: resolve loop:
                 self.set(key, value, table)
             else:
-                #log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s'
-                #          % (value, key, table, error))
-                log.error('could not set value: "%s" on key:"%s" in section:"%s"'
-                          % (value, key, table))
+                log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s'
+                          % (value, key, table, error))
+                #log.error('could not set value: "%s" on key:"%s" in section:"%s"'
+                #          % (value, key, table))
 
     def adds(self, key, value, table=_defaultTable, sep=_defaultSep):
         """

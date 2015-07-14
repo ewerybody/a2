@@ -68,7 +68,7 @@ class Mod(object):
         sets its own db entries
         """
         includes = []
-        hotkeys = []
+        hotkeys = {}
         for cfg in self.config[1:]:
             if cfg['typ'] == 'include':
                 includes.append(cfg['file'])
@@ -78,24 +78,19 @@ class Mod(object):
                     continue
                 
                 key = self.getCfgValue(cfg, userCfg, 'key')
-                log.info('key: %s' % key)
                 scope = self.getCfgValue(cfg, userCfg, 'scope')
                 scopeMode = self.getCfgValue(cfg, userCfg, 'scopeMode')
-                log.info('scope: %s' % scope)
-                log.info('scopeMode: %s' % scopeMode)
-                funcMode = cfg['functionMode']
-                log.info('funcMode: %s' % funcMode)
-                function = cfg[['functionCode', 'functionURL', 'functionSend'][funcMode]]
-                log.info('function: %s' % function)
+                function = cfg[['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']]]
+                if scopeMode not in hotkeys:
+                    hotkeys[scopeMode] = []
+                # save a global if global scope set or all-but AND scope is empty
+                if scopeMode == 0 or scopeMode == 2 and scope == '':
+                    hotkeys[0].append([key, function])
+                else:
+                    hotkeys[scopeMode].append([scope, key, function])
         
-                
-#                 userCfg = self.db.gets(cfg['name'], self.name)
-#
-#                 if not cfg['disablable']:
-#                     hotkeys.append()
-#                     if cfg['name'] in self.db.gets('hotkeyOFF', self.name):
-        
-        self.db.set('include', includes, self.name)
+        self.db.set('includes', includes, self.name)
+        self.db.set('hotkeys', hotkeys, self.name)
 
     @property
     def scripts(self):
