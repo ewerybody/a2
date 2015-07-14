@@ -80,11 +80,15 @@ class Mod(object):
                 key = self.getCfgValue(cfg, userCfg, 'key')
                 log.info('key: %s' % key)
                 scope = self.getCfgValue(cfg, userCfg, 'scope')
+                scopeMode = self.getCfgValue(cfg, userCfg, 'scopeMode')
                 log.info('scope: %s' % scope)
+                log.info('scopeMode: %s' % scopeMode)
                 funcMode = cfg['functionMode']
                 log.info('funcMode: %s' % funcMode)
                 function = cfg[['functionCode', 'functionURL', 'functionSend'][funcMode]]
                 log.info('function: %s' % function)
+        
+                
 #                 userCfg = self.db.gets(cfg['name'], self.name)
 #
 #                 if not cfg['disablable']:

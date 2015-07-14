@@ -103,8 +103,10 @@ class DrawHotkey(QtGui.QWidget):
         self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
+            userCfg = self.mod.db.gets(self.cfg['name'], self.mod.name)
+            state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
-            self.check.setChecked(self.cfg['enabled'])
+            self.check.setChecked(state)
             self.check.clicked.connect(self.hotkeyCheck)
             self.labelLayout.addWidget(self.check)
         self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
