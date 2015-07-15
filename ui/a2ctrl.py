@@ -98,12 +98,12 @@ class DrawHotkey(QtGui.QWidget):
         self._setupUi()
     
     def _setupUi(self):
+        userCfg = self.mod.db.getd(self.cfg['name'], self.mod.name)
         self.ctrllayout = QtGui.QHBoxLayout(self)
         self.labelBoxLayout = QtGui.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
-            userCfg = self.mod.db.gets(self.cfg['name'], self.mod.name)
             state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
             self.check.setChecked(state)
@@ -119,7 +119,7 @@ class DrawHotkey(QtGui.QWidget):
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
-        self.hotkeyButton = HotKey(self.cfg.get('key') or '', self.hotkeyChange)
+        self.hotkeyButton = HotKey(self.mod.getCfgValue(self.cfg, userCfg, 'key'), self.hotkeyChange)
         self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 35))
         self.hotkeyLayout.addWidget(self.hotkeyButton)
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
@@ -716,9 +716,10 @@ class HotKey(QtGui.QPushButton):
         log.info('key: %s' % self.tempKey)
         log.info('ok: %s' % self.tempOK)
         if self.tempOK:
+            self.key = self.tempKey
             self.popup.close()
-            self.func(self.tempKey)
-            self.setText(self.tempKey)
+            self.func(self.key)
+            self.setText(self.key)
 
     def validateHotkey(self, hkstring):
         """
@@ -749,13 +750,10 @@ class HotKey(QtGui.QPushButton):
             self.popup.textEdit.setStyleSheet(styleBad)
             log.error(msg)
         else:
-            ahkDict = {'win': '#', 'ctrl': '^', 'shift': '+', 'alt': '!'}
-            ahkKey = ''.join([ahkDict[m] for m in modifier]) + key
             modifier = [k.title() for k in modifier]
             key = key.title()
             self.tempKey = '+'.join(modifier) + '+' + key
             
-            log.info('ahkKey %s:' % ahkKey)
             log.info('tempKey %s:' % self.tempKey)
             
             self.popup.textEdit.setStyleSheet(styleGood)

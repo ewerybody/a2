@@ -1,13 +1,11 @@
 ﻿a2DO:
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
-    * borrow scope selection and hotkey getter from aA
+    * finish adding scoped hotkeys
+    * borrow scope selection and hotkey getter from aA?
     * add multiple hotkey user functionality
-    * implement hotkey data in change loop
     * check for hotkey conflicts before submit
     * allow multiple hotkeys in edit mode
-* EditCtrls: unify "element" and "data" to cfg
-* resolve settingsChanged bug a2 loads old includes before saving is finished
 * disable Edit mod when multiple selected
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
@@ -24,8 +22,14 @@ in flight:
 * create check control which writes variables.ahk inlcude or inlcude.ahk
 
 a2DONE:
+* resolve settingsChanged bug a2 loads old includes before saving is finished
+* EditCtrls: unify "element" and "data" to cfg
 * added QComboBox to be handled by EditCtrl automatically
 * hotkey stuff
+    * implement hotkey data in change loop
+    * save as little user prefs as possible
+        if nothing set: take it from cfg
+        set ON if default OFF and vice versa ...
     * dynamic show/hide of function controls
     * dynamic show/hide of scope list
 * no reload on submit when mod is disabled

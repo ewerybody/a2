@@ -4,6 +4,7 @@ a2ui - setup interface for an Autohotkey environment.
 from PySide import QtGui, QtCore
 from os.path import exists, join, dirname
 from datetime import datetime
+import time
 from copy import deepcopy
 from _functools import partial
 import os
@@ -12,6 +13,7 @@ import subprocess
 import webbrowser
 import a2dblib
 import a2ctrl
+import threading
 from a2design_ui import Ui_a2MainWindow
 from a2mod import Mod
 import logging
@@ -312,24 +314,36 @@ class A2Window(QtGui.QMainWindow):
         log.debug('calling info on: %s ...' % self.selectedMod)
     
     def settingsChanged(self):
-        includeAhk = ["; a2 include.ahk - Don't bother editing! - "
-                      "File is generated automatically!"]
+        editDisclaimer = ("; a2 %s.ahk - Don't bother editing! - "
+                          "File is generated automatically!")
+        
+        includeAhk = [editDisclaimer % 'includes']
+        hotkeysAhk = {'#IfWinActive,': ['#+a::a2UI()']}
+
         for modname in self.db.gets('enabled'):
             includes = self.db.gets('includes', modname)
             includeAhk += ['#include modules\%s\%s'
                            % (modname, i) for i in includes]
-            #log.debug('includes %s: %s' % (e, includes))
-            #for c in self.modules[e].config:
-            #    if c['typ'] == 'include':
-            #        log.info('enabled mod %s file to include: %s'
-            #                 % (e, c['file']))
-        log.debug('includeAhk:\n%s' % includeAhk)
+            
+            hotkeys = self.db.getd('hotkeys', modname)
+            if '0' in hotkeys:
+                for hk in hotkeys['0']:
+                    hkstring = self.translateHotkey(hk[0]) + '::' + hk[1]
+                    hotkeysAhk['#IfWinActive,'].append(hkstring)
+
         #if os.access(os.W_OK)
         with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:
             fobj.write('\n'.join(includeAhk))
+        with open(join(self.a2setdir, 'hotkeys.ahk'), 'w') as fobj:
+            fobj.write(editDisclaimer % 'hotkeys' + '\n')
+            for i, v in hotkeysAhk.items():
+                fobj.write('\n'.join([i] + v) + '\n\n')
         
-        #print('mod: %s' % self.mod.name)
-        # TODO: do this deferred with a little delay:
+        restartTask = threading.Thread(target=self.restartA2)
+        restartTask.start()
+    
+    def restartA2(self):
+        time.sleep(0.2)
         subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir)
     
     def fetchModules(self):
@@ -393,8 +407,10 @@ class A2Window(QtGui.QMainWindow):
         return self.db.get('devAuthor') or os.getenv('USERNAME')
 
     def getDate(self):
-        today = datetime.today()
-        return '%i %i %i' % (today.year, today.month, today.day)
+        #today = datetime.today()
+        now = time.localtime()
+        return '%i %i %i' % (now.tm_year, now.mon, now.tm_mday)
+        #return '%i %i %i' % (today.year, today.month, today.day)
 
     def closeEvent(self, event):
         self.settings.setValue("geometry", self.saveGeometry())
@@ -414,6 +430,15 @@ class A2Window(QtGui.QMainWindow):
     def surfTo(self, url):
         webbrowser.get().open(url)
 
+    def translateHotkey(self, displayString):
+        parts = displayString.split('+')
+        parts = [p.strip().lower() for p in parts]
+        modifier = parts[:-1]
+        key = parts[-1]
+        ahkDict = {'win': '#', 'ctrl': '^', 'shift': '+', 'alt': '!'}
+        ahkKey = ''.join([ahkDict[m] for m in modifier]) + key
+        log.info('ahkKey %s:' % ahkKey)
+        return ahkKey
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)

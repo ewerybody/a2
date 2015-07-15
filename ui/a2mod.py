@@ -73,7 +73,8 @@ class Mod(object):
             if cfg['typ'] == 'include':
                 includes.append(cfg['file'])
             elif cfg['typ'] == 'hotkey':
-                userCfg = self.db.gets(cfg['name'], self.name)
+                userCfg = self.db.getd(cfg['name'], self.name)
+                print('change userCfg: %s' % userCfg)
                 if not self.getCfgValue(cfg, userCfg, 'enabled'):
                     continue
                 
@@ -91,6 +92,7 @@ class Mod(object):
         
         self.db.set('includes', includes, self.name)
         self.db.set('hotkeys', hotkeys, self.name)
+        self.main.settingsChanged()
 
     @property
     def scripts(self):
@@ -149,26 +151,15 @@ class Mod(object):
         if setValue != subCfg[attrName]:
             userCfg[attrName] = setValue
         self.db.set(subCfg['name'], userCfg, self.name)
-        
-#         for attr, val in userCfg.items():
-#             #key, userValue = part.split(':', 1)
-#             if attr == attrName:
-#                 # value to set equals current value: done
-#                 if str(setValue) == userValue:
-#                     return
-#                 # in any other case: delete to make changes
-#                 userCfg.remove(part)
-#                 break
-#         # value to set equals config value: done
-#         if setValue != subCfg[attrName]:
-#             userCfg.add(':'.join([attrName, str(setValue)]))
-
 
     def getCfgValue(self, subCfg, userCfg, attrName):
         """
         unified call to get a value no matter if its set by user already
         or still default from the module config.
         """
+#         print('getCfgValue: %s' % attrName)
+#         print('subCfg: %s' % subCfg)
+#         print('userCfg: %s' % userCfg)
         if attrName in userCfg:
             return userCfg[attrName]
         elif attrName in subCfg:
