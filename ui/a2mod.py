@@ -137,37 +137,41 @@ class Mod(object):
         user sets True AND default it False:
             set to userCfg
         """
-        userCfg = self.db.gets(subCfg['name'], self.name)
-        for part in userCfg:
-            key, userValue = part.split(':', 1)
-            if key == attrName:
-                # value to set equals current value: done
-                if str(setValue) == userValue:
-                    return
-                # in any other case: delete to make changes
-                userCfg.remove(part)
-                break
-        # value to set equals config value: done
+        userCfg = self.db.getd(subCfg['name'], self.name)
+        if attrName in userCfg:
+            # value to set equals CURRENT value: done
+            if setValue == userCfg[attrName]:
+                return
+            # in any other case: delete to make changes
+            userCfg.pop(attrName)
+
+        # value to set equals CONFIG value: done. otherwise: save it:
         if setValue != subCfg[attrName]:
-            userCfg.add(':'.join([attrName, str(setValue)]))
+            userCfg[attrName] = setValue
         self.db.set(subCfg['name'], userCfg, self.name)
-        return
+        
+#         for attr, val in userCfg.items():
+#             #key, userValue = part.split(':', 1)
+#             if attr == attrName:
+#                 # value to set equals current value: done
+#                 if str(setValue) == userValue:
+#                     return
+#                 # in any other case: delete to make changes
+#                 userCfg.remove(part)
+#                 break
+#         # value to set equals config value: done
+#         if setValue != subCfg[attrName]:
+#             userCfg.add(':'.join([attrName, str(setValue)]))
+
 
     def getCfgValue(self, subCfg, userCfg, attrName):
         """
         unified call to get a value no matter if its set by user already
         or still default from the module config.
         """
-        value = None
-        for part in userCfg:
-            key, value = part.split(':', 1)
-            if key == attrName:
-                if value == 'False':
-                    value = False
-                elif value == 'True':
-                    value = True
-                break
-        if value is None:
-            value = subCfg[attrName]
-        #log.info('value: %s - %s' % (value, type(value)))
-        return value
+        if attrName in userCfg:
+            return userCfg[attrName]
+        elif attrName in subCfg:
+            return subCfg[attrName]
+        else:
+            return None

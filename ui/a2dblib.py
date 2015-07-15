@@ -72,7 +72,10 @@ class A2db(object):
 
     def getd(self, key, table=_defaultTable):
         value = self.get(key, table)
-        value = json.loads(value)
+        try:
+            value = json.loads(value)
+        except:
+            value = {}
         return value
 
     def set(self, key, value, table=_defaultTable, sep=_defaultSep, check=False):
@@ -126,6 +129,16 @@ class A2db(object):
             log.debug('added "%s" to key:%s - %s' % (value, key, current))
         return current
 
+    def pop(self, key, table=_defaultTable):
+        if key not in self.keys(table):
+            return
+        statement = ('delete from "%s" where key="%s"' % (table, key))
+#         delete from where key
+#             statement = 'delete "%s" set value="%s" WHERE key="%s"' % (table, value, key)
+#             log.debug('updating value!\n  %s' % statement)
+        self._execute(statement)
+        self._con.commit()
+    
     def dels(self, key, value, table=_defaultTable, sep=_defaultSep):
         """
         deletes a string value from an entry

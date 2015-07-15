@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1188</width>
+    <width>1004</width>
     <height>673</height>
    </rect>
   </property>
@@ -50,7 +50,7 @@
          <widget class="QLabel" name="internalNameLabel">
           <property name="minimumSize">
            <size>
-            <width>200</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
@@ -74,7 +74,7 @@
          <widget class="QLabel" name="displayLabelLabel">
           <property name="minimumSize">
            <size>
-            <width>200</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
@@ -103,7 +103,7 @@
            <widget class="QLabel" name="hotkeyLabel">
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>100</width>
               <height>0</height>
              </size>
             </property>
@@ -196,7 +196,7 @@
            <widget class="QLabel" name="functionLabel">
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>100</width>
               <height>0</height>
              </size>
             </property>
@@ -304,7 +304,7 @@
            <widget class="QLabel" name="scopeLabel">
             <property name="minimumSize">
              <size>
-              <width>200</width>
+              <width>100</width>
               <height>0</height>
              </size>
             </property>

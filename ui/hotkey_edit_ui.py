@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\hotkey_edit.ui'
+# Form implementation generated from reading ui file 'hotkey_edit.ui'
 #
-# Created: Tue Jul  7 23:58:58 2015
+# Created: Wed Jul 15 10:31:11 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_hotkey_edit(object):
         self.internalNameLayout = QtGui.QHBoxLayout()
         self.internalNameLayout.setObjectName("internalNameLayout")
         self.internalNameLabel = QtGui.QLabel(self.groupBox)
-        self.internalNameLabel.setMinimumSize(QtCore.QSize(200, 0))
+        self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.internalNameLayout.addWidget(self.internalNameLabel)
         self.cfg_name = QtGui.QLineEdit(self.groupBox)
@@ -37,7 +37,7 @@ class Ui_hotkey_edit(object):
         self.displayLabelLayout = QtGui.QHBoxLayout()
         self.displayLabelLayout.setObjectName("displayLabelLayout")
         self.displayLabelLabel = QtGui.QLabel(self.groupBox)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(200, 0))
+        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.displayLabelLayout.addWidget(self.displayLabelLabel)
         self.cfg_label = QtGui.QLineEdit(self.groupBox)
@@ -50,7 +50,7 @@ class Ui_hotkey_edit(object):
         self.hotkeyLabelLayout = QtGui.QVBoxLayout()
         self.hotkeyLabelLayout.setObjectName("hotkeyLabelLayout")
         self.hotkeyLabel = QtGui.QLabel(self.groupBox)
-        self.hotkeyLabel.setMinimumSize(QtCore.QSize(200, 0))
+        self.hotkeyLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.hotkeyLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         self.hotkeyLabel.setObjectName("hotkeyLabel")
         self.hotkeyLabelLayout.addWidget(self.hotkeyLabel)
@@ -86,7 +86,7 @@ class Ui_hotkey_edit(object):
         self.functionLabelLayout = QtGui.QVBoxLayout()
         self.functionLabelLayout.setObjectName("functionLabelLayout")
         self.functionLabel = QtGui.QLabel(self.groupBox)
-        self.functionLabel.setMinimumSize(QtCore.QSize(200, 0))
+        self.functionLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.functionLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         self.functionLabel.setObjectName("functionLabel")
         self.functionLabelLayout.addWidget(self.functionLabel)
@@ -125,7 +125,7 @@ class Ui_hotkey_edit(object):
         self.scopeLabelLayout = QtGui.QVBoxLayout()
         self.scopeLabelLayout.setObjectName("scopeLabelLayout")
         self.scopeLabel = QtGui.QLabel(self.groupBox)
-        self.scopeLabel.setMinimumSize(QtCore.QSize(200, 0))
+        self.scopeLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.scopeLabel.setMaximumSize(QtCore.QSize(200, 16777215))
         self.scopeLabel.setObjectName("scopeLabel")
         self.scopeLabelLayout.addWidget(self.scopeLabel)

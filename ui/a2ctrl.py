@@ -119,11 +119,10 @@ class DrawHotkey(QtGui.QWidget):
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
-        self.hotkeyButton = HotKey(self.cfg.get('key') or '')
-        self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 40))
+        self.hotkeyButton = HotKey(self.cfg.get('key') or '', self.hotkeyChange)
+        self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 35))
         self.hotkeyLayout.addWidget(self.hotkeyButton)
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
-        self.hotkeyButton.pressed.connect(self.hotkeyChange)
         
         self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
                                                     QtGui.QSizePolicy.Minimum))
@@ -141,17 +140,19 @@ class DrawHotkey(QtGui.QWidget):
 #         hkUserCfg = self.mod.db.gets(self.cfg['name'])
 #         print('hkUserCfg: %s' % str(hkUserCfg))
     
-    def hotkeyChange(self):
-        log.info('current key: %s' % self.data['key'])
+    def hotkeyChange(self, newKey):
+        log.info('cfg key: %s' % self.cfg['key'])
+        log.info('newKey: %s' % newKey)
+        self.mod.setUserCfg(self.cfg, 'key', newKey)
+        
 
-
-def edit(element, mod, main):
-    if element['typ'] == 'nfo':
-        return EditNfo(element)
-    elif element['typ'] == 'include':
-        return EditInclude(element, mod, main)
-    elif element['typ'] == 'hotkey':
-        return EditHotkey(element, mod, main)
+def edit(cfg, mod, main):
+    if cfg['typ'] == 'nfo':
+        return EditNfo(cfg)
+    elif cfg['typ'] == 'include':
+        return EditInclude(cfg, mod, main)
+    elif cfg['typ'] == 'hotkey':
+        return EditHotkey(cfg, mod, main)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -197,26 +198,26 @@ class EditCtrl(QtGui.QWidget):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
-    def __init__(self, element, main, addLayout=True):
+    def __init__(self, cfg, main, addLayout=True):
         super(EditCtrl, self).__init__()
-        self.element = element
+        self.cfg = cfg
         self.main = main
         self._setupUi(addLayout)
         self._getCfgList = []
     
     def delete(self):
-        if self.element in self.main.tempConfig:
-            self.main.tempConfig.remove(self.element)
+        if self.cfg in self.main.tempConfig:
+            self.main.tempConfig.remove(self.cfg)
             self.main.editMod()
     
     def move(self, value):
-        index = self.main.tempConfig.index(self.element)
+        index = self.main.tempConfig.index(self.cfg)
         newindex = index + value
         if newindex < 1 or newindex >= len(self.main.tempConfig):
             return
 
-        element = self.main.tempConfig.pop(index)
-        self.main.tempConfig.insert(newindex, element)
+        cfg = self.main.tempConfig.pop(index)
+        self.main.tempConfig.insert(newindex, cfg)
         self.main.editMod()
 
     def _setupUi(self, addLayout):
@@ -264,11 +265,11 @@ class EditCtrl(QtGui.QWidget):
     
     def getCtrlData(self):
         for ctrl in self._getCfgList:
-            self.element[ctrl[0]] = ctrl[1]()
+            self.cfg[ctrl[0]] = ctrl[1]()
     
     def getCfg(self):
         self.getCtrlData()
-        return self.element
+        return self.cfg
 
     def enlistCfgCtrls(self, uiclass):
         """
@@ -285,7 +286,7 @@ class EditCtrl(QtGui.QWidget):
         will end up as ('bananas', self.ui.cfg_bananas.isChecked) in the list so
         it can be called to get the value and set in the dict.
         just if like you wrote
-            self.element['bananas'] = self.ui.cfg_bananas.isChecked()
+            self.cfg['bananas'] = self.ui.cfg_bananas.isChecked()
         """
         self._getCfgList = []
         for ctrl in inspect.getmembers(uiclass):
@@ -294,8 +295,8 @@ class EditCtrl(QtGui.QWidget):
                 #log.info('ctrl: %s' % str(ctrl))
                 if isinstance(ctrl[1], QtGui.QCheckBox):
                     self._getCfgList.append((name, ctrl[1].isChecked))
-                    if name in self.element:
-                        ctrl[1].setChecked(self.element[name])
+                    if name in self.cfg:
+                        ctrl[1].setChecked(self.cfg[name])
             #log.info('e.__name__: %s' % e.__name__)
     
     def connectCfgCtrls(self, uiclass):
@@ -311,24 +312,24 @@ class EditCtrl(QtGui.QWidget):
                 control.clicked.connect(partial(self._updateCfgData,
                                                 name, control.isChecked))
                 # set ctrl according to config or set config from ctrl
-                if name in self.element:
-                    control.setChecked(self.element[name])
+                if name in self.cfg:
+                    control.setChecked(self.cfg[name])
                 else:
-                    self.element[name] = control.isChecked()
+                    self.cfg[name] = control.isChecked()
             
             elif isinstance(control, QtGui.QLineEdit):
                 control.textChanged.connect(partial(self._updateCfgData, name, None))
-                if name in self.element:
-                    control.setText(self.element[name])
+                if name in self.cfg:
+                    control.setText(self.cfg[name])
                 else:
-                    self.element[name] = control.text()
+                    self.cfg[name] = control.text()
             
             elif isinstance(control, QtGui.QComboBox):
                 control.currentIndexChanged.connect(partial(self._updateCfgData, name, None))
-                if name in self.element:
-                    control.setCurrentIndex(self.element[name])
+                if name in self.cfg:
+                    control.setCurrentIndex(self.cfg[name])
                 else:
-                    self.element[name] = control.currentIndex()
+                    self.cfg[name] = control.currentIndex()
 
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
@@ -337,9 +338,9 @@ class EditCtrl(QtGui.QWidget):
     def _updateCfgData(self, name, func, data=None, *args):
         #print('widget sent data: %s' % str(args))
         if data is not None:
-            self.element[name] = data
+            self.cfg[name] = data
         elif func is not None:
-            self.element[name] = func()
+            self.cfg[name] = func()
 
 
 class EditLine(QtGui.QWidget):
@@ -437,9 +438,9 @@ class EditAddElem(QtGui.QWidget):
         self.menu.clear()
         self.menu_include = self.menu.addMenu('include')
         scriptsInUse = set()
-        for element in self.tempConfig:
-            if element['typ'] == 'include':
-                scriptsInUse.add(element['file'])
+        for cfg in self.tempConfig:
+            if cfg['typ'] == 'include':
+                scriptsInUse.add(cfg['file'])
         scriptsUnused = set(self.mod.scripts) - scriptsInUse
         for scriptName in scriptsUnused:
             action = QtGui.QAction(self.menu_include)
@@ -504,10 +505,10 @@ class EditInclude(EditCtrl):
     in the configuration in the background. 
     """
     #def __init__(self, parent, mod):
-    def __init__(self, element, mod, main):
-        super(EditInclude, self).__init__(element, main, addLayout=False)
-        self.typ = element['typ']
-        self.file = element['file']
+    def __init__(self, cfg, mod, main):
+        super(EditInclude, self).__init__(cfg, main, addLayout=False)
+        self.typ = cfg['typ']
+        self.file = cfg['file']
         self.mod = mod
 
         #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
@@ -542,7 +543,7 @@ class EditHotkey(EditCtrl):
     TODO: Oh boy... this has so many implications but it has to be done. Let's do it!
     First: Have the edit ctrl, then the display one, Then we need checks when a mod
     config change is about to be comitted. The change will not be able to be OKed as long
-    as there are conflicts with hotkeys, or missing includes or ... 
+    as there are conflicts with hotkeys, or missing includes or ...
 
     elif cfg['typ'] == 'hotkey':
         cfg['enabled'] = True
@@ -558,13 +559,13 @@ class EditHotkey(EditCtrl):
         cfg['name'] = 'someModule_hotkey1',
         cfg['label'] = 'do awesome stuff on:'
     """
-    def __init__(self, element, mod, main):
-        super(EditHotkey, self).__init__(element, main, addLayout=False)
+    def __init__(self, cfg, mod, main):
+        super(EditHotkey, self).__init__(cfg, main, addLayout=False)
         self.main = main
-        self.element = element
+        self.cfg = cfg
         self.ui = Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
-        self.ui.hotkeyButton = HotKey(element.get('key') or '')
+        self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkeyChange)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
 
@@ -589,7 +590,7 @@ class EditHotkey(EditCtrl):
         index = self.ui.cfg_functionMode.currentIndex()
         if index == 0:
             fsubmenu1 = self.functionMenu.addMenu('local functions')
-            fsubmenu2 = self.functionMenu.addMenu('built-in functions')
+            _fsubmenu2 = self.functionMenu.addMenu('built-in functions')
         elif index == 1:
             for x in [('browse...', self.functionBrowse),
                       ('explore to...', self.functionExplore)]:
@@ -612,7 +613,7 @@ class EditHotkey(EditCtrl):
                 self.functionMenu.addAction(action)
     
     def functionSendMode(self, mode):
-        self.element['sendmode'] = mode
+        self.cfg['sendmode'] = mode
     
     def functionBrowse(self):
         """TODO"""
@@ -632,13 +633,13 @@ class EditHotkey(EditCtrl):
         index = self.ui.cfg_functionMode.currentIndex()
         print('text changed %s: %s' % (index, text))
         print('self.functions[index]: %s' % self.functions[index])
-        self.element[self.functions[index]] = text
+        self.cfg[self.functions[index]] = text
     
     def functionSetText(self, index=None, text=None):
         if index is None:
             index = self.ui.cfg_functionMode.currentIndex()
         if text is None:
-            text = self.element.get(self.functions[index]) or ''
+            text = self.cfg.get(self.functions[index]) or ''
         print('mode change: %s' % text)
         self.ui.functionText.setText(text)
         # show include thingy
@@ -658,21 +659,108 @@ class EditHotkey(EditCtrl):
         self.ui.cfg_enabled.setEnabled(state)
         self.ui.cfg_enabled.setChecked(True)
     
+    def hotkeyChange(self, newKey):
+        log.info('newKey: %s' % newKey)
+        self.cfg['key'] = newKey
+    
     def getCfg(self):
-        return self.element
+        return self.cfg
 
 
 class HotKey(QtGui.QPushButton):
-    def __init__(self, label, parent=None):
+    def __init__(self, key, func, parent=None):
         super(HotKey, self).__init__()
+        self.key = key
+        self.tempKey = key
+        self.tempOK = True
+        self.func = func
         #self.main = main
-        self.setText(label)
+        self.setText(key)
         if parent is not None:
             parent.addWidget(self)
     
     def mousePressEvent(self, event):
-        self.popup = Popup(event.globalX(), event.globalY())
+        self.buildPopup(event.globalX(), event.globalY())
+
+    def buildPopup(self, x, y):
+        self.popup = Popup(x, y)
+        self.popup.textEdit = QtGui.QLineEdit(self.popup)
+        #self.popup.textEdit.setLineWrapMode(QtGui.QTextEdit.NoWrap)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.popup.textEdit.setFont(font)
+        self.popup.textEdit.setText(self.key)
+        self.popup.textEdit.textChanged.connect(self.validateHotkey)
+        self.popup.textEdit.returnPressed.connect(self.ok)
+        
+        self.popup.buttonLyt = QtGui.QHBoxLayout()
+        self.popup.okButton = QtGui.QPushButton("OK")
+        self.popup.okButton.clicked.connect(self.ok)
+        self.popup.closeButton = QtGui.QPushButton("&Cancel")
+        self.popup.closeButton.clicked.connect(self.popup.close)
+        self.popup.buttonLyt.addWidget(self.popup.okButton)
+        self.popup.buttonLyt.addWidget(self.popup.closeButton)
+        
+        self.popup.layout = QtGui.QVBoxLayout()
+        self.popup.layout.addWidget(self.popup.textEdit)
+        self.popup.layout.addLayout(self.popup.buttonLyt)
+        self.popup.setLayout(self.popup.layout)
+        self.validateHotkey(self.key)
+        
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self.popup, self.ok)
+        
         self.popup.show()
+        self.popup.placeAtCursor()
+
+    def ok(self):
+        log.info('key: %s' % self.tempKey)
+        log.info('ok: %s' % self.tempOK)
+        if self.tempOK:
+            self.popup.close()
+            self.func(self.tempKey)
+            self.setText(self.tempKey)
+
+    def validateHotkey(self, hkstring):
+        """
+        first implementation: checks for valid modifyers + a single key
+        TODO: handle F1-F12, Del, Home..., handle single keys when in scope, check availability ...
+        """
+        styleBad = '* {color:#F00}'
+        styleGood = '* {color:#0F0}'
+        good = False
+        hkparts = hkstring.split('+')
+        key = hkparts[-1].strip().lower()
+        allModifiers = ['win', 'ctrl', 'alt', 'shift']
+        modifier = []
+        
+        if len(key) != 1:
+            msg = 'Hotkey must use a single key (%s)' % key
+        elif len(hkparts) == 1:
+            good = True
+        else:
+            modifier = [k.strip().lower() for k in hkparts[:-1]]
+            badModifier = [k for k in modifier if k not in allModifiers]
+            if badModifier:
+                msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(badModifier))
+            else:
+                good = True
+        
+        if not good:
+            self.popup.textEdit.setStyleSheet(styleBad)
+            log.error(msg)
+        else:
+            ahkDict = {'win': '#', 'ctrl': '^', 'shift': '+', 'alt': '!'}
+            ahkKey = ''.join([ahkDict[m] for m in modifier]) + key
+            modifier = [k.title() for k in modifier]
+            key = key.title()
+            self.tempKey = '+'.join(modifier) + '+' + key
+            
+            log.info('ahkKey %s:' % ahkKey)
+            log.info('tempKey %s:' % self.tempKey)
+            
+            self.popup.textEdit.setStyleSheet(styleGood)
+        
+        self.tempOK = good
 
 
 class Popup(QtGui.QWidget):
@@ -681,32 +769,21 @@ class Popup(QtGui.QWidget):
     """
     def __init__(self, x, y):
         super(Popup, self).__init__()
-        
-        self.textEdit = QtGui.QTextEdit()
-        self.textEdit.setReadOnly(True)
-        self.textEdit.setLineWrapMode(QtGui.QTextEdit.NoWrap)
-        
-        closeButton = QtGui.QPushButton("&Close")
-        closeButton.clicked.connect(self.close)
-        
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(self.textEdit)
-        layout.addWidget(closeButton)
-        self.setLayout(layout)
-        
+        self.setpos = (x, y)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.close)
-        pos = self.pos()
-        x = x - (self.width() / 2)
-        pos.setX(x + (self.width() / 4))
-        pos.setY(y - (self.height() / 4))
-        self.move(pos)
         self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
-        self.show()
+    
+    def placeAtCursor(self):
+        x, y = self.setpos
+        pos = self.pos()
+        pos.setX(x - (self.width() / 2))
+        pos.setY(y - (self.height() / 2))
+        self.move(pos)
     
     def leaveEvent(self, *args, **kwargs):
         self.close()
-        
+    
     def focusOutEvent(self, event):
         self.close()
         #self.focusOutEvent()
