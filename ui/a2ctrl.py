@@ -100,16 +100,22 @@ class DrawHotkey(QtGui.QWidget):
     def _setupUi(self):
         userCfg = self.mod.db.getd(self.cfg['name'], self.mod.name)
         self.ctrllayout = QtGui.QHBoxLayout(self)
+        # left, top, right, bottom
+        self.ctrllayout.setContentsMargins(0, 0, 0, 0)
         self.labelBoxLayout = QtGui.QVBoxLayout()
-        self.labelBoxLayout.setContentsMargins(0, 10, 0, 0)
+        self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
             state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
+            self.check.setMinimumSize(QtCore.QSize(25, 25))
+            self.check.setMaximumSize(QtCore.QSize(25, 25))
             self.check.setChecked(state)
             self.check.clicked.connect(self.hotkeyCheck)
             self.labelLayout.addWidget(self.check)
         self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
+        self.label.setWordWrap(True)
+        self.label.setMinimumSize(QtCore.QSize(16777215, 35))
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
@@ -121,17 +127,25 @@ class DrawHotkey(QtGui.QWidget):
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
         self.hotkeyButton = HotKey(self.mod.getCfgValue(self.cfg, userCfg, 'key'),
                                    self.hotkeyChange)
-        self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 35))
+        self.hotkeyButton.setMinimumSize(QtCore.QSize(100, 35))
+        self.hotkeyOption = QtGui.QPushButton()
+        self.hotkeyOption.setMaximumSize(QtCore.QSize(35, 35))
+        self.hotkeyOption.setMinimumSize(QtCore.QSize(35, 35))
+        self.hotkeyOption.setFlat(True)
+        self.hotkeyOption.setText('...')
         self.hotkeyLayout.addWidget(self.hotkeyButton)
+        self.hotkeyLayout.addWidget(self.hotkeyOption)
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
         
-        self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
-                                                    QtGui.QSizePolicy.Minimum))
+#         self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
+#                                                     QtGui.QSizePolicy.Minimum))
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
                                                         QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
-    
+        self.ctrllayout.setStretch(2, 1)
+        self.setLayout(self.ctrllayout)
+        
     def hotkeyCheck(self):
         # setUserCfg: subcfg, attributeName, value, ctrlName
         state = self.check.isChecked()
@@ -676,6 +690,9 @@ class HotKey(QtGui.QPushButton):
         self.tempKey = key
         self.tempOK = True
         self.func = func
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.setFont(font)
         #self.main = main
         self.setText(key)
         if parent is not None:

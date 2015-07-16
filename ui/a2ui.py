@@ -6,7 +6,7 @@ from os.path import exists, join, dirname
 from datetime import datetime
 import time
 from copy import deepcopy
-from _functools import partial
+from functools import partial
 import os
 import sys
 import subprocess
@@ -97,6 +97,8 @@ class A2Window(QtGui.QMainWindow):
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
                         self, self.editSubmit)
+
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settingsChanged)
 
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("a2logo.ico"),
@@ -438,7 +440,7 @@ class A2Window(QtGui.QMainWindow):
         key = parts[-1]
         ahkDict = {'win': '#', 'ctrl': '^', 'shift': '+', 'alt': '!'}
         ahkKey = ''.join([ahkDict[m] for m in modifier]) + key
-        log.info('ahkKey %s:' % ahkKey)
+        #log.info('ahkKey %s:' % ahkKey)
         return ahkKey
 
 if __name__ == '__main__':
