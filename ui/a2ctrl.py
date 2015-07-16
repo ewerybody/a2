@@ -119,7 +119,8 @@ class DrawHotkey(QtGui.QWidget):
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
-        self.hotkeyButton = HotKey(self.mod.getCfgValue(self.cfg, userCfg, 'key'), self.hotkeyChange)
+        self.hotkeyButton = HotKey(self.mod.getCfgValue(self.cfg, userCfg, 'key'),
+                                   self.hotkeyChange)
         self.hotkeyButton.setMinimumSize(QtCore.QSize(300, 35))
         self.hotkeyLayout.addWidget(self.hotkeyButton)
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
@@ -144,7 +145,8 @@ class DrawHotkey(QtGui.QWidget):
         log.info('cfg key: %s' % self.cfg['key'])
         log.info('newKey: %s' % newKey)
         self.mod.setUserCfg(self.cfg, 'key', newKey)
-        
+        self.mod.change()
+
 
 def edit(cfg, mod, main):
     if cfg['typ'] == 'nfo':

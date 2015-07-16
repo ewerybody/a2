@@ -99,7 +99,7 @@ class A2Window(QtGui.QMainWindow):
                         self, self.editSubmit)
 
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("_dump/a2logo 16.png"),
+        icon.addPixmap(QtGui.QPixmap("a2logo.ico"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(icon)
     
@@ -285,6 +285,7 @@ class A2Window(QtGui.QMainWindow):
         
         self.mod.config = newcfg
         if self.mod.name in self.db.gets('enabled'):
+            self.mod.change()
             self.settingsChanged()
         self.drawMod()
     
@@ -409,7 +410,7 @@ class A2Window(QtGui.QMainWindow):
     def getDate(self):
         #today = datetime.today()
         now = time.localtime()
-        return '%i %i %i' % (now.tm_year, now.mon, now.tm_mday)
+        return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)
         #return '%i %i %i' % (today.year, today.month, today.day)
 
     def closeEvent(self, event):
