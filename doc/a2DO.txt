@@ -18,10 +18,10 @@ in flight:
 * get icons into the list
 * deselect mod and show a2 welcome on Esc? (optional)
 * optional remember last selected mod
-* make windowsettings use db
 * create check control which writes variables.ahk inlcude or inlcude.ahk
 
 a2DONE:
+* make windowsettings use db
 * resolve settingsChanged bug a2 loads old includes before saving is finished
 * EditCtrls: unify "element" and "data" to cfg
 * added QComboBox to be handled by EditCtrl automatically
@@ -46,5 +46,4 @@ a2DONE:
 * make Mod.files always browse for files freshly
 * "edit script" on include elements
 * explore to mod
-
-* Qt keyboard shortcut code (animJuggler)
+* Qt keyboard shortcut code

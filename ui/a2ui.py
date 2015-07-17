@@ -36,9 +36,6 @@ class A2Window(QtGui.QMainWindow):
         
         self.urls = URLs()
         
-        #TODO: fck reg! do that with the sql db
-        self.settings = QtCore.QSettings("a2", "a2ui")
-        
         self.initPaths()
         self.db = a2dblib.A2db(self.dbfile)
         self.fetchModules()
@@ -195,17 +192,17 @@ class A2Window(QtGui.QMainWindow):
         """
         if self.mod is None:
             config = [{'typ': 'nfo',
-                      'description': 'Hello user! Welcome to a2! This is a template '
-                      'introduction Text. So far there is not much to say. I just '
-                      'wanted this to fill up more than one line properly. Voila!',
-                      'author': '',
-                      'version': 'v0.1'}]
+                       'description': 'Hello user! Welcome to a2! This is a template '
+                       'introduction Text. So far there is not much to say. I just '
+                       'wanted this to fill up more than one line properly. Voila!',
+                       'author': '',
+                       'version': 'v0.1'}]
         elif isinstance(self.selectedMod, list):
             config = [{'typ': 'nfo',
-                      'description': 'Multiple modules selected. Here goes some '
-                                     'useful info in the future...',
-                      'author': '',
-                      'version': ''}]
+                       'description': 'Multiple modules selected. Here goes some '
+                                      'useful info in the future...',
+                       'author': '',
+                       'version': ''}]
         else:
             config = self.mod.config
         
@@ -416,19 +413,20 @@ class A2Window(QtGui.QMainWindow):
         #return '%i %i %i' % (today.year, today.month, today.day)
 
     def closeEvent(self, event):
-        self.settings.setValue("geometry", self.saveGeometry())
-        self.settings.setValue("splitterPos", self.ui.splitter.sizes())
+        pos = self.pos()
+        size = self.size()
+        splitter = self.ui.splitter.sizes()
+        windowprefs = {'size': [size.width(), size.height()], 'pos': [pos.x(), pos.y()],
+                       'splitter': splitter}
+        self.db.set('windowprefs', windowprefs)
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):
-        #self.setGeometry(QtCore.QRect(250, 250, 1268, 786))
-        self.restoreGeometry(self.settings.value("geometry"))
-        sizes = self.settings.value("splitterPos")
-        if not isinstance(sizes, list):
-            sizes = [200, 200]
-        else:
-            sizes = [int(sizes[0]), int(sizes[1])]
-        self.ui.splitter.setSizes(sizes)
+        winprefs = self.db.getd('windowprefs')
+        if winprefs:
+            self.setGeometry(winprefs['pos'][0], winprefs['pos'][1],
+                             winprefs['size'][0], winprefs['size'][1])
+            self.ui.splitter.setSizes(winprefs['splitter'])
 
     def surfTo(self, url):
         webbrowser.get().open(url)
