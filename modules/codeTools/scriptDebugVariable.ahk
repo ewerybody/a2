@@ -47,8 +47,9 @@ scriptDebugVariable() {
 		pasteMel( selection )
 	Else IfWinActive, Script Editor ahk_class QWidget
 		pastePy( selection )
-    Else IfWinActive, ahk_exe pycharm.exe
-        pastePy( selection )
+    ; unfortunately PyCharm wont work: Ctrl+C with no selection will always copy whole line :/
+    ;Else IfWinActive, ahk_exe pycharm.exe
+    ;    pastePy( selection )
     Else IfWinActive, ahk_class SWT_Window0
         pastePy( selection )
 }

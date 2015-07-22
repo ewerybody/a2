@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1004</width>
-    <height>673</height>
+    <width>574</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -420,7 +420,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QListView" name="cfg_scope">
+           <widget class="QListWidget" name="cfg_scope">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
               <horstretch>0</horstretch>

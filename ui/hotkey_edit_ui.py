@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'hotkey_edit.ui'
 #
-# Created: Wed Jul 15 10:31:11 2015
+# Created: Wed Jul 22 19:09:11 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_hotkey_edit(object):
     def setupUi(self, hotkey_edit):
         hotkey_edit.setObjectName("hotkey_edit")
-        hotkey_edit.resize(1188, 673)
+        hotkey_edit.resize(574, 384)
         self.hotkeyCtrlLayout = QtGui.QVBoxLayout(hotkey_edit)
         self.hotkeyCtrlLayout.setSpacing(0)
         self.hotkeyCtrlLayout.setContentsMargins(0, 0, 0, 0)
@@ -166,7 +166,7 @@ class Ui_hotkey_edit(object):
         spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.scopeRowLayout.addItem(spacerItem4)
         self.scopeCtrlLayout.addLayout(self.scopeRowLayout)
-        self.cfg_scope = QtGui.QListView(self.groupBox)
+        self.cfg_scope = QtGui.QListWidget(self.groupBox)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

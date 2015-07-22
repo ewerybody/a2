@@ -599,6 +599,9 @@ class EditHotkey(EditCtrl):
         self.ui.cfg_scopeMode.currentIndexChanged.connect(self.scopeModeChanged)
         self.scopeModeChanged()
         
+        self.ui.scopePlus.mousePressEvent = self.scopePopup
+        self.ui.scopeMinus.clicked.connect(self.scopeDelete)
+        
         self.connectCfgCtrls(self.ui)
     
     def functionMenuBuild(self):
@@ -678,6 +681,58 @@ class EditHotkey(EditCtrl):
     def hotkeyChange(self, newKey):
         log.info('newKey: %s' % newKey)
         self.cfg['key'] = newKey
+
+    def scopePopup(self, event):
+        print('event: %s' % event)
+        
+        try:
+            self.scopePop.close()
+        except:
+            pass
+        
+        self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False,
+                              parent=self.main)
+        self.scopePop.textEdit = QtGui.QLineEdit(self.scopePop)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.scopePop.textEdit.setFont(font)
+        #self.scopePop.textEdit.setText('...')
+        self.scopePop.textEdit.returnPressed.connect(self.scopePopOK)
+        
+        self.scopePop.buttonLyt = QtGui.QHBoxLayout()
+        self.scopePop.okButton = QtGui.QPushButton("OK")
+        self.scopePop.okButton.clicked.connect(self.scopePopOK)
+        self.scopePop.closeButton = QtGui.QPushButton("&Cancel")
+        self.scopePop.closeButton.clicked.connect(self.scopePop.close)
+        self.scopePop.buttonLyt.addWidget(self.scopePop.okButton)
+        self.scopePop.buttonLyt.addWidget(self.scopePop.closeButton)
+        
+        self.scopePop.layout = QtGui.QVBoxLayout()
+        self.scopePop.layout.addWidget(self.scopePop.textEdit)
+        self.scopePop.layout.addLayout(self.scopePop.buttonLyt)
+        self.scopePop.setLayout(self.scopePop.layout)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self.scopePop, self.scopePopOK)
+        self.scopePop.resize(500, 70)
+        self.scopePop.show()
+        self.scopePop.placeAtCursor()
+    
+    def scopePopOK(self):
+        x = self.scopePop.textEdit.text()
+        print('x: %s' % x)
+        self.scopePop.close()
+        action = QtGui.QAction(self)
+        action.setText(x)
+        self.ui.cfg_scope.addItem(x)
+        
+        c = self.ui.cfg_scope.children()
+        print('c: %s' % c)
+        
+        #self.cfg['scope']
+    
+    def scopeDelete(self):
+        s = self.scopePop.selectedItems()
+        print('s: %s' % s)
+        #removeItemWidget
     
     def getCfg(self):
         return self.cfg
@@ -784,9 +839,10 @@ class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
     | QtCore.Qt.CustomizeWindowHint
     """
-    def __init__(self, x, y):
+    def __init__(self, x, y, closeOnLeave=True, parent=None):
         super(Popup, self).__init__()
         self.setpos = (x, y)
+        self.closeOnLeave = closeOnLeave
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.close)
         self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
@@ -798,8 +854,10 @@ class Popup(QtGui.QWidget):
         pos.setY(y - (self.height() / 2))
         self.move(pos)
     
-    def leaveEvent(self, *args, **kwargs):
-        self.close()
+    def leaveEvent(self, event):
+        #print('event: %s' % event)
+        if self.closeOnLeave:
+            self.close()
     
     def focusOutEvent(self, event):
         self.close()

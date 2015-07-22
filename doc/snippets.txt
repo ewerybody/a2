@@ -11,3 +11,13 @@ self.typeComboBox.addItem(self.style().standardIcon(
         
 # use editor set up in registry:
 RegRead, Editor, HKEY_CLASSES_ROOT, AutoHotkeyScript\Shell\Edit\Command
+
+
+# add icon support for the module list
+    self.listWidget = QtGui.QListWidget(Form)
+    self.listWidget.setGeometry(QtCore.QRect(270, 10, 256, 192))
+    self.listWidget.setObjectName("listWidget")
+    icon = QtGui.QIcon()
+    icon.addPixmap(QtGui.QPixmap("../doc/a2_new_logo_colors.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    item = QtGui.QListWidgetItem(self.listWidget)
+    item.setIcon(icon)
