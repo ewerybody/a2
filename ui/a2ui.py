@@ -319,6 +319,7 @@ class A2Window(QtGui.QMainWindow):
         
         includeAhk = [editDisclaimer % 'includes']
         hotkeysAhk = {'#IfWinActive,': ['#+a::a2UI()']}
+        hkmode = {'1': '#IfWinActive', '2': '#IfWinNotActive'}
 
         for modname in self.db.gets('enabled'):
             includes = self.db.gets('includes', modname)
@@ -326,23 +327,32 @@ class A2Window(QtGui.QMainWindow):
                            % (modname, i) for i in includes]
             
             hotkeys = self.db.getd('hotkeys', modname)
-            if '0' in hotkeys:
-                for hk in hotkeys['0']:
-                    hkstring = self.translateHotkey(hk[0]) + '::' + hk[1]
-                    hotkeysAhk['#IfWinActive,'].append(hkstring)
+            for typ in hotkeys:
+                for hk in hotkeys.get(typ) or []:
+                    # type 0 is global, append under the #IfWinActive label
+                    if typ == '0':
+                        hkstring = self.translateHotkey(hk[0]) + '::' + hk[1]
+                        hotkeysAhk['#IfWinActive,'].append(hkstring)
+                    # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
+                    else:
+                        hkstring = self.translateHotkey(hk[1]) + '::' + hk[2]
+                        scopeKey = '\n'.join(['%s, %s' % (hkmode[typ], scope) for scope in hk[0]])
+                        if scopeKey not in hotkeysAhk:
+                            hotkeysAhk[scopeKey] = []
+                        hotkeysAhk[scopeKey].append(hkstring)
 
-        #if os.access(os.W_OK)
         with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:
             fobj.write('\n'.join(includeAhk))
         with open(join(self.a2setdir, 'hotkeys.ahk'), 'w') as fobj:
             fobj.write(editDisclaimer % 'hotkeys' + '\n')
-            for i, v in hotkeysAhk.items():
-                fobj.write('\n'.join([i] + v) + '\n\n')
+            for key in sorted(hotkeysAhk.keys()):
+                fobj.write('\n'.join([key] + hotkeysAhk[key]) + '\n\n')
         
         restartTask = threading.Thread(target=self.restartA2)
         restartTask.start()
     
     def restartA2(self):
+        """ started in a thread, takes a little break before calling the script again """
         time.sleep(0.2)
         subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir)
     

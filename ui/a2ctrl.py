@@ -347,6 +347,15 @@ class EditCtrl(QtGui.QWidget):
                 else:
                     self.cfg[name] = control.currentIndex()
 
+            elif isinstance(control, QtGui.QListWidget):
+                #control.currentIndexChanged.connect(partial(self._updateCfgData, name, None))
+                if name in self.cfg:
+                    control.insertItems(0, self.cfg[name])
+                    #control.setCurrentIndex(self.cfg[name])
+                else:
+                    items = [control.item(i).text() for i in range(control.count())]
+                    self.cfg[name] = items
+
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (ctrl[0], type(control)))
@@ -723,16 +732,16 @@ class EditHotkey(EditCtrl):
         action = QtGui.QAction(self)
         action.setText(x)
         self.ui.cfg_scope.addItem(x)
+        self.scopeUpdate()
         
-        c = self.ui.cfg_scope.children()
-        print('c: %s' % c)
-        
-        #self.cfg['scope']
-    
     def scopeDelete(self):
-        s = self.scopePop.selectedItems()
-        print('s: %s' % s)
-        #removeItemWidget
+        selIndex = [mi.row() for mi in self.ui.cfg_scope.selectedIndexes()][0]
+        self.ui.cfg_scope.takeItem(selIndex)
+        self.scopeUpdate()
+    
+    def scopeUpdate(self):
+        all = [self.ui.cfg_scope.item(i).text() for i in range(self.ui.cfg_scope.count())]
+        self.cfg['scope'] = all
     
     def getCfg(self):
         return self.cfg

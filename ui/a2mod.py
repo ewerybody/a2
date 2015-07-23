@@ -74,7 +74,6 @@ class Mod(object):
                 includes.append(cfg['file'])
             elif cfg['typ'] == 'hotkey':
                 userCfg = self.db.getd(cfg['name'], self.name)
-                print('change userCfg: %s' % userCfg)
                 if not self.getCfgValue(cfg, userCfg, 'enabled'):
                     continue
                 
