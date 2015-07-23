@@ -26,7 +26,11 @@ Return ; -----------------------------------------------------------------------
 
 a2UI() {
     ; TODO: placeholder. call PySide a2ui when available
-	MsgBox, 1, a2UI, Hello! here goes the a2UI!`nDo you want to reload?
-	IfMsgBox, OK
-		Reload
+    tt("a2ui...", 0.5)
+    Run, pythonw.exe %A_ScriptDir%\ui\a2ui.py, C:\Python34
+    
+    ;Run, 
+	;MsgBox, 1, a2UI, Hello! here goes the a2UI!`nDo you want to reload?
+	;IfMsgBox, OK
+	;	Reload
 }
