@@ -316,10 +316,10 @@ class A2Window(QtGui.QMainWindow):
     def settingsChanged(self):
         editDisclaimer = ("; a2 %s.ahk - Don't bother editing! - "
                           "File is generated automatically!")
+        hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
         
         includeAhk = [editDisclaimer % 'includes']
-        hotkeysAhk = {'#IfWinActive,': ['#+a::a2UI()']}
-        hkmode = {'1': '#IfWinActive', '2': '#IfWinNotActive'}
+        hotkeysAhk = {hkmode['1']: ['#+a::a2UI()']}
 
         for modname in self.db.gets('enabled'):
             includes = self.db.gets('includes', modname)
@@ -332,11 +332,11 @@ class A2Window(QtGui.QMainWindow):
                     # type 0 is global, append under the #IfWinActive label
                     if typ == '0':
                         hkstring = self.translateHotkey(hk[0]) + '::' + hk[1]
-                        hotkeysAhk['#IfWinActive,'].append(hkstring)
+                        hotkeysAhk[hkmode['1']].append(hkstring)
                     # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
                     else:
                         hkstring = self.translateHotkey(hk[1]) + '::' + hk[2]
-                        scopeKey = '\n'.join(['%s, %s' % (hkmode[typ], scope) for scope in hk[0]])
+                        scopeKey = '\n'.join(['%s %s' % (hkmode[typ], scope) for scope in hk[0]])
                         if scopeKey not in hotkeysAhk:
                             hotkeysAhk[scopeKey] = []
                         hotkeysAhk[scopeKey].append(hkstring)
