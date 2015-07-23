@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
+# Form implementation generated from reading ui file 'a2design.ui'
 #
-# Created: Sat Jun 27 18:35:24 2015
+# Created: Thu Jul 23 12:16:17 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

@@ -410,7 +410,8 @@ class EditText(QtGui.QWidget):
         self.inputCtrl = QtGui.QPlainTextEdit()
         self.inputCtrl.setPlainText(str(text))
         self.inputCtrl.setTabChangesFocus(True)
-        self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, 100))
+        self.inputCtrl.setMinimumSize(QtCore.QSize(16777215, 70))
+        self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, 70))
         self.inputCtrl.textChanged.connect(self.update)
         self.baselayout.addWidget(self.inputCtrl)
         if parent:

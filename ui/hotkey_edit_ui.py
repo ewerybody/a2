@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'hotkey_edit.ui'
 #
-# Created: Wed Jul 22 19:09:11 2015
+# Created: Thu Jul 23 12:16:39 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -172,6 +172,7 @@ class Ui_hotkey_edit(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cfg_scope.sizePolicy().hasHeightForWidth())
         self.cfg_scope.setSizePolicy(sizePolicy)
+        self.cfg_scope.setMaximumSize(QtCore.QSize(16777215, 75))
         self.cfg_scope.setObjectName("cfg_scope")
         self.scopeCtrlLayout.addWidget(self.cfg_scope)
         self.cfg_scopeChange = QtGui.QCheckBox(self.groupBox)
