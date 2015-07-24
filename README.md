@@ -2,7 +2,7 @@
 ## <a name="desc"></a>Description
 script managing and developing framework for Autohotkey
 
-![](doc/layout.png?raw=true)
+![](doc/a2_layout.gif?raw=true)
 
 ## Table of Contents  
 * [Description](#desc)
