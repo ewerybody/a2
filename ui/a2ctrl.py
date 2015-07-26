@@ -817,9 +817,11 @@ class HotKey(QtGui.QPushButton):
         key = hkparts[-1].strip().lower()
         allModifiers = ['win', 'ctrl', 'alt', 'shift']
         modifier = []
+        allKeys = (['enter', 'del', 'backspace', 'tab', 'esc', 'pause', 'home', 'end', ] +
+                   ['f%i' % i for i in range(1, 13)])
         
-        if len(key) != 1:
-            msg = 'Hotkey must use a single key (%s)' % key
+        if len(key) != 1 and key not in allKeys:
+            msg = 'Invalid key! (%s)' % key
         elif len(hkparts) == 1:
             good = True
         else:
