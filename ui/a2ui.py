@@ -3,7 +3,6 @@ a2ui - setup interface for an Autohotkey environment.
 """
 from PySide import QtGui, QtCore
 from os.path import exists, join, dirname
-from datetime import datetime
 import time
 from copy import deepcopy
 from functools import partial
@@ -417,10 +416,8 @@ class A2Window(QtGui.QMainWindow):
         return self.db.get('devAuthor') or os.getenv('USERNAME')
 
     def getDate(self):
-        #today = datetime.today()
         now = time.localtime()
         return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)
-        #return '%i %i %i' % (today.year, today.month, today.day)
 
     def closeEvent(self, event):
         pos = self.pos()
@@ -442,14 +439,42 @@ class A2Window(QtGui.QMainWindow):
         webbrowser.get().open(url)
 
     def translateHotkey(self, displayString):
+        """
+        Creates AHK readable string out of a human readable like:
+        Win+Ctrl+M > #^m
+        """
         parts = displayString.split('+')
         parts = [p.strip().lower() for p in parts]
         modifier = parts[:-1]
         key = parts[-1]
-        ahkDict = {'win': '#', 'ctrl': '^', 'shift': '+', 'alt': '!'}
-        ahkKey = ''.join([ahkDict[m] for m in modifier]) + key
+        ahkKey = ''.join([ahkModifiers[m] for m in modifier]) + key
         #log.info('ahkKey %s:' % ahkKey)
         return ahkKey
+
+# http://www.autohotkey.com/docs/KeyList.htm
+ahkModifiers = {'altgr': '<^>'}
+for modifier, code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
+    ahkModifiers[modifier] = code
+    ahkModifiers['l' + modifier] = '<' + code
+    ahkModifiers['r' + modifier] = code + '>'
+
+ahkKeys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2', 'wheel',
+            'wheeldown', 'wheelup', 'wheelleft', 'wheelright', 'capslock', 'space', 'tab',
+            'enter', 'return', 'escape', 'esc', 'backspace', 'bs', 'scrolllock', 'delete',
+            'del', 'insert', 'ins', 'home', 'end', 'pgup', 'pgdn', 'up', 'down', 'left',
+            'right', 'numpad', 'numlock', 'numlock', 'numpad0', 'numpadins', 'numpad1',
+            'numpadend', 'numpad2', 'numpaddown', 'numpad3', 'numpadpgdn', 'numpad4',
+            'numpadleft', 'numpad5', 'numpadclear', 'numpad6', 'numpadright', 'numpad7',
+            'numpadhome', 'numpad8', 'numpadup', 'numpad9', 'numpadpgup', 'numpaddot',
+            'numpaddel', 'numpaddiv', 'numpaddiv', 'numpadmult', 'numpadmult', 'numpadadd',
+            'numpadadd', 'numpadsub', 'numpadsub', 'numpadenter',
+            'browser_back', 'browser_forward', 'browser_refresh', 'browser_stop',
+            'browser_search', 'browser_favorites', 'browser_home', 'volume_mute',
+            'volume_down', 'volume_up', 'media_next', 'media_prev', 'media_stop',
+            'media_play_pause', 'launch_mail', 'launch_media', 'launch_app1',
+            'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak', 'pause',
+            'break', 'help', 'sleep'] +
+           ['f%i' % i for i in range(1, 25)])
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
