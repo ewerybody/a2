@@ -27,6 +27,8 @@ class URLs(object):
         self.a2 = 'https://github.com/ewerybody/a2'
         self.ahk = 'http://ahkscript.org'
         self.ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
+        self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
+        self.helpHotkey = self.a2 + '/wiki/Edit-Hotkey-Control'
 
 
 class A2Window(QtGui.QMainWindow):
@@ -319,7 +321,10 @@ class A2Window(QtGui.QMainWindow):
         
         includeAhk = [editDisclaimer % 'includes']
         hotkeysAhk = {hkmode['1']: ['#+a::a2UI()']}
-
+        # TODO: this needs to be implemented dynamically
+        libsAhk = [editDisclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
+                                               ['tt', 'functions', 'Explorer_Get']]
+        
         for modname in self.db.gets('enabled'):
             includes = self.db.gets('includes', modname)
             includeAhk += ['#include modules\%s\%s'
@@ -339,13 +344,23 @@ class A2Window(QtGui.QMainWindow):
                         if scopeKey not in hotkeysAhk:
                             hotkeysAhk[scopeKey] = []
                         hotkeysAhk[scopeKey].append(hkstring)
-
+        
+        with open(join(self.a2setdir, 'variables.ahk'), 'w') as fobj:
+            fobj.write(editDisclaimer % 'variables' + '\n')
+        
+        with open(join(self.a2setdir, 'libs.ahk'), 'w') as fobj:
+            fobj.write('\n'.join(libsAhk))
+        
         with open(join(self.a2setdir, 'includes.ahk'), 'w') as fobj:
             fobj.write('\n'.join(includeAhk))
+        
         with open(join(self.a2setdir, 'hotkeys.ahk'), 'w') as fobj:
             fobj.write(editDisclaimer % 'hotkeys' + '\n')
             for key in sorted(hotkeysAhk.keys()):
                 fobj.write('\n'.join([key] + hotkeysAhk[key]) + '\n\n')
+        
+        with open(join(self.a2setdir, 'init.ahk'), 'w') as fobj:
+            fobj.write(editDisclaimer % 'init' + '\n')
         
         restartTask = threading.Thread(target=self.restartA2)
         restartTask.start()

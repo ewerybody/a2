@@ -27,6 +27,7 @@ the author, name, version, description info
 import subprocess
 from os.path import join
 import inspect
+from copy import deepcopy
 from functools import partial
 from PySide import QtGui, QtCore
 from hotkey_edit_ui import Ui_hotkey_edit
@@ -217,24 +218,43 @@ class EditCtrl(QtGui.QWidget):
     """
     def __init__(self, cfg, main, addLayout=True):
         super(EditCtrl, self).__init__()
+        self.ctrlType = 'EditCtrl'
         self.cfg = cfg
         self.main = main
         self._setupUi(addLayout)
         self._getCfgList = []
+        self.helpUrl = self.main.urls.helpEditCtrl
     
     def delete(self):
         if self.cfg in self.main.tempConfig:
             self.main.tempConfig.remove(self.cfg)
             self.main.editMod()
     
-    def move(self, value):
+    def move(self, value, *args):
+        print('value: %s' % value)
+        print('args: %s' % str(args))
         index = self.main.tempConfig.index(self.cfg)
-        newindex = index + value
-        if newindex < 1 or newindex >= len(self.main.tempConfig):
+        maxIndex = len(self.main.tempConfig) - 1
+        if isinstance(value, bool):
+            print('value: %s' % value)
+            if value:
+                newindex = 1
+                #self.main.ui.scrollArea.scrollToTop()
+                #self.main.ui.scrollArea
+            else:
+                newindex = maxIndex
+                #self.main.ui.scrollArea.scrollToBottom()
+        else:
+            newindex = index + value
+        # hop out if already at start or end
+        if index == newindex or newindex < 1 or newindex > maxIndex:
+            print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
-
-        cfg = self.main.tempConfig.pop(index)
-        self.main.tempConfig.insert(newindex, cfg)
+        
+        print('moving from/to: %s - %s' % (index, newindex))
+        #cfg = self.main.tempConfig.pop(index)
+        self.main.tempConfig.pop(index)
+        self.main.tempConfig.insert(newindex, self.cfg)
         self.main.editMod()
 
     def _setupUi(self, addLayout):
@@ -274,7 +294,11 @@ class EditCtrl(QtGui.QWidget):
         
         for item in [('up', partial(self.move, -1)),
                      ('down', partial(self.move, 1)),
-                     ('delete', self.delete)]:
+                     ('to top', partial(self.move, True)),
+                     ('to bottom', partial(self.move, False)),
+                     ('delete', self.delete),
+                     ('duplicate', self.duplicate),
+                     ('help on %s' % self.ctrlType, self.help)]:
             action = QtGui.QAction(self._ctrlMenu)
             action.setText(item[0])
             action.triggered.connect(item[1])
@@ -367,6 +391,17 @@ class EditCtrl(QtGui.QWidget):
             self.cfg[name] = data
         elif func is not None:
             self.cfg[name] = func()
+
+    def duplicate(self):
+        newCfg = deepcopy(self.cfg)
+        self.main.tempConfig.append(newCfg)
+        self.main.editMod()
+        # TODO: hmm solve the scrolling another time..
+        #self.main.ui.scrollArea.scrollToBottom()
+        #self.main.ui.scrollArea.verticalScrollBar().setValue(1500)
+
+    def help(self):
+        self.main.surfTo(self.helpUrl)
 
 
 class EditLine(QtGui.QWidget):
@@ -589,6 +624,8 @@ class EditHotkey(EditCtrl):
     def __init__(self, cfg, mod, main):
         super(EditHotkey, self).__init__(cfg, main, addLayout=False)
         self.main = main
+        self.ctrlType = 'Hotkey'
+        self.helpUrl = self.main.urls.helpHotkey
         self.cfg = cfg
         self.ui = Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
@@ -837,7 +874,7 @@ class HotKey(QtGui.QPushButton):
         else:
             modifier = [k.title() for k in modifier]
             key = key.title()
-            self.tempKey = '+'.join(modifier) + '+' + key
+            self.tempKey = '+'.join(modifier + [key])
             
             log.info('tempKey %s:' % self.tempKey)
             

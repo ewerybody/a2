@@ -46,6 +46,9 @@ class A2db(object):
         :param: check: will look for the key in table before even trying to fetch
         :return: string of the data or empty string
         """
+        if check and table not in self.tables():
+            return ''
+        
         if check and key not in self.keys(table):
             return ''
         
