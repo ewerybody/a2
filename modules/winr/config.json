@@ -3,7 +3,7 @@
     "date": "2015", 
     "version": "0.1", 
     "typ": "nfo", 
-    "description": "bla", 
+    "description": "Super Windows+R that checks your selection and opens up according Browsers with the given locations/urls.", 
     "author": "eric"
   }, 
   {
@@ -15,7 +15,7 @@
     "multiple": true, 
     "name": "winrhotkey", 
     "enabled": true, 
-    "label": "winr - super Run that uses your selection", 
+    "label": "winr hotkey:", 
     "keyChange": true, 
     "functionCode": "winr()", 
     "scopeMode": 0, 

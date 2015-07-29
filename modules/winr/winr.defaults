@@ -1,9 +1,0 @@
-﻿#defaults
-name=WinR
-hotkeys:
-	win+r : hotkey=r, win=True, ctrl=False, alt=False, shift=False, code='winr()', tweakable=True
-tags:
-	'Windows','Files'
-variables:
-	winr_TLDs := ["html", "com", "de", "net", "org", "co.uk"]
-	winr_moveWindowToCursor=True
