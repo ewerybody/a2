@@ -1,0 +1,29 @@
+[
+  {
+    "author": "eric",
+    "typ": "nfo",
+    "date": "2015",
+    "description": "Tools to get information about windows and do changes to them.",
+    "version": "0.1"
+  },
+  {
+    "file": "getWinfo.ahk",
+    "typ": "include"
+  },
+  {
+    "disablable": true,
+    "typ": "hotkey",
+    "scopeChange": false,
+    "multiple": true,
+    "keyChange": true,
+    "enabled": true,
+    "scope": "",
+    "functionMode": 0,
+    "label": "getWinfo - menu with current window data",
+    "name": "getWinfoHotkey",
+    "mode": "ahk",
+    "key": "Win+Shift+W",
+    "functionCode": "getWinfo()",
+    "scopeMode": 0
+  }
+]
