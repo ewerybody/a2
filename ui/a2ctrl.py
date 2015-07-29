@@ -110,8 +110,9 @@ class DrawHotkey(QtGui.QWidget):
         if self.cfg['disablable']:
             state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
-            self.check.setMinimumSize(QtCore.QSize(25, 25))
-            self.check.setMaximumSize(QtCore.QSize(25, 25))
+            cbSize = 27
+            self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
+            self.check.setMaximumSize(QtCore.QSize(cbSize, cbSize))
             self.check.setChecked(state)
             self.check.clicked.connect(self.hotkeyCheck)
             self.labelLayout.addWidget(self.check)
