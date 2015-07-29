@@ -1,0 +1,29 @@
+[
+  {
+    "date": "2015 5 28", 
+    "version": "0.1", 
+    "typ": "nfo", 
+    "description": "Because none existed before this temporary description was created for \"webTools\". Change it to describe what it does with a couple of words.", 
+    "author": "eric"
+  }, 
+  {
+    "typ": "include", 
+    "file": "BBCodeMenu.ahk"
+  }, 
+  {
+    "disablable": true, 
+    "multiple": true, 
+    "name": "BBCodeMenuHotkey", 
+    "enabled": true, 
+    "label": "enclose selection with bbCode:", 
+    "keyChange": true, 
+    "functionCode": "BBCodeMenu()", 
+    "scopeMode": 0, 
+    "mode": "ahk", 
+    "key": "Ctrl+Alt+B", 
+    "scopeChange": true, 
+    "scope": [], 
+    "typ": "hotkey", 
+    "functionMode": 0
+  }
+]

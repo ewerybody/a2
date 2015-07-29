@@ -8,6 +8,7 @@ BBCodeMenu(){
 	Menu, BBCodeMenu, Add, IMG, BBCodeMenuHandler
 	Menu, BBCodeMenu, Add, URL, BBCodeMenuHandler
 	Menu, BBCodeMenu, Add, QUOTE, BBCodeMenuHandler
+    Menu, BBCodeMenu, Add, B, BBCodeMenuHandler
 	Menu, BBCodeMenu, Show
 	Menu, BBCodeMenu, DeleteAll
 }
@@ -17,12 +18,7 @@ BBCodeMenuHandler:
 Return
 BBCodeMenuHandler() {
 	sel := getSelection()
-	if (A_ThisMenuItem == "IMG" || A_ThisMenuItem == "QUOTE")
-	{
-		code := "[" A_ThisMenuItem "]" sel "[/" A_ThisMenuItem "]"
-		paste(code)
-	}
-	else if (A_ThisMenuItem == "URL")
+	if (A_ThisMenuItem == "URL")
 	{
 		If (isURL(sel))
 		{
@@ -47,5 +43,9 @@ BBCodeMenuHandler() {
 			hLen += 7
 			SendInput, {Left %hLen%}
 		}
+	}
+	else {
+		code := "[" A_ThisMenuItem "]" sel "[/" A_ThisMenuItem "]"
+		paste(code)
 	}
 }
