@@ -12,15 +12,15 @@ in flight:
 * implement available scripts browse function
 * connect include buttons with include menu thing
 * include script selector to browse through available scipts
-* add element > include uses available scipts list
 * make a2 welcome view a mod with config too
 * create a2 settings page (part of welcome already)
-* get icons into the list
+* get icons into the module list
 * deselect mod and show a2 welcome on Esc? (optional)
 * optional remember last selected mod
-* create check control which writes variables.ahk inlcude or inlcude.ahk
+* create check control which writes inlcudes: variables.ahk/inlcude.ahk
 
 a2DONE:
+* add element > include uses available scipts list
 * make windowsettings use db
 * resolve settingsChanged bug a2 loads old includes before saving is finished
 * EditCtrls: unify "element" and "data" to cfg
