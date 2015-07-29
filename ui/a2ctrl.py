@@ -650,7 +650,7 @@ class EditHotkey(EditCtrl):
         
         self.ui.scopePlus.mousePressEvent = self.scopePopup
         self.ui.scopeMinus.clicked.connect(self.scopeDelete)
-        
+        self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
         self.connectCfgCtrls(self.ui)
     
     def functionMenuBuild(self):
@@ -731,13 +731,21 @@ class EditHotkey(EditCtrl):
         log.info('newKey: %s' % newKey)
         self.cfg['key'] = newKey
 
-    def scopePopup(self, event):
-        print('event: %s' % event)
-        
+    def scopePopup(self, event, change=False):
         try:
             self.scopePop.close()
         except:
             pass
+        
+        # to change items from the list
+        selItem = None
+        text = ''
+        if change:
+            selItem = self.ui.cfg_scope.selectedItems()
+            if not selItem:
+                return
+            selItem = selItem[0]
+            text = selItem.text()
         
         self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False,
                               parent=self.main)
@@ -745,12 +753,12 @@ class EditHotkey(EditCtrl):
         font = QtGui.QFont()
         font.setPointSize(12)
         self.scopePop.textEdit.setFont(font)
-        #self.scopePop.textEdit.setText('...')
-        self.scopePop.textEdit.returnPressed.connect(self.scopePopOK)
+        self.scopePop.textEdit.setText(text)
+        self.scopePop.textEdit.returnPressed.connect(partial(self.scopePopOK, selItem))
         
         self.scopePop.buttonLyt = QtGui.QHBoxLayout()
         self.scopePop.okButton = QtGui.QPushButton("OK")
-        self.scopePop.okButton.clicked.connect(self.scopePopOK)
+        self.scopePop.okButton.clicked.connect(partial(self.scopePopOK, selItem))
         self.scopePop.closeButton = QtGui.QPushButton("&Cancel")
         self.scopePop.closeButton.clicked.connect(self.scopePop.close)
         self.scopePop.buttonLyt.addWidget(self.scopePop.okButton)
@@ -760,18 +768,21 @@ class EditHotkey(EditCtrl):
         self.scopePop.layout.addWidget(self.scopePop.textEdit)
         self.scopePop.layout.addLayout(self.scopePop.buttonLyt)
         self.scopePop.setLayout(self.scopePop.layout)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self.scopePop, self.scopePopOK)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter),
+                        self.scopePop, partial(self.scopePopOK, selItem))
         self.scopePop.resize(500, 70)
         self.scopePop.show()
         self.scopePop.placeAtCursor()
     
-    def scopePopOK(self):
-        x = self.scopePop.textEdit.text()
-        print('x: %s' % x)
+    def scopePopOK(self, selItem=None):
+        text = self.scopePop.textEdit.text()
         self.scopePop.close()
-        action = QtGui.QAction(self)
-        action.setText(x)
-        self.ui.cfg_scope.addItem(x)
+        if selItem is not None:
+            selItem.setText(text)
+        else:
+            #action = QtGui.QAction(self)
+            #action.setText(text)
+            self.ui.cfg_scope.addItem(text)
         self.scopeUpdate()
         
     def scopeDelete(self):
