@@ -88,20 +88,16 @@ class A2Window(QtGui.QMainWindow):
         self.ui.editCancelButton.pressed.connect(self.drawMod)
         
         self.restoreA2ui()
-    
+        
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.escape)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
                         self, self.editSubmit)
-
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settingsChanged)
 
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("a2logo.ico"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.setWindowIcon(icon)
+        self.setWindowIcon(QtGui.QIcon("a2.ico"))
     
     def modSelect(self, force=False):
         """
@@ -458,20 +454,23 @@ class A2Window(QtGui.QMainWindow):
         Creates AHK readable string out of a human readable like:
         Win+Ctrl+M > #^m
         """
+        tilde = ''
+        if displayString.startswith('~'):
+            tilde = '~'
+            displayString = displayString[1:]
         parts = displayString.split('+')
         parts = [p.strip().lower() for p in parts]
         modifier = parts[:-1]
-        key = parts[-1]
-        ahkKey = ''.join([ahkModifiers[m] for m in modifier]) + key
-        #log.info('ahkKey %s:' % ahkKey)
+        ahkKey = tilde + ''.join([ahkModifiers[m] for m in modifier]) + parts[-1]
         return ahkKey
+
 
 # http://www.autohotkey.com/docs/KeyList.htm
 ahkModifiers = {'altgr': '<^>'}
 for modifier, code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
     ahkModifiers[modifier] = code
     ahkModifiers['l' + modifier] = '<' + code
-    ahkModifiers['r' + modifier] = code + '>'
+    ahkModifiers['r' + modifier] = '>' + code
 
 ahkKeys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2', 'wheel',
             'wheeldown', 'wheelup', 'wheelleft', 'wheelright', 'capslock', 'space', 'tab',

@@ -866,6 +866,7 @@ class HotKey(QtGui.QPushButton):
         hkparts = hkstring.split('+')
         key = hkparts[-1].strip().lower()
         modifier = []
+        tilde = ''
         # TODO: implement check for joystick keys and scancodes: 2joy4, SCnnn
         # http://www.autohotkey.com/docs/KeyList.htm#SpecialKeys
         if len(key) != 1 and key not in ahkKeys:
@@ -874,6 +875,9 @@ class HotKey(QtGui.QPushButton):
             good = True
         else:
             modifier = [k.strip().lower() for k in hkparts[:-1]]
+            if modifier[0].startswith('~'):
+                tilde = '~'
+                modifier[0] = modifier[0][1:]
             badModifier = [k for k in modifier if k not in ahkModifiers]
             if badModifier:
                 msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(badModifier))
@@ -886,10 +890,8 @@ class HotKey(QtGui.QPushButton):
         else:
             modifier = [k.title() for k in modifier]
             key = key.title()
-            self.tempKey = '+'.join(modifier + [key])
-            
+            self.tempKey = tilde + '+'.join(modifier + [key])
             log.info('tempKey %s:' % self.tempKey)
-            
             self.popup.textEdit.setStyleSheet(styleGood)
         
         self.tempOK = good
