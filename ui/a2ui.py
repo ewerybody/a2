@@ -32,9 +32,9 @@ class URLs(object):
 
 
 class A2Window(QtGui.QMainWindow):
-    def __init__(self, parent=None, *args):
+    def __init__(self, parent=None, app=None, *args):
         super(A2Window, self).__init__(parent)
-        
+        self.app = app
         self.urls = URLs()
         
         self.initPaths()
@@ -136,7 +136,7 @@ class A2Window(QtGui.QMainWindow):
             numenabled = len([n for n in names if n in self.db.gets('enabled')])
             if numenabled == 0:
                 self.ui.modCheck.setChecked(False)
-            if numenabled == numsel:
+            elif numenabled == numsel:
                 self.ui.modCheck.setChecked(True)
             else:
                 self.ui.modCheck.setTristate(True)
@@ -431,20 +431,44 @@ class A2Window(QtGui.QMainWindow):
         return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)
 
     def closeEvent(self, event):
-        pos = self.pos()
-        size = self.size()
+        geo = self.geometry()
         splitter = self.ui.splitter.sizes()
-        windowprefs = {'size': [size.width(), size.height()], 'pos': [pos.x(), pos.y()],
+        windowprefs = {'size': [geo.width(), geo.height()], 'pos': [geo.x(), geo.y()],
                        'splitter': splitter}
         self.db.set('windowprefs', windowprefs)
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):
+        """
+        gets window settings from prefs and makes sure the window will be visible
+        on the current desktop. bring it back in:
+            Must: if window is completely outside
+            Optional: If window is on the desktop border
+        TODO: find out how to get window border and add it to changes
+        """
         winprefs = self.db.getd('windowprefs')
-        if winprefs:
-            self.setGeometry(winprefs['pos'][0], winprefs['pos'][1],
-                             winprefs['size'][0], winprefs['size'][1])
-            self.ui.splitter.setSizes(winprefs['splitter'])
+        if winprefs is None:
+            return
+        
+        print('winprefs: %s' % winprefs)
+        deskGeo = self.app.desktop().geometry()
+        deskSize = (deskGeo.width(), deskGeo.height())
+        for i in [0, 1]:
+            bottomPos = winprefs['pos'][i] + winprefs['size'][i]
+            # test if window if far out
+            if winprefs['pos'][i] > deskSize[i]:
+                winprefs['pos'][i] = deskSize[i] - winprefs['size'][i]
+            if bottomPos < 0:
+                winprefs['pos'][i] = 0
+            # test if window is partly out
+            if winprefs['pos'][i] < 0:
+                winprefs['pos'][i] = 0
+            if bottomPos > deskSize[i]:
+                winprefs['pos'][i] = deskSize[i] - winprefs['size'][i]
+        
+        self.setGeometry(winprefs['pos'][0], winprefs['pos'][1],
+                         winprefs['size'][0], winprefs['size'][1])
+        self.ui.splitter.setSizes(winprefs['splitter'])
 
     def surfTo(self, url):
         webbrowser.get().open(url)
@@ -493,6 +517,6 @@ ahkKeys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2',
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     #app.setStyle(QtGui.QStyleFactory.create("Plastique"))
-    a2ui = A2Window()
+    a2ui = A2Window(app=app)
     a2ui.show()
     exit(app.exec_())
