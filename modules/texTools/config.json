@@ -1,0 +1,29 @@
+[
+  {
+    "version": "0.1",
+    "typ": "nfo",
+    "author": "eric",
+    "description": "Because none existed before this temporary description was created for \"texTools\". Change it to describe what it does with a couple of words.",
+    "date": "2015"
+  },
+  {
+    "typ": "include",
+    "file": "wordCount.ahk"
+  },
+  {
+    "disablable": true,
+    "keyChange": true,
+    "label": "wordCount - tooltip with selected text information",
+    "functionMode": 0,
+    "scopeChange": true,
+    "functionCode": "wordCount()",
+    "multiple": true,
+    "typ": "hotkey",
+    "mode": "ahk",
+    "name": "wordCountHotkey",
+    "scope": "",
+    "enabled": true,
+    "key": "Win+O",
+    "scopeMode": 0
+  }
+]
