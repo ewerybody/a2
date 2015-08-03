@@ -40,7 +40,7 @@ class A2Window(QtGui.QMainWindow):
         self.initPaths()
         self.db = a2dblib.A2db(self.dbfile)
         #TODO: remove this:
-        #self.dbCleanup()
+        self.dbCleanup()
         self.fetchModules()
         self.setupUi()
         
@@ -512,6 +512,10 @@ class A2Window(QtGui.QMainWindow):
         for table in self.db.tables():
             if table == 'a2':
                 self.db.pop('aValue')
+                enabled = self.db.get('enabled', asjson=False)
+                if not enabled.startswith('["'):
+                    enabled = enabled.split('|')
+                    self.db.set('enabled', enabled)
                 continue
             includes = self.db.get('includes', table, asjson=False)
             include = self.db.get('include', table, asjson=False)
@@ -521,7 +525,7 @@ class A2Window(QtGui.QMainWindow):
             elif includes is not None and not includes.startswith('['):
                 includes = includes.split('|')
 
-            if includes is not None:
+            if isinstance(includes, list):
                 self.db.set('includes', includes, table)
             self.db.pop('include')
 
