@@ -41,7 +41,6 @@ class A2Window(QtGui.QMainWindow):
         self.db = a2dblib.A2db(self.dbfile)
         #TODO: remove this:
         self.dbCleanup()
-        self.fetchModules()
         self.setupUi()
         
         # TODO: make this optional
@@ -67,9 +66,8 @@ class A2Window(QtGui.QMainWindow):
         self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum,
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
-
-        self.ui.modList.insertItems(0, list(sorted(self.modules.keys())))
-        self.ui.modList.itemSelectionChanged.connect(self.modSelect)
+        
+        self.drawModList()
         
         self.ui.modCheck.setVisible(False)
         self.ui.modName.setText('a2')
@@ -100,6 +98,13 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settingsChanged)
 
         self.setWindowIcon(QtGui.QIcon("a2.ico"))
+    
+    def drawModList(self):
+        allMods = self.fetchModules().keys()
+        allMods = sorted(allMods, key=lambda s: s.lower())
+        
+        self.ui.modList.insertItems(0, allMods)
+        self.ui.modList.itemSelectionChanged.connect(self.modSelect)
     
     def modSelect(self, force=False):
         """
@@ -391,6 +396,7 @@ class A2Window(QtGui.QMainWindow):
         self.modules = {}
         for modname in os.listdir(self.a2moddir):
             self.modules[modname] = Mod(modname, self)
+        return self.modules
 
     def initPaths(self):
         """ makes sure all necessary paths and their variables are available """
@@ -519,11 +525,13 @@ class A2Window(QtGui.QMainWindow):
                 continue
             includes = self.db.get('includes', table, asjson=False)
             include = self.db.get('include', table, asjson=False)
-            
+            # turn string separated entries into lists 
             if includes is None and include is not None:
                 includes = include.split('|')
             elif includes is not None and not includes.startswith('['):
                 includes = includes.split('|')
+            elif includes == '[""]':
+                includes = []
 
             if isinstance(includes, list):
                 self.db.set('includes', includes, table)

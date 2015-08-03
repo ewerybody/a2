@@ -44,6 +44,7 @@ class A2db(object):
         :param key: keyName in the "key" column
         :param table: tableName
         :param: check: will look for the key in table before even trying to fetch
+        :param: asjson: Only for fixing legacy stuff with the db. Just gets the string from a field
         :return: string of the data or empty string
         """
         if check and table not in self.tables():
