@@ -73,7 +73,7 @@ class Mod(object):
             if cfg['typ'] == 'include':
                 includes.append(cfg['file'])
             elif cfg['typ'] == 'hotkey':
-                userCfg = self.db.getd(cfg['name'], self.name)
+                userCfg = self.db.get(cfg['name'], self.name)
                 if not self.getCfgValue(cfg, userCfg, 'enabled'):
                     continue
                 
@@ -138,7 +138,7 @@ class Mod(object):
         user sets True AND default it False:
             set to userCfg
         """
-        userCfg = self.db.getd(subCfg['name'], self.name)
+        userCfg = self.db.get(subCfg['name'], self.name) or {}
         if attrName in userCfg:
             # value to set equals CURRENT value: done
             if setValue == userCfg[attrName]:
@@ -159,7 +159,7 @@ class Mod(object):
 #         print('getCfgValue: %s' % attrName)
 #         print('subCfg: %s' % subCfg)
 #         print('userCfg: %s' % userCfg)
-        if attrName in userCfg:
+        if userCfg is not None and attrName in userCfg:
             return userCfg[attrName]
         elif attrName in subCfg:
             return subCfg[attrName]

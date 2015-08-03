@@ -100,7 +100,7 @@ class DrawHotkey(QtGui.QWidget):
         self._setupUi()
     
     def _setupUi(self):
-        userCfg = self.mod.db.getd(self.cfg['name'], self.mod.name)
+        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.ctrllayout = QtGui.QHBoxLayout(self)
         # left, top, right, bottom
         self.ctrllayout.setContentsMargins(0, 0, 0, 0)

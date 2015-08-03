@@ -35,7 +35,7 @@ class A2db(object):
         self._cur = self._con.cursor()
         log.info('database initialised! (%s)' % self._file)
 
-    def get(self, key, table=_defaultTable, check=True):
+    def get(self, key, table=_defaultTable, check=True, asjson=True):
         """
         Gets you a value from a keyName and tableName.
 
@@ -47,64 +47,50 @@ class A2db(object):
         :return: string of the data or empty string
         """
         if check and table not in self.tables():
-            return ''
+            return None
         
         if check and key not in self.keys(table):
-            return ''
+            return None
         
         try:
-            data = self._fetch('select value from "%s" where key="%s"' % (table, key))
-            return data[0][0]
-        except:
+            data = self._fetch('select value from "%s" where key="%s"' % (table, key))[0][0]
+            if not asjson:
+                return data
+            return json.loads(data)
+#             except:
+#                 raise Exception('Failed converting data: %s' % data)
+        
+        except Exception as error:
             if table not in self.tables():
                 log.error('there is no table named "%s"' % table)
-                return ''
+                return None
             elif key not in self.keys(table):
                 log.error('there is no key "%s" in section "%s"' % (key, table))
-                return ''
+                return None
+            else:
+                log.error('Error getting data from key "%s" from table "%s"' % (key, table))
+                raise error
 
-    def gets(self, key, table=_defaultTable, sep=_defaultSep):
-        """
-        returns a separated list from a db string entry
-        TODO: do this with JSON as well!
-        """
-        value = self.get(key, table)
-        if not value:
-            return set()
-        return set(value.split(sep))
-
-    def getd(self, key, table=_defaultTable):
-        value = self.get(key, table)
-        try:
-            value = json.loads(value)
-        except:
-            value = {}
-        return value
-
-    def set(self, key, value, table=_defaultTable, sep=_defaultSep, check=False):
+    def set(self, key, value, table=_defaultTable):
         """
         update TableName SET valueName=value WHERE key=keyName
         example:
         """
-        # to accept iterable values make them a string with separators
-        if isinstance(value, (set, list, tuple)):
-            value = sep.join(value)
-        elif isinstance(value, dict):
-            value = json.dumps(value, separators=(',', ':'))
-            value = value.replace('"', '""')
+        jvalue = json.dumps(value, separators=(',', ':'))
+        jvalue = jvalue.replace('"', '""')
         try:
             if key not in self.keys(table):
                 statement = ('insert into "%s" ("key","value") values ("%s", "%s")'
-                             % (table, key, value))
+                             % (table, key, jvalue))
                 log.debug('adding value!\n  %s' % statement)
             else:
-                statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, value, key)
+                statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, jvalue, key)
                 log.debug('updating value!\n  %s' % statement)
             self._execute(statement)
             self._con.commit()
         #except sqlite3.DatabaseError as error:
         except Exception as error:
-        #except:
+            #except:
             log.debug('setting db failed...')
             if table not in self.tables():
                 log.debug('creating table and retry...')
@@ -117,22 +103,10 @@ class A2db(object):
                 #log.error('could not set value: "%s" on key:"%s" in section:"%s"'
                 #          % (value, key, table))
 
-    def adds(self, key, value, table=_defaultTable, sep=_defaultSep):
-        """
-        appends a string value to a string entry with a separator if its not already in
-        should basically work like built-in set.add
-        """
-        current = self.gets(key, table, sep)
-        if '' in current:
-            current.remove('')
-        
-        if value not in current:
-            current.add(value)
-            self.set(key, sep.join(current), table)
-            log.debug('added "%s" to key:%s - %s' % (value, key, current))
-        return current
-
     def pop(self, key, table=_defaultTable):
+        """
+        removes a whole entry from a table. So the whole row: index, key and value will be gone
+        """
         if key not in self.keys(table):
             return
         statement = ('delete from "%s" where key="%s"' % (table, key))
@@ -142,17 +116,6 @@ class A2db(object):
         self._execute(statement)
         self._con.commit()
     
-    def dels(self, key, value, table=_defaultTable, sep=_defaultSep):
-        """
-        deletes a string value from an entry
-        """
-        current = self.gets(key, table, sep)
-        if value in current:
-            current.remove(value)
-            self.set(key, sep.join(current), table)
-            log.debug('deleted "%s" to key:%s - %s' % (value, key, current))
-        return current
-
     def tables(self):
         tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
         return [t[0] for t in tablelist]
@@ -192,88 +155,3 @@ class A2db(object):
             log.info('\ntable: "%s":\n  %s\n  %s\n  %s'
                      % (t, columns, '-' * 40,
                         '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
-
-    # old crap --------------------------------------------------------
-
-    def _oldset(self, data, section, where=('Id', '1')):
-        """
-        example:
-        INSERT OR REPLACE INTO TableName (Id, key) VALUES (1,value)
-        """
-        changed = self.checkSections(data, section)
-        if changed or where[1] not in self.get(where[0], section):
-            # assemble the insert statenent
-            statement = "INSERT OR REPLACE INTO '" + section + "' (Id"
-            for key in data:
-                statement += ', ' + key
-            statement += ") VALUES (1"
-            for key in data:
-                statement += ", '" + str(data[key]) + "'"
-            statement += ')'
-        else:
-            statement = "UPDATE '" + section + "' SET "
-            statement += ", ".join(["'" + k + "'='" + str(data[k]) + "'" for k in data])
-            statement += " WHERE " + where[0] + "=" + where[1]
-        self._execute(statement)
-
-    def _getSqlType(self, element):
-        if isinstance(element, str):
-            return 'TEXT'
-        elif isinstance(element, float):
-            return 'REAL'
-        elif isinstance(element, int):
-            return 'INT'
-        else:
-            raise IOError('type of "' + str(element) + '" not handled yet!')
-
-    def _oldcheckSections(self, data, section):
-        """
-        for longer tables this checks the number of columns so the given data fits
-        """
-        isDirty = False
-        if section not in self.getSections():
-            # section not in db at all? create it with columns from data types
-            isDirty = True
-            statement = 'CREATE TABLE "' + section + '" (Id INTEGER PRIMARY KEY'
-            for key in data:
-                statement += ', ' + key + ' ' + self.getSqlType(data[key])
-            statement += ')'
-            self._execute(statement)
-        else:
-            # according to given data.keys() check for column existance
-            tableNfo = self._fetch('PRAGMA table_info(%s)' % section)
-            columns = [i[1] for i in tableNfo]
-            for key in data:
-                if key in columns:
-                    continue
-                self._execute("ALTER TABLE '" + section + "' ADD COLUMN " + key + " " +
-                              self.getSqlType(data[key]))
-                isDirty = True
-        return isDirty
-
-    def _oldget(self, column, section):
-        statement = "SELECT %s FROM %s" % (column, section)
-        data = []
-        try:
-            data = self._fetch(statement)
-        except:
-            log.error('could not get data from db "%s" in section "%s"' % (column, section))
-        # if not raw:
-        #	if not ',' in column:
-        #		data = [i[0] for i in data]
-        return data
-
-    def _add(self, data, section):
-        """
-        depricated
-        """
-        self.checkTable(section)
-        statement = "INSERT INTO '" + section + "' ("
-        statement += ','.join(data.keys()) + ") VALUES "
-        statement += '(' + str(data.values())[1:-1] + ')'
-
-        "INSERT INTO %s (%s) VALUES (%s)" % ()
-
-        print('statement: ' + str(statement))
-        self._execute(statement)
-        self._con.commit()

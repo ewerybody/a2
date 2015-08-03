@@ -39,16 +39,18 @@ class A2Window(QtGui.QMainWindow):
         
         self.initPaths()
         self.db = a2dblib.A2db(self.dbfile)
+        #TODO: remove this:
+        #self.dbCleanup()
         self.fetchModules()
         self.setupUi()
         
         # TODO: make this optional
         self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
         self.mod = None
-        self.enabledMods = self.db.gets('enabled')
+        self.enabledMods = self.db.get('enabled') or []
         self.editing = False
         self.tempConfig = None
-        self.selectedMod = None
+        self.selectedMod = []
         self.toggleEdit(False)
         
         self.drawMod()
@@ -107,33 +109,35 @@ class A2Window(QtGui.QMainWindow):
         sel = self.ui.modList.selectedItems()
         numsel = len(sel)
         self.ui.modCheck.setTristate(False)
+        enabledMods = self.db.get('enabled') or []
         
         if not numsel:
             self.ui.modCheck.setVisible(False)
             self.mod = None
-            self.selectedMod = 'a2'
+            self.selectedMod = ['a2']
             self.ui.modName.setText('a2')
         
         elif numsel == 1:
             name = sel[0].text()
-            if name == self.selectedMod and force is False:
+            # break if sel == previous sel
+            if name in self.selectedMod and len(self.selectedMod) == 1 and force is False:
                 return
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText(name)
-            enabled = name in self.db.gets('enabled')
+            enabled = name in enabledMods
             # weird.. need to set false first to fix tristate effect
             self.ui.modCheck.setChecked(False)
             self.ui.modCheck.setChecked(enabled)
             
             self.mod = self.modules[name]
-            self.selectedMod = name
+            self.selectedMod = [name]
         
         else:
             names = [s.text() for s in sel]
             self.selectedMod = names
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText('%i modules' % numsel)
-            numenabled = len([n for n in names if n in self.db.gets('enabled')])
+            numenabled = len([n for n in names if n in enabledMods])
             if numenabled == 0:
                 self.ui.modCheck.setChecked(False)
             elif numenabled == numsel:
@@ -194,7 +198,7 @@ class A2Window(QtGui.QMainWindow):
                        'wanted this to fill up more than one line properly. Voila!',
                        'author': '',
                        'version': 'v0.1'}]
-        elif isinstance(self.selectedMod, list):
+        elif len(self.selectedMod) > 1:
             config = [{'typ': 'nfo',
                        'description': 'Multiple modules selected. Here goes some '
                                       'useful info in the future...',
@@ -280,7 +284,7 @@ class A2Window(QtGui.QMainWindow):
                 newcfg.append(ctrl.getCfg())
         
         self.mod.config = newcfg
-        if self.mod.name in self.db.gets('enabled'):
+        if self.mod.name in self.db.get('enabled') or []:
             self.mod.change()
             self.settingsChanged()
         self.drawMod()
@@ -293,13 +297,21 @@ class A2Window(QtGui.QMainWindow):
             self.ui.editOKCancelLayout.setContentsMargins(-1, -1, -1, 5 if state else 0)
     
     def modEnable(self):
-        if self.ui.modCheck.isChecked():
-            log.debug('enabling: %s ...' % self.selectedMod)
-            self.mod.change()
-            self.db.adds('enabled', self.selectedMod)
+        enabled = self.db.get('enabled') or []
+        
+        checked = self.ui.modCheck.isChecked()
+        if self.ui.modCheck.isTristate() or not checked:
+            for mod in self.selectedMod:
+                if mod in enabled:
+                    enabled.remove(mod)
+            checked = False
         else:
-            log.debug('disabling: %s ...' % self.selectedMod)
-            self.db.dels('enabled', self.selectedMod)
+            enabled += self.selectedMod
+            checked = True
+
+        self.db.set('enabled', enabled)
+        self.ui.modCheck.setTristate(False)
+        self.ui.modCheck.setChecked(checked)
         self.settingsChanged()
     
     def modDisableAll(self):
@@ -321,12 +333,21 @@ class A2Window(QtGui.QMainWindow):
         libsAhk = [editDisclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
                                                ['tt', 'functions', 'Explorer_Get']]
         
-        for modname in self.db.gets('enabled'):
-            includes = self.db.gets('includes', modname)
+        modSettings = self.db.tables()
+        for modname in self.db.get('enabled') or []:
+            if modname not in modSettings:
+                self.modules[modname].change()
+            
+            includes = self.db.get('includes', modname)
+            
+            if not isinstance(includes, list):
+                print('includes not a list: %s' % includes)
+                includes = [includes]
+            
             includeAhk += ['#include modules\%s\%s'
                            % (modname, i) for i in includes]
             
-            hotkeys = self.db.getd('hotkeys', modname)
+            hotkeys = self.db.get('hotkeys', modname)
             for typ in hotkeys:
                 for hk in hotkeys.get(typ) or []:
                     # type 0 is global, append under the #IfWinActive label
@@ -446,11 +467,10 @@ class A2Window(QtGui.QMainWindow):
             Optional: If window is on the desktop border
         TODO: find out how to get window border and add it to changes
         """
-        winprefs = self.db.getd('windowprefs')
+        winprefs = self.db.get('windowprefs')
         if winprefs is None:
             return
-        
-        print('winprefs: %s' % winprefs)
+
         deskGeo = self.app.desktop().geometry()
         deskSize = (deskGeo.width(), deskGeo.height())
         for i in [0, 1]:
@@ -488,6 +508,22 @@ class A2Window(QtGui.QMainWindow):
         ahkKey = tilde + ''.join([ahkModifiers[m] for m in modifier]) + parts[-1]
         return ahkKey
 
+    def dbCleanup(self):
+        for table in self.db.tables():
+            if table == 'a2':
+                self.db.pop('aValue')
+                continue
+            includes = self.db.get('includes', table, asjson=False)
+            include = self.db.get('include', table, asjson=False)
+            
+            if includes is None and include is not None:
+                includes = include.split('|')
+            elif includes is not None and not includes.startswith('['):
+                includes = includes.split('|')
+
+            if includes is not None:
+                self.db.set('includes', includes, table)
+            self.db.pop('include')
 
 # http://www.autohotkey.com/docs/KeyList.htm
 ahkModifiers = {'altgr': '<^>'}
