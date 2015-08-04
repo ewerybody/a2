@@ -365,10 +365,11 @@ class A2Window(QtGui.QMainWindow):
                     # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
                     else:
                         hkstring = self.translateHotkey(hk[1]) + '::' + hk[2]
-                        scopeKey = '\n'.join(['%s %s' % (hkmode[typ], scope) for scope in hk[0]])
-                        if scopeKey not in hotkeysAhk:
-                            hotkeysAhk[scopeKey] = []
-                        hotkeysAhk[scopeKey].append(hkstring)
+                        for scopeStr in hk[0]:
+                            scopeKey = '%s %s' % (hkmode[typ], scopeStr)
+                            if scopeKey not in hotkeysAhk:
+                                hotkeysAhk[scopeKey] = []
+                            hotkeysAhk[scopeKey].append(hkstring)
         
         with open(join(self.a2setdir, 'variables.ahk'), 'w') as fobj:
             fobj.write(editDisclaimer % 'variables' + '\n')
