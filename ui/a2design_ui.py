@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'a2design.ui'
 #
-# Created: Thu Jul 23 12:16:17 2015
+# Created: Tue Aug 04 22:54:21 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,7 +93,7 @@ class Ui_a2MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtGui.QWidget()
-        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 762, 523))
+        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 767, 578))
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -114,12 +114,14 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1196, 38))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1196, 23))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         self.menuDev = QtGui.QMenu(self.menubar)
         self.menuDev.setObjectName("menuDev")
+        self.menuTests = QtGui.QMenu(self.menuDev)
+        self.menuTests.setObjectName("menuTests")
         a2MainWindow.setMenuBar(self.menubar)
         self.actionAbout_a2 = QtGui.QAction(a2MainWindow)
         self.actionAbout_a2.setObjectName("actionAbout_a2")
@@ -135,10 +137,15 @@ class Ui_a2MainWindow(object):
         self.actionAbout_Autohotkey.setObjectName("actionAbout_Autohotkey")
         self.actionExplore_to_a2_dir = QtGui.QAction(a2MainWindow)
         self.actionExplore_to_a2_dir.setObjectName("actionExplore_to_a2_dir")
+        self.actionTest_restorewin = QtGui.QAction(a2MainWindow)
+        self.actionTest_restorewin.setObjectName("actionTest_restorewin")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
+        self.menuTests.addAction(self.actionTest_restorewin)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)
+        self.menuDev.addSeparator()
+        self.menuDev.addAction(self.menuTests.menuAction())
         self.menuDev.addSeparator()
         self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionDev_settings)
@@ -160,6 +167,7 @@ class Ui_a2MainWindow(object):
         self.editCancelButton.setText(QtGui.QApplication.translate("a2MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuDev.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Dev", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuTests.setTitle(QtGui.QApplication.translate("a2MainWindow", "tests", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_a2.setText(QtGui.QApplication.translate("a2MainWindow", "about a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "edit module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisable_all_modules.setText(QtGui.QApplication.translate("a2MainWindow", "disable all modules", None, QtGui.QApplication.UnicodeUTF8))
@@ -167,4 +175,5 @@ class Ui_a2MainWindow(object):
         self.actionDev_settings.setText(QtGui.QApplication.translate("a2MainWindow", "dev settings ...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_Autohotkey.setText(QtGui.QApplication.translate("a2MainWindow", "about Autohotkey", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExplore_to_a2_dir.setText(QtGui.QApplication.translate("a2MainWindow", "explore to a2 dir ...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTest_restorewin.setText(QtGui.QApplication.translate("a2MainWindow", "test restoring window outside of screen", None, QtGui.QApplication.UnicodeUTF8))
 

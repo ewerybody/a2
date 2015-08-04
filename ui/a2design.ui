@@ -222,8 +222,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>762</width>
-             <height>523</height>
+             <width>767</width>
+             <height>578</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -275,7 +275,7 @@
      <x>0</x>
      <y>0</y>
      <width>1196</width>
-     <height>38</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -289,8 +289,16 @@
     <property name="title">
      <string>&amp;Dev</string>
     </property>
+    <widget class="QMenu" name="menuTests">
+     <property name="title">
+      <string>tests</string>
+     </property>
+     <addaction name="actionTest_restorewin"/>
+    </widget>
     <addaction name="actionEdit_module"/>
     <addaction name="actionExplore_to"/>
+    <addaction name="separator"/>
+    <addaction name="menuTests"/>
     <addaction name="separator"/>
     <addaction name="actionDisable_all_modules"/>
     <addaction name="actionDev_settings"/>
@@ -332,6 +340,11 @@
   <action name="actionExplore_to_a2_dir">
    <property name="text">
     <string>explore to a2 dir ...</string>
+   </property>
+  </action>
+  <action name="actionTest_restorewin">
+   <property name="text">
+    <string>test restoring window outside of screen</string>
    </property>
   </action>
  </widget>
