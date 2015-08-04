@@ -24,7 +24,7 @@ log.setLevel(logging.DEBUG)
 
 class URLs(object):
     def __init__(self):
-        self.a2 = 'https://github.com/ewerybody/a2'
+        self.a2 = 'https://github.com/ewerybody/a2#description'
         self.ahk = 'http://ahkscript.org'
         self.ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
         self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
@@ -328,6 +328,9 @@ class A2Window(QtGui.QMainWindow):
         log.debug('calling info on: %s ...' % self.selectedMod)
     
     def settingsChanged(self):
+        # kill old a2 process
+        threading.Thread(target=self.killA2process).start()
+        
         editDisclaimer = ("; a2 %s.ahk - Don't bother editing! - "
                           "File is generated automatically!")
         hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
@@ -536,6 +539,25 @@ class A2Window(QtGui.QMainWindow):
             if isinstance(includes, list):
                 self.db.set('includes', includes, table)
             self.db.pop('include')
+
+    def killA2process(self):
+        """
+        finds and kills Autohotkey processes that run a2.ahk.
+        takes a moment. so start it in a thread!
+        TODO: make sure restart happens after this finishes?
+        """
+        t1 = time.time()
+        wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
+        #wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        wmicproc = subprocess.Popen(wmicall, stdout=subprocess.PIPE)
+        wmicout = str(wmicproc.communicate()[0])
+        wmicout = wmicout.split('\\r\\r\\n')
+        for line in wmicout[1:-1]:
+            if 'autohotkey.exe' in line.lower():
+                cmd, pid = line.rsplit(maxsplit=1)
+                if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
+                    wmicproc = subprocess.Popen('taskkill /pid %s' % pid, stdout=subprocess.PIPE)
+        log.debug('killA2process took: %fs' % (time.time() - t1))
 
 # http://www.autohotkey.com/docs/KeyList.htm
 ahkModifiers = {'altgr': '<^>'}
