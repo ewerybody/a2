@@ -476,25 +476,32 @@ class A2Window(QtGui.QMainWindow):
             Must: if window is completely outside
             Optional: If window is on the desktop border
         TODO: find out how to get window border and add it to changes
+        .frameGeometry()!!
         """
         winprefs = self.db.get('windowprefs')
         if winprefs is None:
             return
 
-        deskGeo = self.app.desktop().geometry()
-        deskSize = (deskGeo.width(), deskGeo.height())
+        print('winprefs: %s' % winprefs)
+
+        desktop = self.app.desktop()
+        deskGeo = desktop.geometry()
+        deskLeftTop = (deskGeo.x(), deskGeo.y())
+        deskBottomR = (deskLeftTop[0] + deskGeo.width(),
+                       deskLeftTop[1] + deskGeo.height())
+
         for i in [0, 1]:
             bottomPos = winprefs['pos'][i] + winprefs['size'][i]
             # test if window if far out
-            if winprefs['pos'][i] > deskSize[i]:
-                winprefs['pos'][i] = deskSize[i] - winprefs['size'][i]
-            if bottomPos < 0:
-                winprefs['pos'][i] = 0
+            if winprefs['pos'][i] > deskBottomR[i]:
+                winprefs['pos'][i] = deskBottomR[i] - winprefs['size'][i]
+            if bottomPos < deskLeftTop[i]:
+                winprefs['pos'][i] = deskLeftTop[i]
             # test if window is partly out
-            if winprefs['pos'][i] < 0:
-                winprefs['pos'][i] = 0
-            if bottomPos > deskSize[i]:
-                winprefs['pos'][i] = deskSize[i] - winprefs['size'][i]
+            if winprefs['pos'][i] < deskLeftTop[i]:
+                winprefs['pos'][i] = deskLeftTop[i]
+            if bottomPos > deskBottomR[i]:
+                winprefs['pos'][i] = deskBottomR[i] - winprefs['size'][i]
         
         self.setGeometry(winprefs['pos'][0], winprefs['pos'][1],
                          winprefs['size'][0], winprefs['size'][1])
@@ -546,6 +553,9 @@ class A2Window(QtGui.QMainWindow):
         finds and kills Autohotkey processes that run a2.ahk.
         takes a moment. so start it in a thread!
         TODO: make sure restart happens after this finishes?
+        
+        there is also:
+        ctypes.windll.kernel32.TerminateProcess(handle, 0)
         """
         t1 = time.time()
         wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
@@ -559,6 +569,7 @@ class A2Window(QtGui.QMainWindow):
                 if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
                     wmicproc = subprocess.Popen('taskkill /pid %s' % pid, stdout=subprocess.PIPE)
         log.debug('killA2process took: %fs' % (time.time() - t1))
+
 
 # http://www.autohotkey.com/docs/KeyList.htm
 ahkModifiers = {'altgr': '<^>'}
