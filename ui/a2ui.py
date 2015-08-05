@@ -84,6 +84,8 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(self.surfTo, self.urls.ahk))
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         
+        self.ui.actionTest_restorewin.triggered.connect(self.testOutOfScreen)
+        
         self.ui.editOKButton.pressed.connect(self.editSubmit)
         self.ui.editCancelButton.pressed.connect(self.drawMod)
         
@@ -462,50 +464,24 @@ class A2Window(QtGui.QMainWindow):
         return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)
 
     def closeEvent(self, event):
-        geo = self.geometry()
-        splitter = self.ui.splitter.sizes()
-        windowprefs = {'size': [geo.width(), geo.height()], 'pos': [geo.x(), geo.y()],
-                       'splitter': splitter}
-        self.db.set('windowprefs', windowprefs)
+        binprefs = str(self.saveGeometry().toPercentEncoding())
+        self.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):
         """
         gets window settings from prefs and makes sure the window will be visible
-        on the current desktop. bring it back in:
-            Must: if window is completely outside
-            Optional: If window is on the desktop border
-        TODO: find out how to get window border and add it to changes
-        .frameGeometry()!!
+        I let Qt handle that via restoreGeometry. Downside is: It does not put back windows
+        that are partiall outside of the left,right and bottom desktop border
         """
-        winprefs = self.db.get('windowprefs')
-        if winprefs is None:
-            return
-
-        print('winprefs: %s' % winprefs)
-
-        desktop = self.app.desktop()
-        deskGeo = desktop.geometry()
-        deskLeftTop = (deskGeo.x(), deskGeo.y())
-        deskBottomR = (deskLeftTop[0] + deskGeo.width(),
-                       deskLeftTop[1] + deskGeo.height())
-
-        for i in [0, 1]:
-            bottomPos = winprefs['pos'][i] + winprefs['size'][i]
-            # test if window if far out
-            if winprefs['pos'][i] > deskBottomR[i]:
-                winprefs['pos'][i] = deskBottomR[i] - winprefs['size'][i]
-            if bottomPos < deskLeftTop[i]:
-                winprefs['pos'][i] = deskLeftTop[i]
-            # test if window is partly out
-            if winprefs['pos'][i] < deskLeftTop[i]:
-                winprefs['pos'][i] = deskLeftTop[i]
-            if bottomPos > deskBottomR[i]:
-                winprefs['pos'][i] = deskBottomR[i] - winprefs['size'][i]
-        
-        self.setGeometry(winprefs['pos'][0], winprefs['pos'][1],
-                         winprefs['size'][0], winprefs['size'][1])
-        self.ui.splitter.setSizes(winprefs['splitter'])
+        winprefs = self.db.get('windowprefs') or {}
+        geometry = winprefs.get('geometry')
+        if geometry is not None:
+            geometry = QtCore.QByteArray().fromPercentEncoding(geometry)
+            self.restoreGeometry(geometry)
+        splitterSize = winprefs.get('splitter')
+        if splitterSize is not None:
+            self.ui.splitter.setSizes(winprefs['splitter'])
 
     def surfTo(self, url):
         webbrowser.get().open(url)
@@ -569,6 +545,15 @@ class A2Window(QtGui.QMainWindow):
                 if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
                     wmicproc = subprocess.Popen('taskkill /pid %s' % pid, stdout=subprocess.PIPE)
         log.debug('killA2process took: %fs' % (time.time() - t1))
+
+
+    def testOutOfScreen(self):
+        h = self.app.desktop().height()
+        print('h: %s' % h)
+        geo = self.geometry()
+        geo.setY(geo.x() + h)
+        self.setGeometry(geo)
+        print('geo: %s' % self.geometry())
 
 
 # http://www.autohotkey.com/docs/KeyList.htm
