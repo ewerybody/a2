@@ -4,7 +4,7 @@
 ; ist ein link markiert wird der auch ins href geschrieben und der cursor zw. >< positioniert
 
 BBCodeMenu(){
-	; hier einfach weitere Menüeinträge erweitern
+    ; add menu entries on demand...
 	Menu, BBCodeMenu, Add, IMG, BBCodeMenuHandler
 	Menu, BBCodeMenu, Add, URL, BBCodeMenuHandler
 	Menu, BBCodeMenu, Add, QUOTE, BBCodeMenuHandler

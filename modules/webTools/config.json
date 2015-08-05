@@ -1,29 +1,49 @@
 [
   {
-    "date": "2015 5 28", 
-    "version": "0.1", 
-    "typ": "nfo", 
-    "description": "Because none existed before this temporary description was created for \"webTools\". Change it to describe what it does with a couple of words.", 
+    "typ": "nfo",
+    "date": "2015 5 28",
+    "version": "0.2",
+    "description": "So far only some simple things to make more of your selection when posting to Forums or Blog posts on the internet...",
     "author": "eric"
-  }, 
+  },
   {
-    "typ": "include", 
+    "typ": "include",
     "file": "BBCodeMenu.ahk"
-  }, 
+  },
   {
-    "disablable": true, 
-    "multiple": true, 
-    "name": "BBCodeMenuHotkey", 
-    "enabled": true, 
-    "label": "enclose selection with bbCode:", 
-    "keyChange": true, 
-    "functionCode": "BBCodeMenu()", 
-    "scopeMode": 0, 
-    "mode": "ahk", 
-    "key": "Ctrl+Alt+B", 
-    "scopeChange": true, 
-    "scope": [], 
-    "typ": "hotkey", 
-    "functionMode": 0
+    "label": "enclose selection with bbCode:",
+    "keyChange": true,
+    "multiple": true,
+    "mode": "ahk",
+    "enabled": true,
+    "scopeChange": true,
+    "functionMode": 0,
+    "scopeMode": 0,
+    "functionCode": "BBCodeMenu()",
+    "key": "Ctrl+Alt+B",
+    "disablable": true,
+    "typ": "hotkey",
+    "name": "BBCodeMenuHotkey",
+    "scope": []
+  },
+  {
+    "typ": "include",
+    "file": "HtmlMenu.ahk"
+  },
+  {
+    "label": "enclose selection html tags:",
+    "scope": [],
+    "keyChange": true,
+    "multiple": true,
+    "mode": "ahk",
+    "enabled": true,
+    "functionMode": 0,
+    "scopeMode": 0,
+    "functionCode": "HtmlMenu()",
+    "key": "Ctrl+Alt+H",
+    "disablable": true,
+    "typ": "hotkey",
+    "scopeChange": true,
+    "name": "HtmlMenuHotkey"
   }
 ]
