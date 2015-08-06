@@ -26,7 +26,7 @@ closing.
 # Imports
 ###############################################################################
 
-import functools
+from functools import partial
 import json
 import os
 import struct
@@ -77,6 +77,7 @@ else:
 # QSingleApplication Class
 ###############################################################################
 
+
 class QSingleApplication(QApplication):
     """
     This subclass of :class:`~PySide.QtGui.QApplication` ensures that only a
@@ -116,8 +117,8 @@ class QSingleApplication(QApplication):
     def __init__(self, *args, **kwargs):
         if not args:
             args = (sys.argv,)
-
-        QApplication.__init__(self, *args, **kwargs)
+        super(QSingleApplication, self).__init__(*args, **kwargs)
+        #QApplication.__init__(self, *args, **kwargs)
 
         # During shutdown, we can't rely on globals like os being still available.
         if os.name == "nt":
@@ -127,8 +128,8 @@ class QSingleApplication(QApplication):
 
         # If this is Windows, then _aeroglass is imported already, so hook up
         # to that.
-        if _aeroglass:
-            _aeroglass.manager.attach(self)
+#         if _aeroglass:
+#             _aeroglass.manager.attach(self)
 
     def __del__(self):
         """
@@ -170,6 +171,8 @@ class QSingleApplication(QApplication):
         that a false value *other* than None will result in no message being
         sent.
         """
+        print('ensure_single message: %s' % message)
+        print('self.already_running: %s' % self.already_running)
         if self.already_running:
             if message is None:
                 message = sys.argv[1:]
@@ -222,7 +225,7 @@ class QSingleApplication(QApplication):
                 sid = os.getenv('USER')
 
             if profile.profile_path:
-                sid = '%s-%s' % (profile.profile_path, sid )
+                sid = '%s-%s' % (profile.profile_path, sid)
 
 #             if isinstance(sid, unicode):
 #                 sid = sid.encode('utf8')
@@ -270,8 +273,8 @@ class QSingleApplication(QApplication):
         Attempt to create a lockfile in the user's temporary directory. This is
         one of the few things that doesn't obey the path functions of profile.
         """
-        lockfile = os.path.abspath(os.path.join(
-                        QDir.tempPath(), u'%s.lock' % self._app_id))
+        lockfile = os.path.abspath(os.path.join(QDir.tempPath(),
+                                                u'%s.lock' % self._app_id))
 
         try:
             fd = os.open(lockfile, os.O_TRUNC | os.O_CREAT | os.O_RDWR)
@@ -337,14 +340,14 @@ class QSingleApplication(QApplication):
             self._read_message(sock, length)
         else:
             sock.readyRead.disconnect()
-            sock.readyRead.connect(functools.partial(self._read_message, sock,
-                                                length))
+            sock.readyRead.connect(partial(self._read_message, sock, length))
 
     def _read_message(self, sock, length):
         if sock.bytesAvailable() < length:
             return
 
-        message = json.loads(sock.readAll().data())
+        message = sock.readAll().data().decode()
+        message = json.loads(message)
         sock.close()
         self.messageReceived.emit(message)
 
@@ -356,7 +359,7 @@ class QSingleApplication(QApplication):
         if not sock:
             return
         
-        sock.readyRead.connect(functools.partial(self._read_length, sock))
+        sock.readyRead.connect(partial(self._read_length, sock))
 
     def send_message(self, message, callback=None):
         """
@@ -367,7 +370,13 @@ class QSingleApplication(QApplication):
         immediately and the boolean will be sent to the callback instead.
         """
         message = json.dumps(message)
-        message = struct.pack("!I", len(message)) + message
+        print('message: %s' % message)
+        if sys.version_info.major == 3:
+            packedLen = struct.pack("!I", len(message)).decode()
+        else:
+            packedLen = struct.pack("!I", len(message))
+        print('packedLen: %s' % packedLen)
+        message = packedLen + message
 
         # Create a socket.
         sock = QLocalSocket(self)

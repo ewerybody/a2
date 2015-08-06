@@ -24,6 +24,7 @@ app.setApplicationVersion("1")
 # a previous instance, app.ensure_single() will raise a SystemExit exception
 # and we'll stop now before anything strenuous can happen.
 siding.profile.initialize(True)
+print('sys.argv: %s' % sys.argv)
 if not sys.argv[1:]:
     app.ensure_single('--show')
 else:
@@ -42,6 +43,7 @@ import main_window
 
 global windows
 windows = []
+
 
 def got_a_message(argv):
     print('got_a_message argv: %s' % argv)

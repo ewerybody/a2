@@ -27,7 +27,6 @@ relatively easy hot reloads.
 
 import argparse
 import base64
-import configparser
 import hashlib
 import os
 import urllib
@@ -44,6 +43,13 @@ from siding import profile
 #     from siding import _aeroglass
 # else:
 _aeroglass = None
+
+if sys.version_info.major == 3:
+    import configparser
+else:
+    import ConfigParser
+    configparser = ConfigParser
+
 
 ###############################################################################
 # Logging

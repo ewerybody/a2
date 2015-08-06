@@ -4,10 +4,11 @@ The unnecessarily complex example script!
 import os
 
 #from siding import addons, profile, style, plugins
-from siding import addons, profile, plugins
+from siding import addons, profile
 
 from PySide.QtGui import QAction, QKeySequence, QMainWindow, QTextEdit
 from PySide.QtGui import QApplication, QFileDialog, QMessageBox
+
 
 class MainWindow(QMainWindow):
     windows = []
@@ -46,7 +47,7 @@ class MainWindow(QMainWindow):
         self.update_title()
 
         # Now, for some plugins.
-        plugins.run_signal('new_window', self)
+#        plugins.run_signal('new_window', self)
 
     ##### Action Icons! #######################################################
 
@@ -251,7 +252,7 @@ class MainWindow(QMainWindow):
             if self in self.windows:
                 self.windows.remove(self)
 
-            plugins.run_signal('close_window', self)
+#            plugins.run_signal('close_window', self)
 
             event.accept()
         else:

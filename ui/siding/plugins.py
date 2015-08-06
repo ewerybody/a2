@@ -27,7 +27,6 @@ application.
 
 import argparse
 import collections
-import configparser
 import functools
 import imp
 import inspect
@@ -39,6 +38,12 @@ from PySide.QtCore import QCoreApplication, QObject, Signal
 
 from siding import profile
 from siding.version import Version, VersionMatch
+
+if sys.version_info.major == 3:
+    import configparser
+else:
+    import ConfigParser
+    configparser = ConfigParser
 
 ###############################################################################
 # Logging
