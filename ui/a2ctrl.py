@@ -23,21 +23,25 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
 nfo item is always the 0th entry in the config.json it just draws and holds all
 the author, name, version, description info
 '''
-
-import subprocess
+from PySide import QtGui, QtCore
 from os.path import join
-import inspect
 from copy import deepcopy
 from functools import partial
-from PySide import QtGui, QtCore
-from hotkey_edit_ui import Ui_hotkey_edit
-from a2ui import ahkModifiers, ahkKeys
+import subprocess
+import inspect
+
+import hotkey_edit_ui
+import ahk
+
 import logging
 logging.basicConfig()
-log = logging.getLogger('a2ctrl')
+log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
 margin = 5
 labelW = 100
+
+uiModules = [hotkey_edit_ui]
 
 
 def draw(cfg, mod):
@@ -628,7 +632,7 @@ class EditHotkey(EditCtrl):
         self.ctrlType = 'Hotkey'
         self.helpUrl = self.main.urls.helpHotkey
         self.cfg = cfg
-        self.ui = Ui_hotkey_edit()
+        self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
         self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkeyChange)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
@@ -869,7 +873,7 @@ class HotKey(QtGui.QPushButton):
         tilde = ''
         # TODO: implement check for joystick keys and scancodes: 2joy4, SCnnn
         # http://www.autohotkey.com/docs/KeyList.htm#SpecialKeys
-        if len(key) != 1 and key not in ahkKeys:
+        if len(key) != 1 and key not in ahk.keys:
             msg = 'Invalid key! (%s)' % key
         elif len(hkparts) == 1:
             good = True
@@ -878,7 +882,7 @@ class HotKey(QtGui.QPushButton):
             if modifier[0].startswith('~'):
                 tilde = '~'
                 modifier[0] = modifier[0][1:]
-            badModifier = [k for k in modifier if k not in ahkModifiers]
+            badModifier = [k for k in modifier if k not in ahk.modifiers]
             if badModifier:
                 msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(badModifier))
             else:

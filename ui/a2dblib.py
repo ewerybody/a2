@@ -33,7 +33,7 @@ class A2db(object):
         self._file = a2dbFile
         self._con = sqlite3.connect(a2dbFile)
         self._cur = self._con.cursor()
-        log.info('database initialised! (%s)' % self._file)
+        log.info('initialised! (%s)' % self._file)
 
     def get(self, key, table=_defaultTable, check=True, asjson=True):
         """

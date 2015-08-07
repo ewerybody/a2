@@ -4,13 +4,15 @@ Created on Jul 9, 2015
 @author: eRiC
 '''
 from PySide import QtGui
-import os
 from os.path import join, exists, splitext
+import os
 import json
+
 import logging
 logging.basicConfig()
-log = logging.getLogger('a2ui')
+log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
 # maybe make this even settable in a dev options dialog?
 jsonIndent = 2
 

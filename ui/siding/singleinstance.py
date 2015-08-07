@@ -119,8 +119,8 @@ class QSingleApplication(QApplication):
     def __init__(self, *args, **kwargs):
         if not args:
             args = (sys.argv,)
-        #super(QSingleApplication, self).__init__(*args, **kwargs)
-        QApplication.__init__(self, *args, **kwargs)
+        super(QSingleApplication, self).__init__(*args, **kwargs)
+        #QApplication.__init__(self, *args, **kwargs)
 
         # During shutdown, we can't rely on globals like os being still available.
         if os.name == "nt":
@@ -173,8 +173,6 @@ class QSingleApplication(QApplication):
         that a false value *other* than None will result in no message being
         sent.
         """
-        print('ensure_single message: %s' % message)
-        print('self.already_running: %s' % self.already_running)
         if self.already_running:
             if message is None:
                 message = sys.argv[1:]
@@ -198,7 +196,7 @@ class QSingleApplication(QApplication):
             result = self._create_mutex()
         else:
             result = self._create_lockfile()
-            
+
         if result:
             self._create_server()
         self._already = not result
@@ -372,12 +370,10 @@ class QSingleApplication(QApplication):
         immediately and the boolean will be sent to the callback instead.
         """
         message = json.dumps(message)
-        print('message: %s' % message)
         if sys.version_info.major == 3:
             packedLen = struct.pack("!I", len(message)).decode()
         else:
             packedLen = struct.pack("!I", len(message))
-        print('packedLen: %s' % packedLen)
         message = packedLen + message
 
         # Create a socket.

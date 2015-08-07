@@ -2,26 +2,29 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 from PySide import QtGui, QtCore
-from siding import QSingleApplication
 from os.path import exists, join, dirname
-import time
 from copy import deepcopy
 from functools import partial
+import time
 import os
 import sys
 import subprocess
 import webbrowser
+import threading
+
 import a2dblib
 import a2ctrl
-import threading
-from a2design_ui import Ui_a2MainWindow
-from a2mod import Mod
+import a2design_ui
+import a2mod
+import ahk
+
 import logging
 logging.basicConfig()
-log = logging.getLogger('a2ui')
+log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-#import siding
-global app
+
+a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk]
+
 
 class URLs(object):
     def __init__(self):
@@ -54,10 +57,10 @@ class A2Window(QtGui.QMainWindow):
         self.toggleEdit(False)
         
         self.drawMod()
-        log.info('a2ui initialised!')
+        log.info('initialised!')
         
     def setupUi(self):
-        self.ui = Ui_a2MainWindow()
+        self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
@@ -402,7 +405,7 @@ class A2Window(QtGui.QMainWindow):
     def fetchModules(self):
         self.modules = {}
         for modname in os.listdir(self.a2moddir):
-            self.modules[modname] = Mod(modname, self)
+            self.modules[modname] = a2mod.Mod(modname, self)
         return self.modules
 
     def initPaths(self):
@@ -447,7 +450,7 @@ class A2Window(QtGui.QMainWindow):
             self.close()
     
     def exploreMod(self):
-        if isinstance(self.mod, Mod):
+        if isinstance(self.mod, a2mod.Mod):
             subprocess.Popen(['explorer.exe', self.mod.path])
 
     def exploreA2(self):
@@ -499,7 +502,7 @@ class A2Window(QtGui.QMainWindow):
         parts = displayString.split('+')
         parts = [p.strip().lower() for p in parts]
         modifier = parts[:-1]
-        ahkKey = tilde + ''.join([ahkModifiers[m] for m in modifier]) + parts[-1]
+        ahkKey = tilde + ''.join([ahk.modifiers[m] for m in modifier]) + parts[-1]
         return ahkKey
 
     def dbCleanup(self):
@@ -547,9 +550,6 @@ class A2Window(QtGui.QMainWindow):
                     wmicproc = subprocess.Popen('taskkill /pid %s' % pid, stdout=subprocess.PIPE)
         log.debug('killA2process took: %fs' % (time.time() - t1))
 
-    def message_get(self, msg):
-        print('msg: %s' % msg)
-
     def testOutOfScreen(self):
         h = self.app.desktop().height()
         print('h: %s' % h)
@@ -558,48 +558,7 @@ class A2Window(QtGui.QMainWindow):
         self.setGeometry(geo)
         print('geo: %s' % self.geometry())
 
-
-# http://www.autohotkey.com/docs/KeyList.htm
-ahkModifiers = {'altgr': '<^>'}
-for modifier, code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
-    ahkModifiers[modifier] = code
-    ahkModifiers['l' + modifier] = '<' + code
-    ahkModifiers['r' + modifier] = '>' + code
-
-ahkKeys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2', 'wheel',
-            'wheeldown', 'wheelup', 'wheelleft', 'wheelright', 'capslock', 'space', 'tab',
-            'enter', 'return', 'escape', 'esc', 'backspace', 'bs', 'scrolllock', 'delete',
-            'del', 'insert', 'ins', 'home', 'end', 'pgup', 'pgdn', 'up', 'down', 'left',
-            'right', 'numpad', 'numlock', 'numlock', 'numpad0', 'numpadins', 'numpad1',
-            'numpadend', 'numpad2', 'numpaddown', 'numpad3', 'numpadpgdn', 'numpad4',
-            'numpadleft', 'numpad5', 'numpadclear', 'numpad6', 'numpadright', 'numpad7',
-            'numpadhome', 'numpad8', 'numpadup', 'numpad9', 'numpadpgup', 'numpaddot',
-            'numpaddel', 'numpaddiv', 'numpaddiv', 'numpadmult', 'numpadmult', 'numpadadd',
-            'numpadadd', 'numpadsub', 'numpadsub', 'numpadenter',
-            'browser_back', 'browser_forward', 'browser_refresh', 'browser_stop',
-            'browser_search', 'browser_favorites', 'browser_home', 'volume_mute',
-            'volume_down', 'volume_up', 'media_next', 'media_prev', 'media_stop',
-            'media_play_pause', 'launch_mail', 'launch_media', 'launch_app1',
-            'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak', 'pause',
-            'break', 'help', 'sleep'] +
-           ['f%i' % i for i in range(1, 25)])
-
-
-def appmsgget(msg):
-    if msg == '--close':
-        app.exit()
-
-
-if __name__ == '__main__':
-    #app = QtGui.QApplication(sys.argv)
-    app = QSingleApplication(sys.argv)
-    print('app.already_running: %s' % app.already_running)
-    if app.already_running:
-        app.send_message('--close')
-    #app.ensure_single('--close')
-    #app.setStyle(QtGui.QStyleFactory.create("Plastique"))
-    a2ui = A2Window(app=app)
-    a2ui.show()
-    #app.messageReceived.connect(a2ui.message_get)
-    app.messageReceived.connect(appmsgget)
-    exit(app.exec_())
+    def showRaise(self):
+        self.show()
+        self.activateWindow()
+        #self.setFocus()
