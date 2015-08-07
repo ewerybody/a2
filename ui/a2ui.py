@@ -2,6 +2,7 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 from PySide import QtGui, QtCore
+from siding import QSingleApplication
 from os.path import exists, join, dirname
 import time
 from copy import deepcopy
@@ -20,7 +21,7 @@ logging.basicConfig()
 log = logging.getLogger('a2ui')
 log.setLevel(logging.DEBUG)
 #import siding
-
+global app
 
 class URLs(object):
     def __init__(self):
@@ -546,6 +547,8 @@ class A2Window(QtGui.QMainWindow):
                     wmicproc = subprocess.Popen('taskkill /pid %s' % pid, stdout=subprocess.PIPE)
         log.debug('killA2process took: %fs' % (time.time() - t1))
 
+    def message_get(self, msg):
+        print('msg: %s' % msg)
 
     def testOutOfScreen(self):
         h = self.app.desktop().height()
@@ -581,9 +584,22 @@ ahkKeys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2',
             'break', 'help', 'sleep'] +
            ['f%i' % i for i in range(1, 25)])
 
+
+def appmsgget(msg):
+    if msg == '--close':
+        app.exit()
+
+
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
+    #app = QtGui.QApplication(sys.argv)
+    app = QSingleApplication(sys.argv)
+    print('app.already_running: %s' % app.already_running)
+    if app.already_running:
+        app.send_message('--close')
+    #app.ensure_single('--close')
     #app.setStyle(QtGui.QStyleFactory.create("Plastique"))
     a2ui = A2Window(app=app)
     a2ui.show()
+    #app.messageReceived.connect(a2ui.message_get)
+    app.messageReceived.connect(appmsgget)
     exit(app.exec_())

@@ -99,8 +99,10 @@ class QSingleApplication(QApplication):
         converted into a :func:`UUID <uuid.uuid5>` before being utilized. If
         you *really* wish to use your own string, set ``_app_id``.
     """
-
-    messageReceived = Signal([dict], [list], [bool], [int], [float])
+    if sys.version_info.major == 3:
+        messageReceived = Signal([dict], [list], [bool], [int], [float])
+    else:
+        messageReceived = Signal([dict], [list], [bool], [int], [long], [unicode], [float])
     compositionChanged = Signal()
 
     # Public Variables
@@ -117,8 +119,8 @@ class QSingleApplication(QApplication):
     def __init__(self, *args, **kwargs):
         if not args:
             args = (sys.argv,)
-        super(QSingleApplication, self).__init__(*args, **kwargs)
-        #QApplication.__init__(self, *args, **kwargs)
+        #super(QSingleApplication, self).__init__(*args, **kwargs)
+        QApplication.__init__(self, *args, **kwargs)
 
         # During shutdown, we can't rely on globals like os being still available.
         if os.name == "nt":
@@ -345,7 +347,7 @@ class QSingleApplication(QApplication):
     def _read_message(self, sock, length):
         if sock.bytesAvailable() < length:
             return
-
+		#TODO: enter switch
         message = sock.readAll().data().decode()
         message = json.loads(message)
         sock.close()
