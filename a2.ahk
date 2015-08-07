@@ -2,8 +2,29 @@
 #Persistent
 ; a2 - modular Autohotkey script envirionment
 ; main file! This basically gathers all resources
+#NoTrayIcon
 
-tt("a2 started!",1)
+ScriptTitle := "a2"
+ScriptIcon = %A_ScriptDir%\ui\a2.ico
+
+Menu, Tray, Icon, %ScriptIcon%, %ScriptIcon#%, 1
+Menu, Tray, Icon
+Gui, 1:Destroy
+mainGuiID =
+
+Menu, Tray, NoStandard
+Menu, Tray, DeleteAll
+Menu, Tray, Tip, %ScriptTitle%
+Menu, Tray, Click, 1
+Menu, Tray, add, open a2 user interface, a2UI
+Menu, Tray, icon, open a2 user interface, %ScriptIcon%
+Menu, Tray, default, open a2 user interface
+Menu, Tray, add, reload a2, doReload
+Menu, Tray, icon, reload a2, %SystemRoot%\system32\imageres.dll,239
+Menu, Tray, add, help on a2, doHelp
+Menu, Tray, icon, help on a2, %SystemRoot%\system32\imageres.dll,95
+Menu, Tray, add, quit a2, doExit
+Menu, Tray, icon, quit a2, %SystemRoot%\system32\imageres.dll,223
 
 ; TODO: make this optional
 SetTitleMatchMode, 2
@@ -13,6 +34,7 @@ SetTitleMatchMode, 2
 ; init phase
 ;Gosub, a2Init
 
+tt("a2 started!",1)
 Return ; -------------------------------------------------------------------------------------------
 
 ; load libraries
@@ -24,10 +46,23 @@ Return ; -----------------------------------------------------------------------
 ; for things that need an initiation phase
 #include settings\init.ahk
 
+a2UI:
+    a2UI()
+Return
 a2UI() {
     ; TODO: placeholder. call PySide a2ui when available
     tt("a2ui...", 0.5)
-    Run, C:\Python34\pythonw.exe a2ui.py, %A_ScriptDir%\ui\
+    Run, C:\Python34\pythonw.exe a2app.py, %A_ScriptDir%\ui\
     ;Run, C:\Python34\python.exe a2ui.py, %A_ScriptDir%\ui\
     ;Run, pythonw.exe %A_ScriptDir%\ui\a2ui.py, C:\Python34
 }
+
+doHelp:
+    Run, https://github.com/ewerybody/a2#description
+Return
+doReload:
+    Reload
+Return
+doExit:
+    ExitApp
+Return
