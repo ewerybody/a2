@@ -20,11 +20,13 @@ Menu, Tray, add, open a2 user interface, a2UI
 Menu, Tray, icon, open a2 user interface, %ScriptIcon%
 Menu, Tray, default, open a2 user interface
 Menu, Tray, add, reload a2, doReload
-Menu, Tray, icon, reload a2, %SystemRoot%\system32\imageres.dll,239
+;%SystemRoot%\system32\imageres.dll,239
+Menu, Tray, icon, reload a2, %ScriptIcon%
 Menu, Tray, add, help on a2, doHelp
 Menu, Tray, icon, help on a2, %SystemRoot%\system32\imageres.dll,95
 Menu, Tray, add, quit a2, doExit
-Menu, Tray, icon, quit a2, %SystemRoot%\system32\imageres.dll,223
+;%SystemRoot%\system32\imageres.dll,223
+Menu, Tray, icon, quit a2, %ScriptIcon%
 
 ; TODO: make this optional
 SetTitleMatchMode, 2
