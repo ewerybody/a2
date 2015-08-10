@@ -28,7 +28,8 @@ a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk]
 
 class URLs(object):
     def __init__(self):
-        self.a2 = 'https://github.com/ewerybody/a2#description'
+        self.a2 = 'https://github.com/ewerybody/a2'
+        self.help = self.a2 + '#description'
         self.ahk = 'http://ahkscript.org'
         self.ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
         self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
@@ -84,7 +85,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionEdit_module.setShortcut("Ctrl+E")
         self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
         self.ui.actionExplore_to.triggered.connect(self.exploreMod)
-        self.ui.actionAbout_a2.triggered.connect(partial(self.surfTo, self.urls.a2))
+        self.ui.actionAbout_a2.triggered.connect(partial(self.surfTo, self.urls.help))
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(self.surfTo, self.urls.ahk))
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         
@@ -249,12 +250,10 @@ class A2Window(QtGui.QMainWindow):
         On Cancel the in-edit config is discarded and drawMod called which draws the
         UI unchanged.
         """
-        if self.mod is None:
+        if len(self.selectedMod) != 1 or self.selectedMod[0] == 'a2':
             return
-        
-        log.debug('editing: %s' % self.mod.name)
+
         self.controls = []
-        
         if self.tempConfig is None:
             self.tempConfig = deepcopy(self.mod.config)
         

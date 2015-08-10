@@ -1,12 +1,10 @@
 ﻿a2DO:
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
-    * finish adding scoped hotkeys
     * borrow scope selection and hotkey getter from aA?
     * add multiple hotkey user functionality
     * check for hotkey conflicts before submit
     * allow multiple hotkeys in edit mode
-* disable Edit mod when multiple selected
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
 * implement available scripts browse function
@@ -20,12 +18,14 @@ in flight:
 * create check control which writes inlcudes: variables.ahk/inlcude.ahk
 
 a2DONE:
+* disable Edit mod when multiple selected
 * add element > include uses available scipts list
 * make windowsettings use db
 * resolve settingsChanged bug a2 loads old includes before saving is finished
 * EditCtrls: unify "element" and "data" to cfg
 * added QComboBox to be handled by EditCtrl automatically
 * hotkey stuff
+    * finish adding scoped hotkeys
     * implement hotkey data in change loop
     * save as little user prefs as possible
         if nothing set: take it from cfg
