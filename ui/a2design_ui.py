@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'a2design.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2design.ui'
 #
-# Created: Tue Aug 04 22:54:21 2015
+# Created: Tue Aug 11 22:30:03 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2MainWindow(object):
     def setupUi(self, a2MainWindow):
         a2MainWindow.setObjectName("a2MainWindow")
-        a2MainWindow.resize(1196, 679)
+        a2MainWindow.resize(925, 679)
         self.centralwidget = QtGui.QWidget(a2MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.centralwidget)
@@ -34,6 +34,10 @@ class Ui_a2MainWindow(object):
         self.moduleBox.setMinimumSize(QtCore.QSize(100, 0))
         self.moduleBox.setMaximumSize(QtCore.QSize(400, 16777215))
         self.moduleBox.setBaseSize(QtCore.QSize(26, 0))
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(11)
+        self.moduleBox.setFont(font)
         self.moduleBox.setObjectName("moduleBox")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.moduleBox)
         self.verticalLayout_2.setSpacing(5)
@@ -63,7 +67,8 @@ class Ui_a2MainWindow(object):
         self.settingsHeadLayout.addWidget(self.modCheck)
         self.modName = QtGui.QLabel(self.settingsBox)
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setFamily("Segoe UI")
+        font.setPointSize(11)
         font.setWeight(75)
         font.setBold(True)
         self.modName.setFont(font)
@@ -77,15 +82,24 @@ class Ui_a2MainWindow(object):
         self.modName.setObjectName("modName")
         self.settingsHeadLayout.addWidget(self.modName)
         self.modVersion = QtGui.QLabel(self.settingsBox)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.modVersion.setFont(font)
         self.modVersion.setObjectName("modVersion")
         self.settingsHeadLayout.addWidget(self.modVersion)
         self.modAuthor = QtGui.QLabel(self.settingsBox)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.modAuthor.setFont(font)
         self.modAuthor.setObjectName("modAuthor")
         self.settingsHeadLayout.addWidget(self.modAuthor)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.settingsHeadLayout.addItem(spacerItem)
         self.modInfoButton = QtGui.QPushButton(self.settingsBox)
-        self.modInfoButton.setMaximumSize(QtCore.QSize(40, 40))
+        self.modInfoButton.setMinimumSize(QtCore.QSize(30, 30))
+        self.modInfoButton.setMaximumSize(QtCore.QSize(30, 30))
         self.modInfoButton.setObjectName("modInfoButton")
         self.settingsHeadLayout.addWidget(self.modInfoButton)
         self.verticalLayout.addLayout(self.settingsHeadLayout)
@@ -93,7 +107,7 @@ class Ui_a2MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtGui.QWidget()
-        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 767, 578))
+        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 496, 571))
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -114,7 +128,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_3.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1196, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 925, 23))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")

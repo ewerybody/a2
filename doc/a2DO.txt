@@ -5,19 +5,24 @@ in flight:
     * add multiple hotkey user functionality
     * check for hotkey conflicts before submit
     * allow multiple hotkeys in edit mode
+
+#38:
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
+
+#39:
 * implement available scripts browse function
 * connect include buttons with include menu thing
 * include script selector to browse through available scipts
+
 * make a2 welcome view a mod with config too
 * create a2 settings page (part of welcome already)
 * get icons into the module list
-* deselect mod and show a2 welcome on Esc? (optional)
 * optional remember last selected mod
 * create check control which writes inlcudes: variables.ahk/inlcude.ahk
 
 a2DONE:
+* deselect mod and show a2 welcome on Esc? (optional)
 * disable Edit mod when multiple selected
 * add element > include uses available scipts list
 * make windowsettings use db

@@ -24,7 +24,8 @@ nfo item is always the 0th entry in the config.json it just draws and holds all
 the author, name, version, description info
 '''
 from PySide import QtGui, QtCore
-from os.path import join
+from pysideuic import compileUi
+from os.path import join, getmtime, dirname, basename
 from copy import deepcopy
 from functools import partial
 import subprocess
@@ -40,8 +41,42 @@ log.setLevel(logging.DEBUG)
 
 margin = 5
 labelW = 100
-
+uipath = dirname(__file__)
 uiModules = [hotkey_edit_ui]
+
+
+def checkUiModule(module):
+    pyfile = module.__file__
+    pypath = dirname(pyfile)
+    print('pyfile: %s' % pyfile)
+    uifile = ''
+    with open(pyfile, 'r') as fobj:
+        line = fobj.readline()
+        while line or not uifile:
+            line = line.strip()
+            if line.startswith('# Form implementation '):
+                uifile = line[line.rfind("'", 0, -1) + 1:-1]
+            line = fobj.readline()
+    print('uifile: %s' % uifile)
+    
+    uifile = join(pypath, uifile)
+    
+    pyTime = getmtime(pyfile)
+    print('pyTime: %s' % pyTime)
+    uiTime = getmtime(uifile)
+    print('uiTime: %s' % uiTime)
+    diff = pyTime - uiTime
+    if diff < 0:
+        print('<! diff: %s %s needs compile!' % (diff, basename(pyfile)))
+        with open(pyfile, 'w') as pyfobj:
+            compileUi(uifile, pyfobj)
+    else:
+        log.debug('%s checked! Is up-to-date!' % basename(pyfile))
+    return
+
+
+for module in uiModules:
+    checkUiModule(module)
 
 
 def draw(cfg, mod):

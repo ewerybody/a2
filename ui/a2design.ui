@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1196</width>
+    <width>925</width>
     <height>679</height>
    </rect>
   </property>
@@ -68,6 +68,12 @@
          <width>26</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="title">
         <string>modules</string>
@@ -142,7 +148,8 @@
            <widget class="QLabel" name="modName">
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
+              <family>Segoe UI</family>
+              <pointsize>11</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -172,6 +179,12 @@
           </item>
           <item>
            <widget class="QLabel" name="modVersion">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>v0.0</string>
             </property>
@@ -179,6 +192,12 @@
           </item>
           <item>
            <widget class="QLabel" name="modAuthor">
+            <property name="font">
+             <font>
+              <family>Segoe UI</family>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
             <property name="text">
              <string>- Author Name</string>
             </property>
@@ -199,10 +218,16 @@
           </item>
           <item>
            <widget class="QPushButton" name="modInfoButton">
+            <property name="minimumSize">
+             <size>
+              <width>30</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>40</width>
-              <height>40</height>
+              <width>30</width>
+              <height>30</height>
              </size>
             </property>
             <property name="text">
@@ -222,8 +247,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>767</width>
-             <height>578</height>
+             <width>496</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -274,7 +299,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1196</width>
+     <width>925</width>
      <height>23</height>
     </rect>
    </property>

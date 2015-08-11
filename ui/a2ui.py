@@ -26,6 +26,9 @@ log.setLevel(logging.DEBUG)
 a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk]
 
 
+a2ctrl.checkUiModule(a2design_ui)
+
+
 class URLs(object):
     def __init__(self):
         self.a2 = 'https://github.com/ewerybody/a2'
