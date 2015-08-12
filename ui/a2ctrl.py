@@ -25,11 +25,12 @@ the author, name, version, description info
 '''
 from PySide import QtGui, QtCore
 from pysideuic import compileUi
-from os.path import join, getmtime, dirname, basename
+from os.path import join, getmtime, dirname, basename, exists
 from copy import deepcopy
 from functools import partial
 import subprocess
 import inspect
+import importlib
 
 import hotkey_edit_ui
 import ahk
@@ -47,19 +48,20 @@ uiModules = [hotkey_edit_ui]
 
 def checkUiModule(module):
     pyfile = module.__file__
+    pybase = basename(pyfile)
     pypath = dirname(pyfile)
-    print('pyfile: %s' % pyfile)
-    uifile = ''
+    uibase = ''
     with open(pyfile, 'r') as fobj:
         line = fobj.readline()
-        while line or not uifile:
+        while line or not uibase:
             line = line.strip()
             if line.startswith('# Form implementation '):
-                uifile = line[line.rfind("'", 0, -1) + 1:-1]
+                uibase = line[line.rfind("'", 0, -1) + 1:-1]
             line = fobj.readline()
-    print('uifile: %s' % uifile)
-    
-    uifile = join(pypath, uifile)
+    uifile = join(pypath, uibase)
+    if not uibase or not exists(uifile):
+        log.error('Ui-file not found: %s' % pybase)
+        return
     
     pyTime = getmtime(pyfile)
     print('pyTime: %s' % pyTime)
@@ -67,11 +69,12 @@ def checkUiModule(module):
     print('uiTime: %s' % uiTime)
     diff = pyTime - uiTime
     if diff < 0:
-        print('<! diff: %s %s needs compile!' % (diff, basename(pyfile)))
+        log.debug('<! diff: %s %s needs compile!' % (diff, pybase))
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
+        importlib.reload(module)
     else:
-        log.debug('%s checked! Is up-to-date!' % basename(pyfile))
+        log.debug('%s checked! Is up-to-date!' % pybase)
     return
 
 
@@ -225,7 +228,7 @@ class EditNfo(QtGui.QGroupBox):
                                              QtGui.QSizePolicy.Maximum))
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setSpacing(5)
-        self.layout.setContentsMargins(5, 5, 5, 5)
+        self.layout.setContentsMargins(5, 5, 5, 10)
         self.description = EditText('description', data.get('description'), self.layout, self.getCfg)
         self.author = EditLine('author', data.get('author'), self.layout, self.getCfg)
         self.version = EditLine('version', data.get('version'), self.layout, self.getCfg)
@@ -239,7 +242,7 @@ class EditNfo(QtGui.QGroupBox):
         return self.data
 
 
-class EditCtrl(QtGui.QWidget):
+class EditCtrl(QtGui.QGroupBox):
     """
     frame widget for an edit control which enables basic arrangement of the
     control up & down as well as deleting the control.
@@ -298,6 +301,7 @@ class EditCtrl(QtGui.QWidget):
         self.main.editMod()
 
     def _setupUi(self, addLayout):
+        self.setTitle(self.cfg['typ'])
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
 #         sizePolicy.setHorizontalStretch(0)
 #         sizePolicy.setVerticalStretch(0)
@@ -315,12 +319,14 @@ class EditCtrl(QtGui.QWidget):
         
         self._ctrlButtonLayout = QtGui.QVBoxLayout()
         self._ctrlButtonLayout.setSpacing(0)
-        self._ctrlButtonLayout.setContentsMargins(5, 0, 0, 0)
+        self._ctrlButtonLayout.setContentsMargins(5, 0, 5, 5)
         self._ctrlButtonLayout.setObjectName("ctrlButtonLayout")
         
         self._ctrlButton = QtGui.QPushButton(self)
-        self._ctrlButton.setMaximumSize(QtCore.QSize(50, 50))
+        self._ctrlButton.setMinimumSize(QtCore.QSize(40, 40))
+        self._ctrlButton.setMaximumSize(QtCore.QSize(40, 40))
         self._ctrlButton.setText("...")
+        self._ctrlButton.setFlat(True)
         self._ctrlButton.setObjectName("ctrlButton")
         self._ctrlButtonLayout.addWidget(self._ctrlButton)
         spacerItem = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
@@ -452,7 +458,7 @@ class EditLine(QtGui.QWidget):
         self.parentLayout = parentLayout
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
-        self.layout.setContentsMargins(margin, margin, margin, margin)
+        self.layout.setContentsMargins(margin, 0, margin, 0)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
         self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
         self.layout.addWidget(self.labelCtrl)
@@ -480,7 +486,7 @@ class EditText(QtGui.QWidget):
         self.updatefunc = updatefunc
         self.baselayout = QtGui.QVBoxLayout(self)
         self.baselayout.setSpacing(5)
-        self.baselayout.setContentsMargins(margin, margin, margin, margin)
+        self.baselayout.setContentsMargins(margin, 0, margin, 0)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
         self.baselayout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QPlainTextEdit()
@@ -616,7 +622,7 @@ class EditInclude(EditCtrl):
         #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
         self.layout = QtGui.QHBoxLayout()
         self.layout.setSpacing(5)
-        self.layout.setContentsMargins(margin, margin, margin, margin)
+        self.layout.setContentsMargins(10, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('include script:')
         self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
         self.layout.addWidget(self.labelCtrl)
@@ -671,7 +677,7 @@ class EditHotkey(EditCtrl):
         self.ui.setupUi(self.mainWidget)
         self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkeyChange)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
-        self.mainWidget.setLayout(self.ui.hotkeyCtrlLayout)
+        self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
         self.disablableCheck()
         self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
