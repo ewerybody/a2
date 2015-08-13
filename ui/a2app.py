@@ -9,7 +9,9 @@ Created on Aug 7, 2015
 '''
 import importlib
 import sys
+import platform
 
+from PySide import QtGui
 from siding import QSingleApplication
 import a2ui
 
@@ -52,7 +54,17 @@ if __name__ == '__main__':
         app.ensure_single()
 
     log.info('initialised! (running on python %s)' % sys.version)
-    #app.setStyle(QtGui.QStyleFactory.create("Plastique"))
+    if platform.uname()[2] == '7':
+        style = QtGui.QStyleFactory.create("Plastique")
+        app.setStyle(style)
+        # some palette playing around...
+        #QtGui.QApplication.palette()
+        #style.standardPalette()
+        #originalPalette = QtGui.QApplication.palette()
+        #QtGui.QApplication.setPalette(QtGui.QApplication.style().standardPalette())
+        #app.setPalette(QtGui.QApplication.palette())
+        #app.setPalette(QtGui.QApplication.style().standardPalette())
+    
     a2win = a2ui.A2Window(app=app)
     a2win.show()
     app.messageReceived.connect(app_msg_get)
