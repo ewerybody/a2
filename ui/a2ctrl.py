@@ -64,17 +64,13 @@ def checkUiModule(module):
         return
     
     pyTime = getmtime(pyfile)
-    print('pyTime: %s' % pyTime)
     uiTime = getmtime(uifile)
-    print('uiTime: %s' % uiTime)
     diff = pyTime - uiTime
     if diff < 0:
-        log.debug('<! diff: %s %s needs compile!' % (diff, pybase))
+        log.debug('%s needs compile! (age: %is)' % (pybase, diff))
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
         importlib.reload(module)
-    else:
-        log.debug('%s checked! Is up-to-date!' % pybase)
     return
 
 
@@ -533,7 +529,9 @@ class EditAddElem(QtGui.QWidget):
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
         
-        self.addButton = QtGui.QPushButton('add')
+        self.addButton = QtGui.QPushButton('add ...')
+        self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
+        self.addButton.setMinimumSize(QtCore.QSize(150, 35))
         self.baselayout.addWidget(self.addButton)
         
         self.menu = QtGui.QMenu(self.addButton)
@@ -544,37 +542,15 @@ class EditAddElem(QtGui.QWidget):
 
     def populateMenu(self):
         self.menu.clear()
-        self.menu_include = self.menu.addMenu('include')
-        scriptsInUse = set()
-        for cfg in self.tempConfig:
-            if cfg['typ'] == 'include':
-                scriptsInUse.add(cfg['file'])
-        scriptsUnused = set(self.mod.scripts) - scriptsInUse
-        for scriptName in scriptsUnused:
-            action = QtGui.QAction(self.menu_include)
-            action.setText(scriptName)
-            action.triggered.connect(partial(self.newInclude, scriptName))
-            self.menu_include.addAction(action)
-        
-        newIncludeAction = QtGui.QAction(self.menu_include)
-        newIncludeAction.setText('create new')
-        newIncludeAction.triggered.connect(self.newInclude)
-        self.menu_include.addAction(newIncludeAction)
-        
-        for el in 'checkBox hotkey groupBox textField floatField intField '\
-                  'fileField text button comboBox'.split():
+        self.menu_include = BrowseScriptsMenu(self.tempConfig, self.mod, self.addCtrl)
+        self.menu.addMenu(self.menu_include)
+
+        for ctrl in ('checkBox hotkey groupBox textField floatField intField '
+                     'fileField text button comboBox').split():
             action = QtGui.QAction(self.menu)
-            action.setText(el)
-            action.triggered.connect(partial(self.addCtrl, el))
+            action.setText(ctrl)
+            action.triggered.connect(partial(self.addCtrl, ctrl))
             self.menu.addAction(action)
-    
-    def newInclude(self, name=''):
-        if not name:
-            name = self.mod.createScript()
-            if not name:
-                return
-        log.info('including: %s' % name)
-        self.addCtrl('include', name)
     
     def addCtrl(self, typ, name=''):
         """
@@ -623,10 +599,12 @@ class EditInclude(EditCtrl):
         self.layout = QtGui.QHBoxLayout()
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(10, margin, margin, margin)
-        self.labelCtrl = QtGui.QLabel('include script:')
+        self.labelCtrl = QtGui.QLabel('script file:')
         self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
         self.layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.file)
+        self.buttonMenu = BrowseScriptsMenu(main.tempConfig, mod, self.setScript)
+        self.button.setMenu(self.buttonMenu)
         self.layout.addWidget(self.button)
         
         self.editButton = QtGui.QPushButton('edit script')
@@ -641,6 +619,11 @@ class EditInclude(EditCtrl):
         cfg = {'typ': self.typ,
                'file': self.file}
         return cfg
+    
+    def setScript(self, typ, name):
+        self.file = name
+        self.cfg['file'] = name
+        self.button.setText(name)
     
     def editScript(self):
         subprocess.Popen([self.main.scriptEditor, join(self.mod.path, self.file)])
@@ -978,3 +961,40 @@ class EditView(QtGui.QWidget):
     """
     def __init__(self):
         pass
+
+
+class BrowseScriptsMenu(QtGui.QMenu):
+    def __init__(self, tempConfig, mod, func):
+        super(BrowseScriptsMenu, self).__init__()
+        self.func = func
+        self.mod = mod
+        self.setTitle('include')
+        self.aboutToShow.connect(self.buildMenu)
+        self.tempConfig = tempConfig
+
+    def buildMenu(self):
+        self.clear()
+        scriptsInUse = set()
+        for cfg in self.tempConfig:
+            if cfg['typ'] == 'include':
+                scriptsInUse.add(cfg['file'])
+        
+        scriptsUnused = set(self.mod.scripts) - scriptsInUse
+        
+        for scriptName in scriptsUnused:
+            action = QtGui.QAction(self)
+            action.setText(scriptName)
+            action.triggered.connect(partial(self.setScript, scriptName))
+            self.addAction(action)
+        
+        newIncludeAction = QtGui.QAction(self)
+        newIncludeAction.setText('create new')
+        newIncludeAction.triggered.connect(self.setScript)
+        self.addAction(newIncludeAction)
+    
+    def setScript(self, name=''):
+        if not name:
+            name = self.mod.createScript()
+            if not name:
+                return
+        self.func('include', name)
