@@ -30,13 +30,12 @@ a2ctrl.checkUiModule(a2design_ui)
 
 
 class URLs(object):
-    def __init__(self):
-        self.a2 = 'https://github.com/ewerybody/a2'
-        self.help = self.a2 + '#description'
-        self.ahk = 'http://ahkscript.org'
-        self.ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
-        self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
-        self.helpHotkey = self.a2 + '/wiki/Edit-Hotkey-Control'
+    a2 = 'https://github.com/ewerybody/a2'
+    help = a2 + '#description'
+    ahk = 'http://ahkscript.org'
+    ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
+    helpEditCtrl = a2 + '/wiki/EditCtrls'
+    helpHotkey = a2 + '/wiki/Edit-Hotkey-Control'
 
 
 class A2Window(QtGui.QMainWindow):
@@ -94,8 +93,8 @@ class A2Window(QtGui.QMainWindow):
         
         self.ui.actionTest_restorewin.triggered.connect(self.testOutOfScreen)
         
-        self.ui.editOKButton.pressed.connect(self.editSubmit)
-        self.ui.editCancelButton.pressed.connect(self.drawMod)
+        self.ui.editOKButton.released.connect(self.editSubmit)
+        self.ui.editCancelButton.released.connect(self.drawMod)
         
         self.restoreA2ui()
         
@@ -129,7 +128,7 @@ class A2Window(QtGui.QMainWindow):
         if not numsel:
             self.ui.modCheck.setVisible(False)
             self.mod = None
-            self.selectedMod = ['a2']
+            self.selectedMod = []
             self.ui.modName.setText('a2')
         
         elif numsel == 1:
@@ -307,7 +306,7 @@ class A2Window(QtGui.QMainWindow):
         for button in [self.ui.editCancelButton, self.ui.editOKButton]:
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
-            self.ui.editOKCancelLayout.setContentsMargins(-1, -1, -1, 5 if state else 0)
+            self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
     
     def modEnable(self):
         enabled = self.db.get('enabled') or []
@@ -333,7 +332,13 @@ class A2Window(QtGui.QMainWindow):
         self.settingsChanged()
     
     def modInfo(self):
-        log.debug('calling info on: %s ...' % self.selectedMod)
+        if len(self.selectedMod) != 1:
+            self.surfTo(self.urls.help)
+            return
+        log.debug('calling info on: %s ...' % self.selectedMod[0])
+        url = self.mod.config[0].get('url')
+        if url:
+            self.surfTo(url)
     
     def settingsChanged(self):
         # kill old a2 process
