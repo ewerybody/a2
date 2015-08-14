@@ -45,6 +45,13 @@ labelW = 100
 uipath = dirname(__file__)
 uiModules = [hotkey_edit_ui]
 
+lenM = 35
+lenL = 61  # alright for 3 rows of text fontL
+fontL = QtGui.QFont()
+fontL.setPointSize(10)
+fontXL = QtGui.QFont()
+fontXL.setPointSize(13)
+
 
 def checkUiModule(module):
     pyfile = module.__file__
@@ -215,8 +222,6 @@ def edit(cfg, mod, main):
 class EditNfo(QtGui.QGroupBox):
     def __init__(self, data):
         super(EditNfo, self).__init__()
-        self.setStyleSheet("QGroupBox {font: 10pt};")
-        
         self.data = data
         self.typ = data['typ']
         self.setTitle('module information:')
@@ -229,12 +234,14 @@ class EditNfo(QtGui.QGroupBox):
         self.author = EditLine('author', data.get('author'), self.layout, self.getCfg)
         self.version = EditLine('version', data.get('version'), self.layout, self.getCfg)
         self.date = EditLine('date', data.get('date'), self.layout, self.getCfg)
+        self.url = EditLine('url', data.get('url') or '', self.layout, self.getCfg)
 
     def getCfg(self):
         self.data['description'] = self.description.value
         self.data['author'] = self.author.value
         self.data['version'] = self.version.value
         self.data['date'] = self.date.value
+        self.data['url'] = self.url.value
         return self.data
 
 
@@ -483,13 +490,13 @@ class EditText(QtGui.QWidget):
         self.baselayout = QtGui.QVBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, 0, margin, 0)
-        self.labelCtrl = QtGui.QLabel('%s:' % name)
-        self.baselayout.addWidget(self.labelCtrl)
+        #self.labelCtrl = QtGui.QLabel('%s:' % name)
+        #self.baselayout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QPlainTextEdit()
         self.inputCtrl.setPlainText(str(text))
         self.inputCtrl.setTabChangesFocus(True)
-        self.inputCtrl.setMinimumSize(QtCore.QSize(16777215, 70))
-        self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, 70))
+        self.inputCtrl.setMinimumSize(QtCore.QSize(16777215, lenL))
+        self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, lenL))
         self.inputCtrl.textChanged.connect(self.update)
         self.baselayout.addWidget(self.inputCtrl)
         if parent:
@@ -531,6 +538,7 @@ class EditAddElem(QtGui.QWidget):
         
         self.addButton = QtGui.QPushButton('add ...')
         self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
+        self.addButton.setFont(fontL)
         self.addButton.setMinimumSize(QtCore.QSize(150, 35))
         self.baselayout.addWidget(self.addButton)
         
@@ -775,12 +783,9 @@ class EditHotkey(EditCtrl):
             selItem = selItem[0]
             text = selItem.text()
         
-        self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False,
-                              parent=self.main)
+        self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False)
         self.scopePop.textEdit = QtGui.QLineEdit(self.scopePop)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.scopePop.textEdit.setFont(font)
+        self.scopePop.textEdit.setFont(fontXL)
         self.scopePop.textEdit.setText(text)
         self.scopePop.textEdit.returnPressed.connect(partial(self.scopePopOK, selItem))
         
@@ -833,9 +838,7 @@ class HotKey(QtGui.QPushButton):
         self.tempKey = key
         self.tempOK = True
         self.func = func
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.setFont(font)
+        self.setFont(fontXL)
         #self.main = main
         self.setText(key)
         if parent is not None:
@@ -845,12 +848,10 @@ class HotKey(QtGui.QPushButton):
         self.buildPopup(event.globalX(), event.globalY())
 
     def buildPopup(self, x, y):
-        self.popup = Popup(x, y)
+        self.popup = Popup(x, y, self)
         self.popup.textEdit = QtGui.QLineEdit(self.popup)
         #self.popup.textEdit.setLineWrapMode(QtGui.QTextEdit.NoWrap)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.popup.textEdit.setFont(font)
+        self.popup.textEdit.setFont(fontXL)
         self.popup.textEdit.setText(self.key)
         self.popup.textEdit.textChanged.connect(self.validateHotkey)
         self.popup.textEdit.returnPressed.connect(self.ok)
@@ -930,7 +931,7 @@ class Popup(QtGui.QWidget):
     | QtCore.Qt.CustomizeWindowHint
     """
     def __init__(self, x, y, closeOnLeave=True, parent=None):
-        super(Popup, self).__init__()
+        super(Popup, self).__init__(parent=parent)
         self.setpos = (x, y)
         self.closeOnLeave = closeOnLeave
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
