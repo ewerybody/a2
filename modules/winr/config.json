@@ -1,29 +1,30 @@
 [
   {
-    "date": "2015", 
-    "version": "0.1", 
-    "typ": "nfo", 
-    "description": "Super Windows+R that checks your selection and opens up according Browsers with the given locations/urls.", 
+    "description": "Super Windows+R that checks your selection and opens up according Browsers with the given locations/urls.",
+    "version": "0.1",
+    "url": "https://github.com/ewerybody/a2/wiki/winr",
+    "date": "2015",
+    "typ": "nfo",
     "author": "eric"
-  }, 
+  },
   {
-    "typ": "include", 
+    "typ": "include",
     "file": "winr.ahk"
-  }, 
+  },
   {
-    "disablable": true, 
-    "multiple": true, 
-    "name": "winrhotkey", 
-    "enabled": true, 
-    "label": "winr hotkey:", 
-    "keyChange": true, 
-    "functionCode": "winr()", 
-    "scopeMode": 0, 
-    "mode": "ahk", 
-    "key": "Win+R", 
-    "scopeChange": true, 
-    "scope": "", 
-    "typ": "hotkey", 
-    "functionMode": 0
+    "disablable": true,
+    "scopeChange": true,
+    "keyChange": true,
+    "enabled": true,
+    "typ": "hotkey",
+    "key": "Win+R",
+    "functionCode": "winr()",
+    "scope": "",
+    "mode": "ahk",
+    "name": "winrhotkey",
+    "functionMode": 0,
+    "scopeMode": 0,
+    "label": "winr hotkey:",
+    "multiple": true
   }
 ]
