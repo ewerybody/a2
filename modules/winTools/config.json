@@ -1,9 +1,10 @@
 [
   {
     "author": "eric",
-    "typ": "nfo",
     "date": "2015",
     "description": "Tools to get information about windows and do changes to them.",
+    "typ": "nfo",
+    "url": "",
     "version": "0.1"
   },
   {
@@ -12,18 +13,18 @@
   },
   {
     "disablable": true,
-    "typ": "hotkey",
-    "scopeChange": false,
-    "multiple": true,
-    "keyChange": true,
     "enabled": true,
-    "scope": "",
-    "functionMode": 0,
-    "label": "getWinfo - menu with current window data",
-    "name": "getWinfoHotkey",
-    "mode": "ahk",
-    "key": "Win+Shift+W",
     "functionCode": "getWinfo()",
-    "scopeMode": 0
+    "functionMode": 0,
+    "key": "Win+Shift+W",
+    "keyChange": true,
+    "label": "getWinfo - menu with current window data",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "getWinfoHotkey",
+    "scope": [],
+    "scopeChange": false,
+    "scopeMode": 0,
+    "typ": "hotkey"
   }
 ]

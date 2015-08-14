@@ -52,7 +52,7 @@ class Mod(object):
     def config(self, cfgdict):
         self._config = cfgdict
         with open(self.configFile, 'w') as fObj:
-            json.dump(self._config, fObj, indent=jsonIndent)
+            json.dump(self._config, fObj, indent=jsonIndent, sort_keys=True)
 
     def getConfig(self):
         if exists(self.configFile):
