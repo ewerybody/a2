@@ -48,6 +48,7 @@ class A2Window(QtGui.QMainWindow):
         self.db = a2dblib.A2db(self.dbfile)
         #TODO: remove this:
         self.dbCleanup()
+        a2ctrl.adjustSizes(app)
         self.setupUi()
         
         # TODO: make this optional
@@ -65,6 +66,10 @@ class A2Window(QtGui.QMainWindow):
     def setupUi(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
+
+        f = self.ui.scrollArea.font()
+        self.ui.scrollArea.setFont(a2ctrl.fontL)
+        print('scrollArea.font.pointSize: %s' % f.pointSize())
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.controls = []

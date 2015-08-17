@@ -53,6 +53,23 @@ fontXL = QtGui.QFont()
 fontXL.setPointSize(13)
 
 
+def adjustSizes(app):
+    desk = app.desktop()
+    dpi = desk.physicalDpiX()
+    if dpi == 192:
+        global labelW, lenM, lenL, fontL, fontXL
+        lenM *= 1.8
+        lenL *= 2
+        fontL.setPointSize(9)
+        fontXL.setPointSize(10)
+        labelW *= 2
+    print('labelW: %s' % labelW)
+    print('lenM: %s' % lenM)
+    print('lenL: %s' % lenL)
+    print('fontL: %s' % fontL.pointSize())
+    print('fontXL: %s' % fontXL.pointSize())
+
+
 def checkUiModule(module):
     pyfile = module.__file__
     pybase = basename(pyfile)
@@ -163,7 +180,7 @@ class DrawHotkey(QtGui.QWidget):
             self.labelLayout.addWidget(self.check)
         self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
-        self.label.setMinimumSize(QtCore.QSize(16777215, 35))
+        self.label.setMinimumHeight(lenM)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
@@ -175,10 +192,9 @@ class DrawHotkey(QtGui.QWidget):
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
         self.hotkeyButton = HotKey(self.mod.getCfgValue(self.cfg, userCfg, 'key'),
                                    self.hotkeyChange)
-        self.hotkeyButton.setMinimumSize(QtCore.QSize(100, 35))
         self.hotkeyOption = QtGui.QPushButton()
-        self.hotkeyOption.setMaximumSize(QtCore.QSize(35, 35))
-        self.hotkeyOption.setMinimumSize(QtCore.QSize(35, 35))
+        self.hotkeyOption.setMaximumSize(QtCore.QSize(lenM, lenM))
+        self.hotkeyOption.setMinimumSize(QtCore.QSize(lenM, lenM))
         self.hotkeyOption.setFlat(True)
         self.hotkeyOption.setText('...')
         self.hotkeyLayout.addWidget(self.hotkeyButton)
@@ -666,6 +682,13 @@ class EditHotkey(EditCtrl):
         self.cfg = cfg
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
+
+        self.ui.internalNameLabel.setMinimumWidth(labelW)
+        self.ui.displayLabelLabel.setMinimumWidth(labelW)
+        self.ui.hotkeyLabel.setMinimumWidth(labelW)
+        self.ui.functionLabel.setMinimumWidth(labelW)
+        self.ui.scopeLabel.setMinimumWidth(labelW)
+        
         self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkeyChange)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
@@ -834,6 +857,9 @@ class EditHotkey(EditCtrl):
 class HotKey(QtGui.QPushButton):
     def __init__(self, key, func, parent=None):
         super(HotKey, self).__init__()
+        
+        self.setMinimumHeight(lenM)
+        
         self.key = key
         self.tempKey = key
         self.tempOK = True
