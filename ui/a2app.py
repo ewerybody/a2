@@ -10,6 +10,7 @@ Created on Aug 7, 2015
 import importlib
 import sys
 import platform
+from ctypes import windll
 
 from PySide import QtGui
 from siding import QSingleApplication
@@ -66,6 +67,8 @@ def main():
         #app.setPalette(QtGui.QApplication.palette())
         #app.setPalette(QtGui.QApplication.style().standardPalette())
     
+    # this is to set the actual taskbar icon
+    windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
     a2win = a2ui.A2Window(app=app)
     a2win.show()
     app.messageReceived.connect(app_msg_get)
