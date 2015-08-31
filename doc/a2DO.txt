@@ -10,14 +10,8 @@ in flight:
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
 
-#39:
-* implement available scripts browse function
-* connect include buttons with include menu thing
-* include script selector to browse through available scipts
-
 * make a2 welcome view a mod with config too
 * create a2 settings page (part of welcome already)
-* get icons into the module list
 * optional remember last selected mod
 * create check control which writes inlcudes: variables.ahk/inlcude.ahk
 

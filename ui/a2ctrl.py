@@ -414,7 +414,8 @@ class EditCtrl(QtGui.QGroupBox):
             control = ctrl[1]
             
             if isinstance(control, QtGui.QCheckBox):
-                # checkBox doesn't send state, so we put the func to check
+                # checkBox.clicked doesn't send state, so we put the func to check
+                # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
                 control.clicked.connect(partial(self._updateCfgData,
                                                 name, control.isChecked))
                 # set ctrl according to config or set config from ctrl
@@ -554,7 +555,7 @@ class EditAddElem(QtGui.QWidget):
         
         self.addButton = QtGui.QPushButton('add ...')
         self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
-        self.addButton.setFont(fontL)
+        self.addButton.setFont(fontXL)
         self.addButton.setMinimumSize(QtCore.QSize(150, 35))
         self.baselayout.addWidget(self.addButton)
         
@@ -859,7 +860,7 @@ class HotKey(QtGui.QPushButton):
         super(HotKey, self).__init__()
         
         self.setMinimumHeight(lenM)
-        
+        self.setStyleSheet('QPushButton {background-color:#FFC23E}')
         self.key = key
         self.tempKey = key
         self.tempOK = True
