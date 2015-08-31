@@ -33,9 +33,11 @@ class URLs(object):
     a2 = 'https://github.com/ewerybody/a2'
     help = a2 + '#description'
     ahk = 'http://ahkscript.org'
-    ahksend = 'http://ahkscript.org/docs/commands/Send.htm'
+    ahksend = ahk + '/docs/commands/Send.htm'
     helpEditCtrl = a2 + '/wiki/EditCtrls'
     helpHotkey = a2 + '/wiki/Edit-Hotkey-Control'
+    ahkWinTitle = ahk + '/docs/misc/WinTitle.htm'
+    ahkWinActive = ahk + '/docs/commands/WinActive.htm'
 
 
 class A2Window(QtGui.QMainWindow):
@@ -406,13 +408,12 @@ class A2Window(QtGui.QMainWindow):
         with open(join(self.a2setdir, 'init.ahk'), 'w') as fobj:
             fobj.write(editDisclaimer % 'init' + '\n')
         
-        restartTask = threading.Thread(target=self.restartA2)
-        restartTask.start()
+        threading.Thread(target=self.restartA2).start()
     
     def restartA2(self):
         """ started in a thread, takes a little break before calling the script again """
         time.sleep(0.2)
-        subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir)
+        subprocess.Popen([self.ahkexe, self.a2ahk], shell=True, cwd=self.a2dir)
     
     def fetchModules(self):
         self.modules = {}
@@ -552,14 +553,14 @@ class A2Window(QtGui.QMainWindow):
         t1 = time.time()
         wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
         #wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        wmicproc = subprocess.Popen(wmicall, stdout=subprocess.PIPE)
+        wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE)
         wmicout = str(wmicproc.communicate()[0])
         wmicout = wmicout.split('\\r\\r\\n')
         for line in wmicout[1:-1]:
             if 'autohotkey.exe' in line.lower():
                 cmd, pid = line.rsplit(maxsplit=1)
                 if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                    wmicproc = subprocess.Popen('taskkill /pid %s' % pid, stdout=subprocess.PIPE)
+                    wmicproc = subprocess.Popen('taskkill /pid %s' % pid, shell=True, stdout=subprocess.PIPE)
         log.debug('killA2process took: %fs' % (time.time() - t1))
 
     def testOutOfScreen(self):
