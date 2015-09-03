@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>ScopeDialog</class>
+ <widget class="QDialog" name="ScopeDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,14 +17,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="scopeText">
        <property name="readOnly">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="helpButton">
        <property name="text">
         <string>?</string>
        </property>
@@ -48,7 +48,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_2"/>
+      <widget class="QLineEdit" name="scopeTitle"/>
      </item>
     </layout>
    </item>
@@ -68,7 +68,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_3"/>
+      <widget class="QLineEdit" name="scopeClass"/>
      </item>
     </layout>
    </item>
@@ -88,14 +88,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_4"/>
+      <widget class="QLineEdit" name="scopeExe"/>
      </item>
     </layout>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="okButton">
        <property name="styleSheet">
         <string notr="true">* {background-color: #43B6FF;}</string>
        </property>
@@ -105,7 +105,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="cancelButton">
        <property name="text">
         <string>Cancel</string>
        </property>

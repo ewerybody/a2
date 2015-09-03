@@ -33,6 +33,7 @@ import inspect
 import importlib
 
 import hotkey_edit_ui
+import scopeDialog_ui
 import ahk
 
 import logging
@@ -43,7 +44,7 @@ log.setLevel(logging.DEBUG)
 margin = 5
 labelW = 100
 uipath = dirname(__file__)
-uiModules = [hotkey_edit_ui]
+uiModules = [hotkey_edit_ui, scopeDialog_ui]
 
 lenM = 35
 lenL = 61  # alright for 3 rows of text fontL
@@ -792,11 +793,6 @@ class EditHotkey(EditCtrl):
         self.cfg['key'] = newKey
 
     def scopePopup(self, event, change=False):
-        try:
-            self.scopePop.close()
-        except:
-            pass
-        
         # to change items from the list
         selItem = None
         text = ''
@@ -804,32 +800,12 @@ class EditHotkey(EditCtrl):
             selItem = self.ui.cfg_scope.selectedItems()
             if not selItem:
                 return
-            selItem = selItem[0]
-            text = selItem.text()
+            text = selItem[0].text()
         
-        self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False)
-        self.scopePop.textEdit = QtGui.QLineEdit(self.scopePop)
-        self.scopePop.textEdit.setFont(fontXL)
-        self.scopePop.textEdit.setText(text)
-        self.scopePop.textEdit.returnPressed.connect(partial(self.scopePopOK, selItem))
-        
-        self.scopePop.buttonLyt = QtGui.QHBoxLayout()
-        self.scopePop.okButton = QtGui.QPushButton("OK")
-        self.scopePop.okButton.clicked.connect(partial(self.scopePopOK, selItem))
-        self.scopePop.closeButton = QtGui.QPushButton("&Cancel")
-        self.scopePop.closeButton.clicked.connect(self.scopePop.close)
-        self.scopePop.buttonLyt.addWidget(self.scopePop.okButton)
-        self.scopePop.buttonLyt.addWidget(self.scopePop.closeButton)
-        
-        self.scopePop.layout = QtGui.QVBoxLayout()
-        self.scopePop.layout.addWidget(self.scopePop.textEdit)
-        self.scopePop.layout.addLayout(self.scopePop.buttonLyt)
-        self.scopePop.setLayout(self.scopePop.layout)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter),
-                        self.scopePop, partial(self.scopePopOK, selItem))
-        self.scopePop.resize(500, 70)
+        #self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False)
+        self.scopePop = ScopeDialog(text, event.globalX(), event.globalY(), self.main)
         self.scopePop.show()
-        self.scopePop.placeAtCursor()
+        #self.scopePop.placeAtCursor()
     
     def scopePopOK(self, selItem=None):
         text = self.scopePop.textEdit.text()
@@ -953,6 +929,19 @@ class HotKey(QtGui.QPushButton):
         self.tempOK = good
 
 
+class ScopeDialog(QtGui.QDialog):
+    def __init__(self, text, x, y, parent=None):
+        super(ScopeDialog, self).__init__(parent)
+        self.ui = scopeDialog_ui.Ui_ScopeDialog()
+        self.setModal(True)
+        self.ui.setupUi(self)
+        pos = self.pos()
+        pos.setX(x - (self.width() / 2))
+        pos.setY(y - (self.height() / 2))
+        self.move(pos)
+        self.ui.scopeText.setText(text)
+        
+
 class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
     | QtCore.Qt.CustomizeWindowHint
@@ -981,15 +970,6 @@ class Popup(QtGui.QWidget):
         self.close()
         #self.focusOutEvent()
         
-
-class EditView(QtGui.QWidget):
-    """
-    TODO: self contained object that displays editable controls for the
-    different parameters of a module
-    """
-    def __init__(self):
-        pass
-
 
 class BrowseScriptsMenu(QtGui.QMenu):
     def __init__(self, tempConfig, mod, func):
