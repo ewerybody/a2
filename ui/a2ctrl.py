@@ -793,7 +793,7 @@ class EditHotkey(EditCtrl):
         self.cfg['key'] = newKey
 
     def scopePopup(self, event, change=False):
-        # to change items from the list
+        # to create new and change scope items from the list
         selItem = None
         text = ''
         if change:
@@ -801,28 +801,29 @@ class EditHotkey(EditCtrl):
             if not selItem:
                 return
             text = selItem[0].text()
-        
-        #self.scopePop = Popup(event.globalX(), event.globalY(), closeOnLeave=False)
-        self.scopePop = ScopeDialog(text, event.globalX(), event.globalY(), self.main)
+
+        self.scopePop = ScopeDialog(text, event.globalX(), event.globalY(),
+                                    self.main, self.scopePopOK)
         self.scopePop.show()
-        #self.scopePop.placeAtCursor()
-    
-    def scopePopOK(self, selItem=None):
-        text = self.scopePop.textEdit.text()
-        self.scopePop.close()
-        if selItem is not None:
+
+    def scopePopOK(self):
+        text = self.scopePop.ui.scopeText.text()
+        if self.scopePop.edit:
+            selItem = self.ui.cfg_scope.selectedItems()[0]
+            print('selItem: %s' % selItem)
             selItem.setText(text)
         else:
-            #action = QtGui.QAction(self)
-            #action.setText(text)
-            self.ui.cfg_scope.addItem(text)
+            item = QtGui.QListWidgetItem(text)
+            self.ui.cfg_scope.addItem(item)
+            item.setSelected(True)
+        self.scopePop.close()
         self.scopeUpdate()
-        
+
     def scopeDelete(self):
         selIndex = [mi.row() for mi in self.ui.cfg_scope.selectedIndexes()][0]
         self.ui.cfg_scope.takeItem(selIndex)
         self.scopeUpdate()
-    
+
     def scopeUpdate(self):
         all = [self.ui.cfg_scope.item(i).text() for i in range(self.ui.cfg_scope.count())]
         self.cfg['scope'] = all
@@ -853,7 +854,6 @@ class HotKey(QtGui.QPushButton):
     def buildPopup(self, x, y):
         self.popup = Popup(x, y, self)
         self.popup.textEdit = QtGui.QLineEdit(self.popup)
-        #self.popup.textEdit.setLineWrapMode(QtGui.QTextEdit.NoWrap)
         self.popup.textEdit.setFont(fontXL)
         self.popup.textEdit.setText(self.key)
         self.popup.textEdit.textChanged.connect(self.validateHotkey)
@@ -930,17 +930,86 @@ class HotKey(QtGui.QPushButton):
 
 
 class ScopeDialog(QtGui.QDialog):
-    def __init__(self, text, x, y, parent=None):
-        super(ScopeDialog, self).__init__(parent)
+    def __init__(self, text, x, y, main, okFunc, *args):
+        super(ScopeDialog, self).__init__(main)
+        self.setWindowTitle('setup scope')
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
         self.setModal(True)
         self.ui.setupUi(self)
+        self.main = main
+        self.edit = text != ''
+
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
         pos.setY(y - (self.height() / 2))
         self.move(pos)
+
         self.ui.scopeText.setText(text)
+        self.ui.scopeText.setStyleSheet('* {background-color:#F0F0F0}')
+        self.ui.scopeText.setFont(fontXL)
+        self.ui.okButton.setFont(fontXL)
+        self.ui.okButton.clicked.connect(okFunc)
+        self.ui.cancelButton.setFont(fontXL)
+        self.ui.cancelButton.clicked.connect(self.close)
+        self.getScopeNfo()
         
+        for ctrl in [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]:
+            ctrl.textChanged.connect(self.textChange)
+        
+        for i, lst, ctrl in [(0, self.titles, self.ui.titleButton),
+                             (1, self.classes, self.ui.classButton),
+                             (2, self.processes, self.ui.exeButton)]:
+            menu = QtGui.QMenu(self)
+            usedmenu = QtGui.QMenu(menu)
+            usedmenu.setTitle('all in use...')
+            submenu = QtGui.QMenu(menu)
+            submenu.setTitle('all available...')
+            menu.addMenu(submenu)
+            for item in sorted(lst):
+                action = QtGui.QAction(item, submenu, triggered=partial(self.setScope, i, item))
+                submenu.addAction(action)
+            ctrl.setMenu(menu)
+
+        # from given text fill the line edits already
+        if text:
+            for typ, ctrl in [('ahk_exe', self.ui.scopeExe), ('ahk_class', self.ui.scopeClass)]:
+                found = text.find(typ)
+                if found != -1:
+                    ctrl.setText(text[found + len(typ):])
+                    text = text[:found]
+            self.ui.scopeTitle.setText(text)
+
+    def textChange(self):
+        texts = [self.ui.scopeTitle.text()]
+        winclass = self.ui.scopeClass.text()
+        if winclass:
+            texts.append('ahk_class ' + winclass)
+        winexe = self.ui.scopeExe.text()
+        if winexe:
+            texts.append('ahk_exe ' + winexe)
+        self.ui.scopeText.setText(' '.join(texts).strip())
+
+    def setScope(self, index, text):
+        ctrls = [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]
+        ctrls[index].setText(text)
+
+    def getScopeNfo(self):
+        scrpt = join(self.main.a2libdir, 'cmds', 'getScopeNfo.ahk')
+        proc = subprocess.Popen([self.main.ahkexe, scrpt], shell=True, stdout=subprocess.PIPE)
+        scopeNfo = str(proc.communicate()[0])
+        # cut away first & last ' and linebreak
+        scopeNfo = scopeNfo[scopeNfo.find("'") + 1:scopeNfo.rfind("'") - 2]
+        scopeNfo = scopeNfo.split('\\n')
+        self.titles = set()
+        self.classes = set()
+        self.processes = set()
+        for i in range(0, len(scopeNfo), 3):
+            if scopeNfo[i]:
+                self.titles.add(scopeNfo[i])
+            if scopeNfo[i + 1]:
+                self.classes.add(scopeNfo[i + 1])
+            if scopeNfo[i + 2]:
+                self.processes.add(scopeNfo[i + 2])
 
 class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
@@ -994,7 +1063,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
             action.setText(scriptName)
             action.triggered.connect(partial(self.setScript, scriptName))
             self.addAction(action)
-        
+
         newIncludeAction = QtGui.QAction(self)
         newIncludeAction.setText('create new')
         newIncludeAction.triggered.connect(self.setScript)

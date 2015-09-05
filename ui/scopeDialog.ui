@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1091</width>
-    <height>285</height>
+    <height>324</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,16 +17,31 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QLineEdit" name="scopeText">
-       <property name="readOnly">
-        <bool>true</bool>
+      <widget class="QPushButton" name="helpButton">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">* {text-align: right}</string>
+       </property>
+       <property name="text">
+        <string>scope description</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="helpButton">
-       <property name="text">
-        <string>?</string>
+      <widget class="QLineEdit" name="scopeText">
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -35,12 +50,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QPushButton" name="titleButton">
        <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">* {text-align: right}</string>
        </property>
        <property name="text">
         <string>title</string>
@@ -55,12 +79,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QPushButton" name="classButton">
        <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">* {text-align: right}</string>
        </property>
        <property name="text">
         <string>window class</string>
@@ -75,12 +108,21 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0">
      <item>
-      <widget class="QLabel" name="label_4">
+      <widget class="QPushButton" name="exeButton">
        <property name="minimumSize">
         <size>
          <width>200</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">* {text-align: right}</string>
        </property>
        <property name="text">
         <string>executable</string>
