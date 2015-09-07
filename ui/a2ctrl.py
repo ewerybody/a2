@@ -378,35 +378,11 @@ class EditCtrl(QtGui.QGroupBox):
         self.getCtrlData()
         return self.cfg
 
-    def enlistCfgCtrls(self, uiclass):
-        """
-        already deprecated. You'd have to connect the widgets to the getCfg method
-        anyways and then fetch them there in again...
-        
-        just for historic reasons...
-        browses a given widget class members and according to their type adds
-        them to the _getCfgList which is then looped by getCfg on change.
-        To have a widget listed its name MUST start with 'cfg_'
-        The string after that will be the name of the data piece in the element
-        dictionary. So
-            self.ui.cfg_bananas = QtGui.QCheckBox()
-        will end up as ('bananas', self.ui.cfg_bananas.isChecked) in the list so
-        it can be called to get the value and set in the dict.
-        just if like you wrote
-            self.cfg['bananas'] = self.ui.cfg_bananas.isChecked()
-        """
-        self._getCfgList = []
-        for ctrl in inspect.getmembers(uiclass):
-            if ctrl[0].startswith('cfg_'):
-                name = ctrl[0][4:]
-                #log.info('ctrl: %s' % str(ctrl))
-                if isinstance(ctrl[1], QtGui.QCheckBox):
-                    self._getCfgList.append((name, ctrl[1].isChecked))
-                    if name in self.cfg:
-                        ctrl[1].setChecked(self.cfg[name])
-            #log.info('e.__name__: %s' % e.__name__)
-    
     def connectCfgCtrls(self, uiclass):
+        """
+        browses all members of the ui object to connect ones named 'cfg_'
+        with the EditCtrls current cfg and fill it with current value.
+        """
         for ctrl in inspect.getmembers(uiclass):
             if not ctrl[0].startswith('cfg_'):
                 continue
@@ -417,8 +393,8 @@ class EditCtrl(QtGui.QGroupBox):
             if isinstance(control, QtGui.QCheckBox):
                 # checkBox.clicked doesn't send state, so we put the func to check
                 # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
-                control.clicked.connect(partial(self._updateCfgData,
-                                                name, control.isChecked))
+                # solution: control.clicked[bool] sends the state already!
+                control.clicked[bool].connect(partial(self._updateCfgData, name))
                 # set ctrl according to config or set config from ctrl
                 if name in self.cfg:
                     control.setChecked(self.cfg[name])
@@ -426,24 +402,23 @@ class EditCtrl(QtGui.QGroupBox):
                     self.cfg[name] = control.isChecked()
             
             elif isinstance(control, QtGui.QLineEdit):
-                control.textChanged.connect(partial(self._updateCfgData, name, None))
+                control.textChanged.connect(partial(self._updateCfgData, name))
                 if name in self.cfg:
                     control.setText(self.cfg[name])
                 else:
                     self.cfg[name] = control.text()
             
             elif isinstance(control, QtGui.QComboBox):
-                control.currentIndexChanged.connect(partial(self._updateCfgData, name, None))
+                control.currentIndexChanged.connect(partial(self._updateCfgData, name))
                 if name in self.cfg:
                     control.setCurrentIndex(self.cfg[name])
                 else:
                     self.cfg[name] = control.currentIndex()
 
             elif isinstance(control, QtGui.QListWidget):
-                #control.currentIndexChanged.connect(partial(self._updateCfgData, name, None))
+                # so far only to fill the control
                 if name in self.cfg:
                     control.insertItems(0, self.cfg[name])
-                    #control.setCurrentIndex(self.cfg[name])
                 else:
                     items = [control.item(i).text() for i in range(control.count())]
                     self.cfg[name] = items
@@ -452,8 +427,10 @@ class EditCtrl(QtGui.QGroupBox):
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (ctrl[0], type(control)))
     
-    def _updateCfgData(self, name, func, data=None, *args):
-        #print('widget sent data: %s' % str(args))
+    def _updateCfgData(self, name, data=None, func=None):
+        """
+        issued from a control change function this sets an according item in config dict
+        """
         if data is not None:
             self.cfg[name] = data
         elif func is not None:
@@ -769,7 +746,6 @@ class EditHotkey(EditCtrl):
             index = self.ui.cfg_functionMode.currentIndex()
         if text is None:
             text = self.cfg.get(self.functions[index]) or ''
-        print('mode change: %s' % text)
         self.ui.functionText.setText(text)
         # show include thingy
         #self.ui.scopePlus.setVisible(index == 0)
@@ -932,52 +908,58 @@ class HotKey(QtGui.QPushButton):
 class ScopeDialog(QtGui.QDialog):
     def __init__(self, text, x, y, main, okFunc, *args):
         super(ScopeDialog, self).__init__(main)
-        self.setWindowTitle('setup scope')
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
         self.setModal(True)
         self.ui.setupUi(self)
+        self.setWindowTitle('setup scope')
         self.main = main
         self.edit = text != ''
 
+        self.resize(self.width(), self.minimumSizeHint().height())
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
         pos.setY(y - (self.height() / 2))
         self.move(pos)
 
         self.ui.scopeText.setText(text)
-        self.ui.scopeText.setStyleSheet('* {background-color:#F0F0F0}')
+        self.ui.scopeText.setStyleSheet('* {background-color:#E0E0E0}')
         self.ui.scopeText.setFont(fontXL)
         self.ui.okButton.setFont(fontXL)
         self.ui.okButton.clicked.connect(okFunc)
         self.ui.cancelButton.setFont(fontXL)
         self.ui.cancelButton.clicked.connect(self.close)
         self.getScopeNfo()
-        
+        self.ui.scopeTitle.setFocus()
+
         for ctrl in [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]:
             ctrl.textChanged.connect(self.textChange)
         
         for i, lst, ctrl in [(0, self.titles, self.ui.titleButton),
                              (1, self.classes, self.ui.classButton),
-                             (2, self.processes, self.ui.exeButton)]:
-            menu = QtGui.QMenu(self)
-            usedmenu = QtGui.QMenu(menu)
-            usedmenu.setTitle('all in use...')
-            submenu = QtGui.QMenu(menu)
-            submenu.setTitle('all available...')
-            menu.addMenu(submenu)
-            for item in sorted(lst):
-                action = QtGui.QAction(item, submenu, triggered=partial(self.setScope, i, item))
-                submenu.addAction(action)
-            ctrl.setMenu(menu)
+                             (2, self.processes, self.ui.exeButton),
+                             (None, None, self.ui.helpButton)]:
+            if lst:
+                menu = QtGui.QMenu(self)
+                usedmenu = QtGui.QMenu(menu)
+                usedmenu.setTitle('all in use...')
+                submenu = QtGui.QMenu(menu)
+                submenu.setTitle('all available...')
+                menu.addMenu(submenu)
+                for item in sorted(lst):
+                    action = QtGui.QAction(item, submenu, triggered=partial(self.setScope, i, item))
+                    submenu.addAction(action)
+                ctrl.setMenu(menu)
+            ctrl.setMinimumWidth(labelW)
+            #ctrl.setMaximumWidth(labelW)
 
         # from given text fill the line edits already
         if text:
             for typ, ctrl in [('ahk_exe', self.ui.scopeExe), ('ahk_class', self.ui.scopeClass)]:
                 found = text.find(typ)
                 if found != -1:
-                    ctrl.setText(text[found + len(typ):])
+                    ctrl.setText(text[found + len(typ):].strip())
                     text = text[:found]
-            self.ui.scopeTitle.setText(text)
+            self.ui.scopeTitle.setText(text.strip())
 
     def textChange(self):
         texts = [self.ui.scopeTitle.text()]
@@ -1010,6 +992,7 @@ class ScopeDialog(QtGui.QDialog):
                 self.classes.add(scopeNfo[i + 1])
             if scopeNfo[i + 2]:
                 self.processes.add(scopeNfo[i + 2])
+
 
 class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
