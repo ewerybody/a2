@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>324</height>
+    <width>800</width>
+    <height>167</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -160,6 +160,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scopeText</tabstop>
+  <tabstop>scopeTitle</tabstop>
+  <tabstop>scopeClass</tabstop>
+  <tabstop>scopeExe</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>helpButton</tabstop>
+  <tabstop>titleButton</tabstop>
+  <tabstop>classButton</tabstop>
+  <tabstop>exeButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

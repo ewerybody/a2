@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\scopeDialog.ui'
 #
-# Created: Sat Sep  5 21:26:57 2015
+# Created: Mon Sep  7 13:28:33 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_ScopeDialog(object):
     def setupUi(self, ScopeDialog):
         ScopeDialog.setObjectName("ScopeDialog")
-        ScopeDialog.resize(1091, 324)
+        ScopeDialog.resize(800, 167)
         self.verticalLayout = QtGui.QVBoxLayout(ScopeDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -79,6 +79,15 @@ class Ui_ScopeDialog(object):
 
         self.retranslateUi(ScopeDialog)
         QtCore.QMetaObject.connectSlotsByName(ScopeDialog)
+        ScopeDialog.setTabOrder(self.scopeText, self.scopeTitle)
+        ScopeDialog.setTabOrder(self.scopeTitle, self.scopeClass)
+        ScopeDialog.setTabOrder(self.scopeClass, self.scopeExe)
+        ScopeDialog.setTabOrder(self.scopeExe, self.okButton)
+        ScopeDialog.setTabOrder(self.okButton, self.cancelButton)
+        ScopeDialog.setTabOrder(self.cancelButton, self.helpButton)
+        ScopeDialog.setTabOrder(self.helpButton, self.titleButton)
+        ScopeDialog.setTabOrder(self.titleButton, self.classButton)
+        ScopeDialog.setTabOrder(self.classButton, self.exeButton)
 
     def retranslateUi(self, ScopeDialog):
         ScopeDialog.setWindowTitle(QtGui.QApplication.translate("ScopeDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
