@@ -64,11 +64,6 @@ def adjustSizes(app):
         fontL.setPointSize(9)
         fontXL.setPointSize(10)
         labelW *= 2
-    print('labelW: %s' % labelW)
-    print('lenM: %s' % lenM)
-    print('lenL: %s' % lenL)
-    print('fontL: %s' % fontL.pointSize())
-    print('fontXL: %s' % fontXL.pointSize())
 
 
 def checkUiModule(module):
@@ -933,10 +928,10 @@ class ScopeDialog(QtGui.QDialog):
 
         for ctrl in [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]:
             ctrl.textChanged.connect(self.textChange)
-        
-        for i, lst, ctrl in [(0, self.titles, self.ui.titleButton),
-                             (1, self.classes, self.ui.classButton),
-                             (2, self.processes, self.ui.exeButton),
+
+        for i, lst, ctrl in [(1, self.titles, self.ui.titleButton),
+                             (2, self.classes, self.ui.classButton),
+                             (3, self.processes, self.ui.exeButton),
                              (None, None, self.ui.helpButton)]:
             if lst:
                 menu = QtGui.QMenu(self)
@@ -945,12 +940,23 @@ class ScopeDialog(QtGui.QDialog):
                 submenu = QtGui.QMenu(menu)
                 submenu.setTitle('all available...')
                 menu.addMenu(submenu)
-                for item in sorted(lst):
+                for item in sorted(lst, key=lambda s: s.lower()):
                     action = QtGui.QAction(item, submenu, triggered=partial(self.setScope, i, item))
                     submenu.addAction(action)
                 ctrl.setMenu(menu)
             ctrl.setMinimumWidth(labelW)
-            #ctrl.setMaximumWidth(labelW)
+
+        menu = QtGui.QMenu(self)
+        action = QtGui.QAction('help on scope setup', menu,
+                               triggered=partial(self.main.surfTo, self.main.urls.helpScopes))
+        menu.addAction(action)
+        submenu = QtGui.QMenu(menu)
+        submenu.setTitle('all in use...')
+        menu.addMenu(submenu)
+        for scope in sorted(self.main.getUsedScopes(), key=lambda s: s.lower()):
+            action = QtGui.QAction(scope, submenu, triggered=partial(self.setScope, i, scope))
+            submenu.addAction(scope)
+        self.ui.helpButton.setMenu(menu)
 
         # from given text fill the line edits already
         if text:
@@ -972,7 +978,7 @@ class ScopeDialog(QtGui.QDialog):
         self.ui.scopeText.setText(' '.join(texts).strip())
 
     def setScope(self, index, text):
-        ctrls = [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]
+        ctrls = [self.ui.scopeText, self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]
         ctrls[index].setText(text)
 
     def getScopeNfo(self):

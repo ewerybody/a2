@@ -36,6 +36,7 @@ class URLs(object):
     ahksend = ahk + '/docs/commands/Send.htm'
     helpEditCtrl = a2 + '/wiki/EditCtrls'
     helpHotkey = a2 + '/wiki/Edit-Hotkey-Control'
+    helpScopes = a2 + '/wiki/Edit-Scopes'
     ahkWinTitle = ahk + '/docs/misc/WinTitle.htm'
     ahkWinActive = ahk + '/docs/commands/WinActive.htm'
 
@@ -61,10 +62,13 @@ class A2Window(QtGui.QMainWindow):
         self.tempConfig = None
         self.selectedMod = []
         self.toggleEdit(False)
+        self.scopes = {}
         
         self.drawMod()
         log.info('initialised!')
-        
+        self.getUsedScopes()
+        self.getUsedHotkeys()
+
     def setupUi(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
@@ -570,6 +574,42 @@ class A2Window(QtGui.QMainWindow):
         geo.setY(geo.x() + h)
         self.setGeometry(geo)
         print('geo: %s' % self.geometry())
+
+    def getUsedScopes(self):
+        """
+        browses the hotkey setups of enabled modules for scope strings
+        TODO: this type of lookup can also be used to get hold of used hotkeys...
+        """
+        self.scopes = {}
+        for modname in self.db.get('enabled'):
+            hotkeys = self.db.get('hotkeys', modname)
+            if not hotkeys:
+                continue
+            for i in ['1', '2']:
+                for hksetup in hotkeys.get(i) or []:
+                    for scope in hksetup[0]:
+                        if scope not in self.scopes:
+                            self.scopes[scope] = set([modname])
+                        else:
+                            self.scopes[scope].add(modname)
+        return self.scopes
+
+    def getUsedHotkeys(self):
+        """
+        wip - for a proper hotkey list we might need more than a list. You'd also wanna
+        know what the hotkey does... shouldn't our data structure care for this right away?
+        """
+        self.hotkeys = set()
+        for modname in self.db.get('enabled'):
+            hotkeys = self.db.get('hotkeys', modname)
+            if not hotkeys:
+                continue
+            for i in ['1', '2']:
+                for hksetup in hotkeys.get(i) or []:
+                    self.hotkeys.add(hksetup[1])
+            for hksetup in hotkeys.get('0') or []:
+                self.hotkeys.add(hksetup[0])
+        return self.hotkeys
 
     def showRaise(self):
         self.show()
