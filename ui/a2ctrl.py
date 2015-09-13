@@ -52,15 +52,16 @@ fontL = QtGui.QFont()
 fontL.setPointSize(10)
 fontXL = QtGui.QFont()
 fontXL.setPointSize(13)
-
+uiScale = 1
 
 def adjustSizes(app):
     desk = app.desktop()
     dpi = desk.physicalDpiX()
     if dpi == 192:
-        global labelW, lenM, lenL, fontL, fontXL
+        global labelW, lenM, lenL, fontL, fontXL, uiScale
         lenM *= 1.8
         lenL *= 2
+        uiScale *= 1.8
         fontL.setPointSize(9)
         fontXL.setPointSize(10)
         labelW *= 2
@@ -906,29 +907,33 @@ class ScopeDialog(QtGui.QDialog):
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
         self.setModal(True)
         self.ui.setupUi(self)
+        self.okFunc = okFunc
         self.setWindowTitle('setup scope')
         self.main = main
         self.edit = text != ''
 
-        self.resize(self.width(), self.minimumSizeHint().height())
+        self.resize(self.width() * uiScale, self.minimumSizeHint().height())
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
         pos.setY(y - (self.height() / 2))
         self.move(pos)
 
-        self.ui.scopeText.setText(text)
+        self.getScopeNfo()
+        self.setupUi()
+        self.setScopeText(text)
+
+    def setupUi(self):
         self.ui.scopeText.setStyleSheet('* {background-color:#E0E0E0}')
         self.ui.scopeText.setFont(fontXL)
         self.ui.okButton.setFont(fontXL)
-        self.ui.okButton.clicked.connect(okFunc)
+        self.ui.okButton.clicked.connect(self.okFunc)
         self.ui.cancelButton.setFont(fontXL)
         self.ui.cancelButton.clicked.connect(self.close)
-        self.getScopeNfo()
         self.ui.scopeTitle.setFocus()
 
         for ctrl in [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]:
             ctrl.textChanged.connect(self.textChange)
-
+        # put menus to the different buttons
         for i, lst, ctrl in [(1, self.titles, self.ui.titleButton),
                              (2, self.classes, self.ui.classButton),
                              (3, self.processes, self.ui.exeButton),
@@ -947,17 +952,21 @@ class ScopeDialog(QtGui.QDialog):
             ctrl.setMinimumWidth(labelW)
 
         menu = QtGui.QMenu(self)
-        action = QtGui.QAction('help on scope setup', menu,
-                               triggered=partial(self.main.surfTo, self.main.urls.helpScopes))
-        menu.addAction(action)
         submenu = QtGui.QMenu(menu)
         submenu.setTitle('all in use...')
-        menu.addMenu(submenu)
         for scope in sorted(self.main.getUsedScopes(), key=lambda s: s.lower()):
-            action = QtGui.QAction(scope, submenu, triggered=partial(self.setScope, i, scope))
-            submenu.addAction(scope)
+            action = QtGui.QAction(scope, submenu, triggered=partial(self.setScopeText, scope))
+            submenu.addAction(action)
+        menu.addMenu(submenu)
+        for title, url in [('Help on Scope Setup', self.main.urls.helpScopes),
+                           ('Help on AHK WinActive', self.main.urls.ahkWinActive),
+                           ('Help on AHK WinTitle', self.main.urls.ahkWinTitle)]:
+            action = QtGui.QAction(title, menu, triggered=partial(self.main.surfTo, url))
+            menu.addAction(action)
         self.ui.helpButton.setMenu(menu)
 
+    def setScopeText(self, text, *args):
+        self.ui.scopeText.setText(text)
         # from given text fill the line edits already
         if text:
             for typ, ctrl in [('ahk_exe', self.ui.scopeExe), ('ahk_class', self.ui.scopeClass)]:
