@@ -72,10 +72,8 @@ class A2Window(QtGui.QMainWindow):
     def setupUi(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
-
-        f = self.ui.scrollArea.font()
+        
         self.ui.scrollArea.setFont(a2ctrl.fontL)
-        print('scrollArea.font.pointSize: %s' % f.pointSize())
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.controls = []
@@ -320,19 +318,19 @@ class A2Window(QtGui.QMainWindow):
             self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
     
     def modEnable(self):
-        enabled = self.db.get('enabled') or []
+        enabledMods = self.db.get('enabled') or []
         
         checked = self.ui.modCheck.isChecked()
         if self.ui.modCheck.isTristate() or not checked:
             for mod in self.selectedMod:
-                if mod in enabled:
-                    enabled.remove(mod)
+                if mod in enabledMods:
+                    enabledMods.remove(mod)
             checked = False
         else:
-            enabled += self.selectedMod
+            enabledMods += self.selectedMod
             checked = True
 
-        self.db.set('enabled', enabled)
+        self.db.set('enabled', enabledMods)
         self.ui.modCheck.setTristate(False)
         self.ui.modCheck.setChecked(checked)
         self.settingsChanged()
@@ -531,9 +529,11 @@ class A2Window(QtGui.QMainWindow):
                     enabled = enabled.split('|')
                     self.db.set('enabled', enabled)
                 continue
+            
             includes = self.db.get('includes', table, asjson=False)
             include = self.db.get('include', table, asjson=False)
-            # turn string separated entries into lists 
+            
+            # turn string separated entries into lists
             if includes is None and include is not None:
                 includes = include.split('|')
             elif includes is not None and not includes.startswith('['):
@@ -543,7 +543,9 @@ class A2Window(QtGui.QMainWindow):
 
             if isinstance(includes, list):
                 self.db.set('includes', includes, table)
-            self.db.pop('include')
+
+            if include is not None:
+                self.db.pop('include', table)
 
     def killA2process(self):
         """

@@ -290,12 +290,9 @@ class EditCtrl(QtGui.QGroupBox):
             self.main.editMod()
     
     def move(self, value, *args):
-        print('value: %s' % value)
-        print('args: %s' % str(args))
         index = self.main.tempConfig.index(self.cfg)
         maxIndex = len(self.main.tempConfig) - 1
         if isinstance(value, bool):
-            print('value: %s' % value)
             if value:
                 newindex = 1
                 #self.main.ui.scrollArea.scrollToTop()
@@ -307,10 +304,9 @@ class EditCtrl(QtGui.QGroupBox):
             newindex = index + value
         # hop out if already at start or end
         if index == newindex or newindex < 1 or newindex > maxIndex:
-            print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
+            #print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
         
-        print('moving from/to: %s - %s' % (index, newindex))
         #cfg = self.main.tempConfig.pop(index)
         self.main.tempConfig.pop(index)
         self.main.tempConfig.insert(newindex, self.cfg)
@@ -733,8 +729,6 @@ class EditHotkey(EditCtrl):
     def functionChanged(self, text=None):
         #text = self.ui.functionText.text()
         index = self.ui.cfg_functionMode.currentIndex()
-        print('text changed %s: %s' % (index, text))
-        print('self.functions[index]: %s' % self.functions[index])
         self.cfg[self.functions[index]] = text
     
     def functionSetText(self, index=None, text=None):
@@ -782,7 +776,6 @@ class EditHotkey(EditCtrl):
         text = self.scopePop.ui.scopeText.text()
         if self.scopePop.edit:
             selItem = self.ui.cfg_scope.selectedItems()[0]
-            print('selItem: %s' % selItem)
             selItem.setText(text)
         else:
             item = QtGui.QListWidgetItem(text)
@@ -1029,7 +1022,6 @@ class Popup(QtGui.QWidget):
         self.move(pos)
     
     def leaveEvent(self, event):
-        #print('event: %s' % event)
         if self.closeOnLeave:
             self.close()
     
