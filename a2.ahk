@@ -54,8 +54,8 @@ Return
 a2UI() {
     ; TODO: placeholder. call PySide a2ui when available
     tt("a2ui...", 0.5)
-    Run, C:\Python34\pythonw.exe a2app.py, %A_ScriptDir%\ui\
-    ;Run, C:\Python34\python.exe a2ui.py, %A_ScriptDir%\ui\
+    ;Run, C:\Python34\pythonw.exe a2app.py, %A_ScriptDir%\ui\
+    Run, C:\Python34\python.exe a2app.py, %A_ScriptDir%\ui\
     ;Run, pythonw.exe %A_ScriptDir%\ui\a2ui.py, C:\Python34
 }
 
