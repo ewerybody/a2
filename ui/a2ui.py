@@ -99,6 +99,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionAbout_a2.triggered.connect(partial(self.surfTo, self.urls.help))
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(self.surfTo, self.urls.ahk))
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
+        self.ui.actionNew_module.triggered.connect(self.newModule)
         
         self.ui.actionTest_restorewin.triggered.connect(self.testOutOfScreen)
         
@@ -612,6 +613,27 @@ class A2Window(QtGui.QMainWindow):
             for hksetup in hotkeys.get('0') or []:
                 self.hotkeys.add(hksetup[0])
         return self.hotkeys
+
+    def newModule(self):
+        print('newModule')
+        a2ctrl.InputDialog('New Module', self)
+
+    def newModuleCheck(self, name):
+        """
+        Run on keystroke when creating new module, to give way to okaying the module creation
+        """
+        if name == 'a2':
+            return 'You just cannot name your module "a2"! Ok?'
+        if name in self.modules:
+            return 'Module name "%s" is already in use!'
+        return True
+
+    def newModuleCreate(self, name):
+        if not self.newModuleCheck(name):
+            return
+        
+        
+            
 
     def showRaise(self):
         self.show()
