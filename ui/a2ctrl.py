@@ -654,11 +654,9 @@ class EditHotkey(EditCtrl):
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
 
-        self.ui.internalNameLabel.setMinimumWidth(labelW)
-        self.ui.displayLabelLabel.setMinimumWidth(labelW)
-        self.ui.hotkeyLabel.setMinimumWidth(labelW)
-        self.ui.functionLabel.setMinimumWidth(labelW)
-        self.ui.scopeLabel.setMinimumWidth(labelW)
+        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.hotkeyLabel,
+                      self.ui.functionLabel, self.ui.scopeLabel]:
+            label.setMinimumWidth(labelW)
         
         self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkeyChange)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
