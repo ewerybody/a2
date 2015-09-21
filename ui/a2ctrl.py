@@ -34,6 +34,7 @@ import importlib
 
 import hotkey_edit_ui
 import scopeDialog_ui
+import inputDialog_ui
 import ahk
 
 import logging
@@ -44,7 +45,7 @@ log.setLevel(logging.DEBUG)
 margin = 5
 labelW = 100
 uipath = dirname(__file__)
-uiModules = [hotkey_edit_ui, scopeDialog_ui]
+uiModules = [hotkey_edit_ui, scopeDialog_ui, ]
 
 lenM = 35
 lenL = 61  # alright for 3 rows of text fontL
@@ -53,6 +54,7 @@ fontL.setPointSize(10)
 fontXL = QtGui.QFont()
 fontXL.setPointSize(13)
 uiScale = 1
+
 
 def adjustSizes(app):
     desk = app.desktop()
@@ -898,8 +900,8 @@ class ScopeDialog(QtGui.QDialog):
     def __init__(self, text, x, y, main, okFunc, *args):
         super(ScopeDialog, self).__init__(main)
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
-        self.setModal(True)
         self.ui.setupUi(self)
+        self.setModal(True)
         self.okFunc = okFunc
         self.setWindowTitle('setup scope')
         self.main = main
@@ -1000,6 +1002,23 @@ class ScopeDialog(QtGui.QDialog):
                 self.classes.add(scopeNfo[i + 1])
             if scopeNfo[i + 2]:
                 self.processes.add(scopeNfo[i + 2])
+
+
+class InputDialog(QtGui.QDialog):
+    def __init__(self, title, main, okFunc, text='', *args):
+        super(InputDialog, self).__init__(main)
+        self.ui = inputDialog_ui.Ui_InputDialog()
+        self.ui.setupUi(self)
+        self.setModal(True)
+        self.okFunc = okFunc
+        self.setWindowTitle(title)
+        self.main = main
+
+        self.ui.okButton.setFont(fontXL)
+        self.ui.okButton.clicked.connect(self.okFunc)
+        self.ui.cancelButton.setFont(fontXL)
+        self.ui.cancelButton.clicked.connect(self.close)
+        self.ui.textField.setFocus()
 
 
 class Popup(QtGui.QWidget):

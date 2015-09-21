@@ -393,8 +393,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>500</width>
-             <height>561</height>
+             <width>596</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -482,7 +482,7 @@
      <x>0</x>
      <y>0</y>
      <width>925</width>
-     <height>23</height>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -498,10 +498,11 @@
     </property>
     <widget class="QMenu" name="menuTests">
      <property name="title">
-      <string>tests</string>
+      <string>Tests</string>
      </property>
      <addaction name="actionTest_restorewin"/>
     </widget>
+    <addaction name="actionNew_module"/>
     <addaction name="actionEdit_module"/>
     <addaction name="actionExplore_to"/>
     <addaction name="separator"/>
@@ -516,42 +517,47 @@
   </widget>
   <action name="actionAbout_a2">
    <property name="text">
-    <string>about a2</string>
+    <string>About a2</string>
    </property>
   </action>
   <action name="actionEdit_module">
    <property name="text">
-    <string>edit module</string>
+    <string>Edit Module</string>
    </property>
   </action>
   <action name="actionDisable_all_modules">
    <property name="text">
-    <string>disable all modules</string>
+    <string>Disable All Modules</string>
    </property>
   </action>
   <action name="actionExplore_to">
    <property name="text">
-    <string>explore to module ...</string>
+    <string>Explore to Module ...</string>
    </property>
   </action>
   <action name="actionDev_settings">
    <property name="text">
-    <string>dev settings ...</string>
+    <string>Dev Settings ...</string>
    </property>
   </action>
   <action name="actionAbout_Autohotkey">
    <property name="text">
-    <string>about Autohotkey</string>
+    <string>About Autohotkey</string>
    </property>
   </action>
   <action name="actionExplore_to_a2_dir">
    <property name="text">
-    <string>explore to a2 dir ...</string>
+    <string>Explore to a2 Dir ...</string>
    </property>
   </action>
   <action name="actionTest_restorewin">
    <property name="text">
     <string>test restoring window outside of screen</string>
+   </property>
+  </action>
+  <action name="actionNew_module">
+   <property name="text">
+    <string>New Module</string>
    </property>
   </action>
  </widget>
