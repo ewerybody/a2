@@ -1003,20 +1003,44 @@ class ScopeDialog(QtGui.QDialog):
 
 
 class InputDialog(QtGui.QDialog):
-    def __init__(self, title, main, okFunc, text='', *args):
+    def __init__(self, title, main, okFunc, checkFunk, text='', msg='', *args):
         super(InputDialog, self).__init__(main)
         self.ui = inputDialog_ui.Ui_InputDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.okFunc = okFunc
+        self.checkFunk = checkFunk
         self.setWindowTitle(title)
         self.main = main
 
+        if self.checkFunk is not None:
+            self.ui.textField.textChanged.connect(self.check)
+
         self.ui.okButton.setFont(fontXL)
-        self.ui.okButton.clicked.connect(self.okFunc)
+        self.ui.okButton.clicked.connect(self.okay)
         self.ui.cancelButton.setFont(fontXL)
         self.ui.cancelButton.clicked.connect(self.close)
+        self.ui.label.setFont(fontL)
+        self.ui.label.setText(msg)
+        self.ui.textField.setFont(fontL)
+        self.ui.textField.setText(text)
         self.ui.textField.setFocus()
+
+    def check(self, name):
+        print('name: %s' % name)
+        #print('args: %s' % str(args))
+        if self.checkFunk is not None:
+            answer = self.checkFunk(name)
+            if answer is True:
+                self.ui.okButton.setEnabled(True)
+            else:
+                self.ui.okButton.setEnabled(False)
+    
+    def okay(self):
+        if self.okFunc is not None:
+            self.okFunc()
+
+
 
 
 class Popup(QtGui.QWidget):

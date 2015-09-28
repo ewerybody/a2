@@ -616,15 +616,19 @@ class A2Window(QtGui.QMainWindow):
 
     def newModule(self):
         print('newModule')
-        a2ctrl.InputDialog('New Module', self)
+        input = a2ctrl.InputDialog('New Module', self, self.newModuleCreate, self.newModuleCheck,
+                                   msg='Name the new module:', text='newModule')
+        input.show()
 
     def newModuleCheck(self, name):
         """
         Run on keystroke when creating new module, to give way to okaying the module creation
         """
+        if name == '':
+            return 'Name cannot be empty!'
         if name == 'a2':
             return 'You just cannot name your module "a2"! Ok?'
-        if name in self.modules:
+        if name.lower() in [m.lower() for m in self.modules]:
             return 'Module name "%s" is already in use!'
         return True
 
