@@ -790,7 +790,7 @@ class EditHotkey(EditCtrl):
         self.scopeUpdate()
 
     def scopeUpdate(self):
-        all = [self.ui.cfg_scope.item(i).text() for i in range(self.ui.cfg_scope.count())]
+        all = list_getAllItems_asText()
         self.cfg['scope'] = all
     
     def getCfg(self):
@@ -1027,7 +1027,6 @@ class InputDialog(QtGui.QDialog):
         self.ui.textField.setFocus()
 
     def check(self, name):
-        print('name: %s' % name)
         #print('args: %s' % str(args))
         if self.checkFunk is not None:
             answer = self.checkFunk(name)
@@ -1038,9 +1037,10 @@ class InputDialog(QtGui.QDialog):
     
     def okay(self):
         if self.okFunc is not None:
-            self.okFunc()
-
-
+            txt = self.ui.textField.text()
+            print('txt: %s' % txt)
+            self.okFunc(txt)
+            self.close()
 
 
 class Popup(QtGui.QWidget):
@@ -1106,3 +1106,22 @@ class BrowseScriptsMenu(QtGui.QMenu):
             if not name:
                 return
         self.func('include', name)
+
+
+def list_getAllItems_asText(listCtrl):
+    return [listCtrl.item(i).text() for i in range(listCtrl.count())]
+
+def list_selectItems(listCtrl, text):
+    if isinstance(text, str):
+        text = [text]
+    
+    lastitem = None
+    for i in range(listCtrl.count()):
+        this = listCtrl.item(i)
+        if this.text() in text:
+            this.setSelected(True)
+            lastitem = this
+        else:
+            this.setSelected(False)
+    if lastitem is not None:
+        listCtrl.setCurrentItem(lastitem)

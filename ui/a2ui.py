@@ -51,8 +51,11 @@ class A2Window(QtGui.QMainWindow):
         self.db = a2dblib.A2db(self.dbfile)
         #TODO: remove this:
         self.dbCleanup()
+        self.modules = {}
         a2ctrl.adjustSizes(app)
         self.setupUi()
+        self.fetchModules()
+        self.drawModList()
         
         # TODO: make this optional
         self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
@@ -82,9 +85,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum,
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
-        
-        self.drawModList()
-        
+                
         self.ui.modCheck.setVisible(False)
         self.ui.modName.setText('a2')
         self.ui.modVersion.setText('v0.1')
@@ -105,7 +106,8 @@ class A2Window(QtGui.QMainWindow):
         
         self.ui.editOKButton.released.connect(self.editSubmit)
         self.ui.editCancelButton.released.connect(self.drawMod)
-        
+        self.ui.modList.itemSelectionChanged.connect(self.modSelect)
+                
         self.restoreA2ui()
         
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -118,12 +120,22 @@ class A2Window(QtGui.QMainWindow):
 
         self.setWindowIcon(QtGui.QIcon("a2.ico"))
     
-    def drawModList(self):
-        allMods = self.fetchModules().keys()
-        allMods = sorted(allMods, key=lambda s: s.lower())
-        
+    def drawModList(self, select=None):
+        if select is None:
+            select = [i.text() for i in self.ui.modList.selectedItems()]
+        allMods = sorted(self.modules.keys(), key=lambda s: s.lower())
+        self.ui.modList.clear()
         self.ui.modList.insertItems(0, allMods)
-        self.ui.modList.itemSelectionChanged.connect(self.modSelect)
+        
+        if select:
+            self.selectMod(select)
+    
+    def selectMod(self, modName):
+        """
+        to select 1 or more given modulenames in the list
+        and update Ui accordingly
+        """
+        a2ctrl.list_selectItems(self.ui.modList, modName)
     
     def modSelect(self, force=False):
         """
@@ -342,6 +354,9 @@ class A2Window(QtGui.QMainWindow):
         self.settingsChanged()
     
     def modInfo(self):
+        """
+        TODO: this needs to be part of Mod obj
+        """
         if len(self.selectedMod) != 1:
             self.surfTo(self.urls.help)
             return
@@ -353,6 +368,9 @@ class A2Window(QtGui.QMainWindow):
     def settingsChanged(self):
         # kill old a2 process
         threading.Thread(target=self.killA2process).start()
+        
+        self.fetchModules()
+        self.drawModList()
         
         editDisclaimer = ("; a2 %s.ahk - Don't bother editing! - "
                           "File is generated automatically!")
@@ -419,9 +437,13 @@ class A2Window(QtGui.QMainWindow):
         subprocess.Popen([self.ahkexe, self.a2ahk], shell=True, cwd=self.a2dir)
     
     def fetchModules(self):
-        self.modules = {}
+        moddirs = os.listdir(self.a2moddir)
+        # get rid of modules gone
+        [self.modules.pop(m) for m in self.modules if m not in moddirs]
+        # register new modules
         for modname in os.listdir(self.a2moddir):
-            self.modules[modname] = a2mod.Mod(modname, self)
+            if modname not in self.modules:
+                self.modules[modname] = a2mod.Mod(modname, self)
         return self.modules
 
     def initPaths(self):
@@ -615,7 +637,6 @@ class A2Window(QtGui.QMainWindow):
         return self.hotkeys
 
     def newModule(self):
-        print('newModule')
         input = a2ctrl.InputDialog('New Module', self, self.newModuleCreate, self.newModuleCheck,
                                    msg='Name the new module:', text='newModule')
         input.show()
@@ -635,9 +656,13 @@ class A2Window(QtGui.QMainWindow):
     def newModuleCreate(self, name):
         if not self.newModuleCheck(name):
             return
+        if not os.access(self.a2moddir, os.W_OK):
+            log.error('A2 module directory not writable! %s' % self.a2moddir)
+            return
         
-        
-            
+        os.mkdir(join(self.a2moddir, name))
+        self.fetchModules()
+        self.drawModList(select=name)
 
     def showRaise(self):
         self.show()
