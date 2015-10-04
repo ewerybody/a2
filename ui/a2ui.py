@@ -650,7 +650,7 @@ class A2Window(QtGui.QMainWindow):
         if name == 'a2':
             return 'You just cannot name your module "a2"! Ok?'
         if name.lower() in [m.lower() for m in self.modules]:
-            return 'Module name "%s" is already in use!'
+            return 'Module name "%s" is already in use!' % name
         return True
 
     def newModuleCreate(self, name):
