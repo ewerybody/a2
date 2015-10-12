@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>366</height>
+    <width>785</width>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,7 +47,7 @@
      <item>
       <widget class="QLineEdit" name="cfg_name">
        <property name="text">
-        <string>extensionXhotkey1</string>
+        <string>extensionX_hotkey1</string>
        </property>
       </widget>
      </item>

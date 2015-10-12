@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\hotkey_edit.ui'
 #
-# Created: Wed Aug 12 22:36:19 2015
+# Created: Sun Oct 11 19:28:30 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_hotkey_edit(object):
     def setupUi(self, hotkey_edit):
         hotkey_edit.setObjectName("hotkey_edit")
-        hotkey_edit.resize(540, 366)
+        hotkey_edit.resize(785, 507)
         self.verticalLayout_2 = QtGui.QVBoxLayout(hotkey_edit)
         self.verticalLayout_2.setSpacing(5)
         self.verticalLayout_2.setContentsMargins(10, 5, 0, 5)
@@ -182,7 +182,7 @@ class Ui_hotkey_edit(object):
     def retranslateUi(self, hotkey_edit):
         hotkey_edit.setWindowTitle(QtGui.QApplication.translate("hotkey_edit", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.internalNameLabel.setText(QtGui.QApplication.translate("hotkey_edit", "internal name:", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_name.setText(QtGui.QApplication.translate("hotkey_edit", "extensionXhotkey1", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_name.setText(QtGui.QApplication.translate("hotkey_edit", "extensionX_hotkey1", None, QtGui.QApplication.UnicodeUTF8))
         self.displayLabelLabel.setText(QtGui.QApplication.translate("hotkey_edit", "display label:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_label.setText(QtGui.QApplication.translate("hotkey_edit", "make some awesome stuff", None, QtGui.QApplication.UnicodeUTF8))
         self.hotkeyLabel.setText(QtGui.QApplication.translate("hotkey_edit", "hotkey:", None, QtGui.QApplication.UnicodeUTF8))

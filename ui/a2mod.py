@@ -71,28 +71,33 @@ class Mod(object):
         """
         includes = []
         hotkeys = {}
+        variables = {}
         for cfg in self.config[1:]:
             if cfg['typ'] == 'include':
                 includes.append(cfg['file'])
-            elif cfg['typ'] == 'hotkey':
+            else:
                 userCfg = self.db.get(cfg['name'], self.name)
-                if not self.getCfgValue(cfg, userCfg, 'enabled'):
-                    continue
-                
-                key = self.getCfgValue(cfg, userCfg, 'key')
-                scope = self.getCfgValue(cfg, userCfg, 'scope')
-                scopeMode = self.getCfgValue(cfg, userCfg, 'scopeMode')
-                function = cfg[['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']]]
-                if scopeMode not in hotkeys:
-                    hotkeys[scopeMode] = []
-                # save a global if global scope set or all-but AND scope is empty
-                if scopeMode == 0 or scopeMode == 2 and scope == '':
-                    hotkeys[0].append([key, function])
-                else:
-                    hotkeys[scopeMode].append([scope, key, function])
+                if cfg['typ'] == 'hotkey':
+                    if not self.getCfgValue(cfg, userCfg, 'enabled'):
+                        continue
+                    
+                    key = self.getCfgValue(cfg, userCfg, 'key')
+                    scope = self.getCfgValue(cfg, userCfg, 'scope')
+                    scopeMode = self.getCfgValue(cfg, userCfg, 'scopeMode')
+                    function = cfg[['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']]]
+                    if scopeMode not in hotkeys:
+                        hotkeys[scopeMode] = []
+                    # save a global if global scope set or all-but AND scope is empty
+                    if scopeMode == 0 or scopeMode == 2 and scope == '':
+                        hotkeys[0].append([key, function])
+                    else:
+                        hotkeys[scopeMode].append([scope, key, function])
+                elif cfg['typ'] == 'checkBox':
+                    variables[cfg['name']] = self.getCfgValue(cfg, userCfg, 'enabled')
         
         self.db.set('includes', includes, self.name)
         self.db.set('hotkeys', hotkeys, self.name)
+        self.db.set('variables', variables, self.name)
         self.main.settingsChanged()
 
     @property
@@ -158,9 +163,6 @@ class Mod(object):
         unified call to get a value no matter if its set by user already
         or still default from the module config.
         """
-#         print('getCfgValue: %s' % attrName)
-#         print('subCfg: %s' % subCfg)
-#         print('userCfg: %s' % userCfg)
         if userCfg is not None and attrName in userCfg:
             return userCfg[attrName]
         elif attrName in subCfg:

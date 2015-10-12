@@ -36,6 +36,7 @@ class URLs(object):
     ahksend = ahk + '/docs/commands/Send.htm'
     helpEditCtrl = a2 + '/wiki/EditCtrls'
     helpHotkey = a2 + '/wiki/Edit-Hotkey-Control'
+    helpCheckbox = a2 + '/wiki/Edit-Checkbox-Control'
     helpScopes = a2 + '/wiki/Edit-Scopes'
     ahkWinTitle = ahk + '/docs/misc/WinTitle.htm'
     ahkWinActive = ahk + '/docs/commands/WinActive.htm'
@@ -206,7 +207,7 @@ class A2Window(QtGui.QMainWindow):
         newLayout = QtGui.QWidget(self)
         newLayout.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                                   QtGui.QSizePolicy.Maximum))
-        # create new columnLayout for the module controls
+        # create new column layout for the module controls
         newInner = QtGui.QVBoxLayout(newLayout)
         
         # turn scroll layout content to new host widget
@@ -293,8 +294,8 @@ class A2Window(QtGui.QMainWindow):
                       'date': self.getDate()}
             self.tempConfig.insert(0, newNfo)
         
-        for element in self.tempConfig:
-            self.controls.append(a2ctrl.edit(element, self.mod, self))
+        for cfg in self.tempConfig:
+            self.controls.append(a2ctrl.edit(cfg, self.mod, self))
         
         editSelect = a2ctrl.EditAddElem(self.mod, self.tempConfig, self.editMod)
         self.controls.append(editSelect)
@@ -378,6 +379,7 @@ class A2Window(QtGui.QMainWindow):
         
         includeAhk = [editDisclaimer % 'includes']
         hotkeysAhk = {hkmode['1']: ['#+a::a2UI()']}
+        variablesAhk = [editDisclaimer % 'variables']
         # TODO: this needs to be implemented dynamically
         libsAhk = [editDisclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
                                                ['tt', 'functions', 'Explorer_Get']]
@@ -390,7 +392,7 @@ class A2Window(QtGui.QMainWindow):
             includes = self.db.get('includes', modname)
             
             if not isinstance(includes, list):
-                print('includes not a list: %s' % includes)
+                log.warn('includes not a list: %s' % includes)
                 includes = [includes]
             
             includeAhk += ['#include modules\%s\%s'
@@ -412,8 +414,13 @@ class A2Window(QtGui.QMainWindow):
                                 hotkeysAhk[scopeKey] = []
                             hotkeysAhk[scopeKey].append(hkstring)
         
+            variables = self.db.get('variables', modname)
+            for var, value in (self.db.get('variables', modname) or {}).items():
+                if isinstance(value, bool):
+                    variablesAhk.append('%s := %s' % (var, str(value).lower()))
+        
         with open(join(self.a2setdir, 'variables.ahk'), 'w') as fobj:
-            fobj.write(editDisclaimer % 'variables' + '\n')
+            fobj.write('\n'.join(variablesAhk))
         
         with open(join(self.a2setdir, 'libs.ahk'), 'w') as fobj:
             fobj.write('\n'.join(libsAhk))
@@ -594,11 +601,11 @@ class A2Window(QtGui.QMainWindow):
 
     def testOutOfScreen(self):
         h = self.app.desktop().height()
-        print('h: %s' % h)
+        log.debug('h: %s' % h)
         geo = self.geometry()
         geo.setY(geo.x() + h)
         self.setGeometry(geo)
-        print('geo: %s' % self.geometry())
+        log.debug('geo: %s' % self.geometry())
 
     def getUsedScopes(self):
         """

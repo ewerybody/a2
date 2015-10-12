@@ -33,6 +33,7 @@ import inspect
 import importlib
 
 import hotkey_edit_ui
+import checkbox_edit_ui
 import scopeDialog_ui
 import inputDialog_ui
 import ahk
@@ -44,8 +45,9 @@ log.setLevel(logging.DEBUG)
 
 margin = 5
 labelW = 100
+print('__file__: %s' % __file__)
 uipath = dirname(__file__)
-uiModules = [hotkey_edit_ui, scopeDialog_ui, ]
+uiModules = [hotkey_edit_ui, scopeDialog_ui, inputDialog_ui, checkbox_edit_ui]
 
 lenM = 35
 lenL = 61  # alright for 3 rows of text fontL
@@ -108,8 +110,8 @@ def draw(cfg, mod):
     """
     if cfg['typ'] == 'nfo':
         return DrawNfo(cfg)
-    elif cfg['typ'] == 'check':
-        return DrawCheck(cfg)
+    elif cfg['typ'] == 'checkBox':
+        return DrawCheck(cfg, mod)
     elif cfg['typ'] == 'hotkey':
         return DrawHotkey(cfg, mod)
 
@@ -119,20 +121,40 @@ class DrawWelcome(QtGui.QWidget):
 
 
 class DrawNfo(QtGui.QWidget):
-    def __init__(self, data):
+    def __init__(self, cfg):
         super(DrawNfo, self).__init__()
         self.layout = QtGui.QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setContentsMargins(0, 0, 0, lenM / 2)
         self.label = QtGui.QLabel(self)
-        self.label.setText(data.get('description') or '')
+        self.label.setText(cfg.get('description') or '')
         self.label.setWordWrap(True)
         self.layout.addWidget(self.label)
 
 
 class DrawCheck(QtGui.QWidget):
-    def __init__(self, data):
+    def __init__(self, cfg, mod):
         super(DrawCheck, self).__init__()
+        self.cfg = cfg
+        self.mod = mod
+        self._setupUi()
+
+    def _setupUi(self):
+        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.layout = QtGui.QVBoxLayout(self)
+        #self.ctrllayout.setContentsMargins(0, 0, 0, 0)
+        state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
+        self.checkbox = QtGui.QCheckBox(self.cfg.get('label') or '', self)
+        self.checkbox.setChecked(state)
+        self.checkbox.clicked.connect(self.check)
+        #self.checkbox.setWordWrap(True)
+        self.layout.addWidget(self.checkbox)
+        #self.checkbox.setMinimumHeight(lenM)
+        self.setLayout(self.layout)
+        
+    def check(self):
+        state = self.checkbox.isChecked()
+        self.mod.setUserCfg(self.cfg, 'enabled', state)
+        self.mod.change()
 
 
 class DrawHotkey(QtGui.QWidget):
@@ -210,13 +232,9 @@ class DrawHotkey(QtGui.QWidget):
         self.setLayout(self.ctrllayout)
         
     def hotkeyCheck(self):
-        # setUserCfg: subcfg, attributeName, value, ctrlName
         state = self.check.isChecked()
         self.mod.setUserCfg(self.cfg, 'enabled', state)
         self.mod.change()
-#         self.cfg['enabled']
-#         hkUserCfg = self.mod.db.gets(self.cfg['name'])
-#         print('hkUserCfg: %s' % str(hkUserCfg))
     
     def hotkeyChange(self, newKey):
         log.info('cfg key: %s' % self.cfg['key'])
@@ -231,7 +249,9 @@ def edit(cfg, mod, main):
     elif cfg['typ'] == 'include':
         return EditInclude(cfg, mod, main)
     elif cfg['typ'] == 'hotkey':
-        return EditHotkey(cfg, mod, main)
+        return EditHotkey(cfg, main)
+    elif cfg['typ'] == 'checkBox':
+        return EditCheck(cfg, main)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -277,9 +297,10 @@ class EditCtrl(QtGui.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
+    ctrlType = 'EditCtrl'
+    
     def __init__(self, cfg, main, addLayout=True):
         super(EditCtrl, self).__init__()
-        self.ctrlType = 'EditCtrl'
         self.cfg = cfg
         self.main = main
         self._setupUi(addLayout)
@@ -351,7 +372,7 @@ class EditCtrl(QtGui.QGroupBox):
         
         self._ctrlMenu = QtGui.QMenu(self)
         self._ctrlButton.setMenu(self._ctrlMenu)
-        
+
         for item in [('up', partial(self.move, -1)),
                      ('down', partial(self.move, 1)),
                      ('to top', partial(self.move, True)),
@@ -528,7 +549,7 @@ class EditAddElem(QtGui.QWidget):
         self.addButton = QtGui.QPushButton('add ...')
         self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
         self.addButton.setFont(fontXL)
-        self.addButton.setMinimumSize(QtCore.QSize(150, 35))
+        self.addButton.setMinimumSize(QtCore.QSize(lenL * 2, lenM))
         self.baselayout.addWidget(self.addButton)
         
         self.menu = QtGui.QMenu(self.addButton)
@@ -569,6 +590,8 @@ class EditAddElem(QtGui.QWidget):
             # mode can be: ahk, file, key
             # to execute code, open up sth, send keystroke
             cfg['mode'] = 'ahk'
+        elif cfg['typ'] == 'checkBox':
+            cfg['enabled'] = True
         
         self.tempConfig.append(cfg)
         self.rebuildFunc()
@@ -585,8 +608,8 @@ class EditInclude(EditCtrl):
     and/or shift it up/down in the layout. Which also shifts it up/down
     in the configuration in the background. 
     """
-    #def __init__(self, parent, mod):
     def __init__(self, cfg, mod, main):
+        self.ctrlType = 'Include'
         super(EditInclude, self).__init__(cfg, main, addLayout=False)
         self.typ = cfg['typ']
         self.file = cfg['file']
@@ -647,10 +670,10 @@ class EditHotkey(EditCtrl):
         cfg['name'] = 'someModule_hotkey1',
         cfg['label'] = 'do awesome stuff on:'
     """
-    def __init__(self, cfg, mod, main):
+    def __init__(self, cfg, main):
+        self.ctrlType = 'Hotkey'
         super(EditHotkey, self).__init__(cfg, main, addLayout=False)
         self.main = main
-        self.ctrlType = 'Hotkey'
         self.helpUrl = self.main.urls.helpHotkey
         self.cfg = cfg
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
@@ -790,8 +813,8 @@ class EditHotkey(EditCtrl):
         self.scopeUpdate()
 
     def scopeUpdate(self):
-        all = list_getAllItems_asText()
-        self.cfg['scope'] = all
+        allItems = list_getAllItems_asText(self.ui.cfg_scope)
+        self.cfg['scope'] = allItems
     
     def getCfg(self):
         return self.cfg
@@ -984,15 +1007,22 @@ class ScopeDialog(QtGui.QDialog):
         ctrls[index].setText(text)
 
     def getScopeNfo(self):
+        # call AHK script to get all window classes, titles and executables
         scrpt = join(self.main.a2libdir, 'cmds', 'getScopeNfo.ahk')
         proc = subprocess.Popen([self.main.ahkexe, scrpt], shell=True, stdout=subprocess.PIPE)
         scopeNfo = str(proc.communicate()[0])
-        # cut away first & last ' and linebreak
-        scopeNfo = scopeNfo[scopeNfo.find("'") + 1:scopeNfo.rfind("'") - 2]
+        # if ' were present in any title the quote sign will change
+        scopeNfo = scopeNfo.strip()
+        quoteChar = scopeNfo[-1]
+        # cut away first & last quote char and linebreak
+        scopeNfo = scopeNfo[scopeNfo.find(quoteChar) + 1:scopeNfo.rfind(quoteChar) - 2]
         scopeNfo = scopeNfo.split('\\n')
         self.titles = set()
         self.classes = set()
         self.processes = set()
+        if not scopeNfo:
+            log.error('Error getting scopeNfo!! scopeNfo: %s' % scopeNfo)
+            return
         for i in range(0, len(scopeNfo), 3):
             if scopeNfo[i]:
                 self.titles.add(scopeNfo[i])
@@ -1000,6 +1030,28 @@ class ScopeDialog(QtGui.QDialog):
                 self.classes.add(scopeNfo[i + 1])
             if scopeNfo[i + 2]:
                 self.processes.add(scopeNfo[i + 2])
+
+
+class EditCheck(EditCtrl):
+    """
+    Checkbox to control boolean values for the a2 runtime.
+    We might put them to the db and get and fetch from there or first: just write them into
+    code directly and start with the variables include.
+    """
+    def __init__(self, cfg, main):
+        self.ctrlType = 'Checkbox'
+        super(EditCheck, self).__init__(cfg, main, addLayout=False)
+        self.helpUrl = self.main.urls.helpCheckbox
+        self.cfg = cfg
+        
+        self.ui = checkbox_edit_ui.Ui_checkbox_edit()
+        self.ui.setupUi(self.mainWidget)
+
+        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.label]:
+            label.setMinimumWidth(labelW)
+        
+        self.connectCfgCtrls(self.ui)
+        self.mainWidget.setLayout(self.ui.verticalLayout)
 
 
 class InputDialog(QtGui.QDialog):
@@ -1040,7 +1092,6 @@ class InputDialog(QtGui.QDialog):
     def okay(self):
         if self.okFunc is not None:
             txt = self.ui.textField.text()
-            print('txt: %s' % txt)
             self.okFunc(txt)
             self.close()
 
@@ -1112,6 +1163,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
 
 def list_getAllItems_asText(listCtrl):
     return [listCtrl.item(i).text() for i in range(listCtrl.count())]
+
 
 def list_selectItems(listCtrl, text):
     if isinstance(text, str):
