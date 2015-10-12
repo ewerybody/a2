@@ -1,0 +1,58 @@
+[
+  {
+    "author": "eRiC",
+    "date": "2015 10 10",
+    "description": "Because none existed before this temporary description was created for \"CalculAid\". Change it to describe what it does with a couple of words.",
+    "typ": "nfo",
+    "url": "",
+    "version": "0.1"
+  },
+  {
+    "file": "calculAid.ahk",
+    "typ": "include"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "calculAid_open()",
+    "functionMode": 0,
+    "functionSend": "",
+    "functionURL": "",
+    "key": "Ctrl+Alt+R",
+    "keyChange": true,
+    "label": "Open up calculator",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "calcul8hotkey",
+    "scope": "",
+    "scopeChange": true,
+    "scopeMode": 0,
+    "typ": "hotkey"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "test()",
+    "functionMode": 0,
+    "functionSend": "",
+    "functionURL": "",
+    "key": "Esc",
+    "keyChange": true,
+    "label": "close the calculator",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "close_calc_hotkey",
+    "scope": [
+      "Calculator ahk_class ApplicationFrameWindow ahk_exe ApplicationFrameHost.exe"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "enabled": true,
+    "label": "open up at cursor position",
+    "name": "calculAid_openAtCursor",
+    "typ": "checkBox"
+  }
+]
