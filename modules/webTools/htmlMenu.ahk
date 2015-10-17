@@ -13,7 +13,7 @@ HtmlMenu() {
     Menu, MyMenu, Add, img, HtmlMenuHandler
     Menu, MyMenu, Add, testHTML, HtmlMenuHandler
     Menu, MyMenu, Show
-	Menu, BBCodeMenu, DeleteAll
+	Menu, MyMenu, DeleteAll
 }
 
 HtmlMenuHandler:
@@ -35,7 +35,7 @@ HtmlMenuHandler() {
         ; if clipboard already contains http* put that in the href and the selection into the ><
         Else If SubStr(textClip,1,4) = "http"
         {
-            paste("<a href=" textClip ">%sel%</a>")
+            paste("<a href=" textClip ">" sel "</a>")
         }
         ; otherwise just put the selected into the ><
         Else
