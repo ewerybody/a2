@@ -45,7 +45,6 @@ log.setLevel(logging.DEBUG)
 
 margin = 5
 labelW = 100
-print('__file__: %s' % __file__)
 uipath = dirname(__file__)
 uiModules = [hotkey_edit_ui, scopeDialog_ui, inputDialog_ui, checkbox_edit_ui]
 
