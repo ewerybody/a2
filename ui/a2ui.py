@@ -389,6 +389,7 @@ class A2Window(QtGui.QMainWindow):
         libsAhk = [editDisclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
                                                ['tt', 'functions', 'Explorer_Get']]
         
+        # browse the enabled modules to collect the include data
         modSettings = self.db.tables()
         for modname in self.db.get('enabled') or []:
             if modname not in modSettings:
@@ -419,11 +420,11 @@ class A2Window(QtGui.QMainWindow):
                                 hotkeysAhk[scopeKey] = []
                             hotkeysAhk[scopeKey].append(hkstring)
         
-            variables = self.db.get('variables', modname)
             for var, value in (self.db.get('variables', modname) or {}).items():
                 if isinstance(value, bool):
                     variablesAhk.append('%s := %s' % (var, str(value).lower()))
         
+        # write all the include files
         with open(join(self.a2setdir, 'variables.ahk'), 'w') as fobj:
             fobj.write('\n'.join(variablesAhk))
         
