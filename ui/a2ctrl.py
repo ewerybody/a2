@@ -695,9 +695,6 @@ class EditHotkey(EditCtrl):
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
-        self.disablableCheck()
-        self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
-
         self.functions = ['functionCode', 'functionURL', 'functionSend']
         self.ui.cfg_functionMode.currentIndexChanged.connect(self.functionSetText)
         self.functionMenu = QtGui.QMenu(self.ui.functionButton)
@@ -715,6 +712,8 @@ class EditHotkey(EditCtrl):
         self.ui.cfg_scope.setFont(fontL)
         self.connectCfgCtrls(self.ui)
         self.scopeUpdate()
+        self.disablableCheck()
+        self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
     
     def functionMenuBuild(self):
         self.functionMenu.clear()
