@@ -51,8 +51,10 @@ uiModules = [hotkey_edit_ui, scopeDialog_ui, inputDialog_ui, checkbox_edit_ui]
 lenM = 35
 lenL = 61  # alright for 3 rows of text fontL
 fontL = QtGui.QFont()
+fontL.setFamily("Segoe UI")
 fontL.setPointSize(10)
 fontXL = QtGui.QFont()
+fontXL.setFamily("Segoe UI")
 fontXL.setPointSize(13)
 uiScale = 1
 
@@ -60,14 +62,15 @@ uiScale = 1
 def adjustSizes(app):
     desk = app.desktop()
     dpi = desk.physicalDpiX()
-    if dpi == 192:
+    print('dpi: %s' % dpi)
+    if dpi >= 144:
         global labelW, lenM, lenL, fontL, fontXL, uiScale
-        lenM *= 1.8
-        lenL *= 2
-        uiScale *= 1.8
-        fontL.setPointSize(9)
-        fontXL.setPointSize(10)
-        labelW *= 2
+        lenM *= 1.5
+        lenL *= 1.5
+        uiScale *= 1.6
+        fontL.setPointSize(10)
+        fontXL.setPointSize(13)
+        labelW *= 1.6
 
 
 def checkUiModule(module):
@@ -122,10 +125,12 @@ class DrawWelcome(QtGui.QWidget):
 class DrawNfo(QtGui.QWidget):
     def __init__(self, cfg):
         super(DrawNfo, self).__init__()
+        global lenM, fontL
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, lenM / 2)
         self.label = QtGui.QLabel(self)
         self.label.setText(cfg.get('description') or '')
+        self.label.setFont(fontL)
         self.label.setWordWrap(True)
         self.layout.addWidget(self.label)
 
@@ -182,6 +187,7 @@ class DrawHotkey(QtGui.QWidget):
         self._setupUi()
     
     def _setupUi(self):
+        global labelW, lenM, lenL, fontL, fontXL, uiScale
         userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.ctrllayout = QtGui.QHBoxLayout(self)
         # left, top, right, bottom
@@ -465,6 +471,7 @@ class EditCtrl(QtGui.QGroupBox):
 class EditLine(QtGui.QWidget):
     def __init__(self, name, text, parentLayout=None, updatefunc=None):
         super(EditLine, self).__init__()
+        global labelW
         self.name = name
         self.updatefunc = updatefunc
         self.parentLayout = parentLayout
@@ -493,6 +500,7 @@ class EditLine(QtGui.QWidget):
 class EditText(QtGui.QWidget):
     def __init__(self, name, text, parent=None, updatefunc=None):
         super(EditText, self).__init__()
+        global labelW, lenL
         self.name = name
         self.parent = parent
         self.updatefunc = updatefunc
@@ -549,6 +557,7 @@ class EditAddElem(QtGui.QWidget):
         self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
         self.addButton.setFont(fontXL)
         self.addButton.setMinimumSize(QtCore.QSize(lenL * 2, lenM))
+        self.addButton.setMaximumHeight(lenM)
         self.baselayout.addWidget(self.addButton)
         
         self.menu = QtGui.QMenu(self.addButton)
@@ -703,7 +712,9 @@ class EditHotkey(EditCtrl):
         self.ui.scopePlus.mousePressEvent = self.scopePopup
         self.ui.scopeMinus.clicked.connect(self.scopeDelete)
         self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
+        self.ui.cfg_scope.setFont(fontL)
         self.connectCfgCtrls(self.ui)
+        self.scopeUpdate()
     
     def functionMenuBuild(self):
         self.functionMenu.clear()
@@ -813,6 +824,9 @@ class EditHotkey(EditCtrl):
 
     def scopeUpdate(self):
         allItems = list_getAllItems_asText(self.ui.cfg_scope)
+        p = fontL.pointSize()
+        h = ((max(1, len(allItems)) * p * uiScale) + 20) * uiScale
+        self.ui.cfg_scope.setMinimumHeight(h)
         self.cfg['scope'] = allItems
     
     def getCfg(self):
@@ -824,6 +838,7 @@ class HotKey(QtGui.QPushButton):
         super(HotKey, self).__init__()
         
         self.setMinimumHeight(lenM)
+        self.setMaximumHeight(lenM)
         self.setStyleSheet('QPushButton {background-color:#FFC23E}')
         self.key = key
         self.tempKey = key
@@ -927,22 +942,22 @@ class ScopeDialog(QtGui.QDialog):
         self.main = main
         self.edit = text != ''
 
+        self.getScopeNfo()
+        self.setupUi(x, y)
+        self.setScopeText(text)
+
+    def setupUi(self, x, y):
         self.resize(self.width() * uiScale, self.minimumSizeHint().height())
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
         pos.setY(y - (self.height() / 2))
         self.move(pos)
-
-        self.getScopeNfo()
-        self.setupUi()
-        self.setScopeText(text)
-
-    def setupUi(self):
         self.ui.scopeText.setStyleSheet('* {background-color:#E0E0E0}')
-        self.ui.scopeText.setFont(fontXL)
-        self.ui.okButton.setFont(fontXL)
+        for ui in [self.ui.scopeText, self.ui.okButton, self.ui.cancelButton]:
+            ui.setFont(fontXL)
+        #for ui in [self.ui.helpButton, self.ui.titleButton, self.ui.classButton, self.ui.exeButton]:
+        #    ui.setMinimumWidth(labelW)
         self.ui.okButton.clicked.connect(self.okFunc)
-        self.ui.cancelButton.setFont(fontXL)
         self.ui.cancelButton.clicked.connect(self.close)
         self.ui.scopeTitle.setFocus()
 

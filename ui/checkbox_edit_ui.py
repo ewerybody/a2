@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\checkbox_edit.ui'
 #
-# Created: Mon Oct 12 09:51:54 2015
+# Created: Wed Oct 28 03:26:20 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,9 +18,11 @@ class Ui_checkbox_edit(object):
         self.verticalLayout.setContentsMargins(10, 5, 0, 5)
         self.verticalLayout.setObjectName("verticalLayout")
         self.internalNameLayout = QtGui.QHBoxLayout()
+        self.internalNameLayout.setSpacing(10)
         self.internalNameLayout.setObjectName("internalNameLayout")
         self.internalNameLabel = QtGui.QLabel(checkbox_edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
+        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.internalNameLayout.addWidget(self.internalNameLabel)
         self.cfg_name = QtGui.QLineEdit(checkbox_edit)
@@ -28,9 +30,11 @@ class Ui_checkbox_edit(object):
         self.internalNameLayout.addWidget(self.cfg_name)
         self.verticalLayout.addLayout(self.internalNameLayout)
         self.displayLabelLayout = QtGui.QHBoxLayout()
+        self.displayLabelLayout.setSpacing(10)
         self.displayLabelLayout.setObjectName("displayLabelLayout")
         self.displayLabelLabel = QtGui.QLabel(checkbox_edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.displayLabelLayout.addWidget(self.displayLabelLabel)
         self.cfg_label = QtGui.QLineEdit(checkbox_edit)
