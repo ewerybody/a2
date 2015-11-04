@@ -31,6 +31,8 @@ from functools import partial
 import subprocess
 import inspect
 import importlib
+import time
+import threading
 
 import hotkey_edit_ui
 import checkbox_edit_ui
@@ -457,13 +459,37 @@ class EditCtrl(QtGui.QGroupBox):
             self.cfg[name] = func()
 
     def duplicate(self):
+        self._scrollValB4 = self.main.ui.scrollBar.value()
+        self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
         newCfg = deepcopy(self.cfg)
         self.main.tempConfig.append(newCfg)
         self.main.editMod()
-        # TODO: hmm solve the scrolling another time..
-        #self.main.ui.scrollArea.scrollToBottom()
-        #self.main.ui.scrollArea.verticalScrollBar().setValue(1500)
 
+        threading.Thread(target=self.scrolltobottom).start()
+    
+    def scrolltobottom(self, *args):
+        print('scrollValB4: %s' % self._scrollValB4)
+        time.sleep(0.1)
+        tmax = 0.3
+        curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
+        res = 0.01
+        steps = tmax / res
+        tsteps = 1 / steps
+        t = 0.0
+        #this = self.main.ui.scrollBar.value()
+        scrollEnd = self.main.ui.scrollBar.maximum()
+        print('scrollEnd: %s' % scrollEnd)
+        if not scrollEnd:
+            scrollEnd = self._scrollMaxB4 + 100
+        r = scrollEnd - self._scrollValB4
+        self.main.ui.scrollBar.setValue(self._scrollValB4)
+        while t <= 1.0:
+            time.sleep(res)
+            t += tsteps
+            v = curve.valueForProgress(t)
+            scrollval = self._scrollValB4 + (v * r)
+            self.main.ui.scrollBar.setValue(scrollval)
+        
     def help(self):
         self.main.surfTo(self.helpUrl)
 
@@ -479,7 +505,8 @@ class EditLine(QtGui.QWidget):
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(margin, 0, margin, 0)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
-        self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
+        self.labelCtrl.setMinimumWidth(labelW)
+        self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QLineEdit()
         self.inputCtrl.setText(str(text))
@@ -628,7 +655,8 @@ class EditInclude(EditCtrl):
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(10, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('script file:')
-        self.labelCtrl.setMinimumSize(QtCore.QSize(labelW, 0))
+        self.labelCtrl.setMinimumWidth(labelW)
+        self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.file)
         self.buttonMenu = BrowseScriptsMenu(main.tempConfig, mod, self.setScript)

@@ -78,8 +78,8 @@ class A2Window(QtGui.QMainWindow):
     def setupUi(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
-        
         self.ui.scrollArea.setFont(a2ctrl.fontL)
+        self.ui.scrollBar = self.ui.scrollArea.verticalScrollBar()
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.controls = []

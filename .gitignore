@@ -5,9 +5,13 @@
 /ui/.idea
 /ui/designer - Shortcut.lnk
 /ui/a2ui
+/settings
+lib/SQLiteSpy
 
 .project
 .settings/org.eclipse.core.resources.prefs
 .pydevproject
 ui/a2ui.spec
 desktop.ini
+GitHub.appref-ms
+ui/PySide examples.lnk
