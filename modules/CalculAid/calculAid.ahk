@@ -24,20 +24,24 @@ calculAid_open() {
         tt("waiting for pid:" calcPID " ...", 2, 1)
 		;WinWait, ahk_pid %calcPID%,, 2
         win10Calc := "Calculator ahk_class ApplicationFrameWindow ahk_exe ApplicationFrameHost.exe"
-        WinWait, %win10Calc%,, 2
+        win7Calc := "Calculator ahk_class CalcFrame ahk_exe calc.exe"
+        WinWait, %win7Calc%,, 2
         sleep, 150
         tt("Window found!", 1)
 		CoordMode, Mouse, Screen
 		MouseGetPos, clq_mousex, clq_mousey
 		;position the windowtitle under the cursor so one can move it instantly:
-        WinMove, %win10Calc%,, (clq_mousex - 30), (clq_mousey - 10)
+        WinMove, %win7Calc%,, (clq_mousex - 30), (clq_mousey - 10)
 		;WinMove, (clq_mousex - 30), (clq_mousey - 10), %win10Calc%
 	}
 }
 
-test() {
+; TODO: delete, this was just for debugging
+calculAid_close() {
+    global calculAid_openAtCursor
     if calculAid_openAtCursor
-        MsgBox YES
+        tt("YES", 1)
     else
-        MsgBox NO
+        tt("NO", 1)
+    WinClose, A
 }
