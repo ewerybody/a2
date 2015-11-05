@@ -119,6 +119,8 @@ class A2Window(QtGui.QMainWindow):
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
                         self, self.editSubmit)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
+                        self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settingsChanged)
 
         self.setWindowIcon(QtGui.QIcon("a2.ico"))
