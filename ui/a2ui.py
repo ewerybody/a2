@@ -260,7 +260,7 @@ class A2Window(QtGui.QMainWindow):
         self.controls = []
         
         if config == []:
-            self.controls.append(QtGui.QLabel('config.json currently empty. '
+            self.controls.append(QtGui.QLabel('config.json currently empty! '
                                               'imagine awesome layout here ...'))
         else:
             for cfg in config:
