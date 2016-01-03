@@ -24,7 +24,7 @@
     "mode": "ahk",
     "multiple": true,
     "name": "calcul8hotkey",
-    "scope": "",
+    "scope": [],
     "scopeChange": true,
     "scopeMode": 0,
     "typ": "hotkey"
@@ -32,7 +32,7 @@
   {
     "disablable": true,
     "enabled": true,
-    "functionCode": "test()",
+    "functionCode": "WinClose, A",
     "functionMode": 0,
     "functionSend": "",
     "functionURL": "",
@@ -43,9 +43,10 @@
     "multiple": true,
     "name": "close_calc_hotkey",
     "scope": [
-      "Calculator ahk_class ApplicationFrameWindow ahk_exe ApplicationFrameHost.exe"
+      "Calculator ahk_class ApplicationFrameWindow ahk_exe ApplicationFrameHost.exe",
+      "Calculator ahk_class CalcFrame ahk_exe calc.exe"
     ],
-    "scopeChange": true,
+    "scopeChange": false,
     "scopeMode": 1,
     "typ": "hotkey"
   },
