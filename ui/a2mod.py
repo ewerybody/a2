@@ -72,21 +72,10 @@ class Mod(object):
         includes = []
         hotkeys = {}
         variables = {}
-        
-        includes, hotkeys, variables = self.loopCfg(self.config[1:], includes, hotkeys, variables)
-        
-        self.db.set('includes', includes, self.name)
-        self.db.set('hotkeys', hotkeys, self.name)
-        self.db.set('variables', variables, self.name)
-        self.main.settingsChanged()
-
-    def loopCfg(self, cfgDict, includes, hotkeys, variables):
-        for cfg in cfgDict:
-            
+        for cfg in self.config[1:]:
             if cfg['typ'] == 'include':
                 includes.append(cfg['file'])
-            
-            elif 'name' in cfg:
+            else:
                 userCfg = self.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
                     if not self.getCfgValue(cfg, userCfg, 'enabled'):
@@ -103,19 +92,13 @@ class Mod(object):
                         hotkeys[0].append([key, function])
                     else:
                         hotkeys[scopeMode].append([scope, key, function])
-                
                 elif cfg['typ'] == 'checkBox':
                     variables[cfg['name']] = self.getCfgValue(cfg, userCfg, 'enabled')
-                
-                elif cfg['typ'] == 'group':
-                    #disablable
-                    if not self.getCfgValue(cfg, userCfg, 'enabled'):
-                        continue
-                    
-                    includes, hotkeys, variables = self.loopCfg(cfgDict, includes,
-                                                                hotkeys, variables)
         
-        return includes, hotkeys, variables
+        self.db.set('includes', includes, self.name)
+        self.db.set('hotkeys', hotkeys, self.name)
+        self.db.set('variables', variables, self.name)
+        self.main.settingsChanged()
 
     @property
     def scripts(self):
@@ -125,6 +108,15 @@ class Mod(object):
     def files(self):
         """ always browses the path for files"""
         return os.listdir(self.path)
+
+    def createConfig(self, main=None):
+        """
+        TODO: not in use. get rid of this
+        """
+        with open(self.configFile, 'w') as fileObj:
+            fileObj.write('')
+        if main:
+            main.modSelect(True)
 
     def createScript(self):
         scriptName, ok = QtGui.QInputDialog.getText(self.main, 'new script',
