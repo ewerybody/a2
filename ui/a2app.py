@@ -7,16 +7,16 @@ Created on Aug 7, 2015
 
 @author: eRiC
 '''
-import importlib
 import sys
 import platform
+from importlib import reload
 from ctypes import windll
-
 from PySide import QtGui
 from siding import QSingleApplication
 import a2ui
-
 import logging
+
+
 logging.basicConfig()
 log = logging.getLogger('a2app')
 log.setLevel(logging.DEBUG)
@@ -31,13 +31,13 @@ def app_msg_get(msg):
     elif '--reload' in msg:
         log.info('attempting reload ...')
         a2win.close()
-        importlib.reload(a2ui)
+        reload(a2ui)
         for module in a2ui.a2PyModules:
             log.debug('reloading module: %s' % module.__name__)
-            importlib.reload(module)
-        for module in a2ui.a2ctrl.uiModules:
+            reload(module)
+        for module in a2ui.a2ctrl.uiModules + a2ui.a2ctrl.reModules:
             log.debug('reloading module: %s' % module.__name__)
-            importlib.reload(module)
+            reload(module)
         a2win = a2ui.A2Window(app=app)
         a2win.showRaise()
     else:
