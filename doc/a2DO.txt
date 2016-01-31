@@ -1,4 +1,10 @@
 ﻿a2DO:
+* create groups
+    * we actually don't need changes on a2ui.settingsChanged
+      all this will be embedded on mod level. So a2mod.change will browse the own settings and
+      put data to the includes, variables and hokeys-entries if the group is activated. 
+      
+
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
     * borrow scope selection and hotkey getter from aA?
