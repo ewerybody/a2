@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\hotkey_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\hotkey_edit.ui'
 #
-# Created: Wed Oct 28 03:26:20 2015
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Feb  1 21:34:49 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_hotkey_edit(object):
     def setupUi(self, hotkey_edit):
         hotkey_edit.setObjectName("hotkey_edit")
-        hotkey_edit.resize(785, 380)
+        hotkey_edit.resize(785, 276)
         self.verticalLayout_2 = QtGui.QVBoxLayout(hotkey_edit)
         self.verticalLayout_2.setSpacing(5)
         self.verticalLayout_2.setContentsMargins(10, 5, 0, 5)
@@ -190,6 +190,7 @@ class Ui_hotkey_edit(object):
         self.cfg_scope.setSizePolicy(sizePolicy)
         self.cfg_scope.setMinimumSize(QtCore.QSize(0, 40))
         self.cfg_scope.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.cfg_scope.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.cfg_scope.setObjectName("cfg_scope")
         self.scopeCtrlLayout.addWidget(self.cfg_scope)
         self.scopeLayout.addLayout(self.scopeCtrlLayout)
