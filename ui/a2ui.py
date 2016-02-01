@@ -309,20 +309,14 @@ class A2Window(QtGui.QMainWindow):
     
     def editSubmit(self):
         """
-        loop the given ctrlDict, query ctrls and feed target mod.config
-        editSubmit should also call to collect and verify the mods user db data
-        So that a change in includes, hotkeys and variables is tracked to make
-        only the needed writes
+        Calls the mod to write the tempConfig to disc.
+        If it's enabled only trigger settingsChanged when
+        
         """
         if not self.editing:
             return
         
-        newcfg = []
-        for ctrl in self.controls:
-            if hasattr(ctrl, 'getCfg'):
-                newcfg.append(ctrl.getCfg())
-        
-        self.mod.config = newcfg
+        self.mod.config = deepcopy(self.tempConfig)
         if self.mod.name in self.db.get('enabled') or []:
             self.mod.change()
             self.settingsChanged()
