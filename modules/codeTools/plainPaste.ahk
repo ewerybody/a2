@@ -1,0 +1,3 @@
+﻿plainPaste() {
+	paste(Clipboard)
+}

@@ -1,0 +1,168 @@
+[
+  {
+    "author": "eric",
+    "date": "2015",
+    "description": "Because none existed before this temporary description was created for \"codeTools\". Change it to describe what it does with a couple of words.",
+    "typ": "nfo",
+    "url": "",
+    "version": "0.1"
+  },
+  {
+    "file": "mel2py.ahk",
+    "typ": "include"
+  },
+  {
+    "file": "scriptDebugVariable.ahk",
+    "typ": "include"
+  },
+  {
+    "file": "nppSourceSelection.ahk",
+    "typ": "include"
+  },
+  {
+    "file": "nppP4Edit.ahk",
+    "typ": "include"
+  },
+  {
+    "file": "maxHacks.ahk",
+    "typ": "include"
+  },
+  {
+    "file": "slasher.ahk",
+    "typ": "include"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "scriptDebugVariable()",
+    "functionMode": 0,
+    "key": "Alt+W",
+    "keyChange": true,
+    "label": "scriptDebugVariable - prints(\"HELP!\") for selection",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "scriptDebugHotkey",
+    "scope": [
+      "Script Editor ahk_class QWidget",
+      "ahk_class Notepad++",
+      "Eclipse ahk_class SWT_Window0"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "slasher()",
+    "functionMode": 0,
+    "key": "Win+\\",
+    "keyChange": true,
+    "label": "slasher - for slash/backslash handling",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "slasherHotkey",
+    "scope": [],
+    "scopeChange": true,
+    "scopeMode": 0,
+    "typ": "hotkey"
+  },
+  {
+    "file": "mayaHelpy.ahk",
+    "typ": "include"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "mayaHelpy(\"help\")",
+    "functionMode": 0,
+    "key": "Alt+Q",
+    "keyChange": true,
+    "label": "mayaHelpy \"help\"",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "mayaPyHotkey_help",
+    "scope": [
+      "Script Editor ahk_class QWidget"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "mayaHelpy(\"reload\")",
+    "functionMode": 0,
+    "key": "Alt+R",
+    "keyChange": true,
+    "label": "mayaHelpy \"reload\"",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "mayaPyHotkey_reload",
+    "scope": [
+      "Script Editor ahk_class QWidget"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "mayaPrintHelpy()",
+    "functionMode": 0,
+    "key": "Ctrl+Q",
+    "keyChange": true,
+    "label": "cmds mayaHelpy",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "mayaPyHotkey_cmdHelp",
+    "scope": [
+      "Script Editor ahk_class QWidget"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "file": "nppExploreTo.ahk",
+    "typ": "include"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "nppExploreTo()",
+    "functionMode": 0,
+    "key": "Ctrl+E",
+    "keyChange": true,
+    "label": "nppExploreTo - opens Exporer of current file",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "nppExploreTo_hotkey",
+    "scope": [
+      "ahk_class Notepad++"
+    ],
+    "scopeChange": false,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "mayaHelpy(\"len\")",
+    "functionMode": 0,
+    "key": "Lalt+L",
+    "keyChange": true,
+    "label": "mayaHelpy \"len\"",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "mayaPyHotkey_len",
+    "scope": [
+      "Script Editor ahk_class QWidget"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  }
+]

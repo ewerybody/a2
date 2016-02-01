@@ -497,27 +497,13 @@ class EditAddElem(QtGui.QWidget):
             self.menu.addAction(action)
     
     def addCtrl(self, typ, name=''):
-        """
-        TODO: I guess we should put the configuration of the element rather to the
-        very class that builds it instead of writing it all in this wrapper thingy
-        here. Maybe there could be a class method that adds to the tempConfig...
+        """Just adds a new dict with the accodting typ value to the tempConfig.
+        Only if it's an include we already enter the file selected.
+        Every other default value will be handled by the very control element.
         """
         cfg = {'typ': typ}
         if typ == 'include':
             cfg['file'] = name
-        elif typ == 'hotkey':
-            cfg['enabled'] = True
-            cfg['disablable'] = True
-            cfg['key'] = 'Win+G'
-            cfg['keyChange'] = True
-            cfg['multiple'] = True
-            cfg['scope'] = ''
-            cfg['scopeChange'] = True
-            # mode can be: ahk, file, key
-            # to execute code, open up sth, send keystroke
-            cfg['mode'] = 'ahk'
-        elif typ == 'checkBox':
-            cfg['enabled'] = True
         
         self.tempConfig.append(cfg)
         self.rebuildFunc()

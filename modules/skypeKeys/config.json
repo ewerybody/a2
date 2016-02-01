@@ -1,0 +1,35 @@
+[
+  {
+    "typ": "nfo",
+    "date": "2015 5 28",
+    "version": "0.1",
+    "author": "eric",
+    "description": "lala skype keys bla bla .."
+  },
+  {
+    "typ": "include",
+    "file": "skypeSnapshotKey.ahk"
+  },
+  {
+    "typ": "include",
+    "file": "captureCodeEditorCopy.ahk"
+  },
+  {
+    "multiple": false,
+    "scopeMode": 1,
+    "keyChange": false,
+    "functionMode": 0,
+    "scopeChange": true,
+    "scope": [
+      "ahk_class Notepad++"
+    ],
+    "disablable": true,
+    "key": "Shift+Alt+C",
+    "functionCode": "captureCodeEditorCopy()",
+    "mode": "ahk",
+    "label": "capture Ctrl+C in code editors",
+    "enabled": true,
+    "name": "captureCtrlCHotkey",
+    "typ": "hotkey"
+  }
+]

@@ -1,81 +1,82 @@
 [
   {
     "author": "eric",
-    "typ": "nfo",
     "date": "2015",
-    "version": "0.1",
-    "description": "Adds some standard hotkey functionality to the basic windows cmd window like pasting via Ctrl+C or simple closing with Ctrl+W."
+    "description": "Adds some standard hotkey functionality to the basic windows cmd window like pasting via Ctrl+C or simple closing with Ctrl+W.",
+    "typ": "nfo",
+    "url": "",
+    "version": "0.1"
   },
   {
     "disablable": true,
-    "name": "closeHotkey1",
-    "typ": "hotkey",
-    "scopeChange": true,
-    "multiple": false,
-    "key": "Alt+F4",
-    "scope": [
-      "ahk_class ConsoleWindowClass"
-    ],
     "enabled": false,
-    "label": "close commandline window",
     "functionCode": "WinClose",
-    "mode": "ahk",
-    "keyChange": false,
     "functionMode": 0,
-    "scopeMode": 1
+    "key": "Alt+F4",
+    "keyChange": false,
+    "label": "close commandline window",
+    "mode": "ahk",
+    "multiple": false,
+    "name": "closeHotkey1",
+    "scope": [
+      "ahk_class ConsoleWindowClass"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
   },
   {
     "disablable": true,
-    "name": "closeHotkey2",
-    "typ": "hotkey",
-    "scopeChange": true,
-    "multiple": false,
+    "enabled": true,
+    "functionCode": "WinClose",
+    "functionMode": 0,
     "key": "Ctrl+W",
-    "scope": [
-      "ahk_class ConsoleWindowClass"
-    ],
-    "enabled": true,
-    "label": "close commandline window",
-    "functionCode": "WinClose",
-    "mode": "ahk",
     "keyChange": false,
-    "functionMode": 0,
-    "scopeMode": 1
-  },
-  {
-    "disablable": true,
-    "name": "pasteHotkey",
-    "typ": "hotkey",
-    "scopeChange": true,
+    "label": "close commandline window",
+    "mode": "ahk",
     "multiple": false,
-    "key": "Ctrl+V",
+    "name": "closeHotkey2",
     "scope": [
       "ahk_class ConsoleWindowClass"
     ],
-    "enabled": true,
-    "label": "paste clipboard",
-    "functionCode": "SendInput %clipboard%",
-    "mode": "ahk",
-    "keyChange": false,
-    "functionMode": 0,
-    "scopeMode": 1
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
   },
   {
     "disablable": true,
-    "name": "closeHotkey3",
-    "typ": "hotkey",
-    "scopeChange": true,
-    "multiple": true,
-    "key": "Esc",
+    "enabled": true,
+    "functionCode": "SendInput %clipboard%",
+    "functionMode": 0,
+    "key": "Ctrl+V",
+    "keyChange": false,
+    "label": "paste clipboard",
+    "mode": "ahk",
+    "multiple": false,
+    "name": "pasteHotkey",
     "scope": [
       "ahk_class ConsoleWindowClass"
     ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  },
+  {
+    "disablable": true,
     "enabled": true,
-    "label": "close commandline window",
     "functionCode": "WinClose",
-    "mode": "ahk",
-    "keyChange": false,
     "functionMode": 0,
-    "scopeMode": 1
+    "key": "Esc",
+    "keyChange": false,
+    "label": "close commandline window",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "closeHotkey3",
+    "scope": [
+      "ahk_class ConsoleWindowClass"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
   }
 ]
