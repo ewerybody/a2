@@ -78,6 +78,7 @@ class Mod(object):
         self.db.set('includes', includes, self.name)
         self.db.set('hotkeys', hotkeys, self.name)
         self.db.set('variables', variables, self.name)
+        self.main.settingsChanged()
 
     def loopCfg(self, cfgDict, includes, hotkeys, variables):
         for cfg in cfgDict:

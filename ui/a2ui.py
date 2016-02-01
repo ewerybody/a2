@@ -19,7 +19,6 @@ import a2mod
 import ahk
 
 import logging
-from pprint import pprint
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -209,22 +208,22 @@ class A2Window(QtGui.QMainWindow):
         # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
-        newWidget = QtGui.QWidget(self)
-        newWidget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+        newLayout = QtGui.QWidget(self)
+        newLayout.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                                   QtGui.QSizePolicy.Maximum))
         # create new column layout for the module controls
-        newLayout = QtGui.QVBoxLayout(newWidget)
+        newInner = QtGui.QVBoxLayout(newLayout)
         
         # turn scroll layout content to new host widget
-        self.ui.scrollArea.setWidget(newWidget)
+        self.ui.scrollArea.setWidget(newLayout)
         # make the new inner layout the mainLayout
         # add the controls to it
         for ctrl in self.controls:
             if ctrl:
-                newLayout.addWidget(ctrl)
+                newInner.addWidget(ctrl)
         # amend the spacer
-        newLayout.addItem(self.ui.spacer)
-        self.mainlayout = newLayout
+        newInner.addItem(self.ui.spacer)
+        self.mainlayout = newInner
     
     def drawMod(self):
         """
@@ -318,8 +317,12 @@ class A2Window(QtGui.QMainWindow):
         if not self.editing:
             return
         
-        self.mod.config = deepcopy(self.tempConfig)
-        # only trigger settingsChanged when enabled
+        newcfg = []
+        for ctrl in self.controls:
+            if hasattr(ctrl, 'getCfg'):
+                newcfg.append(ctrl.getCfg())
+        
+        self.mod.config = newcfg
         if self.mod.name in self.db.get('enabled') or []:
             self.mod.change()
             self.settingsChanged()

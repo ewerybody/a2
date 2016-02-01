@@ -20,8 +20,6 @@ a2db.rem('tempstuff', 'a2')
 import sqlite3
 import logging
 import json
-
-
 logging.basicConfig()
 log = logging.getLogger('a2db')
 log.setLevel(logging.INFO)

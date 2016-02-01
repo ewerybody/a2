@@ -1,5 +1,3 @@
-.gitignore
-settings/
 *.pyc
 /ui/qtuiscripts
 /ui/_dump
@@ -7,22 +5,13 @@ settings/
 /ui/.idea
 /ui/designer - Shortcut.lnk
 /ui/a2ui
-/modules/baustelle/
-/modules/cryTweaks/
-/modules/mayaTweaks/
-/modules/gameHacks/
-
+/settings
+lib/SQLiteSpy
 
 .project
 .settings/org.eclipse.core.resources.prefs
 .pydevproject
 ui/a2ui.spec
 desktop.ini
-modules/codeTools/nppP4Edit.ahk
-modules/codeTools/p4Edit.py
-modules/codeTools/nppSourceSelection.MAYA-WiP
-modules/communicatorTweaks/config.json
-modules/communicatorTweaks/helloName.ahk
-modules/ExplorerHotkeys/callExplorer.ahk
-modules/codeTools/maxHacks.ahk
-modules/codeTools/mayaHelpy.ahk
+GitHub.appref-ms
+ui/PySide examples.lnk

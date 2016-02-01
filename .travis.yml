@@ -1,6 +1,0 @@
-language: python
-python:
-  - "3.4"
-script:
-  - python example_pyqt.py --travis
-  - python example_pyside.py --travis
