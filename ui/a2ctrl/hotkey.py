@@ -127,9 +127,14 @@ class Edit(a2ctrl.EditCtrl):
     def __init__(self, cfg, main):
         self.ctrlType = 'Hotkey'
         super(Edit, self).__init__(cfg, main, addLayout=False)
+        self.cfg = cfg
+        defaults = [('key', 'Win+G'), ('mode', 'ahk')]
+        for key, value in defaults:
+            if key not in self.cfg:
+                self.cfg[key] = value
+        
         self.main = main
         self.helpUrl = self.main.urls.helpHotkey
-        self.cfg = cfg
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
 
