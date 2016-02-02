@@ -81,14 +81,16 @@ def checkUiModule(module):
     
     if uiname.endswith(UI_FILE_SUFFIX):
         uibase = uiname[:-len(UI_FILE_SUFFIX)] + '.ui'
+        log.debug('checkUiModule from name: %s' % uibase)
     else:
         with open(pyfile, 'r') as fobj:
             line = fobj.readline()
-            while line or uibase is not None:
+            while line and uibase is not None:
                 line = line.strip()
                 if line.startswith('# Form implementation '):
                     uibase = line[line.rfind("'", 0, -1) + 1:-1]
-                    uibase = basename(uibase)
+                    uibase = basename(uibase.strip())
+                    log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
     
     uifile = join(pypath, uibase)
