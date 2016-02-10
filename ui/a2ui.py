@@ -208,22 +208,22 @@ class A2Window(QtGui.QMainWindow):
         # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
-        newLayout = QtGui.QWidget(self)
-        newLayout.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+        newWidget = QtGui.QWidget(self)
+        newWidget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                                   QtGui.QSizePolicy.Maximum))
         # create new column layout for the module controls
-        newInner = QtGui.QVBoxLayout(newLayout)
+        newLayout = QtGui.QVBoxLayout(newWidget)
         
         # turn scroll layout content to new host widget
-        self.ui.scrollArea.setWidget(newLayout)
+        self.ui.scrollArea.setWidget(newWidget)
         # make the new inner layout the mainLayout
         # add the controls to it
         for ctrl in self.controls:
             if ctrl:
-                newInner.addWidget(ctrl)
+                newLayout.addWidget(ctrl)
         # amend the spacer
-        newInner.addItem(self.ui.spacer)
-        self.mainlayout = newInner
+        newLayout.addItem(self.ui.spacer)
+        self.mainlayout = newLayout
     
     def drawMod(self):
         """
@@ -686,3 +686,8 @@ class A2Window(QtGui.QMainWindow):
         self.show()
         self.activateWindow()
         #self.setFocus()
+
+
+if __name__ == '__main__':
+    import a2app
+    a2app.main()
