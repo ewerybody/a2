@@ -1,6 +1,6 @@
 '''
 New a2app backend hosting the actual a2ui window.
-Makes sure its only wisible once through the 'siding' package
+Makes sure its only visible once through the 'siding' package
 and enables sending messages to the main app instance.
 
 Created on Aug 7, 2015
@@ -59,13 +59,6 @@ def main():
     if winfo:
         style = QtGui.QStyleFactory.create("Plastique")
         app.setStyle(style)
-        # some palette playing around...
-        #QtGui.QApplication.palette()
-        #style.standardPalette()
-        #originalPalette = QtGui.QApplication.palette()
-        #QtGui.QApplication.setPalette(QtGui.QApplication.style().standardPalette())
-        #app.setPalette(QtGui.QApplication.palette())
-        #app.setPalette(QtGui.QApplication.style().standardPalette())
     
     # this is to set the actual taskbar icon
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')

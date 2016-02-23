@@ -21,3 +21,12 @@ RegRead, Editor, HKEY_CLASSES_ROOT, AutoHotkeyScript\Shell\Edit\Command
     icon.addPixmap(QtGui.QPixmap("../doc/a2_new_logo_colors.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
     item = QtGui.QListWidgetItem(self.listWidget)
     item.setIcon(icon)
+
+
+# some palette playing around...
+        #QtGui.QApplication.palette()
+        #style.standardPalette()
+        #originalPalette = QtGui.QApplication.palette()
+        #QtGui.QApplication.setPalette(QtGui.QApplication.style().standardPalette())
+        #app.setPalette(QtGui.QApplication.palette())
+        #app.setPalette(QtGui.QApplication.style().standardPalette())
