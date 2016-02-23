@@ -67,54 +67,47 @@ class Mod(object):
 
     def change(self):
         """
-        sets its own db entries
+        sets the mods own db entries
         """
-        includes = []
-        hotkeys = {}
-        variables = {}
-        
-        includes, hotkeys, variables = self.loopCfg(self.config[1:], includes, hotkeys, variables)
-        
-        self.db.set('includes', includes, self.name)
-        self.db.set('hotkeys', hotkeys, self.name)
-        self.db.set('variables', variables, self.name)
+        data = {'includes': [], 'hotkeys': {}, 'variables': {}}
+        data = self.loopCfg(self.config[1:], data)
+        for typ in ['includes', 'hotkeys', 'variables']:
+            self.db.set(typ, data[typ], self.name)
 
-    def loopCfg(self, cfgDict, includes, hotkeys, variables):
+    def loopCfg(self, cfgDict, data):
         for cfg in cfgDict:
             
             if cfg['typ'] == 'include':
-                includes.append(cfg['file'])
+                data['includes'].append(cfg['file'])
             
             elif 'name' in cfg:
                 userCfg = self.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
-                    if not self.getCfgValue(cfg, userCfg, 'enabled'):
+                    if not getCfgValue(cfg, userCfg, 'enabled'):
                         continue
                     
-                    key = self.getCfgValue(cfg, userCfg, 'key')
-                    scope = self.getCfgValue(cfg, userCfg, 'scope')
-                    scopeMode = self.getCfgValue(cfg, userCfg, 'scopeMode')
+                    key = getCfgValue(cfg, userCfg, 'key')
+                    scope = getCfgValue(cfg, userCfg, 'scope')
+                    scopeMode = getCfgValue(cfg, userCfg, 'scopeMode')
                     function = cfg[['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']]]
-                    if scopeMode not in hotkeys:
-                        hotkeys[scopeMode] = []
+                    if scopeMode not in data['hotkeys']:
+                        data['hotkeys'][scopeMode] = []
                     # save a global if global scope set or all-but AND scope is empty
                     if scopeMode == 0 or scopeMode == 2 and scope == '':
-                        hotkeys[0].append([key, function])
+                        data['hotkeys'][0].append([key, function])
                     else:
-                        hotkeys[scopeMode].append([scope, key, function])
+                        data['hotkeys'][scopeMode].append([scope, key, function])
                 
                 elif cfg['typ'] == 'checkBox':
-                    variables[cfg['name']] = self.getCfgValue(cfg, userCfg, 'enabled')
+                    data['variables'][cfg['name']] = getCfgValue(cfg, userCfg, 'enabled')
         
                 elif cfg['typ'] == 'group':
                     #disablable
-                    if not self.getCfgValue(cfg, userCfg, 'enabled'):
+                    if not getCfgValue(cfg, userCfg, 'enabled'):
                         continue
                     
-                    includes, hotkeys, variables = self.loopCfg(cfgDict, includes,
-                                                                hotkeys, variables)
-        
-        return includes, hotkeys, variables
+                    data = self.loopCfg(cfgDict, data)
+        return data
 
     @property
     def scripts(self):
@@ -165,14 +158,15 @@ class Mod(object):
             userCfg[attrName] = setValue
         self.db.set(subCfg['name'], userCfg, self.name)
 
-    def getCfgValue(self, subCfg, userCfg, attrName):
-        """
-        unified call to get a value no matter if its set by user already
-        or still default from the module config.
-        """
-        if userCfg is not None and attrName in userCfg:
-            return userCfg[attrName]
-        elif attrName in subCfg:
-            return subCfg[attrName]
-        else:
-            return None
+
+def getCfgValue(subCfg, userCfg, attrName):
+    """
+    unified call to get a value no matter if its set by user already
+    or still default from the module config.
+    """
+    if userCfg is not None and attrName in userCfg:
+        return userCfg[attrName]
+    elif attrName in subCfg:
+        return subCfg[attrName]
+    else:
+        return None
