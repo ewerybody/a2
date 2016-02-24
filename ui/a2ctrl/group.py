@@ -32,7 +32,9 @@ class Draw(QtGui.QGroupBox):
 
         self.layout = QtGui.QVBoxLayout(self)
         for child in self.cfg.get('children', []):
-            self.layout.addWidget(a2ctrl.draw(child, self.mod))
+            ctrl = a2ctrl.draw(child, self.mod)
+            if ctrl:
+                self.layout.addWidget(ctrl)
 
     def check(self, state):
         self.mod.setUserCfg(self.cfg, 'enabled', state)
