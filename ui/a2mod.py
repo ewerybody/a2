@@ -74,7 +74,7 @@ class Mod(object):
         data = self.loopCfg(self.config[1:], data)
         for typ in ['includes', 'hotkeys', 'variables']:
             self.db.set(typ, data[typ], self.name)
-        if mainChange:
+        if mainChange and self.enabled:
             self.main.settingsChanged()
 
     def loopCfg(self, cfgDict, data):
