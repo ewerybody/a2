@@ -36,8 +36,11 @@ class Edit(a2ctrl.EditCtrl):
         self.ctrlType = 'Groupbox'
         super(Edit, self).__init__(cfg, main)
         print('EditGroup cfg: %s' % self.cfg)
+        controls = []
         for child in self.cfg.get('children', []):
             print('child: %s' % child)
-            a2ctrl.edit(cfg, self.mod, self)
-                    
-        #a2ctrl.EditAddElem(self.mod, self.tempConfig, self.editMod)
+            controls.append(a2ctrl.edit(cfg, self.main))
+        
+        controls.append(a2ctrl.EditAddElem(self.main))
+        for ctrl in controls:
+            self.mainLayout.addWidget(ctrl)

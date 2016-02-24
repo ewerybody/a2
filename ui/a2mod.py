@@ -3,12 +3,13 @@ Created on Jul 9, 2015
 
 @author: eRiC
 '''
-from PySide import QtGui
-from os.path import join, exists, splitext
 import os
 import json
-
 import logging
+from PySide import QtGui
+from a2ctrl import getCfgValue
+from os.path import join, exists, splitext
+
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
@@ -157,16 +158,3 @@ class Mod(object):
         if setValue != subCfg[attrName]:
             userCfg[attrName] = setValue
         self.db.set(subCfg['name'], userCfg, self.name)
-
-
-def getCfgValue(subCfg, userCfg, attrName):
-    """
-    unified call to get a value no matter if its set by user already
-    or still default from the module config.
-    """
-    if userCfg is not None and attrName in userCfg:
-        return userCfg[attrName]
-    elif attrName in subCfg:
-        return subCfg[attrName]
-    else:
-        return None

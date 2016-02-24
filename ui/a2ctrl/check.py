@@ -3,10 +3,10 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-from PySide import QtCore, QtGui
-import logging
-from a2ctrl import checkbox_edit_ui
 import a2ctrl
+import logging
+from PySide import QtGui
+from a2ctrl import checkbox_edit_ui, getCfgValue
 
 
 logging.basicConfig()
@@ -25,7 +25,7 @@ class Draw(QtGui.QWidget):
         userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.layout = QtGui.QVBoxLayout(self)
         #self.ctrllayout.setContentsMargins(0, 0, 0, 0)
-        state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
+        state = getCfgValue(self.cfg, userCfg, 'enabled')
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label') or '', self)
         self.checkbox.setChecked(state)
         self.checkbox.clicked.connect(self.check)

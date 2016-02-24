@@ -3,15 +3,17 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-from PySide import QtCore, QtGui
-import a2ctrl
 import ahk
+import a2ctrl
+import logging
+import subprocess
+from os.path import join
+from functools import partial
+from a2ctrl import getCfgValue
+from PySide import QtCore, QtGui
 from a2ctrl import hotkey_edit_ui
 from a2ctrl import scopeDialog_ui
-import logging
-from functools import partial
-from os.path import join
-import subprocess
+
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -52,7 +54,7 @@ class Draw(QtGui.QWidget):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
-            state = self.mod.getCfgValue(self.cfg, userCfg, 'enabled')
+            state = getCfgValue(self.cfg, userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
             cbSize = 27
             self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
@@ -71,8 +73,7 @@ class Draw(QtGui.QWidget):
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
         #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
-        self.hotkeyButton = HotKey(self.mod.getCfgValue(self.cfg, userCfg, 'key'),
-                                   self.hotkeyChange)
+        self.hotkeyButton = HotKey(getCfgValue(self.cfg, userCfg, 'key'), self.hotkeyChange)
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setMinimumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))

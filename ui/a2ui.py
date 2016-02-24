@@ -1,31 +1,30 @@
 """
 a2ui - setup interface for an Autohotkey environment.
 """
-from PySide import QtGui, QtCore
-from os.path import exists, join, dirname
-from copy import deepcopy
-from functools import partial
-import time
 import os
 import sys
+import time
+import logging
+import threading
 import subprocess
 import webbrowser
-import threading
 
-import a2dblib
-import a2ctrl
-import a2design_ui
-import a2mod
 import ahk
+import a2mod
+import a2ctrl
+import a2dblib
+import a2design_ui
 
-import logging
+from copy import deepcopy
+from functools import partial
+from PySide import QtGui, QtCore
+from os.path import exists, join, dirname
+
+
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-
 a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk]
-
-
 a2ctrl.checkUiModule(a2design_ui)
 
 
@@ -299,9 +298,9 @@ class A2Window(QtGui.QMainWindow):
             self.tempConfig.insert(0, newNfo)
         
         for cfg in self.tempConfig:
-            self.controls.append(a2ctrl.edit(cfg, self.mod, self))
+            self.controls.append(a2ctrl.edit(cfg, self))
         
-        editSelect = a2ctrl.EditAddElem(self.mod, self.tempConfig, self.editMod)
+        editSelect = a2ctrl.EditAddElem(self)
         self.controls.append(editSelect)
         
         self.drawUI()

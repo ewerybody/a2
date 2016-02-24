@@ -23,19 +23,19 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
 nfo item is always the 0th entry in the config.json it just draws and holds all
 the author, name, version, description info
 '''
-from PySide import QtGui, QtCore
-from pysideuic import compileUi
-from os.path import join, getmtime, dirname, basename, exists, splitext
+import ahk
+import time
+import logging
+import inspect
+import threading
+import importlib
+import subprocess
 from copy import deepcopy
 from functools import partial
-import subprocess
-import inspect
-import importlib
-import time
-import threading
+from pysideuic import compileUi
+from PySide import QtGui, QtCore
 from a2ctrl import inputDialog_ui
-import ahk
-import logging
+from os.path import join, getmtime, dirname, basename, exists, splitext
 
 
 logging.basicConfig()
@@ -141,11 +141,11 @@ class DrawNfo(QtGui.QWidget):
         self.layout.addWidget(self.label)
 
 
-def edit(cfg, mod, main):
+def edit(cfg, main):
     if cfg['typ'] == 'nfo':
         return EditNfo(cfg)
     elif cfg['typ'] == 'include':
-        return EditInclude(cfg, mod, main)
+        return EditInclude(cfg, main)
     elif cfg['typ'] == 'hotkey':
         return a2ctrl.hotkey.Edit(cfg, main)
     elif cfg['typ'] == 'checkBox':
@@ -464,11 +464,10 @@ class EditAddElem(QtGui.QWidget):
     til: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
-    def __init__(self, mod, tempConfig, rebuildFunc):
+    def __init__(self, main):
         super(EditAddElem, self).__init__()
-        self.tempConfig = tempConfig
-        self.rebuildFunc = rebuildFunc
-        self.mod = mod
+        self.main = main
+        self.tempConfig = self.main.tempConfig
         self.baselayout = QtGui.QHBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
@@ -488,7 +487,7 @@ class EditAddElem(QtGui.QWidget):
 
     def populateMenu(self):
         self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.tempConfig, self.mod, self.addCtrl)
+        self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
         for ctrl in ('checkBox hotkey groupBox textField floatField intField '
@@ -508,22 +507,19 @@ class EditAddElem(QtGui.QWidget):
             cfg['file'] = name
         
         self.tempConfig.append(cfg)
-        self.rebuildFunc()
+        self.main.editMod()
 
 
 class EditInclude(EditCtrl):
     """
-    TODO: An EditInclude only needs to know the mod object to be able to open the file,
-    but that can also be handled by the main obj! lets get rid of this. All the ctrsl
-    need to be module agnostic!
+    
     """
-    def __init__(self, cfg, mod, main):
+    def __init__(self, cfg, main):
         self.ctrlType = 'Include'
         super(EditInclude, self).__init__(cfg, main, addLayout=False)
         self.typ = cfg['typ']
         self.file = cfg['file']
-        self.mod = mod
-
+        self.main = main
         #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
         self.layout = QtGui.QHBoxLayout()
         self.layout.setSpacing(5)
@@ -533,7 +529,7 @@ class EditInclude(EditCtrl):
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.file)
-        self.buttonMenu = BrowseScriptsMenu(main.tempConfig, mod, self.setScript)
+        self.buttonMenu = BrowseScriptsMenu(self.main, self.setScript)
         self.button.setMenu(self.buttonMenu)
         self.layout.addWidget(self.button)
         
@@ -556,7 +552,7 @@ class EditInclude(EditCtrl):
         self.button.setText(name)
     
     def editScript(self):
-        subprocess.Popen([self.main.scriptEditor, join(self.mod.path, self.file)])
+        subprocess.Popen([self.main.scriptEditor, join(self.main.mod.path, self.file)])
 
 
 class InputDialog(QtGui.QDialog):
@@ -629,13 +625,13 @@ class Popup(QtGui.QWidget):
 
 
 class BrowseScriptsMenu(QtGui.QMenu):
-    def __init__(self, tempConfig, mod, func):
+    def __init__(self, main, func):
         super(BrowseScriptsMenu, self).__init__()
         self.func = func
-        self.mod = mod
+        self.main = main
         self.setTitle('include')
         self.aboutToShow.connect(self.buildMenu)
-        self.tempConfig = tempConfig
+        self.tempConfig = self.main.tempConfig
 
     def buildMenu(self):
         self.clear()
@@ -644,7 +640,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
             if cfg['typ'] == 'include':
                 scriptsInUse.add(cfg['file'])
         
-        scriptsUnused = set(self.mod.scripts) - scriptsInUse
+        scriptsUnused = set(self.main.mod.scripts) - scriptsInUse
         
         for scriptName in scriptsUnused:
             action = QtGui.QAction(self)
@@ -659,7 +655,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
     
     def setScript(self, name=''):
         if not name:
-            name = self.mod.createScript()
+            name = self.main.mod.createScript()
             if not name:
                 return
         self.func('include', name)
@@ -685,6 +681,19 @@ def list_selectItems(listCtrl, text):
         listCtrl.setCurrentItem(lastitem)
 
 
+def getCfgValue(subCfg, userCfg, attrName):
+    """
+    unified call to get a value no matter if its set by user already
+    or still default from the module config.
+    """
+    if userCfg is not None and attrName in userCfg:
+        return userCfg[attrName]
+    elif attrName in subCfg:
+        return subCfg[attrName]
+    else:
+        return None
+
+
 # deferred import of sub controls because they might use any part of this module
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group
 reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group]
@@ -692,3 +701,8 @@ uiModules = [inputDialog_ui, a2ctrl.check.checkbox_edit_ui, a2ctrl.hotkey.hotkey
              a2ctrl.hotkey.scopeDialog_ui]
 for uimod in uiModules:
     checkUiModule(uimod)
+
+
+if __name__ == '__main__':
+    import a2app
+    a2app.main()
