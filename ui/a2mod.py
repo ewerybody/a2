@@ -66,7 +66,7 @@ class Mod(object):
                           '%s\nerror: %s' % (self.configFile, error))
         self._config = []
 
-    def change(self):
+    def change(self, mainChange=False):
         """
         sets the mods own db entries
         """
@@ -74,6 +74,8 @@ class Mod(object):
         data = self.loopCfg(self.config[1:], data)
         for typ in ['includes', 'hotkeys', 'variables']:
             self.db.set(typ, data[typ], self.name)
+        if mainChange:
+            self.main.settingsChanged()
 
     def loopCfg(self, cfgDict, data):
         for cfg in cfgDict:
@@ -102,12 +104,13 @@ class Mod(object):
                 elif cfg['typ'] == 'checkBox':
                     data['variables'][cfg['name']] = getCfgValue(cfg, userCfg, 'enabled')
         
-                elif cfg['typ'] == 'group':
+                elif cfg['typ'] == 'groupBox':
                     #disablable
                     if not getCfgValue(cfg, userCfg, 'enabled'):
                         continue
-                    
-                    data = self.loopCfg(cfgDict, data)
+                    childList = cfg.get('children', [])
+                    print('childList: %s' % childList)
+                    data = self.loopCfg(childList, data)
         return data
 
     @property
@@ -158,3 +161,8 @@ class Mod(object):
         if setValue != subCfg[attrName]:
             userCfg[attrName] = setValue
         self.db.set(subCfg['name'], userCfg, self.name)
+
+
+if __name__ == '__main__':
+    import a2app
+    a2app.main()

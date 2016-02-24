@@ -300,7 +300,7 @@ class A2Window(QtGui.QMainWindow):
         for cfg in self.tempConfig:
             self.controls.append(a2ctrl.edit(cfg, self))
         
-        editSelect = a2ctrl.EditAddElem(self)
+        editSelect = a2ctrl.EditAddElem(self, self.tempConfig)
         self.controls.append(editSelect)
         
         self.drawUI()

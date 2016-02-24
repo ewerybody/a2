@@ -24,20 +24,18 @@ class Draw(QtGui.QWidget):
     def _setupUi(self):
         userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.layout = QtGui.QVBoxLayout(self)
-        #self.ctrllayout.setContentsMargins(0, 0, 0, 0)
-        state = getCfgValue(self.cfg, userCfg, 'enabled')
-        self.checkbox = QtGui.QCheckBox(self.cfg.get('label') or '', self)
-        self.checkbox.setChecked(state)
-        self.checkbox.clicked.connect(self.check)
+        self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
+        self.checkbox.setChecked(getCfgValue(self.cfg, userCfg, 'enabled'))
+        self.checkbox.clicked[bool].connect(self.check)
         #self.checkbox.setWordWrap(True)
         self.layout.addWidget(self.checkbox)
         #self.checkbox.setMinimumHeight(lenM)
         self.setLayout(self.layout)
         
-    def check(self):
+    def check(self, state):
         state = self.checkbox.isChecked()
         self.mod.setUserCfg(self.cfg, 'enabled', state)
-        self.mod.change()
+        self.mod.change(True)
 
 
 class Edit(a2ctrl.EditCtrl):

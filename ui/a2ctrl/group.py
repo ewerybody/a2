@@ -3,9 +3,10 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-from PySide import QtCore, QtGui
 import a2ctrl
 import logging
+from PySide import QtCore, QtGui
+from a2ctrl import group_edit_ui
 
 
 logging.basicConfig()
@@ -13,13 +14,29 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class Draw(QtGui.QWidget):
+class Draw(QtGui.QGroupBox):
     """
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.
     """
     def __init__(self, cfg, mod):
         super(Draw, self).__init__()
+        self.cfg = cfg
+        self.mod = mod
+        
+        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
+        self.setTitle(self.cfg.get('label', ''))
+        self.setCheckable(self.cfg.get('disablable', True))
+        self.setChecked(a2ctrl.getCfgValue(self.cfg, userCfg, 'enabled'))
+        self.clicked[bool].connect(self.check)
+
+        self.layout = QtGui.QVBoxLayout(self)
+        for child in self.cfg.get('children', []):
+            self.layout.addWidget(a2ctrl.draw(child, self.mod))
+
+    def check(self, state):
+        self.mod.setUserCfg(self.cfg, 'enabled', state)
+        self.mod.change(True)
 
 
 class Edit(a2ctrl.EditCtrl):
@@ -34,13 +51,25 @@ class Edit(a2ctrl.EditCtrl):
     """
     def __init__(self, cfg, main):
         self.ctrlType = 'Groupbox'
-        super(Edit, self).__init__(cfg, main)
-        print('EditGroup cfg: %s' % self.cfg)
-        controls = []
-        for child in self.cfg.get('children', []):
-            print('child: %s' % child)
-            controls.append(a2ctrl.edit(cfg, self.main))
+        super(Edit, self).__init__(cfg, main, addLayout=False)
+        if 'children' not in self.cfg:
+            self.cfg['children'] = []
         
-        controls.append(a2ctrl.EditAddElem(self.main))
+        self.ui = group_edit_ui.Ui_group_edit()
+        self.ui.setupUi(self.mainWidget)
+        
+        controls = []
+        for child in self.cfg['children']:
+            controls.append(a2ctrl.edit(child, self.main))
+        
+        controls.append(a2ctrl.EditAddElem(self.main, self.cfg['children']))
         for ctrl in controls:
-            self.mainLayout.addWidget(ctrl)
+            self.ui.groupLayout.addWidget(ctrl)
+        
+        self.connectCfgCtrls(self.ui)
+        self.mainWidget.setLayout(self.ui.groupLayout)
+
+
+if __name__ == '__main__':
+    import a2app
+    a2app.main()

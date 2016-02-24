@@ -464,10 +464,10 @@ class EditAddElem(QtGui.QWidget):
     til: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
-    def __init__(self, main):
+    def __init__(self, main, config):
         super(EditAddElem, self).__init__()
         self.main = main
-        self.tempConfig = self.main.tempConfig
+        self.config = config
         self.baselayout = QtGui.QHBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
@@ -490,11 +490,11 @@ class EditAddElem(QtGui.QWidget):
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        for ctrl in ('checkBox hotkey groupBox textField floatField intField '
-                     'fileField text button comboBox').split():
+        for typ in ('checkBox hotkey groupBox textField floatField intField '
+                    'fileField text button comboBox').split():
             action = QtGui.QAction(self.menu)
-            action.setText(ctrl)
-            action.triggered.connect(partial(self.addCtrl, ctrl))
+            action.setText(typ)
+            action.triggered.connect(partial(self.addCtrl, typ))
             self.menu.addAction(action)
     
     def addCtrl(self, typ, name=''):
@@ -506,7 +506,7 @@ class EditAddElem(QtGui.QWidget):
         if typ == 'include':
             cfg['file'] = name
         
-        self.tempConfig.append(cfg)
+        self.config.append(cfg)
         self.main.editMod()
 
 
@@ -698,7 +698,7 @@ def getCfgValue(subCfg, userCfg, attrName):
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group
 reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group]
 uiModules = [inputDialog_ui, a2ctrl.check.checkbox_edit_ui, a2ctrl.hotkey.hotkey_edit_ui,
-             a2ctrl.hotkey.scopeDialog_ui]
+             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui]
 for uimod in uiModules:
     checkUiModule(uimod)
 

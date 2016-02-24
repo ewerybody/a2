@@ -8,13 +8,13 @@ Created on Aug 7, 2015
 @author: eRiC
 '''
 import sys
-import platform
-from importlib import reload
-from ctypes import windll
-from PySide import QtGui
-from siding import QSingleApplication
 import a2ui
 import logging
+import platform
+from PySide import QtGui
+from ctypes import windll
+from importlib import reload
+from siding import QSingleApplication
 
 
 logging.basicConfig()

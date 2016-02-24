@@ -95,13 +95,13 @@ class Draw(QtGui.QWidget):
     def hotkeyCheck(self):
         state = self.check.isChecked()
         self.mod.setUserCfg(self.cfg, 'enabled', state)
-        self.mod.change()
+        self.mod.change(True)
     
     def hotkeyChange(self, newKey):
         log.info('cfg key: %s' % self.cfg['key'])
         log.info('newKey: %s' % newKey)
         self.mod.setUserCfg(self.cfg, 'key', newKey)
-        self.mod.change()
+        self.mod.change(True)
 
 
 class Edit(a2ctrl.EditCtrl):
