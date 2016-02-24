@@ -92,7 +92,7 @@ class Mod(object):
                     key = getCfgValue(cfg, userCfg, 'key')
                     scope = getCfgValue(cfg, userCfg, 'scope')
                     scopeMode = getCfgValue(cfg, userCfg, 'scopeMode')
-                    function = cfg[['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']]]
+                    function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
                     if scopeMode not in data['hotkeys']:
                         data['hotkeys'][scopeMode] = []
                     # save a global if global scope set or all-but AND scope is empty
@@ -122,8 +122,17 @@ class Mod(object):
         """ always browses the path for files"""
         return os.listdir(self.path)
 
+    @property
+    def enabled(self):
+        return self.name in self.db.get('enabled')
+
+    @enabled.setter
+    def enabled(self, this):
+        log.error('Cannot switch enable state here')
+
     def createScript(self):
-        scriptName, ok = QtGui.QInputDialog.getText(self.main, 'new script',
+        scriptName, ok = QtGui.QInputDialog.getText(
+            self.main, 'new script',
             'give a name for the new script file:', QtGui.QLineEdit.Normal,
             'awesomeScript')
 
