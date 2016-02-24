@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\hotkey_edit.ui'
 #
-# Created: Mon Feb  1 21:34:49 2016
+# Created: Wed Feb 24 15:21:34 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_hotkey_edit(object):
     def setupUi(self, hotkey_edit):
         hotkey_edit.setObjectName("hotkey_edit")
-        hotkey_edit.resize(785, 276)
+        hotkey_edit.resize(785, 425)
         self.verticalLayout_2 = QtGui.QVBoxLayout(hotkey_edit)
         self.verticalLayout_2.setSpacing(5)
         self.verticalLayout_2.setContentsMargins(10, 5, 0, 5)
@@ -58,32 +58,29 @@ class Ui_hotkey_edit(object):
         self.hotkeyLayout.addLayout(self.hotkeyLabelLayout)
         self.hotkeyKeyLayout = QtGui.QVBoxLayout()
         self.hotkeyKeyLayout.setSpacing(0)
-        self.hotkeyKeyLayout.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
         self.hotkeyKeyLayout.setObjectName("hotkeyKeyLayout")
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setSpacing(5)
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.setHorizontalSpacing(15)
+        self.gridLayout.setVerticalSpacing(5)
+        self.gridLayout.setObjectName("gridLayout")
         self.cfg_enabled = QtGui.QCheckBox(hotkey_edit)
         self.cfg_enabled.setChecked(True)
         self.cfg_enabled.setObjectName("cfg_enabled")
-        self.horizontalLayout.addWidget(self.cfg_enabled)
-        self.cfg_keyChange = QtGui.QCheckBox(hotkey_edit)
-        self.cfg_keyChange.setChecked(True)
-        self.cfg_keyChange.setObjectName("cfg_keyChange")
-        self.horizontalLayout.addWidget(self.cfg_keyChange)
-        self.hotkeyKeyLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setSpacing(5)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.gridLayout.addWidget(self.cfg_enabled, 0, 0, 1, 1)
         self.cfg_disablable = QtGui.QCheckBox(hotkey_edit)
         self.cfg_disablable.setChecked(True)
         self.cfg_disablable.setObjectName("cfg_disablable")
-        self.horizontalLayout_2.addWidget(self.cfg_disablable)
+        self.gridLayout.addWidget(self.cfg_disablable, 3, 0, 1, 1)
+        self.cfg_keyChange = QtGui.QCheckBox(hotkey_edit)
+        self.cfg_keyChange.setChecked(True)
+        self.cfg_keyChange.setObjectName("cfg_keyChange")
+        self.gridLayout.addWidget(self.cfg_keyChange, 0, 1, 1, 1)
         self.cfg_multiple = QtGui.QCheckBox(hotkey_edit)
         self.cfg_multiple.setChecked(True)
         self.cfg_multiple.setObjectName("cfg_multiple")
-        self.horizontalLayout_2.addWidget(self.cfg_multiple)
-        self.hotkeyKeyLayout.addLayout(self.horizontalLayout_2)
+        self.gridLayout.addWidget(self.cfg_multiple, 3, 1, 1, 1)
+        self.gridLayout.setColumnStretch(1, 1)
+        self.hotkeyKeyLayout.addLayout(self.gridLayout)
         self.hotkeyLayout.addLayout(self.hotkeyKeyLayout)
         self.hotkeyLayout.setStretch(1, 1)
         self.verticalLayout_2.addLayout(self.hotkeyLayout)
@@ -208,8 +205,8 @@ class Ui_hotkey_edit(object):
         self.cfg_label.setText(QtGui.QApplication.translate("hotkey_edit", "make some awesome stuff", None, QtGui.QApplication.UnicodeUTF8))
         self.hotkeyLabel.setText(QtGui.QApplication.translate("hotkey_edit", "hotkey:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_enabled.setText(QtGui.QApplication.translate("hotkey_edit", "enabled by default", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_keyChange.setText(QtGui.QApplication.translate("hotkey_edit", "can be changed", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_disablable.setText(QtGui.QApplication.translate("hotkey_edit", "can be disabled", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_keyChange.setText(QtGui.QApplication.translate("hotkey_edit", "can be changed", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_multiple.setText(QtGui.QApplication.translate("hotkey_edit", "allow multiple hotkeys", None, QtGui.QApplication.UnicodeUTF8))
         self.functionLabel.setText(QtGui.QApplication.translate("hotkey_edit", "function:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_functionMode.setItemText(0, QtGui.QApplication.translate("hotkey_edit", "run code", None, QtGui.QApplication.UnicodeUTF8))

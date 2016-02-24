@@ -296,7 +296,6 @@ class HotKey(QtGui.QPushButton):
         self.tempOK = True
         self.func = func
         self.setFont(a2ctrl.fontXL)
-        #self.main = main
         self.setText(key)
         if parent is not None:
             parent.addWidget(self)

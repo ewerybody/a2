@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
-    <height>164</height>
+    <width>402</width>
+    <height>116</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="groupLayout">
    <property name="spacing">
-    <number>0</number>
+    <number>5</number>
    </property>
    <property name="leftMargin">
     <number>10</number>
@@ -40,6 +40,12 @@
         <size>
          <width>100</width>
          <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">
@@ -72,6 +78,12 @@
          <height>0</height>
         </size>
        </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string>group label:</string>
        </property>
@@ -90,8 +102,8 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="enabledLayout" stretch="0,0">
-     <property name="bottomMargin">
+    <layout class="QHBoxLayout" name="enabledLayout" stretch="0,1">
+     <property name="spacing">
       <number>10</number>
      </property>
      <item>
@@ -104,7 +116,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>200</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
@@ -126,7 +138,10 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="enabledLayout_2" stretch="0,0">
+    <layout class="QHBoxLayout" name="enabledLayout_2" stretch="0,1">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <property name="bottomMargin">
       <number>10</number>
      </property>
@@ -140,7 +155,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>200</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>977</width>
-    <height>182</height>
+    <height>92</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -90,7 +90,10 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="enabledLayout" stretch="0,0">
+    <layout class="QHBoxLayout" name="enabledLayout" stretch="0,1">
+     <property name="spacing">
+      <number>10</number>
+     </property>
      <property name="bottomMargin">
       <number>10</number>
      </property>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>785</width>
-    <height>276</height>
+    <height>279</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -141,15 +141,15 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMinimumSize</enum>
-       </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="spacing">
+        <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+         <property name="horizontalSpacing">
+          <number>15</number>
+         </property>
+         <property name="verticalSpacing">
           <number>5</number>
          </property>
-         <item>
+         <item row="0" column="0">
           <widget class="QCheckBox" name="cfg_enabled">
            <property name="text">
             <string>enabled by default</string>
@@ -159,24 +159,7 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="cfg_keyChange">
-           <property name="text">
-            <string>can be changed</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item>
+         <item row="3" column="0">
           <widget class="QCheckBox" name="cfg_disablable">
            <property name="text">
             <string>can be disabled</string>
@@ -186,7 +169,17 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="cfg_keyChange">
+           <property name="text">
+            <string>can be changed</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
           <widget class="QCheckBox" name="cfg_multiple">
            <property name="text">
             <string>allow multiple hotkeys</string>

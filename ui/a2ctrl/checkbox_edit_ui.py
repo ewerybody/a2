@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\checkbox_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\checkbox_edit.ui'
 #
-# Created: Wed Oct 28 03:26:20 2015
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Wed Feb 24 15:08:35 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_checkbox_edit(object):
     def setupUi(self, checkbox_edit):
         checkbox_edit.setObjectName("checkbox_edit")
-        checkbox_edit.resize(977, 182)
+        checkbox_edit.resize(977, 92)
         self.verticalLayout = QtGui.QVBoxLayout(checkbox_edit)
         self.verticalLayout.setSpacing(5)
         self.verticalLayout.setContentsMargins(10, 5, 0, 5)
@@ -42,6 +42,7 @@ class Ui_checkbox_edit(object):
         self.displayLabelLayout.addWidget(self.cfg_label)
         self.verticalLayout.addLayout(self.displayLabelLayout)
         self.enabledLayout = QtGui.QHBoxLayout()
+        self.enabledLayout.setSpacing(10)
         self.enabledLayout.setContentsMargins(-1, -1, -1, 10)
         self.enabledLayout.setObjectName("enabledLayout")
         self.label = QtGui.QLabel(checkbox_edit)
@@ -54,6 +55,7 @@ class Ui_checkbox_edit(object):
         self.cfg_enabled.setChecked(True)
         self.cfg_enabled.setObjectName("cfg_enabled")
         self.enabledLayout.addWidget(self.cfg_enabled)
+        self.enabledLayout.setStretch(1, 1)
         self.verticalLayout.addLayout(self.enabledLayout)
 
         self.retranslateUi(checkbox_edit)
