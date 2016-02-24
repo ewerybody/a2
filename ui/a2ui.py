@@ -456,9 +456,10 @@ class A2Window(QtGui.QMainWindow):
         return self.modules
 
     def initPaths(self):
-        """ makes sure all necessary paths and their variables are available """
-        # if run on its own sys.path[0] will be the script dir
-        self.a2uidir = sys.path[0]
+        """
+        makes sure all necessary paths and their variables are available.
+        """
+        self.a2uidir = dirname(__file__)
         if not self.a2uidir:
             cwd = os.getcwd()
             if exists(join(cwd, 'a2ui.py')):
