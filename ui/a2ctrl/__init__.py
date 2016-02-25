@@ -141,17 +141,17 @@ class DrawNfo(QtGui.QWidget):
         self.layout.addWidget(self.label)
 
 
-def edit(cfg, main):
+def edit(cfg, main, parentCfg):
     if cfg['typ'] == 'nfo':
         return EditNfo(cfg)
     elif cfg['typ'] == 'include':
-        return EditInclude(cfg, main)
+        return EditInclude(cfg, main, parentCfg)
     elif cfg['typ'] == 'hotkey':
-        return a2ctrl.hotkey.Edit(cfg, main)
+        return a2ctrl.hotkey.Edit(cfg, main, parentCfg)
     elif cfg['typ'] == 'checkBox':
-        return a2ctrl.check.Edit(cfg, main)
+        return a2ctrl.check.Edit(cfg, main, parentCfg)
     elif cfg['typ'] == 'groupBox':
-        return a2ctrl.group.Edit(cfg, main)
+        return a2ctrl.group.Edit(cfg, main, parentCfg)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -199,22 +199,18 @@ class EditCtrl(QtGui.QGroupBox):
     """
     ctrlType = 'EditCtrl'
     
-    def __init__(self, cfg, main, addLayout=True):
+    def __init__(self, cfg, main, parentCfg, addLayout=True):
         super(EditCtrl, self).__init__()
         self.cfg = cfg
         self.main = main
+        self.parentCfg = parentCfg
         self._setupUi(addLayout)
         self._getCfgList = []
         self.helpUrl = self.main.urls.helpEditCtrl
     
-    def delete(self):
-        if self.cfg in self.main.tempConfig:
-            self.main.tempConfig.remove(self.cfg)
-            self.main.editMod()
-    
     def move(self, value, *args):
-        index = self.main.tempConfig.index(self.cfg)
-        maxIndex = len(self.main.tempConfig) - 1
+        index = self.parentCfg.index(self.cfg)
+        maxIndex = len(self.parentCfg) - 1
         if isinstance(value, bool):
             if value:
                 newindex = 1
@@ -230,10 +226,31 @@ class EditCtrl(QtGui.QGroupBox):
             #print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
         
-        #cfg = self.main.tempConfig.pop(index)
-        self.main.tempConfig.pop(index)
-        self.main.tempConfig.insert(newindex, self.cfg)
+        #cfg = self.parentCfg.pop(index)
+        self.parentCfg.pop(index)
+        self.parentCfg.insert(newindex, self.cfg)
         self.main.editMod()
+    
+    def delete(self):
+        if self.cfg in self.parentCfg:
+            self.parentCfg.remove(self.cfg)
+            self.main.editMod()
+
+    def duplicate(self):
+        self._scrollValB4 = self.main.ui.scrollBar.value()
+        self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
+        newCfg = deepcopy(self.cfg)
+        self.parentCfg.append(newCfg)
+        self.main.editMod()
+
+        threading.Thread(target=self.scrolltobottom).start()
+    
+    def cut(self):
+        self.main.edit_clipboard.append(deepcopy(self.cfg))
+        self.delete()
+    
+    def help(self):
+        self.main.surfTo(self.helpUrl)
 
     def _setupUi(self, addLayout):
         self.setTitle(self.cfg['typ'])
@@ -271,15 +288,25 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrlLayout.setStretch(0, 1)
         
         self._ctrlMenu = QtGui.QMenu(self)
+        self._ctrlMenu.aboutToShow.connect(self.buildMenu)
         self._ctrlButton.setMenu(self._ctrlMenu)
 
-        for item in [('up', partial(self.move, -1)),
-                     ('down', partial(self.move, 1)),
-                     ('to top', partial(self.move, True)),
-                     ('to bottom', partial(self.move, False)),
-                     ('delete', self.delete),
-                     ('duplicate', self.duplicate),
-                     ('help on %s' % self.ctrlType, self.help)]:
+    def buildMenu(self):
+        self._ctrlMenu.clear()
+        menu_items = [('Up', partial(self.move, -1)),
+                      ('Down', partial(self.move, 1)),
+                      ('To Top', partial(self.move, True)),
+                      ('To Bottom', partial(self.move, False)),
+                      ('Delete', self.delete),
+                      ('Duplicate', self.duplicate),
+                      ('Help on %s' % self.ctrlType, self.help)]
+
+        if self.ctrlType == 'Groupbox':
+            menu_items.insert(-1, ('Paste', self.paste))
+        else:
+            menu_items.insert(-1, ('Cut', self.cut))
+
+        for item in menu_items:
             action = QtGui.QAction(self._ctrlMenu)
             action.setText(item[0])
             action.triggered.connect(item[1])
@@ -351,15 +378,6 @@ class EditCtrl(QtGui.QGroupBox):
         elif func is not None:
             self.cfg[name] = func()
 
-    def duplicate(self):
-        self._scrollValB4 = self.main.ui.scrollBar.value()
-        self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
-        newCfg = deepcopy(self.cfg)
-        self.main.tempConfig.append(newCfg)
-        self.main.editMod()
-
-        threading.Thread(target=self.scrolltobottom).start()
-    
     def scrolltobottom(self, *args):
         print('scrollValB4: %s' % self._scrollValB4)
         time.sleep(0.1)
@@ -382,9 +400,6 @@ class EditCtrl(QtGui.QGroupBox):
             v = curve.valueForProgress(t)
             scrollval = self._scrollValB4 + (v * r)
             self.main.ui.scrollBar.setValue(scrollval)
-        
-    def help(self):
-        self.main.surfTo(self.helpUrl)
 
 
 class EditLine(QtGui.QWidget):
@@ -514,11 +529,11 @@ class EditInclude(EditCtrl):
     """
     
     """
-    def __init__(self, cfg, main):
+    def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Include'
-        super(EditInclude, self).__init__(cfg, main, addLayout=False)
         self.typ = cfg['typ']
         self.file = cfg['file']
+        super(EditInclude, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.main = main
         #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
         self.layout = QtGui.QHBoxLayout()

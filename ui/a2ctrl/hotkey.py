@@ -125,9 +125,9 @@ class Edit(a2ctrl.EditCtrl):
         cfg['name'] = 'someModule_hotkey1',
         cfg['label'] = 'do awesome stuff on:'
     """
-    def __init__(self, cfg, main):
+    def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Hotkey'
-        super(Edit, self).__init__(cfg, main, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.cfg = cfg
         defaults = [('key', 'Win+G'), ('mode', 'ahk')]
         for key, value in defaults:

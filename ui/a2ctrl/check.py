@@ -44,9 +44,9 @@ class Edit(a2ctrl.EditCtrl):
     We might put them to the db and get and fetch from there or first: just write them into
     code directly and start with the variables include.
     """
-    def __init__(self, cfg, main):
+    def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Checkbox'
-        super(Edit, self).__init__(cfg, main, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.main.urls.helpCheckbox
         self.cfg = cfg
         

@@ -62,6 +62,7 @@ class A2Window(QtGui.QMainWindow):
         self.mod = None
         self.enabledMods = self.db.get('enabled') or []
         self.editing = False
+        self.edit_clipboard = []
         self.tempConfig = None
         self.selectedMod = []
         self.toggleEdit(False)
@@ -298,7 +299,7 @@ class A2Window(QtGui.QMainWindow):
             self.tempConfig.insert(0, newNfo)
         
         for cfg in self.tempConfig:
-            self.controls.append(a2ctrl.edit(cfg, self))
+            self.controls.append(a2ctrl.edit(cfg, self, self.tempConfig))
         
         editSelect = a2ctrl.EditAddElem(self, self.tempConfig)
         self.controls.append(editSelect)

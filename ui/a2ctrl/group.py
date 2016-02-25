@@ -51,9 +51,9 @@ class Edit(a2ctrl.EditCtrl):
         properly implemented it would probably work very well, we will
         not go deeper than this to keep complexity under the lid)
     """
-    def __init__(self, cfg, main):
+    def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Groupbox'
-        super(Edit, self).__init__(cfg, main, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         if 'children' not in self.cfg:
             self.cfg['children'] = []
         
@@ -62,7 +62,7 @@ class Edit(a2ctrl.EditCtrl):
         
         controls = []
         for child in self.cfg['children']:
-            controls.append(a2ctrl.edit(child, self.main))
+            controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
         
         controls.append(a2ctrl.EditAddElem(self.main, self.cfg['children']))
         for ctrl in controls:
@@ -70,6 +70,16 @@ class Edit(a2ctrl.EditCtrl):
         
         self.connectCfgCtrls(self.ui)
         self.mainWidget.setLayout(self.ui.groupLayout)
+
+    def paste(self):
+        """
+        Amends child list with cfgs from the main edit_clipboard
+        and flushes it afterwards.
+        """
+        for cfg in self.main.edit_clipboard:
+            self.cfg['children'].append(cfg)
+        self.main.edit_clipboard = []
+        self.main.editMod()
 
 
 if __name__ == '__main__':
