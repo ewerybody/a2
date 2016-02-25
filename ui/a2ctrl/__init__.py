@@ -208,20 +208,25 @@ class EditCtrl(QtGui.QGroupBox):
         self.helpUrl = self.main.urls.helpEditCtrl
     
     def move(self, value, *args):
+        if self.parentCfg and self.parentCfg[0].get('typ', '') == 'nfo':
+            top_index = 1
+        else:
+            top_index = 0
+        
         index = self.parentCfg.index(self.cfg)
         maxIndex = len(self.parentCfg) - 1
         if isinstance(value, bool):
             if value:
-                newindex = 1
+                newindex = top_index
                 #self.main.ui.scrollArea.scrollToTop()
                 #self.main.ui.scrollArea
             else:
                 newindex = maxIndex
-                #self.main.ui.scrollArea.scrollToBottom()
+                self.scrolltobottom()
         else:
             newindex = index + value
         # hop out if already at start or end
-        if index == newindex or newindex < 1 or newindex > maxIndex:
+        if index == newindex or newindex < top_index or newindex > maxIndex:
             #print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
         
@@ -299,11 +304,15 @@ class EditCtrl(QtGui.QGroupBox):
                       ('Delete', self.delete),
                       ('Duplicate', self.duplicate),
                       ('Help on %s' % self.ctrlType, self.help)]
-
+        
+        clipboard_count = ''
+        if self.main.edit_clipboard:
+            clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
+        
         if self.ctrlType == 'Groupbox':
-            menu_items.insert(-1, ('Paste', self.paste))
+            menu_items.insert(-1, ('Paste' + clipboard_count, self.paste))
         else:
-            menu_items.insert(-1, ('Cut', self.cut))
+            menu_items.insert(-1, ('Cut' + clipboard_count, self.cut))
 
         for item in menu_items:
             action = QtGui.QAction(self._ctrlMenu)
