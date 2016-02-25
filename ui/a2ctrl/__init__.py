@@ -155,28 +155,28 @@ def edit(cfg, main, parentCfg):
 
 
 class EditNfo(QtGui.QGroupBox):
-    def __init__(self, data):
+    def __init__(self, cfg):
         super(EditNfo, self).__init__()
-        self.data = data
-        self.typ = data['typ']
+        self.cfg = cfg
+        self.typ = cfg['typ']
         self.setTitle('module information:')
         self.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                              QtGui.QSizePolicy.Maximum))
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(5, 5, 5, 10)
-        self.description = EditText('description', data.get('description'), self.layout, self.getCfg)
-        self.author = EditLine('author', data.get('author'), self.layout, self.getCfg)
-        self.version = EditLine('version', data.get('version'), self.layout, self.getCfg)
-        self.date = EditLine('date', data.get('date'), self.layout, self.getCfg)
-        self.url = EditLine('url', data.get('url') or '', self.layout, self.getCfg)
+        self.description = EditText('description', cfg.get('description'), self.layout, self.getCfg)
+        self.author = EditLine('author', cfg.get('author'), self.layout, self.getCfg)
+        self.version = EditLine('version', cfg.get('version'), self.layout, self.getCfg)
+        self.date = EditLine('date', cfg.get('date'), self.layout, self.getCfg)
+        self.url = EditLine('url', cfg.get('url') or '', self.layout, self.getCfg)
 
     def getCfg(self):
-        self.data['description'] = self.description.value
-        self.data['author'] = self.author.value
-        self.data['version'] = self.version.value
-        self.data['date'] = self.date.value
-        self.data['url'] = self.url.value
+        self.cfg['description'] = self.description.value
+        self.cfg['author'] = self.author.value
+        self.cfg['version'] = self.version.value
+        self.cfg['date'] = self.date.value
+        self.cfg['url'] = self.url.value
         return self.data
 
 
@@ -205,7 +205,6 @@ class EditCtrl(QtGui.QGroupBox):
         self.main = main
         self.parentCfg = parentCfg
         self._setupUi(addLayout)
-        self._getCfgList = []
         self.helpUrl = self.main.urls.helpEditCtrl
     
     def move(self, value, *args):
@@ -311,14 +310,6 @@ class EditCtrl(QtGui.QGroupBox):
             action.setText(item[0])
             action.triggered.connect(item[1])
             self._ctrlMenu.addAction(action)
-    
-    def getCtrlData(self):
-        for ctrl in self._getCfgList:
-            self.cfg[ctrl[0]] = ctrl[1]()
-    
-    def getCfg(self):
-        self.getCtrlData()
-        return self.cfg
 
     def connectCfgCtrls(self, uiclass):
         """
@@ -531,8 +522,6 @@ class EditInclude(EditCtrl):
     """
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Include'
-        self.typ = cfg['typ']
-        self.file = cfg['file']
         super(EditInclude, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.main = main
         #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
@@ -543,7 +532,7 @@ class EditInclude(EditCtrl):
         self.labelCtrl.setMinimumWidth(labelW)
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
-        self.button = QtGui.QPushButton(self.file)
+        self.button = QtGui.QPushButton(self.cfg['file'])
         self.buttonMenu = BrowseScriptsMenu(self.main, self.setScript)
         self.button.setMenu(self.buttonMenu)
         self.layout.addWidget(self.button)
@@ -556,18 +545,12 @@ class EditInclude(EditCtrl):
         self.layout.addItem(spacerItem)
         self.mainWidget.setLayout(self.layout)
     
-    def getCfg(self):
-        cfg = {'typ': self.typ,
-               'file': self.file}
-        return cfg
-    
     def setScript(self, typ, name):
-        self.file = name
         self.cfg['file'] = name
         self.button.setText(name)
     
     def editScript(self):
-        subprocess.Popen([self.main.scriptEditor, join(self.main.mod.path, self.file)])
+        subprocess.Popen([self.main.scriptEditor, join(self.main.mod.path, self.cfg['file'])])
 
 
 class InputDialog(QtGui.QDialog):

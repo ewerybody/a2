@@ -279,9 +279,6 @@ class Edit(a2ctrl.EditCtrl):
         h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
         self.ui.cfg_scope.setMinimumHeight(h)
         self.cfg['scope'] = allItems
-    
-    def getCfg(self):
-        return self.cfg
 
 
 class HotKey(QtGui.QPushButton):
