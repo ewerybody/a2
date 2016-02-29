@@ -416,9 +416,15 @@ class A2Window(QtGui.QMainWindow):
                                 hotkeysAhk[scopeKey] = []
                             hotkeysAhk[scopeKey].append(hkstring)
         
-            for var, value in (self.db.get('variables', modname) or {}).items():
+            for var_name, value in (self.db.get('variables', modname) or {}).items():
                 if isinstance(value, bool):
-                    variablesAhk.append('%s := %s' % (var, str(value).lower()))
+                    variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
+                elif isinstance(value, str):
+                    variablesAhk.append('%s := "%s"' % (var_name, value))
+                else:
+                    log.error('Please check handling variable type "%s" (%s: %s)'
+                              % (type(value), var_name, str(value)))
+                    variablesAhk.append('%s := %s' % (var_name, str(value)))
         
         # write all the include files
         with open(join(self.a2setdir, 'variables.ahk'), 'w') as fobj:
