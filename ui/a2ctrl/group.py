@@ -68,6 +68,10 @@ class Edit(a2ctrl.EditCtrl):
         for ctrl in controls:
             self.ui.groupLayout.addWidget(ctrl)
         
+        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel,
+                      self.ui.label, self.ui.label_2]:
+            label.setMinimumWidth(a2ctrl.labelW)
+        
         self.connectCfgCtrls(self.ui)
         self.mainWidget.setLayout(self.ui.groupLayout)
 
