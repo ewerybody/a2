@@ -101,9 +101,9 @@ class Mod(object):
                     else:
                         data['hotkeys'][scopeMode].append([scope, key, function])
                 
-                elif cfg['typ'] == 'checkBox':
-                    data['variables'][cfg['name']] = getCfgValue(cfg, userCfg, 'enabled')
-        
+                elif cfg['typ'] in ['checkBox', 'string']:
+                    data['variables'][cfg['name']] = getCfgValue(cfg, userCfg, 'value')
+
                 elif cfg['typ'] == 'groupBox':
                     #disablable
                     if not getCfgValue(cfg, userCfg, 'enabled'):

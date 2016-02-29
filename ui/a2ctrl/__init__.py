@@ -122,6 +122,8 @@ def draw(cfg, mod):
         return a2ctrl.hotkey.Draw(cfg, mod)
     elif cfg['typ'] == 'groupBox':
         return a2ctrl.group.Draw(cfg, mod)
+    elif cfg['typ'] == 'string':
+        return a2ctrl.string.Draw(cfg, mod)
 
 
 class DrawWelcome(QtGui.QWidget):
@@ -152,6 +154,8 @@ def edit(cfg, main, parentCfg):
         return a2ctrl.check.Edit(cfg, main, parentCfg)
     elif cfg['typ'] == 'groupBox':
         return a2ctrl.group.Edit(cfg, main, parentCfg)
+    elif cfg['typ'] == 'string':
+        return a2ctrl.string.Edit(cfg, main, parentCfg)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -505,7 +509,7 @@ class EditAddElem(QtGui.QWidget):
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        for typ in ('checkBox hotkey groupBox textField floatField intField '
+        for typ in ('checkBox hotkey groupBox string textField floatField intField '
                     'fileField text button comboBox').split():
             action = QtGui.QAction(self.menu)
             action.setText(typ)
@@ -702,10 +706,10 @@ def getCfgValue(subCfg, userCfg, attrName):
 
 
 # deferred import of sub controls because they might use any part of this module
-import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group
-reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group]
+import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string
+reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string]
 uiModules = [inputDialog_ui, a2ctrl.check.checkbox_edit_ui, a2ctrl.hotkey.hotkey_edit_ui,
-             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui]
+             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui, a2ctrl.string.string_edit_ui]
 for uimod in uiModules:
     checkUiModule(uimod)
 
