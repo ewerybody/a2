@@ -706,10 +706,11 @@ def getCfgValue(subCfg, userCfg, attrName):
 
 
 # deferred import of sub controls because they might use any part of this module
-import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string
-reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string]
+import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings
+reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings]
 uiModules = [inputDialog_ui, a2ctrl.check.checkbox_edit_ui, a2ctrl.hotkey.hotkey_edit_ui,
-             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui, a2ctrl.string.string_edit_ui]
+             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui, a2ctrl.string.string_edit_ui,
+             a2ctrl.a2settings.a2settings_ui]
 for uimod in uiModules:
     checkUiModule(uimod)
 

@@ -171,6 +171,10 @@ class Mod(object):
             userCfg[attrName] = setValue
         self.db.set(subCfg['name'], userCfg, self.name)
 
+    def help(self):
+        docs_url = self.config[0].get('url')
+        self.main.surfTo(docs_url)
+
 
 if __name__ == '__main__':
     import a2app

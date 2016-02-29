@@ -393,8 +393,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>524</height>
+             <width>500</width>
+             <height>561</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -482,7 +482,7 @@
      <x>0</x>
      <y>0</y>
      <width>925</width>
-     <height>38</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -512,6 +512,13 @@
     <addaction name="actionDev_settings"/>
     <addaction name="actionExplore_to_a2_dir"/>
    </widget>
+   <widget class="QMenu" name="menuModule">
+    <property name="title">
+     <string>Main</string>
+    </property>
+    <addaction name="actionA2_settings"/>
+   </widget>
+   <addaction name="menuModule"/>
    <addaction name="menuDev"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -558,6 +565,11 @@
   <action name="actionNew_module">
    <property name="text">
     <string>New Module</string>
+   </property>
+  </action>
+  <action name="actionA2_settings">
+   <property name="text">
+    <string>a2 Settings</string>
    </property>
   </action>
  </widget>

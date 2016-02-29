@@ -232,41 +232,44 @@ class A2Window(QtGui.QMainWindow):
         On change they trigger writing to the db, collect all include info
         and restart a2.
         """
+        self.controls = []
+        
         if self.mod is None:
+            self.controls.append(a2ctrl.a2settings.A2Settings())
             config = [{'typ': 'nfo',
                        'description': 'Hello user! Welcome to a2! This is a template '
                        'introduction Text. So far there is not much to say. I just '
                        'wanted this to fill up more than one line properly. Voila!',
                        'author': '',
                        'version': 'v0.1'}]
-        elif len(self.selectedMod) > 1:
-            config = [{'typ': 'nfo',
-                       'description': 'Multiple modules selected. Here goes some '
-                                      'useful info in the future...',
-                       'author': '',
-                       'version': ''}]
         else:
-            config = self.mod.config
-        
-        self.tempConfig = None
+            if len(self.selectedMod) > 1:
+                config = [{'typ': 'nfo',
+                           'description': 'Multiple modules selected. Here goes some '
+                                          'useful info in the future...',
+                           'author': '',
+                           'version': ''}]
+            else:
+                config = self.mod.config
 
-        author = ''
-        version = ''
-        if len(config):
-            if config[0].get('typ') != 'nfo':
-                log.error('First element of config is not typ nfo! %s' % self.mod.name)
-            author = config[0].get('author') or ''
-            version = config[0].get('version') or ''
-        self.ui.modAuthor.setText(author)
-        self.ui.modVersion.setText(version)
-        self.controls = []
-        
-        if config == []:
-            self.controls.append(QtGui.QLabel('config.json currently empty. '
-                                              'imagine awesome layout here ...'))
-        else:
-            for cfg in config:
-                self.controls.append(a2ctrl.draw(cfg, self.mod))
+            self.tempConfig = None
+
+            author = ''
+            version = ''
+            if len(config):
+                if config[0].get('typ') != 'nfo':
+                    log.error('First element of config is not typ nfo! %s' % self.mod.name)
+                author = config[0].get('author') or ''
+                version = config[0].get('version') or ''
+            self.ui.modAuthor.setText(author)
+            self.ui.modVersion.setText(version)
+            
+            if config == []:
+                self.controls.append(QtGui.QLabel('config.json currently empty. '
+                                                  'imagine awesome layout here ...'))
+            else:
+                for cfg in config:
+                    self.controls.append(a2ctrl.draw(cfg, self.mod))
         
         self.toggleEdit(False)
         self.drawUI()
@@ -354,15 +357,12 @@ class A2Window(QtGui.QMainWindow):
     
     def modInfo(self):
         """
-        TODO: this needs to be part of Mod obj
+        Open help of the selected module or a2 help
         """
         if len(self.selectedMod) != 1:
             self.surfTo(self.urls.help)
-            return
-        log.debug('calling info on: %s ...' % self.selectedMod[0])
-        url = self.mod.config[0].get('url')
-        if url:
-            self.surfTo(url)
+        else:
+            self.mod.help()
     
     def settingsChanged(self):
         # kill old subprocesses
@@ -544,7 +544,8 @@ class A2Window(QtGui.QMainWindow):
             self.ui.splitter.setSizes(winprefs['splitter'])
 
     def surfTo(self, url):
-        webbrowser.get().open(url)
+        if url:
+            webbrowser.get().open(url)
 
     def translateHotkey(self, displayString):
         """
