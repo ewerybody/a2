@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Tue Mar  1 00:00:44 2016
+# Created: Tue Mar  1 00:50:51 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
         a2settings.setEnabled(False)
-        a2settings.resize(517, 557)
+        a2settings.resize(692, 603)
         self.formLayout = QtGui.QFormLayout(a2settings)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
@@ -79,7 +79,13 @@ class Ui_a2settings(object):
         self.formLayout_3.setWidget(2, QtGui.QFormLayout.FieldRole, self.lineEdit_4)
         self.checkBox_4 = QtGui.QCheckBox(self.groupBox)
         self.checkBox_4.setObjectName("checkBox_4")
-        self.formLayout_3.setWidget(3, QtGui.QFormLayout.FieldRole, self.checkBox_4)
+        self.formLayout_3.setWidget(4, QtGui.QFormLayout.FieldRole, self.checkBox_4)
+        self.label_8 = QtGui.QLabel(self.groupBox)
+        self.label_8.setObjectName("label_8")
+        self.formLayout_3.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_8)
+        self.lineEdit_7 = QtGui.QLineEdit(self.groupBox)
+        self.lineEdit_7.setObjectName("lineEdit_7")
+        self.formLayout_3.setWidget(3, QtGui.QFormLayout.FieldRole, self.lineEdit_7)
         self.formLayout.setWidget(8, QtGui.QFormLayout.SpanningRole, self.groupBox)
         self.checkBox_3 = QtGui.QCheckBox(a2settings)
         self.checkBox_3.setObjectName("checkBox_3")
@@ -108,6 +114,7 @@ class Ui_a2settings(object):
         self.label_6.setText(QtGui.QApplication.translate("a2settings", "Author Homepage:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Code Editor:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_4.setText(QtGui.QApplication.translate("a2settings", "LogLevel:DEBUG", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_8.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Executable:", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_3.setText(QtGui.QApplication.translate("a2settings", "Enable a2 Dev mode", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("a2settings", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
 

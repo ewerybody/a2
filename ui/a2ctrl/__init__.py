@@ -61,7 +61,7 @@ UI_FILE_SUFFIX = '_ui'
 def adjustSizes(app):
     desk = app.desktop()
     dpi = desk.physicalDpiX()
-    print('dpi: %s' % dpi)
+    #print('dpi: %s' % dpi)
     if dpi >= 144:
         global labelW, lenM, lenL, fontL, fontXL, uiScale
         lenM *= 1.5

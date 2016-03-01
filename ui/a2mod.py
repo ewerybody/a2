@@ -72,8 +72,10 @@ class Mod(object):
         """
         data = {'includes': [], 'hotkeys': {}, 'variables': {}}
         data = self.loopCfg(self.config[1:], data)
+                
         for typ in ['includes', 'hotkeys', 'variables']:
             self.db.set(typ, data[typ], self.name)
+                
         if mainChange and self.enabled:
             self.main.settingsChanged()
 
@@ -109,7 +111,6 @@ class Mod(object):
                     if not getCfgValue(cfg, userCfg, 'enabled'):
                         continue
                     childList = cfg.get('children', [])
-                    print('childList: %s' % childList)
                     data = self.loopCfg(childList, data)
         return data
 

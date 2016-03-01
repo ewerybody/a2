@@ -27,6 +27,7 @@ class Draw(QtGui.QWidget):
         self.label = QtGui.QLabel(self.cfg.get('label', ''), self)
         self.valueCtrl = QtGui.QLineEdit(getCfgValue(self.cfg, userCfg, 'value') or '')
         self.valueCtrl.returnPressed.connect(self.check)
+        self.valueCtrl.editingFinished.connect(self.check)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.valueCtrl)
         #self.checkbox.setWordWrap(True)
@@ -37,6 +38,7 @@ class Draw(QtGui.QWidget):
         if value is None:
             value = self.valueCtrl.text()
         self.mod.setUserCfg(self.cfg, 'value', value)
+        print('change...')
         self.mod.change(True)
 
 

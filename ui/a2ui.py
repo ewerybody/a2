@@ -372,7 +372,6 @@ class A2Window(QtGui.QMainWindow):
         threading.Thread(target=self.killA2process).start()
         
         self.fetchModules()
-        self.drawModList()
         
         editDisclaimer = ("; a2 %s.ahk - Don't bother editing! - "
                           "File is generated automatically!")
@@ -445,12 +444,24 @@ class A2Window(QtGui.QMainWindow):
             fobj.write(editDisclaimer % 'init' + '\n')
         
         threading.Thread(target=self.restartA2).start()
+        
+        self.drawModList()
     
     def restartA2(self):
         """ started in a thread, takes a little break before calling the script again """
-        time.sleep(0.2)
-        proc = subprocess.Popen([self.ahkexe, self.a2ahk], shell=True, cwd=self.a2dir)
-        self.procestemp.append(proc)
+        #print('restartA2...')
+        time.sleep(0.3)
+        #print('restartA2 slept...')
+        #proc = subprocess.Popen([self.ahkexe, self.a2ahk], shell=False, cwd=self.a2dir)
+        #subprocess.Popen([self.ahkexe, self.a2ahk], shell=False, cwd=self.a2dir)
+        #subprocess.Popen([self.ahkexe, self.a2ahk], shell=False, cwd=self.a2dir)
+        cmd = '"%s" "%s"' % (self.ahkexe, self.a2ahk)
+        #pid = subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir).pid
+        pid = subprocess.Popen(cmd, cwd=self.a2dir).pid
+        #print('pid: %s' % pid)
+        #print('proc: %s' % proc)
+        #self.procestemp.append(proc)
+        #print('restartA2 done')
     
     def fetchModules(self):
         moddirs = os.listdir(self.a2moddir)
@@ -601,16 +612,20 @@ class A2Window(QtGui.QMainWindow):
         t1 = time.time()
         wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
         #wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE)
-        self.procestemp.append(wmicproc)
+        wmicproc = subprocess.Popen(wmicall, shell=False, stdout=subprocess.PIPE)
+        wmicproc.wait()
+        #self.procestemp.append(wmicproc)
         wmicout = str(wmicproc.communicate()[0])
+        wmicproc.kill()
         wmicout = wmicout.split('\\r\\r\\n')
         for line in wmicout[1:-1]:
             if 'autohotkey.exe' in line.lower():
                 cmd, pid = line.rsplit(maxsplit=1)
                 if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                    wmicproc = subprocess.Popen('taskkill /pid %s' % pid, shell=True, stdout=subprocess.PIPE)
-                    self.procestemp.append(wmicproc)
+                    wmicproc = subprocess.Popen('taskkill /f /pid %s' % pid)
+                    wmicproc.wait()
+                    wmicproc.kill()
+                    #self.procestemp.append(wmicproc)
         log.debug('killA2process took: %fs' % (time.time() - t1))
 
     def killTempProcs(self):
