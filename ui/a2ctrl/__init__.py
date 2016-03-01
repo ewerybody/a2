@@ -567,15 +567,16 @@ class EditInclude(EditCtrl):
 
 
 class InputDialog(QtGui.QDialog):
-    def __init__(self, title, main, okFunc, checkFunk, text='', msg='', size=None, *args):
-        super(InputDialog, self).__init__(main)
+    def __init__(self, parent, title, okFunc=None, checkFunk=None,
+                 text='', msg='', size=None, *args):
+        super(InputDialog, self).__init__(parent)
         self.ui = inputDialog_ui.Ui_InputDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.okFunc = okFunc
         self.checkFunk = checkFunk
         self.setWindowTitle(title)
-        self.main = main
+        self.output = None
 
         if self.checkFunk is not None:
             self.ui.textField.textChanged.connect(self.check)
@@ -606,9 +607,10 @@ class InputDialog(QtGui.QDialog):
                 self.ui.okButton.setToolTip(answer)
     
     def okay(self):
+        txt = self.ui.textField.text()
+        self.output = txt
+        self.close()
         if self.okFunc is not None:
-            txt = self.ui.textField.text()
-            self.close()
             self.okFunc(txt)
 
 
@@ -669,11 +671,14 @@ class BrowseScriptsMenu(QtGui.QMenu):
         newIncludeAction.triggered.connect(self.setScript)
         self.addAction(newIncludeAction)
     
-    def setScript(self, name=''):
+    def setScript(self, name='', create=False):
         if not name:
-            name = self.main.mod.createScript()
-            if not name:
-                return
+            InputDialog(self.main, 'New Script', partial(self.setScript, create=True),
+                        self.main.mod.checkCreateScript, text='awesomeScript',
+                        msg='Give a name for the new script file:', size=(400, 50))
+            return
+        if create:
+            name = self.main.mod.createScript(name)
         self.func('include', name)
 
 

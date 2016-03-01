@@ -5,9 +5,9 @@ Created on Jul 9, 2015
 '''
 import os
 import json
+import a2ctrl
 import logging
 from PySide import QtGui
-from a2ctrl import getCfgValue
 from os.path import join, exists, splitext
 
 logging.basicConfig()
@@ -88,12 +88,12 @@ class Mod(object):
             elif 'name' in cfg:
                 userCfg = self.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
-                    if not getCfgValue(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
                         continue
                     
-                    key = getCfgValue(cfg, userCfg, 'key')
-                    scope = getCfgValue(cfg, userCfg, 'scope')
-                    scopeMode = getCfgValue(cfg, userCfg, 'scopeMode')
+                    key = a2ctrl.getCfgValue(cfg, userCfg, 'key')
+                    scope = a2ctrl.getCfgValue(cfg, userCfg, 'scope')
+                    scopeMode = a2ctrl.getCfgValue(cfg, userCfg, 'scopeMode')
                     function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
                     if scopeMode not in data['hotkeys']:
                         data['hotkeys'][scopeMode] = []
@@ -104,11 +104,11 @@ class Mod(object):
                         data['hotkeys'][scopeMode].append([scope, key, function])
                 
                 elif cfg['typ'] in ['checkBox', 'string']:
-                    data['variables'][cfg['name']] = getCfgValue(cfg, userCfg, 'value')
+                    data['variables'][cfg['name']] = a2ctrl.getCfgValue(cfg, userCfg, 'value')
 
                 elif cfg['typ'] == 'groupBox':
                     #disablable
-                    if not getCfgValue(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
                         continue
                     childList = cfg.get('children', [])
                     data = self.loopCfg(childList, data)
@@ -120,7 +120,7 @@ class Mod(object):
 
     @property
     def files(self):
-        """ always browses the path for files"""
+        """never shale, always browses path for files"""
         return os.listdir(self.path)
 
     @property
@@ -131,22 +131,26 @@ class Mod(object):
     def enabled(self, this):
         log.error('Cannot switch enable state here')
 
-    def createScript(self):
-        scriptName, ok = QtGui.QInputDialog.getText(
-            self.main, 'new script',
-            'give a name for the new script file:', QtGui.QLineEdit.Normal,
-            'awesomeScript')
+    def createScript(self, scriptName=None):
+        if not scriptName:
+            return
+        # make sure there is lowercase .ahk as extension
+        scriptName = '%s.ahk' % splitext(scriptName)[0]
+        scriptName = scriptName.strip()
 
-        if ok and scriptName != '':
-            # make sure there is lowercase .ahk as extension
-            scriptName = '%s.ahk' % splitext(scriptName)[0]
-            log.debug('text: %s' % scriptName)
-            with open(join(self.path, scriptName), 'w') as fObj:
-                content = '; %s - %s\n' % (self.name, scriptName)
-                content += '; author: %s\n' % self.main.getAuthor()
-                content += '; created: %s\n\n' % self.main.getDate()
-                fObj.write(content)
+        with open(join(self.path, scriptName), 'w') as fObj:
+            content = '; %s - %s\n' % (self.name, scriptName)
+            content += '; author: %s\n' % self.main.getAuthor()
+            content += '; created: %s\n\n' % self.main.getDate()
+            fObj.write(content)
         return scriptName
+
+    def checkCreateScript(self, name):
+        if name.strip() == '':
+            return 'Script name cannot be empty!'
+        if splitext(name.lower())[0] in [splitext(s)[0].lower() for s in self.scripts]:
+            return 'Module has already a script named "%s"!' % name
+        return True
 
     def setUserCfg(self, subCfg, attrName, setValue):
         """

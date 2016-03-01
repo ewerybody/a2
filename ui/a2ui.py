@@ -663,7 +663,7 @@ class A2Window(QtGui.QMainWindow):
         return self.hotkeys
 
     def newModule(self):
-        a2ctrl.InputDialog('New Module', self, self.newModuleCreate, self.newModuleCheck,
+        a2ctrl.InputDialog(self, 'New Module', self.newModuleCreate, self.newModuleCheck,
                            msg='Name the new module:', text='newModule')
 
     def newModuleCheck(self, name):
