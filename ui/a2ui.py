@@ -445,7 +445,7 @@ class A2Window(QtGui.QMainWindow):
         
         thread = RestartThread(self)
         thread.start()
-        
+
         self.drawModList()
     
     def fetchModules(self):
