@@ -33,7 +33,6 @@ class Draw(QtGui.QWidget):
         self.setLayout(self.layout)
         
     def check(self, state):
-        #state = self.checkbox.isChecked()
         self.mod.setUserCfg(self.cfg, 'value', state)
         self.mod.change(True)
 

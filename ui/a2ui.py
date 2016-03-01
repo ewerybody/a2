@@ -443,25 +443,10 @@ class A2Window(QtGui.QMainWindow):
         with open(join(self.a2setdir, 'init.ahk'), 'w') as fobj:
             fobj.write(editDisclaimer % 'init' + '\n')
         
-        threading.Thread(target=self.restartA2).start()
+        thread = RestartThread(self)
+        thread.start()
         
         self.drawModList()
-    
-    def restartA2(self):
-        """ started in a thread, takes a little break before calling the script again """
-        #print('restartA2...')
-        time.sleep(0.3)
-        #print('restartA2 slept...')
-        #proc = subprocess.Popen([self.ahkexe, self.a2ahk], shell=False, cwd=self.a2dir)
-        #subprocess.Popen([self.ahkexe, self.a2ahk], shell=False, cwd=self.a2dir)
-        #subprocess.Popen([self.ahkexe, self.a2ahk], shell=False, cwd=self.a2dir)
-        cmd = '"%s" "%s"' % (self.ahkexe, self.a2ahk)
-        #pid = subprocess.Popen([self.ahkexe, self.a2ahk], cwd=self.a2dir).pid
-        pid = subprocess.Popen(cmd, cwd=self.a2dir).pid
-        #print('pid: %s' % pid)
-        #print('proc: %s' % proc)
-        #self.procestemp.append(proc)
-        #print('restartA2 done')
     
     def fetchModules(self):
         moddirs = os.listdir(self.a2moddir)
@@ -678,9 +663,8 @@ class A2Window(QtGui.QMainWindow):
         return self.hotkeys
 
     def newModule(self):
-        input = a2ctrl.InputDialog('New Module', self, self.newModuleCreate, self.newModuleCheck,
-                                   msg='Name the new module:', text='newModule')
-        input.show()
+        a2ctrl.InputDialog('New Module', self, self.newModuleCreate, self.newModuleCheck,
+                           msg='Name the new module:', text='newModule')
 
     def newModuleCheck(self, name):
         """
@@ -709,6 +693,14 @@ class A2Window(QtGui.QMainWindow):
         self.show()
         self.activateWindow()
         #self.setFocus()
+
+
+class RestartThread(QtCore.QThread):
+    def __init__(self, parent):
+        super(RestartThread, self).__init__(parent)
+        self.msleep(300)
+        ahkProcess = QtCore.QProcess()
+        ahkProcess.startDetached(parent.ahkexe, [parent.a2ahk], parent.a2dir)
 
 
 if __name__ == '__main__':

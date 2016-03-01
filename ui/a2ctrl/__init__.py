@@ -567,7 +567,7 @@ class EditInclude(EditCtrl):
 
 
 class InputDialog(QtGui.QDialog):
-    def __init__(self, title, main, okFunc, checkFunk, text='', msg='', *args):
+    def __init__(self, title, main, okFunc, checkFunk, text='', msg='', size=None, *args):
         super(InputDialog, self).__init__(main)
         self.ui = inputDialog_ui.Ui_InputDialog()
         self.ui.setupUi(self)
@@ -589,6 +589,11 @@ class InputDialog(QtGui.QDialog):
         self.ui.textField.setFont(fontL)
         self.ui.textField.setText(text)
         self.ui.textField.setFocus()
+        
+        if size:
+            self.resize(size[0], size[1])
+            
+        self.show()
 
     def check(self, name):
         if self.checkFunk is not None:
@@ -603,8 +608,8 @@ class InputDialog(QtGui.QDialog):
     def okay(self):
         if self.okFunc is not None:
             txt = self.ui.textField.text()
-            self.okFunc(txt)
             self.close()
+            self.okFunc(txt)
 
 
 class Popup(QtGui.QWidget):

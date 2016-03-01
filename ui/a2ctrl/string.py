@@ -19,26 +19,32 @@ class Draw(QtGui.QWidget):
         super(Draw, self).__init__()
         self.cfg = cfg
         self.mod = mod
+        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
+        self.value = getCfgValue(self.cfg, userCfg, 'value') or ''
         self._setupUi()
 
     def _setupUi(self):
-        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.layout = QtGui.QHBoxLayout(self)
-        self.label = QtGui.QLabel(self.cfg.get('label', ''), self)
-        self.valueCtrl = QtGui.QLineEdit(getCfgValue(self.cfg, userCfg, 'value') or '')
-        self.valueCtrl.returnPressed.connect(self.check)
-        self.valueCtrl.editingFinished.connect(self.check)
+        self.labelText = self.cfg.get('label', '')
+        self.label = QtGui.QLabel(self.labelText, self)
+        #self.valueCtrl = QtGui.QLineEdit(getCfgValue(self.cfg, userCfg, 'value') or '')
+        self.valueCtrl = QtGui.QPushButton(self.value)
+        self.valueCtrl.clicked.connect(self.stringDialog)
+        #self.valueCtrl.returnPressed.connect(self.check)
+        #self.valueCtrl.editingFinished.connect(self.check)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.valueCtrl)
-        #self.checkbox.setWordWrap(True)
-        #self.checkbox.setMinimumHeight(lenM)
         self.setLayout(self.layout)
-        
+    
+    def stringDialog(self):
+        a2ctrl.InputDialog('Edit String', self, self.check, None, msg=self.labelText,
+                           text=self.value, size=(400, 50))
+    
     def check(self, value=None):
-        if value is None:
-            value = self.valueCtrl.text()
+        #if value is None:
+        #    value = self.valueCtrl.text()
+        self.value = value
         self.mod.setUserCfg(self.cfg, 'value', value)
-        print('change...')
         self.mod.change(True)
 
 
