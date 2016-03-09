@@ -30,13 +30,14 @@ class Draw(QtGui.QWidget):
         self.labelText = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.labelText, self)
         self.valueCtrl = QtGui.QLineEdit(getCfgValue(self.cfg, self.userCfg, 'value') or '')
-        self.valueCtrl.returnPressed.connect(self.check)
-        self.valueCtrl.leaveEvent = self.lineLeaveEvent
+        #self.valueCtrl.returnPressed.connect(self.check)
+        self.valueCtrl.editingFinished.connect(self.lineLeaveEvent)
+        #self.valueCtrl.leaveEvent = self.lineLeaveEvent
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.valueCtrl)
         self.setLayout(self.layout)
 
-    def lineLeaveEvent(self, event):
+    def lineLeaveEvent(self, event=None):
         QtCore.QTimer().singleShot(150, self.check)
     
     def check(self, value=None):
