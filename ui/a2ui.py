@@ -2,7 +2,6 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
-import sys
 import time
 import logging
 import threading
@@ -11,6 +10,7 @@ import webbrowser
 
 import ahk
 import a2mod
+import a2init
 import a2ctrl
 import a2dblib
 import a2design_ui
@@ -24,7 +24,7 @@ from os.path import exists, join, dirname
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk]
+a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk, a2init]
 a2ctrl.checkUiModule(a2design_ui)
 
 
@@ -72,8 +72,6 @@ class A2Window(QtGui.QMainWindow):
         log.info('initialised!')
         self.getUsedScopes()
         self.getUsedHotkeys()
-        
-        self.procestemp = []
 
     def setupUi(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
@@ -123,7 +121,22 @@ class A2Window(QtGui.QMainWindow):
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settingsChanged)
 
+        self.toggle_dev_menu()
         self.setWindowIcon(QtGui.QIcon("a2.ico"))
+    
+    def toggle_dev_menu(self, state=None):
+        if state is None:
+            state = self.db.get('dev_mode') or False
+            # None happens only on startup, if True we dont have to re-add
+            if state is True:
+                return
+
+        if state:
+            self.ui.menubar.insertAction(self.ui.menuHelp.menuAction(),
+                                         self.ui.menuDev.menuAction())
+        else:
+            self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
+    
     
     def drawModList(self, select=None):
         if select is None:
@@ -235,7 +248,7 @@ class A2Window(QtGui.QMainWindow):
         self.controls = []
         
         if self.mod is None:
-            self.controls.append(a2ctrl.a2settings.A2Settings())
+            self.controls.append(a2ctrl.a2settings.A2Settings(self))
             config = [{'typ': 'nfo',
                        'description': 'Hello user! Welcome to a2! This is a template '
                        'introduction Text. So far there is not much to say. I just '
@@ -365,11 +378,8 @@ class A2Window(QtGui.QMainWindow):
             self.mod.help()
     
     def settingsChanged(self):
-        # kill old subprocesses
-        self.killTempProcs()
-        
         # kill old a2 process
-        threading.Thread(target=self.killA2process).start()
+        threading.Thread(target=ahk.killA2process).start()
         
         self.fetchModules()
         
@@ -404,11 +414,11 @@ class A2Window(QtGui.QMainWindow):
                 for hk in hotkeys.get(typ) or []:
                     # type 0 is global, append under the #IfWinActive label
                     if typ == '0':
-                        hkstring = self.translateHotkey(hk[0]) + '::' + hk[1]
+                        hkstring = ahk.translateHotkey(hk[0]) + '::' + hk[1]
                         hotkeysAhk[hkmode['1']].append(hkstring)
                     # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
                     else:
-                        hkstring = self.translateHotkey(hk[1]) + '::' + hk[2]
+                        hkstring = ahk.translateHotkey(hk[1]) + '::' + hk[2]
                         for scopeStr in hk[0]:
                             scopeKey = '%s %s' % (hkmode[typ], scopeStr)
                             if scopeKey not in hotkeysAhk:
@@ -498,7 +508,6 @@ class A2Window(QtGui.QMainWindow):
         if self.editing:
             self.drawMod()
         else:
-            self.killTempProcs()
             self.close()
     
     def exploreMod(self):
@@ -543,21 +552,6 @@ class A2Window(QtGui.QMainWindow):
         if url:
             webbrowser.get().open(url)
 
-    def translateHotkey(self, displayString):
-        """
-        Creates AHK readable string out of a human readable like:
-        Win+Ctrl+M > #^m
-        """
-        tilde = ''
-        if displayString.startswith('~'):
-            tilde = '~'
-            displayString = displayString[1:]
-        parts = displayString.split('+')
-        parts = [p.strip().lower() for p in parts]
-        modifier = parts[:-1]
-        ahkKey = tilde + ''.join([ahk.modifiers[m] for m in modifier]) + parts[-1]
-        return ahkKey
-
     def dbCleanup(self):
         for table in self.db.tables():
             if table == 'a2':
@@ -584,39 +578,6 @@ class A2Window(QtGui.QMainWindow):
 
             if include is not None:
                 self.db.pop('include', table)
-
-    def killA2process(self):
-        """
-        finds and kills Autohotkey processes that run a2.ahk.
-        takes a moment. so start it in a thread!
-        TODO: make sure restart happens after this finishes?
-        
-        there is also:
-        ctypes.windll.kernel32.TerminateProcess(handle, 0)
-        """
-        t1 = time.time()
-        wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
-        #wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        wmicproc = subprocess.Popen(wmicall, shell=False, stdout=subprocess.PIPE)
-        wmicproc.wait()
-        #self.procestemp.append(wmicproc)
-        wmicout = str(wmicproc.communicate()[0])
-        wmicproc.kill()
-        wmicout = wmicout.split('\\r\\r\\n')
-        for line in wmicout[1:-1]:
-            if 'autohotkey.exe' in line.lower():
-                cmd, pid = line.rsplit(maxsplit=1)
-                if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                    wmicproc = subprocess.Popen('taskkill /f /pid %s' % pid)
-                    wmicproc.wait()
-                    wmicproc.kill()
-                    #self.procestemp.append(wmicproc)
-        log.debug('killA2process took: %fs' % (time.time() - t1))
-
-    def killTempProcs(self):
-        for process in self.procestemp:
-            process.kill()
-        self.procestemp.clear()
 
     def testOutOfScreen(self):
         h = self.app.desktop().height()

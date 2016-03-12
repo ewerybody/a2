@@ -389,7 +389,7 @@ class ScopeDialog(QtGui.QDialog):
         self.main = main
         self.edit = text != ''
 
-        self.getScopeNfo()
+        self.get_scope_nfo()
         self.setupUi(x, y)
         self.setScopeText(text)
 
@@ -467,27 +467,23 @@ class ScopeDialog(QtGui.QDialog):
         ctrls = [self.ui.scopeText, self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]
         ctrls[index].setText(text)
 
-    def getScopeNfo(self):
+    def get_scope_nfo(self):
         # call AHK script to get all window classes, titles and executables
-        scrpt = join(self.main.a2libdir, 'cmds', 'getScopeNfo.ahk')
-        proc = subprocess.Popen([self.main.ahkexe, scrpt], shell=True, stdout=subprocess.PIPE)
-        scopeNfo = str(proc.communicate()[0])
-        # if ' were present in any title the quote sign will change
-        scopeNfo = scopeNfo.strip()
-        quoteChar = scopeNfo[-1]
-        # cut away first & last quote char and linebreak
-        scopeNfo = scopeNfo[scopeNfo.find(quoteChar) + 1:scopeNfo.rfind(quoteChar) - 2]
-        scopeNfo = scopeNfo.split('\\n')
+        scope_nfo = ahk.call_cmd('get_scope_nfo')
+        scope_nfo = scope_nfo.split('\\n')
+        if not scope_nfo:
+            log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)
+            return
+        
         self.titles = set()
         self.classes = set()
         self.processes = set()
-        if not scopeNfo:
-            log.error('Error getting scopeNfo!! scopeNfo: %s' % scopeNfo)
-            return
-        for i in range(0, len(scopeNfo), 3):
-            if scopeNfo[i]:
-                self.titles.add(scopeNfo[i])
-            if scopeNfo[i + 1]:
-                self.classes.add(scopeNfo[i + 1])
-            if scopeNfo[i + 2]:
-                self.processes.add(scopeNfo[i + 2])
+        num_items = len(scope_nfo)
+        num_items = num_items - (num_items % 3)
+        for i in range(0, num_items, 3):
+            if scope_nfo[i]:
+                self.titles.add(scope_nfo[i])
+            if scope_nfo[i + 1]:
+                self.classes.add(scope_nfo[i + 1])
+            if scope_nfo[i + 2]:
+                self.processes.add(scope_nfo[i + 2])

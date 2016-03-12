@@ -9,6 +9,7 @@ Created on Aug 7, 2015
 '''
 import sys
 import a2ui
+import a2init
 import logging
 import platform
 from PySide import QtGui
@@ -56,9 +57,8 @@ def main():
 
     winfo = platform.uname()
     log.info('initialised!\n  python: %s\n  windows: %s' % (sys.version, str(winfo)[31:-1]))
-    if winfo:
-        style = QtGui.QStyleFactory.create("Plastique")
-        app.setStyle(style)
+    
+    a2init.paths = a2init.Paths()
     
     # this is to set the actual taskbar icon
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')

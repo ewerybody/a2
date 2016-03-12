@@ -1,4 +1,4 @@
-﻿; getScopeNfo - returns all currently available window titles, classes and procresses in a string
+﻿; get_scope_nfo - returns all currently available window titles, classes and procresses in a string
 ; separated by linebreaks
 WinGet, ids, list
 data := ""
