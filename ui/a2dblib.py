@@ -17,9 +17,9 @@ incls = a2db.get('includes', 'a2')
 a2db.set('includes', 'a2', incls)
 a2db.rem('tempstuff', 'a2')
 """
+import json
 import sqlite3
 import logging
-import json
 
 
 logging.basicConfig()
