@@ -61,7 +61,6 @@ def killA2process():
     """
     t1 = time.time()
     wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
-    #wmicproc = subprocess.Popen(wmicall, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     wmicproc = subprocess.Popen(wmicall, shell=False, stdout=subprocess.PIPE)
     wmicproc.wait()
     wmicout = str(wmicproc.communicate()[0])
@@ -71,13 +70,16 @@ def killA2process():
         if 'autohotkey.exe' in line.lower():
             cmd, pid = line.rsplit(maxsplit=1)
             if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid)
+                taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid,
+                                                 stdout=subprocess.DEVNULL)
                 taskkill_proc.wait()
                 taskkill_proc.kill()
     log.debug('killA2process took: %fs' % (time.time() - t1))
 
 
-# http://www.autohotkey.com/docs/KeyList.htm
+"""
+http://www.autohotkey.com/docs/KeyList.htm
+"""
 modifiers = {'altgr': '<^>'}
 for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
     modifiers[_key] = _code
