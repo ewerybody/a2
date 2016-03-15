@@ -4,6 +4,7 @@ Created on Dec 28, 2015
 @author: eRiC
 '''
 import ahk
+import a2core
 import a2ctrl
 import logging
 import subprocess
@@ -20,7 +21,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class Draw(QtGui.QWidget):
+class Draw(a2ctrl.DrawCtrl):
     """
     User ui for a Hotkey control.
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
@@ -39,14 +40,11 @@ class Draw(QtGui.QWidget):
     # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
     cfg['mode'] = 'ahk'
     """
-    def __init__(self, cfg, mod):
-        super(Draw, self).__init__()
-        self.cfg = cfg
-        self.mod = mod
+    def __init__(self, main, cfg, mod):
+        super(Draw, self).__init__(main, cfg, mod)
         self._setupUi()
     
     def _setupUi(self):
-        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.ctrllayout = QtGui.QHBoxLayout(self)
         # left, top, right, bottom
         self.ctrllayout.setContentsMargins(0, 0, 0, 0)
@@ -54,13 +52,13 @@ class Draw(QtGui.QWidget):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
-            state = getCfgValue(self.cfg, userCfg, 'enabled')
+            state = getCfgValue(self.cfg, self.userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
             cbSize = 27
             self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
             self.check.setMaximumSize(QtCore.QSize(cbSize, cbSize))
             self.check.setChecked(state)
-            self.check.clicked.connect(self.hotkeyCheck)
+            self.check.clicked.connect(self.hotkey_check)
             self.labelLayout.addWidget(self.check)
         self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
@@ -72,8 +70,7 @@ class Draw(QtGui.QWidget):
         
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        #self.hotkeyButton = QtGui.QPushButton(self.data.get('key') or '')
-        self.hotkeyButton = HotKey(getCfgValue(self.cfg, userCfg, 'key'), self.hotkeyChange)
+        self.hotkeyButton = HotKey(getCfgValue(self.cfg, self.userCfg, 'key'), self.hotkey_change)
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setMinimumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
@@ -83,8 +80,6 @@ class Draw(QtGui.QWidget):
         self.hotkeyLayout.addWidget(self.hotkeyOption)
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
         
-#         self.hotkeyLayout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding,
-#                                                     QtGui.QSizePolicy.Minimum))
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
                                                         QtGui.QSizePolicy.Expanding))
@@ -92,16 +87,18 @@ class Draw(QtGui.QWidget):
         self.ctrllayout.setStretch(2, 1)
         self.setLayout(self.ctrllayout)
         
-    def hotkeyCheck(self):
+    def hotkey_check(self):
         state = self.check.isChecked()
         self.mod.setUserCfg(self.cfg, 'enabled', state)
-        self.mod.change(True)
+        self.mod.change()
+        if self.mod.enabled:
+            self.main.settings_changed('hotkeys')
     
-    def hotkeyChange(self, newKey):
-        log.info('cfg key: %s' % self.cfg['key'])
-        log.info('newKey: %s' % newKey)
+    def hotkey_change(self, newKey):
         self.mod.setUserCfg(self.cfg, 'key', newKey)
-        self.mod.change(True)
+        self.mod.change()
+        if self.mod.enabled:
+            self.main.settings_changed('hotkeys')
 
 
 class Edit(a2ctrl.EditCtrl):
@@ -128,14 +125,12 @@ class Edit(a2ctrl.EditCtrl):
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Hotkey'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        self.cfg = cfg
         defaults = [('key', 'Win+G'), ('mode', 'ahk')]
         for key, value in defaults:
             if key not in self.cfg:
                 self.cfg[key] = value
-        
-        self.main = main
-        self.helpUrl = self.main.urls.helpHotkey
+
+        self.helpUrl = a2core.a2.urls.helpHotkey
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
 
@@ -143,7 +138,7 @@ class Edit(a2ctrl.EditCtrl):
                       self.ui.functionLabel, self.ui.scopeLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
         
-        self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkeyChange)
+        self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkey_change)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
@@ -208,7 +203,7 @@ class Edit(a2ctrl.EditCtrl):
         subprocess.Popen(['explorer.exe', text])
     
     def functionSendHelp(self):
-        self.main.surfTo(self.main.urls.ahksend)
+        a2core.surfTo(a2core.a2.urls.ahksend)
     
     def functionChanged(self, text=None):
         #text = self.ui.functionText.text()
@@ -238,8 +233,7 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.cfg_enabled.setEnabled(state)
         self.ui.cfg_enabled.setChecked(True)
     
-    def hotkeyChange(self, newKey):
-        log.info('newKey: %s' % newKey)
+    def hotkey_change(self, newKey):
         self.cfg['key'] = newKey
 
     def scopePopup(self, event, change=False):
@@ -386,6 +380,7 @@ class ScopeDialog(QtGui.QDialog):
         self.setModal(True)
         self.okFunc = okFunc
         self.setWindowTitle('setup scope')
+        self.a2 = a2core.a2
         self.main = main
         self.edit = text != ''
 
@@ -431,14 +426,14 @@ class ScopeDialog(QtGui.QDialog):
         menu = QtGui.QMenu(self)
         submenu = QtGui.QMenu(menu)
         submenu.setTitle('all in use...')
-        for scope in sorted(self.main.getUsedScopes(), key=lambda s: s.lower()):
+        for scope in sorted(self.a2.get_use(), key=lambda s: s.lower()):
             action = QtGui.QAction(scope, submenu, triggered=partial(self.setScopeText, scope))
             submenu.addAction(action)
         menu.addMenu(submenu)
-        for title, url in [('Help on Scope Setup', self.main.urls.helpScopes),
-                           ('Help on AHK WinActive', self.main.urls.ahkWinActive),
-                           ('Help on AHK WinTitle', self.main.urls.ahkWinTitle)]:
-            action = QtGui.QAction(title, menu, triggered=partial(self.main.surfTo, url))
+        for title, url in [('Help on Scope Setup', self.a2.urls.helpScopes),
+                           ('Help on AHK WinActive', self.a2.urls.ahkWinActive),
+                           ('Help on AHK WinTitle', self.a2.urls.ahkWinTitle)]:
+            action = QtGui.QAction(title, menu, triggered=partial(a2core.surfTo, url))
             menu.addAction(action)
         self.ui.helpButton.setMenu(menu)
 

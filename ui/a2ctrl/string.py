@@ -3,12 +3,11 @@ Created on Feb 28, 2016
 
 @author: eRiC
 '''
+import a2core
 import a2ctrl
 import logging
-import threading
 from PySide import QtGui, QtCore
 from a2ctrl import string_edit_ui, getCfgValue
-import time
 
 
 logging.basicConfig()
@@ -16,12 +15,9 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class Draw(QtGui.QWidget):
-    def __init__(self, cfg, mod):
-        super(Draw, self).__init__()
-        self.cfg = cfg
-        self.mod = mod
-        self.userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
+class Draw(a2ctrl.DrawCtrl):
+    def __init__(self, main, cfg, mod):
+        super(Draw, self).__init__(main, cfg, mod)
         self.value = getCfgValue(self.cfg, self.userCfg, 'value') or ''
         self._setupUi()
 
@@ -51,7 +47,9 @@ class Draw(QtGui.QWidget):
         self.value = value
         self.mod.setUserCfg(self.cfg, 'value', value)
         self.mod.change(True)
-        
+        if self.mod.enabled:
+            self.main.settings_changed('variables')
+
 
 class Edit(a2ctrl.EditCtrl):
     """

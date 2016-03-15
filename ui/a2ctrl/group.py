@@ -3,9 +3,10 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
+import a2core
 import a2ctrl
 import logging
-from PySide import QtCore, QtGui
+from PySide import QtGui
 from a2ctrl import group_edit_ui
 
 
@@ -14,31 +15,30 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class Draw(QtGui.QGroupBox):
+class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
     """
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.
     """
-    def __init__(self, cfg, mod):
+    def __init__(self, main, cfg, mod):
         super(Draw, self).__init__()
-        self.cfg = cfg
-        self.mod = mod
-        
-        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
+        a2ctrl.DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
-        self.setChecked(a2ctrl.getCfgValue(self.cfg, userCfg, 'enabled'))
+        self.setChecked(a2ctrl.getCfgValue(self.cfg, self.userCfg, 'enabled'))
         self.clicked[bool].connect(self.check)
 
         self.layout = QtGui.QVBoxLayout(self)
         for child in self.cfg.get('children', []):
-            ctrl = a2ctrl.draw(child, self.mod)
+            ctrl = a2ctrl.draw(self.main, child, self.mod)
             if ctrl:
                 self.layout.addWidget(ctrl)
 
     def check(self, state):
         self.mod.setUserCfg(self.cfg, 'enabled', state)
-        self.mod.change(True)
+        self.mod.change()
+        if self.mod.enabled:
+            self.main.settings_changed()
 
 
 class Edit(a2ctrl.EditCtrl):

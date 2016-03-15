@@ -5,9 +5,9 @@ Created on Jul 9, 2015
 '''
 import os
 import json
+import a2core
 import a2ctrl
 import logging
-from PySide import QtGui
 from os.path import join, exists, splitext
 
 logging.basicConfig()
@@ -33,15 +33,15 @@ class Mod(object):
     config is None at first and filled as soon as the mod is selected in the UI.
     If there is no configFile yet it will be emptied instead of None.
     """
-    def __init__(self, modname, main):
+    def __init__(self, modname):
         # gather files from module path in local list
         self.name = modname
-        self.path = join(main.a2moddir, modname)
+        global a2
+        a2 = a2core.a2
+        self.path = join(a2.paths.modules, modname)
         self._config = None
         self.configFile = join(self.path, 'config.json')
-        self.db = main.db
         self.ui = None
-        self.main = main
 
     @property
     def config(self):
@@ -66,18 +66,15 @@ class Mod(object):
                           '%s\nerror: %s' % (self.configFile, error))
         self._config = []
 
-    def change(self, mainChange=False):
+    def change(self):
         """
-        sets the mods own db entries
+        Sets the mods own db entries
         """
         data = {'includes': [], 'hotkeys': {}, 'variables': {}}
         data = self.loopCfg(self.config[1:], data)
                 
         for typ in ['includes', 'hotkeys', 'variables']:
-            self.db.set(typ, data[typ], self.name)
-                
-        if mainChange and self.enabled:
-            self.main.settingsChanged()
+            a2.db.set(typ, data[typ], self.name)
 
     def loopCfg(self, cfgDict, data):
         for cfg in cfgDict:
@@ -86,7 +83,7 @@ class Mod(object):
                 data['includes'].append(cfg['file'])
             
             elif 'name' in cfg:
-                userCfg = self.db.get(cfg['name'], self.name)
+                userCfg = a2.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
                     if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
                         continue
@@ -125,7 +122,7 @@ class Mod(object):
 
     @property
     def enabled(self):
-        return self.name in self.db.get('enabled')
+        return self.name in a2.enabled
 
     @enabled.setter
     def enabled(self, this):
@@ -140,8 +137,8 @@ class Mod(object):
 
         with open(join(self.path, scriptName), 'w') as fObj:
             content = '; %s - %s\n' % (self.name, scriptName)
-            content += '; author: %s\n' % self.main.getAuthor()
-            content += '; created: %s\n\n' % self.main.getDate()
+            content += '; author: %s\n' % a2core.get_author()
+            content += '; created: %s\n\n' % a2core.get_date()
             fObj.write(content)
         return scriptName
 
@@ -163,7 +160,7 @@ class Mod(object):
         user sets True AND default it False:
             set to userCfg
         """
-        userCfg = self.db.get(subCfg['name'], self.name) or {}
+        userCfg = a2.db.get(subCfg['name'], self.name) or {}
         if attrName in userCfg:
             # value to set equals CURRENT value: done
             if setValue == userCfg[attrName]:
@@ -174,11 +171,11 @@ class Mod(object):
         # value to set equals CONFIG value: done. otherwise: save it:
         if setValue != subCfg[attrName]:
             userCfg[attrName] = setValue
-        self.db.set(subCfg['name'], userCfg, self.name)
+        a2.db.set(subCfg['name'], userCfg, self.name)
 
     def help(self):
         docs_url = self.config[0].get('url')
-        self.main.surfTo(docs_url)
+        a2core.surfTo(docs_url)
 
 
 if __name__ == '__main__':

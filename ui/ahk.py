@@ -5,10 +5,10 @@ Created on Aug 7, 2015
 
 @author: eRiC
 '''
-import a2init
+import a2core
 import logging
 import subprocess
-from time import time
+import time
 from os.path import join
 
 logging.basicConfig()
@@ -36,8 +36,8 @@ def call_cmd(cmd_name, *args):
     if not cmd_name.endswith('.ahk'):
         cmd_name += '.ahk'
     
-    cmd_path = join(a2init.paths.lib, 'cmds', cmd_name)
-    args = [a2init.paths.autohotkey, cmd_path] + [str(a) for a in args]
+    cmd_path = join(a2core.a2.paths.lib, 'cmds', cmd_name)
+    args = [a2core.a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
     cmd_result = str(proc.communicate()[0])
     proc.kill()

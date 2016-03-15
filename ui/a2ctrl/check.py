@@ -3,6 +3,7 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
+import a2core
 import a2ctrl
 import logging
 from PySide import QtGui
@@ -14,18 +15,15 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-class Draw(QtGui.QWidget):
-    def __init__(self, cfg, mod):
-        super(Draw, self).__init__()
-        self.cfg = cfg
-        self.mod = mod
+class Draw(a2ctrl.DrawCtrl):
+    def __init__(self, main, cfg, mod):
+        super(Draw, self).__init__(main, cfg, mod)
         self._setupUi()
 
     def _setupUi(self):
-        userCfg = self.mod.db.get(self.cfg['name'], self.mod.name)
         self.layout = QtGui.QVBoxLayout(self)
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
-        self.checkbox.setChecked(getCfgValue(self.cfg, userCfg, 'value') or False)
+        self.checkbox.setChecked(getCfgValue(self.cfg, self.userCfg, 'value') or False)
         self.checkbox.clicked[bool].connect(self.check)
         #self.checkbox.setWordWrap(True)
         self.layout.addWidget(self.checkbox)
@@ -35,6 +33,8 @@ class Draw(QtGui.QWidget):
     def check(self, state):
         self.mod.setUserCfg(self.cfg, 'value', state)
         self.mod.change(True)
+        if self.mod.enabled:
+            self.main.settings_changed('variables')
 
 
 class Edit(a2ctrl.EditCtrl):
@@ -46,8 +46,7 @@ class Edit(a2ctrl.EditCtrl):
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Checkbox'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        self.helpUrl = self.main.urls.helpCheckbox
-        self.cfg = cfg
+        self.helpUrl = self.a2.urls.helpCheckbox
         
         self.ui = checkbox_edit_ui.Ui_checkbox_edit()
         self.ui.setupUi(self.mainWidget)

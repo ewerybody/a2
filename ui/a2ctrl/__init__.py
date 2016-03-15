@@ -25,6 +25,7 @@ the author, name, version, description info
 '''
 import ahk
 import time
+import a2core
 import logging
 import inspect
 import threading
@@ -39,7 +40,7 @@ from os.path import join, getmtime, dirname, basename, exists, splitext
 
 
 logging.basicConfig()
-log = logging.getLogger(__name__)
+log = logging.getLogger('a2ctrl')
 log.setLevel(logging.DEBUG)
 
 
@@ -109,22 +110,33 @@ def checkUiModule(module):
     return
 
 
-def draw(cfg, mod):
+def draw(main, cfg, mod):
     """
     mapper that returns display control objects
     according to the 'typ' of a config element
     """
     if cfg['typ'] == 'nfo':
         return DrawNfo(cfg)
-    elif cfg['typ'] == 'checkBox':
-        return a2ctrl.check.Draw(cfg, mod)
-    elif cfg['typ'] == 'hotkey':
-        return a2ctrl.hotkey.Draw(cfg, mod)
-    elif cfg['typ'] == 'groupBox':
-        return a2ctrl.group.Draw(cfg, mod)
-    elif cfg['typ'] == 'string':
-        return a2ctrl.string.Draw(cfg, mod)
+    else:
+        for typ, ctrl_class in [('checkBox', a2ctrl.check.Draw),
+                                ('hotkey', a2ctrl.hotkey.Draw),
+                                ('groupBox', a2ctrl.group.Draw),
+                                ('string', a2ctrl.string.Draw)]:
+            if cfg['typ'] == typ:
+                return ctrl_class(main, cfg, mod)
 
+
+class DrawCtrl(QtGui.QWidget):
+    def __init__(self, main, cfg, mod, _init_ctrl=True):
+        if _init_ctrl:
+            super(DrawCtrl, self).__init__()
+        self.a2 = a2core.a2
+        self.main = main
+        self.cfg = cfg
+        self.mod = mod
+        self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.name)
+
+        
 
 class DrawWelcome(QtGui.QWidget):
     'Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!'
@@ -181,7 +193,7 @@ class EditNfo(QtGui.QGroupBox):
         self.cfg['version'] = self.version.value
         self.cfg['date'] = self.date.value
         self.cfg['url'] = self.url.value
-        return self.data
+        return self.cfg
 
 
 class EditCtrl(QtGui.QGroupBox):
@@ -205,11 +217,12 @@ class EditCtrl(QtGui.QGroupBox):
     
     def __init__(self, cfg, main, parentCfg, addLayout=True):
         super(EditCtrl, self).__init__()
+        self.a2 = a2core.a2
         self.cfg = cfg
         self.main = main
         self.parentCfg = parentCfg
         self._setupUi(addLayout)
-        self.helpUrl = self.main.urls.helpEditCtrl
+        self.helpUrl = self.a2.urls.helpEditCtrl
     
     def move(self, value, *args):
         if self.parentCfg and self.parentCfg[0].get('typ', '') == 'nfo':
