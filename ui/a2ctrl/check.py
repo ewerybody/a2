@@ -32,9 +32,7 @@ class Draw(a2ctrl.DrawCtrl):
         
     def check(self, state):
         self.mod.setUserCfg(self.cfg, 'value', state)
-        self.mod.change(True)
-        if self.mod.enabled:
-            self.main.settings_changed('variables')
+        self.change('variables')
 
 
 class Edit(a2ctrl.EditCtrl):

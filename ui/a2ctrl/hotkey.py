@@ -90,15 +90,11 @@ class Draw(a2ctrl.DrawCtrl):
     def hotkey_check(self):
         state = self.check.isChecked()
         self.mod.setUserCfg(self.cfg, 'enabled', state)
-        self.mod.change()
-        if self.mod.enabled:
-            self.main.settings_changed('hotkeys')
+        self.change('hotkeys')
     
     def hotkey_change(self, newKey):
         self.mod.setUserCfg(self.cfg, 'key', newKey)
-        self.mod.change()
-        if self.mod.enabled:
-            self.main.settings_changed('hotkeys')
+        self.change('hotkeys')
 
 
 class Edit(a2ctrl.EditCtrl):
@@ -373,15 +369,14 @@ class HotKey(QtGui.QPushButton):
 
 
 class ScopeDialog(QtGui.QDialog):
-    def __init__(self, text, x, y, main, okFunc, *args):
-        super(ScopeDialog, self).__init__(main)
+    def __init__(self, text, x, y, parent, okFunc, *args):
+        super(ScopeDialog, self).__init__(parent)
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.okFunc = okFunc
         self.setWindowTitle('setup scope')
         self.a2 = a2core.a2
-        self.main = main
         self.edit = text != ''
 
         self.get_scope_nfo()
@@ -426,7 +421,7 @@ class ScopeDialog(QtGui.QDialog):
         menu = QtGui.QMenu(self)
         submenu = QtGui.QMenu(menu)
         submenu.setTitle('all in use...')
-        for scope in sorted(self.a2.get_use(), key=lambda s: s.lower()):
+        for scope in sorted(self.a2.get_used_scopes(), key=lambda s: s.lower()):
             action = QtGui.QAction(scope, submenu, triggered=partial(self.setScopeText, scope))
             submenu.addAction(action)
         menu.addMenu(submenu)

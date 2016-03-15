@@ -36,9 +36,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
 
     def check(self, state):
         self.mod.setUserCfg(self.cfg, 'enabled', state)
-        self.mod.change()
-        if self.mod.enabled:
-            self.main.settings_changed()
+        self.change()
 
 
 class Edit(a2ctrl.EditCtrl):

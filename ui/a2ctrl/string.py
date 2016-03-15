@@ -3,7 +3,6 @@ Created on Feb 28, 2016
 
 @author: eRiC
 '''
-import a2core
 import a2ctrl
 import logging
 from PySide import QtGui, QtCore
@@ -46,9 +45,7 @@ class Draw(a2ctrl.DrawCtrl):
 
         self.value = value
         self.mod.setUserCfg(self.cfg, 'value', value)
-        self.mod.change(True)
-        if self.mod.enabled:
-            self.main.settings_changed('variables')
+        self.change('variables')
 
 
 class Edit(a2ctrl.EditCtrl):

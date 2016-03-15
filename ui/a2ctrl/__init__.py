@@ -136,7 +136,11 @@ class DrawCtrl(QtGui.QWidget):
         self.mod = mod
         self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.name)
 
-        
+    def change(self, specific=None):
+        self.mod.change()
+        if self.mod.enabled:
+            self.main.settings_changed(specific)
+
 
 class DrawWelcome(QtGui.QWidget):
     'Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!'
