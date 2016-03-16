@@ -10,10 +10,8 @@ Created on Aug 7, 2015
 import sys
 import a2ui
 import a2core
-import a2dblib
 import logging
 import platform
-from PySide import QtGui
 from ctypes import windll
 from importlib import reload
 from siding import QSingleApplication
