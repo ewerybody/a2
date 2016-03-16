@@ -285,11 +285,10 @@ class A2Window(QtGui.QMainWindow):
         
         #if not mod.config: is None or mod.config is []
         if not len(self.tempConfig):
-            s = 'Because none existed before this temporary description was created for "%s". '\
-                'Change it to describe what it does with a couple of words.' % self.mod.name
             newNfo = {'typ': 'nfo',
-                      'description': s,
-                      #'display name': '%s' % mod.name,
+                      'description': 'Because none existed before this temporary description was '
+                                     'created for "%s". Change it to describe what it does with a '
+                                     'couple of words.' % self.mod.name,
                       'author': a2core.get_author(),
                       'version': '0.1',
                       'date': a2core.get_date()}
@@ -386,7 +385,6 @@ class A2Window(QtGui.QMainWindow):
     def closeEvent(self, event):
         binprefs = str(self.saveGeometry().toPercentEncoding())
         self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
-        print('self.selected_mod: %s' % self.selected_mod)
         self.a2.db.set('last_selected', self.selected_mod)
         QtGui.QMainWindow.closeEvent(self, event)
 
