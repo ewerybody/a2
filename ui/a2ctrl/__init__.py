@@ -710,7 +710,7 @@ def list_selectItems(listCtrl, text):
     lastitem = None
     for i in range(listCtrl.count()):
         this = listCtrl.item(i)
-        if this.text() in text:
+        if text is not None and this.text() in text:
             this.setSelected(True)
             lastitem = this
         else:
