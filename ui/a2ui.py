@@ -17,7 +17,6 @@ from os.path import join
 from copy import deepcopy
 from functools import partial
 from PySide import QtGui, QtCore
-from pprint import pprint
 
 
 logging.basicConfig()
@@ -43,7 +42,7 @@ class A2Window(QtGui.QMainWindow):
         self.editing = False
         self.edit_clipboard = []
         self.tempConfig = None
-        self.selectedMod = []
+        self.selected_mod = []
         self.toggleEdit(False)
         self.scopes = {}
         
@@ -79,15 +78,17 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         self.ui.actionNew_module.triggered.connect(self.newModule)
+        self.ui.actionA2_settings.triggered.connect(partial(self.select_mod, None))
+        self.ui.actionDev_settings.triggered.connect(partial(self.select_mod, None))
         
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
         
         self.ui.editOKButton.released.connect(self.editSubmit)
         self.ui.editCancelButton.released.connect(self.drawMod)
         self.ui.modList.itemSelectionChanged.connect(self.mod_select)
-                
+
         self.restoreA2ui()
-        
+
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.escape)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
@@ -100,7 +101,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.toggle_dev_menu()
         self.setWindowIcon(QtGui.QIcon("a2.ico"))
-    
+
     def toggle_dev_menu(self, state=None):
         if state is None:
             state = self.a2.db.get('dev_mode') or False
@@ -113,8 +114,7 @@ class A2Window(QtGui.QMainWindow):
                                          self.ui.menuDev.menuAction())
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
-    
-    
+
     def draw_mod_list(self, select=None):
         self.__drawing_mod_list = True
         if select is None:
@@ -124,17 +124,16 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modList.insertItems(0, allMods)
         
         if select:
-            self.selectMod(select)
-            
+            self.select_mod(select)
         self.__drawing_mod_list = False
-    
-    def selectMod(self, modName):
+
+    def select_mod(self, modName):
         """
         to select 1 or more given modulenames in the list
         and update Ui accordingly
         """
         a2ctrl.list_selectItems(self.ui.modList, modName)
-    
+
     def mod_select(self, force=False):
         """
         updates the mod view to the right of the UI
@@ -150,13 +149,13 @@ class A2Window(QtGui.QMainWindow):
         if not numsel:
             self.ui.modCheck.setVisible(False)
             self.mod = None
-            self.selectedMod = []
+            self.selected_mod = []
             self.ui.modName.setText('a2')
         
         elif numsel == 1:
             name = sel[0].text()
             # break if sel == previous sel
-            if name in self.selectedMod and len(self.selectedMod) == 1 and force is False:
+            if name in self.selected_mod and len(self.selected_mod) == 1 and force is False:
                 return
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText(name)
@@ -166,11 +165,11 @@ class A2Window(QtGui.QMainWindow):
             self.ui.modCheck.setChecked(enabled)
             
             self.mod = self.a2.modules[name]
-            self.selectedMod = [name]
+            self.selected_mod = [name]
         
         else:
             names = [s.text() for s in sel]
-            self.selectedMod = names
+            self.selected_mod = names
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText('%i modules' % numsel)
             numenabled = len([n for n in names if n in self.a2.enabled])
@@ -238,7 +237,7 @@ class A2Window(QtGui.QMainWindow):
                        'author': '',
                        'version': 'v0.1'}]
         else:
-            if len(self.selectedMod) > 1:
+            if len(self.selected_mod) > 1:
                 config = [{'typ': 'nfo',
                            'description': 'Multiple modules selected. Here goes some '
                                           'useful info in the future...',
@@ -277,7 +276,7 @@ class A2Window(QtGui.QMainWindow):
         On Cancel the in-edit config is discarded and drawMod called which draws the
         UI unchanged.
         """
-        if len(self.selectedMod) != 1 or self.selectedMod[0] == 'a2':
+        if len(self.selected_mod) != 1 or self.selected_mod[0] == 'a2':
             return
 
         self.controls = []
@@ -334,12 +333,12 @@ class A2Window(QtGui.QMainWindow):
         enabled_mods = self.a2.enabled
         checked = self.ui.modCheck.isChecked()
         if self.ui.modCheck.isTristate() or not checked:
-            for mod in self.selectedMod:
+            for mod in self.selected_mod:
                 if mod in enabled_mods:
                     enabled_mods.remove(mod)
             checked = False
         else:
-            enabled_mods += self.selectedMod
+            enabled_mods += self.selected_mod
             checked = True
 
         self.a2.enabled = enabled_mods
@@ -356,7 +355,7 @@ class A2Window(QtGui.QMainWindow):
         """
         Open help of the selected module or a2 help
         """
-        if len(self.selectedMod) != 1:
+        if len(self.selected_mod) != 1:
             a2core.surfTo(self.a2.urls.help)
         else:
             self.mod.help()
@@ -387,6 +386,8 @@ class A2Window(QtGui.QMainWindow):
     def closeEvent(self, event):
         binprefs = str(self.saveGeometry().toPercentEncoding())
         self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
+        print('self.selected_mod: %s' % self.selected_mod)
+        self.a2.db.set('last_selected', self.selected_mod)
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):
@@ -403,6 +404,10 @@ class A2Window(QtGui.QMainWindow):
         splitterSize = winprefs.get('splitter')
         if splitterSize is not None:
             self.ui.splitter.setSizes(winprefs['splitter'])
+            
+        if self.a2.db.get('remember_last') or False:
+            last_selected = self.a2.db.get('last_selected')
+            QtCore.QTimer().singleShot(200, partial(self.select_mod, last_selected))
 
     def newModule(self):
         a2ctrl.InputDialog(self, 'New Module', self.newModuleCreate, self.newModuleCheck,
@@ -451,7 +456,7 @@ class RestartThread(QtCore.QThread):
         self.msleep(300)
         ahkProcess = QtCore.QProcess()
         ahkProcess.startDetached(a2.paths.autohotkey, [a2.paths.a2_script], a2.paths.a2)
-        
+
 
 if __name__ == '__main__':
     import a2app

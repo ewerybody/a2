@@ -30,6 +30,9 @@ class A2Settings(QtGui.QWidget):
         self.ui.enableDevMode.setChecked(dev_mode)
         self.ui.enableDevMode.clicked[bool].connect(self.dev_mode_toggle)
         
+        self.ui.rememberLastSel.setChecked(self.a2.db.get('remember_last') or False)
+        self.ui.rememberLastSel.clicked[bool].connect(self.remember_last_toggle)
+        
         self.ui.devBox.setVisible(dev_mode)
     
     def dev_mode_toggle(self, dev_mode):
@@ -37,6 +40,8 @@ class A2Settings(QtGui.QWidget):
         self.ui.devBox.setVisible(dev_mode)
         self.main.toggle_dev_menu(dev_mode)
 
+    def remember_last_toggle(self, state):
+        self.a2.db.set('remember_last', state)
 
 if __name__ == '__main__':
     pass
