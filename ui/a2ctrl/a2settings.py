@@ -21,6 +21,10 @@ class A2Settings(QtGui.QWidget):
         self.ui = a2settings_ui.Ui_a2settings()
         self.ui.setupUi(self)
 
+        a2_hotkey = self.a2.db.get('a2_hotkey') or a2core.a2default_hotkey
+        self.ui.a2hotkey.set_key(a2_hotkey)
+        self.ui.a2hotkey.ok_func = self.set_a2_hotkey
+
         win_startup_path = ahk.call_cmd('get_win_startup_path')
         win_startup_lnk = join(win_startup_path, 'a2.lnk')
         self.ui.loadOnWinStart.setChecked(exists(win_startup_lnk))
@@ -42,6 +46,11 @@ class A2Settings(QtGui.QWidget):
 
     def remember_last_toggle(self, state):
         self.a2.db.set('remember_last', state)
+
+    def set_a2_hotkey(self, key):
+        self.a2.db.set('a2_hotkey', key)
+        self.main.settings_changed('hotkeys')
+
 
 if __name__ == '__main__':
     pass

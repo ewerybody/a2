@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Fri Mar 11 17:22:59 2016
+# Created: Thu Mar 17 01:52:29 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,6 +14,7 @@ class Ui_a2settings(object):
         a2settings.setObjectName("a2settings")
         a2settings.resize(938, 1012)
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
+        self.verticalLayout_2.setSpacing(12)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.headLabel = QtGui.QLabel(a2settings)
         font = QtGui.QFont()
@@ -24,15 +25,15 @@ class Ui_a2settings(object):
         self.verticalLayout_2.addWidget(self.headLabel)
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setContentsMargins(-1, 0, -1, 15)
+        self.formLayout.setContentsMargins(-1, 25, -1, 15)
         self.formLayout.setObjectName("formLayout")
         self.label_3 = QtGui.QLabel(a2settings)
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_3)
-        self.pushButton_2 = QtGui.QPushButton(a2settings)
-        self.pushButton_2.setEnabled(False)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.pushButton_2)
+        self.a2hotkey = HotKey(a2settings)
+        self.a2hotkey.setEnabled(True)
+        self.a2hotkey.setObjectName("a2hotkey")
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.a2hotkey)
         self.label_2 = QtGui.QLabel(a2settings)
         self.label_2.setObjectName("label_2")
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_2)
@@ -98,7 +99,7 @@ class Ui_a2settings(object):
         self.ahkExe.setObjectName("ahkExe")
         self.formLayout_3.setWidget(3, QtGui.QFormLayout.FieldRole, self.ahkExe)
         self.verticalLayout_2.addWidget(self.devBox)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
 
         self.retranslateUi(a2settings)
@@ -107,7 +108,7 @@ class Ui_a2settings(object):
     def retranslateUi(self, a2settings):
         self.headLabel.setText(QtGui.QApplication.translate("a2settings", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("a2settings", "Open a2 Dialog:", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_2.setText(QtGui.QApplication.translate("a2settings", "Win+Shift+A", None, QtGui.QApplication.UnicodeUTF8))
+        self.a2hotkey.setText(QtGui.QApplication.translate("a2settings", "Win+Shift+A", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("a2settings", "Settings Folder:", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("a2settings", "Module Source:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("a2settings", "+", None, QtGui.QApplication.UnicodeUTF8))
@@ -121,3 +122,4 @@ class Ui_a2settings(object):
         self.checkBox_4.setText(QtGui.QApplication.translate("a2settings", "LogLevel:DEBUG", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Executable:", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2ctrl.hotkey import HotKey

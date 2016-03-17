@@ -26,6 +26,7 @@ log.setLevel(logging.DEBUG)
 
 a2 = None
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
+a2default_hotkey = 'Win+Shift+A'
 
 
 class A2Obj(object):
@@ -161,7 +162,8 @@ def write_includes(specific=None):
     hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
     
     includeAhk = [edit_disclaimer % 'includes']
-    hotkeysAhk = {hkmode['1']: ['#+a::a2UI()']}
+    a2_hotkey = ahk.translateHotkey(a2.db.get('a2_hotkey') or a2default_hotkey)
+    hotkeysAhk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
     variablesAhk = [edit_disclaimer % 'variables']
     # TODO: this needs to be implemented dynamically
     libsAhk = [edit_disclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in

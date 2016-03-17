@@ -8,7 +8,6 @@ import a2core
 import a2ctrl
 import logging
 import subprocess
-from os.path import join
 from functools import partial
 from a2ctrl import getCfgValue
 from PySide import QtCore, QtGui
@@ -70,7 +69,8 @@ class Draw(a2ctrl.DrawCtrl):
         
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = HotKey(getCfgValue(self.cfg, self.userCfg, 'key'), self.hotkey_change)
+        self.hotkeyButton = HotKey(self, getCfgValue(self.cfg, self.userCfg, 'key'),
+                                   self.hotkey_change)
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setMinimumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
@@ -134,7 +134,7 @@ class Edit(a2ctrl.EditCtrl):
                       self.ui.functionLabel, self.ui.scopeLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
         
-        self.ui.hotkeyButton = HotKey(cfg.get('key') or '', self.hotkey_change)
+        self.ui.hotkeyButton = HotKey(self, cfg.get('key') or '', self.hotkey_change)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
@@ -272,7 +272,7 @@ class Edit(a2ctrl.EditCtrl):
 
 
 class HotKey(QtGui.QPushButton):
-    def __init__(self, key, func, parent=None):
+    def __init__(self, parent=None, key=None, ok_func=None):
         super(HotKey, self).__init__()
         
         self.setMinimumHeight(a2ctrl.lenM)
@@ -281,11 +281,13 @@ class HotKey(QtGui.QPushButton):
         self.key = key
         self.tempKey = key
         self.tempOK = True
-        self.func = func
+        self.ok_func = ok_func
         self.setFont(a2ctrl.fontXL)
         self.setText(key)
-        if parent is not None:
-            parent.addWidget(self)
+    
+    def set_key(self, key):
+        self.key = key
+        self.setText(key)
     
     def mousePressEvent(self, event):
         self.buildPopup(event.globalX(), event.globalY())
@@ -321,15 +323,16 @@ class HotKey(QtGui.QPushButton):
         log.info('key: %s' % self.tempKey)
         log.info('ok: %s' % self.tempOK)
         if self.tempOK:
-            self.key = self.tempKey
+            self.set_key(self.tempKey)
             self.popup.close()
-            self.setText(self.key)
-            self.func(self.key)
+            self.ok_func(self.key)
 
     def validateHotkey(self, hkstring):
         """
         first implementation: checks for valid modifyers + a single key
-        TODO: handle F1-F12, Del, Home..., handle single keys when in scope, check availability ...
+        TODO: handle F1-F12, Del, Home...
+              handle single keys when in scope,
+              check availability ...
         """
         styleBad = '* {color:#F00}'
         styleGood = '* {color:#0F0}'
@@ -369,12 +372,12 @@ class HotKey(QtGui.QPushButton):
 
 
 class ScopeDialog(QtGui.QDialog):
-    def __init__(self, text, x, y, parent, okFunc, *args):
+    def __init__(self, text, x, y, parent, ok_func, *args):
         super(ScopeDialog, self).__init__(parent)
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
         self.setModal(True)
-        self.okFunc = okFunc
+        self.okFunc = ok_func
         self.setWindowTitle('setup scope')
         self.a2 = a2core.a2
         self.edit = text != ''
@@ -394,7 +397,7 @@ class ScopeDialog(QtGui.QDialog):
             ui.setFont(a2ctrl.fontXL)
         #for ui in [self.ui.helpButton, self.ui.titleButton, self.ui.classButton, self.ui.exeButton]:
         #    ui.setMinimumWidth(labelW)
-        self.ui.okButton.clicked.connect(self.okFunc)
+        self.ui.okButton.clicked.connect(self.ok_func)
         self.ui.cancelButton.clicked.connect(self.close)
         self.ui.scopeTitle.setFocus()
 

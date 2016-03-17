@@ -11,6 +11,9 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>12</number>
+   </property>
    <item>
     <widget class="QLabel" name="headLabel">
      <property name="font">
@@ -32,7 +35,7 @@
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
      <property name="topMargin">
-      <number>0</number>
+      <number>25</number>
      </property>
      <property name="bottomMargin">
       <number>15</number>
@@ -45,9 +48,9 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="HotKey" name="a2hotkey">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="text">
         <string>Win+Shift+A</string>
@@ -191,14 +194,21 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
     </spacer>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>HotKey</class>
+   <extends>QPushButton</extends>
+   <header>a2ctrl.hotkey</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
