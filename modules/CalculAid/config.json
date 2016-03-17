@@ -8,26 +8,49 @@
     "version": "0.1"
   },
   {
-    "file": "calculAid.ahk",
-    "typ": "include"
-  },
-  {
+    "children": [
+      {
+        "file": "calculAid.ahk",
+        "typ": "include"
+      },
+      {
+        "disablable": true,
+        "enabled": true,
+        "functionCode": "calculAid_open()",
+        "functionMode": 0,
+        "functionSend": "",
+        "functionURL": "",
+        "key": "Ctrl+Alt+R",
+        "keyChange": true,
+        "label": "Standard Hotkey",
+        "mode": "ahk",
+        "multiple": true,
+        "name": "calcul8hotkey",
+        "scope": [],
+        "scopeChange": true,
+        "scopeMode": 0,
+        "typ": "hotkey"
+      },
+      {
+        "enabled": true,
+        "label": "open up at cursor position",
+        "name": "calculAid_openAtCursor",
+        "typ": "checkBox",
+        "value": true
+      },
+      {
+        "enabled": true,
+        "label": "Make new calculator \"Always On Top\"",
+        "name": "calculAid_AlwaysOnTop",
+        "typ": "checkBox",
+        "value": false
+      }
+    ],
     "disablable": true,
     "enabled": true,
-    "functionCode": "calculAid_open()",
-    "functionMode": 0,
-    "functionSend": "",
-    "functionURL": "",
-    "key": "Ctrl+Alt+R",
-    "keyChange": true,
-    "label": "Open up calculator",
-    "mode": "ahk",
-    "multiple": true,
-    "name": "calcul8hotkey",
-    "scope": [],
-    "scopeChange": true,
-    "scopeMode": 0,
-    "typ": "hotkey"
+    "label": "Open up the Calculator",
+    "name": "calcOpenGroup",
+    "typ": "groupBox"
   },
   {
     "disablable": true,
@@ -49,11 +72,5 @@
     "scopeChange": false,
     "scopeMode": 1,
     "typ": "hotkey"
-  },
-  {
-    "enabled": true,
-    "label": "open up at cursor position",
-    "name": "calculAid_openAtCursor",
-    "typ": "checkBox"
   }
 ]
