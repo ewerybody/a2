@@ -30,17 +30,17 @@ class A2Settings(QtGui.QWidget):
         self.ui.loadOnWinStart.setChecked(exists(win_startup_lnk))
         self.ui.loadOnWinStart.clicked[bool].connect(a2core.set_windows_startup)
 
-        dev_mode = self.a2.db.get('dev_mode') or False
-        self.ui.enableDevMode.setChecked(dev_mode)
+        self.ui.enableDevMode.setChecked(self.main.dev_mode)
         self.ui.enableDevMode.clicked[bool].connect(self.dev_mode_toggle)
         
         self.ui.rememberLastSel.setChecked(self.a2.db.get('remember_last') or False)
         self.ui.rememberLastSel.clicked[bool].connect(self.remember_last_toggle)
         
-        self.ui.devBox.setVisible(dev_mode)
+        self.ui.devBox.setVisible(self.main.dev_mode)
     
     def dev_mode_toggle(self, dev_mode):
         self.a2.db.set('dev_mode', dev_mode)
+        self.main.dev_mode = dev_mode
         self.ui.devBox.setVisible(dev_mode)
         self.main.toggle_dev_menu(dev_mode)
 

@@ -30,6 +30,10 @@ class A2Window(QtGui.QMainWindow):
         self.a2 = a2core.A2Obj.inst()
         self.app = app
 
+        self.dev_mode = self.a2.db.get('dev_mode') or False
+        if self.dev_mode:
+            a2ctrl.check_ui_module(a2design_ui)
+            a2ctrl.check_all_ui()
         a2ctrl.adjustSizes(app)
         self.setupUi()
         self.draw_mod_list()
@@ -103,7 +107,7 @@ class A2Window(QtGui.QMainWindow):
     def toggle_dev_menu(self, state=None):
         if state is None:
             state = self.a2.db.get('dev_mode') or False
-            # None happens only on startup, if True we dont have to re-add
+            # state=None happens only on startup, if True we dont have to re-add
             if state is True:
                 return
 
