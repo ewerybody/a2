@@ -118,6 +118,8 @@ class URLs(object):
         self.helpHotkey = self.a2 + '/wiki/Edit-Hotkey-Control'
         self.helpCheckbox = self.a2 + '/wiki/Edit-Checkbox-Control'
         self.helpScopes = self.a2 + '/wiki/Edit-Scopes'
+        self.help_string = self.a2 + '/wiki/Edit-String'
+        self.help_number = self.a2 + '/wiki/Edit-Number'
 
         self.ahk = 'http://ahkscript.org'
         self.ahksend = self.ahk + '/docs/commands/Send.htm'
@@ -215,6 +217,8 @@ def write_includes(specific=None):
                 variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
             elif isinstance(value, str):
                 variablesAhk.append('%s := "%s"' % (var_name, value))
+            elif isinstance(value, float):
+                variablesAhk.append('%s := %f' % (var_name, value))
             else:
                 log.error('Please check handling variable type "%s" (%s: %s)'
                           % (type(value), var_name, str(value)))

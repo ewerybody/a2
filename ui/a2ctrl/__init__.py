@@ -120,7 +120,8 @@ def draw(main, cfg, mod):
         for typ, ctrl_class in [('checkBox', a2ctrl.check.Draw),
                                 ('hotkey', a2ctrl.hotkey.Draw),
                                 ('groupBox', a2ctrl.group.Draw),
-                                ('string', a2ctrl.string.Draw)]:
+                                ('string', a2ctrl.string.Draw),
+                                ('number', a2ctrl.number.Draw)]:
             if cfg['typ'] == typ:
                 return ctrl_class(main, cfg, mod)
 
@@ -161,16 +162,15 @@ class DrawNfo(QtGui.QWidget):
 def edit(cfg, main, parentCfg):
     if cfg['typ'] == 'nfo':
         return EditNfo(cfg)
-    elif cfg['typ'] == 'include':
-        return EditInclude(cfg, main, parentCfg)
-    elif cfg['typ'] == 'hotkey':
-        return a2ctrl.hotkey.Edit(cfg, main, parentCfg)
-    elif cfg['typ'] == 'checkBox':
-        return a2ctrl.check.Edit(cfg, main, parentCfg)
-    elif cfg['typ'] == 'groupBox':
-        return a2ctrl.group.Edit(cfg, main, parentCfg)
-    elif cfg['typ'] == 'string':
-        return a2ctrl.string.Edit(cfg, main, parentCfg)
+    else:
+        for typ, ctrl_class in [('include', EditInclude),
+                                ('hotkey', a2ctrl.hotkey.Edit),
+                                ('checkBox', a2ctrl.check.Edit),
+                                ('groupBox', a2ctrl.group.Edit),
+                                ('string', a2ctrl.string.Edit),
+                                ('number', a2ctrl.number.Edit)]:
+            if cfg['typ'] == typ:
+                return ctrl_class(cfg, main, parentCfg)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -385,6 +385,13 @@ class EditCtrl(QtGui.QGroupBox):
                     items = [control.item(i).text() for i in range(control.count())]
                     self.cfg[name] = items
 
+            elif isinstance(control, (QtGui.QSpinBox, QtGui.QDoubleSpinBox)):
+                control.valueChanged.connect(partial(self._updateCfgData, name))
+                if name in self.cfg:
+                    control.setValue(self.cfg[name])
+                else:
+                    self.cfg[name] = control.value()
+
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (ctrl[0], type(control)))
@@ -525,7 +532,7 @@ class EditAddElem(QtGui.QWidget):
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        for typ in ('checkBox hotkey groupBox string textField floatField intField '
+        for typ in ('checkBox hotkey groupBox string number '
                     'fileField text button comboBox').split():
             action = QtGui.QAction(self.menu)
             action.setText(typ)

@@ -100,8 +100,8 @@ class Mod(object):
                     else:
                         data['hotkeys'][scopeMode].append([scope, key, function])
                 
-                elif cfg['typ'] in ['checkBox', 'string']:
-                    data['variables'][cfg['name']] = a2ctrl.getCfgValue(cfg, userCfg, 'value')
+                elif cfg['typ'] in ['checkBox', 'string', 'number']:
+                    data['variables'][cfg['name']] = a2ctrl.get_cfg_value(cfg, userCfg, 'value')
 
                 elif cfg['typ'] == 'groupBox':
                     #disablable
