@@ -16,7 +16,7 @@ from a2ctrl import a2settings_ui
 class A2Settings(QtGui.QWidget):
     def __init__(self, main):
         super(A2Settings, self).__init__()
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.ui = a2settings_ui.Ui_a2settings()
         self.ui.setupUi(self)

@@ -125,8 +125,9 @@ class Edit(a2ctrl.EditCtrl):
         for key, value in defaults:
             if key not in self.cfg:
                 self.cfg[key] = value
-
-        self.helpUrl = a2core.a2.urls.helpHotkey
+        
+        self.a2 = a2core.A2Obj.inst()
+        self.helpUrl = self.a2.urls.helpHotkey
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
 
@@ -199,7 +200,7 @@ class Edit(a2ctrl.EditCtrl):
         subprocess.Popen(['explorer.exe', text])
     
     def functionSendHelp(self):
-        a2core.surfTo(a2core.a2.urls.ahksend)
+        a2core.surfTo(self.a2.urls.ahksend)
     
     def functionChanged(self, text=None):
         #text = self.ui.functionText.text()
@@ -380,7 +381,7 @@ class ScopeDialog(QtGui.QDialog):
         self.setModal(True)
         self.okFunc = ok_func
         self.setWindowTitle('setup scope')
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.edit = text != ''
 
         self.get_scope_nfo()

@@ -25,13 +25,20 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-a2 = None
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
 reload_modules = [ahk, a2db, a2mod]
 
 
 class A2Obj(object):
+    __instance = None
+    
+    @classmethod
+    def inst(cls):
+        if A2Obj.__instance is None:
+            A2Obj.__instance = A2Obj()
+        return A2Obj.__instance
+    
     def __init__(self):
         self.app = None
         self.win = None
@@ -159,6 +166,7 @@ class Paths(object):
 
 
 def write_includes(specific=None):
+    a2 = A2Obj.inst()
     a2.fetch_modules()
     
     hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
@@ -262,6 +270,7 @@ def surfTo(url):
 
 
 def _dbCleanup():
+    a2 = A2Obj.inst()
     for table in a2.db.tables():
         if table == 'a2':
             a2.db.pop('aValue')

@@ -46,11 +46,12 @@ def main():
 
 
 def init_a2_win(app):
-    a2core.a2 = a2core.A2Obj()
-    a2core.a2.start_up()
+    a2 = a2core.A2Obj.inst()
+    a2.start_up()
+    
     a2win = a2ui.A2Window(app=app)
-    a2core.a2.win = a2win
-    a2core.a2.app = app
+    a2.win = a2win
+    a2.app = app
     a2win.showRaise()
     return a2win
 

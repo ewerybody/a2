@@ -129,7 +129,7 @@ class DrawCtrl(QtGui.QWidget):
     def __init__(self, main, cfg, mod, _init_ctrl=True):
         if _init_ctrl:
             super(DrawCtrl, self).__init__()
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.cfg = cfg
         self.mod = mod
@@ -220,7 +220,7 @@ class EditCtrl(QtGui.QGroupBox):
     
     def __init__(self, cfg, main, parentCfg, addLayout=True):
         super(EditCtrl, self).__init__()
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.cfg = cfg
         self.main = main
         self.parentCfg = parentCfg
