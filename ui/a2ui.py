@@ -126,8 +126,19 @@ class A2Window(QtGui.QMainWindow):
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
 
-    def draw_mod_list(self, select=None):
+    def draw_mod_list(self, select=None, refresh=False):
+        """
+        Fills/refills the left module list with according entries
+        TODO: connect with tag selection and search
+        
+        :param str select: to select a certain entry, by default re-selects last entry
+        """
         self.__drawing_mod_list = True
+        
+        if refresh:
+            self.a2.fetch_modules()
+        self.mod_select(force=True)
+
         if select is None:
             select = [i.text() for i in self.ui.modList.selectedItems()]
         allMods = sorted(self.a2.modules.keys(), key=lambda s: s.lower())
@@ -137,6 +148,9 @@ class A2Window(QtGui.QMainWindow):
         if select:
             self.select_mod(select)
         self.__drawing_mod_list = False
+        
+        if refresh:
+            self.mod_select(force=True)
 
     def select_mod(self, modName):
         """
@@ -147,7 +161,7 @@ class A2Window(QtGui.QMainWindow):
 
     def mod_select(self, force=False):
         """
-        updates the mod view to the right of the UI
+        Updates the module settings view to the right of the UI
         when something different is elected in the module list
         """
         if self.__drawing_mod_list:
@@ -373,12 +387,12 @@ class A2Window(QtGui.QMainWindow):
     def settings_changed(self, specific=None):
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
+        self.draw_mod_list(refresh=True)
+        
         a2core.write_includes(specific)
         
         thread = RestartThread(self.a2, self)
         thread.start()
-        
-        self.draw_mod_list()
     
     def escape(self):
         if self.editing:
@@ -440,6 +454,7 @@ class A2Window(QtGui.QMainWindow):
         os.mkdir(join(self.a2.paths.modules, name))
         self.a2.fetch_modules()
         self.draw_mod_list(select=name)
+        self.mod_select(force=True)
 
     def showRaise(self):
         self.show()
