@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\string_edit.ui'
 #
-# Created: Sun Feb 28 11:59:56 2016
+# Created: Tue Mar 22 20:53:18 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,11 +12,11 @@ from PySide import QtCore, QtGui
 class Ui_string_edit(object):
     def setupUi(self, string_edit):
         string_edit.setObjectName("string_edit")
-        string_edit.resize(1066, 227)
-        self.stringLayout = QtGui.QVBoxLayout(string_edit)
-        self.stringLayout.setSpacing(5)
-        self.stringLayout.setContentsMargins(10, 5, 0, 5)
-        self.stringLayout.setObjectName("stringLayout")
+        string_edit.resize(1138, 243)
+        self.editLayout = QtGui.QVBoxLayout(string_edit)
+        self.editLayout.setSpacing(5)
+        self.editLayout.setContentsMargins(10, 5, 0, 5)
+        self.editLayout.setObjectName("editLayout")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout.setVerticalSpacing(5)
@@ -46,7 +46,7 @@ class Ui_string_edit(object):
         self.cfg_name = QtGui.QLineEdit(string_edit)
         self.cfg_name.setObjectName("cfg_name")
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.cfg_name)
-        self.stringLayout.addLayout(self.formLayout)
+        self.editLayout.addLayout(self.formLayout)
 
         self.retranslateUi(string_edit)
         QtCore.QMetaObject.connectSlotsByName(string_edit)

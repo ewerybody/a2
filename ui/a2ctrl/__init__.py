@@ -722,7 +722,7 @@ def list_selectItems(listCtrl, text):
         listCtrl.setCurrentItem(lastitem)
 
 
-def getCfgValue(subCfg, userCfg, attrName):
+def get_cfg_value(subCfg, userCfg, attrName):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.

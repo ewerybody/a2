@@ -6,7 +6,7 @@ Created on Feb 28, 2016
 import a2ctrl
 import logging
 from PySide import QtGui, QtCore
-from a2ctrl import string_edit_ui, getCfgValue
+from a2ctrl import string_edit_ui
 
 
 logging.basicConfig()
@@ -17,27 +17,28 @@ log.setLevel(logging.DEBUG)
 class Draw(a2ctrl.DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        self.value = getCfgValue(self.cfg, self.userCfg, 'value') or ''
+        self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
         self._setupUi()
 
     def _setupUi(self):
         self.layout = QtGui.QHBoxLayout(self)
-        self.labelText = self.cfg.get('label', '')
-        self.label = QtGui.QLabel(self.labelText, self)
-        self.valueCtrl = QtGui.QLineEdit(getCfgValue(self.cfg, self.userCfg, 'value') or '')
+        self.label_text = self.cfg.get('label', '')
+        self.label = QtGui.QLabel(self.label_text, self)
+        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
+        self.value_ctrl = QtGui.QLineEdit(value)
         #self.valueCtrl.returnPressed.connect(self.check)
-        self.valueCtrl.editingFinished.connect(self.lineLeaveEvent)
+        self.value_ctrl.editingFinished.connect(self.submit_value)
         #self.valueCtrl.leaveEvent = self.lineLeaveEvent
         self.layout.addWidget(self.label)
-        self.layout.addWidget(self.valueCtrl)
+        self.layout.addWidget(self.value_ctrl)
         self.setLayout(self.layout)
 
-    def lineLeaveEvent(self, event=None):
+    def submit_value(self, event=None):
         QtCore.QTimer().singleShot(150, self.check)
     
     def check(self, value=None):
         if value is None:
-            value = self.valueCtrl.text()
+            value = self.value_ctrl.text()
         
         # prevent being called double
         if self.value == value:
@@ -57,8 +58,7 @@ class Edit(a2ctrl.EditCtrl):
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'String'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        self.helpUrl = self.main.urls.helpCheckbox
-        self.cfg = cfg
+        self.helpUrl = self.a2.urls.help_string
         
         self.ui = string_edit_ui.Ui_string_edit()
         self.ui.setupUi(self.mainWidget)
@@ -66,4 +66,4 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
         
         self.connectCfgCtrls(self.ui)
-        self.mainWidget.setLayout(self.ui.stringLayout)
+        self.mainWidget.setLayout(self.ui.editLayout)

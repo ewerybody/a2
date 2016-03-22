@@ -7,8 +7,7 @@ import a2core
 import a2ctrl
 import logging
 from PySide import QtGui
-from a2ctrl import checkbox_edit_ui, getCfgValue
-
+from a2ctrl import checkbox_edit_ui
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -23,7 +22,7 @@ class Draw(a2ctrl.DrawCtrl):
     def _setupUi(self):
         self.layout = QtGui.QVBoxLayout(self)
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
-        self.checkbox.setChecked(getCfgValue(self.cfg, self.userCfg, 'value') or False)
+        self.checkbox.setChecked(a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or False)
         self.checkbox.clicked[bool].connect(self.check)
         #self.checkbox.setWordWrap(True)
         self.layout.addWidget(self.checkbox)
@@ -46,7 +45,7 @@ class Edit(a2ctrl.EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.helpCheckbox
         
-        self.ui = checkbox_edit_ui.Ui_checkbox_edit()
+        self.ui = a2ctrl.checkbox_edit_ui.Ui_checkbox_edit()
         self.ui.setupUi(self.mainWidget)
 
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.label]:

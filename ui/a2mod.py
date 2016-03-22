@@ -85,12 +85,12 @@ class Mod(object):
             elif 'name' in cfg:
                 userCfg = self.a2.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
-                    if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
                     
-                    key = a2ctrl.getCfgValue(cfg, userCfg, 'key')
-                    scope = a2ctrl.getCfgValue(cfg, userCfg, 'scope')
-                    scopeMode = a2ctrl.getCfgValue(cfg, userCfg, 'scopeMode')
+                    key = a2ctrl.get_cfg_value(cfg, userCfg, 'key')
+                    scope = a2ctrl.get_cfg_value(cfg, userCfg, 'scope')
+                    scopeMode = a2ctrl.get_cfg_value(cfg, userCfg, 'scopeMode')
                     function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
                     if scopeMode not in data['hotkeys']:
                         data['hotkeys'][scopeMode] = []
@@ -105,7 +105,7 @@ class Mod(object):
 
                 elif cfg['typ'] == 'groupBox':
                     #disablable
-                    if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
                     childList = cfg.get('children', [])
                     data = self.loopCfg(childList, data)

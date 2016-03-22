@@ -25,7 +25,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
         a2ctrl.DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
-        self.setChecked(a2ctrl.getCfgValue(self.cfg, self.userCfg, 'enabled'))
+        self.setChecked(a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'enabled'))
         self.clicked[bool].connect(self.check)
 
         self.layout = QtGui.QVBoxLayout(self)
