@@ -273,8 +273,9 @@ class Edit(a2ctrl.EditCtrl):
 
 class HotKey(QtGui.QPushButton):
     def __init__(self, parent=None, key=None, ok_func=None):
-        super(HotKey, self).__init__()
-        
+        # i'd love to use super here. But it introduces problems with reload
+        #super(HotKey, self).__init__()
+        QtGui.QPushButton.__init__(self)
         self.setMinimumHeight(a2ctrl.lenM)
         self.setMaximumHeight(a2ctrl.lenM)
         self.setStyleSheet('QPushButton {background-color:#FFC23E}')

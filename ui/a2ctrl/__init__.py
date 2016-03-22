@@ -1,8 +1,4 @@
 '''
-Created on Mar 6, 2015
-
-@author: eRiC
-
 # create header edit controls
 def editctrl(nfoDict, keyName, typ, parent, editCtrls):
     if keyName not in nfoDict:
@@ -22,7 +18,11 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
 
 nfo item is always the 0th entry in the config.json it just draws and holds all
 the author, name, version, description info
+
+@created: Mar 6, 2015
+@author: eRiC
 '''
+import sys
 import ahk
 import time
 import a2core
@@ -73,7 +73,7 @@ def adjustSizes(app):
         labelW *= 1.6
 
 
-def checkUiModule(module):
+def check_ui_module(module):
     pyfile = module.__file__
     pybase = basename(pyfile)
     uiname = splitext(pybase)[0]
@@ -107,7 +107,6 @@ def checkUiModule(module):
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
         importlib.reload(module)
-    return
 
 
 def draw(main, cfg, mod):
@@ -733,13 +732,31 @@ def getCfgValue(subCfg, userCfg, attrName):
 
 
 # deferred import of sub controls because they might use any part of this module
-import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings
-reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings]
-uiModules = [inputDialog_ui, a2ctrl.check.checkbox_edit_ui, a2ctrl.hotkey.hotkey_edit_ui,
-             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui, a2ctrl.string.string_edit_ui,
-             a2ctrl.a2settings.a2settings_ui]
-for uimod in uiModules:
-    checkUiModule(uimod)
+import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number
+
+# import first, then add here for reload coverage
+reload_modules = [
+    a2ctrl.check,
+    a2ctrl.hotkey,
+    a2ctrl.a2settings,
+    a2ctrl.group,
+    a2ctrl.string,
+    a2ctrl.number]
+
+ui_modules = [
+    inputDialog_ui,
+    a2ctrl.check.checkbox_edit_ui,
+    a2ctrl.hotkey.hotkey_edit_ui,
+    a2ctrl.hotkey.scopeDialog_ui,
+    a2ctrl.group.group_edit_ui,
+    a2ctrl.string.string_edit_ui,
+    a2ctrl.a2settings.a2settings_ui,
+    a2ctrl.number.number_edit_ui]
+
+
+def check_all_ui():
+    for uimod in ui_modules:
+        check_ui_module(uimod)
 
 
 if __name__ == '__main__':

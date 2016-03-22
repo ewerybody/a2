@@ -10,7 +10,6 @@ import ahk
 import a2mod
 import a2core
 import a2ctrl
-import a2dblib
 import a2design_ui
 
 from os.path import join
@@ -22,8 +21,7 @@ from PySide import QtGui, QtCore
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk, a2core]
-a2ctrl.checkUiModule(a2design_ui)
+reload_modules = [a2ctrl]
 
 
 class A2Window(QtGui.QMainWindow):

@@ -64,13 +64,13 @@ def app_msg_get(msg):
     elif '--reload' in msg:
         log.info('attempting reload ...')
         a2win.close()
+        reload(a2core)
         reload(a2ui)
-        for module in a2ui.a2PyModules:
-            log.debug('reloading module: %s' % module.__name__)
-            reload(module)
-        for module in a2ui.a2ctrl.uiModules + a2ui.a2ctrl.reModules:
-            log.debug('reloading module: %s' % module.__name__)
-            reload(module)
+        
+        for main_mod in [a2core, a2ui, a2ui.a2ctrl]:
+            for module in main_mod.reload_modules:
+                log.debug('reloading module: %s' % module.__name__)
+                reload(module)
         
         a2win = init_a2_win(app)
 

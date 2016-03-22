@@ -9,14 +9,15 @@ to make functionality available without passing the main ui object.
 @author: eric
 """
 import os
+import sys
 import time
 import logging
 import webbrowser
 from os.path import exists, join, dirname
 
 import ahk
+import a2db
 import a2mod
-import a2dblib
 
 
 logging.basicConfig()
@@ -27,6 +28,7 @@ log.setLevel(logging.DEBUG)
 a2 = None
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
+reload_modules = [ahk, a2db, a2mod]
 
 
 class A2Obj(object):
@@ -36,7 +38,7 @@ class A2Obj(object):
         self.modules = {}
         self.urls = URLs()
         self.paths = Paths()
-        self.db = a2dblib.A2db(self.paths.db)
+        self.db = a2db.A2db(self.paths.db)
 
     def start_up(self):
         self.fetch_modules()

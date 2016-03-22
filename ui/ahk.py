@@ -5,11 +5,12 @@ Created on Aug 7, 2015
 
 @author: eRiC
 '''
+import time
 import a2core
 import logging
 import subprocess
-import time
 from os.path import join
+
 
 logging.basicConfig()
 log = logging.getLogger()

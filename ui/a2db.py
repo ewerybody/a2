@@ -1,5 +1,5 @@
 ﻿"""
-a2dblib - wrapper to the a2 database
+a2db - wrapper to the a2 database
 
 Mainly we store key value pairs. So the 'tables' are more or less
 id key  value
