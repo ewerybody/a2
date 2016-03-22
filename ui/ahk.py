@@ -37,8 +37,9 @@ def call_cmd(cmd_name, *args):
     if not cmd_name.endswith('.ahk'):
         cmd_name += '.ahk'
     
-    cmd_path = join(a2core.a2.paths.lib, 'cmds', cmd_name)
-    args = [a2core.a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
+    a2 = a2core.A2Obj.inst()
+    cmd_path = join(a2.paths.lib, 'cmds', cmd_name)
+    args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
     cmd_result = str(proc.communicate()[0])
     proc.kill()

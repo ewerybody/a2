@@ -111,7 +111,8 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settings_changed)
 
         self.toggle_dev_menu()
-        self.setWindowIcon(QtGui.QIcon("a2.ico"))
+        iconpath = join(self.a2.paths.ui, "a2.ico")
+        self.setWindowIcon(QtGui.QIcon(iconpath))
 
     def toggle_dev_menu(self, state=None):
         if state is None:
@@ -119,7 +120,6 @@ class A2Window(QtGui.QMainWindow):
             # state=None happens only on startup, if True we dont have to re-add
             if state is True:
                 return
-
         if state:
             self.ui.menubar.insertAction(self.ui.menuHelp.menuAction(),
                                          self.ui.menuDev.menuAction())
@@ -147,6 +147,7 @@ class A2Window(QtGui.QMainWindow):
         
         if select:
             self.select_mod(select)
+
         self.__drawing_mod_list = False
         
         if refresh:
@@ -383,7 +384,7 @@ class A2Window(QtGui.QMainWindow):
             a2core.surfTo(self.a2.urls.help)
         else:
             self.mod.help()
-    
+
     def settings_changed(self, specific=None):
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()

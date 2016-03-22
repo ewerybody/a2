@@ -279,9 +279,6 @@ class EditCtrl(QtGui.QGroupBox):
     def _setupUi(self, addLayout):
         self.setTitle(self.cfg['typ'])
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
-#         sizePolicy.setHorizontalStretch(0)
-#         sizePolicy.setVerticalStretch(0)
-#         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
         self._ctrlLayout = QtGui.QHBoxLayout(self)
         self._ctrlLayout.setSpacing(0)
