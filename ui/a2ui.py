@@ -47,6 +47,15 @@ class A2Window(QtGui.QMainWindow):
         self.selected_mod = []
         self.toggleEdit(False)
         self.scopes = {}
+
+        if self.a2.db.get('remember_last') or False:
+            last_selected = self.a2.db.get('last_selected')
+            new_selected = [m for m in last_selected if m in self.a2.modules]
+            if len(new_selected) == 1:
+                self.mod = self.a2.modules[new_selected[0]]
+            else:
+                self.mod_selected = new_selected
+            self.select_mod(new_selected)
         
         self.drawMod()
         log.info('initialised!')
@@ -404,10 +413,6 @@ class A2Window(QtGui.QMainWindow):
         splitterSize = winprefs.get('splitter')
         if splitterSize is not None:
             self.ui.splitter.setSizes(winprefs['splitter'])
-            
-        if self.a2.db.get('remember_last') or False:
-            last_selected = self.a2.db.get('last_selected')
-            QtCore.QTimer().singleShot(200, partial(self.select_mod, last_selected))
 
     def newModule(self):
         a2ctrl.InputDialog(self, 'New Module', self.newModuleCreate, self.newModuleCheck,
