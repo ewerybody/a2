@@ -1,8 +1,4 @@
 '''
-Created on Mar 6, 2015
-
-@author: eRiC
-
 # create header edit controls
 def editctrl(nfoDict, keyName, typ, parent, editCtrls):
     if keyName not in nfoDict:
@@ -22,7 +18,11 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
 
 nfo item is always the 0th entry in the config.json it just draws and holds all
 the author, name, version, description info
+
+@created: Mar 6, 2015
+@author: eRiC
 '''
+import sys
 import ahk
 import time
 import a2core
@@ -73,7 +73,7 @@ def adjustSizes(app):
         labelW *= 1.6
 
 
-def checkUiModule(module):
+def check_ui_module(module):
     pyfile = module.__file__
     pybase = basename(pyfile)
     uiname = splitext(pybase)[0]
@@ -107,7 +107,6 @@ def checkUiModule(module):
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
         importlib.reload(module)
-    return
 
 
 def draw(main, cfg, mod):
@@ -121,7 +120,8 @@ def draw(main, cfg, mod):
         for typ, ctrl_class in [('checkBox', a2ctrl.check.Draw),
                                 ('hotkey', a2ctrl.hotkey.Draw),
                                 ('groupBox', a2ctrl.group.Draw),
-                                ('string', a2ctrl.string.Draw)]:
+                                ('string', a2ctrl.string.Draw),
+                                ('number', a2ctrl.number.Draw)]:
             if cfg['typ'] == typ:
                 return ctrl_class(main, cfg, mod)
 
@@ -130,7 +130,7 @@ class DrawCtrl(QtGui.QWidget):
     def __init__(self, main, cfg, mod, _init_ctrl=True):
         if _init_ctrl:
             super(DrawCtrl, self).__init__()
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.cfg = cfg
         self.mod = mod
@@ -162,16 +162,15 @@ class DrawNfo(QtGui.QWidget):
 def edit(cfg, main, parentCfg):
     if cfg['typ'] == 'nfo':
         return EditNfo(cfg)
-    elif cfg['typ'] == 'include':
-        return EditInclude(cfg, main, parentCfg)
-    elif cfg['typ'] == 'hotkey':
-        return a2ctrl.hotkey.Edit(cfg, main, parentCfg)
-    elif cfg['typ'] == 'checkBox':
-        return a2ctrl.check.Edit(cfg, main, parentCfg)
-    elif cfg['typ'] == 'groupBox':
-        return a2ctrl.group.Edit(cfg, main, parentCfg)
-    elif cfg['typ'] == 'string':
-        return a2ctrl.string.Edit(cfg, main, parentCfg)
+    else:
+        for typ, ctrl_class in [('include', EditInclude),
+                                ('hotkey', a2ctrl.hotkey.Edit),
+                                ('checkBox', a2ctrl.check.Edit),
+                                ('groupBox', a2ctrl.group.Edit),
+                                ('string', a2ctrl.string.Edit),
+                                ('number', a2ctrl.number.Edit)]:
+            if cfg['typ'] == typ:
+                return ctrl_class(cfg, main, parentCfg)
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -221,7 +220,7 @@ class EditCtrl(QtGui.QGroupBox):
     
     def __init__(self, cfg, main, parentCfg, addLayout=True):
         super(EditCtrl, self).__init__()
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.cfg = cfg
         self.main = main
         self.parentCfg = parentCfg
@@ -280,9 +279,6 @@ class EditCtrl(QtGui.QGroupBox):
     def _setupUi(self, addLayout):
         self.setTitle(self.cfg['typ'])
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
-#         sizePolicy.setHorizontalStretch(0)
-#         sizePolicy.setVerticalStretch(0)
-#         sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy)
         self._ctrlLayout = QtGui.QHBoxLayout(self)
         self._ctrlLayout.setSpacing(0)
@@ -385,6 +381,13 @@ class EditCtrl(QtGui.QGroupBox):
                 else:
                     items = [control.item(i).text() for i in range(control.count())]
                     self.cfg[name] = items
+
+            elif isinstance(control, (QtGui.QSpinBox, QtGui.QDoubleSpinBox)):
+                control.valueChanged.connect(partial(self._updateCfgData, name))
+                if name in self.cfg:
+                    control.setValue(self.cfg[name])
+                else:
+                    self.cfg[name] = control.value()
 
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
@@ -526,7 +529,7 @@ class EditAddElem(QtGui.QWidget):
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        for typ in ('checkBox hotkey groupBox string textField floatField intField '
+        for typ in ('checkBox hotkey groupBox string number '
                     'fileField text button comboBox').split():
             action = QtGui.QAction(self.menu)
             action.setText(typ)
@@ -719,7 +722,7 @@ def list_selectItems(listCtrl, text):
         listCtrl.setCurrentItem(lastitem)
 
 
-def getCfgValue(subCfg, userCfg, attrName):
+def get_cfg_value(subCfg, userCfg, attrName):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.
@@ -733,13 +736,31 @@ def getCfgValue(subCfg, userCfg, attrName):
 
 
 # deferred import of sub controls because they might use any part of this module
-import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings
-reModules = [a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings]
-uiModules = [inputDialog_ui, a2ctrl.check.checkbox_edit_ui, a2ctrl.hotkey.hotkey_edit_ui,
-             a2ctrl.hotkey.scopeDialog_ui, a2ctrl.group.group_edit_ui, a2ctrl.string.string_edit_ui,
-             a2ctrl.a2settings.a2settings_ui]
-for uimod in uiModules:
-    checkUiModule(uimod)
+import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number
+
+# import first, then add here for reload coverage
+reload_modules = [
+    a2ctrl.check,
+    a2ctrl.hotkey,
+    a2ctrl.a2settings,
+    a2ctrl.group,
+    a2ctrl.string,
+    a2ctrl.number]
+
+ui_modules = [
+    inputDialog_ui,
+    a2ctrl.check.checkbox_edit_ui,
+    a2ctrl.hotkey.hotkey_edit_ui,
+    a2ctrl.hotkey.scopeDialog_ui,
+    a2ctrl.group.group_edit_ui,
+    a2ctrl.string.string_edit_ui,
+    a2ctrl.a2settings.a2settings_ui,
+    a2ctrl.number.number_edit_ui]
+
+
+def check_all_ui():
+    for uimod in ui_modules:
+        check_ui_module(uimod)
 
 
 if __name__ == '__main__':

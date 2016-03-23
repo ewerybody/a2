@@ -9,7 +9,6 @@ import a2ctrl
 import logging
 import subprocess
 from functools import partial
-from a2ctrl import getCfgValue
 from PySide import QtCore, QtGui
 from a2ctrl import hotkey_edit_ui
 from a2ctrl import scopeDialog_ui
@@ -51,7 +50,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
-            state = getCfgValue(self.cfg, self.userCfg, 'enabled')
+            state = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'enabled')
             self.check = QtGui.QCheckBox(self)
             cbSize = 27
             self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
@@ -69,7 +68,7 @@ class Draw(a2ctrl.DrawCtrl):
         
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = HotKey(self, getCfgValue(self.cfg, self.userCfg, 'key'),
+        self.hotkeyButton = HotKey(self, a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'key'),
                                    self.hotkey_change)
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
@@ -125,8 +124,9 @@ class Edit(a2ctrl.EditCtrl):
         for key, value in defaults:
             if key not in self.cfg:
                 self.cfg[key] = value
-
-        self.helpUrl = a2core.a2.urls.helpHotkey
+        
+        self.a2 = a2core.A2Obj.inst()
+        self.helpUrl = self.a2.urls.helpHotkey
         self.ui = hotkey_edit_ui.Ui_hotkey_edit()
         self.ui.setupUi(self.mainWidget)
 
@@ -199,7 +199,7 @@ class Edit(a2ctrl.EditCtrl):
         subprocess.Popen(['explorer.exe', text])
     
     def functionSendHelp(self):
-        a2core.surfTo(a2core.a2.urls.ahksend)
+        a2core.surfTo(self.a2.urls.ahksend)
     
     def functionChanged(self, text=None):
         #text = self.ui.functionText.text()
@@ -273,8 +273,9 @@ class Edit(a2ctrl.EditCtrl):
 
 class HotKey(QtGui.QPushButton):
     def __init__(self, parent=None, key=None, ok_func=None):
-        super(HotKey, self).__init__()
-        
+        # i'd love to use super here. But it introduces problems with reload
+        #super(HotKey, self).__init__()
+        QtGui.QPushButton.__init__(self)
         self.setMinimumHeight(a2ctrl.lenM)
         self.setMaximumHeight(a2ctrl.lenM)
         self.setStyleSheet('QPushButton {background-color:#FFC23E}')
@@ -379,7 +380,7 @@ class ScopeDialog(QtGui.QDialog):
         self.setModal(True)
         self.okFunc = ok_func
         self.setWindowTitle('setup scope')
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.edit = text != ''
 
         self.get_scope_nfo()

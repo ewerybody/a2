@@ -9,14 +9,15 @@ to make functionality available without passing the main ui object.
 @author: eric
 """
 import os
+import sys
 import time
 import logging
 import webbrowser
 from os.path import exists, join, dirname
 
 import ahk
+import a2db
 import a2mod
-import a2dblib
 
 
 logging.basicConfig()
@@ -24,19 +25,27 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-a2 = None
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
+reload_modules = [ahk, a2db, a2mod]
 
 
 class A2Obj(object):
+    __instance = None
+    
+    @classmethod
+    def inst(cls):
+        if A2Obj.__instance is None:
+            A2Obj.__instance = A2Obj()
+        return A2Obj.__instance
+    
     def __init__(self):
         self.app = None
         self.win = None
         self.modules = {}
         self.urls = URLs()
         self.paths = Paths()
-        self.db = a2dblib.A2db(self.paths.db)
+        self.db = a2db.A2db(self.paths.db)
 
     def start_up(self):
         self.fetch_modules()
@@ -109,6 +118,8 @@ class URLs(object):
         self.helpHotkey = self.a2 + '/wiki/Edit-Hotkey-Control'
         self.helpCheckbox = self.a2 + '/wiki/Edit-Checkbox-Control'
         self.helpScopes = self.a2 + '/wiki/Edit-Scopes'
+        self.help_string = self.a2 + '/wiki/Edit-String'
+        self.help_number = self.a2 + '/wiki/Edit-Number'
 
         self.ahk = 'http://ahkscript.org'
         self.ahksend = self.ahk + '/docs/commands/Send.htm'
@@ -157,6 +168,7 @@ class Paths(object):
 
 
 def write_includes(specific=None):
+    a2 = A2Obj.inst()
     a2.fetch_modules()
     
     hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
@@ -205,6 +217,8 @@ def write_includes(specific=None):
                 variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
             elif isinstance(value, str):
                 variablesAhk.append('%s := "%s"' % (var_name, value))
+            elif isinstance(value, float):
+                variablesAhk.append('%s := %f' % (var_name, value))
             else:
                 log.error('Please check handling variable type "%s" (%s: %s)'
                           % (type(value), var_name, str(value)))
@@ -260,6 +274,7 @@ def surfTo(url):
 
 
 def _dbCleanup():
+    a2 = A2Obj.inst()
     for table in a2.db.tables():
         if table == 'a2':
             a2.db.pop('aValue')

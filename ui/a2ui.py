@@ -10,7 +10,6 @@ import ahk
 import a2mod
 import a2core
 import a2ctrl
-import a2dblib
 import a2design_ui
 
 from os.path import join
@@ -22,16 +21,19 @@ from PySide import QtGui, QtCore
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-a2PyModules = [a2dblib, a2ctrl, a2design_ui, a2mod, ahk, a2core]
-a2ctrl.checkUiModule(a2design_ui)
+reload_modules = [a2ctrl]
 
 
 class A2Window(QtGui.QMainWindow):
     def __init__(self, app=None, *args):
         super(A2Window, self).__init__(parent=None)
-        self.a2 = a2core.a2
+        self.a2 = a2core.A2Obj.inst()
         self.app = app
 
+        self.dev_mode = self.a2.db.get('dev_mode') or False
+        if self.dev_mode:
+            a2ctrl.check_ui_module(a2design_ui)
+            a2ctrl.check_all_ui()
         a2ctrl.adjustSizes(app)
         self.setupUi()
         self.draw_mod_list()
@@ -45,6 +47,15 @@ class A2Window(QtGui.QMainWindow):
         self.selected_mod = []
         self.toggleEdit(False)
         self.scopes = {}
+
+        if self.a2.db.get('remember_last') or False:
+            last_selected = self.a2.db.get('last_selected')
+            new_selected = [m for m in last_selected if m in self.a2.modules]
+            if len(new_selected) == 1:
+                self.mod = self.a2.modules[new_selected[0]]
+            else:
+                self.mod_selected = new_selected
+            self.select_mod(new_selected)
         
         self.drawMod()
         log.info('initialised!')
@@ -100,23 +111,34 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settings_changed)
 
         self.toggle_dev_menu()
-        self.setWindowIcon(QtGui.QIcon("a2.ico"))
+        iconpath = join(self.a2.paths.ui, "a2.ico")
+        self.setWindowIcon(QtGui.QIcon(iconpath))
 
     def toggle_dev_menu(self, state=None):
         if state is None:
             state = self.a2.db.get('dev_mode') or False
-            # None happens only on startup, if True we dont have to re-add
+            # state=None happens only on startup, if True we dont have to re-add
             if state is True:
                 return
-
         if state:
             self.ui.menubar.insertAction(self.ui.menuHelp.menuAction(),
                                          self.ui.menuDev.menuAction())
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
 
-    def draw_mod_list(self, select=None):
+    def draw_mod_list(self, select=None, refresh=False):
+        """
+        Fills/refills the left module list with according entries
+        TODO: connect with tag selection and search
+        
+        :param str select: to select a certain entry, by default re-selects last entry
+        """
         self.__drawing_mod_list = True
+        
+        if refresh:
+            self.a2.fetch_modules()
+        self.mod_select(force=True)
+
         if select is None:
             select = [i.text() for i in self.ui.modList.selectedItems()]
         allMods = sorted(self.a2.modules.keys(), key=lambda s: s.lower())
@@ -125,7 +147,11 @@ class A2Window(QtGui.QMainWindow):
         
         if select:
             self.select_mod(select)
+
         self.__drawing_mod_list = False
+        
+        if refresh:
+            self.mod_select(force=True)
 
     def select_mod(self, modName):
         """
@@ -136,7 +162,7 @@ class A2Window(QtGui.QMainWindow):
 
     def mod_select(self, force=False):
         """
-        updates the mod view to the right of the UI
+        Updates the module settings view to the right of the UI
         when something different is elected in the module list
         """
         if self.__drawing_mod_list:
@@ -358,16 +384,16 @@ class A2Window(QtGui.QMainWindow):
             a2core.surfTo(self.a2.urls.help)
         else:
             self.mod.help()
-    
+
     def settings_changed(self, specific=None):
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
+        self.draw_mod_list(refresh=True)
+        
         a2core.write_includes(specific)
         
         thread = RestartThread(self.a2, self)
         thread.start()
-        
-        self.draw_mod_list()
     
     def escape(self):
         if self.editing:
@@ -402,10 +428,6 @@ class A2Window(QtGui.QMainWindow):
         splitterSize = winprefs.get('splitter')
         if splitterSize is not None:
             self.ui.splitter.setSizes(winprefs['splitter'])
-            
-        if self.a2.db.get('remember_last') or False:
-            last_selected = self.a2.db.get('last_selected')
-            QtCore.QTimer().singleShot(200, partial(self.select_mod, last_selected))
 
     def newModule(self):
         a2ctrl.InputDialog(self, 'New Module', self.newModuleCreate, self.newModuleCheck,
@@ -433,6 +455,7 @@ class A2Window(QtGui.QMainWindow):
         os.mkdir(join(self.a2.paths.modules, name))
         self.a2.fetch_modules()
         self.draw_mod_list(select=name)
+        self.mod_select(force=True)
 
     def showRaise(self):
         self.show()

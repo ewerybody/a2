@@ -1,12 +1,12 @@
 '''
-Created on Feb 28, 2016
+Created on Mar 22, 2016
 
 @author: eRiC
 '''
 import a2ctrl
 import logging
 from PySide import QtGui, QtCore
-from a2ctrl import string_edit_ui
+from a2ctrl import number_edit_ui
 
 
 logging.basicConfig()
@@ -24,11 +24,10 @@ class Draw(a2ctrl.DrawCtrl):
         self.layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
+        self.value_ctrl = QtGui.QDoubleSpinBox()
         value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
-        self.value_ctrl = QtGui.QLineEdit(value)
-        #self.valueCtrl.returnPressed.connect(self.check)
+        self.value_ctrl.setValue(value)
         self.value_ctrl.editingFinished.connect(self.submit_value)
-        #self.valueCtrl.leaveEvent = self.lineLeaveEvent
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.value_ctrl)
         self.setLayout(self.layout)
@@ -38,7 +37,7 @@ class Draw(a2ctrl.DrawCtrl):
     
     def check(self, value=None):
         if value is None:
-            value = self.value_ctrl.text()
+            value = self.value_ctrl.value()
         
         # prevent being called double
         if self.value == value:
@@ -58,9 +57,9 @@ class Edit(a2ctrl.EditCtrl):
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'String'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        self.helpUrl = self.a2.urls.help_string
+        self.helpUrl = self.a2.urls.help_number
         
-        self.ui = string_edit_ui.Ui_string_edit()
+        self.ui = number_edit_ui.Ui_number_edit()
         self.ui.setupUi(self.mainWidget)
 
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)

@@ -37,8 +37,8 @@ class Mod(object):
         # gather files from module path in local list
         self.name = modname
         global a2
-        a2 = a2core.a2
-        self.path = join(a2.paths.modules, modname)
+        self.a2 = a2core.A2Obj.inst()
+        self.path = join(self.a2.paths.modules, modname)
         self._config = None
         self.configFile = join(self.path, 'config.json')
         self.ui = None
@@ -74,7 +74,7 @@ class Mod(object):
         data = self.loopCfg(self.config[1:], data)
                 
         for typ in ['includes', 'hotkeys', 'variables']:
-            a2.db.set(typ, data[typ], self.name)
+            self.a2.db.set(typ, data[typ], self.name)
 
     def loopCfg(self, cfgDict, data):
         for cfg in cfgDict:
@@ -83,14 +83,14 @@ class Mod(object):
                 data['includes'].append(cfg['file'])
             
             elif 'name' in cfg:
-                userCfg = a2.db.get(cfg['name'], self.name)
+                userCfg = self.a2.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
-                    if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
                     
-                    key = a2ctrl.getCfgValue(cfg, userCfg, 'key')
-                    scope = a2ctrl.getCfgValue(cfg, userCfg, 'scope')
-                    scopeMode = a2ctrl.getCfgValue(cfg, userCfg, 'scopeMode')
+                    key = a2ctrl.get_cfg_value(cfg, userCfg, 'key')
+                    scope = a2ctrl.get_cfg_value(cfg, userCfg, 'scope')
+                    scopeMode = a2ctrl.get_cfg_value(cfg, userCfg, 'scopeMode')
                     function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
                     if scopeMode not in data['hotkeys']:
                         data['hotkeys'][scopeMode] = []
@@ -100,12 +100,12 @@ class Mod(object):
                     else:
                         data['hotkeys'][scopeMode].append([scope, key, function])
                 
-                elif cfg['typ'] in ['checkBox', 'string']:
-                    data['variables'][cfg['name']] = a2ctrl.getCfgValue(cfg, userCfg, 'value')
+                elif cfg['typ'] in ['checkBox', 'string', 'number']:
+                    data['variables'][cfg['name']] = a2ctrl.get_cfg_value(cfg, userCfg, 'value')
 
                 elif cfg['typ'] == 'groupBox':
                     #disablable
-                    if not a2ctrl.getCfgValue(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
                     childList = cfg.get('children', [])
                     data = self.loopCfg(childList, data)
@@ -122,7 +122,7 @@ class Mod(object):
 
     @property
     def enabled(self):
-        return self.name in a2.enabled
+        return self.name in self.a2.enabled
 
     @enabled.setter
     def enabled(self, this):
@@ -160,7 +160,7 @@ class Mod(object):
         user sets True AND default it False:
             set to userCfg
         """
-        userCfg = a2.db.get(subCfg['name'], self.name) or {}
+        userCfg = self.a2.db.get(subCfg['name'], self.name) or {}
         if attrName in userCfg:
             # value to set equals CURRENT value: done
             if setValue == userCfg[attrName]:
@@ -171,7 +171,7 @@ class Mod(object):
         # value to set equals CONFIG value: done. otherwise: save it:
         if setValue != subCfg[attrName]:
             userCfg[attrName] = setValue
-        a2.db.set(subCfg['name'], userCfg, self.name)
+        self.a2.db.set(subCfg['name'], userCfg, self.name)
 
     def help(self):
         docs_url = self.config[0].get('url')
