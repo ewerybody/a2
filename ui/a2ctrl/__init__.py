@@ -25,7 +25,6 @@ the author, name, version, description info
 import sys
 import ahk
 import time
-import a2core
 import logging
 import inspect
 import threading
@@ -34,10 +33,11 @@ import subprocess
 from copy import deepcopy
 from functools import partial
 from pysideuic import compileUi
-from PySide import QtGui, QtCore
-from a2ctrl import inputDialog_ui
+from PySide import QtGui, QtCore, QtSvg
 from os.path import join, getmtime, dirname, basename, exists, splitext
 
+import a2core
+from a2ctrl import inputDialog_ui
 
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
@@ -57,6 +57,30 @@ fontXL.setFamily("Segoe UI")
 fontXL.setPointSize(13)
 uiScale = 1
 UI_FILE_SUFFIX = '_ui'
+ICO_PATH = None
+
+
+class UIValues(object):
+    spacing = 5
+
+
+class Icons(object):
+    __instance = None
+    
+    @staticmethod
+    def inst():
+        if Icons.__instance is None:
+            Icons.__instance = Icons()
+        return Icons.__instance
+
+    def __init__(self):
+        self.hotkey = Ico('keyboard')
+        self.group = Ico('folder')
+        self.paste = Ico('paste')
+        self.code = Ico('code')
+        self.check = Ico('check')
+        self.string = Ico('string')
+        self.number = Ico('number')
 
 
 def adjustSizes(app):
@@ -525,15 +549,24 @@ class EditAddElem(QtGui.QWidget):
         self.baselayout.addItem(spacerItem)
 
     def populateMenu(self):
+        icons = Icons.inst()
         self.menu.clear()
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        for typ in ('checkBox hotkey groupBox string number '
-                    'fileField text button comboBox').split():
-            action = QtGui.QAction(self.menu)
-            action.setText(typ)
-            action.triggered.connect(partial(self.addCtrl, typ))
+        for typ, icon in [('checkBox', icons.check),
+                          ('hotkey', icons.hotkey),
+                          ('groupBox', icons.group),
+                          ('string', icons.string),
+                          ('number', icons.number),
+                          ('fileField', None),
+                          ('text', None),
+                          ('button', None),
+                          ('comboBox', None)]:
+            if icon is None:
+                action = QtGui.QAction(typ, self.menu, triggered=partial(self.addCtrl, typ))
+            else:
+                action = QtGui.QAction(icon, typ, self.menu, triggered=partial(self.addCtrl, typ))
             self.menu.addAction(action)
     
     def addCtrl(self, typ, name=''):
@@ -667,6 +700,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
         super(BrowseScriptsMenu, self).__init__()
         self.func = func
         self.main = main
+        self.setIcon(Icons.inst().code)
         self.setTitle('include')
         self.aboutToShow.connect(self.buildMenu)
         self.tempConfig = self.main.tempConfig
@@ -678,17 +712,14 @@ class BrowseScriptsMenu(QtGui.QMenu):
             if cfg['typ'] == 'include':
                 scriptsInUse.add(cfg['file'])
         
+        icons = Icons.inst()
         scriptsUnused = set(self.main.mod.scripts) - scriptsInUse
         
         for scriptName in scriptsUnused:
-            action = QtGui.QAction(self)
-            action.setText(scriptName)
-            action.triggered.connect(partial(self.setScript, scriptName))
+            action = QtGui.QAction(icons.code, scriptName, self,
+                                   triggered=partial(self.setScript, scriptName))
             self.addAction(action)
-
-        newIncludeAction = QtGui.QAction(self)
-        newIncludeAction.setText('create new')
-        newIncludeAction.triggered.connect(self.setScript)
+        newIncludeAction = QtGui.QAction(icons.code, 'create new', self, triggered=self.setScript)
         self.addAction(newIncludeAction)
     
     def setScript(self, name='', create=False):
@@ -700,6 +731,49 @@ class BrowseScriptsMenu(QtGui.QMenu):
         if create:
             name = self.main.mod.createScript(name)
         self.func('include', name)
+
+
+class Ico(QtGui.QIcon):
+    """
+    """
+    def __init__(self, ico_name, px=512, scale=1.0, color=None):
+        super(Ico, self).__init__()
+        if exists(ico_name):
+            self.path = ico_name
+        else:
+            global ICO_PATH
+            if ICO_PATH is None:
+                ICO_PATH = join(a2core.A2Obj.inst().paths.a2, 'ui', 'res', '%s.svg')
+            self.path = ICO_PATH % ico_name
+            if not exists(self.path):
+                raise IOError('SVG_icon: could not find path to "%s"!' % ico_name)
+                return
+        
+        renderer = QtSvg.QSvgRenderer(self.path)
+        image = QtGui.QImage(QtCore.QSize(px, px), QtGui.QImage.Format_ARGB32)
+        painter = QtGui.QPainter(image)
+        
+        if scale != 1.0:
+            t = (px / 2) * (1 - scale)
+            painter.translate(t, t)
+            painter.scale(scale, scale)
+        
+        renderer.render(painter)
+        
+        if color:
+            if isinstance(color, (int, float)):
+                color = [int(color)] * 3
+            if isinstance(color, (tuple, list)):
+                color = QtGui.QColor(color[0], color[1], color[2])
+            if isinstance(color, QtGui.QColor):
+                painter.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
+                painter.fillRect(image.rect(), color)
+            else:
+                log.error('Cannot use color: "%s"' % str(color))
+        
+        pixmap = QtGui.QPixmap.fromImage(image)
+        self.addPixmap(pixmap)
+        painter.end()
 
 
 def list_getAllItems_asText(listCtrl):

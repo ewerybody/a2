@@ -3,7 +3,6 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-import a2core
 import a2ctrl
 import logging
 from PySide import QtGui
@@ -29,6 +28,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
         self.clicked[bool].connect(self.check)
 
         self.layout = QtGui.QVBoxLayout(self)
+        self.layout.setSpacing(a2ctrl.UIValues.spacing)
         for child in self.cfg.get('children', []):
             ctrl = a2ctrl.draw(self.main, child, self.mod)
             if ctrl:

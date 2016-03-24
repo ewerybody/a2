@@ -12,9 +12,9 @@ import a2core
 import a2ctrl
 import a2design_ui
 
-from os.path import join
 from copy import deepcopy
 from functools import partial
+from os.path import join
 from PySide import QtGui, QtCore
 
 
@@ -68,12 +68,10 @@ class A2Window(QtGui.QMainWindow):
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.controls = []
-        # create a spacer to arrange the layout
-        # NOTE that a spacer is added via addItem! not widget
-        self.ui.spacer = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum,
+        self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
-                
+
         self.ui.modCheck.setVisible(False)
         self.ui.modName.setText('a2')
         self.ui.modVersion.setText('v0.1')
@@ -94,6 +92,8 @@ class A2Window(QtGui.QMainWindow):
         
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
         
+        self.ui.actionIcon_test.triggered.connect(self.set_icon)
+        
         self.ui.editOKButton.released.connect(self.editSubmit)
         self.ui.editCancelButton.released.connect(self.drawMod)
         self.ui.modList.itemSelectionChanged.connect(self.mod_select)
@@ -111,8 +111,12 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settings_changed)
 
         self.toggle_dev_menu()
-        iconpath = join(self.a2.paths.ui, "a2.ico")
-        self.setWindowIcon(QtGui.QIcon(iconpath))
+        self.set_icon()
+
+    def set_icon(self):
+        iconpath = join(self.a2.paths.ui, 'res', 'a2.svg')
+        icon = a2ctrl.Ico(iconpath)
+        self.setWindowIcon(icon)
 
     def toggle_dev_menu(self, state=None):
         if state is None:
@@ -233,7 +237,8 @@ class A2Window(QtGui.QMainWindow):
                                                   QtGui.QSizePolicy.Maximum))
         # create new column layout for the module controls
         newLayout = QtGui.QVBoxLayout(newWidget)
-        
+        newLayout.setContentsMargins(5, 5, 5, 5)
+        newLayout.setSpacing(a2ctrl.UIValues.spacing)
         # turn scroll layout content to new host widget
         self.ui.scrollArea.setWidget(newWidget)
         # make the new inner layout the mainLayout
@@ -243,6 +248,7 @@ class A2Window(QtGui.QMainWindow):
                 newLayout.addWidget(ctrl)
         # amend the spacer
         newLayout.addItem(self.ui.spacer)
+        #newLayout.
         self.mainlayout = newLayout
     
     def drawMod(self):
