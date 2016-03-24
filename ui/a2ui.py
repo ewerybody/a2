@@ -92,8 +92,6 @@ class A2Window(QtGui.QMainWindow):
         
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
         
-        self.ui.actionIcon_test.triggered.connect(self.set_icon)
-        
         self.ui.editOKButton.released.connect(self.editSubmit)
         self.ui.editCancelButton.released.connect(self.drawMod)
         self.ui.modList.itemSelectionChanged.connect(self.mod_select)
@@ -111,11 +109,8 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settings_changed)
 
         self.toggle_dev_menu()
-        self.set_icon()
-
-    def set_icon(self):
-        iconpath = join(self.a2.paths.ui, 'res', 'a2.svg')
-        icon = a2ctrl.Ico(iconpath)
+        
+        icon = a2ctrl.Ico(join(self.a2.paths.ui, 'res', 'a2.svg'))
         self.setWindowIcon(icon)
 
     def toggle_dev_menu(self, state=None):
