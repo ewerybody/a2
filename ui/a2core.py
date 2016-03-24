@@ -252,7 +252,7 @@ def get_settings_path():
 
 
 def get_author():
-    return a2.db.get('devAuthor') or os.getenv('USERNAME')
+    return A2Obj.inst().db.get('devAuthor') or os.getenv('USERNAME')
 
 
 def get_date():
@@ -264,8 +264,7 @@ def set_windows_startup(state=True):
     """
     might be doable via python but this is just too easy with AHKs A_Startup
     """
-    import ahk
-    ahk.call_cmd('set_windows_startup', a2.paths.a2, int(state))
+    ahk.call_cmd('set_windows_startup', A2Obj.inst().paths.a2, int(state))
 
 
 def surfTo(url):
