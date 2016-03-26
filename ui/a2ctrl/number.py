@@ -7,6 +7,7 @@ import a2ctrl
 import logging
 from PySide import QtGui, QtCore
 from a2ctrl import number_edit_ui
+from functools import partial
 
 
 logging.basicConfig()
@@ -19,18 +20,60 @@ class Draw(a2ctrl.DrawCtrl):
         super(Draw, self).__init__(main, cfg, mod)
         self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
         self._setupUi()
+        self.slider_pressed = None
 
     def _setupUi(self):
         self.layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        self.value_ctrl = QtGui.QDoubleSpinBox()
-        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
-        self.value_ctrl.setValue(value)
-        self.value_ctrl.editingFinished.connect(self.submit_value)
         self.layout.addWidget(self.label)
+        
+        self.value_ctrl = QtGui.QDoubleSpinBox()
+        self.value_ctrl.setValue(self.value)
+        self.value_ctrl.setMinimum(self.cfg.get('min', 0))
+        self.value_ctrl.setMaximum(self.cfg.get('max', 100))
+        self.value_ctrl.setDecimals(self.cfg.get('decimals', 1))
+        self.value_ctrl.setSingleStep(self.cfg.get('step_len', 1))
+        self.value_ctrl.setValue(self.value)
+        self.value_ctrl.setValue(self.value)
+        self.value_ctrl.editingFinished.connect(self.submit_value)
         self.layout.addWidget(self.value_ctrl)
+        
+        if self.cfg.get('suffix'):
+            self.suffix_label = QtGui.QLabel(self.cfg.get('suffix'))
+            self.layout.addWidget(self.suffix_label)
+        if self.cfg.get('slider'):
+            self.slider = QtGui.QSlider(self)
+            self.slider.setValue(self.value)
+            self.slider.setOrientation(QtCore.Qt.Horizontal)
+            self.slider.setMinimum(self.cfg.get('min', 0))
+            self.slider.setMaximum(self.cfg.get('max', 100))
+            self.slider.setSingleStep(self.cfg.get('step_len', 1))
+            self.slider.valueChanged.connect(self.slider_change)
+            #self.slider.sliderReleased.connect(self.slider_change)
+            self.slider.sliderPressed.connect(partial(self.set_slider_pressed, True))
+            self.slider.sliderReleased.connect(partial(self.set_slider_pressed, False))
+            self.slider.sliderReleased.connect(self.slider_change)
+            self.layout.addWidget(self.slider)
+            
+            self.value_ctrl.editingFinished.connect(self.slider.setValue)
+
         self.setLayout(self.layout)
+
+    def set_slider_pressed(self, value):
+        self.slider_pressed = value
+
+    def slider_change(self, value=None, no_submit=None):
+        if no_submit is not None:
+            
+        if value is None:
+            value = self.value_ctrl.value()
+        else:
+            self.value_ctrl.setValue(value)
+        
+        if self.slider_pressed:
+            return
+        self.submit_value()
 
     def submit_value(self, event=None):
         QtCore.QTimer().singleShot(150, self.check)
@@ -66,3 +109,9 @@ class Edit(a2ctrl.EditCtrl):
         
         self.connectCfgCtrls(self.ui)
         self.mainWidget.setLayout(self.ui.editLayout)
+        
+        for signal, set_func in [(self.ui.cfg_min.valueChanged, self.ui.cfg_value.setMinimum),
+                                 (self.ui.cfg_max.valueChanged, self.ui.cfg_value.setMaximum),
+                                 (self.ui.cfg_decimals.valueChanged, self.ui.cfg_value.setDecimals),
+                                 (self.ui.cfg_step_len.valueChanged, self.ui.cfg_value.setSingleStep)]:
+            signal.connect(set_func)

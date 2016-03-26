@@ -14,9 +14,28 @@
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="editLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
    <property name="labelAlignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="internalNameLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>internal name:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="1">
     <widget class="QLineEdit" name="cfg_name">
      <property name="text">
@@ -34,22 +53,6 @@
      </property>
      <property name="text">
       <string>string label:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="internalNameLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>internal name:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -99,10 +102,27 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QDoubleSpinBox" name="cfg_min"/>
+      <widget class="QDoubleSpinBox" name="cfg_min">
+       <property name="minimum">
+        <double>-16777215.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.000000000000000</double>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="cfg_max"/>
+      <widget class="QDoubleSpinBox" name="cfg_max">
+       <property name="minimum">
+        <double>-16777215.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>16777215.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>100.000000000000000</double>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -114,7 +134,11 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QSpinBox" name="cfg_decimals"/>
+    <widget class="QSpinBox" name="cfg_decimals">
+     <property name="value">
+      <number>1</number>
+     </property>
+    </widget>
    </item>
    <item row="5" column="0">
     <widget class="QLabel" name="label_4">
@@ -124,7 +148,14 @@
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QDoubleSpinBox" name="cfg_step_len"/>
+    <widget class="QDoubleSpinBox" name="cfg_step_len">
+     <property name="maximum">
+      <double>16777215.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
    </item>
    <item row="6" column="0">
     <widget class="QLabel" name="label_5">
@@ -137,7 +168,7 @@
     <widget class="QLineEdit" name="cfg_suffix"/>
    </item>
    <item row="7" column="1">
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="cfg_slider">
      <property name="text">
       <string>show slider</string>
      </property>
