@@ -106,7 +106,8 @@ class A2Window(QtGui.QMainWindow):
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                         self, self.editSubmit)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self, self.settings_changed)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
+                        partial(self.settings_changed, refresh=True))
 
         self.toggle_dev_menu()
         
@@ -386,10 +387,10 @@ class A2Window(QtGui.QMainWindow):
         else:
             self.mod.help()
 
-    def settings_changed(self, specific=None):
+    def settings_changed(self, specific=None, refresh_ui=False):
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
-        self.draw_mod_list(refresh=True)
+        self.draw_mod_list(refresh=refresh_ui)
         
         a2core.write_includes(specific)
         
