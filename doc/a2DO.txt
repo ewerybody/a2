@@ -1,10 +1,4 @@
 ﻿a2DO:
-* create groups
-    * we actually don't need changes on a2ui.settingsChanged
-      all this will be embedded on mod level. So a2mod.change will browse the own settings and
-      put data to the includes, variables and hokeys-entries if the group is activated. 
-      
-
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
     * borrow scope selection and hotkey getter from aA?
@@ -12,16 +6,26 @@ in flight:
     * check for hotkey conflicts before submit
     * allow multiple hotkeys in edit mode
 
+* reset module settings
+* reset single control settings
+
 #38:
 * create dev config page
     * author name (get user name by default), script editor, github handle?, jsonIndent ...
-
-* make a2 welcome view a mod with config too
-* create a2 settings page (part of welcome already)
-* optional remember last selected mod
-* create check control which writes inlcudes: variables.ahk/inlcude.ahk
+    * homepage
+    * autohotkey editor
+    * autohotkey executable
 
 a2DONE:
+* config/welcome page
+    * create a2 settings page (part of welcome already)
+    * make a2 welcome view a mod with config too
+    * option: remember last selected mod   
+* create groups
+    * we actually don't need changes on a2ui.settingsChanged
+      all this will be embedded on mod level. So a2mod.change will browse the own settings and
+      put data to the includes, variables and hokeys-entries if the group is activated. 
+* create check control which writes inlcudes: variables.ahk/inlcude.ahk
 * deselect mod and show a2 welcome on Esc? (optional)
 * disable Edit mod when multiple selected
 * add element > include uses available scipts list

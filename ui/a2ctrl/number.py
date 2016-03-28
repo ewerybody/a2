@@ -21,6 +21,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
         self._setupUi()
         self.slider_pressed = None
+        self.ignore_change = False
 
     def _setupUi(self):
         self.layout = QtGui.QHBoxLayout(self)
@@ -56,15 +57,21 @@ class Draw(a2ctrl.DrawCtrl):
             self.slider.sliderReleased.connect(self.slider_change)
             self.layout.addWidget(self.slider)
             
-            self.value_ctrl.editingFinished.connect(self.slider.setValue)
+            self.value_ctrl.valueChanged.connect(self.set_slider)
 
         self.setLayout(self.layout)
 
-    def set_slider_pressed(self, value):
-        self.slider_pressed = value
+    def set_slider_pressed(self, state):
+        self.slider_pressed = state
 
-    def slider_change(self, value=None, no_submit=None):
-        if no_submit is not None:
+    def set_slider(self, value):
+        self.ignore_change = True
+        self.slider.setValue(value)
+        self.ignore_change = False
+
+    def slider_change(self, value=None):
+        if self.ignore_change:
+            return
             
         if value is None:
             value = self.value_ctrl.value()
