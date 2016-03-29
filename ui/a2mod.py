@@ -163,13 +163,13 @@ class Mod(object):
         userCfg = self.a2.db.get(subCfg['name'], self.name) or {}
         if attrName in userCfg:
             # value to set equals CURRENT value: done
-            if setValue == userCfg[attrName]:
+            if setValue == userCfg.get(attrName):
                 return
             # in any other case: delete to make changes
             userCfg.pop(attrName)
 
         # value to set equals CONFIG value: done. otherwise: save it:
-        if setValue != subCfg[attrName]:
+        if setValue != subCfg.get(attrName):
             userCfg[attrName] = setValue
         self.a2.db.set(subCfg['name'], userCfg, self.name)
 
