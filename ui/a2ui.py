@@ -88,6 +88,9 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionExplore_to.triggered.connect(self.exploreMod)
         self.ui.actionAbout_a2.triggered.connect(partial(a2core.surfTo, self.a2.urls.help))
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
+        self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2)
+        self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
+        
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         self.ui.actionNew_module.triggered.connect(self.newModule)
         self.ui.actionA2_settings.triggered.connect(partial(self.select_mod, None))
@@ -113,9 +116,7 @@ class A2Window(QtGui.QMainWindow):
                         partial(self.settings_changed, refresh=True))
 
         self.toggle_dev_menu()
-        
-        icon = a2ctrl.Ico(join(self.a2.paths.ui, 'res', 'a2.svg'))
-        self.setWindowIcon(icon)
+        self.setWindowIcon(a2ctrl.Icons.inst().a2)
 
     def toggle_dev_menu(self, state=None):
         if state is None:

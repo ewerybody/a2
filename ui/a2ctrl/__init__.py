@@ -77,13 +77,23 @@ class Icons(object):
         return Icons.__instance
 
     def __init__(self):
-        self.hotkey = Ico('keyboard')
-        self.group = Ico('folder')
-        self.paste = Ico('paste')
-        self.code = Ico('code')
+        self.a2 = Ico('a2')
+        self.autohotkey = Ico('autohotkey')
         self.check = Ico('check')
-        self.string = Ico('string')
+        self.code = Ico('code')
+        self.copy = Ico('copy')
+        self.cut = Ico('cut')
+        self.delete = Ico('delete')
+        self.down = Ico('down')
+        self.down_align = Ico('down_align')
+        self.group = Ico('folder')
+        self.help = Ico('help')
+        self.hotkey = Ico('keyboard')
         self.number = Ico('number')
+        self.paste = Ico('paste')
+        self.string = Ico('string')
+        self.up = Ico('up')
+        self.up_align = Ico('up_align')
 
 
 def adjustSizes(app):
@@ -299,7 +309,7 @@ class EditCtrl(QtGui.QGroupBox):
         self.delete()
     
     def help(self):
-        self.main.surfTo(self.helpUrl)
+        a2core.surfTo(self.helpUrl)
 
     def _setupUi(self, addLayout):
         self.setTitle(self.cfg['typ'])
@@ -338,28 +348,33 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrlButton.setMenu(self._ctrlMenu)
 
     def buildMenu(self):
+        """
+        TODO: don't show top/to top, bottom/to bottom when already at top/bottom
+        """
         self._ctrlMenu.clear()
-        menu_items = [('Up', partial(self.move, -1)),
-                      ('Down', partial(self.move, 1)),
-                      ('To Top', partial(self.move, True)),
-                      ('To Bottom', partial(self.move, False)),
-                      ('Delete', self.delete),
-                      ('Duplicate', self.duplicate),
-                      ('Help on %s' % self.ctrlType, self.help)]
+        icons = Icons.inst()
+        menu_items = [('Up', partial(self.move, -1), icons.up),
+                      ('Down', partial(self.move, 1), icons.down),
+                      ('To Top', partial(self.move, True), icons.up_align),
+                      ('To Bottom', partial(self.move, False), icons.down_align),
+                      ('Delete', self.delete, icons.delete),
+                      ('Duplicate', self.duplicate, icons.copy),
+                      ('Help on %s' % self.ctrlType, self.help, icons.help)]
         
         clipboard_count = ''
         if self.main.edit_clipboard:
             clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
         
         if self.ctrlType == 'Groupbox':
-            menu_items.insert(-1, ('Paste' + clipboard_count, self.paste))
+            menu_items.insert(-1, ('Paste' + clipboard_count, self.paste, icons.paste))
         else:
-            menu_items.insert(-1, ('Cut' + clipboard_count, self.cut))
+            menu_items.insert(-1, ('Cut' + clipboard_count, self.cut, icons.cut))
 
         for item in menu_items:
-            action = QtGui.QAction(self._ctrlMenu)
-            action.setText(item[0])
-            action.triggered.connect(item[1])
+            if icons and len(item) == 3:
+                action = QtGui.QAction(item[2], item[0], self._ctrlMenu, triggered=item[1])
+            else:
+                action = QtGui.QAction(item[0], self._ctrlMenu, triggered=item[1])
             self._ctrlMenu.addAction(action)
 
     def connectCfgCtrls(self, uiclass):
