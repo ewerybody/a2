@@ -378,7 +378,7 @@ class ScopeDialog(QtGui.QDialog):
         self.ui = scopeDialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
         self.setModal(True)
-        self.okFunc = ok_func
+        self.ok_func = ok_func
         self.setWindowTitle('setup scope')
         self.a2 = a2core.A2Obj.inst()
         self.edit = text != ''
