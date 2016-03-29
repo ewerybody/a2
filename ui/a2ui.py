@@ -45,7 +45,6 @@ class A2Window(QtGui.QMainWindow):
         self.edit_clipboard = []
         self.tempConfig = None
         self.selected_mod = []
-        self.toggleEdit(False)
         self.scopes = {}
 
         if self.a2.db.get('remember_last') or False:
@@ -71,6 +70,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
+        self.settings_widget = self.ui.scrollAreaContents
 
         self.ui.modCheck.setVisible(False)
         self.ui.modName.setText('a2')
@@ -209,7 +209,7 @@ class A2Window(QtGui.QMainWindow):
         
         self.drawMod()
         
-    def drawUI(self):
+    def drawUI(self, keep_scroll=False):
         """
         takes list of controls and arranges them in the scroll layout
         
@@ -228,15 +228,24 @@ class A2Window(QtGui.QMainWindow):
         # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
-        newWidget = QtGui.QWidget(self)
-        newWidget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                  QtGui.QSizePolicy.Maximum))
+        current_height = self.settings_widget.height()
+        new_widget = QtGui.QWidget(self)
+        if keep_scroll:
+            current_scroll_value = self.ui.scrollBar.value()
+            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                                       QtGui.QSizePolicy.Fixed))
+            new_widget.setMinimumHeight(current_height)
+        else:
+            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                                       QtGui.QSizePolicy.Maximum))
+
         # create new column layout for the module controls
-        newLayout = QtGui.QVBoxLayout(newWidget)
+        newLayout = QtGui.QVBoxLayout(new_widget)
         newLayout.setContentsMargins(5, 5, 5, 5)
         newLayout.setSpacing(a2ctrl.UIValues.spacing)
         # turn scroll layout content to new host widget
-        self.ui.scrollArea.setWidget(newWidget)
+        self.ui.scrollArea.setWidget(new_widget)
+        
         # make the new inner layout the mainLayout
         # add the controls to it
         for ctrl in self.controls:
@@ -244,8 +253,14 @@ class A2Window(QtGui.QMainWindow):
                 newLayout.addWidget(ctrl)
         # amend the spacer
         newLayout.addItem(self.ui.spacer)
-        #newLayout.
+        
+        if keep_scroll:
+            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                                                 QtGui.QSizePolicy.Maximum))
+            self.ui.scrollBar.setValue(current_scroll_value)
+        
         self.mainlayout = newLayout
+        self.settings_widget = new_widget
     
     def drawMod(self):
         """
@@ -296,7 +311,7 @@ class A2Window(QtGui.QMainWindow):
         self.toggleEdit(False)
         self.drawUI()
         
-    def editMod(self):
+    def editMod(self, keep_scroll=False):
         """
         From the modules config creates controls to edit the config itself.
         If a header is not found one will be added to the in-edit config.
@@ -328,8 +343,9 @@ class A2Window(QtGui.QMainWindow):
         editSelect = a2ctrl.EditAddElem(self, self.tempConfig)
         self.controls.append(editSelect)
         
-        self.drawUI()
+        self.drawUI(keep_scroll)
         self.toggleEdit(True)
+        print('editMod: ...')
     
     def editSubmit(self):
         """
@@ -352,6 +368,7 @@ class A2Window(QtGui.QMainWindow):
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
             self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
+        print('toggleEdit: %s' % state)
     
     def mod_enable(self):
         """

@@ -69,6 +69,9 @@ class Icons(object):
     
     @staticmethod
     def inst():
+        """
+        :rtype: Icons
+        """
         if Icons.__instance is None:
             Icons.__instance = Icons()
         return Icons.__instance
@@ -266,7 +269,7 @@ class EditCtrl(QtGui.QGroupBox):
                 #self.main.ui.scrollArea
             else:
                 newindex = maxIndex
-                self.scrolltobottom()
+                self.scroll_to_bottom()
         else:
             newindex = index + value
         # hop out if already at start or end
@@ -277,7 +280,8 @@ class EditCtrl(QtGui.QGroupBox):
         #cfg = self.parentCfg.pop(index)
         self.parentCfg.pop(index)
         self.parentCfg.insert(newindex, self.cfg)
-        self.main.editMod()
+        self.main.editMod(keep_scroll=True)
+        #self.main.editMod()
     
     def delete(self):
         if self.cfg in self.parentCfg:
@@ -285,13 +289,10 @@ class EditCtrl(QtGui.QGroupBox):
             self.main.editMod()
 
     def duplicate(self):
-        self._scrollValB4 = self.main.ui.scrollBar.value()
-        self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
         newCfg = deepcopy(self.cfg)
         self.parentCfg.append(newCfg)
         self.main.editMod()
-
-        threading.Thread(target=self.scrolltobottom).start()
+        self.scroll_to_bottom()
     
     def cut(self):
         self.main.edit_clipboard.append(deepcopy(self.cfg))
@@ -426,7 +427,14 @@ class EditCtrl(QtGui.QGroupBox):
         elif func is not None:
             self.cfg[name] = func()
 
-    def scrolltobottom(self, *args):
+    def scroll_to_bottom(self):
+        self._scrollValB4 = self.main.ui.scrollBar.value()
+        self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
+        print('scroll_to_bottom...')
+        #QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
+        threading.Thread(target=self._scroll_to_bottom).start()
+
+    def _scroll_to_bottom(self, *args):
         print('scrollValB4: %s' % self._scrollValB4)
         time.sleep(0.1)
         tmax = 0.3
