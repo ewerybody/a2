@@ -54,8 +54,11 @@ class A2Window(QtGui.QMainWindow):
                 self.mod = self.a2.modules[new_selected[0]]
             else:
                 self.mod_selected = new_selected
+            # to keep controls from triggering yet
+            self._draw_phase = True
             self.select_mod(new_selected)
         
+        self._draw_phase = False
         self.drawMod()
         log.info('initialised!')
 
@@ -133,11 +136,10 @@ class A2Window(QtGui.QMainWindow):
         
         :param str select: to select a certain entry, by default re-selects last entry
         """
-        self.__drawing_mod_list = True
+        self._draw_phase = True
         
         if refresh:
             self.a2.fetch_modules()
-        self.mod_select(force=True)
 
         if select is None:
             select = [i.text() for i in self.ui.modList.selectedItems()]
@@ -148,7 +150,7 @@ class A2Window(QtGui.QMainWindow):
         if select:
             self.select_mod(select)
 
-        self.__drawing_mod_list = False
+        self._draw_phase = False
         
         if refresh:
             self.mod_select(force=True)
@@ -165,7 +167,7 @@ class A2Window(QtGui.QMainWindow):
         Updates the module settings view to the right of the UI
         when something different is elected in the module list
         """
-        if self.__drawing_mod_list:
+        if self._draw_phase:
             return
         
         sel = self.ui.modList.selectedItems()
@@ -235,9 +237,6 @@ class A2Window(QtGui.QMainWindow):
             new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                                        QtGui.QSizePolicy.Fixed))
             new_widget.setMinimumHeight(current_height)
-        else:
-            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                       QtGui.QSizePolicy.Maximum))
 
         # create new column layout for the module controls
         newLayout = QtGui.QVBoxLayout(new_widget)
@@ -254,9 +253,9 @@ class A2Window(QtGui.QMainWindow):
         # amend the spacer
         newLayout.addItem(self.ui.spacer)
         
+        new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                                   QtGui.QSizePolicy.Maximum))
         if keep_scroll:
-            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                                 QtGui.QSizePolicy.Maximum))
             self.ui.scrollBar.setValue(current_scroll_value)
         
         self.mainlayout = newLayout
@@ -345,7 +344,6 @@ class A2Window(QtGui.QMainWindow):
         
         self.drawUI(keep_scroll)
         self.toggleEdit(True)
-        print('editMod: ...')
     
     def editSubmit(self):
         """
@@ -368,7 +366,6 @@ class A2Window(QtGui.QMainWindow):
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
             self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
-        print('toggleEdit: %s' % state)
     
     def mod_enable(self):
         """
