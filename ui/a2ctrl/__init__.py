@@ -30,6 +30,7 @@ import inspect
 import threading
 import importlib
 import subprocess
+import collections
 from copy import deepcopy
 from functools import partial
 from pysideuic import compileUi
@@ -555,7 +556,7 @@ class EditAddElem(QtGui.QWidget):
         self.addButton.setMaximumHeight(lenM)
         self.baselayout.addWidget(self.addButton)
         
-        self.menu = QtGui.QMenu(self.addButton)
+        self.menu = QtGui.QMenu(self)
         self.menu.aboutToShow.connect(self.populateMenu)
         self.addButton.setMenu(self.menu)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -567,15 +568,16 @@ class EditAddElem(QtGui.QWidget):
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        menu_items = {'check': ('CheckBox', icons.check),
-                      'hotkey': ('Hotkey', icons.hotkey),
-                      'group': ('GroupBox', icons.group),
-                      'string': ('String', icons.string),
-                      'number': ('Number', icons.number),
-                      'combo': ('ComboBox', None),
-                      'file': ('FileField', None),
-                      'text': ('TextField', None),
-                      'button': ('Button', None)}
+        menu_items = collections.OrderedDict()
+        menu_items['check'] = ('CheckBox', icons.check)
+        menu_items['hotkey'] = ('Hotkey', icons.hotkey)
+        menu_items['group'] = ('GroupBox', icons.group)
+        menu_items['string'] = ('String', icons.string)
+        menu_items['number'] = ('Number', icons.number)
+        menu_items['combo'] = ('ComboBox', None)
+        #'file'] = ('FileField', None),
+        #'text'] = ('TextField', None),
+        #'button'] = ('Button', None)
 
         for typ, values in menu_items.items():
             action = QtGui.QAction(values[0], self.menu, triggered=partial(self.addCtrl, typ))
@@ -715,7 +717,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
         self.func = func
         self.main = main
         self.setIcon(Icons.inst().code)
-        self.setTitle('include')
+        self.setTitle('Include')
         self.aboutToShow.connect(self.buildMenu)
         self.tempConfig = self.main.tempConfig
 

@@ -80,8 +80,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
         
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
-        spacer = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.hotkeyListLayout.addItem(spacer)
+        self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
         self.ctrllayout.setStretch(2, 1)
         self.setLayout(self.ctrllayout)
