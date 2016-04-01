@@ -48,8 +48,8 @@ class Edit(a2ctrl.EditCtrl):
         self.ui = a2ctrl.check_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.label]:
+        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
         
         self.connectCfgCtrls(self.ui)
-        self.mainWidget.setLayout(self.ui.verticalLayout)
+        self.mainWidget.setLayout(self.ui.editLayout)
