@@ -52,11 +52,10 @@ class A2Window(QtGui.QMainWindow):
             new_selected = [m for m in last_selected if m in self.a2.modules]
             if len(new_selected) == 1:
                 self.mod = self.a2.modules[new_selected[0]]
-            else:
-                self.mod_selected = new_selected
             # to keep controls from triggering yet
             self._draw_phase = True
             self.select_mod(new_selected)
+            self.selected_mod = new_selected
         
         self._draw_phase = False
         self.drawMod()
