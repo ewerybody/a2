@@ -50,6 +50,6 @@
     "enabled": true,
     "label": "browse back and forth with Shift+Wheel in Chrome",
     "name": "wheelUpDownGroup",
-    "typ": "groupBox"
+    "typ": "group"
   }
 ]

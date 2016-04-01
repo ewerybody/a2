@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>string_edit</class>
- <widget class="QWidget" name="string_edit">
+ <class>edit</class>
+ <widget class="QWidget" name="edit">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>1138</width>
-    <height>243</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
         </size>
        </property>
        <property name="text">
-        <string>string label:</string>
+        <string>display label:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>number_edit</class>
- <widget class="QWidget" name="number_edit">
+ <class>edit</class>
+ <widget class="QWidget" name="edit">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -52,7 +52,7 @@
       </size>
      </property>
      <property name="text">
-      <string>string label:</string>
+      <string>display label:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

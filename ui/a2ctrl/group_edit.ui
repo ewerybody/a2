@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>group_edit</class>
- <widget class="QWidget" name="group_edit">
+ <class>edit</class>
+ <widget class="QWidget" name="edit">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>116</height>
+    <width>1082</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,7 +85,7 @@
         </size>
        </property>
        <property name="text">
-        <string>group label:</string>
+        <string>display label:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

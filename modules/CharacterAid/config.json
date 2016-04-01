@@ -1,29 +1,29 @@
 [
   {
-    "date": "2015", 
-    "version": "0.1", 
-    "typ": "nfo", 
-    "description": "Because none existed before this temporary description was created for \"CharacterAid\". Change it to describe what it does with a couple of words.", 
-    "author": "eric"
-  }, 
+    "author": "eric",
+    "date": "2015",
+    "description": "Because none existed before this temporary description was created for \"CharacterAid\". Change it to describe what it does with a couple of words.",
+    "typ": "nfo",
+    "version": "0.1"
+  },
   {
-    "typ": "include", 
-    "file": "umlaut.ahk"
-  }, 
+    "file": "umlaut.ahk",
+    "typ": "include"
+  },
   {
-    "disablable": true, 
-    "multiple": true, 
-    "name": "umlautHotkey", 
-    "enabled": true, 
-    "label": "umlaut - tool to write german umlauts", 
-    "keyChange": true, 
-    "functionCode": "charAid_umlaut()", 
-    "scopeMode": 0, 
-    "mode": "ahk", 
-    "key": "Win+'", 
-    "scopeChange": true, 
-    "scope": "", 
-    "typ": "hotkey", 
-    "functionMode": 0
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "charAid_umlaut()",
+    "functionMode": 0,
+    "key": "Win+'",
+    "keyChange": true,
+    "label": "umlaut - tool to write german umlauts",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "umlautHotkey",
+    "scope": [],
+    "scopeChange": true,
+    "scopeMode": 0,
+    "typ": "hotkey"
   }
 ]

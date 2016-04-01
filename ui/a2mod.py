@@ -99,8 +99,8 @@ class Mod(object):
                         data['hotkeys'][0].append([key, function])
                     else:
                         data['hotkeys'][scopeMode].append([scope, key, function])
-                
-                elif cfg['typ'] in ['checkBox', 'string', 'number']:
+
+                elif cfg['typ'] in ['checkBox', 'string', 'number', 'combobox']:
                     data['variables'][cfg['name']] = a2ctrl.get_cfg_value(cfg, userCfg, 'value')
 
                 elif cfg['typ'] == 'groupBox':

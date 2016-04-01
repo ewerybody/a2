@@ -127,7 +127,7 @@ class Edit(a2ctrl.EditCtrl):
         
         self.a2 = a2core.A2Obj.inst()
         self.helpUrl = self.a2.urls.helpHotkey
-        self.ui = hotkey_edit_ui.Ui_hotkey_edit()
+        self.ui = hotkey_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.hotkeyLabel,

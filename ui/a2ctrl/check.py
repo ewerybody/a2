@@ -7,7 +7,7 @@ import a2core
 import a2ctrl
 import logging
 from PySide import QtGui
-from a2ctrl import checkbox_edit_ui
+from a2ctrl import check_edit_ui
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ class Edit(a2ctrl.EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.helpCheckbox
         
-        self.ui = a2ctrl.checkbox_edit_ui.Ui_checkbox_edit()
+        self.ui = a2ctrl.check_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.label]:

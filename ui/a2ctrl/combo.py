@@ -1,17 +1,13 @@
 '''
-Created on Feb 28, 2016
+Created on Apr 1, 2016
 
 @author: eRiC
 '''
 import a2ctrl
 import logging
 from PySide import QtGui, QtCore
-from a2ctrl import string_edit_ui
-
-
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+from a2ctrl import combo_edit_ui
+from functools import partial
 
 
 class Draw(a2ctrl.DrawCtrl):
@@ -24,21 +20,17 @@ class Draw(a2ctrl.DrawCtrl):
         self.layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
-        self.value_ctrl = QtGui.QLineEdit(value)
-        #self.valueCtrl.returnPressed.connect(self.check)
-        self.value_ctrl.editingFinished.connect(self.submit_value)
-        #self.valueCtrl.leaveEvent = self.lineLeaveEvent
         self.layout.addWidget(self.label)
-        self.layout.addWidget(self.value_ctrl)
-        self.setLayout(self.layout)
+        
+        self.value_ctrl = QtGui.QComboBox()
+        self.value_ctrl.setEditable(self.cfg.get('cfg_user_edit', False))
 
-    def submit_value(self, event=None):
-        QtCore.QTimer().singleShot(150, self.check)
-    
+        self.value_ctrl.currentIndexChanged.connect(self.check)
+
     def check(self, value=None):
+        print('value: %s' % value)
         if value is None:
-            value = self.value_ctrl.text()
+            value = self.value_ctrl.currentText()
         
         # prevent being called double
         if self.value == value:
@@ -58,9 +50,9 @@ class Edit(a2ctrl.EditCtrl):
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'String'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        self.helpUrl = self.a2.urls.help_string
+        self.helpUrl = self.a2.urls.help_number
         
-        self.ui = string_edit_ui.Ui_edit()
+        self.ui = combo_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)

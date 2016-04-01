@@ -35,14 +35,14 @@
         "enabled": true,
         "label": "open up at cursor position",
         "name": "calculAid_openAtCursor",
-        "typ": "checkBox",
+        "typ": "check",
         "value": true
       },
       {
         "enabled": true,
         "label": "Make new calculator \"Always On Top\"",
         "name": "calculAid_AlwaysOnTop",
-        "typ": "checkBox",
+        "typ": "check",
         "value": false
       }
     ],
@@ -50,7 +50,7 @@
     "enabled": true,
     "label": "Open up the Calculator",
     "name": "calcOpenGroup",
-    "typ": "groupBox"
+    "typ": "group"
   },
   {
     "disablable": true,

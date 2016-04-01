@@ -153,14 +153,10 @@ def draw(main, cfg, mod):
     """
     if cfg['typ'] == 'nfo':
         return DrawNfo(cfg)
-    else:
-        for typ, ctrl_class in [('checkBox', a2ctrl.check.Draw),
-                                ('hotkey', a2ctrl.hotkey.Draw),
-                                ('groupBox', a2ctrl.group.Draw),
-                                ('string', a2ctrl.string.Draw),
-                                ('number', a2ctrl.number.Draw)]:
-            if cfg['typ'] == typ:
-                return ctrl_class(main, cfg, mod)
+    elif cfg['typ'] in draw_classes:
+        return draw_classes[cfg['typ']](main, cfg, mod)
+    elif cfg['typ'] != 'include':
+        log.error('Draw type "%s" not supported (yet)!' % cfg['typ'])
 
 
 class DrawCtrl(QtGui.QWidget):
@@ -199,15 +195,10 @@ class DrawNfo(QtGui.QWidget):
 def edit(cfg, main, parentCfg):
     if cfg['typ'] == 'nfo':
         return EditNfo(cfg)
+    elif cfg['typ'] in edit_classes:
+        return edit_classes[cfg['typ']](cfg, main, parentCfg)
     else:
-        for typ, ctrl_class in [('include', EditInclude),
-                                ('hotkey', a2ctrl.hotkey.Edit),
-                                ('checkBox', a2ctrl.check.Edit),
-                                ('groupBox', a2ctrl.group.Edit),
-                                ('string', a2ctrl.string.Edit),
-                                ('number', a2ctrl.number.Edit)]:
-            if cfg['typ'] == typ:
-                return ctrl_class(cfg, main, parentCfg)
+        log.error('Edit type "%s" not supported (yet)!' % cfg['typ'])
 
 
 class EditNfo(QtGui.QGroupBox):
@@ -291,7 +282,6 @@ class EditCtrl(QtGui.QGroupBox):
         self.parentCfg.pop(index)
         self.parentCfg.insert(newindex, self.cfg)
         self.main.editMod(keep_scroll=True)
-        #self.main.editMod()
     
     def delete(self):
         if self.cfg in self.parentCfg:
@@ -577,19 +567,20 @@ class EditAddElem(QtGui.QWidget):
         self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
         self.menu.addMenu(self.menu_include)
 
-        for typ, icon in [('checkBox', icons.check),
-                          ('hotkey', icons.hotkey),
-                          ('groupBox', icons.group),
-                          ('string', icons.string),
-                          ('number', icons.number),
-                          ('fileField', None),
-                          ('text', None),
-                          ('button', None),
-                          ('comboBox', None)]:
-            if icon is None:
-                action = QtGui.QAction(typ, self.menu, triggered=partial(self.addCtrl, typ))
-            else:
-                action = QtGui.QAction(icon, typ, self.menu, triggered=partial(self.addCtrl, typ))
+        menu_items = {'check': ('CheckBox', icons.check),
+                      'hotkey': ('Hotkey', icons.hotkey),
+                      'group': ('GroupBox', icons.group),
+                      'string': ('String', icons.string),
+                      'number': ('Number', icons.number),
+                      'combo': ('ComboBox', None),
+                      'file': ('FileField', None),
+                      'text': ('TextField', None),
+                      'button': ('Button', None)}
+
+        for typ, values in menu_items.items():
+            action = QtGui.QAction(values[0], self.menu, triggered=partial(self.addCtrl, typ))
+            if values[1]:
+                action.setIcon(values[1])
             self.menu.addAction(action)
     
     def addCtrl(self, typ, name=''):
@@ -834,6 +825,7 @@ def get_cfg_value(subCfg, userCfg, attrName):
 
 # deferred import of sub controls because they might use any part of this module
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number
+import a2ctrl.combo
 
 # import first, then add here for reload coverage
 reload_modules = [
@@ -842,17 +834,34 @@ reload_modules = [
     a2ctrl.a2settings,
     a2ctrl.group,
     a2ctrl.string,
-    a2ctrl.number]
+    a2ctrl.number,
+    a2ctrl.combo]
 
 ui_modules = [
     inputDialog_ui,
-    a2ctrl.check.checkbox_edit_ui,
+    a2ctrl.check.check_edit_ui,
     a2ctrl.hotkey.hotkey_edit_ui,
     a2ctrl.hotkey.scopeDialog_ui,
     a2ctrl.group.group_edit_ui,
     a2ctrl.string.string_edit_ui,
     a2ctrl.a2settings.a2settings_ui,
-    a2ctrl.number.number_edit_ui]
+    a2ctrl.number.number_edit_ui,
+    a2ctrl.combo.combo_edit_ui]
+
+draw_classes = {'hotkey': a2ctrl.hotkey.Draw,
+                'check': a2ctrl.check.Draw,
+                'group': a2ctrl.group.Draw,
+                'string': a2ctrl.string.Draw,
+                'number': a2ctrl.number.Draw,
+                'combo': a2ctrl.combo.Draw}
+
+edit_classes = {'include': EditInclude,
+                'hotkey': a2ctrl.hotkey.Edit,
+                'check': a2ctrl.check.Edit,
+                'group': a2ctrl.group.Edit,
+                'string': a2ctrl.string.Edit,
+                'number': a2ctrl.number.Edit,
+                'combo': a2ctrl.combo.Edit}
 
 
 def check_all_ui():

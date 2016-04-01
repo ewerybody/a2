@@ -109,7 +109,7 @@ class Edit(a2ctrl.EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.help_number
         
-        self.ui = number_edit_ui.Ui_number_edit()
+        self.ui = number_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)

@@ -55,7 +55,7 @@ class Edit(a2ctrl.EditCtrl):
         if 'children' not in self.cfg:
             self.cfg['children'] = []
         
-        self.ui = group_edit_ui.Ui_group_edit()
+        self.ui = group_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
         
         controls = []
