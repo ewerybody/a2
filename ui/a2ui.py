@@ -112,7 +112,7 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
-                        partial(self.settings_changed, refresh=True))
+                        partial(self.settings_changed, refresh_ui=True))
 
         self.toggle_dev_menu()
         self.setWindowIcon(a2ctrl.Icons.inst().a2)
