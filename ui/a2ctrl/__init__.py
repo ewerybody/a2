@@ -760,7 +760,7 @@ class Ico(QtGui.QIcon):
                 ICO_PATH = join(a2core.A2Obj.inst().paths.a2, 'ui', 'res', '%s.svg')
             self.path = ICO_PATH % ico_name
             if not exists(self.path):
-                raise IOError('SVG_icon: could not find path to "%s"!' % ico_name)
+                log.error('SVG_icon: could not find path to "%s"!' % ico_name)
                 return
         
         renderer = QtSvg.QSvgRenderer(self.path)
