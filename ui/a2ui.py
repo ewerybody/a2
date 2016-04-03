@@ -344,6 +344,7 @@ class A2Window(QtGui.QMainWindow):
         
         self.drawUI(keep_scroll)
         self.toggleEdit(True)
+        self.settings_widget.setFocus()
     
     def editSubmit(self):
         """
