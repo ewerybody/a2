@@ -804,24 +804,40 @@ def list_get_all_items(list_ctrl):
     return [list_ctrl.item(i)for i in range(list_ctrl.count())]
 
 
-def list_get_all_items_as_text(listCtrl):
-    return [listCtrl.item(i).text() for i in range(listCtrl.count())]
+def list_get_all_items_as_text(list_ctrl):
+    return [list_ctrl.item(i).text() for i in range(list_ctrl.count())]
 
 
-def list_select_items(listCtrl, text):
-    if isinstance(text, str):
-        text = [text]
+def list_select_items(list_ctrl, items):
+    if not isinstance(items, list):
+        items = [items]
+    
+    if all([isinstance(i, str) for i in items]):
+        text_check = True
+    elif all([isinstance(i, QtGui.QListWidgetItem) for i in items]):
+        text_check = False
+        item_ids = [id(i) for i in items]
+    else:
+        log.error('list_select_items: All given elements must either be strings or QListWidgetItems!')
+        return
     
     lastitem = None
-    for i in range(listCtrl.count()):
-        this = listCtrl.item(i)
-        if text is not None and this.text() in text:
+    for i in range(list_ctrl.count()):
+        this = list_ctrl.item(i)
+        if text_check and this.text() in items:
+            this.setSelected(True)
+            lastitem = this
+        # WTF!?: there is an error when checking if a QListWidgetItem is
+        # in a list of QListWidgetItems via "item in item_list"
+        # NotImplementedError: operator not implemented.
+        # this is a workaround:
+        elif not text_check and id(this) in item_ids:
             this.setSelected(True)
             lastitem = this
         else:
             this.setSelected(False)
     if lastitem is not None:
-        listCtrl.setCurrentItem(lastitem)
+        list_ctrl.setCurrentItem(lastitem)
 
 def list_get_selected_as_text(list_ctrl):
     return [i.text() for i in list_ctrl.selectedItems()]
