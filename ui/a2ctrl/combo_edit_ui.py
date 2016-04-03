@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\combo_edit.ui'
 #
-# Created: Fri Apr  1 01:52:55 2016
+# Created: Sat Apr  2 18:48:04 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,6 +34,8 @@ class Ui_edit(object):
         self.cfg_label.setObjectName("cfg_label")
         self.editLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.cfg_label)
         self.cfg_items = QtGui.QListWidget(edit)
+        self.cfg_items.setAlternatingRowColors(True)
+        self.cfg_items.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.cfg_items.setObjectName("cfg_items")
         self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_items)
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -48,15 +50,15 @@ class Ui_edit(object):
         self.verticalLayout_2 = QtGui.QVBoxLayout()
         self.verticalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.scopePlus = QtGui.QPushButton(edit)
-        self.scopePlus.setMaximumSize(QtCore.QSize(50, 50))
-        self.scopePlus.setObjectName("scopePlus")
-        self.verticalLayout_2.addWidget(self.scopePlus)
-        self.scopeMinus = QtGui.QPushButton(edit)
-        self.scopeMinus.setMaximumSize(QtCore.QSize(50, 50))
-        self.scopeMinus.setAutoDefault(True)
-        self.scopeMinus.setObjectName("scopeMinus")
-        self.verticalLayout_2.addWidget(self.scopeMinus)
+        self.plus_button = QtGui.QPushButton(edit)
+        self.plus_button.setMaximumSize(QtCore.QSize(50, 50))
+        self.plus_button.setObjectName("plus_button")
+        self.verticalLayout_2.addWidget(self.plus_button)
+        self.minus_button = QtGui.QPushButton(edit)
+        self.minus_button.setMaximumSize(QtCore.QSize(50, 50))
+        self.minus_button.setAutoDefault(True)
+        self.minus_button.setObjectName("minus_button")
+        self.verticalLayout_2.addWidget(self.minus_button)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
         spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -76,7 +78,7 @@ class Ui_edit(object):
         self.displayLabelLabel.setText(QtGui.QApplication.translate("edit", "display label:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_label.setText(QtGui.QApplication.translate("edit", "some values", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("edit", "items:", None, QtGui.QApplication.UnicodeUTF8))
-        self.scopePlus.setText(QtGui.QApplication.translate("edit", "+", None, QtGui.QApplication.UnicodeUTF8))
-        self.scopeMinus.setText(QtGui.QApplication.translate("edit", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.plus_button.setText(QtGui.QApplication.translate("edit", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.minus_button.setText(QtGui.QApplication.translate("edit", "-", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_user_edit.setText(QtGui.QApplication.translate("edit", "allow user edit", None, QtGui.QApplication.UnicodeUTF8))
 

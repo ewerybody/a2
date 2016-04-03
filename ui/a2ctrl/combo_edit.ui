@@ -67,7 +67,14 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QListWidget" name="cfg_items"/>
+    <widget class="QListWidget" name="cfg_items">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -95,7 +102,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="scopePlus">
+          <widget class="QPushButton" name="plus_button">
            <property name="maximumSize">
             <size>
              <width>50</width>
@@ -108,7 +115,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="scopeMinus">
+          <widget class="QPushButton" name="minus_button">
            <property name="maximumSize">
             <size>
              <width>50</width>
