@@ -375,13 +375,19 @@ class EditCtrl(QtGui.QGroupBox):
                 action = QtGui.QAction(item[0], self._ctrlMenu, triggered=item[1])
             self._ctrlMenu.addAction(action)
 
-    def connect_cfg_controls(self, uiclass):
+    def connect_cfg_controls(self, uiclass, exclude=None):
         """
         browses all members of the ui object to connect ones named 'cfg_'
         with the EditCtrls current cfg and fill it with current value.
         """
+        if exclude is not None:
+            if not isinstance(exclude, list):
+                exclude = [exclude]
+        else:
+            exclude = []
+        
         for objname, control in inspect.getmembers(uiclass):
-            if not objname.startswith('cfg_'):
+            if not objname.startswith('cfg_') or object in exclude:
                 continue
             
             name = objname[4:]

@@ -219,6 +219,8 @@ def write_includes(specific=None):
                 variablesAhk.append('%s := "%s"' % (var_name, value))
             elif isinstance(value, float):
                 variablesAhk.append('%s := %f' % (var_name, value))
+            elif isinstance(value, int):
+                variablesAhk.append('%s := %i' % (var_name, value))
             else:
                 log.error('Please check handling variable type "%s" (%s: %s)'
                           % (type(value), var_name, str(value)))
