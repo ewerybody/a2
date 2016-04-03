@@ -31,7 +31,7 @@ class Mod(object):
     encapsulates the background functions for enabling/disabling a part
     
     config is None at first and filled as soon as the mod is selected in the UI.
-    If there is no configFile yet it will be emptied instead of None.
+    If there is no config_file yet it will be emptied instead of None.
     """
     def __init__(self, modname):
         # gather files from module path in local list
@@ -40,30 +40,30 @@ class Mod(object):
         self.a2 = a2core.A2Obj.inst()
         self.path = join(self.a2.paths.modules, modname)
         self._config = None
-        self.configFile = join(self.path, 'config.json')
+        self.config_file = join(self.path, 'config.json')
         self.ui = None
 
     @property
     def config(self):
         if self._config is None:
-            self.getConfig()
+            self.get_config()
         return self._config
 
     @config.setter
     def config(self, cfgdict):
         self._config = cfgdict
-        with open(self.configFile, 'w') as fObj:
+        with open(self.config_file, 'w') as fObj:
             json.dump(self._config, fObj, indent=jsonIndent, sort_keys=True)
 
-    def getConfig(self):
-        if exists(self.configFile):
+    def get_config(self):
+        if exists(self.config_file):
             try:
-                with open(self.configFile) as fobj:
-                    self._config = json.load(fobj)
+                with open(self.config_file) as fobj:
+                    self._config = json.load(fobj) or []
                     return
             except Exception as error:
                 log.error('config exists but could not be loaded!: '
-                          '%s\nerror: %s' % (self.configFile, error))
+                          '%s\nerror: %s' % (self.config_file, error))
         self._config = []
 
     def change(self):
@@ -71,12 +71,12 @@ class Mod(object):
         Sets the mods own db entries
         """
         data = {'includes': [], 'hotkeys': {}, 'variables': {}}
-        data = self.loopCfg(self.config[1:], data)
+        data = self.loop_cfg(self.config[1:], data)
                 
         for typ in ['includes', 'hotkeys', 'variables']:
             self.a2.db.set(typ, data[typ], self.name)
 
-    def loopCfg(self, cfgDict, data):
+    def loop_cfg(self, cfgDict, data):
         for cfg in cfgDict:
             
             if cfg['typ'] == 'include':
@@ -108,7 +108,7 @@ class Mod(object):
                     if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
                     childList = cfg.get('children', [])
-                    data = self.loopCfg(childList, data)
+                    data = self.loop_cfg(childList, data)
         return data
 
     @property
