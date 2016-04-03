@@ -7,7 +7,6 @@ import a2ctrl
 import logging
 from PySide import QtGui, QtCore
 from a2ctrl import combo_edit_ui
-from functools import partial
 
 
 logging.basicConfig()
@@ -42,8 +41,6 @@ class Draw(a2ctrl.DrawCtrl):
         if self.value in items:
             index = items.index(self.value)
             self.value_ctrl.setCurrentIndex(index)
-        else:
-            log.error('Saved value "%s" not found in item list!' % self.value)
 
     def check(self, value=None):
         if value is None:
@@ -56,7 +53,6 @@ class Draw(a2ctrl.DrawCtrl):
         if self.user_edit:
             #items = a2ctrl.list_get_all_items_as_text(self.value_ctrl)
             items = [self.value_ctrl.itemText(i) for i in range(self.value_ctrl.count())]
-            print('items: %s' % items)
             self.mod.set_user_cfg(self.cfg, 'items', items)
 
         self.value = value
@@ -105,9 +101,7 @@ class Edit(a2ctrl.EditCtrl):
     def delete_item(self):
         item_objs = self.ui.cfg_items.selectedItems()
         sel_items = [i.text() for i in item_objs]
-        print('sel_items: %s' % sel_items)
         new_items = [i for i in self.cfg.get('items', []) if i not in sel_items]
-        print('new_items: %s' % new_items)
         self.update_items(items=new_items)
         for item in item_objs:
             # doesnt doanything :(
@@ -117,7 +111,6 @@ class Edit(a2ctrl.EditCtrl):
 
     def update_items(self, item=None, items=None):
         if item is not None:
-            print('item: %s' % item.text())
             a2ctrl.list_select_items(self.ui.cfg_items, item)
             #item.setSelected(True)
         if items is None:
