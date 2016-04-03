@@ -37,7 +37,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.value_ctrl.setSingleStep(self.cfg.get('step_len', 1))
         self.value_ctrl.setValue(self.value)
         self.value_ctrl.setValue(self.value)
-        self.value_ctrl.editingFinished.connect(self.submit_value)
+        self.value_ctrl.editingFinished.connect(self.delayed_check)
         self.layout.addWidget(self.value_ctrl)
         
         if self.cfg.get('suffix'):
@@ -80,10 +80,7 @@ class Draw(a2ctrl.DrawCtrl):
         
         if self.slider_pressed:
             return
-        self.submit_value()
-
-    def submit_value(self, event=None):
-        QtCore.QTimer().singleShot(150, self.check)
+        self.delayed_check()
     
     def check(self, value=None):
         if value is None:

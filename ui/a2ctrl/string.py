@@ -27,15 +27,12 @@ class Draw(a2ctrl.DrawCtrl):
         value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
         self.value_ctrl = QtGui.QLineEdit(value)
         #self.valueCtrl.returnPressed.connect(self.check)
-        self.value_ctrl.editingFinished.connect(self.submit_value)
+        self.value_ctrl.editingFinished.connect(self.delayed_check)
         #self.valueCtrl.leaveEvent = self.lineLeaveEvent
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.value_ctrl)
         self.setLayout(self.layout)
 
-    def submit_value(self, event=None):
-        QtCore.QTimer().singleShot(150, self.check)
-    
     def check(self, value=None):
         if value is None:
             value = self.value_ctrl.text()

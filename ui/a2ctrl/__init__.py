@@ -168,12 +168,19 @@ class DrawCtrl(QtGui.QWidget):
         self.main = main
         self.cfg = cfg
         self.mod = mod
+        self.check_delay = 150
         self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.name)
 
     def change(self, specific=None):
         self.mod.change()
         if self.mod.enabled:
             self.main.settings_changed(specific)
+
+    def delayed_check(self, event=None):
+        QtCore.QTimer().singleShot(self.check_delay, self.check)
+
+    def check(self):
+        pass
 
 
 class DrawWelcome(QtGui.QWidget):
