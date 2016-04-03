@@ -142,7 +142,7 @@ class A2Window(QtGui.QMainWindow):
             self.a2.fetch_modules()
 
         if select is None:
-            select = [i.text() for i in self.ui.modList.selectedItems()]
+            select = a2ctrl.list_get_selected_as_text(self.ui.modList)
         allMods = sorted(self.a2.modules.keys(), key=lambda s: s.lower())
         self.ui.modList.clear()
         self.ui.modList.insertItems(0, allMods)
