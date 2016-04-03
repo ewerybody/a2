@@ -1,9 +1,0 @@
-﻿creating a config.json automatically creates basic fields about the module
-* "display name"
-* description
-* author
-* date
-* version
-...
-which show at the header of a module layout
-
