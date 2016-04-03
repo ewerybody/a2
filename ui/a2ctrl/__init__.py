@@ -287,7 +287,7 @@ class EditCtrl(QtGui.QGroupBox):
     def delete(self):
         if self.cfg in self.parentCfg:
             self.parentCfg.remove(self.cfg)
-            self.main.editMod()
+            self.main.editMod(keep_scroll=True)
 
     def duplicate(self):
         newCfg = deepcopy(self.cfg)
@@ -368,17 +368,16 @@ class EditCtrl(QtGui.QGroupBox):
                 action = QtGui.QAction(item[0], self._ctrlMenu, triggered=item[1])
             self._ctrlMenu.addAction(action)
 
-    def connectCfgCtrls(self, uiclass):
+    def connect_cfg_controls(self, uiclass):
         """
         browses all members of the ui object to connect ones named 'cfg_'
         with the EditCtrls current cfg and fill it with current value.
         """
-        for ctrl in inspect.getmembers(uiclass):
-            if not ctrl[0].startswith('cfg_'):
+        for objname, control in inspect.getmembers(uiclass):
+            if not objname.startswith('cfg_'):
                 continue
             
-            name = ctrl[0][4:]
-            control = ctrl[1]
+            name = objname[4:]
             
             if isinstance(control, QtGui.QCheckBox):
                 # checkBox.clicked doesn't send state, so we put the func to check
@@ -407,6 +406,8 @@ class EditCtrl(QtGui.QGroupBox):
 
             elif isinstance(control, QtGui.QListWidget):
                 # so far only to fill the control
+                #QtGui.QListWidget.c
+                #control.itemChanged.connect(partial(self._list_widget_test, name))
                 if name in self.cfg:
                     control.insertItems(0, self.cfg[name])
                 else:
@@ -422,7 +423,7 @@ class EditCtrl(QtGui.QGroupBox):
 
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
-                          (ctrl[0], type(control)))
+                          (objname, type(control)))
     
     def _updateCfgData(self, name, data=None, func=None):
         """
@@ -792,11 +793,15 @@ class Ico(QtGui.QIcon):
         painter.end()
 
 
-def list_getAllItems_asText(listCtrl):
+def list_get_all_items(list_ctrl):
+    return [list_ctrl.item(i)for i in range(list_ctrl.count())]
+
+
+def list_get_all_items_as_text(listCtrl):
     return [listCtrl.item(i).text() for i in range(listCtrl.count())]
 
 
-def list_selectItems(listCtrl, text):
+def list_select_items(listCtrl, text):
     if isinstance(text, str):
         text = [text]
     

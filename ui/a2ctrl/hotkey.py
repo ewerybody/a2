@@ -87,11 +87,11 @@ class Draw(a2ctrl.DrawCtrl):
         
     def hotkey_check(self):
         state = self.check.isChecked()
-        self.mod.setUserCfg(self.cfg, 'enabled', state)
+        self.mod.set_user_cfg(self.cfg, 'enabled', state)
         self.change('hotkeys')
     
     def hotkey_change(self, newKey):
-        self.mod.setUserCfg(self.cfg, 'key', newKey)
+        self.mod.set_user_cfg(self.cfg, 'key', newKey)
         self.change('hotkeys')
 
 
@@ -152,7 +152,7 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.scopeMinus.clicked.connect(self.scopeDelete)
         self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
         self.ui.cfg_scope.setFont(a2ctrl.fontL)
-        self.connectCfgCtrls(self.ui)
+        self.connect_cfg_controls(self.ui)
         self.scopeUpdate()
         self.disablableCheck()
         self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
@@ -265,7 +265,7 @@ class Edit(a2ctrl.EditCtrl):
             self.scopeUpdate()
 
     def scopeUpdate(self):
-        allItems = a2ctrl.list_getAllItems_asText(self.ui.cfg_scope)
+        allItems = a2ctrl.list_get_all_items_as_text(self.ui.cfg_scope)
         p = a2ctrl.fontL.pointSize()
         h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
         self.ui.cfg_scope.setMinimumHeight(h)

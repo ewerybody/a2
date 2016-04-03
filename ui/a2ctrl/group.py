@@ -35,7 +35,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
                 self.layout.addWidget(ctrl)
 
     def check(self, state):
-        self.mod.setUserCfg(self.cfg, 'enabled', state)
+        self.mod.set_user_cfg(self.cfg, 'enabled', state)
         self.change()
 
 
@@ -70,7 +70,7 @@ class Edit(a2ctrl.EditCtrl):
                       self.ui.label, self.ui.label_2]:
             label.setMinimumWidth(a2ctrl.labelW)
         
-        self.connectCfgCtrls(self.ui)
+        self.connect_cfg_controls(self.ui)
         self.mainWidget.setLayout(self.ui.groupLayout)
 
     def paste(self):

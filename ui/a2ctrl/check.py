@@ -30,7 +30,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.setLayout(self.layout)
         
     def check(self, state):
-        self.mod.setUserCfg(self.cfg, 'value', state)
+        self.mod.set_user_cfg(self.cfg, 'value', state)
         self.change('variables')
 
 
@@ -51,5 +51,5 @@ class Edit(a2ctrl.EditCtrl):
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
         
-        self.connectCfgCtrls(self.ui)
+        self.connect_cfg_controls(self.ui)
         self.mainWidget.setLayout(self.ui.editLayout)

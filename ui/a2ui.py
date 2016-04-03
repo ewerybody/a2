@@ -133,7 +133,7 @@ class A2Window(QtGui.QMainWindow):
         """
         Fills/refills the left module list with according entries
         TODO: connect with tag selection and search
-        
+
         :param str select: to select a certain entry, by default re-selects last entry
         """
         self._draw_phase = True
@@ -160,7 +160,7 @@ class A2Window(QtGui.QMainWindow):
         to select 1 or more given modulenames in the list
         and update Ui accordingly
         """
-        a2ctrl.list_selectItems(self.ui.modList, modName)
+        a2ctrl.list_select_items(self.ui.modList, modName)
 
     def mod_select(self, force=False):
         """
@@ -493,7 +493,7 @@ class RestartThread(QtCore.QThread):
         self.msleep(300)
         ahkProcess = QtCore.QProcess()
         ahkProcess.startDetached(a2.paths.autohotkey, [a2.paths.a2_script], a2.paths.a2)
-
+        self.quit()
 
 if __name__ == '__main__':
     import a2app
