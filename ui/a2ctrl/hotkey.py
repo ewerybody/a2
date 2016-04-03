@@ -258,9 +258,11 @@ class Edit(a2ctrl.EditCtrl):
         self.scopeUpdate()
 
     def scopeDelete(self):
-        selIndex = [mi.row() for mi in self.ui.cfg_scope.selectedIndexes()][0]
-        self.ui.cfg_scope.takeItem(selIndex)
-        self.scopeUpdate()
+        selectedIndexes = self.ui.cfg_scope.selectedIndexes()
+        if selectedIndexes:
+            selIndex = [mi.row() for mi in selectedIndexes][0]
+            self.ui.cfg_scope.takeItem(selIndex)
+            self.scopeUpdate()
 
     def scopeUpdate(self):
         allItems = a2ctrl.list_getAllItems_asText(self.ui.cfg_scope)
