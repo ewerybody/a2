@@ -9,6 +9,7 @@ import a2core
 import a2ctrl
 import logging
 from os.path import join, exists, splitext
+from shutil import copy2
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ log.setLevel(logging.DEBUG)
 
 # maybe make this even settable in a dev options dialog?
 jsonIndent = 2
-
+CONFIG_FILENAME = 'config.json'
 
 class Mod(object):
     """
@@ -40,7 +41,7 @@ class Mod(object):
         self.a2 = a2core.A2Obj.inst()
         self.path = join(self.a2.paths.modules, modname)
         self._config = None
-        self.config_file = join(self.path, 'config.json')
+        self.config_file = join(self.path, CONFIG_FILENAME)
         self.ui = None
 
     @property
@@ -52,6 +53,19 @@ class Mod(object):
     @config.setter
     def config(self, cfgdict):
         self._config = cfgdict
+        # backup current config_file
+        backup_path = join(self.path, '_config_backups')
+        if not exists(backup_path):
+            os.mkdir(backup_path)
+        _config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
+        if _config_backups:
+            _config_backups.sort()
+            backup_index = int(_config_backups[-1].rsplit('.', 1)[1]) + 1
+        else:
+            backup_index = 1
+        copy2(self.config_file, join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
+        
+        # overwrite config_file
         with open(self.config_file, 'w') as fObj:
             json.dump(self._config, fObj, indent=jsonIndent, sort_keys=True)
 
