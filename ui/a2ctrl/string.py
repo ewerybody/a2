@@ -5,7 +5,7 @@ Created on Feb 28, 2016
 '''
 import a2ctrl
 import logging
-from PySide import QtGui, QtCore
+from PySide import QtGui
 from a2ctrl import string_edit_ui
 
 
@@ -24,8 +24,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
-        self.value_ctrl = QtGui.QLineEdit(value)
+        self.value_ctrl = QtGui.QLineEdit(self.value)
         #self.valueCtrl.returnPressed.connect(self.check)
         self.value_ctrl.editingFinished.connect(self.delayed_check)
         #self.valueCtrl.leaveEvent = self.lineLeaveEvent

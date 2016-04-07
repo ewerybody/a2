@@ -83,7 +83,8 @@ class Edit(a2ctrl.EditCtrl):
         self.connect_cfg_controls(self.ui)
         
         for item in a2ctrl.list_get_all_items(self.ui.cfg_items):
-            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsDragEnabled|QtCore.Qt.ItemIsEnabled)
+            item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
+                          QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
         
         self.ui.cfg_items.itemChanged.connect(self.update_items)
         self.mainWidget.setLayout(self.ui.editLayout)

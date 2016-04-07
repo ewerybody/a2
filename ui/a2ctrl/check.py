@@ -3,7 +3,7 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-import a2core
+
 import a2ctrl
 import logging
 from PySide import QtGui
@@ -24,11 +24,9 @@ class Draw(a2ctrl.DrawCtrl):
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
         self.checkbox.setChecked(a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or False)
         self.checkbox.clicked[bool].connect(self.check)
-        #self.checkbox.setWordWrap(True)
         self.layout.addWidget(self.checkbox)
-        #self.checkbox.setMinimumHeight(lenM)
         self.setLayout(self.layout)
-        
+
     def check(self, state):
         self.mod.set_user_cfg(self.cfg, 'value', state)
         self.change('variables')
@@ -45,7 +43,7 @@ class Edit(a2ctrl.EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.helpCheckbox
         
-        self.ui = a2ctrl.check_edit_ui.Ui_edit()
+        self.ui = check_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel]:
