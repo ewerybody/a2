@@ -3,11 +3,11 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-
 import a2ctrl
 import logging
 from PySide import QtGui
 from a2ctrl import check_edit_ui
+
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -22,9 +22,9 @@ class Draw(a2ctrl.DrawCtrl):
     def _setupUi(self):
         self.layout = QtGui.QVBoxLayout(self)
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
-        self.checkbox.clicked[bool].connect(self.check)
         value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value', bool)
         self.checkbox.setChecked(value)
+        self.checkbox.clicked[bool].connect(self.delayed_check)
         self.layout.addWidget(self.checkbox)
         self.setLayout(self.layout)
 
