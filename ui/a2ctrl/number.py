@@ -5,9 +5,9 @@ Created on Mar 22, 2016
 '''
 import a2ctrl
 import logging
+from functools import partial
 from PySide import QtGui, QtCore
 from a2ctrl import number_edit_ui
-from functools import partial
 
 
 logging.basicConfig()
@@ -18,7 +18,7 @@ log.setLevel(logging.DEBUG)
 class Draw(a2ctrl.DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or 0
+        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value', (float, int), 0.0)
         self.value = _toggle_type(self.cfg['decimals'], value)
         
         self._setupUi()

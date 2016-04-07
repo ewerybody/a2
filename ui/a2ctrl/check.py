@@ -22,8 +22,9 @@ class Draw(a2ctrl.DrawCtrl):
     def _setupUi(self):
         self.layout = QtGui.QVBoxLayout(self)
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
-        self.checkbox.setChecked(a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or False)
         self.checkbox.clicked[bool].connect(self.check)
+        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value', bool)
+        self.checkbox.setChecked(value)
         self.layout.addWidget(self.checkbox)
         self.setLayout(self.layout)
 

@@ -176,10 +176,10 @@ class DrawCtrl(QtGui.QWidget):
         if self.mod.enabled:
             self.main.settings_changed(specific)
 
-    def delayed_check(self, event=None):
-        QtCore.QTimer().singleShot(self.check_delay, self.check)
+    def delayed_check(self, *args):
+        QtCore.QTimer().singleShot(self.check_delay, partial(self.check, *args))
 
-    def check(self):
+    def check(self, *args):
         pass
 
 
@@ -848,17 +848,26 @@ def list_select_items(list_ctrl, items):
 def list_get_selected_as_text(list_ctrl):
     return [i.text() for i in list_ctrl.selectedItems()]
 
-def get_cfg_value(subCfg, userCfg, attrName):
+def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.
     """
+    value = None
     if userCfg is not None and attrName in userCfg:
-        return userCfg[attrName]
+        value = userCfg[attrName]
     elif attrName in subCfg:
-        return subCfg[attrName]
-    else:
-        return None
+        value = subCfg[attrName]
+    
+    if typ is not None:
+        if not isinstance(value, typ):
+            log.error('Fetched wrong type for attrName %s: %s' % (attrName, value))
+            if default is None:
+                value = typ()
+            else:
+                value = default
+    
+    return value
 
 
 # deferred import of sub controls because they might use any part of this module

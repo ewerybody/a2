@@ -17,7 +17,7 @@ log.setLevel(logging.DEBUG)
 class Draw(a2ctrl.DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
+        self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value', str)
         self._setupUi()
 
     def _setupUi(self):

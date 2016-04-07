@@ -17,7 +17,7 @@ log.setLevel(logging.DEBUG)
 class Draw(a2ctrl.DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value') or ''
+        self.value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value', str)
         self.user_edit = self.cfg.get('user_edit', False)
         self._setupUi()
 
@@ -29,7 +29,7 @@ class Draw(a2ctrl.DrawCtrl):
         
         self.value_ctrl = QtGui.QComboBox()
         if self.user_edit:
-            items = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'items') or []
+            items = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'items', list)
             self.value_ctrl.setEditable(True)
             self.value_ctrl.editTextChanged.connect(self.check_user_items)
         else:

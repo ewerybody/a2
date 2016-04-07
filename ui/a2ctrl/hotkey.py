@@ -50,7 +50,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
-            state = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'enabled')
+            state = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'enabled', bool, True)
             self.check = QtGui.QCheckBox(self)
             cbSize = 27
             self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
@@ -68,7 +68,7 @@ class Draw(a2ctrl.DrawCtrl):
         
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = HotKey(self, a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'key'),
+        self.hotkeyButton = HotKey(self, a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'key', str),
                                    self.hotkey_change)
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))

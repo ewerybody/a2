@@ -19,6 +19,12 @@ log.setLevel(logging.DEBUG)
 jsonIndent = 2
 CONFIG_FILENAME = 'config.json'
 
+VALUE_MAP = {'check': {'typ': bool, 'default': False},
+             'string': {'typ': str, 'default': ''},
+             'number': {'typ': (int, float), 'default': 0.0},
+             'combo': {'typ': str, 'default': ''}}
+
+
 class Mod(object):
     """
     The ui creates such a Mod instance when dealing with it
@@ -102,9 +108,9 @@ class Mod(object):
                     if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
                     
-                    key = a2ctrl.get_cfg_value(cfg, userCfg, 'key')
-                    scope = a2ctrl.get_cfg_value(cfg, userCfg, 'scope')
-                    scopeMode = a2ctrl.get_cfg_value(cfg, userCfg, 'scopeMode')
+                    key = a2ctrl.get_cfg_value(cfg, userCfg, 'key', str)
+                    scope = a2ctrl.get_cfg_value(cfg, userCfg, 'scope', list)
+                    scopeMode = a2ctrl.get_cfg_value(cfg, userCfg, 'scopeMode', int)
                     function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
                     if scopeMode not in data['hotkeys']:
                         data['hotkeys'][scopeMode] = []
@@ -113,13 +119,18 @@ class Mod(object):
                         data['hotkeys'][0].append([key, function])
                     else:
                         data['hotkeys'][scopeMode].append([scope, key, function])
-
-                elif cfg['typ'] in ['check', 'string', 'number', 'combo']:
-                    data['variables'][cfg['name']] = a2ctrl.get_cfg_value(cfg, userCfg, 'value')
+                
+                elif cfg['typ'] in VALUE_MAP:
+                    data['variables'][cfg['name']] = a2ctrl.get_cfg_value(
+                        subCfg=cfg,
+                        userCfg=userCfg,
+                        attrName='value',
+                        typ=VALUE_MAP[cfg['typ']]['typ'],
+                        default=VALUE_MAP[cfg['typ']]['default'])
 
                 elif cfg['typ'] == 'group':
                     #disablable
-                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
+                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled', bool):
                         continue
                     childList = cfg.get('children', [])
                     data = self.loop_cfg(childList, data)
