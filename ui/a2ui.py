@@ -13,6 +13,7 @@ import a2ctrl
 import a2design_ui
 
 from copy import deepcopy
+import time
 from functools import partial
 from os.path import join
 from PySide import QtGui, QtCore
@@ -113,6 +114,11 @@ class A2Window(QtGui.QMainWindow):
                         self, self.editSubmit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
                         partial(self.settings_changed, refresh_ui=True))
+
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.scrollArea,
+                        partial(self.scroll_to, True))
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.scrollArea,
+                        partial(self.scroll_to, False))
 
         self.toggle_dev_menu()
         self.setWindowIcon(a2ctrl.Icons.inst().a2)
@@ -478,6 +484,34 @@ class A2Window(QtGui.QMainWindow):
         self.show()
         self.activateWindow()
         #self.setFocus()
+
+    def scroll_to(self, value, smooth=False):
+        current = self.ui.scrollBar.value()
+        scroll_end = self.ui.scrollBar.maximum()
+        if isinstance(value, bool):
+            value = 0 if value else self.ui.scrollBar.maximum()
+
+        if value == current or scroll_end == 0:
+            return
+
+        if not smooth:
+            self.ui.scrollBar.setValue(value)
+        else:
+            pass
+#             tmax = 0.3
+#             curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
+#             res = 0.01
+#             steps = tmax / res
+#             tsteps = 1 / steps
+#             t = 0.0
+#
+#             rng = value - current
+#             while t <= 1.0:
+#                 time.sleep(res)
+#                 t += tsteps
+#                 v = curve.valueForProgress(t)
+#                 scrollval = current + (v * rng)
+#                 self.ui.scrollBar.setValue(scrollval)
 
     def _testOutOfScreen(self):
         h = self.app.desktop().height()
