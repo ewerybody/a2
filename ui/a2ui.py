@@ -2,6 +2,7 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
+import time
 import logging
 import threading
 import subprocess
@@ -13,7 +14,6 @@ import a2ctrl
 import a2design_ui
 
 from copy import deepcopy
-import time
 from functools import partial
 from os.path import join
 from PySide import QtGui, QtCore

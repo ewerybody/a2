@@ -70,7 +70,7 @@ class Edit(a2ctrl.EditCtrl):
     code directly and start with the variables include.
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'String'
+        self.ctrlType = 'ComboBox'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.help_number
         
@@ -80,6 +80,8 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
         self.ui.plus_button.clicked.connect(self.add_item)
         self.ui.minus_button.clicked.connect(self.delete_item)
+        
+        self.check_new_name()
         self.connect_cfg_controls(self.ui)
         
         for item in a2ctrl.list_get_all_items(self.ui.cfg_items):
@@ -95,7 +97,8 @@ class Edit(a2ctrl.EditCtrl):
         item = QtGui.QListWidgetItem(new_item_name)
         current_items.append(new_item_name)
         self.update_items(items=current_items)
-        item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsDragEnabled|QtCore.Qt.ItemIsEnabled)
+        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
+                      QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
         self.ui.cfg_items.addItem(item)
         self.ui.cfg_items.editItem(item)
 

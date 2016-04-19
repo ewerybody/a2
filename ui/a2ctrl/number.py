@@ -102,7 +102,7 @@ class Edit(a2ctrl.EditCtrl):
     code directly and start with the variables include.
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'String'
+        self.ctrlType = 'Number'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.help_number
         
@@ -111,6 +111,7 @@ class Edit(a2ctrl.EditCtrl):
 
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
         
+        self.check_new_name()
         self.connect_cfg_controls(self.ui, exclude=self.ui.cfg_value)
         
         self.ui.cfg_value.valueChanged.connect(self.set_value)

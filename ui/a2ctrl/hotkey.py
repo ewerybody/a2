@@ -152,6 +152,7 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.scopeMinus.clicked.connect(self.scopeDelete)
         self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
         self.ui.cfg_scope.setFont(a2ctrl.fontL)
+        self.check_new_name()
         self.connect_cfg_controls(self.ui)
         self.scopeUpdate()
         self.disablableCheck()

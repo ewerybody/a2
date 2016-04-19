@@ -358,7 +358,7 @@ class EditCtrl(QtGui.QGroupBox):
                       ('Delete', self.delete, icons.delete),
                       ('Duplicate', self.duplicate, icons.copy),
                       ('Help on %s' % self.ctrlType, self.help, icons.help)]
-        
+
         clipboard_count = ''
         if self.main.edit_clipboard:
             clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
@@ -437,6 +437,25 @@ class EditCtrl(QtGui.QGroupBox):
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (objname, type(control)))
+    
+    def check_new_name(self):
+        """
+        If no name set yet, like on new controls this creates a new unique
+        name for the control from the module name + control type + incremental number
+        """
+        if 'name' not in self.cfg:
+            #build the base control name
+            new_name = '%s_%s' % (self.main.mod.name, self.ctrlType)
+            # find biggest number
+            this_type = self.cfg['typ']
+            controls = [cfg.get('name', '') for cfg in self.main.tempConfig
+                        if cfg.get('typ') == this_type]
+            number = len(controls)
+            try_name = new_name + str(number)
+            while try_name in controls:
+                number += 1
+                try_name = new_name + str(number)
+            self.cfg['name'] = try_name
     
     def _updateCfgData(self, name, data=None, func=None):
         """
@@ -598,7 +617,7 @@ class EditAddElem(QtGui.QWidget):
             if values[1]:
                 action.setIcon(values[1])
             self.menu.addAction(action)
-    
+
     def addCtrl(self, typ, name=''):
         """Just adds a new dict with the accodting typ value to the tempConfig.
         Only if it's an include we already enter the file selected.
