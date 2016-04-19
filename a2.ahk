@@ -19,12 +19,12 @@ Menu, Tray, Click, 1
 Menu, Tray, add, open a2 user interface, a2UI
 Menu, Tray, icon, open a2 user interface, %ScriptIcon%
 Menu, Tray, default, open a2 user interface
-Menu, Tray, add, reload a2, doReload
+Menu, Tray, add, reload a2, a2UI_reload
 ;%SystemRoot%\system32\imageres.dll,239
 Menu, Tray, icon, reload a2, %ScriptIcon%
-Menu, Tray, add, help on a2, doHelp
+Menu, Tray, add, help on a2, a2UI_help
 Menu, Tray, icon, help on a2, %SystemRoot%\system32\imageres.dll,95
-Menu, Tray, add, quit a2, doExit
+Menu, Tray, add, quit a2, a2UI_exit
 ;%SystemRoot%\system32\imageres.dll,223
 Menu, Tray, icon, quit a2, %ScriptIcon%
 
@@ -59,12 +59,12 @@ a2UI() {
     ;Run, pythonw.exe %A_ScriptDir%\ui\a2ui.py, C:\Python34
 }
 
-doHelp:
+a2UI_help:
     Run, https://github.com/ewerybody/a2#description
 Return
-doReload:
+a2UI_reload:
     Reload
 Return
-doExit:
+a2UI_exit:
     ExitApp
 Return
