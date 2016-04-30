@@ -825,54 +825,6 @@ class Ico(QtGui.QIcon):
         painter.end()
 
 
-def list_get_all_items(list_ctrl):
-    return [list_ctrl.item(i)for i in range(list_ctrl.count())]
-
-
-def list_get_all_items_as_text(list_ctrl):
-    return [list_ctrl.item(i).text() for i in range(list_ctrl.count())]
-
-
-def list_select_items(list_ctrl, items):
-    if not isinstance(items, list):
-        items = [items]
-    
-    if all([isinstance(i, str) for i in items]):
-        text_check = True
-    elif all([isinstance(i, QtGui.QListWidgetItem) for i in items]):
-        text_check = False
-        item_ids = [id(i) for i in items]
-    else:
-        log.error('list_select_items: All given elements must either be strings or QListWidgetItems!')
-        return
-    
-    lastitem = None
-    for i in range(list_ctrl.count()):
-        this = list_ctrl.item(i)
-        if text_check and this.text() in items:
-            this.setSelected(True)
-            lastitem = this
-        # WTF!?: there is an error when checking if a QListWidgetItem is
-        # in a list of QListWidgetItems via "item in item_list"
-        # NotImplementedError: operator not implemented.
-        # this is a workaround:
-        elif not text_check and id(this) in item_ids:
-            this.setSelected(True)
-            lastitem = this
-        else:
-            this.setSelected(False)
-    if lastitem is not None:
-        list_ctrl.setCurrentItem(lastitem)
-
-
-def list_get_selected_as_text(list_ctrl):
-    return [i.text() for i in list_ctrl.selectedItems()]
-
-
-def list_deselect_all(list_ctrl):
-    [i.setSelected(False) for i in list_ctrl.selectedItems()]
-
-
 def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
@@ -897,12 +849,14 @@ def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
 
 # deferred import of sub controls because they might use any part of this module
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number
-import a2ctrl.combo
+import a2ctrl.combo, a2ctrl.hotkey_func, a2ctrl.hotkey_scope
 
 # import first, then add here for reload coverage
 reload_modules = [
     a2ctrl.check,
     a2ctrl.hotkey,
+    a2ctrl.hotkey_func,
+    a2ctrl.hotkey_scope,
     a2ctrl.a2settings,
     a2ctrl.group,
     a2ctrl.string,
@@ -913,7 +867,7 @@ ui_modules = [
     inputDialog_ui,
     a2ctrl.check.check_edit_ui,
     a2ctrl.hotkey.hotkey_edit_ui,
-    a2ctrl.hotkey.scopeDialog_ui,
+    a2ctrl.hotkey_scope.scopeDialog_ui,
     a2ctrl.group.group_edit_ui,
     a2ctrl.string.string_edit_ui,
     a2ctrl.a2settings.a2settings_ui,
