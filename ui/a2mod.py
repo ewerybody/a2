@@ -69,7 +69,8 @@ class Mod(object):
             backup_index = int(_config_backups[-1].rsplit('.', 1)[1]) + 1
         else:
             backup_index = 1
-        copy2(self.config_file, join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
+        if exists(self.config_file):
+            copy2(self.config_file, join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
         
         # overwrite config_file
         with open(self.config_file, 'w') as fObj:
