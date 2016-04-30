@@ -864,8 +864,14 @@ def list_select_items(list_ctrl, items):
     if lastitem is not None:
         list_ctrl.setCurrentItem(lastitem)
 
+
 def list_get_selected_as_text(list_ctrl):
     return [i.text() for i in list_ctrl.selectedItems()]
+
+
+def list_deselect_all(list_ctrl):
+    [i.setSelected(False) for i in list_ctrl.selectedItems()]
+
 
 def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
     """
