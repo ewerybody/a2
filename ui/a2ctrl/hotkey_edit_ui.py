@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\hotkey_edit.ui'
 #
-# Created: Fri Apr  1 02:07:47 2016
+# Created: Wed May  4 00:35:00 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(785, 370)
+        edit.resize(785, 454)
         self.verticalLayout_2 = QtGui.QVBoxLayout(edit)
         self.verticalLayout_2.setSpacing(5)
         self.verticalLayout_2.setContentsMargins(10, 5, 0, 5)
@@ -119,9 +119,24 @@ class Ui_edit(object):
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.functionRowLayout.addItem(spacerItem2)
         self.functionCtrlLayout.addLayout(self.functionRowLayout)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.function_send_mode = QtGui.QComboBox(edit)
+        self.function_send_mode.setObjectName("function_send_mode")
+        self.function_send_mode.addItem("")
+        self.function_send_mode.addItem("")
+        self.function_send_mode.addItem("")
+        self.function_send_mode.addItem("")
+        self.function_send_mode.addItem("")
+        self.horizontalLayout.addWidget(self.function_send_mode)
+        self.run_label = QtGui.QLabel(edit)
+        self.run_label.setObjectName("run_label")
+        self.horizontalLayout.addWidget(self.run_label)
         self.functionText = QtGui.QLineEdit(edit)
         self.functionText.setObjectName("functionText")
-        self.functionCtrlLayout.addWidget(self.functionText)
+        self.horizontalLayout.addWidget(self.functionText)
+        self.functionCtrlLayout.addLayout(self.horizontalLayout)
         self.functionLayout.addLayout(self.functionCtrlLayout)
         self.functionLayout.setStretch(1, 1)
         self.verticalLayout_2.addLayout(self.functionLayout)
@@ -209,10 +224,16 @@ class Ui_edit(object):
         self.cfg_keyChange.setText(QtGui.QApplication.translate("edit", "can be changed", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_multiple.setText(QtGui.QApplication.translate("edit", "allow multiple hotkeys", None, QtGui.QApplication.UnicodeUTF8))
         self.functionLabel.setText(QtGui.QApplication.translate("edit", "function:", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_functionMode.setItemText(0, QtGui.QApplication.translate("edit", "run code", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_functionMode.setItemText(1, QtGui.QApplication.translate("edit", "open file/url", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_functionMode.setItemText(2, QtGui.QApplication.translate("edit", "send keystroke", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_functionMode.setItemText(0, QtGui.QApplication.translate("edit", "Run code", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_functionMode.setItemText(1, QtGui.QApplication.translate("edit", "Open file/url", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_functionMode.setItemText(2, QtGui.QApplication.translate("edit", "Send keystroke", None, QtGui.QApplication.UnicodeUTF8))
         self.functionButton.setText(QtGui.QApplication.translate("edit", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.function_send_mode.setItemText(0, QtGui.QApplication.translate("edit", "Send", None, QtGui.QApplication.UnicodeUTF8))
+        self.function_send_mode.setItemText(1, QtGui.QApplication.translate("edit", "SendRaw", None, QtGui.QApplication.UnicodeUTF8))
+        self.function_send_mode.setItemText(2, QtGui.QApplication.translate("edit", "SendInput", None, QtGui.QApplication.UnicodeUTF8))
+        self.function_send_mode.setItemText(3, QtGui.QApplication.translate("edit", "SendPlay", None, QtGui.QApplication.UnicodeUTF8))
+        self.function_send_mode.setItemText(4, QtGui.QApplication.translate("edit", "SendEvent", None, QtGui.QApplication.UnicodeUTF8))
+        self.run_label.setText(QtGui.QApplication.translate("edit", "Run, ", None, QtGui.QApplication.UnicodeUTF8))
         self.scopeLabel.setText(QtGui.QApplication.translate("edit", "scope:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_scopeMode.setItemText(0, QtGui.QApplication.translate("edit", "global", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_scopeMode.setItemText(1, QtGui.QApplication.translate("edit", "only in:", None, QtGui.QApplication.UnicodeUTF8))

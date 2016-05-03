@@ -121,10 +121,13 @@ class URLs(object):
         self.help_string = self.a2 + '/wiki/Edit-String'
         self.help_number = self.a2 + '/wiki/Edit-Number'
 
-        self.ahk = 'http://ahkscript.org'
-        self.ahksend = self.ahk + '/docs/commands/Send.htm'
+        self.ahk = 'https://autohotkey.com'
+        self.ahk_commands = self.ahk + '/docs/commands'
+        self.ahk_run = self.ahk_commands + '/Run.htm'
+        self.ahksend = self.ahk_commands + '/Send.htm'
+        self.ahkWinActive = self.ahk_commands + '/WinActive.htm'
+        self.ahk_builtin_vars = self.ahk + '/docs/Variables.htm#BuiltIn'
         self.ahkWinTitle = self.ahk + '/docs/misc/WinTitle.htm'
-        self.ahkWinActive = self.ahk + '/docs/commands/WinActive.htm'
 
 
 class Paths(object):

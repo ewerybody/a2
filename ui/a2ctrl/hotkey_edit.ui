@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>785</width>
-    <height>370</height>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -259,17 +259,17 @@
           <widget class="QComboBox" name="cfg_functionMode">
            <item>
             <property name="text">
-             <string>run code</string>
+             <string>Run code</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>open file/url</string>
+             <string>Open file/url</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>send keystroke</string>
+             <string>Send keystroke</string>
             </property>
            </item>
           </widget>
@@ -303,7 +303,50 @@
         </layout>
        </item>
        <item>
-        <widget class="QLineEdit" name="functionText"/>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QComboBox" name="function_send_mode">
+           <item>
+            <property name="text">
+             <string>Send</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SendRaw</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SendInput</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SendPlay</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SendEvent</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="run_label">
+           <property name="text">
+            <string>Run, </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="functionText"/>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
