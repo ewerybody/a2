@@ -5,7 +5,7 @@ Created on Apr 30, 2016
 """
 import ahk
 import a2ctrl
-import a2ctrl.list
+import a2ctrl.qlist
 import a2core
 import logging
 from PySide import QtGui
@@ -74,7 +74,7 @@ class Hotkey_Scope_Handler(object):
             self.scopeUpdate()
 
     def scopeUpdate(self):
-        allItems = a2ctrl.list.get_items_as_text(self.ui.cfg_scope)
+        allItems = a2ctrl.qlist.get_items_as_text(self.ui.cfg_scope)
         p = a2ctrl.fontL.pointSize()
         h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
         self.ui.cfg_scope.setMinimumHeight(h)

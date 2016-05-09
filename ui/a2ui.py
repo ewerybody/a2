@@ -11,7 +11,7 @@ import ahk
 import a2mod
 import a2core
 import a2ctrl
-import a2ctrl.list
+import a2ctrl.qlist
 import a2design_ui
 
 from copy import deepcopy
@@ -149,7 +149,7 @@ class A2Window(QtGui.QMainWindow):
             self.a2.fetch_modules()
 
         if select is None:
-            select = a2ctrl.list.get_selected_as_text(self.ui.modList)
+            select = a2ctrl.qlist.get_selected_as_text(self.ui.modList)
         allMods = sorted(self.a2.modules.keys(), key=lambda s: s.lower())
         self.ui.modList.clear()
         self.ui.modList.insertItems(0, allMods)
@@ -167,7 +167,7 @@ class A2Window(QtGui.QMainWindow):
         to select 1 or more given modulenames in the list
         and update Ui accordingly
         """
-        a2ctrl.list.select_items(self.ui.modList, modName)
+        a2ctrl.qlist.select_items(self.ui.modList, modName)
 
     def mod_select(self, force=False):
         """
@@ -489,7 +489,7 @@ class A2Window(QtGui.QMainWindow):
     def scroll_to(self, value, smooth=False):
         if self.ui.modList.hasFocus():
             if isinstance(value, bool):
-                a2ctrl.list.deselect_all(self.ui.modList)
+                a2ctrl.qlist.deselect_all(self.ui.modList)
                 if value:
                     item = self.ui.modList.item(0)
                 else:

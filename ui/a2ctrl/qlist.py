@@ -1,5 +1,5 @@
 """
-a2ctrl.list
+a2ctrl.qlist
 
 @created: Apr 30, 2016
 @author: eRiC

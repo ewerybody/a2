@@ -4,6 +4,7 @@ Created on Apr 1, 2016
 @author: eRiC
 '''
 import a2ctrl
+import a2ctrl.qlist
 import logging
 from PySide import QtGui, QtCore
 from a2ctrl import combo_edit_ui
@@ -51,7 +52,7 @@ class Draw(a2ctrl.DrawCtrl):
             return
 
         if self.user_edit:
-            #items = a2ctrl.list.get_items_as_text(self.value_ctrl)
+            #items = a2ctrl.qlist.get_items_as_text(self.value_ctrl)
             items = [self.value_ctrl.itemText(i) for i in range(self.value_ctrl.count())]
             self.mod.set_user_cfg(self.cfg, 'items', items)
 
@@ -84,7 +85,7 @@ class Edit(a2ctrl.EditCtrl):
         self.check_new_name()
         self.connect_cfg_controls(self.ui)
         
-        for item in a2ctrl.list.get_all_items(self.ui.cfg_items):
+        for item in a2ctrl.qlist.get_all_items(self.ui.cfg_items):
             item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
                           QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
         
@@ -92,7 +93,7 @@ class Edit(a2ctrl.EditCtrl):
         self.mainWidget.setLayout(self.ui.editLayout)
 
     def add_item(self):
-        current_items = a2ctrl.list.get_items_as_text(self.ui.cfg_items)
+        current_items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)
         new_item_name = 'new_item'
         item = QtGui.QListWidgetItem(new_item_name)
         current_items.append(new_item_name)
@@ -115,10 +116,10 @@ class Edit(a2ctrl.EditCtrl):
 
     def update_items(self, item=None, items=None):
         if item is not None:
-            a2ctrl.list.select_items(self.ui.cfg_items, item)
+            a2ctrl.qlist.select_items(self.ui.cfg_items, item)
             #item.setSelected(True)
         if items is None:
-            items = a2ctrl.list.get_items_as_text(self.ui.cfg_items)
+            items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)
         self.cfg['items'] = items
 
     def keyPressEvent(self, event):
