@@ -136,11 +136,11 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
+        self.check_new_name()
         self.connect_cfg_controls(self.ui)
         self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
         self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
 
-        self.check_new_name()
         self.disablableCheck()
         self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
 
