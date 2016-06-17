@@ -31,6 +31,7 @@ class A2Window(QtGui.QMainWindow):
         super(A2Window, self).__init__(parent=None)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
+        self.restart_thread = None
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
         if self.dev_mode:
@@ -39,7 +40,7 @@ class A2Window(QtGui.QMainWindow):
         a2ctrl.adjustSizes(app)
         self.setupUi()
         self.draw_mod_list()
-        
+
         # TODO: make this optional
         self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
         self.mod = None
@@ -58,7 +59,7 @@ class A2Window(QtGui.QMainWindow):
             self._draw_phase = True
             self.select_mod(new_selected)
             self.selected_mod = new_selected
-        
+
         self._draw_phase = False
         self.drawMod()
         log.info('initialised!')
@@ -80,7 +81,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modName.setText('a2')
         self.ui.modVersion.setText('v0.1')
         self.ui.modAuthor.setText('')
-        
+
         self.ui.modCheck.clicked.connect(self.mod_enable)
         self.ui.modInfoButton.clicked.connect(self.modInfo)
         self.ui.actionEdit_module.triggered.connect(self.editMod)
@@ -91,14 +92,14 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2)
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
-        
+
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         self.ui.actionNew_module.triggered.connect(self.newModule)
         self.ui.actionA2_settings.triggered.connect(partial(self.select_mod, None))
         self.ui.actionDev_settings.triggered.connect(partial(self.select_mod, None))
-        
+
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
-        
+
         self.ui.editOKButton.released.connect(self.editSubmit)
         self.ui.editCancelButton.released.connect(self.drawMod)
         self.ui.modList.itemSelectionChanged.connect(self.mod_select)
@@ -144,7 +145,7 @@ class A2Window(QtGui.QMainWindow):
         :param str select: to select a certain entry, by default re-selects last entry
         """
         self._draw_phase = True
-        
+
         if refresh:
             self.a2.fetch_modules()
 
@@ -153,12 +154,12 @@ class A2Window(QtGui.QMainWindow):
         allMods = sorted(self.a2.modules.keys(), key=lambda s: s.lower())
         self.ui.modList.clear()
         self.ui.modList.insertItems(0, allMods)
-        
+
         if select:
             self.select_mod(select)
 
         self._draw_phase = False
-        
+
         if refresh:
             self.mod_select(force=True)
 
@@ -176,17 +177,17 @@ class A2Window(QtGui.QMainWindow):
         """
         if self._draw_phase:
             return
-        
+
         sel = self.ui.modList.selectedItems()
         numsel = len(sel)
         self.ui.modCheck.setTristate(False)
-        
+
         if not numsel:
             self.ui.modCheck.setVisible(False)
             self.mod = None
             self.selected_mod = []
             self.ui.modName.setText('a2')
-        
+
         elif numsel == 1:
             name = sel[0].text()
             # break if sel == previous sel
@@ -198,10 +199,10 @@ class A2Window(QtGui.QMainWindow):
             # weird.. need to set false first to fix tristate effect
             self.ui.modCheck.setChecked(False)
             self.ui.modCheck.setChecked(enabled)
-            
+
             self.mod = self.a2.modules[name]
             self.selected_mod = [name]
-        
+
         else:
             names = [s.text() for s in sel]
             self.selected_mod = names
@@ -215,9 +216,9 @@ class A2Window(QtGui.QMainWindow):
             else:
                 self.ui.modCheck.setTristate(True)
                 self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
-        
+
         self.drawMod()
-        
+
     def drawUI(self, keep_scroll=False):
         """
         takes list of controls and arranges them in the scroll layout
@@ -251,7 +252,7 @@ class A2Window(QtGui.QMainWindow):
         newLayout.setSpacing(a2ctrl.UIValues.spacing)
         # turn scroll layout content to new host widget
         self.ui.scrollArea.setWidget(new_widget)
-        
+
         # make the new inner layout the mainLayout
         # add the controls to it
         for ctrl in self.controls:
@@ -259,15 +260,15 @@ class A2Window(QtGui.QMainWindow):
                 newLayout.addWidget(ctrl)
         # amend the spacer
         newLayout.addItem(self.ui.spacer)
-        
+
         new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                                    QtGui.QSizePolicy.Maximum))
         if keep_scroll:
             self.ui.scrollBar.setValue(current_scroll_value)
-        
+
         self.mainlayout = newLayout
         self.settings_widget = new_widget
-    
+
     def drawMod(self):
         """
         from the modules config creates the usual display controls and
@@ -276,7 +277,7 @@ class A2Window(QtGui.QMainWindow):
         and restart a2.
         """
         self.controls = []
-        
+
         if self.mod is None:
             self.controls.append(a2ctrl.a2settings.A2Settings(self))
             config = [{'typ': 'nfo',
@@ -306,17 +307,17 @@ class A2Window(QtGui.QMainWindow):
                 version = config[0].get('version') or ''
             self.ui.modAuthor.setText(author)
             self.ui.modVersion.setText(version)
-            
+
             if config == []:
                 self.controls.append(QtGui.QLabel('config.json currently empty. '
                                                   'imagine awesome layout here ...'))
             else:
                 for cfg in config:
                     self.controls.append(a2ctrl.draw(self, cfg, self.mod))
-        
+
         self.toggleEdit(False)
         self.drawUI()
-        
+
     def editMod(self, keep_scroll=False):
         """
         From the modules config creates controls to edit the config itself.
@@ -331,7 +332,7 @@ class A2Window(QtGui.QMainWindow):
         self.controls = []
         if self.tempConfig is None:
             self.tempConfig = deepcopy(self.mod.config)
-        
+
         #if not mod.config: is None or mod.config is []
         if not len(self.tempConfig):
             newNfo = {'typ': 'nfo',
@@ -342,17 +343,17 @@ class A2Window(QtGui.QMainWindow):
                       'version': '0.1',
                       'date': a2core.get_date()}
             self.tempConfig.insert(0, newNfo)
-        
+
         for cfg in self.tempConfig:
             self.controls.append(a2ctrl.edit(cfg, self, self.tempConfig))
-        
+
         editSelect = a2ctrl.EditAddElem(self, self.tempConfig)
         self.controls.append(editSelect)
-        
+
         self.drawUI(keep_scroll)
         self.toggleEdit(True)
         self.settings_widget.setFocus()
-    
+
     def editSubmit(self):
         """
         Calls the mod to write the tempConfig to disc.
@@ -361,20 +362,20 @@ class A2Window(QtGui.QMainWindow):
         """
         if not self.editing:
             return
-        
+
         self.mod.config = deepcopy(self.tempConfig)
         if self.mod.name in self.a2.db.get('enabled') or []:
             self.mod.change()
             self.settings_changed()
         self.drawMod()
-    
+
     def toggleEdit(self, state):
         self.editing = state
         for button in [self.ui.editCancelButton, self.ui.editOKButton]:
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
             self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
-    
+
     def mod_enable(self):
         """
         Handles the module checkbox to enable/disable one or multiple modules
@@ -394,12 +395,12 @@ class A2Window(QtGui.QMainWindow):
         self.ui.modCheck.setTristate(False)
         self.ui.modCheck.setChecked(checked)
         self.settings_changed()
-    
+
     def modDisableAll(self):
         self.a2.enabled = []
         self.mod_select(force=True)
         self.settings_changed()
-    
+
     def modInfo(self):
         """
         Open help of the selected module or a2 help
@@ -410,32 +411,36 @@ class A2Window(QtGui.QMainWindow):
             self.mod.help()
 
     def settings_changed(self, specific=None, refresh_ui=False):
+        if self.restart_thread is not None:
+            self.restart_thread.quit()
+
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
         self.draw_mod_list(refresh=refresh_ui)
-        
+
         a2core.write_includes(specific)
-        
-        thread = RestartThread(self.a2, self)
-        thread.start()
-    
+
+        self.restart_thread = RestartThread(self.a2, self)
+        self.restart_thread.start()
+
     def escape(self):
         if self.editing:
             self.drawMod()
         else:
             self.close()
-    
+
     def exploreMod(self):
         if isinstance(self.mod, a2mod.Mod):
             subprocess.Popen(['explorer.exe', self.mod.path])
 
     def exploreA2(self):
         subprocess.Popen(['explorer.exe', self.a2.paths.a2])
-    
+
     def closeEvent(self, event):
         binprefs = str(self.saveGeometry().toPercentEncoding())
         self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
         self.a2.db.set('last_selected', self.selected_mod)
+        self.restart_thread.quit()
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):
@@ -475,7 +480,7 @@ class A2Window(QtGui.QMainWindow):
         if not os.access(self.a2.paths.modules, os.W_OK):
             log.error('A2 module directory not writable! %s' % self.a2.paths.modules)
             return
-        
+
         os.mkdir(join(self.a2.paths.modules, name))
         self.a2.fetch_modules()
         self.draw_mod_list(select=name)
@@ -502,10 +507,10 @@ class A2Window(QtGui.QMainWindow):
             scroll_end = self.ui.scrollBar.maximum()
             if isinstance(value, bool):
                 value = 0 if value else self.ui.scrollBar.maximum()
-    
+
             if value == current or scroll_end == 0:
                 return
-    
+
             if not smooth:
                 self.ui.scrollBar.setValue(value)
             else:
@@ -540,7 +545,7 @@ class RestartThread(QtCore.QThread):
         self.msleep(300)
         ahkProcess = QtCore.QProcess()
         ahkProcess.startDetached(a2.paths.autohotkey, [a2.paths.a2_script], a2.paths.a2)
-        self.quit()
+
 
 if __name__ == '__main__':
     import a2app
