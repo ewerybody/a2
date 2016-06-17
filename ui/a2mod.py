@@ -17,8 +17,8 @@ log.setLevel(logging.DEBUG)
 
 # maybe make this even settable in a dev options dialog?
 jsonIndent = 2
-CONFIG_FILENAME = 'config.json'
 
+CONFIG_FILENAME = 'config.json'
 VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'string': {'typ': str, 'default': ''},
              'number': {'typ': (int, float), 'default': 0.0},
@@ -36,7 +36,7 @@ class Mod(object):
     stores the available parts of the module that can be enabled in the ui.
     also the according variables, hotkeys, defaults, inits
     encapsulates the background functions for enabling/disabling a part
-    
+
     config is None at first and filled as soon as the mod is selected in the UI.
     If there is no config_file yet it will be emptied instead of None.
     """
@@ -71,7 +71,7 @@ class Mod(object):
             backup_index = 1
         if exists(self.config_file):
             copy2(self.config_file, join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
-        
+
         # overwrite config_file
         with open(self.config_file, 'w') as fObj:
             json.dump(self._config, fObj, indent=jsonIndent, sort_keys=True)
@@ -93,22 +93,22 @@ class Mod(object):
         """
         data = {'includes': [], 'hotkeys': {}, 'variables': {}}
         data = self.loop_cfg(self.config[1:], data)
-                
+
         for typ in ['includes', 'hotkeys', 'variables']:
             self.a2.db.set(typ, data[typ], self.name)
 
     def loop_cfg(self, cfgDict, data):
         for cfg in cfgDict:
-            
+
             if cfg['typ'] == 'include':
                 data['includes'].append(cfg['file'])
-            
+
             elif 'name' in cfg:
                 userCfg = self.a2.db.get(cfg['name'], self.name)
                 if cfg['typ'] == 'hotkey':
                     if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
-                    
+
                     key = a2ctrl.get_cfg_value(cfg, userCfg, 'key', str)
                     scope = a2ctrl.get_cfg_value(cfg, userCfg, 'scope', list)
                     scopeMode = a2ctrl.get_cfg_value(cfg, userCfg, 'scopeMode', int)
@@ -120,7 +120,7 @@ class Mod(object):
                         data['hotkeys'][0].append([key, function])
                     else:
                         data['hotkeys'][scopeMode].append([scope, key, function])
-                
+
                 elif cfg['typ'] in VALUE_MAP:
                     data['variables'][cfg['name']] = a2ctrl.get_cfg_value(
                         subCfg=cfg,
@@ -180,7 +180,7 @@ class Mod(object):
         Helps to keep the user config as small as possible. For instance if there is a value
         'enabled' True by default only setting it to False will be saved. User setting it to True
         would delete it from user settings, so it's taking the default again.
-        
+
         user sets True AND default is True:
             delete from userCfg
         user sets True AND default it False:

@@ -9,7 +9,6 @@ to make functionality available without passing the main ui object.
 @author: eric
 """
 import os
-import sys
 import time
 import logging
 import webbrowser
@@ -32,13 +31,13 @@ reload_modules = [ahk, a2db, a2mod]
 
 class A2Obj(object):
     __instance = None
-    
+
     @classmethod
     def inst(cls):
         if A2Obj.__instance is None:
             A2Obj.__instance = A2Obj()
         return A2Obj.__instance
-    
+
     def __init__(self):
         self.app = None
         self.win = None
@@ -120,6 +119,7 @@ class URLs(object):
         self.helpScopes = self.a2 + '/wiki/Edit-Scopes'
         self.help_string = self.a2 + '/wiki/Edit-String'
         self.help_number = self.a2 + '/wiki/Edit-Number'
+        self.help_path = self.a2 + '/wiki/Edit-Path'
 
         self.ahk = 'https://autohotkey.com'
         self.ahk_commands = self.ahk + '/docs/commands'
@@ -136,7 +136,7 @@ class Paths(object):
     """
     def __init__(self):
         self.ui = dirname(__file__)
-        
+
         if not self.ui:
             cwd = os.getcwd()
             if exists(join(cwd, 'a2ui.py')):
@@ -152,7 +152,7 @@ class Paths(object):
         self.a2_script = join(self.a2, 'a2.ahk')
         self.settings = get_settings_path()
         self.modules = join(self.a2, 'modules')
-        
+
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.starter_exe, self.lib,
                       self.modules, self.settings, self.ui]
@@ -163,7 +163,7 @@ class Paths(object):
         if not os.access(self.settings, os.W_OK):
             raise Exception('a2ui start interrupted! %s inaccessable!'
                             % self.settings)
-    
+
         # by default the Autohotkey.exe in the lib should be uses
         # but we need an option for that a user can put it to whatever he wants
         self.autohotkey = join(self.lib, 'AutoHotkey', 'AutoHotkey.exe')
@@ -173,9 +173,9 @@ class Paths(object):
 def write_includes(specific=None):
     a2 = A2Obj.inst()
     a2.fetch_modules()
-    
+
     hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
-    
+
     includeAhk = [edit_disclaimer % 'includes']
     a2_hotkey = ahk.translateHotkey(a2.db.get('a2_hotkey') or a2default_hotkey)
     hotkeysAhk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
@@ -183,22 +183,22 @@ def write_includes(specific=None):
     # TODO: this needs to be implemented dynamically
     libsAhk = [edit_disclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
                                             ['tt', 'functions', 'Explorer_Get']]
-    
+
     # browse the enabled modules to collect the include data
     modSettings = a2.db.tables()
     for modname in a2.db.get('enabled') or []:
         if modname not in modSettings:
             a2.modules[modname].change()
-        
+
         includes = a2.db.get('includes', modname)
-        
+
         if not isinstance(includes, list):
             log.warn('includes not a list: %s' % includes)
             includes = [includes]
-        
+
         includeAhk += ['#include modules\%s\%s'
                        % (modname, i) for i in includes]
-        
+
         hotkeys = a2.db.get('hotkeys', modname)
         for typ in hotkeys:
             for hk in hotkeys.get(typ) or []:
@@ -214,7 +214,7 @@ def write_includes(specific=None):
                         if scopeKey not in hotkeysAhk:
                             hotkeysAhk[scopeKey] = []
                         hotkeysAhk[scopeKey].append(hkstring)
-    
+
         for var_name, value in (a2.db.get('variables', modname) or {}).items():
             if isinstance(value, bool):
                 variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
@@ -228,22 +228,22 @@ def write_includes(specific=None):
                 log.error('Please check handling variable type "%s" (%s: %s)'
                           % (type(value), var_name, str(value)))
                 variablesAhk.append('%s := %s' % (var_name, str(value)))
-    
+
     # write all the include files
     with open(join(a2.paths.settings, 'variables.ahk'), 'w') as fobj:
         fobj.write('\n'.join(variablesAhk))
-    
+
     with open(join(a2.paths.settings, 'libs.ahk'), 'w') as fobj:
         fobj.write('\n'.join(libsAhk))
-    
+
     with open(join(a2.paths.settings, 'includes.ahk'), 'w') as fobj:
         fobj.write('\n'.join(includeAhk))
-    
+
     with open(join(a2.paths.settings, 'hotkeys.ahk'), 'w') as fobj:
         fobj.write(edit_disclaimer % 'hotkeys' + '\n')
         for key in sorted(hotkeysAhk.keys()):
             fobj.write('\n'.join([key] + hotkeysAhk[key]) + '\n\n')
-    
+
     with open(join(a2.paths.settings, 'init.ahk'), 'w') as fobj:
         fobj.write(edit_disclaimer % 'init' + '\n')
 
@@ -287,10 +287,10 @@ def _dbCleanup():
                 enabled = enabled.split('|')
                 a2.db.set('enabled', enabled)
             continue
-        
+
         includes = a2.db.get('includes', table, asjson=False)
         include = a2.db.get('include', table, asjson=False)
-        
+
         # turn string separated entries into lists
         if includes is None and include is not None:
             includes = include.split('|')

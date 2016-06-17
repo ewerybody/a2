@@ -6,7 +6,6 @@ Created on Aug 7, 2015
 @author: eRiC
 '''
 import time
-import a2core
 import logging
 import subprocess
 from os.path import join
@@ -36,7 +35,8 @@ def translateHotkey(displayString):
 def call_cmd(cmd_name, *args):
     if not cmd_name.endswith('.ahk'):
         cmd_name += '.ahk'
-    
+
+    import a2core
     a2 = a2core.A2Obj.inst()
     cmd_path = join(a2.paths.lib, 'cmds', cmd_name)
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]

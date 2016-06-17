@@ -31,7 +31,7 @@ class A2Window(QtGui.QMainWindow):
         super(A2Window, self).__init__(parent=None)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
-        self.restart_thread = None
+        self._restart_thread = None
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
         if self.dev_mode:
@@ -413,8 +413,8 @@ class A2Window(QtGui.QMainWindow):
             self.mod.help()
 
     def settings_changed(self, specific=None, refresh_ui=False):
-        if self.restart_thread is not None:
-            self.restart_thread.quit()
+        if self._restart_thread is not None:
+            self._restart_thread.quit()
 
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
@@ -422,8 +422,8 @@ class A2Window(QtGui.QMainWindow):
 
         a2core.write_includes(specific)
 
-        self.restart_thread = RestartThread(self.a2, self)
-        self.restart_thread.start()
+        self._restart_thread = RestartThread(self.a2, self)
+        self._restart_thread.start()
 
     def escape(self):
         if self.editing:
@@ -442,7 +442,8 @@ class A2Window(QtGui.QMainWindow):
         binprefs = str(self.saveGeometry().toPercentEncoding())
         self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
         self.a2.db.set('last_selected', self.selected_mod)
-        self.restart_thread.quit()
+        if self._restart_thread is not None:
+            self._restart_thread.quit()
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):

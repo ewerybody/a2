@@ -16,7 +16,6 @@ from ctypes import windll
 from importlib import reload
 from siding import QSingleApplication
 
-
 logging.basicConfig()
 log = logging.getLogger('a2app')
 log.setLevel(logging.DEBUG)
@@ -37,18 +36,18 @@ def main():
     app.messageReceived.connect(app_msg_get)
     # this is to set the actual taskbar icon
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
-    
+
     a2win = init_a2_win(app)
     #TODO: remove this:
     a2core._dbCleanup()
-    
+
     exit(app.exec_())
 
 
 def init_a2_win(app):
     a2 = a2core.A2Obj.inst()
     a2.start_up()
-    
+
     a2win = a2ui.A2Window(app=app)
     a2.win = a2win
     a2.app = app
@@ -67,12 +66,12 @@ def app_msg_get(msg):
         a2win.close()
         reload(a2core)
         reload(a2ui)
-        
+
         for main_mod in [a2core, a2ui, a2ui.a2ctrl]:
             for module in main_mod.reload_modules:
                 log.debug('reloading module: %s' % module.__name__)
                 reload(module)
-        
+
         a2win = init_a2_win(app)
 
     else:
