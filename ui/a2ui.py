@@ -50,6 +50,8 @@ class A2Window(QtGui.QMainWindow):
         self.selected_mod = []
         self.scopes = {}
 
+        # as we don't want to draw the ui more than once, we make sure
+        # selecting does not trigger draw already
         if self.a2.db.get('remember_last') or False:
             last_selected = self.a2.db.get('last_selected') or []
             new_selected = [m for m in last_selected if m in self.a2.modules]
@@ -59,9 +61,9 @@ class A2Window(QtGui.QMainWindow):
             self._draw_phase = True
             self.select_mod(new_selected)
             self.selected_mod = new_selected
-
         self._draw_phase = False
-        self.drawMod()
+        self.mod_select(True)
+
         log.info('initialised!')
 
     def setupUi(self):
