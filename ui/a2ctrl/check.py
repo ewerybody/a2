@@ -22,14 +22,13 @@ class Draw(a2ctrl.DrawCtrl):
     def _setupUi(self):
         self.layout = QtGui.QVBoxLayout(self)
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
-        value = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'value', bool)
-        self.checkbox.setChecked(value)
+        self.checkbox.setChecked(self.get_user_value(bool))
         self.checkbox.clicked[bool].connect(self.delayed_check)
         self.layout.addWidget(self.checkbox)
         self.setLayout(self.layout)
 
     def check(self, state):
-        self.mod.set_user_cfg(self.cfg, 'value', state)
+        self.set_user_value(state)
         self.change('variables')
 
 
@@ -43,13 +42,13 @@ class Edit(a2ctrl.EditCtrl):
         self.ctrlType = 'Checkbox'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.helpCheckbox
-        
+
         self.ui = check_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
-        
+
         self.check_new_name()
-        self.connect_cfg_controls(self.ui)
+        self.connect_cfg_controls()
         self.mainWidget.setLayout(self.ui.editLayout)

@@ -20,9 +20,10 @@ jsonIndent = 2
 
 CONFIG_FILENAME = 'config.json'
 VALUE_MAP = {'check': {'typ': bool, 'default': False},
-             'string': {'typ': str, 'default': ''},
              'number': {'typ': (int, float), 'default': 0.0},
-             'combo': {'typ': str, 'default': ''}}
+             'string': {'typ': str, 'default': ''},
+             'combo': {'typ': str, 'default': ''},
+             'path': {'typ': str, 'default': ''}}
 
 
 class Mod(object):

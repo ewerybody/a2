@@ -1,12 +1,11 @@
-'''
-Created on Feb 28, 2016
-
-@author: eRiC
-'''
+"""
+a2 path control
+"""
 import a2ctrl
 import logging
-from PySide import QtGui
-from a2ctrl import string_edit_ui
+from functools import partial
+from PySide import QtGui, QtCore
+from a2ctrl import path_edit_ui
 
 
 logging.basicConfig()
@@ -25,9 +24,16 @@ class Draw(a2ctrl.DrawCtrl):
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
         self.value_ctrl = QtGui.QLineEdit(self.value)
-        self.value_ctrl.editingFinished.connect(self.delayed_check)
+        if self.cfg.get('writable', False):
+            self.value_ctrl.editingFinished.connect(self.delayed_check)
+        else:
+            self.value_ctrl.setReadOnly(True)
+        self.browse_button = QtGui.QPushButton('Browse...')
+        self.browse_button.clicked.connect(self.browse)
+
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.value_ctrl)
+        self.layout.addWidget(self.browse_button)
         self.setLayout(self.layout)
 
     def check(self, value=None):
@@ -42,23 +48,31 @@ class Draw(a2ctrl.DrawCtrl):
         self.set_user_value(value)
         self.change('variables')
 
+    def browse(self):
+        save_mode = self.cfg.get('save_mode', False)
+
+        if save_mode:
+            filepath = QtGui.QFileDialog.getSaveFileName(self, caption=self.label_text, dir=self.value)
+        else:
+            filepath = QtGui.QFileDialog.getOpenFileName(self, caption=self.label_text, dir=self.value)
+
+        if filepath[0]:
+            self.value_ctrl.setText(filepath[0])
+            self.check(filepath[0])
+
 
 class Edit(a2ctrl.EditCtrl):
-    """
-    Checkbox to control boolean values for the a2 runtime.
-    We might put them to the db and get and fetch from there or first: just write them into
-    code directly and start with the variables include.
-    """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'String'
+        self.ctrlType = 'Path'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        self.helpUrl = self.a2.urls.help_string
+        self.helpUrl = self.a2.urls.help_path
 
-        self.ui = string_edit_ui.Ui_edit()
+        self.ui = path_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
         self.connect_cfg_controls()
+
         self.mainWidget.setLayout(self.ui.editLayout)

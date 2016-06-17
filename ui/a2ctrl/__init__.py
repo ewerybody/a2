@@ -1,9 +1,9 @@
-'''
+"""
 # create header edit controls
 def editctrl(nfoDict, keyName, typ, parent, editCtrls):
     if keyName not in nfoDict:
         return
-    
+
     label = QtGui.QLabel('%s:' % keyName)
     parent.addWidget(label)
     if typ == 'text':
@@ -21,9 +21,8 @@ the author, name, version, description info
 
 @created: Mar 6, 2015
 @author: eRiC
-'''
+"""
 import sys
-import ahk
 import time
 import logging
 import inspect
@@ -32,11 +31,13 @@ import importlib
 import subprocess
 import collections
 from copy import deepcopy
+from pprint import pprint
 from functools import partial
 from pysideuic import compileUi
-from PySide import QtGui, QtCore, QtSvg
 from os.path import join, getmtime, dirname, basename, exists, splitext
+from PySide import QtGui, QtCore, QtSvg
 
+import ahk
 import a2core
 from a2ctrl import inputDialog_ui
 
@@ -67,7 +68,7 @@ class UIValues(object):
 
 class Icons(object):
     __instance = None
-    
+
     @staticmethod
     def inst():
         """
@@ -83,11 +84,13 @@ class Icons(object):
         self.check = Ico('check')
         self.code = Ico('code')
         self.copy = Ico('copy')
+        self.combo = Ico('combo')
         self.cut = Ico('cut')
         self.delete = Ico('delete')
         self.down = Ico('down')
         self.down_align = Ico('down_align')
-        self.group = Ico('folder')
+        self.folder = Ico('folder')
+        self.group = Ico('group')
         self.help = Ico('help')
         self.hotkey = Ico('keyboard')
         self.number = Ico('number')
@@ -117,10 +120,10 @@ def check_ui_module(module):
     uiname = splitext(pybase)[0]
     pypath = dirname(pyfile)
     uibase = None
-    
+
     if uiname.endswith(UI_FILE_SUFFIX):
         uibase = uiname[:-len(UI_FILE_SUFFIX)] + '.ui'
-        log.debug('checkUiModule from name: %s' % uibase)
+        #log.debug('checkUiModule from name: %s' % uibase)
     else:
         with open(pyfile, 'r') as fobj:
             line = fobj.readline()
@@ -131,12 +134,12 @@ def check_ui_module(module):
                     uibase = basename(uibase.strip())
                     log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
-    
+
     uifile = join(pypath, uibase)
     if not uibase or not exists(uifile):
         log.error('Ui-file not found: %s' % pybase)
         return
-    
+
     pyTime = getmtime(pyfile)
     uiTime = getmtime(uifile)
     diff = pyTime - uiTime
@@ -171,6 +174,21 @@ class DrawCtrl(QtGui.QWidget):
         self.check_delay = 150
         self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.name)
 
+    def get_user_value(self, typ, name='value', default=None):
+        """
+        Get a user value.
+        Name is 'value' by default so you can just get the default value by stating the type. Voila!
+        """
+        return get_cfg_value(self.cfg, self.userCfg, name, typ, default)
+
+    def set_user_value(self, this, name='value'):
+        """
+        Set a user value.
+        Name is 'value' by default so you can just set the default value by ... well:
+        passing the value. Voila!
+        """
+        self.mod.set_user_cfg(self.cfg, name, this)
+
     def change(self, specific=None):
         self.mod.change()
         if self.mod.enabled:
@@ -184,7 +202,11 @@ class DrawCtrl(QtGui.QWidget):
 
 
 class DrawWelcome(QtGui.QWidget):
-    'Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!'
+    """TODO: currently unused"""
+    def __init__(self):
+        self.text = ('Hello user! Welcome to a2! This is a template introduction Text. '
+                     'So far there is not much to say. '
+                     'I just wanted this to fill up more than one line properly. Voila!')
 
 
 class DrawNfo(QtGui.QWidget):
@@ -239,7 +261,7 @@ class EditCtrl(QtGui.QGroupBox):
     """
     frame widget for an edit control which enables basic arrangement of the
     control up & down as well as deleting the control.
-    
+
     It's made to work with handwritten and compiled Uis right away.
     To embedd a compiled ui tell it so addLayout=False in the super()-statement:
         super(MyNewCtrl, self).__init__(addLayout=False)
@@ -247,13 +269,13 @@ class EditCtrl(QtGui.QGroupBox):
         self.ui.setupUi(self.mainWidget)
     and then set the self.mainWidget-layout to your top layout in the compiled ui:
         self.mainWidget.setLayout(self.ui.mytoplayout)
-    
+
     TODO: currently this is embedded as menuitems on a button which is pretty shitty.
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
     ctrlType = 'EditCtrl'
-    
+
     def __init__(self, cfg, main, parentCfg, addLayout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
@@ -262,13 +284,13 @@ class EditCtrl(QtGui.QGroupBox):
         self.parentCfg = parentCfg
         self._setupUi(addLayout)
         self.helpUrl = self.a2.urls.helpEditCtrl
-    
+
     def move(self, value, *args):
         if self.parentCfg and self.parentCfg[0].get('typ', '') == 'nfo':
             top_index = 1
         else:
             top_index = 0
-        
+
         index = self.parentCfg.index(self.cfg)
         maxIndex = len(self.parentCfg) - 1
         if isinstance(value, bool):
@@ -285,12 +307,12 @@ class EditCtrl(QtGui.QGroupBox):
         if index == newindex or newindex < top_index or newindex > maxIndex:
             #print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
-        
+
         #cfg = self.parentCfg.pop(index)
         self.parentCfg.pop(index)
         self.parentCfg.insert(newindex, self.cfg)
         self.main.editMod(keep_scroll=True)
-    
+
     def delete(self):
         if self.cfg in self.parentCfg:
             self.parentCfg.remove(self.cfg)
@@ -301,11 +323,11 @@ class EditCtrl(QtGui.QGroupBox):
         self.parentCfg.append(newCfg)
         self.main.editMod()
         self.scroll_to_bottom()
-    
+
     def cut(self):
         self.main.edit_clipboard.append(deepcopy(self.cfg))
         self.delete()
-    
+
     def help(self):
         a2core.surfTo(self.helpUrl)
 
@@ -322,12 +344,12 @@ class EditCtrl(QtGui.QGroupBox):
             self.mainLayout.setContentsMargins(5, 5, 5, 5)
             self.mainWidget.setLayout(self.mainLayout)
         self._ctrlLayout.addWidget(self.mainWidget)
-        
+
         self._ctrlButtonLayout = QtGui.QVBoxLayout()
         self._ctrlButtonLayout.setSpacing(0)
         self._ctrlButtonLayout.setContentsMargins(5, 0, 5, 5)
         self._ctrlButtonLayout.setObjectName("ctrlButtonLayout")
-        
+
         self._ctrlButton = QtGui.QPushButton(self)
         self._ctrlButton.setMinimumSize(QtCore.QSize(40, 40))
         self._ctrlButton.setMaximumSize(QtCore.QSize(40, 40))
@@ -340,7 +362,7 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrlButtonLayout.addItem(spacerItem)
         self._ctrlLayout.addLayout(self._ctrlButtonLayout)
         self._ctrlLayout.setStretch(0, 1)
-        
+
         self._ctrlMenu = QtGui.QMenu(self)
         self._ctrlMenu.aboutToShow.connect(self.buildMenu)
         self._ctrlButton.setMenu(self._ctrlMenu)
@@ -362,7 +384,7 @@ class EditCtrl(QtGui.QGroupBox):
         clipboard_count = ''
         if self.main.edit_clipboard:
             clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
-        
+
         if self.ctrlType == 'Groupbox':
             menu_items.insert(-1, ('Paste' + clipboard_count, self.paste, icons.paste))
         else:
@@ -375,23 +397,32 @@ class EditCtrl(QtGui.QGroupBox):
                 action = QtGui.QAction(item[0], self._ctrlMenu, triggered=item[1])
             self._ctrlMenu.addAction(action)
 
-    def connect_cfg_controls(self, uiclass, exclude=None):
+    def connect_cfg_controls(self, ui_obj=None, exclude=None):
         """
         browses all members of the ui object to connect ones named 'cfg_'
         with the EditCtrls current cfg and fill it with current value.
         """
+        if ui_obj is None:
+            try:
+                ui_obj = self.ui
+            except AttributeError as error:
+                log.error(error)
+                log.error('No "self.ui"! Cannot auto-connect cfg controls on %s\n'
+                          '  Create self.ui or pass another object to browse for cfg_controls.' % self.__class__)
+                return
+
         if exclude is not None:
             if not isinstance(exclude, list):
                 exclude = [exclude]
         else:
             exclude = []
-        
-        for objname, control in inspect.getmembers(uiclass):
+
+        for objname, control in inspect.getmembers(ui_obj):
             if not objname.startswith('cfg_') or object in exclude:
                 continue
-            
+
             name = objname[4:]
-            
+
             if isinstance(control, QtGui.QCheckBox):
                 # checkBox.clicked doesn't send state, so we put the func to check
                 # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
@@ -402,14 +433,14 @@ class EditCtrl(QtGui.QGroupBox):
                     control.setChecked(self.cfg[name])
                 else:
                     self.cfg[name] = control.isChecked()
-            
+
             elif isinstance(control, QtGui.QLineEdit):
                 control.textChanged.connect(partial(self._updateCfgData, name))
                 if name in self.cfg:
                     control.setText(self.cfg[name])
                 else:
                     self.cfg[name] = control.text()
-            
+
             elif isinstance(control, QtGui.QComboBox):
                 control.currentIndexChanged.connect(partial(self._updateCfgData, name))
                 if name in self.cfg:
@@ -437,7 +468,7 @@ class EditCtrl(QtGui.QGroupBox):
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                           (objname, type(control)))
-    
+
     def check_new_name(self):
         """
         If no name set yet, like on new controls this creates a new unique
@@ -456,7 +487,10 @@ class EditCtrl(QtGui.QGroupBox):
                 number += 1
                 try_name = new_name + str(number)
             self.cfg['name'] = try_name
-    
+            print('check_new_name - name created: %s' % try_name)
+        else:
+            print('check_new_name - got already: %s' % self.cfg['name'])
+
     def _updateCfgData(self, name, data=None, func=None):
         """
         issued from a control change function this sets an according item in config dict
@@ -517,11 +551,11 @@ class EditLine(QtGui.QWidget):
         self.layout.addWidget(self.inputCtrl)
         if parentLayout:
             parentLayout.addWidget(self)
-    
+
     def update(self):
         if self.updatefunc:
             self.updatefunc()
-    
+
     @property
     def value(self):
         return self.inputCtrl.text()
@@ -548,11 +582,11 @@ class EditText(QtGui.QWidget):
         self.baselayout.addWidget(self.inputCtrl)
         if parent:
             parent.addWidget(self)
-    
+
     def update(self):
         if self.updatefunc:
             self.updatefunc()
-    
+
     @property
     def value(self):
         return self.inputCtrl.toPlainText()
@@ -562,7 +596,7 @@ class EditAddElem(QtGui.QWidget):
     """
     to add a control to a module setup. This will probably go into some popup
     later. This way its a little too clunky I think.
-    
+
     TODO: the popup will show all available scripts to include in a sub menu
         * include > script1.ahk
                     script2.ahk
@@ -570,7 +604,7 @@ class EditAddElem(QtGui.QWidget):
         * hotkey
         * checkBox
         * ...
-    
+
     til: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
@@ -581,14 +615,14 @@ class EditAddElem(QtGui.QWidget):
         self.baselayout = QtGui.QHBoxLayout(self)
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
-        
+
         self.addButton = QtGui.QPushButton('add ...')
         self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
         self.addButton.setFont(fontXL)
         self.addButton.setMinimumSize(QtCore.QSize(lenL * 2, lenM))
         self.addButton.setMaximumHeight(lenM)
         self.baselayout.addWidget(self.addButton)
-        
+
         self.menu = QtGui.QMenu(self)
         self.menu.aboutToShow.connect(self.populateMenu)
         self.addButton.setMenu(self.menu)
@@ -607,8 +641,8 @@ class EditAddElem(QtGui.QWidget):
         menu_items['group'] = ('GroupBox', icons.group)
         menu_items['string'] = ('String', icons.string)
         menu_items['number'] = ('Number', icons.number)
-        menu_items['combo'] = ('ComboBox', None)
-        #'file'] = ('FileField', None),
+        menu_items['combo'] = ('ComboBox', icons.combo)
+        menu_items['path'] = ('Path', icons.folder)
         #'text'] = ('TextField', None),
         #'button'] = ('Button', None)
 
@@ -626,14 +660,17 @@ class EditAddElem(QtGui.QWidget):
         cfg = {'typ': typ}
         if typ == 'include':
             cfg['file'] = name
-        
+
+        print('\nadded control:')
+        pprint(cfg)
+
         self.config.append(cfg)
         self.main.editMod()
 
 
 class EditInclude(EditCtrl):
     """
-    
+    User-invisible control that you only see in edit-mode
     """
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Include'
@@ -651,19 +688,19 @@ class EditInclude(EditCtrl):
         self.buttonMenu = BrowseScriptsMenu(self.main, self.setScript)
         self.button.setMenu(self.buttonMenu)
         self.layout.addWidget(self.button)
-        
+
         self.editButton = QtGui.QPushButton('edit script')
         self.editButton.pressed.connect(self.editScript)
         self.layout.addWidget(self.editButton)
-        
+
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.layout.addItem(spacerItem)
         self.mainWidget.setLayout(self.layout)
-    
+
     def setScript(self, typ, name):
         self.cfg['file'] = name
         self.button.setText(name)
-    
+
     def editScript(self):
         subprocess.Popen([self.main.scriptEditor, join(self.main.mod.path, self.cfg['file'])])
 
@@ -692,10 +729,10 @@ class InputDialog(QtGui.QDialog):
         self.ui.textField.setFont(fontL)
         self.ui.textField.setText(text)
         self.ui.textField.setFocus()
-        
+
         if size:
             self.resize(size[0], size[1])
-            
+
         self.show()
 
     def check(self, name):
@@ -707,7 +744,7 @@ class InputDialog(QtGui.QDialog):
             else:
                 self.ui.okButton.setEnabled(False)
                 self.ui.okButton.setToolTip(answer)
-    
+
     def okay(self):
         txt = self.ui.textField.text()
         self.output = txt
@@ -727,18 +764,18 @@ class Popup(QtGui.QWidget):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.close)
         self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
-    
+
     def placeAtCursor(self):
         x, y = self.setpos
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
         pos.setY(y - (self.height() / 2))
         self.move(pos)
-    
+
     def leaveEvent(self, event):
         if self.closeOnLeave:
             self.close()
-    
+
     def focusOutEvent(self, event):
         self.close()
         #self.focusOutEvent()
@@ -760,17 +797,17 @@ class BrowseScriptsMenu(QtGui.QMenu):
         for cfg in self.tempConfig:
             if cfg['typ'] == 'include':
                 scriptsInUse.add(cfg['file'])
-        
+
         icons = Icons.inst()
         scriptsUnused = set(self.main.mod.scripts) - scriptsInUse
-        
+
         for scriptName in scriptsUnused:
             action = QtGui.QAction(icons.code, scriptName, self,
                                    triggered=partial(self.setScript, scriptName))
             self.addAction(action)
         newIncludeAction = QtGui.QAction(icons.code, 'create new', self, triggered=self.setScript)
         self.addAction(newIncludeAction)
-    
+
     def setScript(self, name='', create=False):
         if not name:
             InputDialog(self.main, 'New Script', partial(self.setScript, create=True),
@@ -797,18 +834,18 @@ class Ico(QtGui.QIcon):
             if not exists(self.path):
                 log.error('SVG_icon: could not find path to "%s"!' % ico_name)
                 return
-        
+
         renderer = QtSvg.QSvgRenderer(self.path)
         image = QtGui.QImage(QtCore.QSize(px, px), QtGui.QImage.Format_ARGB32)
         painter = QtGui.QPainter(image)
-        
+
         if scale != 1.0:
             t = (px / 2) * (1 - scale)
             painter.translate(t, t)
             painter.scale(scale, scale)
-        
+
         renderer.render(painter)
-        
+
         if color:
             if isinstance(color, (int, float)):
                 color = [int(color)] * 3
@@ -819,7 +856,7 @@ class Ico(QtGui.QIcon):
                 painter.fillRect(image.rect(), color)
             else:
                 log.error('Cannot use color: "%s"' % str(color))
-        
+
         pixmap = QtGui.QPixmap.fromImage(image)
         self.addPixmap(pixmap)
         painter.end()
@@ -835,7 +872,7 @@ def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
         value = userCfg[attrName]
     elif attrName in subCfg:
         value = subCfg[attrName]
-    
+
     if typ is not None:
         if not isinstance(value, typ):
             log.error('Fetched wrong type for attrName %s: %s' % (attrName, value))
@@ -843,13 +880,13 @@ def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
                 value = typ()
             else:
                 value = default
-    
+
     return value
 
 
 # deferred import of sub controls because they might use any part of this module
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number
-import a2ctrl.combo, a2ctrl.hotkey_func, a2ctrl.hotkey_scope
+import a2ctrl.combo, a2ctrl.path, a2ctrl.hotkey_func, a2ctrl.hotkey_scope
 
 # import first, then add here for reload coverage
 reload_modules = [
@@ -861,7 +898,8 @@ reload_modules = [
     a2ctrl.group,
     a2ctrl.string,
     a2ctrl.number,
-    a2ctrl.combo]
+    a2ctrl.combo,
+    a2ctrl.path]
 
 ui_modules = [
     inputDialog_ui,
@@ -872,14 +910,16 @@ ui_modules = [
     a2ctrl.string.string_edit_ui,
     a2ctrl.a2settings.a2settings_ui,
     a2ctrl.number.number_edit_ui,
-    a2ctrl.combo.combo_edit_ui]
+    a2ctrl.combo.combo_edit_ui,
+    a2ctrl.path.path_edit_ui]
 
 draw_classes = {'hotkey': a2ctrl.hotkey.Draw,
                 'check': a2ctrl.check.Draw,
                 'group': a2ctrl.group.Draw,
                 'string': a2ctrl.string.Draw,
                 'number': a2ctrl.number.Draw,
-                'combo': a2ctrl.combo.Draw}
+                'combo': a2ctrl.combo.Draw,
+                'path': a2ctrl.path.Draw}
 
 edit_classes = {'include': EditInclude,
                 'hotkey': a2ctrl.hotkey.Edit,
@@ -887,7 +927,8 @@ edit_classes = {'include': EditInclude,
                 'group': a2ctrl.group.Edit,
                 'string': a2ctrl.string.Edit,
                 'number': a2ctrl.number.Edit,
-                'combo': a2ctrl.combo.Edit}
+                'combo': a2ctrl.combo.Edit,
+                'path': a2ctrl.path.Edit}
 
 
 def check_all_ui():

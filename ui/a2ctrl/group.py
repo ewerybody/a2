@@ -24,7 +24,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
         a2ctrl.DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
-        self.setChecked(a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'enabled', bool))
+        self.setChecked(self.get_user_value(bool, 'enabled'))
         self.clicked[bool].connect(self.check)
 
         self.layout = QtGui.QVBoxLayout(self)
@@ -35,7 +35,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
                 self.layout.addWidget(ctrl)
 
     def check(self, state):
-        self.mod.set_user_cfg(self.cfg, 'enabled', state)
+        self.set_user_value(state, 'enabled')
         self.change()
 
 
@@ -54,24 +54,24 @@ class Edit(a2ctrl.EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         if 'children' not in self.cfg:
             self.cfg['children'] = []
-        
+
         self.ui = group_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
-        
+
         controls = []
         for child in self.cfg['children']:
             controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
-        
+
         controls.append(a2ctrl.EditAddElem(self.main, self.cfg['children']))
         for ctrl in controls:
             self.ui.groupLayout.addWidget(ctrl)
-        
+
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel,
                       self.ui.label, self.ui.label_2]:
             label.setMinimumWidth(a2ctrl.labelW)
-        
+
         self.check_new_name()
-        self.connect_cfg_controls(self.ui)
+        self.connect_cfg_controls()
         self.mainWidget.setLayout(self.ui.groupLayout)
 
     def paste(self):

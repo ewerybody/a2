@@ -23,7 +23,7 @@ class Draw(a2ctrl.DrawCtrl):
     User ui for a Hotkey control.
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
         additional shortcuts, controls to change scope if that's enabled...
-    
+
     cfg['label'] == 'Hotkeytest with a MsgBox'
     cfg['typ'] == 'hotkey':
     cfg['name'] == 'modnameHotkey1'
@@ -40,7 +40,7 @@ class Draw(a2ctrl.DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
         self._setupUi()
-    
+
     def _setupUi(self):
         self.ctrllayout = QtGui.QHBoxLayout(self)
         # left, top, right, bottom
@@ -49,7 +49,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
         if self.cfg['disablable']:
-            state = a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'enabled', bool, True)
+            state = self.get_user_value(bool, 'enabled', True)
             self.check = QtGui.QCheckBox(self)
             cbSize = 27
             self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
@@ -64,11 +64,10 @@ class Draw(a2ctrl.DrawCtrl):
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.labelBoxLayout)
-        
+
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = HotKey(self, a2ctrl.get_cfg_value(self.cfg, self.userCfg, 'key', str),
-                                   self.hotkey_change)
+        self.hotkeyButton = HotKey(self, self.get_user_value(str, 'key'), self.hotkey_change)
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setMinimumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
@@ -77,20 +76,20 @@ class Draw(a2ctrl.DrawCtrl):
         self.hotkeyLayout.addWidget(self.hotkeyButton)
         self.hotkeyLayout.addWidget(self.hotkeyOption)
         self.hotkeyButton.setEnabled(self.cfg['keyChange'])
-        
+
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
         self.ctrllayout.setStretch(2, 1)
         self.setLayout(self.ctrllayout)
-        
+
     def hotkey_check(self):
         state = self.check.isChecked()
-        self.mod.set_user_cfg(self.cfg, 'enabled', state)
+        self.set_user_value(state, 'enabled')
         self.change('hotkeys')
-    
+
     def hotkey_change(self, newKey):
-        self.mod.set_user_cfg(self.cfg, 'key', newKey)
+        self.set_user_value(newKey, 'key')
         self.change('hotkeys')
 
 
@@ -122,7 +121,7 @@ class Edit(a2ctrl.EditCtrl):
         for key, value in defaults:
             if key not in self.cfg:
                 self.cfg[key] = value
-        
+
         self.a2 = a2core.A2Obj.inst()
         self.helpUrl = self.a2.urls.helpHotkey
         self.ui = hotkey_edit_ui.Ui_edit()
@@ -131,13 +130,13 @@ class Edit(a2ctrl.EditCtrl):
         for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.hotkeyLabel,
                       self.ui.functionLabel, self.ui.scopeLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
-        
+
         self.ui.hotkeyButton = HotKey(self, cfg.get('key') or '', self.hotkey_change)
         self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
         self.check_new_name()
-        self.connect_cfg_controls(self.ui)
+        self.connect_cfg_controls()
         self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
         self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
 
@@ -149,7 +148,7 @@ class Edit(a2ctrl.EditCtrl):
         state = self.ui.cfg_disablable.isChecked()
         self.ui.cfg_enabled.setEnabled(state)
         self.ui.cfg_enabled.setChecked(True)
-    
+
     def hotkey_change(self, newKey):
         self.cfg['key'] = newKey
 
@@ -168,11 +167,11 @@ class HotKey(QtGui.QPushButton):
         self.ok_func = ok_func
         self.setFont(a2ctrl.fontXL)
         self.setText(key)
-    
+
     def set_key(self, key):
         self.key = key
         self.setText(key)
-    
+
     def mousePressEvent(self, event):
         self.buildPopup(event.globalX(), event.globalY())
 
@@ -183,7 +182,7 @@ class HotKey(QtGui.QPushButton):
         self.popup.textEdit.setText(self.key)
         self.popup.textEdit.textChanged.connect(self.validateHotkey)
         self.popup.textEdit.returnPressed.connect(self.ok)
-        
+
         self.popup.buttonLyt = QtGui.QHBoxLayout()
         self.popup.okButton = QtGui.QPushButton("OK")
         self.popup.okButton.clicked.connect(self.ok)
@@ -191,15 +190,15 @@ class HotKey(QtGui.QPushButton):
         self.popup.closeButton.clicked.connect(self.popup.close)
         self.popup.buttonLyt.addWidget(self.popup.okButton)
         self.popup.buttonLyt.addWidget(self.popup.closeButton)
-        
+
         self.popup.layout = QtGui.QVBoxLayout()
         self.popup.layout.addWidget(self.popup.textEdit)
         self.popup.layout.addLayout(self.popup.buttonLyt)
         self.popup.setLayout(self.popup.layout)
         self.validateHotkey(self.key)
-        
+
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self.popup, self.ok)
-        
+
         self.popup.show()
         self.popup.placeAtCursor()
 
@@ -241,7 +240,7 @@ class HotKey(QtGui.QPushButton):
                 msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(badModifier))
             else:
                 good = True
-        
+
         if not good:
             self.popup.textEdit.setStyleSheet(styleBad)
             log.error(msg)
@@ -251,5 +250,5 @@ class HotKey(QtGui.QPushButton):
             self.tempKey = tilde + '+'.join(modifier + [key])
             log.info('tempKey %s:' % self.tempKey)
             self.popup.textEdit.setStyleSheet(styleGood)
-        
+
         self.tempOK = good
