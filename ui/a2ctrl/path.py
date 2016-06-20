@@ -1,11 +1,13 @@
 """
 a2 path control
 """
-import a2ctrl
 import logging
 from functools import partial
 from PySide import QtGui, QtCore
+
+import a2ctrl
 from a2ctrl import path_edit_ui
+from a2ctrl.path_field import PathField
 
 
 logging.basicConfig()
@@ -20,21 +22,22 @@ class Draw(a2ctrl.DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        self.value_ctrl = QtGui.QLineEdit(self.value)
-        if self.cfg.get('writable', False):
-            self.value_ctrl.editingFinished.connect(self.delayed_check)
-        else:
-            self.value_ctrl.setReadOnly(True)
-        self.browse_button = QtGui.QPushButton('Browse...')
-        self.browse_button.clicked.connect(self.browse)
+        self.value_ctrl = PathField(self)
+        #self.value_ctrl.set_callback(self.check)
 
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(self.value_ctrl)
-        self.layout.addWidget(self.browse_button)
-        self.setLayout(self.layout)
+#        if self.cfg.get('writable', False):
+#            self.value_ctrl.editingFinished.connect(self.delayed_check)
+#        else:
+#            self.value_ctrl.setReadOnly(True)
+#        self.browse_button = QtGui.QPushButton('Browse...')
+#        self.browse_button.clicked.connect(self.browse)
+
+        self.main_layout.addWidget(self.label)
+        self.main_layout.addWidget(self.value_ctrl)
+        #self.setLayout(self.main_layout)
 
     def check(self, value=None):
         if value is None:
@@ -47,18 +50,6 @@ class Draw(a2ctrl.DrawCtrl):
         self.value = value
         self.set_user_value(value)
         self.change('variables')
-
-    def browse(self):
-        save_mode = self.cfg.get('save_mode', False)
-
-        if save_mode:
-            filepath = QtGui.QFileDialog.getSaveFileName(self, caption=self.label_text, dir=self.value)
-        else:
-            filepath = QtGui.QFileDialog.getOpenFileName(self, caption=self.label_text, dir=self.value)
-
-        if filepath[0]:
-            self.value_ctrl.setText(filepath[0])
-            self.check(filepath[0])
 
 
 class Edit(a2ctrl.EditCtrl):
