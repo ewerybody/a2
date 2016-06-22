@@ -16,6 +16,7 @@ from ctypes import windll
 from importlib import reload
 from siding import QSingleApplication
 
+
 logging.basicConfig()
 log = logging.getLogger('a2app')
 log.setLevel(logging.DEBUG)

@@ -40,6 +40,7 @@ from PySide import QtGui, QtCore, QtSvg
 import ahk
 import a2core
 from a2ctrl import inputDialog_ui
+from a2ctrl.path_field import PathField
 
 logging.basicConfig()
 log = logging.getLogger('a2ctrl')
@@ -434,7 +435,7 @@ class EditCtrl(QtGui.QGroupBox):
                 else:
                     self.cfg[name] = control.isChecked()
 
-            elif isinstance(control, QtGui.QLineEdit):
+            elif isinstance(control, (QtGui.QLineEdit, PathField)):
                 control.textChanged.connect(partial(self._updateCfgData, name))
                 if name in self.cfg:
                     control.setText(self.cfg[name])
@@ -487,9 +488,6 @@ class EditCtrl(QtGui.QGroupBox):
                 number += 1
                 try_name = new_name + str(number)
             self.cfg['name'] = try_name
-            print('check_new_name - name created: %s' % try_name)
-        else:
-            print('check_new_name - got already: %s' % self.cfg['name'])
 
     def _updateCfgData(self, name, data=None, func=None):
         """

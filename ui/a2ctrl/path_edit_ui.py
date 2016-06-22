@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\path_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\path_edit.ui'
 #
-# Created: Fri Jun 17 22:15:29 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Wed Jun 22 22:44:04 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(567, 354)
+        edit.resize(837, 385)
         self.editLayout = QtGui.QFormLayout(edit)
         self.editLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.editLayout.setContentsMargins(10, 5, 0, 5)
@@ -33,27 +33,18 @@ class Ui_edit(object):
         self.cfg_label = QtGui.QLineEdit(edit)
         self.cfg_label.setObjectName("cfg_label")
         self.editLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.cfg_label)
+        self.cfg_value = PathField(edit)
+        self.cfg_value.setText("")
+        self.cfg_value.setObjectName("cfg_value")
+        self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_value)
         self.defaultPathLabel = QtGui.QLabel(edit)
         self.defaultPathLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.defaultPathLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.defaultPathLabel.setObjectName("defaultPathLabel")
         self.editLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.defaultPathLabel)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.cfg_value = QtGui.QLineEdit(edit)
-        self.cfg_value.setText("")
-        self.cfg_value.setObjectName("cfg_value")
-        self.horizontalLayout.addWidget(self.cfg_value)
-        self.pushButton = QtGui.QPushButton(edit)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.editLayout.setLayout(2, QtGui.QFormLayout.FieldRole, self.horizontalLayout)
-        self.label_3 = QtGui.QLabel(edit)
-        self.label_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_3.setObjectName("label_3")
-        self.editLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.cfg_writable = QtGui.QCheckBox(edit)
+        self.cfg_writable.setObjectName("cfg_writable")
+        self.editLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.cfg_writable)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -69,9 +60,11 @@ class Ui_edit(object):
         self.horizontalLayout_2.addWidget(self.cfg_save_mode)
         self.horizontalLayout_2.setStretch(2, 1)
         self.editLayout.setLayout(4, QtGui.QFormLayout.FieldRole, self.horizontalLayout_2)
-        self.cfg_writable = QtGui.QCheckBox(edit)
-        self.cfg_writable.setObjectName("cfg_writable")
-        self.editLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.cfg_writable)
+        self.label_3 = QtGui.QLabel(edit)
+        self.label_3.setMinimumSize(QtCore.QSize(100, 0))
+        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.label_3.setObjectName("label_3")
+        self.editLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_3)
         self.label_4 = QtGui.QLabel(edit)
         self.label_4.setEnabled(False)
         self.label_4.setMinimumSize(QtCore.QSize(100, 0))
@@ -80,6 +73,7 @@ class Ui_edit(object):
         self.editLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_4)
         self.tableWidget = QtGui.QTableWidget(edit)
         self.tableWidget.setEnabled(False)
+        self.tableWidget.setMaximumSize(QtCore.QSize(16777215, 80))
         font = QtGui.QFont()
         font.setPointSize(8)
         self.tableWidget.setFont(font)
@@ -108,12 +102,11 @@ class Ui_edit(object):
         self.displayLabelLabel.setText(QtGui.QApplication.translate("edit", "display label:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_label.setText(QtGui.QApplication.translate("edit", "some path bla", None, QtGui.QApplication.UnicodeUTF8))
         self.defaultPathLabel.setText(QtGui.QApplication.translate("edit", "default path:", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("edit", "browse", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("edit", "browse mode:", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_writable.setText(QtGui.QApplication.translate("edit", "writable field", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg2_path_type.setText(QtGui.QApplication.translate("edit", "file", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_path_type.setText(QtGui.QApplication.translate("edit", "folder", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_save_mode.setText(QtGui.QApplication.translate("edit", "save mode", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_writable.setText(QtGui.QApplication.translate("edit", "writable field", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("edit", "browse mode:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("edit", "file types:", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("edit", "name", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("edit", "extension", None, QtGui.QApplication.UnicodeUTF8))
@@ -123,3 +116,4 @@ class Ui_edit(object):
         self.tableWidget.item(0, 1).setText(QtGui.QApplication.translate("edit", "*", None, QtGui.QApplication.UnicodeUTF8))
         self.tableWidget.setSortingEnabled(__sortingEnabled)
 
+from a2ctrl.path_field import PathField

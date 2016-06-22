@@ -28,20 +28,19 @@ class Draw(a2ctrl.DrawCtrl):
         self.value_ctrl = PathField(self)
         #self.value_ctrl.set_callback(self.check)
 
-#        if self.cfg.get('writable', False):
-#            self.value_ctrl.editingFinished.connect(self.delayed_check)
-#        else:
-#            self.value_ctrl.setReadOnly(True)
-#        self.browse_button = QtGui.QPushButton('Browse...')
-#        self.browse_button.clicked.connect(self.browse)
+        if self.cfg.get('writable', False):
+            self.value_ctrl.editingFinished.connect(self.delayed_check)
+        else:
+            self.value_ctrl.setReadOnly(True)
 
         self.main_layout.addWidget(self.label)
         self.main_layout.addWidget(self.value_ctrl)
-        #self.setLayout(self.main_layout)
 
     def check(self, value=None):
         if value is None:
             value = self.value_ctrl.text()
+
+        print('value: %s' % value)
 
         # prevent being called double
         if self.value == value:
