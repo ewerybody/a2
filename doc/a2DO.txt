@@ -1,4 +1,20 @@
 ﻿a2DO:
+road to release:
+    * multi module sources implemented.
+        . remote sources have index file
+        . higher version nr invokes update
+        . local sources (on disc) just import
+    * tagging system implemented
+        . source is a tag
+        . active/inactive
+        . file/windows/text/lookup/code/keys/control/mouse
+    * some more modules ported
+        . Comfort Resize
+        . Hotstrings
+        . LeoToolTip
+        . CommandLine
+        . PastePlain
+
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
     * borrow scope selection and hotkey getter from aA?
