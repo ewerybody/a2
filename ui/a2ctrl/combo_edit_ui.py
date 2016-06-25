@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\combo_edit.ui'
 #
-# Created: Sat Apr  2 18:48:04 2016
+# Created: Sat Jun 25 18:42:50 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,6 +34,7 @@ class Ui_edit(object):
         self.cfg_label.setObjectName("cfg_label")
         self.editLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.cfg_label)
         self.cfg_items = QtGui.QListWidget(edit)
+        self.cfg_items.setMaximumSize(QtCore.QSize(16777215, 145))
         self.cfg_items.setAlternatingRowColors(True)
         self.cfg_items.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.cfg_items.setObjectName("cfg_items")
@@ -61,8 +62,6 @@ class Ui_edit(object):
         self.verticalLayout_2.addWidget(self.minus_button)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
         self.editLayout.setLayout(2, QtGui.QFormLayout.LabelRole, self.verticalLayout)
         self.cfg_user_edit = QtGui.QCheckBox(edit)
         self.cfg_user_edit.setObjectName("cfg_user_edit")
