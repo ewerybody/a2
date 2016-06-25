@@ -25,13 +25,10 @@ class Draw(a2ctrl.DrawCtrl):
         self.main_layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        self.value_ctrl = PathField(self)
-        #self.value_ctrl.set_callback(self.check)
-
-        if self.cfg.get('writable', False):
-            self.value_ctrl.editingFinished.connect(self.delayed_check)
-        else:
-            self.value_ctrl.setReadOnly(True)
+        self.value_ctrl = PathField(self, value=self.value)
+        self.value_ctrl.set_writable(self.cfg.get('writable', False))
+        self.value_ctrl.changed.connect(self.check)
+        self.value_ctrl.file_types = self.cfg.get('file_types', '')
 
         self.main_layout.addWidget(self.label)
         self.main_layout.addWidget(self.value_ctrl)
@@ -39,8 +36,6 @@ class Draw(a2ctrl.DrawCtrl):
     def check(self, value=None):
         if value is None:
             value = self.value_ctrl.text()
-
-        print('value: %s' % value)
 
         # prevent being called double
         if self.value == value:

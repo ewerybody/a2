@@ -435,12 +435,19 @@ class EditCtrl(QtGui.QGroupBox):
                 else:
                     self.cfg[name] = control.isChecked()
 
-            elif isinstance(control, (QtGui.QLineEdit, PathField)):
+            elif isinstance(control, QtGui.QLineEdit):
                 control.textChanged.connect(partial(self._updateCfgData, name))
                 if name in self.cfg:
                     control.setText(self.cfg[name])
                 else:
                     self.cfg[name] = control.text()
+
+            elif isinstance(control, PathField):
+                control.changed.connect(partial(self._updateCfgData, name))
+                if name in self.cfg:
+                    control.value = self.cfg[name]
+                else:
+                    self.cfg[name] = control.value
 
             elif isinstance(control, QtGui.QComboBox):
                 control.currentIndexChanged.connect(partial(self._updateCfgData, name))
@@ -465,6 +472,15 @@ class EditCtrl(QtGui.QGroupBox):
                     control.setValue(self.cfg[name])
                 else:
                     self.cfg[name] = control.value()
+
+            elif isinstance(control, QtGui.QRadioButton):
+                radio_members = inspect.getmembers(control)
+                print('radio_members: %s' % radio_members)
+#                control.valueChanged.connect(partial(self._updateCfgData, name))
+#                if name in self.cfg:
+#                    control.setValue(self.cfg[name])
+#                else:
+#                    self.cfg[name] = control.value()
 
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
