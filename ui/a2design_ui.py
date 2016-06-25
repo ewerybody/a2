@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Wed Mar 16 00:01:35 2016
+# Created: Sat Jun 25 22:38:28 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -183,6 +183,8 @@ class Ui_a2MainWindow(object):
         self.actionNew_module.setObjectName("actionNew_module")
         self.actionA2_settings = QtGui.QAction(a2MainWindow)
         self.actionA2_settings.setObjectName("actionA2_settings")
+        self.actionExit_a2 = QtGui.QAction(a2MainWindow)
+        self.actionExit_a2.setObjectName("actionExit_a2")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
         self.menuTests.addAction(self.actionTest_restorewin)
@@ -196,6 +198,7 @@ class Ui_a2MainWindow(object):
         self.menuDev.addAction(self.actionDev_settings)
         self.menuDev.addAction(self.actionExplore_to_a2_dir)
         self.menuMain.addAction(self.actionA2_settings)
+        self.menuMain.addAction(self.actionExit_a2)
         self.menubar.addAction(self.menuMain.menuAction())
         self.menubar.addAction(self.menuDev.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -215,7 +218,7 @@ class Ui_a2MainWindow(object):
         self.menuHelp.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuDev.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Dev", None, QtGui.QApplication.UnicodeUTF8))
         self.menuTests.setTitle(QtGui.QApplication.translate("a2MainWindow", "Tests", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuMain.setTitle(QtGui.QApplication.translate("a2MainWindow", "Main", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuMain.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Main", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_a2.setText(QtGui.QApplication.translate("a2MainWindow", "About a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "Edit Module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDisable_all_modules.setText(QtGui.QApplication.translate("a2MainWindow", "Disable All Modules", None, QtGui.QApplication.UnicodeUTF8))
@@ -226,4 +229,5 @@ class Ui_a2MainWindow(object):
         self.actionTest_restorewin.setText(QtGui.QApplication.translate("a2MainWindow", "test restoring window outside of screen", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew_module.setText(QtGui.QApplication.translate("a2MainWindow", "New Module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionA2_settings.setText(QtGui.QApplication.translate("a2MainWindow", "a2 Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit_a2.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2", None, QtGui.QApplication.UnicodeUTF8))
 

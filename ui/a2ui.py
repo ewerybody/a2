@@ -92,13 +92,16 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionExplore_to.triggered.connect(self.exploreMod)
         self.ui.actionAbout_a2.triggered.connect(partial(a2core.surfTo, self.a2.urls.help))
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
-        self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2)
+        self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2help)
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
         self.ui.actionNew_module.triggered.connect(self.newModule)
         self.ui.actionA2_settings.triggered.connect(partial(self.select_mod, None))
+        self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
         self.ui.actionDev_settings.triggered.connect(partial(self.select_mod, None))
+        self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
+        self.ui.actionExit_a2.triggered.connect(self.close)
 
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
 

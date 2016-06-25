@@ -81,6 +81,9 @@ class Icons(object):
 
     def __init__(self):
         self.a2 = Ico('a2')
+        self.a2close = Ico('a2x')
+        self.a2reload = Ico('a2reload')
+        self.a2help = Ico('a2help')
         self.autohotkey = Ico('autohotkey')
         self.check = Ico('check')
         self.code = Ico('code')

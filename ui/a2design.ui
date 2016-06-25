@@ -369,9 +369,10 @@
    </widget>
    <widget class="QMenu" name="menuMain">
     <property name="title">
-     <string>Main</string>
+     <string>&amp;Main</string>
     </property>
     <addaction name="actionA2_settings"/>
+    <addaction name="actionExit_a2"/>
    </widget>
    <addaction name="menuMain"/>
    <addaction name="menuDev"/>
@@ -425,6 +426,11 @@
   <action name="actionA2_settings">
    <property name="text">
     <string>a2 Settings</string>
+   </property>
+  </action>
+  <action name="actionExit_a2">
+   <property name="text">
+    <string>Exit a2</string>
    </property>
   </action>
  </widget>
