@@ -4,29 +4,32 @@
 ; main file! This basically gathers all resources
 #NoTrayIcon
 
-ScriptTitle := "a2"
-ScriptIcon = %A_ScriptDir%\ui\a2.ico
+script_title := "a2"
+script_icon = %A_ScriptDir%\ui\res\a2.ico
+reload_icon = %A_ScriptDir%\ui\res\a2reload.ico
+close_icon = %A_ScriptDir%\ui\res\a2x.ico
+help_icon = %A_ScriptDir%\ui\res\a2help.ico
 
-Menu, Tray, Icon, %ScriptIcon%, %ScriptIcon#%, 1
+Menu, Tray, Icon, %script_icon%, %script_icon#%, 1
 Menu, Tray, Icon
 Gui, 1:Destroy
 mainGuiID =
 
 Menu, Tray, NoStandard
 Menu, Tray, DeleteAll
-Menu, Tray, Tip, %ScriptTitle%
+Menu, Tray, Tip, %script_title%
 Menu, Tray, Click, 1
 Menu, Tray, add, open a2 user interface, a2UI
-Menu, Tray, icon, open a2 user interface, %ScriptIcon%
+Menu, Tray, icon, open a2 user interface, %script_icon%
 Menu, Tray, default, open a2 user interface
 Menu, Tray, add, reload a2, a2UI_reload
 ;%SystemRoot%\system32\imageres.dll,239
-Menu, Tray, icon, reload a2, %ScriptIcon%
+Menu, Tray, icon, reload a2, %reload_icon%
 Menu, Tray, add, help on a2, a2UI_help
-Menu, Tray, icon, help on a2, %SystemRoot%\system32\imageres.dll,95
+Menu, Tray, icon, help on a2, %help_icon%
 Menu, Tray, add, quit a2, a2UI_exit
 ;%SystemRoot%\system32\imageres.dll,223
-Menu, Tray, icon, quit a2, %ScriptIcon%
+Menu, Tray, icon, quit a2, %close_icon%
 
 ; TODO: make this optional
 SetTitleMatchMode, 2
