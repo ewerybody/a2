@@ -14,14 +14,14 @@ from functools import partial
 
 
 class BrowseType(object):
-    file = 0
-    folder = 1
+    folder = '0'
+    file = '1'
 
 
 class PathField(QtGui.QWidget):
     changed = QtCore.Signal(str)
 
-    def __init__(self, parent, value='', file_types=''):
+    def __init__(self, parent, value='', file_types='', writable=True, label_text=None, save_mode=False):
         super(PathField, self).__init__(parent)
         self.main_layout = QtGui.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -33,41 +33,47 @@ class PathField(QtGui.QWidget):
         self.main_layout.addWidget(self.browse_button)
         self._set_delay = 150
         self._field_set = False
+
         self._value = value
         self.file_types = file_types
-
-        self.save_mode = False
-        self.writable = False
+        self.save_mode = save_mode
         self.browse_type = BrowseType.file
-        self.label_text = None
+        self.label_text = label_text
+        self._writable = writable
 
-        self.text = self.line_field.text
-        self.setText = self.line_field.setText
-        self.setReadOnly = self.line_field.setReadOnly
-        self.set_writable(self.writable)
+        self.writable = self._writable
 
-    def set_writable(self, state):
-        if state == self.writable:
+    @property
+    def writable(self):
+        return self._writable
+
+    @writable.setter
+    def writable(self, state):
+        if state == self._writable:
             return
-        self.writable = state
+        print('state: %s' % state)
+        self._writable = state
+        self.line_field.setReadOnly(not state)
         if state:
             self.line_field.editingFinished.connect(self._delayed_set)
         else:
-            self.line_field.editingFinished.disconnect(self._delayed_set)
+            try:
+                self.line_field.editingFinished.disconnect(self._delayed_set)
+            except:
+                pass
 
     def browse(self):
         if self.browse_type == BrowseType.file:
             file_types = 'All Files (*)' if not self.file_types else self.file_types
             if self.save_mode:
-                filepath = QtGui.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
+                filepath, _ = QtGui.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
             else:
-                filepath = QtGui.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
-
+                filepath, _ = QtGui.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
         else:
             filepath = QtGui.QFileDialog.getExistingDirectory(self, caption=self.label_text, dir=self._value)
 
-        if filepath[0]:
-            self.value = filepath[0]
+        if filepath:
+            self.value = filepath
 
     def _delayed_set(self):
         if self._field_set:
@@ -77,6 +83,9 @@ class PathField(QtGui.QWidget):
     def _set_field(self):
         self._value = self.line_field.text()
         self.changed.emit(self._value)
+
+    def setText(self, this):
+        self.value = this
 
     @property
     def value(self):

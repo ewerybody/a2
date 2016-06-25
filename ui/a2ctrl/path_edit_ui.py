@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\path_edit.ui'
 #
-# Created: Sat Jun 25 18:05:42 2016
+# Created: Sat Jun 25 18:28:27 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,13 +49,13 @@ class Ui_edit(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.cfg_path_type_0 = QtGui.QRadioButton(edit)
-        self.cfg_path_type_0.setObjectName("cfg_path_type_0")
-        self.horizontalLayout_2.addWidget(self.cfg_path_type_0)
-        self.cfg_path_type_1 = QtGui.QRadioButton(edit)
-        self.cfg_path_type_1.setChecked(True)
-        self.cfg_path_type_1.setObjectName("cfg_path_type_1")
-        self.horizontalLayout_2.addWidget(self.cfg_path_type_1)
+        self.cfg_browse_type_0 = QtGui.QRadioButton(edit)
+        self.cfg_browse_type_0.setObjectName("cfg_browse_type_0")
+        self.horizontalLayout_2.addWidget(self.cfg_browse_type_0)
+        self.cfg_browse_type_1 = QtGui.QRadioButton(edit)
+        self.cfg_browse_type_1.setChecked(True)
+        self.cfg_browse_type_1.setObjectName("cfg_browse_type_1")
+        self.horizontalLayout_2.addWidget(self.cfg_browse_type_1)
         self.cfg_save_mode = QtGui.QCheckBox(edit)
         self.cfg_save_mode.setObjectName("cfg_save_mode")
         self.horizontalLayout_2.addWidget(self.cfg_save_mode)
@@ -88,8 +88,8 @@ class Ui_edit(object):
         self.cfg_label.setText(QtGui.QApplication.translate("edit", "some path bla", None, QtGui.QApplication.UnicodeUTF8))
         self.defaultPathLabel.setText(QtGui.QApplication.translate("edit", "default path:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_writable.setText(QtGui.QApplication.translate("edit", "writable field", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_path_type_0.setText(QtGui.QApplication.translate("edit", "folder", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_path_type_1.setText(QtGui.QApplication.translate("edit", "file", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_browse_type_0.setText(QtGui.QApplication.translate("edit", "folder", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_browse_type_1.setText(QtGui.QApplication.translate("edit", "file", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_save_mode.setText(QtGui.QApplication.translate("edit", "save mode", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("edit", "browse mode:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("edit", "file types:", None, QtGui.QApplication.UnicodeUTF8))
