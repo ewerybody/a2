@@ -474,13 +474,17 @@ class EditCtrl(QtGui.QGroupBox):
                     self.cfg[name] = control.value()
 
             elif isinstance(control, QtGui.QRadioButton):
-                radio_members = inspect.getmembers(control)
-                print('radio_members: %s' % radio_members)
-#                control.valueChanged.connect(partial(self._updateCfgData, name))
-#                if name in self.cfg:
-#                    control.setValue(self.cfg[name])
-#                else:
-#                    self.cfg[name] = control.value()
+                name, value = name.rsplit('_', 1)
+
+                def radio_update(name, value, state):
+                    if state:
+                        self.cfg[name] = value
+
+                control.toggled.connect(partial(radio_update, name, value))
+                if name in self.cfg:
+                    control.setChecked(self.cfg[name] == value)
+                elif control.isChecked():
+                    self.cfg[name] = value
 
             else:
                 log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
