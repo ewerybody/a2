@@ -6,11 +6,12 @@ at files it can be set to save-mode where inexistent paths can be selected
 and filtered file types can be set. See:
 http://pyside.github.io/docs/pyside/PySide/QtGui/QFileDialog.html?highlight=qfiledialog#detailed-description
 
+TODO: add recent paths, copy path, explore to path on the button
+
 @created: Jun 19, 2016
 @author: eRiC
 """
 from PySide import QtGui, QtCore
-from functools import partial
 
 
 class BrowseType(object):

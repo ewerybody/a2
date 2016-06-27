@@ -2,13 +2,11 @@
 a2 path control
 """
 import logging
-from functools import partial
-from PySide import QtGui, QtCore
+from PySide import QtGui
 
 import a2ctrl
 from a2ctrl import path_edit_ui
-from a2ctrl.path_field import PathField
-from pprint import pprint
+from a2ctrl import path_field
 
 
 logging.basicConfig()
@@ -26,7 +24,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.main_layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        self.value_ctrl = PathField(self, value=self.value)
+        self.value_ctrl = path_field.PathField(self, value=self.value)
         self.value_ctrl.changed.connect(self.check)
         self.value_ctrl.writable = self.cfg.get('writable', False)
         self.value_ctrl.file_types = self.cfg.get('file_types', '')
@@ -62,14 +60,18 @@ class Edit(a2ctrl.EditCtrl):
 
         self.check_new_name()
         self.connect_cfg_controls()
-        for ctrl in [self.ui.cfg_writable, self.ui.cfg_browse_type_0]:
+        self._adjust_path_field()
+        for ctrl in [self.ui.cfg_writable, self.ui.cfg_browse_type_0, self.ui.cfg_browse_type_1,
+                     self.ui.cfg_save_mode]:
             ctrl.clicked.connect(self._adjust_path_field)
-
+        self.ui.cfg_file_types.editingFinished.connect(self._adjust_path_field)
         self.mainWidget.setLayout(self.ui.editLayout)
 
     def _adjust_path_field(self):
-        pprint(self.cfg)
         self.ui.cfg_value.writable = self.cfg.get('writable', False)
         self.ui.cfg_value.file_types = self.cfg.get('file_types', '')
-        self.ui.cfg_value.browse_type = self.cfg.get('browse_type', '1')
+        self.ui.cfg_value.browse_type = self.cfg.get('browse_type', path_field.BrowseType.file)
         self.ui.cfg_value.save_mode = self.cfg.get('save_mode', False)
+
+        self.ui.cfg_file_types.setEnabled(self.ui.cfg_value.browse_type == path_field.BrowseType.file)
+        self.ui.cfg_save_mode.setEnabled(self.ui.cfg_value.browse_type == path_field.BrowseType.file)
