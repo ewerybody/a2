@@ -1,0 +1,61 @@
+[
+  {
+    "author": "eric",
+    "date": "2015",
+    "description": "ExplorerHotkeys does mean things to your Windows Explorer!",
+    "typ": "nfo",
+    "version": "0.1"
+  },
+  {
+    "file": "callExplorer.ahk",
+    "typ": "include"
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "callExplorer()",
+    "functionMode": 0,
+    "key": "Win+E",
+    "keyChange": true,
+    "label": "calls Explorer with a predefined folder",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "callExplorerHotkey",
+    "scope": [],
+    "scopeChange": false,
+    "scopeMode": 0,
+    "typ": "hotkey"
+  },
+  {
+    "file": "ftpExplorerCopy.ahk",
+    "typ": "include"
+  },
+  {
+    "browse_type": "0",
+    "file_types": "",
+    "label": "predefined folder",
+    "name": "callExplorer_path",
+    "save_mode": false,
+    "typ": "path",
+    "value": "C:/",
+    "writable": false
+  },
+  {
+    "disablable": true,
+    "enabled": true,
+    "functionCode": "ftpExplorerCopy()",
+    "functionMode": 0,
+    "key": "Alt+V",
+    "keyChange": true,
+    "label": "from an FTP-Explorer get the http-url into the clipboard",
+    "mode": "ahk",
+    "multiple": true,
+    "name": "ftpExplorerCopyHotkey",
+    "scope": [
+      "ahk_class CabinetWClass"
+    ],
+    "scopeChange": true,
+    "scopeMode": 1,
+    "typ": "hotkey"
+  }
+]
