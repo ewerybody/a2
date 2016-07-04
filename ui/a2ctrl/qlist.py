@@ -22,9 +22,13 @@ def get_items_as_text(list_ctrl):
 
 
 def select_items(list_ctrl, items):
+    if items is None:
+        list_ctrl.clearSelection()
+        return
+
     if not isinstance(items, list):
         items = [items]
-    
+
     if all([isinstance(i, str) for i in items]):
         text_check = True
     elif all([isinstance(i, QtGui.QListWidgetItem) for i in items]):
@@ -33,7 +37,7 @@ def select_items(list_ctrl, items):
     else:
         log.error('select_items: All given elements must either be strings or QListWidgetItems!')
         return
-    
+
     lastitem = None
     for i in range(list_ctrl.count()):
         this = list_ctrl.item(i)
