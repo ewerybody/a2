@@ -159,11 +159,11 @@ def draw(main, cfg, mod):
     mapper that returns display control objects
     according to the 'typ' of a config element
     """
-    if cfg['typ'] == 'nfo':
-        return DrawNfo(cfg)
-    elif cfg['typ'] in draw_classes:
+    if cfg['typ'] in draw_classes:
         return draw_classes[cfg['typ']](main, cfg, mod)
-    elif cfg['typ'] != 'include':
+    elif cfg['typ'] in ['nfo', 'include']:
+        return
+    else:
         log.error('Draw type "%s" not supported (yet)!' % cfg['typ'])
 
 
@@ -203,27 +203,6 @@ class DrawCtrl(QtGui.QWidget):
 
     def check(self, *args):
         pass
-
-
-class DrawWelcome(QtGui.QWidget):
-    """TODO: currently unused"""
-    def __init__(self):
-        self.text = ('Hello user! Welcome to a2! This is a template introduction Text. '
-                     'So far there is not much to say. '
-                     'I just wanted this to fill up more than one line properly. Voila!')
-
-
-class DrawNfo(QtGui.QWidget):
-    def __init__(self, cfg):
-        super(DrawNfo, self).__init__()
-        global lenM, fontL
-        self.layout = QtGui.QVBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, lenM / 2)
-        self.label = QtGui.QLabel(self)
-        self.label.setText(cfg.get('description') or '')
-        self.label.setFont(fontL)
-        self.label.setWordWrap(True)
-        self.layout.addWidget(self.label)
 
 
 def edit(cfg, main, parentCfg):
