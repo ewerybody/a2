@@ -10,6 +10,7 @@ to make functionality available without passing the main ui object.
 """
 import os
 import time
+import string
 import logging
 import webbrowser
 from os.path import exists, join, dirname
@@ -27,6 +28,7 @@ log.setLevel(logging.DEBUG)
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
 reload_modules = [ahk, a2db, a2mod]
+ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
 
 
 class A2Obj(object):

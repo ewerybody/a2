@@ -286,9 +286,6 @@ class A2Window(QtGui.QMainWindow):
         if self.mod is None:
             self.controls.append(a2ctrl.a2settings.A2Settings(self))
             config = [{'typ': 'nfo',
-                       'description': 'Hello user! Welcome to a2! This is a template '
-                       'introduction Text. So far there is not much to say. I just '
-                       'wanted this to fill up more than one line properly. Voila!',
                        'author': '',
                        'version': 'v0.1'}]
         else:
@@ -475,6 +472,12 @@ class A2Window(QtGui.QMainWindow):
             return 'You just cannot name your module "a2"! Ok?'
         if name.lower() in [m.lower() for m in self.a2.modules]:
             return 'Module name "%s" is already in use!' % name
+        if any([(l in a2core.string.whitespace) for l in name]):
+            return 'Name cannot have whitespace! Use _ or - insead!'
+        if not all([(l in a2core.ALLOWED_CHARS) for l in name]):
+            return 'Name can only have letters, digits, _ and -'
+        if not any([(l in a2core.string.ascii_letters) for l in name]):
+            return 'Come one have at least 1 letter in the name!'
         return True
 
     def newModuleCreate(self, name):

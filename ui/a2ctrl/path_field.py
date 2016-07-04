@@ -52,7 +52,6 @@ class PathField(QtGui.QWidget):
     def writable(self, state):
         if state == self._writable:
             return
-        print('state: %s' % state)
         self._writable = state
         self.line_field.setReadOnly(not state)
         if state:
