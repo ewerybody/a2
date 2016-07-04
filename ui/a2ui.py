@@ -547,10 +547,14 @@ class A2Window(QtGui.QMainWindow):
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):
+        self.a2 = a2
         super(RestartThread, self).__init__(parent)
+
+    def run(self, *args, **kwargs):
         self.msleep(300)
         ahkProcess = QtCore.QProcess()
-        ahkProcess.startDetached(a2.paths.autohotkey, [a2.paths.a2_script], a2.paths.a2)
+        ahkProcess.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
+        return QtCore.QThread.run(self, *args, **kwargs)
 
 
 if __name__ == '__main__':
