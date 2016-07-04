@@ -303,22 +303,19 @@ class A2Window(QtGui.QMainWindow):
 
             self.tempConfig = None
 
-            author = ''
-            version = ''
-            if len(config):
-                if config[0].get('typ') != 'nfo':
-                    log.error('First element of config is not typ nfo! %s' % self.mod.name)
-                author = config[0].get('author') or ''
-                version = config[0].get('version') or ''
-            self.ui.modAuthor.setText(author)
-            self.ui.modVersion.setText(version)
+        if len(config):
+            if config[0].get('typ') != 'nfo':
+                log.error('First element of config is not typ nfo! %s' % self.mod.name)
 
-            if config == []:
-                self.controls.append(QtGui.QLabel('config.json currently empty. '
-                                                  'imagine awesome layout here ...'))
-            else:
-                for cfg in config:
-                    self.controls.append(a2ctrl.draw(self, cfg, self.mod))
+        self.ui.modAuthor.setText(config[0].get('author', ''))
+        self.ui.modVersion.setText(config[0].get('version', ''))
+
+        if config == []:
+            self.controls.append(QtGui.QLabel('config.json currently empty. '
+                                              'imagine awesome layout here ...'))
+        else:
+            for cfg in config:
+                self.controls.append(a2ctrl.draw(self, cfg, self.mod))
 
         self.toggleEdit(False)
         self.drawUI()
