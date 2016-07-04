@@ -41,14 +41,18 @@ def call_cmd(cmd_name, *args):
     cmd_path = join(a2.paths.lib, 'cmds', cmd_name)
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
+
+#        ahkProcess = QtCore.QProcess()
+#        ahkProcess.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
+
     cmd_result = str(proc.communicate()[0])
     proc.kill()
-    
+
     cmd_result = cmd_result.strip()
     quote_char = cmd_result[-1]
     # cut away first & last quote char
     cmd_result = cmd_result[cmd_result.find(quote_char) + 1:cmd_result.rfind(quote_char)]
-    
+
     return cmd_result
 
 
@@ -57,22 +61,19 @@ def killA2process():
     finds and kills Autohotkey processes that run a2.ahk.
     takes a moment. so start it in a thread!
     TODO: make sure restart happens after this finishes?
-    
+
     there is also:
     ctypes.windll.kernel32.TerminateProcess(handle, 0)
     """
     t1 = time.time()
     wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
-    wmicproc = subprocess.Popen(wmicall, shell=False, stdout=subprocess.PIPE)
-    wmicproc.wait()
-    wmicout = str(wmicproc.communicate()[0])
-    wmicproc.kill()
-    wmicout = wmicout.split('\\r\\r\\n')
+    wmicout = subprocess.check_output(wmicall)
+    wmicout = str(wmicout).split('\\r\\r\\n')
     for line in wmicout[1:-1]:
         if 'autohotkey.exe' in line.lower():
             cmd, pid = line.rsplit(maxsplit=1)
             if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid,
+                taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid, shell=True,
                                                  stdout=subprocess.DEVNULL)
                 taskkill_proc.wait()
                 taskkill_proc.kill()
@@ -106,4 +107,3 @@ keys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2', 'w
          'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak', 'pause',
          'break', 'help', 'sleep'] +
         ['f%i' % _i for _i in range(1, 25)])
-
