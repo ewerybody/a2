@@ -227,7 +227,7 @@ class A2Window(QtGui.QMainWindow):
     def drawUI(self, keep_scroll=False):
         """
         takes list of controls and arranges them in the scroll layout
-        
+
         1. I tried to just create layouts for each module unhook them from the
         scroll layout on demand and hook up another one but Qt is spart so it
         deletes the invisible layout which cannot be hooked up again.
@@ -363,7 +363,7 @@ class A2Window(QtGui.QMainWindow):
         """
         Calls the mod to write the tempConfig to disc.
         If it's enabled only trigger settingsChanged when
-        
+
         """
         if not self.editing:
             return
@@ -506,6 +506,7 @@ class A2Window(QtGui.QMainWindow):
                 else:
                     item = self.ui.modList.item(self.ui.modList.count() - 1)
                 item.setSelected(True)
+                self.ui.modList.setCurrentItem(item)
                 self.ui.modList.scrollToItem(item)
         else:
             #print('self.ui.scrollArea.hasFocus(): %s' % self.ui.scrollArea.hasFocus())
