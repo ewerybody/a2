@@ -159,12 +159,13 @@ def draw(main, cfg, mod):
     mapper that returns display control objects
     according to the 'typ' of a config element
     """
-    if cfg['typ'] in draw_classes:
+    if cfg.get('typ') in draw_classes:
         return draw_classes[cfg['typ']](main, cfg, mod)
-    elif cfg['typ'] in ['nfo', 'include']:
+    # invisible types
+    elif cfg.get('typ') in ['include']:
         return
     else:
-        log.error('Draw type "%s" not supported (yet)!' % cfg['typ'])
+        log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod.name))
 
 
 class DrawCtrl(QtGui.QWidget):
@@ -205,10 +206,21 @@ class DrawCtrl(QtGui.QWidget):
         pass
 
 
+class DrawNfo(QtGui.QWidget):
+    def __init__(self, main, cfg, mod):
+        super(DrawNfo, self).__init__()
+        global lenM, fontL
+        self.layout = QtGui.QVBoxLayout(self)
+        self.layout.setContentsMargins(0, 0, 0, lenM / 2)
+        self.label = QtGui.QLabel(self)
+        self.label.setText(cfg.get('description') or '')
+        self.label.setFont(fontL)
+        self.label.setWordWrap(True)
+        self.layout.addWidget(self.label)
+
+
 def edit(cfg, main, parentCfg):
-    if cfg['typ'] == 'nfo':
-        return EditNfo(cfg)
-    elif cfg['typ'] in edit_classes:
+    if cfg['typ'] in edit_classes:
         return edit_classes[cfg['typ']](cfg, main, parentCfg)
     else:
         log.error('Edit type "%s" not supported (yet)!' % cfg['typ'])
@@ -913,7 +925,8 @@ ui_modules = [
     a2ctrl.combo.combo_edit_ui,
     a2ctrl.path.path_edit_ui]
 
-draw_classes = {'hotkey': a2ctrl.hotkey.Draw,
+draw_classes = {'nfo': DrawNfo,
+                'hotkey': a2ctrl.hotkey.Draw,
                 'check': a2ctrl.check.Draw,
                 'group': a2ctrl.group.Draw,
                 'string': a2ctrl.string.Draw,
@@ -921,7 +934,8 @@ draw_classes = {'hotkey': a2ctrl.hotkey.Draw,
                 'combo': a2ctrl.combo.Draw,
                 'path': a2ctrl.path.Draw}
 
-edit_classes = {'include': EditInclude,
+edit_classes = {'nfo': EditNfo,
+                'include': EditInclude,
                 'hotkey': a2ctrl.hotkey.Edit,
                 'check': a2ctrl.check.Edit,
                 'group': a2ctrl.group.Edit,

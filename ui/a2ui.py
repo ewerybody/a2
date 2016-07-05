@@ -285,16 +285,12 @@ class A2Window(QtGui.QMainWindow):
 
         if self.mod is None:
             self.controls.append(a2ctrl.a2settings.A2Settings(self))
-            config = [{'typ': 'nfo',
-                       'author': '',
-                       'version': 'v0.1'}]
+            config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
         else:
             if len(self.selected_mod) > 1:
-                config = [{'typ': 'nfo',
+                config = [{'typ': 'nfo', 'author': '', 'version': '',
                            'description': 'Multiple modules selected. Here goes some '
-                                          'useful info in the future...',
-                           'author': '',
-                           'version': ''}]
+                                          'useful info in the future...'}]
             else:
                 config = self.mod.config
 
@@ -303,16 +299,15 @@ class A2Window(QtGui.QMainWindow):
         if len(config):
             if config[0].get('typ') != 'nfo':
                 log.error('First element of config is not typ nfo! %s' % self.mod.name)
+        else:
+            config = [{'typ': 'nfo', 'author': '', 'version': '',
+                       'description': 'Module Config is currently empty! imagine awesome layout here ...'}]
 
         self.ui.modAuthor.setText(config[0].get('author', ''))
         self.ui.modVersion.setText(config[0].get('version', ''))
 
-        if config == []:
-            self.controls.append(QtGui.QLabel('config.json currently empty. '
-                                              'imagine awesome layout here ...'))
-        else:
-            for cfg in config:
-                self.controls.append(a2ctrl.draw(self, cfg, self.mod))
+        for cfg in config:
+            self.controls.append(a2ctrl.draw(self, cfg, self.mod))
 
         self.toggleEdit(False)
         self.drawUI()

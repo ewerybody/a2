@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Thu Mar 17 01:52:29 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Tue Jul  5 15:15:14 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,9 +12,10 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(938, 1012)
+        a2settings.resize(602, 561)
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.headLabel = QtGui.QLabel(a2settings)
         font = QtGui.QFont()
@@ -27,23 +28,20 @@ class Ui_a2settings(object):
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setContentsMargins(-1, 25, -1, 15)
         self.formLayout.setObjectName("formLayout")
-        self.label_3 = QtGui.QLabel(a2settings)
-        self.label_3.setObjectName("label_3")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_3)
         self.a2hotkey = HotKey(a2settings)
         self.a2hotkey.setEnabled(True)
         self.a2hotkey.setObjectName("a2hotkey")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.a2hotkey)
-        self.label_2 = QtGui.QLabel(a2settings)
-        self.label_2.setObjectName("label_2")
-        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_2)
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.a2hotkey)
+        self.label_3 = QtGui.QLabel(a2settings)
+        self.label_3.setObjectName("label_3")
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
         self.lineEdit_2 = QtGui.QLineEdit(a2settings)
         self.lineEdit_2.setEnabled(False)
         self.lineEdit_2.setObjectName("lineEdit_2")
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.lineEdit_2)
-        self.label = QtGui.QLabel(a2settings)
-        self.label.setObjectName("label")
-        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label)
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.lineEdit_2)
+        self.label_2 = QtGui.QLabel(a2settings)
+        self.label_2.setObjectName("label_2")
+        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -55,16 +53,19 @@ class Ui_a2settings(object):
         self.pushButton.setMaximumSize(QtCore.QSize(35, 16777215))
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
-        self.formLayout.setLayout(3, QtGui.QFormLayout.FieldRole, self.horizontalLayout)
+        self.formLayout.setLayout(2, QtGui.QFormLayout.FieldRole, self.horizontalLayout)
+        self.label = QtGui.QLabel(a2settings)
+        self.label.setObjectName("label")
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label)
         self.loadOnWinStart = QtGui.QCheckBox(a2settings)
         self.loadOnWinStart.setObjectName("loadOnWinStart")
-        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.loadOnWinStart)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.loadOnWinStart)
         self.rememberLastSel = QtGui.QCheckBox(a2settings)
         self.rememberLastSel.setObjectName("rememberLastSel")
-        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.rememberLastSel)
+        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.rememberLastSel)
         self.enableDevMode = QtGui.QCheckBox(a2settings)
         self.enableDevMode.setObjectName("enableDevMode")
-        self.formLayout.setWidget(6, QtGui.QFormLayout.FieldRole, self.enableDevMode)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.FieldRole, self.enableDevMode)
         self.verticalLayout_2.addLayout(self.formLayout)
         self.devBox = QtGui.QGroupBox(a2settings)
         self.devBox.setObjectName("devBox")
@@ -107,11 +108,11 @@ class Ui_a2settings(object):
 
     def retranslateUi(self, a2settings):
         self.headLabel.setText(QtGui.QApplication.translate("a2settings", "Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("a2settings", "Open a2 Dialog:", None, QtGui.QApplication.UnicodeUTF8))
         self.a2hotkey.setText(QtGui.QApplication.translate("a2settings", "Win+Shift+A", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("a2settings", "Open a2 Dialog:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("a2settings", "Settings Folder:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("a2settings", "Module Source:", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("a2settings", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("a2settings", "Module Source:", None, QtGui.QApplication.UnicodeUTF8))
         self.loadOnWinStart.setText(QtGui.QApplication.translate("a2settings", "Load a2 on Windows Start", None, QtGui.QApplication.UnicodeUTF8))
         self.rememberLastSel.setText(QtGui.QApplication.translate("a2settings", "Remember last selected Module", None, QtGui.QApplication.UnicodeUTF8))
         self.enableDevMode.setText(QtGui.QApplication.translate("a2settings", "Enable a2 Dev mode", None, QtGui.QApplication.UnicodeUTF8))
