@@ -219,15 +219,15 @@ class DrawNfo(QtGui.QWidget):
         self.layout.addWidget(self.label)
 
 
-def edit(cfg, main, parentCfg):
+def edit(cfg, main, parent_cfg):
     if cfg['typ'] in edit_classes:
-        return edit_classes[cfg['typ']](cfg, main, parentCfg)
+        return edit_classes[cfg['typ']](cfg, main, parent_cfg)
     else:
         log.error('Edit type "%s" not supported (yet)!' % cfg['typ'])
 
 
 class EditNfo(QtGui.QGroupBox):
-    def __init__(self, cfg):
+    def __init__(self, cfg, main, parent_cfg):
         super(EditNfo, self).__init__()
         self.cfg = cfg
         self.typ = cfg['typ']
