@@ -13,7 +13,7 @@ import time
 import string
 import logging
 import webbrowser
-from os.path import exists, join, dirname
+from os.path import exists, join, dirname, abspath
 
 import ahk
 import a2db
@@ -32,13 +32,13 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
 
 
 class A2Obj(object):
-    __instance = None
+    _instance = None
 
     @classmethod
     def inst(cls):
-        if A2Obj.__instance is None:
-            A2Obj.__instance = A2Obj()
-        return A2Obj.__instance
+        if A2Obj._instance is None:
+            A2Obj._instance = A2Obj()
+        return A2Obj._instance
 
     def __init__(self):
         self.app = None
@@ -134,10 +134,10 @@ class URLs(object):
 
 class Paths(object):
     """
-    Hosts common paths around a2.
+    Aquires and hosts common paths around a2.
     """
     def __init__(self):
-        self.ui = dirname(__file__)
+        self.ui = dirname(abspath(__file__))
 
         if not self.ui:
             cwd = os.getcwd()
@@ -145,8 +145,8 @@ class Paths(object):
                 self.ui = cwd
                 log.info('fetched a2ui dir from cwd... %s' % cwd)
             else:
-                raise Exception('a2ui start interrupted! '
-                                'Could not get main Ui dir!')
+                raise RuntimeError('a2ui start interrupted! '
+                                   'Could not get main ui dir!')
 
         self.a2 = dirname(self.ui)
         self.lib = join(self.a2, 'lib')
@@ -166,7 +166,7 @@ class Paths(object):
             raise Exception('a2ui start interrupted! %s inaccessable!'
                             % self.settings)
 
-        # by default the Autohotkey.exe in the lib should be uses
+        # by default the Autohotkey.exe in the lib should be used
         # but we need an option for that a user can put it to whatever he wants
         self.autohotkey = join(self.lib, 'AutoHotkey', 'AutoHotkey.exe')
         self.db = join(self.settings, 'a2.db')
