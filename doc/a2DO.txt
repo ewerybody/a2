@@ -1,4 +1,25 @@
 ﻿a2DO:
+finish laying out paths
+
+* a2 dir:
+    a2_starter - compiled AHK, runs set Autohotkey.exe with a2.ahk
+    a2.ahk - starts up a2 runtime with includes from a2_init
+    a2_init.ahk - includes pointing to settings dir, empty by default
+    a2_settings.ahk - basic a2 paths, empty by default
+    a2ui.ahk - starts up a2 user interface with a2_python path from a2_settings
+
+    * a2 ui dir:
+        a2app.py - a2ui entry point
+        a2ui.py - actual user interface, calls a2.ahk with set Autohotkey.exe
+
+* a2_settings dir: (by default in a2 dir)
+    a2db
+    includes
+
+* a2_module dir: (by default in a2 dir/modules)
+    a2_module.json
+
+
 road to release:
     * multi module sources implemented.
         . remote sources have index file
@@ -14,6 +35,8 @@ road to release:
         . LeoToolTip
         . CommandLine
         . PastePlain
+    * reset module settings
+    * reset single control settings
 
 in flight:
 * create hotkey control which writes hotkeys.ahk inlcude
@@ -22,8 +45,6 @@ in flight:
     * check for hotkey conflicts before submit
     * allow multiple hotkeys in edit mode
 
-* reset module settings
-* reset single control settings
 
 #38:
 * create dev config page
@@ -31,6 +52,11 @@ in flight:
     * homepage
     * autohotkey editor
     * autohotkey executable
+
+* startup with no settings set
+* write python executable path to a2.ahk
+* make startup tooltip optional
+
 
 a2DONE:
 * config/welcome page
