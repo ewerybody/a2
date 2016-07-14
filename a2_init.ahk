@@ -3,5 +3,3 @@
 #include settings\includes.ahk
 #include settings\hotkeys.ahk
 #include settings\init.ahk
-
-msgbox init included!
