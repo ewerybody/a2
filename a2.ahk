@@ -3,7 +3,6 @@
 #SingleInstance force
 #Persistent
 #NoTrayIcon
-#include a2_init.ahk
 #include a2_settings.ahk
 
 script_title := "a2"
@@ -12,7 +11,6 @@ script_icon = %icon_path%\a2.ico
 reload_icon = %icon_path%\a2reload.ico
 close_icon = %icon_path%\a2x.ico
 help_icon = %icon_path%\a2help.ico
-
 
 Menu, Tray, Icon, %script_icon%, %script_icon#%, 1
 Menu, Tray, Icon
@@ -32,25 +30,18 @@ Menu, Tray, icon, help on a2, %help_icon%
 Menu, Tray, add, quit a2, a2ui_exit
 Menu, Tray, icon, quit a2, %close_icon%
 
-
-IfNotExist, %a2_settings%
-{
-    MsgBox No settings path found!, Use the a2ui to set one up or point to existing settings path.
-    ExitApp
-}
-
 if a2_startup_tool_tips
     tt("a2 started!", 1)
 
 Return ; -------------------------------------------------------------------------------------------
+#include a2_init.ahk
 
-a2ui:
-    a2ui()
+a2UI:
+    a2UI()
 Return
 a2ui() {
-    if a2_startup_tool_tips
-        tt("a2ui...", 0.5)
-    Run, %a2_python% a2app.py, %A_ScriptDir%\ui\
+    global a2_ahk
+    Run, %a2_ahk% a2ui.ahk
 }
 
 a2ui_help:

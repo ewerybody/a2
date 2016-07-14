@@ -6,5 +6,3 @@ a2_help = https://github.com/ewerybody/a2#description
 SetTitleMatchMode, 2
 a2_tray_click_button = 1
 a2_startup_tool_tips := true
-
-msgbox settings included!

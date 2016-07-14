@@ -37,7 +37,7 @@ tt(text="", timeout=0, add=0, kill=0, font="s11,Tahoma")
 
 			SetTimer, eZttTimer, %eZttDelay%
 		}
-		
+
 		if kill
 		{
 			sleep, timeout
@@ -87,7 +87,7 @@ HE_SetFont(hEdit, pFont="") {
    height := -DllCall("MulDiv", "int", Height, "int", LogPixels, "int", 72)
 
  ;face
-   RegExMatch(pFont, "(?<=,).+", fontFace)   
+   RegExMatch(pFont, "(?<=,).+", fontFace)
    if (fontFace != "")
        fontFace := RegExReplace( fontFace, "(^\s*)|(\s*$)")      ;trim
    else fontFace := "MS Sans Serif"
@@ -101,20 +101,20 @@ HE_SetFont(hEdit, pFont="") {
    return ErrorLevel
 }
 
-
-
-; testing...
-/* #SingleInstance force
+/*; testing...
+#SingleInstance force
+#Persistent
 
 #q::Gosub, testEZtt
 Return
 
 testEZtt:
-	eZtt("lala",0,1,"s20,Arial")
+	tt("lala", 0, 1, font="s20,Arial")
 	sleep 1000
-	eZtt("vlavlavla",0,1)
+	tt("vlavlavla",0,1)
 	sleep 700
-	eZtt("bfbadb",0,0)
+	tt("bfbadb",0,0)
 	sleep 1000
-	eZtt("XXXX",1,1)
-Return */
+	tt("XXXX",1,1)
+Return
+*/

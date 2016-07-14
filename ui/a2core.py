@@ -150,14 +150,12 @@ class Paths(object):
 
         self.a2 = dirname(self.ui)
         self.lib = join(self.a2, 'lib')
-        self.starter_exe = join(self.a2, 'a2Starter.exe')
         self.a2_script = join(self.a2, 'a2.ahk')
         self.settings = get_settings_path()
         self.modules = join(self.a2, 'modules')
 
         # test if all necessary directories are present:
-        main_items = [self.a2_script, self.starter_exe, self.lib,
-                      self.modules, self.settings, self.ui]
+        main_items = [self.a2_script, self.lib, self.modules, self.settings, self.ui]
         missing = [p for p in main_items if not exists(p)]
         if missing:
             raise Exception('a2ui start interrupted! %s not found in main dir!'
