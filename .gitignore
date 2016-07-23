@@ -3,9 +3,11 @@
 /ui/_dump
 /ui/__pycache__
 /ui/.idea
+/settings
+a2_init.ahk
+a2_settings.ahk
 /ui/designer - Shortcut.lnk
 /ui/a2ui
-/settings
 lib/SQLiteSpy
 _config_backups
 
