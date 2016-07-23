@@ -1,22 +1,46 @@
-﻿; a2 _init_check. This is used by a2_starter and is not supposed to be run standalone
-_INIT_ERR_STARTER = _init_check.ahk is only to be used by compiled a2_starter!
-;MsgBox A_ScriptName: %A_ScriptName%`nA_IsCompiled: %A_IsCompiled%
-if (!A_IsCompiled || (A_ScriptName != "a2_starter.exe")) {
-    MsgBox, 16, _init_check.ahk, %_INIT_ERR_STARTER%
-    ExitApp
+_init_check_settings() {
+    ; looks for the essential settings files to be there.
+    ; writes those with basic settings if not.
+    a2_settings = a2_settings.ahk
+    a2_init = a2_init.ahk
+    settings_created := false
+    
+    ifNotExist, %a2_settings%
+    {
+        FileCopy, lib\_startup_defaults\%a2_settings%, %a2_settings%
+        
+        settings_dir = %A_ScriptDir%\settings\
+        IfNotExist, %settings_dir%
+            FileCreateDir, %settings_dir%
+        
+        ifNotExist, %settings_dir%libs.ahk
+            FileCopy, lib\_startup_defaults\libs.ahk, %settings_dir%libs.ahk
+        
+        includes := ["hotkeys", "variables", "includes", "init"]
+        for i, filename in includes
+        {
+            msg := "; a2 " filename ".ahk - Don't bother editing! - File is generated automatically!`n"
+            FileAppend, %msg%, %A_ScriptDir%\settings\%filename%.ahk
+        }
+        
+        settings_created := true
+    }
+    IfNotExist, %a2_init%
+        FileCopy, lib\_startup_defaults\%a2_init%, %a2_init%
+
+    Return settings_created
 }
 
-_init_check_settings() {
-    lib_ahk = lib\AutoHotkey\AutoHotkey.exe
-    lib_ahk_path = %A_ScriptDir%\%lib_ahk%
-    ;RegRead, installed_ahk, HKEY_LOCAL_MACHINE, SOFTWARE\AutoHotkey, InstallDir
-    ;installed_ahk = %installed_ahk%\AutoHotkey.exe
-    ;MsgBox installed_ahk: %installed_ahk%
-    IfNotExist, %lib_ahk_path%
+_init_get_var(var_name) {
+    ; reads a2_settings.ahk and returns the value of a given variable name.
+    Loop, read, a2_settings.ahk
     {
-        MsgBox, 16, ERROR - AutoHotkey.exe not available, So I wanted to create vanilla a2 settings, but seems 
+        parts := StrSplit(A_LoopReadLine, ["=", ":="])
+        this_name := Trim(parts[1])
+
+        if (this_name == var_name) {
+            value := Trim(parts[2])
+            Return value
+        }
     }
-    
-    FileGetVersion, version, %installed_ahk%
-    MsgBox version: %version%
 }
