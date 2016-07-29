@@ -31,7 +31,6 @@ import importlib
 import subprocess
 import collections
 from copy import deepcopy
-from pprint import pprint
 from functools import partial
 from pysideuic import compileUi
 from os.path import join, getmtime, dirname, basename, exists, splitext
@@ -672,9 +671,6 @@ class EditAddElem(QtGui.QWidget):
         cfg = {'typ': typ}
         if typ == 'include':
             cfg['file'] = name
-
-        print('\nadded control:')
-        pprint(cfg)
 
         self.config.append(cfg)
         self.main.editMod()
