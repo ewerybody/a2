@@ -673,9 +673,6 @@ class EditAddElem(QtGui.QWidget):
         if typ == 'include':
             cfg['file'] = name
 
-        print('\nadded control:')
-        pprint(cfg)
-
         self.config.append(cfg)
         self.main.editMod()
 
