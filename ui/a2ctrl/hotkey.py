@@ -3,14 +3,13 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-import ahk
-import a2core
-import a2ctrl
 import logging
 from PySide import QtCore, QtGui
-from a2ctrl import hotkey_edit_ui
-from a2ctrl import hotkey_func
-from a2ctrl import hotkey_scope
+
+import ahk
+import a2ctrl
+import a2core
+from a2ctrl import hotkey_edit_ui, hotkey_func, hotkey_scope, connect_cfg_controls
 
 
 logging.basicConfig()
@@ -136,7 +135,7 @@ class Edit(a2ctrl.EditCtrl):
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
         self.check_new_name()
-        self.connect_cfg_controls()
+        connect_cfg_controls(self.cfg, self.ui)
         self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
         self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
 

@@ -74,7 +74,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="cfg_value">
+    <widget class="QDoubleSpinBox" name="value">
      <property name="suffix">
       <string notr="true"/>
      </property>

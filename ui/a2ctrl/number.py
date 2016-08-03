@@ -7,7 +7,7 @@ import a2ctrl
 import logging
 from functools import partial
 from PySide import QtGui, QtCore
-from a2ctrl import number_edit_ui
+from a2ctrl import number_edit_ui, connect_cfg_controls
 
 
 logging.basicConfig()
@@ -111,27 +111,26 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
-        # cfg_value excluded to apply decimal changes if any
-        self.connect_cfg_controls(exclude=self.ui.cfg_value)
+        connect_cfg_controls(self.cfg, self.ui)
 
-        self.ui.cfg_value.valueChanged.connect(self.set_value)
+        self.ui.value.valueChanged.connect(self.set_value)
         if 'value' in self.cfg:
-            self.ui.cfg_value.setValue(self.cfg['value'])
+            self.ui.value.setValue(self.cfg['value'])
         else:
             self.set_value()
 
         self.mainWidget.setLayout(self.ui.editLayout)
 
-        for ctrl, set_func in [(self.ui.cfg_min, self.ui.cfg_value.setMinimum),
-                               (self.ui.cfg_max, self.ui.cfg_value.setMaximum),
-                               (self.ui.cfg_decimals, self.ui.cfg_value.setDecimals),
-                               (self.ui.cfg_step_len, self.ui.cfg_value.setSingleStep)]:
+        for ctrl, set_func in [(self.ui.cfg_min, self.ui.value.setMinimum),
+                               (self.ui.cfg_max, self.ui.value.setMaximum),
+                               (self.ui.cfg_decimals, self.ui.value.setDecimals),
+                               (self.ui.cfg_step_len, self.ui.value.setSingleStep)]:
             ctrl.valueChanged.connect(set_func)
         self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
 
     def set_value(self, value=None, *args):
         if value is None:
-            value = self.ui.cfg_value.value()
+            value = self.ui.value.value()
 
         self.cfg['value'] = _toggle_type(self.cfg['decimals'], value)
 

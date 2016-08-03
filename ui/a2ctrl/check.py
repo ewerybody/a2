@@ -6,7 +6,7 @@ Created on Dec 28, 2015
 import a2ctrl
 import logging
 from PySide import QtGui
-from a2ctrl import check_edit_ui
+from a2ctrl import check_edit_ui, connect_cfg_controls
 
 
 logging.basicConfig()
@@ -50,5 +50,5 @@ class Edit(a2ctrl.EditCtrl):
             label.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
-        self.connect_cfg_controls()
+        connect_cfg_controls(self.cfg, self.ui)
         self.mainWidget.setLayout(self.ui.editLayout)

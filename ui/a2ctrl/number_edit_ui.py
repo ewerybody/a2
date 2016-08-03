@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\number_edit.ui'
 #
-# Created: Fri Apr  1 02:07:48 2016
+# Created: Thu Aug  4 00:26:34 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,13 +36,13 @@ class Ui_edit(object):
         self.label = QtGui.QLabel(edit)
         self.label.setObjectName("label")
         self.editLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label)
-        self.cfg_value = QtGui.QDoubleSpinBox(edit)
-        self.cfg_value.setSuffix("")
-        self.cfg_value.setDecimals(0)
-        self.cfg_value.setSingleStep(1.0)
-        self.cfg_value.setProperty("value", 0.0)
-        self.cfg_value.setObjectName("cfg_value")
-        self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_value)
+        self.valuee = QtGui.QDoubleSpinBox(edit)
+        self.valuee.setSuffix("")
+        self.valuee.setDecimals(0)
+        self.valuee.setSingleStep(1.0)
+        self.valuee.setProperty("value", 0.0)
+        self.valuee.setObjectName("valuee")
+        self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.valuee)
         self.label_2 = QtGui.QLabel(edit)
         self.label_2.setObjectName("label_2")
         self.editLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_2)

@@ -5,8 +5,7 @@ import logging
 from PySide import QtGui
 
 import a2ctrl
-from a2ctrl import path_edit_ui
-from a2ctrl import path_field
+from a2ctrl import path_edit_ui, path_field, connect_cfg_controls
 
 
 logging.basicConfig()
@@ -59,7 +58,7 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
-        self.connect_cfg_controls()
+        connect_cfg_controls(self.cfg, self.ui)
         self._adjust_path_field()
         for ctrl in [self.ui.cfg_writable, self.ui.cfg_browse_type_0, self.ui.cfg_browse_type_1,
                      self.ui.cfg_save_mode]:

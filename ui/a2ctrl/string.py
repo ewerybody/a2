@@ -60,5 +60,5 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
-        self.connect_cfg_controls()
+        connect_cfg_controls(self.cfg, self.ui)
         self.mainWidget.setLayout(self.ui.editLayout)
