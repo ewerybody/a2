@@ -138,21 +138,14 @@ class Paths(object):
     """
     def __init__(self):
         self.ui = dirname(abspath(__file__))
-
-        if not self.ui:
-            cwd = os.getcwd()
-            if exists(join(cwd, 'a2ui.py')):
-                self.ui = cwd
-                log.info('fetched a2ui dir from cwd... %s' % cwd)
-            else:
-                raise RuntimeError('a2ui start interrupted! '
-                                   'Could not get main ui dir!')
-
         self.a2 = dirname(self.ui)
         self.lib = join(self.a2, 'lib')
         self.a2_script = join(self.a2, 'a2.ahk')
-        self.settings = get_settings_path()
-        self.modules = join(self.a2, 'modules')
+
+        path_vars = self._fetch_a2_setting_paths()
+        self.settings = path_vars['settings']
+        self.modules = path_vars['modules']
+        self.autohotkey = path_vars['ahk']
 
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.modules, self.settings, self.ui]
@@ -164,10 +157,27 @@ class Paths(object):
             raise Exception('a2ui start interrupted! %s inaccessable!'
                             % self.settings)
 
-        # by default the Autohotkey.exe in the lib should be used
-        # but we need an option for that a user can put it to whatever he wants
-        self.autohotkey = join(self.lib, 'AutoHotkey', 'AutoHotkey.exe')
         self.db = join(self.settings, 'a2.db')
+
+    def _fetch_a2_setting_paths(self):
+        keys = ['settings', 'modules', 'ahk']
+        prefix = 'a2_'
+        settings_file = os.path.join(self.a2, 'a2_settings.ahk')
+        if not settings_file:
+            settings_file = os.path.join(self.lib, '_startup_defaults', 'a2_settings.ahk')
+
+        with open(settings_file) as fobj:
+            lines = [l.split('=', 1) for l in fobj.read().split('\n') if l]
+        lines = [(l[0].strip(), l[1].strip()) for l in lines if len(l) == 2]
+        result = {}
+        for key, value in lines:
+            key = key[len(prefix):]
+            if key in keys:
+                if os.path.isabs(value):
+                    result[key] = value
+                else:
+                    result[key] = os.path.abspath(os.path.join(self.a2, value))
+        return result
 
 
 def write_includes(specific=None):
@@ -246,14 +256,6 @@ def write_includes(specific=None):
 
     with open(join(a2.paths.settings, 'init.ahk'), 'w') as fobj:
         fobj.write(edit_disclaimer % 'init' + '\n')
-
-
-def get_settings_path():
-    """
-    Location of regulary written settings db and import modules.
-    TODO: same shit: make it changable
-    """
-    return join(dirname(dirname(__file__)), 'settings')
 
 
 def get_author():
