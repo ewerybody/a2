@@ -29,6 +29,7 @@ edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated auto
 a2default_hotkey = 'Win+Shift+A'
 reload_modules = [ahk, a2db, a2mod]
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
+MOD_SOURCE_NAME = 'a2modsource.json'
 
 
 class A2Obj(object):
@@ -55,6 +56,11 @@ class A2Obj(object):
 
     def fetch_modules(self):
         moddirs = os.listdir(self.paths.modules)
+        for name in moddirs:
+            path = os.path.join(self.paths.modules, name, MOD_SOURCE_NAME)
+            if exists(path):
+                a2mod.ModSource(self, path)
+
         # get rid of modules gone
         [self.modules.pop(m) for m in self.modules if m not in moddirs]
         # register new modules

@@ -26,6 +26,13 @@ VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'path': {'typ': str, 'default': ''}}
 
 
+class ModSource(object):
+    def __init__(self, main, path):
+        self.main = main
+        self.path = path
+        print('path: %s' % path)
+
+
 class Mod(object):
     """
     The ui creates such a Mod instance when dealing with it
