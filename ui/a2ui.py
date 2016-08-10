@@ -38,7 +38,7 @@ class A2Window(QtGui.QMainWindow):
             a2ctrl.check_ui_module(a2design_ui)
             a2ctrl.check_all_ui()
         a2ctrl.adjustSizes(app)
-        self.setupUi()
+        self.setup_ui()
         self.draw_mod_list()
 
         # TODO: make this optional
@@ -66,7 +66,7 @@ class A2Window(QtGui.QMainWindow):
 
         log.info('initialised!')
 
-    def setupUi(self):
+    def setup_ui(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
         self.ui.scrollArea.setFont(a2ctrl.fontL)

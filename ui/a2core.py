@@ -18,6 +18,7 @@ from os.path import exists, join, dirname, abspath
 import ahk
 import a2db
 import a2mod
+import json
 
 
 logging.basicConfig()
@@ -29,7 +30,7 @@ edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated auto
 a2default_hotkey = 'Win+Shift+A'
 reload_modules = [ahk, a2db, a2mod]
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
-MOD_SOURCE_NAME = 'a2modsource.json'
+JSON_INDENT = 2
 
 
 class A2Obj(object):
@@ -48,6 +49,7 @@ class A2Obj(object):
         self.urls = URLs()
         self.paths = Paths()
         self.db = a2db.A2db(self.paths.db)
+        self._enabled = None
 
     def start_up(self):
         self.fetch_modules()
@@ -55,18 +57,29 @@ class A2Obj(object):
         self.get_used_hotkeys()
 
     def fetch_modules(self):
-        moddirs = os.listdir(self.paths.modules)
-        for name in moddirs:
-            path = os.path.join(self.paths.modules, name, MOD_SOURCE_NAME)
-            if exists(path):
-                a2mod.ModSource(self, path)
+        """
+        Gets/Updates all module sources with their modules into A2Obj.modules.
+        Which is now a dictionary with dictionaries:
+        
+        A2Obj.modules = {
+            'module_source1': {
+                'module1': a2Mod.Mod(),
+                'module2': a2Mod.Mod()
+                },
+            'module_source2' ...
+            }
+        """
+        modsources = os.listdir(self.paths.modules)
+        # get rid of inexistent module sources
+        [self.modules.pop(m) for m in self.modules if m not in modsources]
 
-        # get rid of modules gone
-        [self.modules.pop(m) for m in self.modules if m not in moddirs]
-        # register new modules
-        for modname in os.listdir(self.paths.modules):
-            if modname not in self.modules:
-                self.modules[modname] = a2mod.Mod(modname)
+        for name in modsources:
+            #path = os.path.join(self.paths.modules, name, MOD_SOURCE_NAME)
+            path = os.path.join(self.paths.modules, name)
+            if name not in self.modules:
+                self.modules[name] = a2mod.ModSource(self, name, path)
+            self.modules[name].fetch_modules()
+
         return self.modules
 
     def get_used_scopes(self):
@@ -107,10 +120,13 @@ class A2Obj(object):
 
     @property
     def enabled(self):
-        return self.db.get('enabled') or []
+        if self._enabled is None:
+            self._enabled = self.db.get('enabled') or {}
+        return self._enabled
 
     @enabled.setter
     def enabled(self, these):
+        self._enabled = these
         self.db.set('enabled', these)
 
 
@@ -283,6 +299,16 @@ def set_windows_startup(state=True):
 def surfTo(url):
     if url:
         webbrowser.get().open(url)
+
+
+def json_read(path):
+    with open(path) as fob:
+        return json.load(fob)
+
+
+def json_write(path, data):
+    with open(path, 'w') as fob:
+        json.dump(data, fob, indent=JSON_INDENT, sort_keys=True)
 
 
 def _dbCleanup():

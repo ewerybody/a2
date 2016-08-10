@@ -4,21 +4,20 @@ Created on Jul 9, 2015
 @author: eRiC
 '''
 import os
-import json
 import a2core
 import a2ctrl
 import logging
 from os.path import join, exists, splitext
 from shutil import copy2
+from pprint import pprint
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-# maybe make this even settable in a dev options dialog?
-jsonIndent = 2
 
 CONFIG_FILENAME = 'config.json'
+MOD_SOURCE_NAME = 'a2modsource.json'
 VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'number': {'typ': (int, float), 'default': 0.0},
              'string': {'typ': str, 'default': ''},
@@ -27,10 +26,36 @@ VALUE_MAP = {'check': {'typ': bool, 'default': False},
 
 
 class ModSource(object):
-    def __init__(self, main, path):
+    def __init__(self, main, name, path):
         self.main = main
+        self.name = path
         self.path = path
-        print('path: %s' % path)
+        self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
+        self.mods = {}
+
+    def fetch_modules(self):
+        mods = os.listdir(self.path)
+        # pop inexistent modules
+        [self.mods.pop(m) for m in self.mods if m not in mods]
+
+        if not mods:
+            log.debug('No modules in module source: %s' % self.path)
+
+        # add new ones
+        for modname in mods:
+            if modname not in self.mods:
+                self.mods[modname] = Mod(self, modname)
+
+    @property
+    def config(self):
+        try:
+            return a2core.json_read(self.config_file)
+        except Exception:
+            return {}
+
+    @config.setter
+    def config(self, data):
+        a2core.json_write(self.config_file, data)
 
 
 class Mod(object):
@@ -48,8 +73,9 @@ class Mod(object):
     config is None at first and filled as soon as the mod is selected in the UI.
     If there is no config_file yet it will be emptied instead of None.
     """
-    def __init__(self, modname):
+    def __init__(self, source, modname):
         # gather files from module path in local list
+        self.source = source
         self.name = modname
         global a2
         self.a2 = a2core.A2Obj.inst()
@@ -57,6 +83,8 @@ class Mod(object):
         self._config = None
         self.config_file = join(self.path, CONFIG_FILENAME)
         self.ui = None
+        # the compound modulesource|modulename identifier
+        self.key = self.source.name + '|' + self.name
 
     @property
     def config(self):
@@ -81,15 +109,13 @@ class Mod(object):
             copy2(self.config_file, join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
 
         # overwrite config_file
-        with open(self.config_file, 'w') as fObj:
-            json.dump(self._config, fObj, indent=jsonIndent, sort_keys=True)
+        a2core.json_write(self.config_file, self._config)
 
     def get_config(self):
         if exists(self.config_file):
             try:
-                with open(self.config_file) as fobj:
-                    self._config = json.load(fobj) or []
-                    return
+                self._config = a2core.json_read(self.config_file)
+                return
             except Exception as error:
                 log.error('config exists but could not be loaded!: '
                           '%s\nerror: %s' % (self.config_file, error))
@@ -103,7 +129,7 @@ class Mod(object):
         data = self.loop_cfg(self.config[1:], data)
 
         for typ in ['includes', 'hotkeys', 'variables']:
-            self.a2.db.set(typ, data[typ], self.name)
+            self.a2.db.set(typ, data[typ], self.key)
 
     def loop_cfg(self, cfgDict, data):
         for cfg in cfgDict:
@@ -112,7 +138,7 @@ class Mod(object):
                 data['includes'].append(cfg['file'])
 
             elif 'name' in cfg:
-                userCfg = self.a2.db.get(cfg['name'], self.name)
+                userCfg = self.a2.db.get(cfg['name'], self.key)
                 if cfg['typ'] == 'hotkey':
                     if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
                         continue
@@ -156,11 +182,23 @@ class Mod(object):
 
     @property
     def enabled(self):
-        return self.name in self.a2.enabled
+        return self.name in self.a2.enabled.get(self.source.name, [])
 
     @enabled.setter
-    def enabled(self, this):
-        log.error('Cannot switch enable state here')
+    def enabled(self, state):
+        current = self.a2.enabled
+        if state:
+            if self.name not in current.get(self.source.name, []):
+                current.setdefault(self.source.name, []).append(self.name)
+                self.a2.enabled = current
+        else:
+            if self.name in current.get(self.source.name, []):
+                current.remove(self.name)
+            if current.get(self.source.name) == []:
+                del current[self.source.name]
+            self.a2.enabled = current
+        print('enabled: %s: %s' % (self.name, state))
+        pprint(current)
 
     def createScript(self, scriptName=None):
         if not scriptName:
@@ -194,7 +232,7 @@ class Mod(object):
         user sets True AND default it False:
             set to userCfg
         """
-        user_cfg = self.a2.db.get(sub_cfg['name'], self.name) or {}
+        user_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
         if attr_name in user_cfg:
             # value to set equals CURRENT value: done
             if value == user_cfg.get(attr_name):
@@ -205,7 +243,7 @@ class Mod(object):
         # value to set equals CONFIG value: done. otherwise: save it:
         if value != sub_cfg.get(attr_name):
             user_cfg[attr_name] = value
-        self.a2.db.set(sub_cfg['name'], user_cfg, self.name)
+        self.a2.db.set(sub_cfg['name'], user_cfg, self.key)
 
     def help(self):
         docs_url = self.config[0].get('url')
