@@ -26,10 +26,10 @@ VALUE_MAP = {'check': {'typ': bool, 'default': False},
 
 
 class ModSource(object):
-    def __init__(self, main, name, path):
+    def __init__(self, main, name):
         self.main = main
-        self.name = path
-        self.path = path
+        self.name = name
+        self.path = os.path.join(main.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
 

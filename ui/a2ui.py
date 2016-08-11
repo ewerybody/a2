@@ -132,8 +132,9 @@ class A2Window(QtGui.QMainWindow):
 
     def toggle_dev_menu(self, state=None):
         if state is None:
+            # state=None happens only on startup
             state = self.a2.db.get('dev_mode') or False
-            # state=None happens only on startup, if True we dont have to re-add
+            # if True we dont have to re-add
             if state is True:
                 return
         if state:

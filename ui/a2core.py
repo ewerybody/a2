@@ -46,6 +46,7 @@ class A2Obj(object):
         self.app = None
         self.win = None
         self.modules = {}
+        self.module_sources = {}
         self.urls = URLs()
         self.paths = Paths()
         self.db = a2db.A2db(self.paths.db)
@@ -60,7 +61,7 @@ class A2Obj(object):
         """
         Gets/Updates all module sources with their modules into A2Obj.modules.
         Which is now a dictionary with dictionaries:
-        
+
         A2Obj.modules = {
             'module_source1': {
                 'module1': a2Mod.Mod(),
@@ -71,16 +72,13 @@ class A2Obj(object):
         """
         modsources = os.listdir(self.paths.modules)
         # get rid of inexistent module sources
-        [self.modules.pop(m) for m in self.modules if m not in modsources]
+        [self.module_sources.pop(m) for m in self.module_sources if m not in modsources]
 
         for name in modsources:
-            #path = os.path.join(self.paths.modules, name, MOD_SOURCE_NAME)
-            path = os.path.join(self.paths.modules, name)
-            if name not in self.modules:
-                self.modules[name] = a2mod.ModSource(self, name, path)
-            self.modules[name].fetch_modules()
-
-        return self.modules
+            if name not in self.module_sources:
+                self.module_sources[name] = a2mod.ModSource(self, name)
+            self.module_sources[name].fetch_modules()
+        return self.module_sources
 
     def get_used_scopes(self):
         """
