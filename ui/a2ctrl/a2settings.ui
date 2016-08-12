@@ -87,7 +87,17 @@
      <property name="title">
       <string>Module Sources</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="mod_source_box_layout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="mod_source_layout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+       </layout>
+      </item>
       <item>
        <widget class="QLabel" name="no_sources_msg">
         <property name="text">

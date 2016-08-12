@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Thu Aug 11 14:36:45 2016
+# Created: Fri Aug 12 14:41:41 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,18 +45,23 @@ class Ui_a2settings(object):
         self.verticalLayout_2.addLayout(self.formLayout)
         self.groupBox = QtGui.QGroupBox(a2settings)
         self.groupBox.setObjectName("groupBox")
-        self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.mod_source_box_layout = QtGui.QVBoxLayout(self.groupBox)
+        self.mod_source_box_layout.setSpacing(10)
+        self.mod_source_box_layout.setObjectName("mod_source_box_layout")
+        self.mod_source_layout = QtGui.QVBoxLayout()
+        self.mod_source_layout.setSpacing(2)
+        self.mod_source_layout.setObjectName("mod_source_layout")
+        self.mod_source_box_layout.addLayout(self.mod_source_layout)
         self.no_sources_msg = QtGui.QLabel(self.groupBox)
         self.no_sources_msg.setAlignment(QtCore.Qt.AlignCenter)
         self.no_sources_msg.setWordWrap(True)
         self.no_sources_msg.setObjectName("no_sources_msg")
-        self.verticalLayout.addWidget(self.no_sources_msg)
+        self.mod_source_box_layout.addWidget(self.no_sources_msg)
         self.add_source_button = QtGui.QPushButton(self.groupBox)
         self.add_source_button.setMaximumSize(QtCore.QSize(75, 16777215))
         self.add_source_button.setStyleSheet("QPushButton {background-color:#37ED95}")
         self.add_source_button.setObjectName("add_source_button")
-        self.verticalLayout.addWidget(self.add_source_button)
+        self.mod_source_box_layout.addWidget(self.add_source_button)
         self.verticalLayout_2.addWidget(self.groupBox)
         self.dev_box = QtGui.QGroupBox(a2settings)
         self.dev_box.setCheckable(True)
@@ -128,5 +133,5 @@ class Ui_a2settings(object):
         self.label_8.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Executable:", None, QtGui.QApplication.UnicodeUTF8))
         self.debug_checkbox.setText(QtGui.QApplication.translate("a2settings", "LogLevel:DEBUG", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.hotkey import HotKey
 from a2ctrl.path_field import PathField
+from a2ctrl.hotkey import HotKey

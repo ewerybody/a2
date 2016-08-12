@@ -7,7 +7,7 @@ import os
 import a2core
 import a2ctrl
 import logging
-from os.path import join, exists, splitext
+from os.path import exists, splitext, isdir
 from shutil import copy2
 from pprint import pprint
 
@@ -34,7 +34,7 @@ class ModSource(object):
         self.mods = {}
 
     def fetch_modules(self):
-        mods = os.listdir(self.path)
+        mods = [m for m in os.listdir(self.path) if isdir(os.path.join(self.path, m))]
         # pop inexistent modules
         [self.mods.pop(m) for m in self.mods if m not in mods]
 
@@ -79,9 +79,9 @@ class Mod(object):
         self.name = modname
         global a2
         self.a2 = a2core.A2Obj.inst()
-        self.path = join(self.a2.paths.modules, modname)
+        self.path = os.path.join(self.a2.paths.modules, modname)
         self._config = None
-        self.config_file = join(self.path, CONFIG_FILENAME)
+        self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
         # the compound modulesource|modulename identifier
         self.key = self.source.name + '|' + self.name
@@ -96,7 +96,7 @@ class Mod(object):
     def config(self, cfgdict):
         self._config = cfgdict
         # backup current config_file
-        backup_path = join(self.path, '_config_backups')
+        backup_path = os.path.join(self.path, '_config_backups')
         if not exists(backup_path):
             os.mkdir(backup_path)
         _config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
@@ -106,7 +106,7 @@ class Mod(object):
         else:
             backup_index = 1
         if exists(self.config_file):
-            copy2(self.config_file, join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
+            copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
 
         # overwrite config_file
         a2core.json_write(self.config_file, self._config)
@@ -207,7 +207,7 @@ class Mod(object):
         scriptName = '%s.ahk' % splitext(scriptName)[0]
         scriptName = scriptName.strip()
 
-        with open(join(self.path, scriptName), 'w') as fObj:
+        with open(os.path.join(self.path, scriptName), 'w') as fObj:
             content = '; %s - %s\n' % (self.name, scriptName)
             content += '; author: %s\n' % a2core.get_author()
             content += '; created: %s\n\n' % a2core.get_date()

@@ -34,10 +34,6 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread = None
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
-        if self.dev_mode:
-            a2ctrl.check_ui_module(a2design_ui)
-            a2ctrl.check_all_ui()
-        a2ctrl.adjustSizes(app)
         self.setup_ui()
         #self.draw_mod_list()
 
@@ -59,7 +55,7 @@ class A2Window(QtGui.QMainWindow):
                 self.mod = self.a2.modules[new_selected[0]]
             # to keep controls from triggering yet
             self._draw_phase = True
-            self.select_mod(new_selected)
+            #self.select_mod(new_selected)
             self.selected_mod = new_selected
         self._draw_phase = False
         #self.mod_select(True)
@@ -70,6 +66,11 @@ class A2Window(QtGui.QMainWindow):
         print('self.ui.module_list: %s' % self.ui.module_list.ui.list_widget)
 
     def setup_ui(self):
+        if self.dev_mode:
+            a2ctrl.check_ui_module(a2design_ui)
+            a2ctrl.check_all_ui()
+        a2ctrl.adjustSizes(self.app)
+
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
         self.ui.scrollArea.setFont(a2ctrl.fontL)
