@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Sat Jun 25 22:38:28 2016
+# Created: Fri Aug 12 10:04:41 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,14 +46,9 @@ class Ui_a2MainWindow(object):
         self.verticalLayout_2.setSpacing(5)
         self.verticalLayout_2.setContentsMargins(5, 5, 5, 5)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.modList = QtGui.QListWidget(self.moduleBox)
-        self.modList.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.modList.setAlternatingRowColors(True)
-        self.modList.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        self.modList.setIconSize(QtCore.QSize(32, 32))
-        self.modList.setSelectionRectVisible(False)
-        self.modList.setObjectName("modList")
-        self.verticalLayout_2.addWidget(self.modList)
+        self.module_list = ModuleList(self.moduleBox)
+        self.module_list.setObjectName("module_list")
+        self.verticalLayout_2.addWidget(self.module_list)
         self.settingsBox = QtGui.QGroupBox(self.splitter)
         self.settingsBox.setTitle("")
         self.settingsBox.setObjectName("settingsBox")
@@ -204,7 +199,6 @@ class Ui_a2MainWindow(object):
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(a2MainWindow)
-        self.modList.setCurrentRow(-1)
         QtCore.QMetaObject.connectSlotsByName(a2MainWindow)
 
     def retranslateUi(self, a2MainWindow):
@@ -231,3 +225,4 @@ class Ui_a2MainWindow(object):
         self.actionA2_settings.setText(QtGui.QApplication.translate("a2MainWindow", "a2 Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit_a2.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2ctrl.module_list import ModuleList

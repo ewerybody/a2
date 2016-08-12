@@ -39,7 +39,7 @@ class A2Window(QtGui.QMainWindow):
             a2ctrl.check_all_ui()
         a2ctrl.adjustSizes(app)
         self.setup_ui()
-        self.draw_mod_list()
+        #self.draw_mod_list()
 
         # TODO: make this optional
         self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
@@ -62,9 +62,12 @@ class A2Window(QtGui.QMainWindow):
             self.select_mod(new_selected)
             self.selected_mod = new_selected
         self._draw_phase = False
-        self.mod_select(True)
+        #self.mod_select(True)
+        print('self.selected_mod: %s' % self.selected_mod)
 
         log.info('initialised!')
+
+        print('self.ui.module_list: %s' % self.ui.module_list.ui.list_widget)
 
     def setup_ui(self):
         self.ui = a2design_ui.Ui_a2MainWindow()
@@ -107,7 +110,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui.editOKButton.released.connect(self.editSubmit)
         self.ui.editCancelButton.released.connect(self.drawMod)
-        self.ui.modList.itemSelectionChanged.connect(self.mod_select)
+        #self.ui.modList.itemSelectionChanged.connect(self.mod_select)
 
         self.restoreA2ui()
 

@@ -86,7 +86,7 @@ def check_ui_module(module):
     pyfile = module.__file__
     pybase = basename(pyfile)
     uiname = splitext(pybase)[0]
-    pypath = dirname(pyfile)
+    folder = dirname(pyfile)
     uibase = None
 
     if uiname.endswith(UI_FILE_SUFFIX):
@@ -103,7 +103,7 @@ def check_ui_module(module):
                     log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
 
-    uifile = join(pypath, uibase)
+    uifile = join(folder, uibase)
     if not uibase or not exists(uifile):
         log.error('Ui-file not found: %s' % pybase)
         return
@@ -531,7 +531,7 @@ def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
 
 # deferred import of sub controls because they might use any part of this module
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number
-import a2ctrl.combo, a2ctrl.path, a2ctrl.hotkey_func, a2ctrl.hotkey_scope
+import a2ctrl.combo, a2ctrl.path, a2ctrl.hotkey_func, a2ctrl.hotkey_scope, a2ctrl.module_list
 
 # import first, then add here for reload coverage
 reload_modules = [
@@ -554,6 +554,7 @@ ui_modules = [
     a2ctrl.group.group_edit_ui,
     a2ctrl.string.string_edit_ui,
     a2ctrl.a2settings.a2settings_ui,
+    a2ctrl.module_list.module_list_ui,
     a2ctrl.number.number_edit_ui,
     a2ctrl.combo.combo_edit_ui,
     a2ctrl.path.path_edit_ui]
