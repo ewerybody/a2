@@ -215,8 +215,6 @@ class EditCtrl(QtGui.QGroupBox):
 
 
 class Ico(QtGui.QIcon):
-    """
-    """
     def __init__(self, ico_name, px=512, scale=1.0, color=None):
         super(Ico, self).__init__()
         if exists(ico_name):

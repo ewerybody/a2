@@ -61,13 +61,14 @@ class ModSource(object):
 
         if not self.enabled:
             self.mods = {}
+            return
 
         # pop inexistent modules
         [self.mods.pop(m) for m in self.mods if m not in mods_in_path]
 
         # add new ones
         for modname in mods_in_path:
-            if modname not in self.mods:
+            if modname not in ['.git'] and modname not in self.mods:
                 self.mods[modname] = Mod(self, modname)
 
     @property
@@ -132,6 +133,12 @@ class Mod(object):
         self.ui = None
         # the compound modulesource|modulename identifier
         self.key = self.source.name + '|' + self.name
+        # to itentify the module in the module list widget e.g. for selection
+        self._item = None
+
+    @property
+    def has_config_file(self):
+        return exists(self.config_file)
 
     @property
     def config(self):
@@ -152,14 +159,14 @@ class Mod(object):
             backup_index = int(_config_backups[-1].rsplit('.', 1)[1]) + 1
         else:
             backup_index = 1
-        if exists(self.config_file):
+        if self.has_config_file:
             copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
 
         # overwrite config_file
         a2core.json_write(self.config_file, self._config)
 
     def get_config(self):
-        if exists(self.config_file):
+        if self.has_config_file:
             try:
                 self._config = a2core.json_read(self.config_file)
                 return

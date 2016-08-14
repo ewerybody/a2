@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\string_edit.ui'
 #
-# Created: Fri Apr  1 02:07:48 2016
+# Created: Sun Aug 14 22:27:34 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

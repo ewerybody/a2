@@ -38,35 +38,29 @@ class A2Window(QtGui.QMainWindow):
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self.setup_ui()
-        #self.draw_mod_list()
+        self.ui.module_list.draw_modules()
+        self.ui.module_list.selection_changed.connect(self.module_selected)
 
         # TODO: make this optional
         self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
-        self.mod = None
-        self.editing = False
         self.edit_clipboard = []
         self.tempConfig = None
-        self.selected_mod = []
+        self.selected = []
         self.scopes = {}
 
         # as we don't want to draw the ui more than once, we make sure
         # selecting does not trigger draw already
+        init_selection = []
         if self.a2.db.get('remember_last') or False:
-            last_selected = self.a2.db.get('last_selected') or []
-            new_selected = [m for m in last_selected if m in self.a2.modules]
-            if len(new_selected) > 0:
-                self.mod = self.a2.modules[new_selected[0]]
-            # to keep controls from triggering yet
-            self._draw_phase = True
-            #self.select_mod(new_selected)
-            self.selected_mod = new_selected
-        self._draw_phase = False
-        #self.mod_select(True)
-        print('self.selected_mod: %s' % self.selected_mod)
+            init_selection = self.a2.db.get('last_selected') or []
+        self.ui.module_list.select(init_selection)
 
         log.info('initialised!')
 
-        print('self.ui.module_list: %s' % self.ui.module_list.ui.list_widget)
+    def module_selected(self, module_list):
+        self.selected = module_list
+        print('module_selected: %s' % module_list)
+        self.ui.module_view.draw_mod()
 
     def setup_ui(self):
         if self.dev_mode:
@@ -76,33 +70,19 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
-        self.ui.scrollArea.setFont(a2ctrl.fontL)
-        self.ui.scrollBar = self.ui.scrollArea.verticalScrollBar()
 
-        self.mainlayout = self.ui.scrollAreaContents.layout()
-        self.controls = []
-        self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
-                                           QtGui.QSizePolicy.Expanding)
-        self.mainlayout.addItem(self.ui.spacer)
-        self.settings_widget = self.ui.scrollAreaContents
+        self.ui.module_view.setup_ui(self)
 
-        self.ui.modCheck.setVisible(False)
-        self.ui.modName.setText('a2')
-        self.ui.modVersion.setText('v0.1')
-        self.ui.modAuthor.setText('')
-
-        self.ui.modCheck.clicked.connect(self.mod_enable)
-        self.ui.modInfoButton.clicked.connect(self.modInfo)
-        self.ui.actionEdit_module.triggered.connect(self.editMod)
+        self.ui.actionEdit_module.triggered.connect(self.edit_mod)
         self.ui.actionEdit_module.setShortcut("Ctrl+E")
         self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
-        self.ui.actionExplore_to.triggered.connect(self.exploreMod)
+        self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionAbout_a2.triggered.connect(partial(a2core.surfTo, self.a2.urls.help))
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2help)
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
 
-        self.ui.actionExplore_to_a2_dir.triggered.connect(self.exploreA2)
+        self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionNew_module.triggered.connect(self.newModule)
         self.ui.actionA2_settings.triggered.connect(partial(self.select_mod, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
@@ -112,8 +92,6 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
 
-        self.ui.editOKButton.released.connect(self.editSubmit)
-        self.ui.editCancelButton.released.connect(self.drawMod)
         #self.ui.modList.itemSelectionChanged.connect(self.mod_select)
 
         self.restoreA2ui()
@@ -129,13 +107,17 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
                         partial(self.settings_changed, refresh_ui=True))
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.scrollArea,
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.module_view.ui.scrollArea,
                         partial(self.scroll_to, True))
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.scrollArea,
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.module_view.ui.scrollArea,
                         partial(self.scroll_to, False))
 
         self.toggle_dev_menu()
         self.setWindowIcon(a2ctrl.Icons.inst().a2)
+
+    def edit_mod(self):
+        if len(self.selected) == 1:
+            self.ui.module_view.edit_mod()
 
     def toggle_dev_menu(self, state=None):
         if state is None:
@@ -232,129 +214,8 @@ class A2Window(QtGui.QMainWindow):
 
         self.drawMod()
 
-    def drawUI(self, keep_scroll=False):
-        """
-        takes list of controls and arranges them in the scroll layout
 
-        1. I tried to just create layouts for each module unhook them from the
-        scroll layout on demand and hook up another one but Qt is spart so it
-        deletes the invisible layout which cannot be hooked up again.
-        2. I tried to brute force delete everything and building it over again each
-        time something else is seleceted in the left list but Qt refuses to
-        delete anything visually with destroy() or removeWidget()
-        3. We probably need an actual tab layout to do this but I can't find how to
-        make the tabs invisible...
-        4. I'll try to create an all new layout,
-            fill it and switch away from the old one:
-        """
-        # to refill the scoll layout:
-        # take away the spacer from 'mainLayout'
-        self.mainlayout.removeItem(self.ui.spacer)
-        # create widget to host the module's new layout
-        current_height = self.settings_widget.height()
-        new_widget = QtGui.QWidget(self)
-        if keep_scroll:
-            current_scroll_value = self.ui.scrollBar.value()
-            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                       QtGui.QSizePolicy.Fixed))
-            new_widget.setMinimumHeight(current_height)
 
-        # create new column layout for the module controls
-        newLayout = QtGui.QVBoxLayout(new_widget)
-        newLayout.setContentsMargins(5, 5, 5, 5)
-        newLayout.setSpacing(a2ctrl.UIValues.spacing)
-        # turn scroll layout content to new host widget
-        self.ui.scrollArea.setWidget(new_widget)
-
-        # make the new inner layout the mainLayout
-        # add the controls to it
-        for ctrl in self.controls:
-            if ctrl:
-                newLayout.addWidget(ctrl)
-        # amend the spacer
-        newLayout.addItem(self.ui.spacer)
-
-        new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                   QtGui.QSizePolicy.Maximum))
-        if keep_scroll:
-            self.ui.scrollBar.setValue(current_scroll_value)
-
-        self.mainlayout = newLayout
-        self.settings_widget = new_widget
-
-    def drawMod(self):
-        """
-        from the modules config creates the usual display controls and
-        fills them with the saved settings from the database.
-        On change they trigger writing to the db, collect all include info
-        and restart a2.
-        """
-        self.controls = []
-
-        if self.mod is None:
-            self.controls.append(a2ctrl.a2settings.A2Settings(self))
-            config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
-        else:
-            if len(self.selected_mod) > 1:
-                config = [{'typ': 'nfo', 'author': '', 'version': '',
-                           'description': 'Multiple modules selected. Here goes some '
-                                          'useful info in the future...'}]
-            else:
-                config = self.mod.config
-
-            self.tempConfig = None
-
-        if len(config):
-            if config[0].get('typ') != 'nfo':
-                log.error('First element of config is not typ nfo! %s' % self.mod.name)
-        else:
-            config = [{'typ': 'nfo', 'author': '', 'version': '',
-                       'description': 'Module Config is currently empty! imagine awesome layout here ...'}]
-
-        self.ui.modAuthor.setText(config[0].get('author', ''))
-        self.ui.modVersion.setText(config[0].get('version', ''))
-
-        for cfg in config:
-            self.controls.append(a2ctrl.draw(self, cfg, self.mod))
-
-        self.toggleEdit(False)
-        self.drawUI()
-
-    def editMod(self, keep_scroll=False):
-        """
-        From the modules config creates controls to edit the config itself.
-        If a header is not found one will be added to the in-edit config.
-        On "OK" the config data is collected from the UI and written back to the json.
-        On Cancel the in-edit config is discarded and drawMod called which draws the
-        UI unchanged.
-        """
-        if len(self.selected_mod) != 1 or self.selected_mod[0] == 'a2':
-            return
-
-        self.controls = []
-        if self.tempConfig is None:
-            self.tempConfig = deepcopy(self.mod.config)
-
-        #if not mod.config: is None or mod.config is []
-        if not len(self.tempConfig):
-            newNfo = {'typ': 'nfo',
-                      'description': 'Because none existed before this temporary description was '
-                                     'created for "%s". Change it to describe what it does with a '
-                                     'couple of words.' % self.mod.name,
-                      'author': a2core.get_author(),
-                      'version': '0.1',
-                      'date': a2core.get_date()}
-            self.tempConfig.insert(0, newNfo)
-
-        for cfg in self.tempConfig:
-            self.controls.append(a2ctrl.edit(cfg, self, self.tempConfig))
-
-        editSelect = a2ctrl.EditAddElem(self, self.tempConfig)
-        self.controls.append(editSelect)
-
-        self.drawUI(keep_scroll)
-        self.toggleEdit(True)
-        self.settings_widget.setFocus()
 
     def editSubmit(self):
         """
@@ -362,7 +223,7 @@ class A2Window(QtGui.QMainWindow):
         If it's enabled only trigger settingsChanged when
 
         """
-        if not self.editing:
+        if not self.ui.module_view.editing:
             return
 
         self.mod.config = deepcopy(self.tempConfig)
@@ -370,13 +231,6 @@ class A2Window(QtGui.QMainWindow):
             self.mod.change()
             self.settings_changed()
         self.drawMod()
-
-    def toggleEdit(self, state):
-        self.editing = state
-        for button in [self.ui.editCancelButton, self.ui.editOKButton]:
-            button.setEnabled(state)
-            button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
-            self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
 
     def mod_enable(self):
         """
@@ -407,7 +261,7 @@ class A2Window(QtGui.QMainWindow):
         """
         Open help of the selected module or a2 help
         """
-        if len(self.selected_mod) != 1:
+        if len(self.selected) != 1:
             a2core.surfTo(self.a2.urls.help)
         else:
             self.mod.help()
@@ -426,22 +280,22 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread.start()
 
     def escape(self):
-        if self.editing:
-            self.drawMod()
+        if self.ui.module_view.editing:
+            self.ui.module_view.draw_mod()
         else:
             self.close()
 
-    def exploreMod(self):
-        if isinstance(self.mod, a2mod.Mod):
-            subprocess.Popen(['explorer.exe', self.mod.path])
+    def explore_mod(self):
+        if len(self.selected) == 1:
+            subprocess.Popen(['explorer.exe', self.selected[0].path])
 
-    def exploreA2(self):
+    def explore_a2(self):
         subprocess.Popen(['explorer.exe', self.a2.paths.a2])
 
     def closeEvent(self, event):
         binprefs = str(self.saveGeometry().toPercentEncoding())
         self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
-        self.a2.db.set('last_selected', self.selected_mod)
+        self.a2.db.set('last_selected', [m.key for m in self.selected])
         if self._restart_thread is not None:
             self._restart_thread.quit()
         QtGui.QMainWindow.closeEvent(self, event)
