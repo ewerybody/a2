@@ -23,9 +23,11 @@ class A2Settings(QtGui.QWidget):
         self._draw_module_sources()
 
     def _draw_module_sources(self):
-        self.ui.no_sources_msg.setVisible(self.main.a2.module_sources == {})
-        for source in self.main.a2.module_sources.values():
-            self.ui.mod_source_layout.addWidget(ModSourceWidget(source))
+        enabled_list = [name for name, data in self.a2.enabled.items() if data[0]]
+        print('enabled_list: %s' % enabled_list)
+        self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
+        for source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
+            self.ui.mod_source_layout.addWidget(ModSourceWidget(source, enabled_list))
 
     def _setup_ui(self):
         self.ui = a2settings_ui.Ui_a2settings()
@@ -64,20 +66,32 @@ class A2Settings(QtGui.QWidget):
 
 
 class ModSourceWidget(QtGui.QWidget):
-    def __init__(self, mod_source):
+    def __init__(self, mod_source, enabled_list):
         super(ModSourceWidget, self).__init__()
         self.mod_source = mod_source
         self.mainlayout = QtGui.QHBoxLayout(self)
         m = 1
         self.mainlayout.setContentsMargins(m, m, m, m)
         self.check = QtGui.QCheckBox(mod_source.name)
+        self.check.setChecked(mod_source.name in enabled_list)
         self.mainlayout.addWidget(self.check)
-        self.mod_count = QtGui.QLabel('%i modules' % len(mod_source.mods))
-        self.mainlayout.addWidget(self.mod_count)
-        self.button = QtGui.QPushButton('settings')
-        self.mainlayout.addWidget(self.button)
+        self.check.clicked[bool].connect(mod_source.toggle)
 
+        self.mod_count = QtGui.QLabel('%i modules, %i enabled'
+                                      % (mod_source.mod_count, mod_source.enabled_count,))
+        self.mainlayout.addWidget(self.mod_count)
+
+        self.button = QtGui.QPushButton('settings')
+        self.mainlayout.setStretch(0, 1)
+        self.mainlayout.setStretch(1, 1)
+        self.mainlayout.addWidget(self.button)
         self.setLayout(self.mainlayout)
 
-if __name__ == '__main__':
-    pass
+        self.menu = QtGui.QMenu(self)
+        self.button.setMenu(self.menu)
+        self.menu.aboutToShow.connect(self.build_menu)
+
+    def build_menu(self):
+        self.menu.clear()
+        self.menu.addAction(QtGui.QAction('Details...', self))
+

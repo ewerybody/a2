@@ -27,6 +27,9 @@ reload_modules = [a2ctrl]
 
 
 class A2Window(QtGui.QMainWindow):
+    # to be triggered whenever a module or module source is dis/enabled
+    module_enabled = QtCore.Signal()
+
     def __init__(self, app=None, *args):
         super(A2Window, self).__init__(parent=None)
         self.a2 = a2core.A2Obj.inst()

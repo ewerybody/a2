@@ -16,7 +16,7 @@ def editctrl(nfoDict, keyName, typ, parent, editCtrls):
     parent.addWidget(inputctrl)
     editCtrls[keyName] = inputctrl
 
-nfo item is always the 0th entry in the config.json it just draws and holds all
+nfo item is always the 0th entry in the configuration. it just draws and holds all
 the author, name, version, description info
 
 @created: Mar 6, 2015

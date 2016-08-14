@@ -7,7 +7,7 @@ import os
 import a2core
 import a2ctrl
 import logging
-from os.path import exists, splitext, isdir
+from os.path import exists, splitext, isdir, isfile
 from shutil import copy2
 from pprint import pprint
 
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
 
-CONFIG_FILENAME = 'config.json'
+CONFIG_FILENAME = 'a2module.json'
 MOD_SOURCE_NAME = 'a2modsource.json'
 VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'number': {'typ': (int, float), 'default': 0.0},
@@ -25,24 +25,48 @@ VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'path': {'typ': str, 'default': ''}}
 
 
+def get_module_sources(main, path, modsource_dict):
+    """
+    Browses the a2 module folder for module sources and updates given
+    modsource_dict with new ModSource objects if found or deletes vanished ones.
+    Skips folders that have CONFIG_FILENAME inside.
+    Calls all module sources to update their modules.
+    """
+    modsources = get_folders(path)
+    # get rid of inexistent module sources
+    [modsource_dict.pop(m) for m in modsource_dict if m not in modsources]
+
+    for name in modsources:
+        if not exists(os.path.join(path, name, MOD_SOURCE_NAME)):
+            continue
+
+        if name not in modsource_dict:
+            modsource_dict[name] = ModSource(main, name)
+        modsource_dict[name].fetch_modules()
+
+
 class ModSource(object):
-    def __init__(self, main, name):
-        self.main = main
+    def __init__(self, a2, name):
+        self.a2 = a2
         self.name = name
-        self.path = os.path.join(main.paths.modules, name)
+        self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
 
     def fetch_modules(self):
-        mods = [m for m in os.listdir(self.path) if isdir(os.path.join(self.path, m))]
-        # pop inexistent modules
-        [self.mods.pop(m) for m in self.mods if m not in mods]
-
-        if not mods:
+        mods_in_path = get_folders(self.path)
+        if not mods_in_path:
             log.debug('No modules in module source: %s' % self.path)
+        self.mod_count = len(mods_in_path)
+
+        if not self.enabled:
+            self.mods = {}
+
+        # pop inexistent modules
+        [self.mods.pop(m) for m in self.mods if m not in mods_in_path]
 
         # add new ones
-        for modname in mods:
+        for modname in mods_in_path:
             if modname not in self.mods:
                 self.mods[modname] = Mod(self, modname)
 
@@ -56,6 +80,30 @@ class ModSource(object):
     @config.setter
     def config(self, data):
         a2core.json_write(self.config_file, data)
+
+    @property
+    def enabled(self):
+        state, enabled_mods = self.a2.enabled.get(self.name, (False, []))
+        self.enabled_count = len(enabled_mods)
+        return state
+
+    @enabled.setter
+    def enabled(self, state):
+        current = self.a2.enabled
+        print('current: %s' % str(current))
+        current_state, enabled_mods = current.get(self.name, (False, []))
+        if current_state != state:
+            if not state and enabled_mods == [] and self.name in current:
+                current.pop(self.name)
+            else:
+                current[self.name] = (state, enabled_mods)
+            print('current: %s' % current)
+            self.a2.enabled = current
+
+    def toggle(self, state=None):
+        if state is None:
+            state = not self.enabled
+        self.enabled = state
 
 
 class Mod(object):
@@ -77,7 +125,6 @@ class Mod(object):
         # gather files from module path in local list
         self.source = source
         self.name = modname
-        global a2
         self.a2 = a2core.A2Obj.inst()
         self.path = os.path.join(self.a2.paths.modules, modname)
         self._config = None
@@ -178,7 +225,7 @@ class Mod(object):
     @property
     def files(self):
         """never shale, always browses path for files"""
-        return os.listdir(self.path)
+        return get_folders(self.path)
 
     @property
     def enabled(self):
@@ -248,6 +295,14 @@ class Mod(object):
     def help(self):
         docs_url = self.config[0].get('url')
         a2core.surfTo(docs_url)
+
+
+def get_files(path):
+    return [f for f in os.listdir(path) if isfile(os.path.join(path, f))]
+
+
+def get_folders(path):
+    return [f for f in os.listdir(path) if isdir(os.path.join(path, f))]
 
 
 if __name__ == '__main__':

@@ -70,15 +70,7 @@ class A2Obj(object):
             'module_source2' ...
             }
         """
-        modsources = os.listdir(self.paths.modules)
-        # get rid of inexistent module sources
-        [self.module_sources.pop(m) for m in self.module_sources if m not in modsources]
-
-        for name in modsources:
-            if name not in self.module_sources:
-                self.module_sources[name] = a2mod.ModSource(self, name)
-            self.module_sources[name].fetch_modules()
-        return self.module_sources
+        a2mod.get_module_sources(self, self.paths.modules, self.module_sources)
 
     def get_used_scopes(self):
         """
@@ -120,6 +112,7 @@ class A2Obj(object):
     def enabled(self):
         if self._enabled is None:
             self._enabled = self.db.get('enabled') or {}
+            print('self._enabled: %s' % type(self._enabled))
         return self._enabled
 
     @enabled.setter
@@ -315,9 +308,8 @@ def _dbCleanup():
         if table == 'a2':
             a2.db.pop('aValue')
             enabled = a2.db.get('enabled', asjson=False)
-            if not enabled.startswith('["'):
-                enabled = enabled.split('|')
-                a2.db.set('enabled', enabled)
+            if not enabled.startswith('{'):
+                a2.db.set('enabled', {})
             continue
 
         includes = a2.db.get('includes', table, asjson=False)

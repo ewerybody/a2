@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>558</height>
+    <width>925</width>
+    <height>966</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -112,20 +112,34 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="add_source_button">
-        <property name="maximumSize">
-         <size>
-          <width>75</width>
-          <height>16777215</height>
-         </size>
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+        <property name="topMargin">
+         <number>0</number>
         </property>
-        <property name="styleSheet">
-         <string notr="true">QPushButton {background-color:#37ED95}</string>
-        </property>
-        <property name="text">
-         <string>Add Source</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="QPushButton" name="add_source_button">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {background-color:#37ED95}</string>
+          </property>
+          <property name="text">
+           <string>Add Source</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

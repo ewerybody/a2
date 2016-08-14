@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Fri Aug 12 14:41:41 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sun Aug 14 11:48:09 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(556, 558)
+        a2settings.resize(925, 966)
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -57,11 +57,16 @@ class Ui_a2settings(object):
         self.no_sources_msg.setWordWrap(True)
         self.no_sources_msg.setObjectName("no_sources_msg")
         self.mod_source_box_layout.addWidget(self.no_sources_msg)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.add_source_button = QtGui.QPushButton(self.groupBox)
-        self.add_source_button.setMaximumSize(QtCore.QSize(75, 16777215))
         self.add_source_button.setStyleSheet("QPushButton {background-color:#37ED95}")
         self.add_source_button.setObjectName("add_source_button")
-        self.mod_source_box_layout.addWidget(self.add_source_button)
+        self.horizontalLayout.addWidget(self.add_source_button)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.mod_source_box_layout.addLayout(self.horizontalLayout)
         self.verticalLayout_2.addWidget(self.groupBox)
         self.dev_box = QtGui.QGroupBox(a2settings)
         self.dev_box.setCheckable(True)
@@ -110,8 +115,8 @@ class Ui_a2settings(object):
         self.formLayout_2.setWidget(5, QtGui.QFormLayout.FieldRole, self.debug_checkbox)
         self.verticalLayout_3.addWidget(self.dev_widget)
         self.verticalLayout_2.addWidget(self.dev_box)
-        spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_2.addItem(spacerItem1)
 
         self.retranslateUi(a2settings)
         QtCore.QMetaObject.connectSlotsByName(a2settings)
@@ -133,5 +138,5 @@ class Ui_a2settings(object):
         self.label_8.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Executable:", None, QtGui.QApplication.UnicodeUTF8))
         self.debug_checkbox.setText(QtGui.QApplication.translate("a2settings", "LogLevel:DEBUG", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.path_field import PathField
 from a2ctrl.hotkey import HotKey
+from a2ctrl.path_field import PathField
