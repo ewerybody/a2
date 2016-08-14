@@ -39,14 +39,14 @@ def main():
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
 
     a2win = init_a2_win(app)
-    #TODO: remove this:
-    a2core._dbCleanup()
 
     exit(app.exec_())
 
 
 def init_a2_win(app):
     a2 = a2core.A2Obj.inst()
+    #TODO: remove this:
+    a2core._dbCleanup()
     a2.start_up()
 
     a2win = a2ui.A2Window(app=app)
