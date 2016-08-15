@@ -127,7 +127,7 @@ class Mod(object):
         self.source = source
         self.name = modname
         self.a2 = a2core.A2Obj.inst()
-        self.path = os.path.join(self.a2.paths.modules, modname)
+        self.path = os.path.join(self.source.path, modname)
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
@@ -246,11 +246,15 @@ class Mod(object):
                 current.setdefault(self.source.name, []).append(self.name)
                 self.a2.enabled = current
         else:
+            change = False
             if self.name in current.get(self.source.name, []):
                 current.remove(self.name)
+                change = True
             if current.get(self.source.name) == []:
                 del current[self.source.name]
-            self.a2.enabled = current
+                change = True
+            if change:
+                self.a2.enabled = current
         print('enabled: %s: %s' % (self.name, state))
         pprint(current)
 

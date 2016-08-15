@@ -26,6 +26,9 @@ class ModuleView(QtGui.QWidget):
         self.editing = False
         self.controls = []
         self.a2 = a2core.A2Obj.inst()
+        # since the view can only display one module at a time
+        # this is set to the module on change
+        self.mod = None
 
     def setup_ui(self, main):
         self.main = main
@@ -48,7 +51,7 @@ class ModuleView(QtGui.QWidget):
         self.ui.modAuthor.setText('')
 
         self.ui.modCheck.clicked.connect(self.main.mod_enable)
-        self.ui.modInfoButton.clicked.connect(self.main.modInfo)
+        self.ui.modInfoButton.clicked.connect(self.mod_info)
 
         self.ui.editOKButton.released.connect(self.main.editSubmit)
         self.ui.editCancelButton.released.connect(self.draw_mod)
@@ -63,9 +66,8 @@ class ModuleView(QtGui.QWidget):
         """
         self.controls = []
 
-        print('draw_mod main.selected: %s' % self.main.selected)
-
         if self.main.selected == []:
+            self.mod = None
             self.controls.append(a2ctrl.a2settings.A2Settings(self.main))
             config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
         else:
@@ -73,14 +75,18 @@ class ModuleView(QtGui.QWidget):
                 config = [{'typ': 'nfo', 'author': '', 'version': '',
                            'description': 'Multiple modules selected. Here goes some '
                                           'useful info in the future...'}]
+                self.mod = None
             else:
-                config = self.main.selected[0].config
+                self.mod = self.main.selected[0]
+                print('self.mod.name: %s' % self.mod.name)
+                config = self.mod.config
+                print('config: %s' % config)
 
             self.main.tempConfig = None
 
         if len(config):
             if config[0].get('typ') != 'nfo':
-                log.error('First element of config is not typ nfo! %s' % self.main.selected[0].name)
+                log.error('First element of config is not typ nfo! %s' % self.mod.name)
         else:
             config = [{'typ': 'nfo', 'author': '', 'version': '',
                        'description': 'Module Config is currently empty! imagine awesome layout here ...'}]
@@ -88,12 +94,60 @@ class ModuleView(QtGui.QWidget):
         self.ui.modAuthor.setText(config[0].get('author', ''))
         self.ui.modVersion.setText(config[0].get('version', ''))
 
-        mod = None if not self.main.selected else self.main.selected[0]
         for cfg in config:
-            self.controls.append(a2ctrl.draw(self, cfg, mod))
+            self.controls.append(a2ctrl.draw(self, cfg, self.mod))
 
         self.toggle_edit(False)
         self.drawUI()
+
+    def mod_select(self):
+        """
+        Updates the module settings view to the right of the UI
+        when something different is elected in the module list
+        """
+        if self._draw_phase:
+            return
+
+        sel = self.ui.modList.selectedItems()
+        numsel = len(sel)
+        self.ui.modCheck.setTristate(False)
+
+        if not numsel:
+            self.ui.modCheck.setVisible(False)
+            self.mod = None
+            self.selected_mod = []
+            self.ui.modName.setText('a2')
+
+        elif numsel == 1:
+            name = sel[0].text()
+            # break if sel == previous sel
+            if name in self.selected_mod and len(self.selected_mod) == 1 and force is False:
+                return
+            self.ui.modCheck.setVisible(True)
+            self.ui.modName.setText(name)
+            enabled = name in self.a2.enabled
+            # weird.. need to set false first to fix tristate effect
+            self.ui.modCheck.setChecked(False)
+            self.ui.modCheck.setChecked(enabled)
+
+            self.mod = self.a2.modules[name]
+            self.selected_mod = [name]
+
+        else:
+            names = [s.text() for s in sel]
+            self.selected_mod = names
+            self.ui.modCheck.setVisible(True)
+            self.ui.modName.setText('%i modules' % numsel)
+            numenabled = len([n for n in names if n in self.a2.enabled])
+            if numenabled == 0:
+                self.ui.modCheck.setChecked(False)
+            elif numenabled == numsel:
+                self.ui.modCheck.setChecked(True)
+            else:
+                self.ui.modCheck.setTristate(True)
+                self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
+
+        self.drawMod()
 
     def edit_mod(self, keep_scroll=False):
         """
@@ -105,19 +159,18 @@ class ModuleView(QtGui.QWidget):
         """
         if len(self.main.selected) != 1 or self.main.selected[0] == 'a2':
             return
-
-        mod = self.main.selected[0]
+        self.mod = self.main.selected[0]
 
         self.controls = []
         if self.main.tempConfig is None:
-            self.main.tempConfig = deepcopy(mod.config)
+            self.main.tempConfig = deepcopy(self.mod.config)
 
         #if not mod.config: is None or mod.config is []
-        if not len(self.tempConfig):
+        if not len(self.main.tempConfig):
             newNfo = {'typ': 'nfo',
                       'description': 'Because none existed before this temporary description was '
                                      'created for "%s". Change it to describe what it does with a '
-                                     'couple of words.' % mod.name,
+                                     'couple of words.' % self.mod.name,
                       'author': a2core.get_author(),
                       'version': '0.1',
                       'date': a2core.get_date()}
@@ -189,3 +242,12 @@ class ModuleView(QtGui.QWidget):
             button.setEnabled(state)
             button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
             self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
+
+    def mod_info(self):
+        """
+        Open help of the selected module or a2 help
+        """
+        if self.mod is None:
+            a2core.surfTo(self.a2.urls.help)
+        else:
+            self.mod.help()

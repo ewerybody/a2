@@ -37,7 +37,7 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread = None
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
-        self.setup_ui()
+        self._setup_ui()
         self.ui.module_list.draw_modules()
         self.ui.module_list.selection_changed.connect(self.module_selected)
 
@@ -59,10 +59,9 @@ class A2Window(QtGui.QMainWindow):
 
     def module_selected(self, module_list):
         self.selected = module_list
-        print('module_selected: %s' % module_list)
         self.ui.module_view.draw_mod()
 
-    def setup_ui(self):
+    def _setup_ui(self):
         if self.dev_mode:
             a2ctrl.check_ui_module(a2design_ui)
             a2ctrl.check_all_ui()
@@ -73,6 +72,13 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui.module_view.setup_ui(self)
 
+        self._setup_actions()
+        self._setup_shortcuts()
+
+        self.toggle_dev_menu()
+        self.setWindowIcon(a2ctrl.Icons.inst().a2)
+
+    def _setup_actions(self):
         self.ui.actionEdit_module.triggered.connect(self.edit_mod)
         self.ui.actionEdit_module.setShortcut("Ctrl+E")
         self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
@@ -84,18 +90,16 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionNew_module.triggered.connect(self.newModule)
-        self.ui.actionA2_settings.triggered.connect(partial(self.select_mod, None))
+        self.ui.actionA2_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
-        self.ui.actionDev_settings.triggered.connect(partial(self.select_mod, None))
+        self.ui.actionDev_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
         self.ui.actionExit_a2.triggered.connect(self.close)
 
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
-
-        #self.ui.modList.itemSelectionChanged.connect(self.mod_select)
-
         self.restoreA2ui()
 
+    def _setup_shortcuts(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.escape)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
@@ -111,9 +115,6 @@ class A2Window(QtGui.QMainWindow):
                         partial(self.scroll_to, True))
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.module_view.ui.scrollArea,
                         partial(self.scroll_to, False))
-
-        self.toggle_dev_menu()
-        self.setWindowIcon(a2ctrl.Icons.inst().a2)
 
     def edit_mod(self):
         if len(self.selected) == 1:
@@ -132,90 +133,12 @@ class A2Window(QtGui.QMainWindow):
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
 
-    def draw_mod_list(self, select=None, refresh=False):
-        """
-        Fills/refills the left module list with according entries
-        TODO: connect with tag selection and search
-
-        :param str select: to select a certain entry, by default re-selects last entry
-        """
-        self._draw_phase = True
-
-        if refresh:
-            self.a2.fetch_modules()
-
-        if select is None:
-            select = a2ctrl.qlist.get_selected_as_text(self.ui.modList)
-        allMods = sorted(self.a2.modules.keys(), key=lambda s: s.lower())
-        self.ui.modList.clear()
-        self.ui.modList.insertItems(0, allMods)
-
-        if select:
-            self.select_mod(select)
-
-        self._draw_phase = False
-
-        if refresh:
-            self.mod_select(force=True)
-
     def select_mod(self, modName):
         """
         to select 1 or more given modulenames in the list
         and update Ui accordingly
         """
         a2ctrl.qlist.select_items(self.ui.modList, modName)
-
-    def mod_select(self, force=False):
-        """
-        Updates the module settings view to the right of the UI
-        when something different is elected in the module list
-        """
-        if self._draw_phase:
-            return
-
-        sel = self.ui.modList.selectedItems()
-        numsel = len(sel)
-        self.ui.modCheck.setTristate(False)
-
-        if not numsel:
-            self.ui.modCheck.setVisible(False)
-            self.mod = None
-            self.selected_mod = []
-            self.ui.modName.setText('a2')
-
-        elif numsel == 1:
-            name = sel[0].text()
-            # break if sel == previous sel
-            if name in self.selected_mod and len(self.selected_mod) == 1 and force is False:
-                return
-            self.ui.modCheck.setVisible(True)
-            self.ui.modName.setText(name)
-            enabled = name in self.a2.enabled
-            # weird.. need to set false first to fix tristate effect
-            self.ui.modCheck.setChecked(False)
-            self.ui.modCheck.setChecked(enabled)
-
-            self.mod = self.a2.modules[name]
-            self.selected_mod = [name]
-
-        else:
-            names = [s.text() for s in sel]
-            self.selected_mod = names
-            self.ui.modCheck.setVisible(True)
-            self.ui.modName.setText('%i modules' % numsel)
-            numenabled = len([n for n in names if n in self.a2.enabled])
-            if numenabled == 0:
-                self.ui.modCheck.setChecked(False)
-            elif numenabled == numsel:
-                self.ui.modCheck.setChecked(True)
-            else:
-                self.ui.modCheck.setTristate(True)
-                self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
-
-        self.drawMod()
-
-
-
 
     def editSubmit(self):
         """
@@ -236,20 +159,19 @@ class A2Window(QtGui.QMainWindow):
         """
         Handles the module checkbox to enable/disable one or multiple modules
         """
-        enabled_mods = self.a2.enabled
-        checked = self.ui.modCheck.isChecked()
-        if self.ui.modCheck.isTristate() or not checked:
-            for mod in self.selected_mod:
-                if mod in enabled_mods:
-                    enabled_mods.remove(mod)
+        check_box = self.ui.module_view.ui.modCheck
+        checked = check_box.isChecked()
+        if check_box.isTristate() or not checked:
+            for mod in self.selected:
+                mod.enabled = False
             checked = False
         else:
-            enabled_mods += self.selected_mod
+            for mod in self.selected:
+                mod.enabled = True
             checked = True
 
-        self.a2.enabled = enabled_mods
-        self.ui.modCheck.setTristate(False)
-        self.ui.modCheck.setChecked(checked)
+        check_box.setTristate(False)
+        check_box.setChecked(checked)
         self.settings_changed()
 
     def modDisableAll(self):
@@ -257,22 +179,13 @@ class A2Window(QtGui.QMainWindow):
         self.mod_select(force=True)
         self.settings_changed()
 
-    def modInfo(self):
-        """
-        Open help of the selected module or a2 help
-        """
-        if len(self.selected) != 1:
-            a2core.surfTo(self.a2.urls.help)
-        else:
-            self.mod.help()
-
     def settings_changed(self, specific=None, refresh_ui=False):
         if self._restart_thread is not None:
             self._restart_thread.quit()
 
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
-        self.draw_mod_list(refresh=refresh_ui)
+        self.ui.module_list.draw_modules()
 
         a2core.write_includes(specific)
 
@@ -316,7 +229,8 @@ class A2Window(QtGui.QMainWindow):
             self.ui.splitter.setSizes(winprefs['splitter'])
 
     def newModule(self):
-        a2ctrl.InputDialog(self, 'New Module', self.newModuleCreate, self.newModuleCheck,
+        # TODO: Move new module functionality to a2mod
+        a2ctrl.InputDialog(self, 'New Module', self.new_module_create, self.newModuleCheck,
                            msg='Name the new module:', text='newModule')
 
     def newModuleCheck(self, name):
@@ -337,17 +251,18 @@ class A2Window(QtGui.QMainWindow):
             return 'Come one have at least 1 letter in the name!'
         return True
 
-    def newModuleCreate(self, name):
-        if not self.newModuleCheck(name):
-            return
-        if not os.access(self.a2.paths.modules, os.W_OK):
-            log.error('A2 module directory not writable! %s' % self.a2.paths.modules)
-            return
-
-        os.mkdir(join(self.a2.paths.modules, name))
-        self.a2.fetch_modules()
-        self.draw_mod_list(select=name)
-        self.mod_select(force=True)
+    def new_module_create(self, name):
+        raise NotImplementedError('TBD!')
+#        if not self.newModuleCheck(name):
+#            return
+#        if not os.access(self.a2.paths.modules, os.W_OK):
+#            log.error('A2 module directory not writable! %s' % self.a2.paths.modules)
+#            return
+#
+#        os.mkdir(join(self.a2.paths.modules, name))
+#        self.a2.fetch_modules()
+#        self.draw_mod_list(select=name)
+#        self.mod_select(force=True)
 
     def showRaise(self):
         self.show()
