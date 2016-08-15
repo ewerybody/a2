@@ -1,21 +1,20 @@
 *.pyc
+*.lnk
 /ui/qtuiscripts
 /ui/_dump
-/ui/__pycache__
 /ui/.idea
-/settings
-/modules
-a2_init.ahk
-a2_settings.ahk
-/ui/designer - Shortcut.lnk
 /ui/a2ui
 lib/SQLiteSpy
-_config_backups
 
 .project
 .settings/org.eclipse.core.resources.prefs
 .pydevproject
-ui/a2ui.spec
 desktop.ini
 GitHub.appref-ms
-ui/PySide examples.lnk
+ui/res/_intermediate/
+
+_config_backups
+/settings
+/modules
+a2_init.ahk
+a2_settings.ahk
