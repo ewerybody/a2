@@ -155,12 +155,11 @@ class A2Window(QtGui.QMainWindow):
             self.settings_changed()
         self.drawMod()
 
-    def mod_enable(self):
+    def mod_enable(self, checked=None):
         """
         Handles the module checkbox to enable/disable one or multiple modules
         """
         check_box = self.ui.module_view.ui.modCheck
-        checked = check_box.isChecked()
         if check_box.isTristate() or not checked:
             for mod in self.selected:
                 mod.enabled = False
