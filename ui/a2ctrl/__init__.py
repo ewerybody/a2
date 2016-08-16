@@ -387,7 +387,8 @@ class EditInclude(EditCtrl):
         self.button.setText(name)
 
     def editScript(self):
-        subprocess.Popen([self.main.scriptEditor, join(self.main.mod.path, self.cfg['file'])])
+        if len(self.main.selected) == 1:
+            subprocess.Popen([self.main.scriptEditor, join(self.main.selected[0].path, self.cfg['file'])])
 
 
 class InputDialog(QtGui.QDialog):
