@@ -35,7 +35,6 @@ class ModuleView(QtGui.QWidget):
         self.ui = a2module_view_ui.Ui_ModuleView()
         self.ui.setupUi(self)
 
-        #self.setLayout(self.ui.module_list_layout)
         self.ui.scrollArea.setFont(a2ctrl.fontL)
         self.ui.scrollBar = self.ui.scrollArea.verticalScrollBar()
 
@@ -45,12 +44,7 @@ class ModuleView(QtGui.QWidget):
         self.mainlayout.addItem(self.ui.spacer)
         self.settings_widget = self.ui.scrollAreaContents
 
-        self.ui.modCheck.setVisible(False)
-        self.ui.modName.setText('a2')
-        self.ui.modVersion.setText('v0.1')
-        self.ui.modAuthor.setText('')
-
-        self.ui.modCheck.clicked.connect(self.main.mod_enable)
+        self.ui.modCheck.clicked[bool].connect(self.main.mod_enable)
         self.ui.modInfoButton.clicked.connect(self.mod_info)
 
         self.ui.editOKButton.released.connect(self.main.editSubmit)
@@ -80,7 +74,6 @@ class ModuleView(QtGui.QWidget):
                 self.mod = self.main.selected[0]
                 print('self.mod.name: %s' % self.mod.name)
                 config = self.mod.config
-                print('config: %s' % config)
 
             self.main.tempConfig = None
 
@@ -93,52 +86,42 @@ class ModuleView(QtGui.QWidget):
 
         self.ui.modAuthor.setText(config[0].get('author', ''))
         self.ui.modVersion.setText(config[0].get('version', ''))
+        self.update_header()
 
         for cfg in config:
-            self.controls.append(a2ctrl.draw(self, cfg, self.mod))
+            self.controls.append(a2ctrl.draw(self.main, cfg, self.mod))
 
         self.toggle_edit(False)
         self.drawUI()
 
-    def mod_select(self):
+    def update_header(self):
         """
         Updates the module settings view to the right of the UI
         when something different is elected in the module list
         """
-        if self._draw_phase:
-            return
-
-        sel = self.ui.modList.selectedItems()
-        numsel = len(sel)
+        numsel = len(self.main.selected)
         self.ui.modCheck.setTristate(False)
 
         if not numsel:
             self.ui.modCheck.setVisible(False)
             self.mod = None
-            self.selected_mod = []
             self.ui.modName.setText('a2')
 
         elif numsel == 1:
-            name = sel[0].text()
-            # break if sel == previous sel
-            if name in self.selected_mod and len(self.selected_mod) == 1 and force is False:
-                return
+            self.mod = self.main.selected[0]
             self.ui.modCheck.setVisible(True)
-            self.ui.modName.setText(name)
-            enabled = name in self.a2.enabled
+            self.ui.modName.setText(self.mod.name)
             # weird.. need to set false first to fix tristate effect
             self.ui.modCheck.setChecked(False)
-            self.ui.modCheck.setChecked(enabled)
-
-            self.mod = self.a2.modules[name]
-            self.selected_mod = [name]
+            self.ui.modCheck.setChecked(self.mod.enabled)
 
         else:
-            names = [s.text() for s in sel]
-            self.selected_mod = names
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText('%i modules' % numsel)
-            numenabled = len([n for n in names if n in self.a2.enabled])
+            numenabled = 0
+            for mod in self.main.selected:
+                if mod.enabled:
+                    numenabled += 1
             if numenabled == 0:
                 self.ui.modCheck.setChecked(False)
             elif numenabled == numsel:
@@ -146,8 +129,6 @@ class ModuleView(QtGui.QWidget):
             else:
                 self.ui.modCheck.setTristate(True)
                 self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
-
-        self.drawMod()
 
     def edit_mod(self, keep_scroll=False):
         """
@@ -177,7 +158,7 @@ class ModuleView(QtGui.QWidget):
             self.main.tempConfig.insert(0, newNfo)
 
         for cfg in self.main.tempConfig:
-            self.controls.append(a2ctrl.edit(cfg, self, self.main.tempConfig))
+            self.controls.append(a2ctrl.edit(cfg, self.main, self.main.tempConfig))
 
         editSelect = a2ctrl.EditAddElem(self, self.main.tempConfig)
         self.controls.append(editSelect)

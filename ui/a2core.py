@@ -13,12 +13,13 @@ import time
 import string
 import logging
 import webbrowser
-from os.path import exists, join, dirname, abspath
+from os.path import exists, join, dirname, abspath, relpath
 
 import ahk
 import a2db
 import a2mod
 import json
+from test._test_multiprocessing import TimingWrapper
 
 
 logging.basicConfig()
@@ -208,49 +209,57 @@ def write_includes(specific=None):
                                             ['tt', 'functions', 'Explorer_Get']]
 
     # browse the enabled modules to collect the include data
-    modSettings = a2.db.tables()
-    for modname in a2.db.get('enabled') or []:
-        if modname not in modSettings:
-            a2.modules[modname].change()
+    mod_settings = a2.db.tables()
+    mod_path = relpath(a2.paths.modules, a2.paths.a2)
+    for source_name, data in a2.enabled.items():
+        source_enabled, enabled_modules = data
+        if not source_enabled:
+            return
 
-        includes = a2.db.get('includes', modname)
+        source = a2.module_sources[source_name]
+        for modname in enabled_modules:
+            module = source.mods[modname]
+            if modname not in mod_settings:
+                module.change()
 
-        if not isinstance(includes, list):
-            log.warn('includes not a list: %s' % includes)
-            includes = [includes]
+            includes = a2.db.get('includes', module.key) or []
 
-        includeAhk += ['#include modules\%s\%s'
-                       % (modname, i) for i in includes]
+            if not isinstance(includes, list):
+                log.warn('includes not a list: %s' % includes)
+                includes = [includes]
 
-        hotkeys = a2.db.get('hotkeys', modname)
-        for typ in hotkeys:
-            for hk in hotkeys.get(typ) or []:
-                # type 0 is global, append under the #IfWinActive label
-                if typ == '0':
-                    hkstring = ahk.translateHotkey(hk[0]) + '::' + hk[1]
-                    hotkeysAhk[hkmode['1']].append(hkstring)
-                # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
+            includeAhk += ['#include %s\%s\%s\%s'
+                           % (mod_path, source.name, modname, i) for i in includes]
+
+            hotkeys = a2.db.get('hotkeys', module.key) or {}
+            for typ in hotkeys:
+                for hk in hotkeys.get(typ) or []:
+                    # type 0 is global, append under the #IfWinActive label
+                    if typ == '0':
+                        hkstring = ahk.translateHotkey(hk[0]) + '::' + hk[1]
+                        hotkeysAhk[hkmode['1']].append(hkstring)
+                    # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
+                    else:
+                        hkstring = ahk.translateHotkey(hk[1]) + '::' + hk[2]
+                        for scopeStr in hk[0]:
+                            scopeKey = '%s %s' % (hkmode[typ], scopeStr)
+                            if scopeKey not in hotkeysAhk:
+                                hotkeysAhk[scopeKey] = []
+                            hotkeysAhk[scopeKey].append(hkstring)
+
+            for var_name, value in (a2.db.get('variables', module.key) or {}).items():
+                if isinstance(value, bool):
+                    variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
+                elif isinstance(value, str):
+                    variablesAhk.append('%s := "%s"' % (var_name, value))
+                elif isinstance(value, float):
+                    variablesAhk.append('%s := %f' % (var_name, value))
+                elif isinstance(value, int):
+                    variablesAhk.append('%s := %i' % (var_name, value))
                 else:
-                    hkstring = ahk.translateHotkey(hk[1]) + '::' + hk[2]
-                    for scopeStr in hk[0]:
-                        scopeKey = '%s %s' % (hkmode[typ], scopeStr)
-                        if scopeKey not in hotkeysAhk:
-                            hotkeysAhk[scopeKey] = []
-                        hotkeysAhk[scopeKey].append(hkstring)
-
-        for var_name, value in (a2.db.get('variables', modname) or {}).items():
-            if isinstance(value, bool):
-                variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
-            elif isinstance(value, str):
-                variablesAhk.append('%s := "%s"' % (var_name, value))
-            elif isinstance(value, float):
-                variablesAhk.append('%s := %f' % (var_name, value))
-            elif isinstance(value, int):
-                variablesAhk.append('%s := %i' % (var_name, value))
-            else:
-                log.error('Please check handling variable type "%s" (%s: %s)'
-                          % (type(value), var_name, str(value)))
-                variablesAhk.append('%s := %s' % (var_name, str(value)))
+                    log.error('Please check handling variable type "%s" (%s: %s)'
+                              % (type(value), var_name, str(value)))
+                    variablesAhk.append('%s := %s' % (var_name, str(value)))
 
     # write all the include files
     with open(join(a2.paths.settings, 'variables.ahk'), 'w') as fobj:
@@ -310,6 +319,26 @@ def _dbCleanup():
             enabled = a2.db.get('enabled', asjson=False)
             if not enabled.startswith('{'):
                 a2.db.set('enabled', {})
+            else:
+                enabled = a2.db.get('enabled')
+                write = False
+                for name, data in enabled.items():
+                    if not isinstance(data, list) or not data:
+                        log.error('Bad data: %s: "%s"' % (name, data))
+                        enabled[name] = [False, []]
+                        write = True
+                    if not isinstance(data[0], bool):
+                        enabled[name] = [False] + data[1:]
+                        write = True
+                    if not isinstance(data[1], list):
+                        enabled[name] = data[0] + [[]]
+                        write = True
+                    if len(data) > 2:
+                        log.error('Too much data: %s: "%s"' % (name, data))
+                        enabled[name] = data[:2]
+                        write = True
+                if write:
+                    a2.db.set('enabled', enabled)
             continue
 
         includes = a2.db.get('includes', table, asjson=False)

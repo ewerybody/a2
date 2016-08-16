@@ -236,27 +236,22 @@ class Mod(object):
 
     @property
     def enabled(self):
-        return self.name in self.a2.enabled.get(self.source.name, [])
+        current = self.a2.enabled
+        _, enabled_mods = current.get(self.source.name, [False, []])
+        return self.name in enabled_mods
 
     @enabled.setter
     def enabled(self, state):
         current = self.a2.enabled
-        if state:
-            if self.name not in current.get(self.source.name, []):
-                current.setdefault(self.source.name, []).append(self.name)
-                self.a2.enabled = current
-        else:
-            change = False
-            if self.name in current.get(self.source.name, []):
-                current.remove(self.name)
-                change = True
-            if current.get(self.source.name) == []:
-                del current[self.source.name]
-                change = True
-            if change:
-                self.a2.enabled = current
-        print('enabled: %s: %s' % (self.name, state))
-        pprint(current)
+        source_state, enabled_mods = current.get(self.source.name, [False, []])
+        if state and self.name not in enabled_mods:
+            enabled_mods.append(self.name)
+            current[self.source.name] = [source_state, enabled_mods]
+            self.a2.enabled = current
+        elif self.name in enabled_mods:
+            enabled_mods.remove(self.name)
+            current[self.source.name] = [source_state, enabled_mods]
+            self.a2.enabled = current
 
     def createScript(self, scriptName=None):
         if not scriptName:
