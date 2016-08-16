@@ -12,8 +12,8 @@ log.setLevel(logging.DEBUG)
 a2setdir = abspath(join('..', '..', 'settings', 'a2.db'))
 log.debug('\n a2setdir: %s\n exists: %s' % (a2setdir, exists(a2setdir)))
 
-import a2dblib
-db = a2dblib.A2db(a2setdir)
+import a2db
+db = a2db.A2db(a2setdir)
 
 log.info('db members:\n\t%s' % [d for d in dir(db) if not d.startswith('_')])
 testTable = 'TEST table'
@@ -47,10 +47,10 @@ log.info('d: %s' % d)
 db.set('jsonTest', d, testTable)
 x = db.get('jsonTest', testTable)
 log.info('x: %s' % x)
-dx = json.loads(x)
+dx = json.dumps(x)
 log.info('dx: %s' % dx)
 log.info('dx == d: %s' % (dx == d))
-dd = db.getd('jsonTest', testTable)
+dd = db.get('jsonTest', testTable)
 log.info('d == dd: %s' % (d == dd))
 
 log.info('\ndeleting values ".pop" %s' % ('.' * 40))
@@ -65,5 +65,5 @@ log.debug('testTable: "%s" Deleted: %s' % (testTable, testTable not in db.tables
 
 db.dropTable('a3')
 
-#db.all()
+db.all()
 log.info('a2dbtest finished!')
