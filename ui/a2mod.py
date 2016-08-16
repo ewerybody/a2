@@ -299,8 +299,10 @@ class Mod(object):
         self.a2.db.set(sub_cfg['name'], user_cfg, self.key)
 
     def help(self):
-        docs_url = self.config[0].get('url')
-        a2core.surfTo(docs_url)
+        try:
+            a2core.surfTo(self.config[0].get('url'))
+        except Exception as error:
+            log.error('Error calling help() on module: %s\n:%s' % (self.name, error))
 
 
 def get_files(path):
