@@ -38,6 +38,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self._setup_ui()
+
         self.ui.module_list.draw_modules()
         self.ui.module_list.selection_changed.connect(self.module_selected)
 
@@ -46,10 +47,9 @@ class A2Window(QtGui.QMainWindow):
         self.edit_clipboard = []
         self.tempConfig = None
         self.selected = []
+        self.mod = None
         self.scopes = {}
 
-        # as we don't want to draw the ui more than once, we make sure
-        # selecting does not trigger draw already
         init_selection = []
         if self.a2.db.get('remember_last') or False:
             init_selection = self.a2.db.get('last_selected') or []
@@ -59,6 +59,11 @@ class A2Window(QtGui.QMainWindow):
 
     def module_selected(self, module_list):
         self.selected = module_list
+        self.num_selected = len(module_list)
+        if self.num_selected == 1:
+            self.mod = module_list[0]
+        else:
+            self.mod = None
         self.ui.module_view.draw_mod()
 
     def _setup_ui(self):
@@ -103,11 +108,11 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.escape)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
-                        self, self.editSubmit)
+                        self, self.edit_submit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
-                        self, self.editSubmit)
+                        self, self.edit_submit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
-                        self, self.editSubmit)
+                        self, self.edit_submit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
                         partial(self.settings_changed, refresh_ui=True))
 
@@ -133,14 +138,7 @@ class A2Window(QtGui.QMainWindow):
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
 
-    def select_mod(self, modName):
-        """
-        to select 1 or more given modulenames in the list
-        and update Ui accordingly
-        """
-        a2ctrl.qlist.select_items(self.ui.modList, modName)
-
-    def editSubmit(self):
+    def edit_submit(self):
         """
         Calls the mod to write the tempConfig to disc.
         If it's enabled only trigger settingsChanged when
