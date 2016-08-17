@@ -1,20 +1,21 @@
-*.pyc
-*.lnk
-/ui/qtuiscripts
-/ui/_dump
-/ui/.idea
-/ui/a2ui
-lib/SQLiteSpy
-
-.project
-.settings/org.eclipse.core.resources.prefs
-.pydevproject
-desktop.ini
-GitHub.appref-ms
-ui/res/_intermediate/
-
-_config_backups
-/settings
-/modules
+# a2 userfiles
+settings/
+modules/
 a2_init.ahk
 a2_settings.ahk
+
+# Compiled python files
+*.py[co]
+
+# Exclude all starting with . or _
+_*
+.*
+
+# Include certain .somethings
+!.editorconfig
+!.github/
+
+# Windows files
+desktop.ini
+thumbs.db
+*.lnk
