@@ -63,7 +63,6 @@ uiScale = 1
 UI_FILE_SUFFIX = '_ui'
 
 
-
 class UIValues(object):
     spacing = 5
 
@@ -214,9 +213,6 @@ class EditNfo(QtGui.QGroupBox):
         self.cfg['date'] = self.date.value
         self.cfg['url'] = self.url.value
         return self.cfg
-
-
-
 
 
 class EditLine(QtGui.QWidget):
@@ -505,9 +501,6 @@ class BrowseScriptsMenu(QtGui.QMenu):
         self.func('include', name)
 
 
-
-
-
 def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
@@ -528,7 +521,6 @@ def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
                 value = default
 
     return value
-
 
 # deferred import of sub controls because they might use any part of this module
 import a2ctrl.check, a2ctrl.hotkey, a2ctrl.group, a2ctrl.string, a2ctrl.a2settings, a2ctrl.number

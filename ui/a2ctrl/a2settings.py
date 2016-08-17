@@ -9,7 +9,7 @@ import a2core
 import a2ctrl
 import logging
 from os.path import join, exists
-from PySide import QtGui
+from PySide import QtGui, QtCore
 from a2ctrl import a2settings_ui
 
 
@@ -27,7 +27,9 @@ class A2Settings(QtGui.QWidget):
         print('enabled_list: %s' % enabled_list)
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
-            self.ui.mod_source_layout.addWidget(ModSourceWidget(source, enabled_list))
+            modsourcewidget = ModSourceWidget(source, enabled_list)
+            modsourcewidget.toggled.connect(self.main.settings_changed)
+            self.ui.mod_source_layout.addWidget(modsourcewidget)
 
     def _setup_ui(self):
         self.ui = a2settings_ui.Ui_a2settings()
@@ -66,6 +68,8 @@ class A2Settings(QtGui.QWidget):
 
 
 class ModSourceWidget(QtGui.QWidget):
+    toggled = QtCore.Signal()
+
     def __init__(self, mod_source, enabled_list):
         super(ModSourceWidget, self).__init__()
         self.mod_source = mod_source
@@ -76,6 +80,7 @@ class ModSourceWidget(QtGui.QWidget):
         self.check.setChecked(mod_source.name in enabled_list)
         self.mainlayout.addWidget(self.check)
         self.check.clicked[bool].connect(mod_source.toggle)
+        self.check.clicked.connect(self.toggled.emit)
 
         self.mod_count = QtGui.QLabel('%i modules, %i enabled'
                                       % (mod_source.mod_count, mod_source.enabled_count,))
