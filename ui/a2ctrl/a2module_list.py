@@ -76,3 +76,16 @@ class ModuleList(QtGui.QWidget):
         self.ui.setupUi(self)
 
         self.setLayout(self.ui.module_list_layout)
+
+    def scroll_to(self, value):
+        # TODO: was this really necessary?
+#        if isinstance(value, bool):
+#            a2ctrl.qlist.deselect_all(self.ui.list_widget)
+#            if value:
+#                item = self.ui.list_widget.item(0)
+#            else:
+#                item = self.ui.list_widget.item(self.ui.list_widget.count() - 1)
+#            item.setSelected(True)
+#            self.ui.list_widget.setCurrentItem(item)
+#            self.ui.list_widget.scrollToItem(item)
+        pass

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Sun Aug 14 23:01:38 2016
+# Created: Thu Aug 18 00:53:46 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,10 +63,11 @@ class Ui_a2MainWindow(object):
         self.actionA2_settings.setObjectName("actionA2_settings")
         self.actionExit_a2 = QtGui.QAction(a2MainWindow)
         self.actionExit_a2.setObjectName("actionExit_a2")
+        self.actionRefresh_UI = QtGui.QAction(a2MainWindow)
+        self.actionRefresh_UI.setObjectName("actionRefresh_UI")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
         self.menuTests.addAction(self.actionTest_restorewin)
-        self.menuDev.addAction(self.actionNew_module)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)
         self.menuDev.addSeparator()
@@ -76,6 +77,7 @@ class Ui_a2MainWindow(object):
         self.menuDev.addAction(self.actionDev_settings)
         self.menuDev.addAction(self.actionExplore_to_a2_dir)
         self.menuMain.addAction(self.actionA2_settings)
+        self.menuMain.addAction(self.actionRefresh_UI)
         self.menuMain.addAction(self.actionExit_a2)
         self.menubar.addAction(self.menuMain.menuAction())
         self.menubar.addAction(self.menuDev.menuAction())
@@ -101,6 +103,7 @@ class Ui_a2MainWindow(object):
         self.actionNew_module.setText(QtGui.QApplication.translate("a2MainWindow", "New Module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionA2_settings.setText(QtGui.QApplication.translate("a2MainWindow", "a2 Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit_a2.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRefresh_UI.setText(QtGui.QApplication.translate("a2MainWindow", "Refresh UI", None, QtGui.QApplication.UnicodeUTF8))
 
 from a2ctrl.a2module_list import ModuleList
 from a2ctrl.a2module_view import ModuleView

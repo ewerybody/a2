@@ -217,3 +217,31 @@ class ModuleView(QtGui.QWidget):
             a2core.surfTo(self.a2.urls.help)
         else:
             self.main.mod.help()
+
+    def scroll_to(self):
+        # TODO:
+        #if self.ui.module_view.ui.scrollArea.hasFocus():
+        #print('self.ui.scrollArea.hasFocus(): %s' % self.ui.scrollArea.hasFocus())
+        #    current = self.ui.scrollBar.value()
+        #    scroll_end = self.ui.scrollBar.maximum()
+        #    if isinstance(value, bool):
+        #        value = 0 if value else self.ui.scrollBar.maximum()
+        #    if value == current or scroll_end == 0:
+        #        return
+        #    if not smooth:
+        #        self.ui.scrollBar.setValue(value)
+        pass
+    #             tmax = 0.3
+    #             curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
+    #             res = 0.01
+    #             steps = tmax / res
+    #             tsteps = 1 / steps
+    #             t = 0.0
+    #
+    #             rng = value - current
+    #             while t <= 1.0:
+    #                 time.sleep(res)
+    #                 t += tsteps
+    #                 v = curve.valueForProgress(t)
+    #                 scrollval = current + (v * rng)
+    #                 self.ui.scrollBar.setValue(scrollval)

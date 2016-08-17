@@ -1,14 +1,13 @@
 """
 a2ui - setup interface for an Autohotkey environment.
 """
-import os
+
 import time
 import logging
 import threading
 import subprocess
 
 import ahk
-import a2mod
 import a2core
 import a2ctrl
 import a2ctrl.qlist
@@ -16,7 +15,6 @@ import a2design_ui
 
 from copy import deepcopy
 from functools import partial
-from os.path import join
 from PySide import QtGui, QtCore
 
 
@@ -85,21 +83,25 @@ class A2Window(QtGui.QMainWindow):
 
     def _setup_actions(self):
         self.ui.actionEdit_module.triggered.connect(self.edit_mod)
-        self.ui.actionEdit_module.setShortcut("Ctrl+E")
-        self.ui.actionDisable_all_modules.triggered.connect(self.modDisableAll)
+        self.ui.actionEdit_module.setShortcut('Ctrl+E')
+        self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionAbout_a2.triggered.connect(partial(a2core.surfTo, self.a2.urls.help))
+        self.ui.actionAbout_a2.setShortcut('F1')
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2help)
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
-        self.ui.actionNew_module.triggered.connect(self.newModule)
+        #self.ui.actionNew_module.triggered.connect(self.newModule)
         self.ui.actionA2_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
         self.ui.actionDev_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
         self.ui.actionExit_a2.triggered.connect(self.close)
+        self.ui.actionRefresh_UI.triggered.connect(partial(self.settings_changed, refresh_ui=True))
+        self.ui.actionRefresh_UI.setIcon(a2ctrl.Icons.inst().a2reload)
+        self.ui.actionRefresh_UI.setShortcut('F5')
 
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
         self.restoreA2ui()
@@ -113,8 +115,8 @@ class A2Window(QtGui.QMainWindow):
                         self, self.edit_submit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                         self, self.edit_submit)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
-                        partial(self.settings_changed, refresh_ui=True))
+#        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
+#                        partial(self.settings_changed, refresh_ui=True))
 
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.module_view.ui.scrollArea,
                         partial(self.scroll_to, True))
@@ -122,7 +124,7 @@ class A2Window(QtGui.QMainWindow):
                         partial(self.scroll_to, False))
 
     def edit_mod(self):
-        if len(self.selected) == 1:
+        if self.num_selected == 1:
             self.ui.module_view.edit_mod()
 
     def toggle_dev_menu(self, state=None):
@@ -171,10 +173,9 @@ class A2Window(QtGui.QMainWindow):
         check_box.setChecked(checked)
         self.settings_changed()
 
-    def modDisableAll(self):
-        self.a2.enabled = []
-        self.mod_select(force=True)
-        self.settings_changed()
+    def mod_disable_all(self):
+        self.a2.enabled = {}
+        self.settings_changed(refresh_ui=True)
 
     def settings_changed(self, specific=None, refresh_ui=False):
         if self._restart_thread is not None:
@@ -189,6 +190,9 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread = RestartThread(self.a2, self)
         self._restart_thread.start()
 
+        if refresh_ui:
+            self.ui.module_view.draw_mod()
+
     def escape(self):
         if self.ui.module_view.editing:
             self.ui.module_view.draw_mod()
@@ -196,8 +200,8 @@ class A2Window(QtGui.QMainWindow):
             self.close()
 
     def explore_mod(self):
-        if len(self.selected) == 1:
-            subprocess.Popen(['explorer.exe', self.selected[0].path])
+        if self.mod is not None:
+            subprocess.Popen(['explorer.exe', self.mod.path])
 
     def explore_a2(self):
         subprocess.Popen(['explorer.exe', self.a2.paths.a2])
@@ -225,86 +229,14 @@ class A2Window(QtGui.QMainWindow):
         if splitterSize is not None:
             self.ui.splitter.setSizes(winprefs['splitter'])
 
-    def newModule(self):
-        # TODO: Move new module functionality to a2mod
-        a2ctrl.InputDialog(self, 'New Module', self.new_module_create, self.newModuleCheck,
-                           msg='Name the new module:', text='newModule')
-
-    def newModuleCheck(self, name):
-        """
-        Run on keystroke when creating new module, to give way to okaying the module creation
-        """
-        if name == '':
-            return 'Name cannot be empty!'
-        if name == 'a2':
-            return 'You just cannot name your module "a2"! Ok?'
-        if name.lower() in [m.lower() for m in self.a2.modules]:
-            return 'Module name "%s" is already in use!' % name
-        if any([(l in a2core.string.whitespace) for l in name]):
-            return 'Name cannot have whitespace! Use _ or - insead!'
-        if not all([(l in a2core.ALLOWED_CHARS) for l in name]):
-            return 'Name can only have letters, digits, _ and -'
-        if not any([(l in a2core.string.ascii_letters) for l in name]):
-            return 'Come one have at least 1 letter in the name!'
-        return True
-
-    def new_module_create(self, name):
-        raise NotImplementedError('TBD!')
-#        if not self.newModuleCheck(name):
-#            return
-#        if not os.access(self.a2.paths.modules, os.W_OK):
-#            log.error('A2 module directory not writable! %s' % self.a2.paths.modules)
-#            return
-#
-#        os.mkdir(join(self.a2.paths.modules, name))
-#        self.a2.fetch_modules()
-#        self.draw_mod_list(select=name)
-#        self.mod_select(force=True)
-
     def showRaise(self):
         self.show()
         self.activateWindow()
         #self.setFocus()
 
     def scroll_to(self, value, smooth=False):
-        if self.ui.modList.hasFocus():
-            if isinstance(value, bool):
-                a2ctrl.qlist.deselect_all(self.ui.modList)
-                if value:
-                    item = self.ui.modList.item(0)
-                else:
-                    item = self.ui.modList.item(self.ui.modList.count() - 1)
-                item.setSelected(True)
-                self.ui.modList.setCurrentItem(item)
-                self.ui.modList.scrollToItem(item)
-        else:
-            #print('self.ui.scrollArea.hasFocus(): %s' % self.ui.scrollArea.hasFocus())
-            current = self.ui.scrollBar.value()
-            scroll_end = self.ui.scrollBar.maximum()
-            if isinstance(value, bool):
-                value = 0 if value else self.ui.scrollBar.maximum()
-
-            if value == current or scroll_end == 0:
-                return
-
-            if not smooth:
-                self.ui.scrollBar.setValue(value)
-            else:
-                pass
-    #             tmax = 0.3
-    #             curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
-    #             res = 0.01
-    #             steps = tmax / res
-    #             tsteps = 1 / steps
-    #             t = 0.0
-    #
-    #             rng = value - current
-    #             while t <= 1.0:
-    #                 time.sleep(res)
-    #                 t += tsteps
-    #                 v = curve.valueForProgress(t)
-    #                 scrollval = current + (v * rng)
-    #                 self.ui.scrollBar.setValue(scrollval)
+        # TODO: reimplement in each widget
+        pass
 
     def _testOutOfScreen(self):
         h = self.app.desktop().height()
