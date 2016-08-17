@@ -1,20 +1,47 @@
+###################################
+# Windows files
+desktop.ini
+Thumbs.db
+
+###################################
+# python related files
 *.pyc
-/ui/qtuiscripts
 /ui/_dump
 /ui/__pycache__
+/ui/qtuiscripts
+ui/res/_intermediate/
+
+###################################
+# editor specific files
+*.bak
+.settings/org.eclipse.core.resources.prefs
+*.sublime-workspace
+
+###################################
+# cache & logs
+*.cache
+*.log
+
+###################################
+# customizable files
 /ui/.idea
 /settings
+/modules
 a2_init.ahk
 a2_settings.ahk
-/ui/designer - Shortcut.lnk
-/ui/a2ui
-lib/SQLiteSpy
-_config_backups
 
+###################################
+# Documentation
+/ui/designer - Shortcut.lnk
+ui/PySide examples.lnk
+*.lnk
+
+###################################
+# Misc
+/ui/a2ui
+libs/SQLiteSpy
+_config_backups
 .project
-.settings/org.eclipse.core.resources.prefs
 .pydevproject
 ui/a2ui.spec
-desktop.ini
 GitHub.appref-ms
-ui/PySide examples.lnk
