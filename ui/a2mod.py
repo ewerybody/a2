@@ -102,6 +102,7 @@ class ModSource(object):
             self.a2.enabled = current
 
     def toggle(self, state=None):
+        print('state: %s' % state)
         if state is None:
             state = not self.enabled
         self.enabled = state
