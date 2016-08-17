@@ -53,13 +53,15 @@ class ModSource(object):
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
 
-    def fetch_modules(self):
+    def fetch_modules(self, state=None):
         mods_in_path = get_folders(self.path)
         if not mods_in_path:
             log.debug('No modules in module source: %s' % self.path)
         self.mod_count = len(mods_in_path)
 
-        if not self.enabled:
+        if state is None:
+            state = self.enabled
+        if not state:
             self.mods = {}
             return
 
@@ -91,15 +93,14 @@ class ModSource(object):
     @enabled.setter
     def enabled(self, state):
         current = self.a2.enabled
-        print('current: %s' % str(current))
         current_state, enabled_mods = current.get(self.name, (False, []))
         if current_state != state:
             if not state and enabled_mods == [] and self.name in current:
                 current.pop(self.name)
             else:
                 current[self.name] = (state, enabled_mods)
-            print('current: %s' % current)
             self.a2.enabled = current
+            self.fetch_modules(state)
 
     def toggle(self, state=None):
         print('state: %s' % state)
