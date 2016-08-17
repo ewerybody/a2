@@ -214,12 +214,14 @@ def write_includes(specific=None):
     for source_name, data in a2.enabled.items():
         source_enabled, enabled_modules = data
         if not source_enabled:
-            return
-
+            continue
+        print('source_name: %s' % source_name)
         source = a2.module_sources[source_name]
         for modname in enabled_modules:
+            print('  modname: %s' % modname)
             module = source.mods[modname]
-            if modname not in mod_settings:
+            if module.key not in mod_settings:
+                print('  modname: %s' % modname)
                 module.change()
 
             includes = a2.db.get('includes', module.key) or []
