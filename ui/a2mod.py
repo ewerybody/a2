@@ -34,15 +34,15 @@ def get_module_sources(main, path, modsource_dict):
     """
     modsources = get_folders(path)
     # get rid of inexistent module sources
-    [modsource_dict.pop(m) for m in modsource_dict if m not in modsources]
+    [modsource_dict.pop(m) for m in list(modsource_dict) if m not in modsources]
 
     for name in modsources:
         if not exists(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
-
-        if name not in modsource_dict:
-            modsource_dict[name] = ModSource(main, name)
-        modsource_dict[name].fetch_modules()
+#        if name not in modsource_dict:
+#            modsource_dict[name] = ModSource(main, name)
+#        modsource_dict[name].fetch_modules()
+        modsource_dict.setdefault(name, ModSource(main, name)).fetch_modules()
 
 
 class ModSource(object):
@@ -66,7 +66,7 @@ class ModSource(object):
             return
 
         # pop inexistent modules
-        [self.mods.pop(m) for m in self.mods if m not in mods_in_path]
+        [self.mods.pop(m) for m in list(self.mods) if m not in mods_in_path]
 
         # add new ones
         for modname in mods_in_path:
@@ -305,6 +305,50 @@ class Mod(object):
             a2core.surfTo(self.config[0].get('url'))
         except Exception as error:
             log.error('Error calling help() on module: %s\n:%s' % (self.name, error))
+
+
+class NewModuleSourceTool(object):
+    def __init__(self, main):
+        self.a2 = a2core.A2Obj.inst()
+        self.main = main
+        self.source_names = [m.lower() for m in self.a2.module_sources]
+        a2ctrl.InputDialog(self.main, 'New Module Source', self.create_source, self.check_name,
+                           msg='Name the new module source:', text='my_module_source')
+
+    def check_name(self, NAME):
+        """
+        Run on keystroke when creating new module, to give way to okaying the module creation
+        """
+        name = NAME.lower()
+        if NAME == '':
+            return 'Name cannot be empty!'
+        if name == 'a2':
+            return 'You just cannot name your module "a2"! Ok?'
+        if name in self.source_names:
+            return 'Module source name "%s" is in use!' % name
+        if any([(l in a2core.string.whitespace) for l in name]):
+            return 'Name cannot have whitespace! Use _ or - insead!'
+        if not all([(l in a2core.ALLOWED_CHARS) for l in name]):
+            return 'Name can only have letters, digits, _ and -'
+        if name in a2core.ILLEGAL_NAMES:
+            return 'Name cannot be reserved Windows device name!'
+        if not any([(l in a2core.string.ascii_letters) for l in name]):
+            return 'Come one have at least 1 letter in the name!'
+        return True
+
+    def create_source(self, name):
+        if not self.check_name(name):
+            return
+        if not os.access(self.a2.paths.modules, os.W_OK):
+            log.error('A2 module directory not writable! %s' % self.a2.paths.modules)
+            return
+
+        source_path = os.path.join(self.a2.paths.modules, name)
+        source_cfg = os.path.join(source_path, MOD_SOURCE_NAME)
+        os.mkdir(source_path)
+        a2core.json_write(source_cfg, {})
+        self.a2.fetch_modules()
+        self.main.ui.module_view.draw_mod()
 
 
 def get_files(path):

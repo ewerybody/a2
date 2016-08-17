@@ -9,6 +9,7 @@ to make functionality available without passing the main ui object.
 @author: eric
 """
 import os
+import json
 import time
 import string
 import logging
@@ -18,8 +19,6 @@ from os.path import exists, join, dirname, abspath, relpath
 import ahk
 import a2db
 import a2mod
-import json
-from test._test_multiprocessing import TimingWrapper
 
 
 logging.basicConfig()
@@ -31,6 +30,8 @@ edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated auto
 a2default_hotkey = 'Win+Shift+A'
 reload_modules = [ahk, a2db, a2mod]
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
+ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 '
+                 'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
 JSON_INDENT = 2
 
 
@@ -46,7 +47,6 @@ class A2Obj(object):
     def __init__(self):
         self.app = None
         self.win = None
-        self.modules = {}
         self.module_sources = {}
         self.urls = URLs()
         self.paths = Paths()
@@ -60,16 +60,16 @@ class A2Obj(object):
 
     def fetch_modules(self):
         """
-        Gets/Updates all module sources with their modules into A2Obj.modules.
-        Which is now a dictionary with dictionaries:
+        Gets/Updates all module sources with their modules into
+        self.module_sources. It looks like:
 
-        A2Obj.modules = {
-            'module_source1': {
-                'module1': a2Mod.Mod(),
-                'module2': a2Mod.Mod()
-                },
-            'module_source2' ...
-            }
+            {   'module_source1': a2Mod.ModSource,
+                'module_source2': a2Mod.ModSource, ...}
+
+        Then on a module source object:
+
+            ModSource.mods = {'module1': a2Mod.Mod,
+                              'module2': a2Mod.Mod, ...}
         """
         a2mod.get_module_sources(self, self.paths.modules, self.module_sources)
 

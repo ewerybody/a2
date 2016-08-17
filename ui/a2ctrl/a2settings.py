@@ -5,12 +5,12 @@ a2ctrl.a2settings
 @author: eric
 """
 import ahk
+import a2mod
 import a2core
-import a2ctrl
-import logging
 from os.path import join, exists
 from PySide import QtGui, QtCore
 from a2ctrl import a2settings_ui
+import subprocess
 
 
 class A2Settings(QtGui.QWidget):
@@ -47,6 +47,10 @@ class A2Settings(QtGui.QWidget):
 
         self.ui.dev_widget.setVisible(self.main.dev_mode)
 
+        self.add_source_menu = QtGui.QMenu(self)
+        self.ui.add_source_button.setMenu(self.add_source_menu)
+        self.add_source_menu.aboutToShow.connect(self.build_add_source_menu)
+
     def _check_win_startup(self):
         win_startup_path = ahk.call_cmd('get_win_startup_path')
         win_startup_lnk = join(win_startup_path, 'a2.lnk')
@@ -65,6 +69,15 @@ class A2Settings(QtGui.QWidget):
     def set_a2_hotkey(self, key):
         self.a2.db.set('a2_hotkey', key)
         self.main.settings_changed('hotkeys')
+
+    def build_add_source_menu(self):
+        self.add_source_menu.clear()
+        self.add_source_menu.addAction(
+            QtGui.QAction('Create Local', self, triggered=self.create_local_source))
+        self.add_source_menu.addAction(QtGui.QAction('Add From URL', self))
+
+    def create_local_source(self):
+        a2mod.NewModuleSourceTool(self.main)
 
 
 class ModSourceWidget(QtGui.QWidget):
@@ -98,5 +111,11 @@ class ModSourceWidget(QtGui.QWidget):
 
     def build_menu(self):
         self.menu.clear()
-        self.menu.addAction(QtGui.QAction('Details...', self))
+        self.menu.addAction(QtGui.QAction('Details...', self, triggered=self.show_details))
+        self.menu.addAction(QtGui.QAction('Explore to ...', self, triggered=self.explore_source))
 
+    def show_details(self):
+        raise NotImplementedError('Module Source Dialog tbd...')
+
+    def explore_source(self):
+        subprocess.Popen(['explorer.exe', self.mod_source.path])
