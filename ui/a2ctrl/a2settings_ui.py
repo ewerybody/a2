@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Sun Aug 14 11:48:09 2016
+# Created: Thu Aug 18 10:31:52 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,6 +13,7 @@ class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
         a2settings.resize(925, 966)
+        a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -95,9 +96,9 @@ class Ui_a2settings(object):
         self.label_6 = QtGui.QLabel(self.dev_widget)
         self.label_6.setObjectName("label_6")
         self.formLayout_2.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_6)
-        self.author_homepage = QtGui.QLineEdit(self.dev_widget)
-        self.author_homepage.setObjectName("author_homepage")
-        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.author_homepage)
+        self.author_url = QtGui.QLineEdit(self.dev_widget)
+        self.author_url.setObjectName("author_url")
+        self.formLayout_2.setWidget(1, QtGui.QFormLayout.FieldRole, self.author_url)
         self.label_5 = QtGui.QLabel(self.dev_widget)
         self.label_5.setObjectName("label_5")
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_5)
@@ -112,7 +113,14 @@ class Ui_a2settings(object):
         self.formLayout_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.ahk_exe)
         self.debug_checkbox = QtGui.QCheckBox(self.dev_widget)
         self.debug_checkbox.setObjectName("debug_checkbox")
-        self.formLayout_2.setWidget(5, QtGui.QFormLayout.FieldRole, self.debug_checkbox)
+        self.formLayout_2.setWidget(6, QtGui.QFormLayout.FieldRole, self.debug_checkbox)
+        self.module_folder = QtGui.QLineEdit(self.dev_widget)
+        self.module_folder.setEnabled(False)
+        self.module_folder.setObjectName("module_folder")
+        self.formLayout_2.setWidget(5, QtGui.QFormLayout.FieldRole, self.module_folder)
+        self.label_7 = QtGui.QLabel(self.dev_widget)
+        self.label_7.setObjectName("label_7")
+        self.formLayout_2.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_7)
         self.verticalLayout_3.addWidget(self.dev_widget)
         self.verticalLayout_2.addWidget(self.dev_box)
         spacerItem1 = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
@@ -137,6 +145,7 @@ class Ui_a2settings(object):
         self.label_5.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Code Editor:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Executable:", None, QtGui.QApplication.UnicodeUTF8))
         self.debug_checkbox.setText(QtGui.QApplication.translate("a2settings", "LogLevel:DEBUG", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("a2settings", "Modules Folder:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.hotkey import HotKey
 from a2ctrl.path_field import PathField
+from a2ctrl.hotkey import HotKey

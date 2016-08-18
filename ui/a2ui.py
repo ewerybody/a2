@@ -1,8 +1,7 @@
 """
 a2ui - setup interface for an Autohotkey environment.
 """
-
-import time
+import os
 import logging
 import threading
 import subprocess
@@ -10,7 +9,6 @@ import subprocess
 import ahk
 import a2core
 import a2ctrl
-import a2ctrl.qlist
 import a2design_ui
 
 from copy import deepcopy
@@ -35,6 +33,7 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread = None
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
+        self.devset = DevSettings(self.a2)
         self._setup_ui()
 
         self.ui.module_list.draw_modules()
@@ -257,6 +256,38 @@ class RestartThread(QtCore.QThread):
         ahkProcess = QtCore.QProcess()
         ahkProcess.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
         return QtCore.QThread.run(self, *args, **kwargs)
+
+
+class DevSettings(object):
+    def __init__(self, a2):
+        self._enabled = False
+        self.author_name = ''
+        self.author_url = ''
+        self.code_editor = ''
+        self.json_indent = 2
+
+        self._a2 = a2
+        self._defaults = {'author_name': os.getenv('USERNAME'),
+                          'author_url': '',
+                          'code_editor': '',
+                          'json_indent': 2}
+        self._get()
+
+    def _get(self):
+        settings = self._a2.db.get('dev_settings') or {}
+        for key, default in self._defaults.items():
+            if key in settings and settings[key] != default:
+                setattr(self, key, settings[key])
+            else:
+                setattr(self, key, default)
+
+    def set(self, this):
+        #settings = self.a2.db.get('dev_settings') or {}
+        for key, default in self._defaults.items():
+            if key in this and this[key] == default:
+                del this[key]
+        print('this: %s' % this)
+        self._a2.db.set('dev_settings', this)
 
 
 if __name__ == '__main__':

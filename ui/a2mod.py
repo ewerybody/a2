@@ -288,6 +288,9 @@ class Mod(object):
             set to userCfg
         """
         user_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
+        print('user_cfg: %s' % user_cfg)
+        print('sub_cfg: %s' % sub_cfg)
+        print('attr_name: %s: %s' % (attr_name, value))
         if attr_name in user_cfg:
             # value to set equals CURRENT value: done
             if value == user_cfg.get(attr_name):
