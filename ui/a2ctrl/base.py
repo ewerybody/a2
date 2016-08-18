@@ -295,9 +295,19 @@ class Icons(object):
 def connect_cfg_controls(cfg, ui_obj):
     """
     browses all members of the ui object to connect ones named 'cfg_'
-    with the EditCtrls current cfg and fill it with current value.
+    with the EditCtrls current cfg dict and fill it with current value.
     """
+    for objname, control in inspect.getmembers(ui_obj):
+        if not objname.startswith('cfg_'):
+            continue
+        name = objname[4:]
+        connect_control(control, name, cfg)
 
+
+def connect_control(control, name, cfg):
+    """
+    Connects a single control to a name in the given cfg dict
+    """
     def _updateCfgData(cfg, name, value):
         """
         issued from a control change function this sets an according item in config dict
@@ -311,70 +321,64 @@ def connect_cfg_controls(cfg, ui_obj):
         if state:
             cfg[name] = value
 
-    for objname, control in inspect.getmembers(ui_obj):
-        if not objname.startswith('cfg_'):
-            continue
-
-        name = objname[4:]
-
-        if isinstance(control, QtGui.QCheckBox):
-            # checkBox.clicked doesn't send state, so we put the func to check
-            # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
-            # solution: control.clicked[bool] sends the state already!
-            control.clicked[bool].connect(partial(_updateCfgData, cfg, name))
-            # set ctrl according to config or set config from ctrl
-            if name in cfg:
-                control.setChecked(cfg[name])
-            else:
-                cfg[name] = control.isChecked()
-
-        elif isinstance(control, QtGui.QLineEdit):
-            control.textChanged.connect(partial(_updateCfgData, cfg, name))
-            if name in cfg:
-                control.setText(cfg[name])
-            else:
-                cfg[name] = control.text()
-
-        elif isinstance(control, PathField):
-            control.changed.connect(partial(_updateCfgData, cfg, name))
-            if name in cfg:
-                control.value = cfg[name]
-            else:
-                cfg[name] = control.value
-
-        elif isinstance(control, QtGui.QComboBox):
-            control.currentIndexChanged.connect(partial(_updateCfgData, cfg, name))
-            if name in cfg:
-                control.setCurrentIndex(cfg[name])
-            else:
-                cfg[name] = control.currentIndex()
-
-        elif isinstance(control, QtGui.QListWidget):
-            # so far only to fill the control
-            #QtGui.QListWidget.c
-            #control.itemChanged.connect(partial(_list_widget_test, name))
-            if name in cfg:
-                control.insertItems(0, cfg[name])
-            else:
-                items = [control.item(i).text() for i in range(control.count())]
-                cfg[name] = items
-
-        elif isinstance(control, (QtGui.QSpinBox, QtGui.QDoubleSpinBox)):
-            control.valueChanged.connect(partial(_updateCfgData, cfg, name))
-            if name in cfg:
-                control.setValue(cfg[name])
-            else:
-                cfg[name] = control.value()
-
-        elif isinstance(control, QtGui.QRadioButton):
-            name, value = name.rsplit('_', 1)
-
-            control.toggled.connect(partial(_radio_update, cfg, name, value))
-            if name in cfg:
-                control.setChecked(cfg[name] == value)
-            elif control.isChecked():
-                cfg[name] = value
-
+    if isinstance(control, QtGui.QCheckBox):
+        # checkBox.clicked doesn't send state, so we put the func to check
+        # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
+        # solution: control.clicked[bool] sends the state already!
+        control.clicked[bool].connect(partial(_updateCfgData, cfg, name))
+        # set ctrl according to config or set config from ctrl
+        if name in cfg:
+            control.setChecked(cfg[name])
         else:
-            log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
-                      (objname, type(control)))
+            cfg[name] = control.isChecked()
+
+    elif isinstance(control, QtGui.QLineEdit):
+        control.textChanged.connect(partial(_updateCfgData, cfg, name))
+        if name in cfg:
+            control.setText(cfg[name])
+        else:
+            cfg[name] = control.text()
+
+    elif isinstance(control, PathField):
+        control.changed.connect(partial(_updateCfgData, cfg, name))
+        if name in cfg:
+            control.value = cfg[name]
+        else:
+            cfg[name] = control.value
+
+    elif isinstance(control, QtGui.QComboBox):
+        control.currentIndexChanged.connect(partial(_updateCfgData, cfg, name))
+        if name in cfg:
+            control.setCurrentIndex(cfg[name])
+        else:
+            cfg[name] = control.currentIndex()
+
+    elif isinstance(control, QtGui.QListWidget):
+        # so far only to fill the control
+        #QtGui.QListWidget.c
+        #control.itemChanged.connect(partial(_list_widget_test, name))
+        if name in cfg:
+            control.insertItems(0, cfg[name])
+        else:
+            items = [control.item(i).text() for i in range(control.count())]
+            cfg[name] = items
+
+    elif isinstance(control, (QtGui.QSpinBox, QtGui.QDoubleSpinBox)):
+        control.valueChanged.connect(partial(_updateCfgData, cfg, name))
+        if name in cfg:
+            control.setValue(cfg[name])
+        else:
+            cfg[name] = control.value()
+
+    elif isinstance(control, QtGui.QRadioButton):
+        name, value = name.rsplit('_', 1)
+
+        control.toggled.connect(partial(_radio_update, cfg, name, value))
+        if name in cfg:
+            control.setChecked(cfg[name] == value)
+        elif control.isChecked():
+            cfg[name] = value
+
+    else:
+        log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
+                  (name, type(control)))
