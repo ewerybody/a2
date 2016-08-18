@@ -51,10 +51,10 @@ class A2db(object):
         """
         if check and table not in self.tables():
             return None
-        
+
         if check and key not in self.keys(table):
             return None
-        
+
         try:
             data = self._fetch('select value from "%s" where key="%s"' % (table, key))[0][0]
             if not asjson:
@@ -62,7 +62,7 @@ class A2db(object):
             return json.loads(data)
 #             except:
 #                 raise Exception('Failed converting data: %s' % data)
-        
+
         except Exception as error:
             if table not in self.tables():
                 log.error('there is no table named "%s"' % table)
@@ -77,7 +77,6 @@ class A2db(object):
     def set(self, key, value, table=_defaultTable):
         """
         update TableName SET valueName=value WHERE key=keyName
-        example:
         """
         jvalue = json.dumps(value, separators=(',', ':'))
         jvalue = jvalue.replace('"', '""')
@@ -118,7 +117,7 @@ class A2db(object):
 #             log.debug('updating value!\n  %s' % statement)
         self._execute(statement)
         self._con.commit()
-    
+
     def tables(self):
         tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
         return [t[0] for t in tablelist]
@@ -158,3 +157,37 @@ class A2db(object):
             log.info('\ntable: "%s":\n  %s\n  %s\n  %s'
                      % (t, columns, '-' * 40,
                         '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
+
+    def set_changes(self, key, changes_dict, defaults_dict, table=_defaultTable):
+        """
+        Writes differences from defaults_dict to the db.
+
+        To keep the data in db at a minumum. The key is deleted
+        when there are no changes from the default_dict.
+        """
+        current = self.get(key, table) or {}
+        changed = False
+        for value_name, value in changes_dict.items():
+            if value_name not in defaults_dict:
+                log.info('Setting "%s:%s" to "%s|%s" Which is not in defaults_dict!'
+                         % (value_name, str(value), table, key))
+
+            if defaults_dict.get(value_name) != value:
+                # value is not default
+                if current.get(value_name) == value:
+                    # value is already set! done!
+                    continue
+                else:
+                    # else set it
+                    current[value_name] = value
+                    changed = True
+            elif value_name in current:
+                # value is default
+                log.debug('value "%s" is default %s.. deleting...' % (value_name, value))
+                del current[value_name]
+                changed = True
+        if changed:
+            if current:
+                self.set(key, current, table)
+            else:
+                self.pop(key, table)
