@@ -292,19 +292,19 @@ class Icons(object):
         self.up_align = Ico('up_align')
 
 
-def connect_cfg_controls(cfg, ui_obj):
+def connect_cfg_controls(cfg, object_collection):
     """
     browses all members of the ui object to connect ones named 'cfg_'
     with the EditCtrls current cfg dict and fill it with current value.
     """
-    for objname, control in inspect.getmembers(ui_obj):
+    for objname, control in inspect.getmembers(object_collection):
         if not objname.startswith('cfg_'):
             continue
         name = objname[4:]
         connect_control(control, name, cfg)
 
 
-def connect_control(control, name, cfg):
+def connect_control(control, name, cfg, change_signal=None):
     """
     Connects a single control to a name in the given cfg dict
     """

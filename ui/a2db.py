@@ -191,3 +191,10 @@ class A2db(object):
                 self.set(key, current, table)
             else:
                 self.pop(key, table)
+
+
+if __name__ == '__main__':
+    import unittest
+    import test.test_a2db
+    print('test.test_a2db: %s' % test.test_a2db)
+    unittest.main(test.test_a2db, verbosity=2)

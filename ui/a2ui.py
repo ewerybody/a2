@@ -79,6 +79,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.toggle_dev_menu()
         self.setWindowIcon(a2ctrl.Icons.inst().a2)
+        self.restoreA2ui()
 
     def _setup_actions(self):
         self.ui.actionEdit_module.triggered.connect(self.edit_mod)
@@ -103,7 +104,11 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionRefresh_UI.setShortcut('F5')
 
         self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
-        self.restoreA2ui()
+
+        self.ui.menu_new_module = QtGui.QMenu(self.ui.menuDev)
+        self.ui.menu_new_module.setTitle('New Module')
+        self.ui.menuDev.insertMenu(self.ui.actionEdit_module, self.ui.menu_new_module)
+        self.ui.menu_new_module.aboutToShow.connect(self.build_new_module_menu)
 
     def _setup_shortcuts(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -121,6 +126,11 @@ class A2Window(QtGui.QMainWindow):
                         partial(self.scroll_to, True))
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.module_view.ui.scrollArea,
                         partial(self.scroll_to, False))
+
+    def build_new_module_menu(self):
+        menu = self.ui.menu_new_module
+        menu.clear()
+        self.ui.menu_new_module.addAction(QtGui.QAction('NotImplemented Yet', menu))
 
     def edit_mod(self):
         if self.num_selected == 1:
