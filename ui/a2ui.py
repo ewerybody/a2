@@ -16,7 +16,6 @@ from functools import partial
 from PySide import QtGui, QtCore
 
 
-logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 reload_modules = [a2ctrl]
@@ -159,7 +158,7 @@ class A2Window(QtGui.QMainWindow):
         if self.mod.name in self.a2.db.get('enabled') or []:
             self.mod.change()
             self.settings_changed()
-        self.ui.module_view.draw_mod()()
+        self.ui.module_view.draw_mod()
 
     def mod_enable(self, checked=None):
         """

@@ -346,7 +346,7 @@ class EditAddElem(QtGui.QWidget):
             cfg['file'] = name
 
         self.config.append(cfg)
-        self.main.editMod()
+        self.main.edit_mod()
 
 
 class EditInclude(EditCtrl):

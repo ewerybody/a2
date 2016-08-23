@@ -145,7 +145,7 @@ class ModuleView(QtGui.QWidget):
         for cfg in self.main.tempConfig:
             self.controls.append(a2ctrl.edit(cfg, self.main, self.main.tempConfig))
 
-        editSelect = a2ctrl.EditAddElem(self, self.main.tempConfig)
+        editSelect = a2ctrl.EditAddElem(self.main, self.main.tempConfig)
         self.controls.append(editSelect)
 
         self.drawUI(keep_scroll)

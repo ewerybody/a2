@@ -48,6 +48,7 @@ def main():
 
 
 def init_a2_win(app):
+    global a2win
     try:
         import a2ui
         import a2core
@@ -67,6 +68,7 @@ def init_a2_win(app):
                % (error, traceback.format_exc().strip()))
         from PySide import QtGui
         QtGui.QMessageBox.critical(None, title, msg)
+        raise RuntimeError(msg)
     return a2win
 
 

@@ -234,7 +234,7 @@ class Mod(object):
     @property
     def files(self):
         """never shale, always browses path for files"""
-        return get_folders(self.path)
+        return get_files(self.path)
 
     @property
     def enabled(self):
@@ -254,6 +254,7 @@ class Mod(object):
             enabled_mods.remove(self.name)
             current[self.source.name] = [source_state, enabled_mods]
             self.a2.enabled = current
+        self.change()
 
     def createScript(self, scriptName=None):
         if not scriptName:
