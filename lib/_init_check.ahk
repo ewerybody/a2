@@ -15,7 +15,11 @@ _init_check_settings() {
         
         ifNotExist, %settings_dir%libs.ahk
             FileCopy, lib\_startup_defaults\libs.ahk, %settings_dir%libs.ahk
-        
+
+        modules_dir = %A_ScriptDir%\modules\
+        IfNotExist, %modules_dir%
+            FileCreateDir, %modules_dir%
+            
         includes := ["hotkeys", "variables", "includes", "init"]
         for i, filename in includes
         {
