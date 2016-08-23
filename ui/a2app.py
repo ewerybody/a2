@@ -32,7 +32,7 @@ def main():
     # ensure_single will already exit() after sending the message
     if not sys.argv[1:]:
         #app.ensure_single(['--show'])
-        app.ensure_single(['--reload'])
+        app.ensure_single(['--show'])
     else:
         app.ensure_single()
 
@@ -75,6 +75,7 @@ def app_msg_get(msg):
     if '--close' in msg:
         app.exit()
     elif '--show' in msg:
+        log.info('received show command ...')
         a2win.showRaise()
     elif '--reload' in msg:
         log.info('attempting reload ...')
