@@ -93,7 +93,6 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
-        #self.ui.actionNew_module.triggered.connect(self.newModule)
         self.ui.actionA2_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
         self.ui.actionDev_settings.triggered.connect(partial(self.ui.module_list.select, None))
@@ -119,8 +118,6 @@ class A2Window(QtGui.QMainWindow):
                         self, self.edit_submit)
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                         self, self.edit_submit)
-#        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F5), self,
-#                        partial(self.settings_changed, refresh_ui=True))
 
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.module_view.ui.scrollArea,
                         partial(self.scroll_to, True))
@@ -162,7 +159,7 @@ class A2Window(QtGui.QMainWindow):
         if self.mod.name in self.a2.db.get('enabled') or []:
             self.mod.change()
             self.settings_changed()
-        self.drawMod()
+        self.ui.module_view.draw_mod()()
 
     def mod_enable(self, checked=None):
         """
