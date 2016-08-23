@@ -8,18 +8,22 @@ Created on Aug 7, 2015
 @author: eRiC
 '''
 import sys
-import a2ui
-import a2core
 import logging
 import platform
+import traceback
 from ctypes import windll
 from importlib import reload
+
 from siding import QSingleApplication
 
 
 logging.basicConfig()
 log = logging.getLogger('a2app')
 log.setLevel(logging.DEBUG)
+
+
+app = None
+a2win = None
 
 
 def main():
@@ -44,15 +48,25 @@ def main():
 
 
 def init_a2_win(app):
-    a2 = a2core.A2Obj.inst()
-    #TODO: remove this:
-    a2core._dbCleanup()
-    a2.start_up()
+    try:
+        import a2ui
+        import a2core
+        a2 = a2core.A2Obj.inst()
+        #TODO: remove this:
+        a2core._dbCleanup()
+        a2.start_up()
 
-    a2win = a2ui.A2Window(app=app)
-    a2.win = a2win
-    a2.app = app
-    a2win.showRaise()
+        a2win = a2ui.A2Window(app=app)
+        a2.win = a2win
+        a2.app = app
+        a2win.showRaise()
+    except Exception as error:
+        title = 'a2app: Error on "init_a2_win()"!'
+        msg = ('Could not call A2Window! Error:\n%s\n'
+               'Traceback:%s\n\nPress Ctrl+C to copy this message.'
+               % (error, traceback.format_exc().strip()))
+        from PySide import QtGui
+        QtGui.QMessageBox.critical(None, title, msg)
     return a2win
 
 
@@ -64,6 +78,8 @@ def app_msg_get(msg):
         a2win.showRaise()
     elif '--reload' in msg:
         log.info('attempting reload ...')
+        import a2ui
+        import a2core
         a2win.close()
         reload(a2core)
         reload(a2ui)
