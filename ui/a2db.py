@@ -20,6 +20,7 @@ a2db.rem('tempstuff', 'a2')
 import json
 import sqlite3
 import logging
+from copy import deepcopy
 
 
 logging.basicConfig()
@@ -191,6 +192,20 @@ class A2db(object):
                 self.set(key, current, table)
             else:
                 self.pop(key, table)
+
+    def get_changes(self, key, default_dict, table=_defaultTable):
+        """
+        Fetches settings from the db if set in the db and different from the
+        given default_dict.
+        """
+        current = self.get(key, table) or {}
+        result = deepcopy(default_dict)
+        for value_name, value in default_dict.items():
+            if value_name in current:
+                set_value = current.get(value_name)
+                if set_value != value:
+                    result[value_name] = set_value
+        return result
 
 
 if __name__ == '__main__':

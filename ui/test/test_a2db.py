@@ -46,8 +46,33 @@ class Test(unittest.TestCase):
         db.set_changes(key, changes, defaults, table)
         now = db.get(key, table)
         self.assertTrue(now == changes)
+        db.pop(key, table)
+        self.assertFalse(key in db.keys(table))
+        db.dropTable(table)
+        self.assertFalse(table in db.tables())
 
-    def test2_shutdown(self):
+    def test2_get_changes(self):
+        key = 'test_entry'
+        table = 'test_table'
+
+        # test nothing set at all
+        defaults = {'some': str(uuid.uuid4()), 'value': 13374223}
+        fetched = db.get_changes(key, defaults, table)
+        self.assertEqual(defaults['some'], fetched['some'])
+        self.assertEqual(defaults['value'], fetched['value'])
+
+        # test set changes, get different and same
+        changes = {'value': 8888, 'somethingelse': 'HFHWKEGFKKUSDK'}
+        db.set_changes(key, changes, defaults, table)
+        fetched = db.get_changes(key, defaults, table)
+        self.assertEqual(defaults['some'], fetched['some'])
+        self.assertNotEqual(defaults['value'], fetched['value'])
+        db.pop(key, table)
+        self.assertFalse(key in db.keys(table))
+        db.dropTable(table)
+        self.assertFalse(table in db.tables())
+
+    def test4_shutdown(self):
         db.all()
         db._con.close()
         os.remove(temp_db_path)
