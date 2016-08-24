@@ -2,7 +2,8 @@
 A universal file/folder path field with a browse button.
 the field can be made writable or read-only to allow only browsed paths
 it can be made browsing for folders or files
-at files it can be set to save-mode where inexistent paths can be selected
+
+At files it can be set to save-mode where inexistent paths can be selected
 and filtered file types can be set. See:
 http://pyside.github.io/docs/pyside/PySide/QtGui/QFileDialog.html?highlight=qfiledialog#detailed-description
 
@@ -85,6 +86,7 @@ class PathField(QtGui.QWidget):
         self.changed.emit(self._value)
 
     def setText(self, this):
+        """Just to be compatible with QDesigner setting text already"""
         self.value = this
 
     @property

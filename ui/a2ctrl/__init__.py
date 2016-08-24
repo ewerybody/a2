@@ -22,6 +22,7 @@ the author, name, version, description info
 @created: Mar 6, 2015
 @author: eRiC
 """
+import os
 import sys
 import time
 import inspect
@@ -32,7 +33,7 @@ import collections
 from copy import deepcopy
 from functools import partial
 from pysideuic import compileUi
-from os.path import join, getmtime, dirname, basename, exists, splitext
+from os.path import getmtime, dirname, basename, exists, splitext
 from PySide import QtGui, QtCore, QtSvg
 
 import ahk
@@ -96,7 +97,7 @@ def check_ui_module(module):
                     log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
 
-    uifile = join(folder, uibase)
+    uifile = os.path.join(folder, uibase)
     if not uibase or not exists(uifile):
         log.error('Ui-file not found: %s' % pybase)
         return
@@ -378,7 +379,8 @@ class EditInclude(EditCtrl):
 
     def editScript(self):
         if len(self.main.selected) == 1:
-            subprocess.Popen([self.main.scriptEditor, join(self.main.selected[0].path, self.cfg['file'])])
+            subprocess.Popen([self.main.scriptEditor,
+                              os.path.join(self.main.selected[0].path, self.cfg['file'])])
 
 
 class InputDialog(QtGui.QDialog):
