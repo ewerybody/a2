@@ -79,6 +79,40 @@ def killA2process():
     log.debug('killA2process took: %fs' % (time.time() - t1))
 
 
+def get_variables(ahk_file):
+    """
+    Parses an Autohotkey file to get root variables to Python.
+    Ignores any indented ones.
+    Returns a dict with the variables.
+    TODO: convert int,float,bool
+    """
+    with open(ahk_file) as fobj:
+        lines = [l.split('=', 1) for l in fobj.read().split('\n') if l]
+    lines = [(l[0], l[1].strip('" ')) for l in lines if len(l) == 2]
+    result = {}
+    for key, value in lines:
+        _key = key.strip(': ')
+        # skip lines with indentation
+        if key[0] != _key[0]:
+            continue
+        key = _key
+        result[key] = value
+    return result
+
+
+def set_variable(ahk_file, key, value):
+    """
+    Sets a single root variable in a Autohotkey script file.
+    Raises ValueError if value was not found as root variable ie not indented.
+    TODO: finish setting vars
+    """
+    with open(ahk_file) as fobj:
+        lines = [l for l in fobj.read().split('\n')]
+
+    with open(ahk_file, 'w') as fobj:
+        fobj.write('\n'.join(lines))
+
+
 """
 http://www.autohotkey.com/docs/KeyList.htm
 """

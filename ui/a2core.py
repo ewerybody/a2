@@ -181,12 +181,8 @@ class Paths(object):
         settings_file = os.path.join(self.a2, 'a2_settings.ahk')
         if not settings_file:
             settings_file = os.path.join(self.lib, '_startup_defaults', 'a2_settings.ahk')
-
-        with open(settings_file) as fobj:
-            lines = [l.split('=', 1) for l in fobj.read().split('\n') if l]
-        lines = [(l[0].strip(), l[1].strip()) for l in lines if len(l) == 2]
         result = {}
-        for key, value in lines:
+        for key, value in ahk.get_variables(settings_file).items():
             key = key[len(prefix):]
             if key in keys:
                 if os.path.isabs(value):
