@@ -84,7 +84,6 @@ def get_variables(ahk_file):
     Parses an Autohotkey file to get root variables to Python.
     Ignores any indented ones.
     Returns a dict with the variables.
-    TODO: convert int,float,bool
     """
     with open(ahk_file) as fobj:
         lines = [l.split('=', 1) for l in fobj.read().split('\n') if l]
@@ -96,7 +95,7 @@ def get_variables(ahk_file):
         if key[0] != _key[0]:
             continue
         key = _key
-        result[key] = value
+        result[key] = _convert_string_to_type(value)
     return result
 
 
@@ -104,13 +103,55 @@ def set_variable(ahk_file, key, value):
     """
     Sets a single root variable in a Autohotkey script file.
     Raises ValueError if value was not found as root variable ie not indented.
-    TODO: finish setting vars
     """
     with open(ahk_file) as fobj:
         lines = [l for l in fobj.read().split('\n')]
 
-    with open(ahk_file, 'w') as fobj:
-        fobj.write('\n'.join(lines))
+    found = False
+    write = False
+    for i, line in enumerate(lines):
+        parts = line.split('=', 1)
+        if not len(parts) == 2:
+            continue
+        _key, _value = parts
+        curkey = _key.strip(': ')
+        # skip lines with indentation
+        if curkey[0] != _key[0]:
+            continue
+        # skip if its not the key we're looking for
+        if key != curkey:
+            continue
+        found = True
+        curvalue = _convert_string_to_type(_value.strip('" '))
+        if curvalue != value:
+            write = True
+            if isinstance(value, bool):
+                lines[i] = '%s := %s' % (key, value)
+            else:
+                lines[i] = '%s = %s' % (key, value)
+        break
+
+    if not found:
+        raise ValueError('There is no value "%s" to set in %s' % (key, ahk_file))
+
+    if write:
+        with open(ahk_file, 'w') as fobj:
+            fobj.write('\n'.join(lines))
+
+
+def _convert_string_to_type(string):
+    try:
+        return int(string)
+    except ValueError:
+        try:
+            return float(string)
+        except:
+            lowstring = string.lower()
+            if lowstring == 'true':
+                return True
+            elif lowstring == 'false':
+                return False
+            return string
 
 
 """
