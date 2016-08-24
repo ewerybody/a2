@@ -162,6 +162,7 @@ class Paths(object):
         self.settings = path_vars['settings']
         self.modules = path_vars['modules']
         self.autohotkey = path_vars['ahk']
+        self.python = path_vars['python']
 
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.modules, self.settings, self.ui]
@@ -176,7 +177,7 @@ class Paths(object):
         self.db = join(self.settings, 'a2.db')
 
     def _fetch_a2_setting_paths(self):
-        keys = ['settings', 'modules', 'ahk']
+        keys = ['settings', 'modules', 'ahk', 'python']
         prefix = 'a2_'
         settings_file = os.path.join(self.a2, 'a2_settings.ahk')
         if not settings_file:

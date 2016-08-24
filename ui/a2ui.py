@@ -271,27 +271,26 @@ class DevSettings(object):
         self.json_indent = 2
 
         self._a2 = a2
-        self._defaults = {'author_name': os.getenv('USERNAME'),
-                          'author_url': '',
-                          'code_editor': '',
-                          'json_indent': 2}
-        self._get()
+        self._defaults = {
+            'author_name': os.getenv('USERNAME'),
+            'author_url': '',
+            'code_editor': '',
+            'json_indent': 2,
+            'loglevel_debug': False}
+        self.get()
 
-    def _get(self):
-        settings = self._a2.db.get('dev_settings') or {}
-        for key, default in self._defaults.items():
-            if key in settings and settings[key] != default:
-                setattr(self, key, settings[key])
-            else:
-                setattr(self, key, default)
+    def get(self):
+        settings = self._a2.db.get_changes('dev_settings', self._defaults)
+        self._set_attrs(settings)
+        return settings
 
-    def set(self, this):
-        #settings = self.a2.db.get('dev_settings') or {}
-        for key, default in self._defaults.items():
-            if key in this and this[key] == default:
-                del this[key]
-        print('this: %s' % this)
-        self._a2.db.set('dev_settings', this)
+    def _set_attrs(self, settings):
+        for key, value in settings.items():
+            setattr(self, key, value)
+
+    def set(self, these):
+        self._a2.db.set_changes('dev_settings', these, self._defaults)
+        self._set_attrs(these)
 
 
 if __name__ == '__main__':

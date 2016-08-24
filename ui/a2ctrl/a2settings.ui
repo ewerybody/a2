@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
-    <height>966</height>
+    <width>916</width>
+    <height>1122</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,21 +20,6 @@
    <property name="margin">
     <number>0</number>
    </property>
-   <item>
-    <widget class="QLabel" name="headLabel">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Hello user! Welcome to a2! This is a template introduction Text. So far there is not much to say. I just wanted this to fill up more than one line properly. Voila!</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item>
     <layout class="QFormLayout" name="formLayout">
      <property name="fieldGrowthPolicy">
@@ -159,23 +144,12 @@
       <item>
        <widget class="QWidget" name="dev_widget" native="true">
         <layout class="QFormLayout" name="formLayout_2">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
          <property name="labelAlignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Settings Folder:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QLineEdit" name="settings_folder">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
@@ -196,56 +170,46 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="author_url"/>
          </item>
-         <item row="8" column="1">
-          <widget class="QLineEdit" name="module_folder">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>Modules Folder:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="label_8">
            <property name="text">
             <string>Autohotkey Executable:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="4" column="1">
           <widget class="PathField" name="ahk_exe"/>
          </item>
-         <item row="3" column="1">
-          <widget class="PathField" name="code_editor"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_5">
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Autohotkey Code Editor:</string>
+            <string>Python Output:</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>Verbose Logging:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
+         <item row="7" column="1">
           <widget class="QCheckBox" name="loglevel_debug">
            <property name="text">
             <string>LogLevel:DEBUG</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
-          <widget class="QSpinBox" name="spinBox">
+         <item row="8" column="1">
+          <widget class="QCheckBox" name="show_console">
+           <property name="text">
+            <string>Show Console</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>JSON Indent:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QSpinBox" name="json_indent">
            <property name="maximumSize">
             <size>
              <width>70</width>
@@ -254,14 +218,7 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>JSON Indent:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="2">
+         <item row="11" column="0" colspan="2">
           <widget class="Line" name="line">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -279,6 +236,72 @@
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Settings Folder:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QLineEdit" name="settings_folder">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Modules Folder:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QLineEdit" name="module_folder">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Python Executable:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QLineEdit" name="python_executable">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>a2 runtime:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="loglevel_debug_2">
+           <property name="text">
+            <string>Enable Startup Tooltips</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Autohotkey Code Editor:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="PathField" name="code_editor"/>
          </item>
         </layout>
        </widget>
