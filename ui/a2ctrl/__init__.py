@@ -39,7 +39,7 @@ import ahk
 import a2core
 from a2ctrl import inputDialog_ui
 from a2ctrl.path_field import PathField
-from a2ctrl.base import EditCtrl, Ico, Icons, connect_cfg_controls
+from a2ctrl.base import EditCtrl, Ico, Icons, connect_cfg_controls, connect_control_list
 
 
 log = a2core.get_logger(__name__)
