@@ -82,7 +82,7 @@ class Edit(a2ctrl.EditCtrl):
         for cfg in self.main.edit_clipboard:
             self.cfg['children'].append(cfg)
         self.main.edit_clipboard = []
-        self.main.editMod()
+        self.main.edit_mod()
 
 
 if __name__ == '__main__':

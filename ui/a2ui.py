@@ -126,9 +126,9 @@ class A2Window(QtGui.QMainWindow):
         menu.clear()
         self.ui.menu_new_module.addAction(QtGui.QAction('NotImplemented Yet', menu))
 
-    def edit_mod(self):
+    def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:
-            self.ui.module_view.edit_mod()
+            self.ui.module_view.edit_mod(keep_scroll)
 
     def toggle_dev_menu(self, state=None):
         if state is None:

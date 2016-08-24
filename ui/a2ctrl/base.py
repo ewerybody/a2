@@ -78,17 +78,17 @@ class EditCtrl(QtGui.QGroupBox):
         #cfg = self.parentCfg.pop(index)
         self.parentCfg.pop(index)
         self.parentCfg.insert(newindex, self.cfg)
-        self.main.editMod(keep_scroll=True)
+        self.main.edit_mod(keep_scroll=True)
 
     def delete(self):
         if self.cfg in self.parentCfg:
             self.parentCfg.remove(self.cfg)
-            self.main.editMod(keep_scroll=True)
+            self.main.edit_mod(keep_scroll=True)
 
     def duplicate(self):
         newCfg = deepcopy(self.cfg)
         self.parentCfg.append(newCfg)
-        self.main.editMod()
+        self.main.edit_mod()
         self.scroll_to_bottom()
 
     def cut(self):
