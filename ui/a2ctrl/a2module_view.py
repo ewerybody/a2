@@ -4,7 +4,6 @@ a2ctrl.a2module_view
 @created: Aug 14, 2016
 @author: eRiC
 """
-import logging
 from copy import deepcopy
 
 from PySide import QtGui, QtCore
@@ -13,9 +12,8 @@ import a2core
 import a2ctrl
 from a2ctrl import a2module_view_ui
 
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+
+log = a2core.get_logger(__name__)
 
 
 class ModuleView(QtGui.QWidget):

@@ -5,12 +5,11 @@ a2ctrl.qlist
 @author: eRiC
 """
 from PySide import QtGui
-import logging
+
+import a2core
 
 
-logging.basicConfig()
-log = logging.getLogger('a2ctrl')
-log.setLevel(logging.DEBUG)
+log = a2core.get_logger(__name__)
 
 
 def get_all_items(list_ctrl):

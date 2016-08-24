@@ -1,16 +1,10 @@
 """
 a2 path control
 """
-import logging
 from PySide import QtGui
 
 import a2ctrl
 from a2ctrl import path_edit_ui, path_field, connect_cfg_controls
-
-
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
 class Draw(a2ctrl.DrawCtrl):

@@ -7,15 +7,12 @@ import ahk
 import a2ctrl
 import a2ctrl.qlist
 import a2core
-import logging
 from PySide import QtGui
 from functools import partial
 from a2ctrl import scopeDialog_ui
 
 
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log = a2core.get_logger(__name__)
 
 
 class Hotkey_Scope_Handler(object):
@@ -25,7 +22,7 @@ class Hotkey_Scope_Handler(object):
 
         self.ui.cfg_scopeMode.currentIndexChanged.connect(self.scopeModeChanged)
         self.scopeModeChanged()
-        
+
         self.ui.scopePlus.mousePressEvent = self.scopePopup
         self.ui.scopeMinus.clicked.connect(self.scopeDelete)
         self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
@@ -39,7 +36,7 @@ class Hotkey_Scope_Handler(object):
         self.ui.cfg_scope.setVisible(state)
         self.ui.scopePlus.setVisible(state)
         self.ui.scopeMinus.setVisible(state)
-        
+
     def scopePopup(self, event, change=False):
         # to create new and change scope items from the list
         selItem = None
@@ -177,7 +174,7 @@ class ScopeDialog(QtGui.QDialog):
         if not scope_nfo:
             log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)
             return
-        
+
         self.titles = set()
         self.classes = set()
         self.processes = set()

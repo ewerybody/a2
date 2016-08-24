@@ -19,7 +19,6 @@ a2db.rem('tempstuff', 'a2')
 """
 import json
 import sqlite3
-import logging
 from copy import deepcopy
 
 import a2core

@@ -4,15 +4,9 @@ Created on Mar 22, 2016
 @author: eRiC
 '''
 import a2ctrl
-import logging
 from functools import partial
 from PySide import QtGui, QtCore
 from a2ctrl import number_edit_ui, connect_cfg_controls
-
-
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
 class Draw(a2ctrl.DrawCtrl):

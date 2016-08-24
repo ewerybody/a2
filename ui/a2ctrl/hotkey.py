@@ -3,7 +3,6 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-import logging
 from PySide import QtCore, QtGui
 
 import ahk
@@ -12,9 +11,7 @@ import a2core
 from a2ctrl import hotkey_edit_ui, hotkey_func, hotkey_scope, connect_cfg_controls
 
 
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log = a2core.get_logger(__name__)
 
 
 class Draw(a2ctrl.DrawCtrl):

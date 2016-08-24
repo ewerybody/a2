@@ -1,7 +1,6 @@
 """
 a2ctrl.module_list
 """
-import logging
 from PySide import QtGui, QtCore
 
 import a2mod
@@ -11,9 +10,8 @@ import a2core
 from a2ctrl.base import Ico
 from a2ctrl import a2module_list_ui
 
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+
+log = a2core.get_logger(__name__)
 
 
 class ModuleList(QtGui.QWidget):

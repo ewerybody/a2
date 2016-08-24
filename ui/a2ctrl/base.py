@@ -7,7 +7,6 @@ a2ctrl.base
 import time
 import inspect
 import threading
-import logging
 from copy import deepcopy
 from functools import partial
 from os.path import exists, join
@@ -17,10 +16,7 @@ import a2core
 from a2ctrl import PathField
 
 
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
+log = a2core.get_logger(__name__)
 ICO_PATH = None
 
 
