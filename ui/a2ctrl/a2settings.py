@@ -7,7 +7,7 @@ a2ctrl.a2settings
 import os
 import subprocess
 from pprint import pprint
-from os.path import exists
+from os.path import exists, dirname
 
 from PySide import QtGui, QtCore
 
@@ -76,6 +76,21 @@ class A2Settings(QtGui.QWidget):
         self.ui.settings_folder.setText(self.a2.paths.settings)
         self.ui.module_folder.setText(self.a2.paths.modules)
         self.ui.python_executable.setText(self.a2.paths.python)
+
+        self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
+        self.ui.show_console.clicked[bool].connect(self.toggle_console)
+
+        ahk_vars = ahk.get_variables(self.a2.paths.settings_ahk)
+        self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
+        self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
+
+    def toggle_console(self, state):
+        base_name = ['pythonw.exe', 'python.exe'][state]
+        ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python',
+                         os.path.join(dirname(self.a2.paths.python), base_name))
+
+    def toggle_startup_tooltips(self, state):
+        ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
     def on_dev_setting_changed(self, *args):
         self.main.devset.set(self.dev_set_dict)

@@ -155,6 +155,7 @@ class Paths(object):
     def __init__(self):
         self.ui = dirname(abspath(__file__))
         self.a2 = dirname(self.ui)
+        self.settings_ahk = os.path.join(self.a2, 'a2_settings.ahk')
         self.lib = join(self.a2, 'lib')
         self.a2_script = join(self.a2, 'a2.ahk')
 
@@ -179,8 +180,8 @@ class Paths(object):
     def _fetch_a2_setting_paths(self):
         keys = ['settings', 'modules', 'ahk', 'python']
         prefix = 'a2_'
-        settings_file = os.path.join(self.a2, 'a2_settings.ahk')
-        if not settings_file:
+        settings_file = self.settings_ahk
+        if not exists(settings_file):
             settings_file = os.path.join(self.lib, '_startup_defaults', 'a2_settings.ahk')
         result = {}
         for key, value in ahk.get_variables(settings_file).items():

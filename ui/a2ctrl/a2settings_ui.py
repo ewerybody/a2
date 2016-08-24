@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Wed Aug 24 10:18:33 2016
+# Created: Thu Aug 25 00:41:38 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -143,9 +143,9 @@ class Ui_a2settings(object):
         self.label_12 = QtGui.QLabel(self.dev_widget)
         self.label_12.setObjectName("label_12")
         self.formLayout_2.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_12)
-        self.loglevel_debug_2 = QtGui.QCheckBox(self.dev_widget)
-        self.loglevel_debug_2.setObjectName("loglevel_debug_2")
-        self.formLayout_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.loglevel_debug_2)
+        self.startup_tooltips = QtGui.QCheckBox(self.dev_widget)
+        self.startup_tooltips.setObjectName("startup_tooltips")
+        self.formLayout_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.startup_tooltips)
         self.label_5 = QtGui.QLabel(self.dev_widget)
         self.label_5.setObjectName("label_5")
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_5)
@@ -180,8 +180,8 @@ class Ui_a2settings(object):
         self.label_7.setText(QtGui.QApplication.translate("a2settings", "Modules Folder:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_10.setText(QtGui.QApplication.translate("a2settings", "Python Executable:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_12.setText(QtGui.QApplication.translate("a2settings", "a2 runtime:", None, QtGui.QApplication.UnicodeUTF8))
-        self.loglevel_debug_2.setText(QtGui.QApplication.translate("a2settings", "Enable Startup Tooltips", None, QtGui.QApplication.UnicodeUTF8))
+        self.startup_tooltips.setText(QtGui.QApplication.translate("a2settings", "Enable Startup Tooltips", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("a2settings", "Autohotkey Code Editor:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.hotkey import HotKey
 from a2ctrl.path_field import PathField
+from a2ctrl.hotkey import HotKey

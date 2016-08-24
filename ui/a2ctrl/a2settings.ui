@@ -287,7 +287,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QCheckBox" name="loglevel_debug_2">
+          <widget class="QCheckBox" name="startup_tooltips">
            <property name="text">
             <string>Enable Startup Tooltips</string>
            </property>
