@@ -153,7 +153,7 @@ class A2Window(QtGui.QMainWindow):
             return
 
         self.mod.config = deepcopy(self.tempConfig)
-        if self.mod.name in self.a2.db.get('enabled') or []:
+        if self.mod.enabled:
             self.mod.change()
             self.settings_changed()
         self.ui.module_view.draw_mod()
