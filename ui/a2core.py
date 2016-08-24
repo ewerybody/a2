@@ -130,7 +130,7 @@ class URLs(object):
         Common a2 & ahk related web links.
         """
         self.a2 = 'https://github.com/ewerybody/a2'
-        self.help = self.a2 + '#description'
+        self.help = self.a2 + '#a2-'
         self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
         self.helpHotkey = self.a2 + '/wiki/Edit-Hotkey-Control'
         self.helpCheckbox = self.a2 + '/wiki/Edit-Checkbox-Control'
