@@ -1,19 +1,18 @@
-'''
+"""
 nfo about Autohotkey that we might use across the modules
 
 Created on Aug 7, 2015
 
 @author: eRiC
-'''
+"""
 import time
-import logging
 import subprocess
 from os.path import join
 
+import a2core
 
-logging.basicConfig()
-log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+
+log = a2core.get_logger(__name__)
 
 
 def translateHotkey(displayString):

@@ -22,11 +22,10 @@ import sqlite3
 import logging
 from copy import deepcopy
 
+import a2core
 
-logging.basicConfig()
-log = logging.getLogger('a2db')
-log.setLevel(logging.INFO)
 
+log = a2core.get_logger(__name__)
 _defaultTable = 'a2'
 _defaultSep = '|'
 

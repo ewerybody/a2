@@ -24,7 +24,6 @@ the author, name, version, description info
 """
 import sys
 import time
-import logging
 import inspect
 import threading
 import importlib
@@ -43,12 +42,7 @@ from a2ctrl.path_field import PathField
 from a2ctrl.base import EditCtrl, Ico, Icons, connect_cfg_controls
 
 
-logging.basicConfig()
-log = logging.getLogger('a2ctrl')
-log.setLevel(logging.DEBUG)
-
-
-uipath = dirname(__file__)
+log = a2core.get_logger(__name__)
 margin = 5
 labelW = 100
 lenM = 35

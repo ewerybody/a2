@@ -16,19 +16,16 @@ import logging
 import webbrowser
 from os.path import exists, join, dirname, abspath, relpath
 
-import ahk
-import a2db
-import a2mod
 
-
-logging.basicConfig()
+LOG_LEVEL = logging.INFO
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(LOG_LEVEL)
+
+ahk, a2db, a2mod = None, None, None
 
 
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
-reload_modules = [ahk, a2db, a2mod]
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
 ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 '
                  'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
@@ -45,6 +42,11 @@ class A2Obj(object):
         return A2Obj._instance
 
     def __init__(self):
+        # lazy import so importing a2core does not depend on other a2 module
+        global ahk, a2db, a2mod
+        import ahk
+        import a2db
+        import a2mod
         self.app = None
         self.win = None
         self.module_sources = {}
@@ -359,6 +361,19 @@ def _dbCleanup():
 
         if include is not None:
             a2.db.pop('include', table)
+
+
+def get_logger(name):
+    newlog = logging.getLogger(name)
+    newlog.setLevel(LOG_LEVEL)
+    return newlog
+
+
+def set_loglevel(debug=False):
+    level = [logging.INFO, logging.DEBUG][debug]
+    for name, logger in log.manager.loggerDict.items():
+        if name.startswith('a2'):
+            logger.setLevel(level)
 
 
 if __name__ == '__main__':

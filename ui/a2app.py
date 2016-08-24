@@ -16,7 +16,7 @@ from importlib import reload
 
 from siding import QSingleApplication
 
-
+# first basicConfic. No need for more.
 logging.basicConfig()
 log = logging.getLogger('a2app')
 log.setLevel(logging.DEBUG)
@@ -50,13 +50,13 @@ def main():
 def init_a2_win(app):
     global a2win
     try:
-        import a2ui
         import a2core
         a2 = a2core.A2Obj.inst()
         #TODO: remove this:
         a2core._dbCleanup()
         a2.start_up()
 
+        import a2ui
         a2win = a2ui.A2Window(app=app)
         a2.win = a2win
         a2.app = app

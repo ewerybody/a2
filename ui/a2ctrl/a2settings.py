@@ -11,6 +11,7 @@ from os.path import join, exists
 from PySide import QtGui, QtCore
 from a2ctrl import a2settings_ui
 import subprocess
+log = a2core.get_logger(__name__)
 
 
 class A2Settings(QtGui.QWidget):

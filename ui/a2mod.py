@@ -6,16 +6,11 @@ Created on Jul 9, 2015
 import os
 import a2core
 import a2ctrl
-import logging
 from os.path import exists, splitext, isdir, isfile
 from shutil import copy2
-from pprint import pprint
-
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
+log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
 MOD_SOURCE_NAME = 'a2modsource.json'
 VALUE_MAP = {'check': {'typ': bool, 'default': False},

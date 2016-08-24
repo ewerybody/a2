@@ -2,7 +2,6 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
-import logging
 import threading
 import subprocess
 
@@ -16,8 +15,7 @@ from functools import partial
 from PySide import QtGui, QtCore
 
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log = a2core.get_logger(__name__)
 reload_modules = [a2ctrl]
 
 
