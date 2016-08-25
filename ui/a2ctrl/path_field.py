@@ -12,6 +12,7 @@ TODO: add recent paths, copy path, explore to path on the button
 @created: Jun 19, 2016
 @author: eRiC
 """
+import os
 from PySide import QtGui, QtCore
 
 
@@ -96,7 +97,7 @@ class PathField(QtGui.QWidget):
     @value.setter
     def value(self, this):
         self._field_set = True
-        self._value = this
-        self.line_field.setText(this)
-        self.changed.emit(this)
+        self._value = os.path.normpath(this)
+        self.line_field.setText(self._value)
+        self.changed.emit(self._value)
         self._field_set = False
