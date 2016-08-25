@@ -366,7 +366,7 @@ class EditInclude(EditCtrl):
         self.layout.addWidget(self.button)
 
         self.editButton = QtGui.QPushButton('edit script')
-        self.editButton.pressed.connect(self.editScript)
+        self.editButton.pressed.connect(self.edit_script)
         self.layout.addWidget(self.editButton)
 
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -377,10 +377,12 @@ class EditInclude(EditCtrl):
         self.cfg['file'] = name
         self.button.setText(name)
 
-    def editScript(self):
-        if len(self.main.selected) == 1:
-            subprocess.Popen([self.main.scriptEditor,
-                              os.path.join(self.main.selected[0].path, self.cfg['file'])])
+    def edit_script(self):
+        if exists(self.main.devset.code_editor):
+            subprocess.Popen([self.main.devset.code_editor,
+                              os.path.join(self.main.mod.path, self.cfg['file'])])
+        else:
+            log.error('No code_editor found! Set it up in settings!')
 
 
 class InputDialog(QtGui.QDialog):

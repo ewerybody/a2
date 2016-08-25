@@ -36,8 +36,6 @@ class A2Window(QtGui.QMainWindow):
         self.ui.module_list.draw_modules()
         self.ui.module_list.selection_changed.connect(self.module_selected)
 
-        # TODO: make this optional
-        self.scriptEditor = 'C:/Users/eRiC/io/tools/np++/notepad++.exe'
         self.edit_clipboard = []
         self.tempConfig = None
         self.selected = []
