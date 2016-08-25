@@ -6,8 +6,7 @@ a2ctrl.a2settings
 """
 import os
 import subprocess
-from pprint import pprint
-from os.path import exists, dirname
+from os.path import exists, dirname, basename, relpath
 
 from PySide import QtGui, QtCore
 
@@ -18,6 +17,7 @@ import a2ctrl
 from a2ctrl import a2settings_ui
 
 
+autohotkey_exe = 'autohotkey.exe'
 log = a2core.get_logger(__name__)
 
 
@@ -77,7 +77,12 @@ class A2Settings(QtGui.QWidget):
         self.ui.module_folder.setText(self.a2.paths.modules)
         self.ui.python_executable.setText(self.a2.paths.python)
 
-        self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
+        self.ui.autohotkey.writable = False
+        self.ui.autohotkey.setText(self.a2.paths.autohotkey)
+        self.ui.autohotkey.file_types = "Autohotkey Executable (%s)" % autohotkey_exe
+        self.ui.autohotkey.changed.connect(self.set_autohotkey)
+
+        self.ui.show_console.setChecked(basename(self.a2.paths.python).lower() == 'python.exe')
         self.ui.show_console.clicked[bool].connect(self.toggle_console)
 
         ahk_vars = ahk.get_variables(self.a2.paths.settings_ahk)
@@ -86,15 +91,31 @@ class A2Settings(QtGui.QWidget):
 
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
-        ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python',
-                         os.path.join(dirname(self.a2.paths.python), base_name))
+        newpath = os.path.join(dirname(self.a2.paths.python), base_name)
+        ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', newpath)
+        self.a2.paths.python = newpath
+        self.ui.python_executable.setText(newpath)
 
     def toggle_startup_tooltips(self, state):
         ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
+    def set_autohotkey(self, path):
+        if basename(path).lower() != autohotkey_exe:
+            self.ui.autohotkey.changed.disconnect(self.set_autohotkey)
+            self.ui.autohotkey.value = self.a2.paths.autohotkey
+            self.ui.autohotkey.changed.connect(self.set_autohotkey)
+            return
+
+        rel = relpath(path, self.a2.paths.a2)
+        if rel.startswith('..'):
+            ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', path)
+        else:
+            ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', rel)
+        self.a2.paths.autohotkey = path
+        self.main.settings_changed()
+
     def on_dev_setting_changed(self, *args):
         self.main.devset.set(self.dev_set_dict)
-        pprint(self.dev_set_dict)
 
     def toggle_log_level(self, state):
         a2core.set_loglevel(state)

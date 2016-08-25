@@ -170,54 +170,6 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="author_url"/>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_8">
-           <property name="text">
-            <string>Autohotkey Executable:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="PathField" name="ahk_exe"/>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>Python Output:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QCheckBox" name="loglevel_debug">
-           <property name="text">
-            <string>LogLevel:DEBUG</string>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
-          <widget class="QCheckBox" name="show_console">
-           <property name="text">
-            <string>Show Console</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>JSON Indent:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="1">
-          <widget class="QSpinBox" name="json_indent">
-           <property name="maximumSize">
-            <size>
-             <width>70</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
          <item row="11" column="0" colspan="2">
           <widget class="Line" name="line">
            <property name="sizePolicy">
@@ -279,20 +231,6 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>a2 runtime:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="startup_tooltips">
-           <property name="text">
-            <string>Enable Startup Tooltips</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
@@ -302,6 +240,68 @@
          </item>
          <item row="2" column="1">
           <widget class="PathField" name="code_editor"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Autohotkey Executable:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="PathField" name="autohotkey"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>a2 runtime:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QCheckBox" name="startup_tooltips">
+           <property name="text">
+            <string>Enable Startup Tooltips</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Python Output:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QCheckBox" name="loglevel_debug">
+           <property name="text">
+            <string>LogLevel:DEBUG</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QCheckBox" name="show_console">
+           <property name="text">
+            <string>Show Console</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>JSON Indent:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QSpinBox" name="json_indent">
+           <property name="maximumSize">
+            <size>
+             <width>70</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
