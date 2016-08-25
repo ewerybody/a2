@@ -8,7 +8,7 @@ from PySide import QtCore, QtGui
 import ahk
 import a2ctrl
 import a2core
-from a2ctrl import hotkey_edit_ui, hotkey_func, hotkey_scope, connect_cfg_controls
+from a2ctrl import hotkey_edit_ui, hotkey_func, hotkey_scope
 
 
 log = a2core.get_logger(__name__)
@@ -91,7 +91,7 @@ class Draw(a2ctrl.DrawCtrl):
 
 class Edit(a2ctrl.EditCtrl):
     """
-    TODO: Oh boy... this has so many implications but it has to be done. Let's do it!
+    Oh boy... this has so many implications but it has to be done. Let's do it!
     First: Have the edit ctrl, then the display one, Then we need checks when a mod
     config change is about to be comitted. The change will not be able to be OKed as long
     as there are conflicts with hotkeys, or missing includes or ...
@@ -132,18 +132,24 @@ class Edit(a2ctrl.EditCtrl):
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
         self.check_new_name()
-        connect_cfg_controls(self.cfg, self.ui)
+        a2ctrl.connect_cfg_controls(self.cfg, self.ui)
         self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
         self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
 
-        self.disablableCheck()
-        self.ui.cfg_disablable.clicked.connect(self.disablableCheck)
+        self.disablable_check()
+        self.ui.cfg_disablable.clicked[bool].connect(self.disablable_check)
 
-    def disablableCheck(self):
-        """would be useless if hotkey is off by default and cannot be changed"""
-        state = self.ui.cfg_disablable.isChecked()
-        self.ui.cfg_enabled.setEnabled(state)
-        self.ui.cfg_enabled.setChecked(True)
+    def disablable_check(self, state=None):
+        """Would be useless if hotkey is off by default and cannot be changed."""
+        if state is None:
+            # happens only initially
+            if not self.cfg['disablable']:
+                self.cfg['enabled'] = True
+                self.ui.cfg_enabled.setEnabled(False)
+                self.ui.cfg_enabled.setChecked(True)
+        else:
+            self.ui.cfg_enabled.setEnabled(state)
+            self.ui.cfg_enabled.setChecked(True)
 
     def hotkey_change(self, newKey):
         self.cfg['key'] = newKey
