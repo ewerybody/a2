@@ -37,6 +37,7 @@ _init_check_settings() {
 
 _init_get_var(var_name) {
     ; reads a2_settings.ahk and returns the value of a given variable name.
+    ; without including the file
     Loop, read, a2_settings.ahk
     {
         parts := StrSplit(A_LoopReadLine, ["=", ":="])

@@ -1,8 +1,10 @@
 a2_python := _init_get_var("a2_python")
 a2_startup_tool_tips := _init_get_var("a2_startup_tool_tips")
+StringLower, a2_startup_tool_tips, a2_startup_tool_tips
 
-if a2_startup_tool_tips
+if (a2_startup_tool_tips == "true")
     tt("a2ui...", 0.5)
+
 Run, %a2_python% a2app.py, %A_ScriptDir%\ui\
 sleep 500
 
