@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2design.ui'
 #
-# Created: Thu Aug 18 00:53:46 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Fri Aug 26 11:22:56 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,6 +19,8 @@ class Ui_a2MainWindow(object):
         self.centralwidget = QtGui.QWidget(a2MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -30,7 +32,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 38))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 23))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
