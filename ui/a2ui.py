@@ -33,19 +33,17 @@ class A2Window(QtGui.QMainWindow):
         self.devset = DevSettings(self.a2)
         self._setup_ui()
 
-        self.ui.module_list.draw_modules()
+        init_selection = []
+        if self.a2.db.get('remember_last') or False:
+            init_selection = self.a2.db.get('last_selected') or []
         self.ui.module_list.selection_changed.connect(self.module_selected)
+        self.ui.module_list.draw_modules(init_selection)
 
         self.edit_clipboard = []
         self.tempConfig = None
         self.selected = []
         self.mod = None
         self.scopes = {}
-
-        init_selection = []
-        if self.a2.db.get('remember_last') or False:
-            init_selection = self.a2.db.get('last_selected') or []
-        self.ui.module_list.select(init_selection)
 
         log.info('initialised!')
 

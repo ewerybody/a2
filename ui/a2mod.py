@@ -103,6 +103,8 @@ class ModSource(object):
             state = not self.enabled
         self.enabled = state
 
+    def __repr__(self):
+        return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
 
 class Mod(object):
     """
@@ -304,6 +306,9 @@ class Mod(object):
             a2core.surfTo(self.config[0].get('url'))
         except Exception as error:
             log.error('Error calling help() on module: %s\n:%s' % (self.name, error))
+
+    def __repr__(self):
+        return '<a2mod.Mod %s at %s>' % (self.name, hex(id(self)))
 
 
 class NewModuleSourceTool(object):

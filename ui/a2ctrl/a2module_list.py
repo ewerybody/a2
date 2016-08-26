@@ -26,33 +26,40 @@ class ModuleList(QtGui.QWidget):
 
     def selection_change(self):
         if not self._draw_phase:
-            modules = [item._module for item in self.ui.list_widget.selectedItems()]
-            self.selection_changed.emit(modules)
+            self.selection = [item._module for item in self.ui.list_widget.selectedItems()]
+            self.selection_changed.emit(self.selection)
 
     def select(self, modules=None):
         self._draw_phase = True
         a2ctrl.qlist.deselect_all(self.ui.list_widget)
         selection = []
+        lastitem = None
         if modules is not None:
             for item in modules:
                 if isinstance(item, a2mod.Mod):
                     selection.append(item)
                     item._item.setSelected(True)
+                    lastitem = item._item
+
                 elif isinstance(item, str):
                     srcname, modname = item.split('|', 1)
                     mod = self.a2.module_sources.get(srcname, {}).mods.get(modname, {})
                     try:
                         mod._item.setSelected(True)
+                        lastitem = mod._item
                         selection.append(mod)
                     except Exception:
                         pass
+
+        if lastitem is not None:
+            self.ui.list_widget.setCurrentItem(lastitem)
 
         self._draw_phase = False
         if selection != self.selection:
             self.selection = selection
             self.selection_changed.emit(self.selection)
 
-    def draw_modules(self, select=None):
+    def draw_modules(self, select_mods=None):
         """
         Call to refill the module list with items.
         ... to match filtering, module deletion or enabling of module sources.
@@ -66,6 +73,10 @@ class ModuleList(QtGui.QWidget):
                 item._module = mod
                 mod._item = item
                 self.ui.list_widget.addItem(item)
+
+        if select_mods is None:
+            select_mods = self.selection
+        self.select(select_mods)
 
         self._draw_phase = False
 
