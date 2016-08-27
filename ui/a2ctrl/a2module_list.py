@@ -69,7 +69,8 @@ class ModuleList(QtGui.QWidget):
         for source in self.a2.module_sources.values():
             for mod in source.mods.values():
                 item = QtGui.QListWidgetItem(mod.name)
-                item.setIcon(Ico('a2', scale=0.8))
+                item.setIcon(mod.icon)
+                print('mod.icon.path: %s' % mod.icon.path)
                 item._module = mod
                 mod._item = item
                 self.ui.list_widget.addItem(item)

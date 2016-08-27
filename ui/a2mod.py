@@ -8,11 +8,14 @@ import a2core
 import a2ctrl
 from os.path import exists, splitext, isdir, isfile
 from shutil import copy2
+from PySide import QtGui
 
 
 log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
 MOD_SOURCE_NAME = 'a2modsource.json'
+ICON_FILENAME = 'a2icon'
+ICON_FORMATS = ['.svg', '.png', '.ico']
 VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'number': {'typ': (int, float), 'default': 0.0},
              'string': {'typ': str, 'default': ''},
@@ -47,6 +50,7 @@ class ModSource(object):
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
+        self._icon = None
 
     def fetch_modules(self, state=None):
         mods_in_path = get_folders(self.path)
@@ -103,8 +107,14 @@ class ModSource(object):
             state = not self.enabled
         self.enabled = state
 
+    @property
+    def icon(self):
+        self._icon = get_icon(self._icon, self.path, a2ctrl.Icons.inst().a2)
+        return self._icon
+
     def __repr__(self):
         return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
+
 
 class Mod(object):
     """
@@ -134,6 +144,7 @@ class Mod(object):
         self.key = self.source.name + '|' + self.name
         # to itentify the module in the module list widget e.g. for selection
         self._item = None
+        self._icon = None
 
     @property
     def has_config_file(self):
@@ -310,6 +321,10 @@ class Mod(object):
     def __repr__(self):
         return '<a2mod.Mod %s at %s>' % (self.name, hex(id(self)))
 
+    @property
+    def icon(self):
+        self._icon = get_icon(self._icon, self.path, self.source.icon)
+        return self._icon
 
 class NewModuleSourceTool(object):
     def __init__(self, main):
@@ -361,6 +376,27 @@ def get_files(path):
 
 def get_folders(path):
     return [f for f in os.listdir(path) if isdir(os.path.join(path, f))]
+
+
+icon_types = [ICON_FILENAME + ext for ext in ICON_FORMATS]
+
+
+def get_icon(current_icon, folder, fallback):
+    if current_icon is None or not exists(current_icon.path):
+        icon_path = ''
+        for item in get_files(folder):
+            if item in icon_types:
+                print('item: %s' % item)
+                icon_path = os.path.join(folder, item)
+                #self._icon =
+                break
+        if icon_path:
+            current_icon = QtGui.QIcon(icon_path)
+            current_icon.path = icon_path
+        else:
+            current_icon = fallback
+
+    return current_icon
 
 
 if __name__ == '__main__':
