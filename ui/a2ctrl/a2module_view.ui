@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="settingsHeadLayout" stretch="0,0,0,1,0">
+    <layout class="QHBoxLayout" name="settingsHeadLayout" stretch="0,0,0,0,1,0">
      <item>
       <widget class="QCheckBox" name="modCheck">
        <property name="text">
@@ -82,6 +82,25 @@
        </property>
        <property name="text">
         <string>- Author Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="modSource">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI</family>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>- Module Source</string>
        </property>
       </widget>
      </item>

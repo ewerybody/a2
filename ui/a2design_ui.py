@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2design.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2design.ui'
 #
-# Created: Fri Aug 26 11:22:56 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sat Aug 27 01:23:41 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,8 +19,6 @@ class Ui_a2MainWindow(object):
         self.centralwidget = QtGui.QWidget(a2MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -32,7 +30,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 38))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
@@ -69,7 +67,6 @@ class Ui_a2MainWindow(object):
         self.actionRefresh_UI.setObjectName("actionRefresh_UI")
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
-        self.menuTests.addAction(self.actionTest_restorewin)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)
         self.menuDev.addSeparator()
@@ -107,5 +104,5 @@ class Ui_a2MainWindow(object):
         self.actionExit_a2.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefresh_UI.setText(QtGui.QApplication.translate("a2MainWindow", "Refresh UI", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.a2module_list import ModuleList
 from a2ctrl.a2module_view import ModuleView
+from a2ctrl.a2module_list import ModuleList
