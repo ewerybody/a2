@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\number_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\number_edit.ui'
 #
-# Created: Thu Aug  4 00:26:34 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Aug 29 14:16:00 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(837, 499)
+        edit.resize(457, 279)
         self.editLayout = QtGui.QFormLayout(edit)
         self.editLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.editLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
@@ -36,13 +36,13 @@ class Ui_edit(object):
         self.label = QtGui.QLabel(edit)
         self.label.setObjectName("label")
         self.editLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label)
-        self.valuee = QtGui.QDoubleSpinBox(edit)
-        self.valuee.setSuffix("")
-        self.valuee.setDecimals(0)
-        self.valuee.setSingleStep(1.0)
-        self.valuee.setProperty("value", 0.0)
-        self.valuee.setObjectName("valuee")
-        self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.valuee)
+        self.value = QtGui.QDoubleSpinBox(edit)
+        self.value.setSuffix("")
+        self.value.setDecimals(0)
+        self.value.setSingleStep(1.0)
+        self.value.setProperty("value", 0.0)
+        self.value.setObjectName("value")
+        self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.value)
         self.label_2 = QtGui.QLabel(edit)
         self.label_2.setObjectName("label_2")
         self.editLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_2)
