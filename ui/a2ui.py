@@ -29,6 +29,12 @@ class A2Window(QtGui.QMainWindow):
         self.app = app
         self._restart_thread = None
 
+        self.edit_clipboard = []
+        self.tempConfig = None
+        self.selected = []
+        self.mod = None
+        self.scopes = {}
+
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self.devset = DevSettings(self.a2)
         self._setup_ui()
@@ -38,12 +44,6 @@ class A2Window(QtGui.QMainWindow):
             init_selection = self.a2.db.get('last_selected') or []
         self.ui.module_list.selection_changed.connect(self.module_selected)
         self.ui.module_list.draw_modules(init_selection)
-
-        self.edit_clipboard = []
-        self.tempConfig = None
-        self.selected = []
-        self.mod = None
-        self.scopes = {}
 
         with open('a2.css') as fobj:
             self.setStyleSheet(fobj.read())

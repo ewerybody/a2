@@ -70,7 +70,6 @@ class ModuleList(QtGui.QWidget):
             for mod in source.mods.values():
                 item = QtGui.QListWidgetItem(mod.name)
                 item.setIcon(mod.icon)
-                print('mod.icon.path: %s' % mod.icon.path)
                 item._module = mod
                 mod._item = item
                 self.ui.list_widget.addItem(item)
