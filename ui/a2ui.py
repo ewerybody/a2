@@ -98,6 +98,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionRefresh_UI.setIcon(a2ctrl.Icons.inst().a2reload)
 
         self.ui.actionReport_Issue.triggered.connect(partial(a2core.surfTo, self.a2.urls.help_report_issue))
+        self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
         self.ui.menuNew_Module.aboutToShow.connect(self.build_new_module_menu)
 
