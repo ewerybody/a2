@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\inputDialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\inputDialog.ui'
 #
-# Created: Sun Sep 20 22:20:37 2015
+# Created: Tue Aug 30 00:36:21 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,14 +13,14 @@ class Ui_InputDialog(object):
     def setupUi(self, InputDialog):
         InputDialog.setObjectName("InputDialog")
         InputDialog.resize(800, 168)
-        self.verticalLayout = QtGui.QVBoxLayout(InputDialog)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.main_layout = QtGui.QVBoxLayout(InputDialog)
+        self.main_layout.setObjectName("main_layout")
         self.label = QtGui.QLabel(InputDialog)
         self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
+        self.main_layout.addWidget(self.label)
         self.textField = QtGui.QLineEdit(InputDialog)
         self.textField.setObjectName("textField")
-        self.verticalLayout.addWidget(self.textField)
+        self.main_layout.addWidget(self.textField)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.okButton = QtGui.QPushButton(InputDialog)
@@ -32,7 +32,7 @@ class Ui_InputDialog(object):
         self.cancelButton.setObjectName("cancelButton")
         self.horizontalLayout.addWidget(self.cancelButton)
         self.horizontalLayout.setStretch(0, 1)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.main_layout.addLayout(self.horizontalLayout)
 
         self.retranslateUi(InputDialog)
         QtCore.QMetaObject.connectSlotsByName(InputDialog)

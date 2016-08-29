@@ -370,6 +370,36 @@ class NewModuleSourceTool(object):
         self.main.ui.module_view.draw_mod()
 
 
+class NewModulueTool(object):
+    def __init__(self, main, module_source=None):
+        self.a2 = a2core.A2Obj.inst()
+        self.main = main
+        if module_source is None:
+            module_source = self.a2.db.get('last_module_create_source')
+
+        _NewModuleInput(self.main, self.a2, 'New Module', self.create_module, self.check_name,
+                        msg='Name the new module:', text='my_module')
+
+    def create_module(self, name):
+        print('create_module: %s' % name)
+
+    def check_name(self, name):
+        print('check_name: %s' % name)
+        return True
+
+
+class _NewModuleInput(a2ctrl.InputDialog):
+    def __init__(self, parent, a2, title, okFunk, checkFunc, text, msg):
+        super(_NewModuleInput, self).__init__(parent, title, okFunk, checkFunc, text, msg)
+        self.main = parent
+        self.a2 = a2
+        self.ui.main_layout.insertWidget(0, QtGui.QLabel('Module Source:'))
+        self.source_combo = QtGui.QComboBox(self)
+        self.ui.main_layout.insertWidget(1, self.source_combo)
+
+        self.source_combo.addItems(list(self.a2.module_sources.keys()))
+
+
 def get_files(path):
     return [f for f in os.listdir(path) if isfile(os.path.join(path, f))]
 

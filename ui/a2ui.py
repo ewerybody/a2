@@ -13,6 +13,7 @@ import a2design_ui
 from copy import deepcopy
 from functools import partial
 from PySide import QtGui, QtCore
+import a2mod
 
 
 log = a2core.get_logger(__name__)
@@ -101,6 +102,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
         self.ui.menuNew_Module.aboutToShow.connect(self.build_new_module_menu)
+        self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
 
     def _setup_shortcuts(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -119,7 +121,6 @@ class A2Window(QtGui.QMainWindow):
 
     def build_new_module_menu(self):
         menu = self.ui.menuNew_Module
-        #self.ui.actionNew_Module_Dialog
         menu.clear()
         menu.addAction(self.ui.actionNew_Module_Dialog)
         menu.addAction(QtGui.QAction('NotImplemented Yet', menu))
@@ -239,13 +240,8 @@ class A2Window(QtGui.QMainWindow):
         # TODO: reimplement in each widget
         pass
 
-    def _testOutOfScreen(self):
-        h = self.app.desktop().height()
-        log.debug('h: %s' % h)
-        geo = self.geometry()
-        geo.setY(geo.x() + h)
-        self.setGeometry(geo)
-        log.debug('geo: %s' % self.geometry())
+    def create_new_module(self):
+        a2mod.NewModulueTool(self)
 
 
 class RestartThread(QtCore.QThread):
