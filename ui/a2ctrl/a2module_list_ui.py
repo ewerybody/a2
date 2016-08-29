@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2module_list.ui'
 #
-# Created: Fri Aug 26 11:26:04 2016
+# Created: Mon Aug 29 14:04:30 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -15,7 +15,7 @@ class Ui_ModuleList(object):
         ModuleList.resize(487, 889)
         self.module_list_layout = QtGui.QVBoxLayout(ModuleList)
         self.module_list_layout.setSpacing(5)
-        self.module_list_layout.setContentsMargins(0, 0, 0, 0)
+        self.module_list_layout.setContentsMargins(0, 5, 0, 0)
         self.module_list_layout.setObjectName("module_list_layout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setSpacing(5)

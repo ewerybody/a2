@@ -20,6 +20,12 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -37,13 +43,14 @@
      <x>0</x>
      <y>0</y>
      <width>1012</width>
-     <height>38</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionReport_Issue"/>
     <addaction name="actionAbout_a2"/>
     <addaction name="actionAbout_Autohotkey"/>
    </widget>
@@ -51,18 +58,17 @@
     <property name="title">
      <string>&amp;Dev</string>
     </property>
-    <widget class="QMenu" name="menuTests">
+    <widget class="QMenu" name="menuNew_Module">
      <property name="title">
-      <string>Tests</string>
+      <string>New Module</string>
      </property>
+     <addaction name="actionNew_Module_Dialog"/>
     </widget>
+    <addaction name="menuNew_Module"/>
     <addaction name="actionEdit_module"/>
     <addaction name="actionExplore_to"/>
     <addaction name="separator"/>
-    <addaction name="menuTests"/>
-    <addaction name="separator"/>
     <addaction name="actionDisable_all_modules"/>
-    <addaction name="actionDev_settings"/>
     <addaction name="actionExplore_to_a2_dir"/>
    </widget>
    <widget class="QMenu" name="menuMain">
@@ -81,6 +87,9 @@
    <property name="text">
     <string>About a2</string>
    </property>
+   <property name="shortcut">
+    <string notr="true">F1</string>
+   </property>
   </action>
   <action name="actionEdit_module">
    <property name="text">
@@ -95,6 +104,9 @@
   <action name="actionExplore_to">
    <property name="text">
     <string>Explore to Module ...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Alt+E</string>
    </property>
   </action>
   <action name="actionDev_settings">
@@ -135,6 +147,27 @@
   <action name="actionRefresh_UI">
    <property name="text">
     <string>Refresh UI</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionAsdfasdf">
+   <property name="text">
+    <string>asdfasdf</string>
+   </property>
+  </action>
+  <action name="actionReport_Issue">
+   <property name="text">
+    <string>Report Issue</string>
+   </property>
+  </action>
+  <action name="actionNew_Module_Dialog">
+   <property name="text">
+    <string>New Module Dialog</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+N</string>
    </property>
   </action>
  </widget>

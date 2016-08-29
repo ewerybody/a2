@@ -45,6 +45,9 @@ class A2Window(QtGui.QMainWindow):
         self.mod = None
         self.scopes = {}
 
+        with open('a2.css') as fobj:
+            self.setStyleSheet(fobj.read())
+
         log.info('initialised!')
 
     def module_selected(self, module_list):
@@ -79,28 +82,24 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionEdit_module.setShortcut('Ctrl+E')
         self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
+        self.ui.actionExplore_to.setIcon(a2ctrl.Icons.inst().folder)
         self.ui.actionAbout_a2.triggered.connect(partial(a2core.surfTo, self.a2.urls.help))
-        self.ui.actionAbout_a2.setShortcut('F1')
         self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2help)
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
+        self.ui.actionExplore_to_a2_dir.setIcon(a2ctrl.Icons.inst().folder)
         self.ui.actionA2_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
-        self.ui.actionDev_settings.triggered.connect(partial(self.ui.module_list.select, None))
         self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
         self.ui.actionExit_a2.triggered.connect(self.close)
         self.ui.actionRefresh_UI.triggered.connect(partial(self.settings_changed, refresh_ui=True))
         self.ui.actionRefresh_UI.setIcon(a2ctrl.Icons.inst().a2reload)
-        self.ui.actionRefresh_UI.setShortcut('F5')
 
-        self.ui.actionTest_restorewin.triggered.connect(self._testOutOfScreen)
+        self.ui.actionReport_Issue.triggered.connect(partial(a2core.surfTo, self.a2.urls.help_report_issue))
 
-        self.ui.menu_new_module = QtGui.QMenu(self.ui.menuDev)
-        self.ui.menu_new_module.setTitle('New Module')
-        self.ui.menuDev.insertMenu(self.ui.actionEdit_module, self.ui.menu_new_module)
-        self.ui.menu_new_module.aboutToShow.connect(self.build_new_module_menu)
+        self.ui.menuNew_Module.aboutToShow.connect(self.build_new_module_menu)
 
     def _setup_shortcuts(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -118,9 +117,11 @@ class A2Window(QtGui.QMainWindow):
                         partial(self.scroll_to, False))
 
     def build_new_module_menu(self):
-        menu = self.ui.menu_new_module
+        menu = self.ui.menuNew_Module
+        #self.ui.actionNew_Module_Dialog
         menu.clear()
-        self.ui.menu_new_module.addAction(QtGui.QAction('NotImplemented Yet', menu))
+        menu.addAction(self.ui.actionNew_Module_Dialog)
+        menu.addAction(QtGui.QAction('NotImplemented Yet', menu))
 
     def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:

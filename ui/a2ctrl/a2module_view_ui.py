@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2module_view.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2module_view.ui'
 #
-# Created: Sun Aug 14 22:48:43 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Aug 29 14:33:28 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -14,8 +14,11 @@ class Ui_ModuleView(object):
         ModuleView.setObjectName("ModuleView")
         ModuleView.resize(753, 703)
         self.verticalLayout = QtGui.QVBoxLayout(ModuleView)
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.settingsHeadLayout = QtGui.QHBoxLayout()
+        self.settingsHeadLayout.setSpacing(5)
         self.settingsHeadLayout.setObjectName("settingsHeadLayout")
         self.modCheck = QtGui.QCheckBox(ModuleView)
         self.modCheck.setText("")
@@ -52,12 +55,24 @@ class Ui_ModuleView(object):
         self.modAuthor.setFont(font)
         self.modAuthor.setObjectName("modAuthor")
         self.settingsHeadLayout.addWidget(self.modAuthor)
+        self.a2mod_view_source_label = QtGui.QLabel(ModuleView)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.a2mod_view_source_label.sizePolicy().hasHeightForWidth())
+        self.a2mod_view_source_label.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Segoe UI")
+        font.setPointSize(10)
+        self.a2mod_view_source_label.setFont(font)
+        self.a2mod_view_source_label.setObjectName("a2mod_view_source_label")
+        self.settingsHeadLayout.addWidget(self.a2mod_view_source_label)
         self.modInfoButton = QtGui.QPushButton(ModuleView)
         self.modInfoButton.setMinimumSize(QtCore.QSize(30, 30))
         self.modInfoButton.setMaximumSize(QtCore.QSize(30, 30))
         self.modInfoButton.setObjectName("modInfoButton")
         self.settingsHeadLayout.addWidget(self.modInfoButton)
-        self.settingsHeadLayout.setStretch(3, 1)
+        self.settingsHeadLayout.setStretch(4, 1)
         self.verticalLayout.addLayout(self.settingsHeadLayout)
         self.scrollArea = QtGui.QScrollArea(ModuleView)
         font = QtGui.QFont()
@@ -66,7 +81,7 @@ class Ui_ModuleView(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaContents = QtGui.QWidget()
-        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 715, 549))
+        self.scrollAreaContents.setGeometry(QtCore.QRect(0, 0, 751, 634))
         self.scrollAreaContents.setObjectName("scrollAreaContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaContents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -77,7 +92,8 @@ class Ui_ModuleView(object):
         self.editOKCancelWidget.setObjectName("editOKCancelWidget")
         self.horizontalLayout = QtGui.QHBoxLayout(self.editOKCancelWidget)
         self.horizontalLayout.setSpacing(5)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 3)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.editOKButton = QtGui.QPushButton(self.editOKCancelWidget)
         self.editOKButton.setMinimumSize(QtCore.QSize(0, 35))
@@ -110,6 +126,7 @@ class Ui_ModuleView(object):
         ModuleView.setWindowTitle(QtGui.QApplication.translate("ModuleView", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.modVersion.setText(QtGui.QApplication.translate("ModuleView", "v0.0", None, QtGui.QApplication.UnicodeUTF8))
         self.modAuthor.setText(QtGui.QApplication.translate("ModuleView", "- Author Name", None, QtGui.QApplication.UnicodeUTF8))
+        self.a2mod_view_source_label.setText(QtGui.QApplication.translate("ModuleView", "- Module Source", None, QtGui.QApplication.UnicodeUTF8))
         self.modInfoButton.setText(QtGui.QApplication.translate("ModuleView", "?", None, QtGui.QApplication.UnicodeUTF8))
         self.editOKButton.setText(QtGui.QApplication.translate("ModuleView", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.editCancelButton.setText(QtGui.QApplication.translate("ModuleView", "Cancel", None, QtGui.QApplication.UnicodeUTF8))

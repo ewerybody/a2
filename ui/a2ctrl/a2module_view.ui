@@ -14,8 +14,17 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item>
     <layout class="QHBoxLayout" name="settingsHeadLayout" stretch="0,0,0,0,1,0">
+     <property name="spacing">
+      <number>5</number>
+     </property>
      <item>
       <widget class="QCheckBox" name="modCheck">
        <property name="text">
@@ -86,7 +95,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="modSource">
+      <widget class="QLabel" name="a2mod_view_source_label">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -140,8 +149,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>715</width>
-        <height>549</height>
+        <width>751</width>
+        <height>634</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -160,17 +169,8 @@
       <property name="spacing">
        <number>5</number>
       </property>
-      <property name="leftMargin">
+      <property name="margin">
        <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>3</number>
       </property>
       <item>
        <widget class="QPushButton" name="editOKButton">

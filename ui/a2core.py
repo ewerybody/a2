@@ -138,6 +138,7 @@ class URLs(object):
         self.help_string = self.a2 + '/wiki/Edit-String'
         self.help_number = self.a2 + '/wiki/Edit-Number'
         self.help_path = self.a2 + '/wiki/Edit-Path'
+        self.help_report_issue = self.a2 + '/issues/new'
 
         self.ahk = 'https://autohotkey.com'
         self.ahk_commands = self.ahk + '/docs/commands'
