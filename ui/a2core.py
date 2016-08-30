@@ -50,8 +50,10 @@ class A2Obj(object):
         self.app = None
         self.win = None
         self.module_sources = {}
-        self.urls = URLs()
+
         self.paths = Paths()
+        self.urls = URLs(self.paths._variables_dict)
+
         self.db = a2db.A2db(self.paths.db)
         self._enabled = None
 
@@ -125,12 +127,12 @@ class A2Obj(object):
 
 
 class URLs(object):
-    def __init__(self):
+    def __init__(self, variables_dict):
         """
         Common a2 & ahk related web links.
         """
-        self.a2 = 'https://github.com/ewerybody/a2'
-        self.help = self.a2 + '#a2-'
+        self.a2 = variables_dict.get('a2_url', 'https://github.com/ewerybody/a2')
+        self.help = variables_dict.get('a2_help', (self.a2 + '#a2-'))
         self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
         self.helpHotkey = self.a2 + '/wiki/Edit-Hotkey-Control'
         self.helpCheckbox = self.a2 + '/wiki/Edit-Checkbox-Control'
@@ -160,6 +162,7 @@ class Paths(object):
         self.lib = join(self.a2, 'lib')
         self.a2_script = join(self.a2, 'a2.ahk')
 
+        self._variables_dict = ahk.get_variables(self._get_settings_ahk())
         path_vars = self._fetch_a2_setting_paths()
         self.settings = path_vars['settings']
         self.modules = path_vars['modules']
@@ -178,14 +181,16 @@ class Paths(object):
 
         self.db = join(self.settings, 'a2.db')
 
+    def _get_settings_ahk(self):
+        if not exists(self.settings_ahk):
+            return os.path.join(self.lib, '_startup_defaults', 'a2_settings.ahk')
+        return self.settings_ahk
+
     def _fetch_a2_setting_paths(self):
         keys = ['settings', 'modules', 'ahk', 'python']
         prefix = 'a2_'
-        settings_file = self.settings_ahk
-        if not exists(settings_file):
-            settings_file = os.path.join(self.lib, '_startup_defaults', 'a2_settings.ahk')
         result = {}
-        for key, value in ahk.get_variables(settings_file).items():
+        for key, value in self._variables_dict.items():
             key = key[len(prefix):]
             if key in keys:
                 if os.path.isabs(value):
