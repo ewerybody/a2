@@ -132,7 +132,7 @@ class Edit(a2ctrl.EditCtrl):
         self.mainWidget.setLayout(self.ui.verticalLayout_2)
 
         self.check_new_name()
-        a2ctrl.connect_cfg_controls(self.cfg, self.ui)
+        a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
         self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
 

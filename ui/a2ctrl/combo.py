@@ -6,7 +6,7 @@ Created on Apr 1, 2016
 import a2ctrl
 import a2ctrl.qlist
 from PySide import QtGui, QtCore
-from a2ctrl import combo_edit_ui, connect_cfg_controls
+from a2ctrl import combo_edit_ui
 
 
 class Draw(a2ctrl.DrawCtrl):
@@ -76,7 +76,7 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.minus_button.clicked.connect(self.delete_item)
 
         self.check_new_name()
-        connect_cfg_controls(self.cfg, self.ui)
+        a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
         for item in a2ctrl.qlist.get_all_items(self.ui.cfg_items):
             item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |

@@ -66,7 +66,7 @@ class A2Settings(QtGui.QWidget):
         self.ui.loglevel_debug.clicked[bool].connect(self.toggle_log_level)
 
         self.dev_set_dict = self.main.devset.get()
-        a2ctrl.connect_control_list([self.ui.author_name, self.ui.author_url,
+        a2ctrl.connect.control_list([self.ui.author_name, self.ui.author_url,
                                      self.ui.code_editor, self.ui.json_indent,
                                      self.ui.loglevel_debug],
                                     self.dev_set_dict,

@@ -6,7 +6,7 @@ Created on Mar 22, 2016
 import a2ctrl
 from functools import partial
 from PySide import QtGui, QtCore
-from a2ctrl import number_edit_ui, connect_cfg_controls
+from a2ctrl import number_edit_ui
 
 
 class Draw(a2ctrl.DrawCtrl):
@@ -105,7 +105,7 @@ class Edit(a2ctrl.EditCtrl):
         self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
-        connect_cfg_controls(self.cfg, self.ui)
+        a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
         self.ui.value.valueChanged.connect(self.set_value)
         if 'value' in self.cfg:

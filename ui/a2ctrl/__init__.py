@@ -38,10 +38,10 @@ from PySide import QtGui, QtCore, QtSvg
 
 import ahk
 import a2core
+from a2ctrl import connect
 from a2ctrl import inputDialog_ui
 from a2ctrl.path_field import PathField
-from a2ctrl.base import EditCtrl, Ico, Icons, connect_cfg_controls, connect_control_list
-
+from a2ctrl.base import EditCtrl, Ico, Icons
 
 log = a2core.get_logger(__name__)
 margin = 5
