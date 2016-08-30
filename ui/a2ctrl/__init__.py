@@ -423,10 +423,10 @@ class InputDialog(QtGui.QDialog):
             answer = self.checkFunk(name)
             if answer is True:
                 self.ui.okButton.setEnabled(True)
-                self.ui.okButton.setToolTip(None)
+                self.ui.okButton.setText('OK')
             else:
                 self.ui.okButton.setEnabled(False)
-                self.ui.okButton.setToolTip(answer)
+                self.ui.okButton.setText(answer)
 
     def okay(self):
         txt = self.ui.textField.text()
