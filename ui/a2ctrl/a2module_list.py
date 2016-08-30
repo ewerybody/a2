@@ -35,11 +35,17 @@ class ModuleList(QtGui.QWidget):
         selection = []
         lastitem = None
         if modules is not None:
+            if isinstance(modules, str):
+                modules = [modules]
+
             for item in modules:
                 if isinstance(item, a2mod.Mod):
                     selection.append(item)
-                    item._item.setSelected(True)
-                    lastitem = item._item
+                    try:
+                        item._item.setSelected(True)
+                        lastitem = item._item
+                    except Exception:
+                        pass
 
                 elif isinstance(item, str):
                     srcname, modname = item.split('|', 1)
