@@ -415,7 +415,10 @@ class InputDialog(QtGui.QDialog):
 
         self.show()
 
-    def check(self, name):
+    def check(self, name=None):
+        if name is None:
+            name = self.ui.textField.text()
+
         if self.checkFunk is not None:
             answer = self.checkFunk(name)
             if answer is True:
