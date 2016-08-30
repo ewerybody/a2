@@ -319,7 +319,7 @@ def _dbCleanup():
     for table in a2.db.tables():
         if table == 'a2':
             a2.db.pop('aValue')
-            enabled = a2.db.get('enabled', asjson=False)
+            enabled = a2.db.get('enabled', asjson=False) or ''
             if not enabled.startswith('{'):
                 a2.db.set('enabled', {})
             else:
