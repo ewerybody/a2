@@ -39,12 +39,15 @@ class A2Window(QtGui.QMainWindow):
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self.devset = DevSettings(self.a2)
         self._setup_ui()
+        # shortcuts
+        self.module_list = self.ui.module_list
+        self.module_view = self.ui.module_view
 
         init_selection = []
         if self.a2.db.get('remember_last') or False:
             init_selection = self.a2.db.get('last_selected') or []
-        self.ui.module_list.selection_changed.connect(self.module_selected)
-        self.ui.module_list.draw_modules(init_selection)
+        self.module_list.selection_changed.connect(self.module_selected)
+        self.module_list.draw_modules(init_selection)
 
         with open('a2.css') as fobj:
             self.setStyleSheet(fobj.read())
