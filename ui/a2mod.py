@@ -6,9 +6,10 @@ Created on Jul 9, 2015
 import os
 import a2core
 import a2ctrl
+import a2ctrl.connect
 from os.path import exists, splitext, isdir, isfile
 from shutil import copy2
-from PySide import QtGui
+from PySide import QtGui, QtCore
 
 
 log = a2core.get_logger(__name__)
@@ -326,6 +327,7 @@ class Mod(object):
         self._icon = get_icon(self._icon, self.path, self.source.icon)
         return self._icon
 
+
 class NewModuleSourceTool(object):
     def __init__(self, main):
         self.a2 = a2core.A2Obj.inst()
@@ -374,30 +376,44 @@ class NewModulueTool(object):
     def __init__(self, main, module_source=None):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
+        self.source_dict = {'sources': list(self.a2.module_sources.keys())}
         if module_source is None:
-            module_source = self.a2.db.get('last_module_create_source')
+            module_source = self.a2.db.get('last_module_create_source') or self.source_dict['sources'][0]
+        self.source_dict['seleceted_source'] = module_source
+        self.source_dict['source_index'] = self.source_dict['sources'].index(module_source)
 
-        _NewModuleInput(self.main, self.a2, 'New Module', self.create_module, self.check_name,
+        _NewModuleInput(self, 'New Module', self.create_module, self.check_name,
                         msg='Name the new module:', text='my_module')
 
     def create_module(self, name):
+        source = self.source_dict['sources'][self.source_dict['source_index']]
+        self.a2.db.set('last_module_create_source', source)
+        print('source: %s' % source)
         print('create_module: %s' % name)
 
     def check_name(self, name):
+        source = self.source_dict['sources'][self.source_dict['source_index']]
+        print('source: %s' % source)
         print('check_name: %s' % name)
         return True
 
 
 class _NewModuleInput(a2ctrl.InputDialog):
-    def __init__(self, parent, a2, title, okFunk, checkFunc, text, msg):
-        super(_NewModuleInput, self).__init__(parent, title, okFunk, checkFunc, text, msg)
-        self.main = parent
-        self.a2 = a2
+    def __init__(self, parent, title, okFunk, checkFunc, text, msg):
+        super(_NewModuleInput, self).__init__(parent.main, title, okFunk, checkFunc, text, msg)
+        self.parent = parent
         self.ui.main_layout.insertWidget(0, QtGui.QLabel('Module Source:'))
-        self.source_combo = QtGui.QComboBox(self)
-        self.ui.main_layout.insertWidget(1, self.source_combo)
 
-        self.source_combo.addItems(list(self.a2.module_sources.keys()))
+        self.source_index = QtGui.QComboBox(self)
+        self.source_index.addItems(parent.source_dict['sources'])
+        a2ctrl.connect.control(self.source_index, 'source_index', parent.source_dict)
+        i = parent.source_dict['source_index']
+        print('source_index: %s' % i)
+        self.source_index.currentIndexChanged.connect(self.check_on_source_change)
+        self.ui.main_layout.insertWidget(1, self.source_index)
+
+    def check_on_source_change(self, _int):
+        self.check()
 
 
 def get_files(path):
