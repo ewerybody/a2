@@ -16,7 +16,7 @@ log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
 MOD_SOURCE_NAME = 'a2modsource.json'
 ICON_FILENAME = 'a2icon'
-ICON_FORMATS = ['.svg', '.png', '.ico']
+ICON_FORMATS = ['.svg', '.png']
 VALUE_MAP = {'check': {'typ': bool, 'default': False},
              'number': {'typ': (int, float), 'default': 0.0},
              'string': {'typ': str, 'default': ''},
@@ -460,7 +460,7 @@ def get_icon(current_icon, folder, fallback):
         for item in get_files(folder):
             if item in icon_types:
                 icon_path = os.path.join(folder, item)
-                #self._icon =
+
                 break
         if icon_path:
             if item.endswith('.svg'):
