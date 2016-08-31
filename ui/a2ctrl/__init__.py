@@ -63,9 +63,8 @@ class UIValues(object):
 
 
 def adjustSizes(app):
-    desk = app.desktop()
-    dpi = desk.physicalDpiX()
-    #print('dpi: %s' % dpi)
+    dpi = app.desktop().physicalDpiX()
+    print('dpi: %s' % dpi)
     if dpi >= 144:
         global labelW, lenM, lenL, fontL, fontXL, uiScale
         lenM *= 1.5
@@ -295,16 +294,13 @@ class EditAddElem(QtGui.QWidget):
         self.baselayout.setSpacing(5)
         self.baselayout.setContentsMargins(margin, margin, margin, margin)
 
-        self.addButton = QtGui.QPushButton('add ...')
-        self.addButton.setStyleSheet('QPushButton {background-color:#37ED95}')
-        self.addButton.setFont(fontXL)
-        self.addButton.setMinimumSize(QtCore.QSize(lenL * 2, lenM))
-        self.addButton.setMaximumHeight(lenM)
-        self.baselayout.addWidget(self.addButton)
+        self.a2add_button = QtGui.QPushButton('Add ...')
+        self.a2add_button.setObjectName('a2add_button')
+        self.baselayout.addWidget(self.a2add_button)
 
         self.menu = QtGui.QMenu(self)
         self.menu.aboutToShow.connect(self.populateMenu)
-        self.addButton.setMenu(self.menu)
+        self.a2add_button.setMenu(self.menu)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.baselayout.addItem(spacerItem)
 
@@ -352,8 +348,7 @@ class EditInclude(EditCtrl):
         self.ctrlType = 'Include'
         super(EditInclude, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.main = main
-        #self.layout = QtGui.QHBoxLayout(self.ctrlui.layout)
-        self.layout = QtGui.QHBoxLayout()
+        self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
         self.layout.setContentsMargins(10, margin, margin, margin)
         self.labelCtrl = QtGui.QLabel('script file:')
@@ -400,10 +395,10 @@ class InputDialog(QtGui.QDialog):
         if self.checkFunk is not None:
             self.ui.textField.textChanged.connect(self.check)
 
-        self.ui.okButton.setFont(fontXL)
-        self.ui.okButton.clicked.connect(self.okay)
-        self.ui.cancelButton.setFont(fontXL)
-        self.ui.cancelButton.clicked.connect(self.close)
+        self.ui.a2ok_button.setFont(fontXL)
+        self.ui.a2ok_button.clicked.connect(self.okay)
+        self.ui.a2cancel_button.setFont(fontXL)
+        self.ui.a2cancel_button.clicked.connect(self.close)
         self.ui.label.setFont(fontL)
         self.ui.label.setText(msg)
         self.ui.textField.setFont(fontL)
@@ -422,11 +417,11 @@ class InputDialog(QtGui.QDialog):
         if self.checkFunk is not None:
             answer = self.checkFunk(name)
             if answer is True:
-                self.ui.okButton.setEnabled(True)
-                self.ui.okButton.setText('OK')
+                self.ui.a2ok_button.setEnabled(True)
+                self.ui.a2ok_button.setText('OK')
             else:
-                self.ui.okButton.setEnabled(False)
-                self.ui.okButton.setText(answer)
+                self.ui.a2ok_button.setEnabled(False)
+                self.ui.a2ok_button.setText(answer)
 
     def okay(self):
         txt = self.ui.textField.text()
@@ -544,7 +539,6 @@ reload_modules = [
 ui_modules = [
     inputDialog_ui,
     a2ctrl.check.check_edit_ui,
-    a2ctrl.hotkey.hotkey_edit_ui,
     a2ctrl.hotkey_scope.scopeDialog_ui,
     a2ctrl.group.group_edit_ui,
     a2ctrl.string.string_edit_ui,

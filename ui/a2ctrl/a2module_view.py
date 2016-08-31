@@ -30,8 +30,7 @@ class ModuleView(QtGui.QWidget):
         self.ui = a2module_view_ui.Ui_ModuleView()
         self.ui.setupUi(self)
 
-        self.ui.scrollArea.setFont(a2ctrl.fontL)
-        self.ui.scrollBar = self.ui.scrollArea.verticalScrollBar()
+        self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()
 
         self.mainlayout = self.ui.scrollAreaContents.layout()
         self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
@@ -42,8 +41,8 @@ class ModuleView(QtGui.QWidget):
         self.ui.modCheck.clicked[bool].connect(self.main.mod_enable)
         self.ui.modInfoButton.clicked.connect(self.mod_info)
 
-        self.ui.editOKButton.clicked.connect(self.main.edit_submit)
-        self.ui.editCancelButton.clicked.connect(self.draw_mod)
+        self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
+        self.ui.a2cancel_button.clicked.connect(self.draw_mod)
         self.toggle_edit(False)
 
     def draw_mod(self):
@@ -182,7 +181,7 @@ class ModuleView(QtGui.QWidget):
         newLayout.setContentsMargins(5, 5, 5, 5)
         newLayout.setSpacing(a2ctrl.UIValues.spacing)
         # turn scroll layout content to new host widget
-        self.ui.scrollArea.setWidget(new_widget)
+        self.ui.a2scroll_area.setWidget(new_widget)
 
         # make the new inner layout the mainLayout
         # add the controls to it
@@ -202,10 +201,10 @@ class ModuleView(QtGui.QWidget):
 
     def toggle_edit(self, state):
         self.editing = state
-        for button in [self.ui.editCancelButton, self.ui.editOKButton]:
+        for button in [self.ui.a2cancel_button, self.ui.a2ok_button]:
             button.setEnabled(state)
-            button.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
-            self.ui.editOKCancelWidget.setMaximumSize(QtCore.QSize(16777215, 50 if state else 0))
+            button.setMaximumSize(QtCore.QSize(16777215, 150 if state else 0))
+            self.ui.a2edit_okcancel_widget.setMaximumSize(QtCore.QSize(16777215, 150 if state else 0))
 
     def mod_info(self):
         """

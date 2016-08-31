@@ -45,4 +45,3 @@ class Edit(a2ctrl.EditCtrl):
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
-        self.mainWidget.setLayout(self.ui.editLayout)

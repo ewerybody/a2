@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\scopeDialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\scopeDialog.ui'
 #
-# Created: Mon Sep  7 13:28:33 2015
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Wed Aug 31 21:47:59 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_ScopeDialog(object):
     def setupUi(self, ScopeDialog):
         ScopeDialog.setObjectName("ScopeDialog")
-        ScopeDialog.resize(800, 167)
+        ScopeDialog.resize(780, 167)
         self.verticalLayout = QtGui.QVBoxLayout(ScopeDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
@@ -66,14 +66,13 @@ class Ui_ScopeDialog(object):
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.okButton = QtGui.QPushButton(ScopeDialog)
-        self.okButton.setStyleSheet("* {background-color: #43B6FF;}")
-        self.okButton.setObjectName("okButton")
-        self.horizontalLayout.addWidget(self.okButton)
-        self.cancelButton = QtGui.QPushButton(ScopeDialog)
-        self.cancelButton.setFlat(True)
-        self.cancelButton.setObjectName("cancelButton")
-        self.horizontalLayout.addWidget(self.cancelButton)
+        self.a2ok_button = QtGui.QPushButton(ScopeDialog)
+        self.a2ok_button.setObjectName("a2ok_button")
+        self.horizontalLayout.addWidget(self.a2ok_button)
+        self.a2cancel_button = QtGui.QPushButton(ScopeDialog)
+        self.a2cancel_button.setFlat(True)
+        self.a2cancel_button.setObjectName("a2cancel_button")
+        self.horizontalLayout.addWidget(self.a2cancel_button)
         self.horizontalLayout.setStretch(0, 1)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
@@ -82,9 +81,9 @@ class Ui_ScopeDialog(object):
         ScopeDialog.setTabOrder(self.scopeText, self.scopeTitle)
         ScopeDialog.setTabOrder(self.scopeTitle, self.scopeClass)
         ScopeDialog.setTabOrder(self.scopeClass, self.scopeExe)
-        ScopeDialog.setTabOrder(self.scopeExe, self.okButton)
-        ScopeDialog.setTabOrder(self.okButton, self.cancelButton)
-        ScopeDialog.setTabOrder(self.cancelButton, self.helpButton)
+        ScopeDialog.setTabOrder(self.scopeExe, self.a2ok_button)
+        ScopeDialog.setTabOrder(self.a2ok_button, self.a2cancel_button)
+        ScopeDialog.setTabOrder(self.a2cancel_button, self.helpButton)
         ScopeDialog.setTabOrder(self.helpButton, self.titleButton)
         ScopeDialog.setTabOrder(self.titleButton, self.classButton)
         ScopeDialog.setTabOrder(self.classButton, self.exeButton)
@@ -95,6 +94,6 @@ class Ui_ScopeDialog(object):
         self.titleButton.setText(QtGui.QApplication.translate("ScopeDialog", "title", None, QtGui.QApplication.UnicodeUTF8))
         self.classButton.setText(QtGui.QApplication.translate("ScopeDialog", "window class", None, QtGui.QApplication.UnicodeUTF8))
         self.exeButton.setText(QtGui.QApplication.translate("ScopeDialog", "executable", None, QtGui.QApplication.UnicodeUTF8))
-        self.okButton.setText(QtGui.QApplication.translate("ScopeDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelButton.setText(QtGui.QApplication.translate("ScopeDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.a2ok_button.setText(QtGui.QApplication.translate("ScopeDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
+        self.a2cancel_button.setText(QtGui.QApplication.translate("ScopeDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

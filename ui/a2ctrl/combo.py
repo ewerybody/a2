@@ -83,7 +83,6 @@ class Edit(a2ctrl.EditCtrl):
                           QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
 
         self.ui.cfg_items.itemChanged.connect(self.update_items)
-        self.mainWidget.setLayout(self.ui.editLayout)
 
     def add_item(self):
         current_items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)

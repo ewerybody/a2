@@ -102,8 +102,6 @@ class Edit(a2ctrl.EditCtrl):
         self.ui = number_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
-
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
@@ -112,8 +110,6 @@ class Edit(a2ctrl.EditCtrl):
             self.ui.value.setValue(self.cfg['value'])
         else:
             self.set_value()
-
-        self.mainWidget.setLayout(self.ui.editLayout)
 
         for ctrl, set_func in [(self.ui.cfg_min, self.ui.value.setMinimum),
                                (self.ui.cfg_max, self.ui.value.setMaximum),

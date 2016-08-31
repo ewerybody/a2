@@ -49,9 +49,6 @@ class A2Window(QtGui.QMainWindow):
         self.module_list.selection_changed.connect(self.module_selected)
         self.module_list.draw_modules(init_selection)
 
-        with open('a2.css') as fobj:
-            self.setStyleSheet(fobj.read())
-
         log.info('initialised!')
 
     def module_selected(self, module_list):
@@ -117,9 +114,9 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                         self, self.edit_submit)
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.module_view.ui.scrollArea,
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.module_view.ui.a2scroll_area,
                         partial(self.scroll_to, True))
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.module_view.ui.scrollArea,
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.module_view.ui.a2scroll_area,
                         partial(self.scroll_to, False))
 
     def build_new_module_menu(self):

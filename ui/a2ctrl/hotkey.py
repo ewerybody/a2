@@ -8,9 +8,10 @@ from PySide import QtCore, QtGui
 import ahk
 import a2ctrl
 import a2core
-from a2ctrl import hotkey_edit_ui, hotkey_func, hotkey_scope
+from a2ctrl import hotkey_func, hotkey_scope
 
 
+hotkey_edit_ui = None
 log = a2core.get_logger(__name__)
 
 
@@ -63,15 +64,16 @@ class Draw(a2ctrl.DrawCtrl):
 
         self.hotkeyListLayout = QtGui.QVBoxLayout()
         self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = HotKey(self, self.get_user_value(str, 'key'), self.hotkey_change)
+        self.hotkeyButton = A2Hotkey(self, self.get_user_value(str, 'key'), self.hotkey_change)
+        self.hotkeyButton.setEnabled(self.cfg['keyChange'])
+        self.hotkeyLayout.addWidget(self.hotkeyButton)
+
         self.hotkeyOption = QtGui.QPushButton()
         self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setMinimumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setFlat(True)
         self.hotkeyOption.setText('...')
-        self.hotkeyLayout.addWidget(self.hotkeyButton)
         self.hotkeyLayout.addWidget(self.hotkeyOption)
-        self.hotkeyButton.setEnabled(self.cfg['keyChange'])
 
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
         self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
@@ -120,6 +122,13 @@ class Edit(a2ctrl.EditCtrl):
 
         self.a2 = a2core.A2Obj.inst()
         self.helpUrl = self.a2.urls.helpHotkey
+
+        global hotkey_edit_ui
+        if hotkey_edit_ui is None:
+            from a2ctrl import hotkey_edit_ui
+        if main.dev_mode:
+            a2ctrl.check_ui_module(hotkey_edit_ui)
+
         self.ui = hotkey_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
@@ -127,9 +136,8 @@ class Edit(a2ctrl.EditCtrl):
                       self.ui.functionLabel, self.ui.scopeLabel]:
             label.setMinimumWidth(a2ctrl.labelW)
 
-        self.ui.hotkeyButton = HotKey(self, cfg.get('key') or '', self.hotkey_change)
-        self.ui.hotkeyKeyLayout.insertWidget(0, self.ui.hotkeyButton)
-        self.mainWidget.setLayout(self.ui.verticalLayout_2)
+        self.ui.hotkey_button.set_key(cfg.get('key') or '')
+        self.ui.hotkey_button.ok_func = self.hotkey_change
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
@@ -155,19 +163,15 @@ class Edit(a2ctrl.EditCtrl):
         self.cfg['key'] = newKey
 
 
-class HotKey(QtGui.QPushButton):
+class A2Hotkey(QtGui.QPushButton):
     def __init__(self, parent=None, key=None, ok_func=None):
         # i'd love to use super here. But it introduces problems with reload
         #super(HotKey, self).__init__()
         QtGui.QPushButton.__init__(self)
-        self.setMinimumHeight(a2ctrl.lenM)
-        self.setMaximumHeight(a2ctrl.lenM)
-        self.setStyleSheet('QPushButton {background-color:#FFC23E}')
         self.key = key
         self.tempKey = key
         self.tempOK = True
         self.ok_func = ok_func
-        self.setFont(a2ctrl.fontXL)
         self.setText(key)
 
     def set_key(self, key):

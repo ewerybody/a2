@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Thu Aug 25 01:32:17 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Wed Aug 31 22:42:02 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(916, 1122)
+        a2settings.resize(555, 740)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
@@ -26,7 +26,7 @@ class Ui_a2settings(object):
         self.label_3 = QtGui.QLabel(a2settings)
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
-        self.a2hotkey = HotKey(a2settings)
+        self.a2hotkey = A2Hotkey(a2settings)
         self.a2hotkey.setEnabled(True)
         self.a2hotkey.setObjectName("a2hotkey")
         self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.a2hotkey)
@@ -54,10 +54,9 @@ class Ui_a2settings(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.add_source_button = QtGui.QPushButton(self.groupBox)
-        self.add_source_button.setStyleSheet("QPushButton {background-color:#37ED95}")
-        self.add_source_button.setObjectName("add_source_button")
-        self.horizontalLayout.addWidget(self.add_source_button)
+        self.a2add_button = QtGui.QPushButton(self.groupBox)
+        self.a2add_button.setObjectName("a2add_button")
+        self.horizontalLayout.addWidget(self.a2add_button)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
@@ -167,7 +166,7 @@ class Ui_a2settings(object):
         self.remember_selection.setText(QtGui.QApplication.translate("a2settings", "Remember last selected Module", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("a2settings", "Module Sources", None, QtGui.QApplication.UnicodeUTF8))
         self.no_sources_msg.setText(QtGui.QApplication.translate("a2settings", "Currently there are no modules sources listed. Go ahead and add or create one:", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_source_button.setText(QtGui.QApplication.translate("a2settings", "Add Source", None, QtGui.QApplication.UnicodeUTF8))
+        self.a2add_button.setText(QtGui.QApplication.translate("a2settings", "Add Source", None, QtGui.QApplication.UnicodeUTF8))
         self.dev_box.setTitle(QtGui.QApplication.translate("a2settings", "a2 dev mode", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("a2settings", "Author Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("a2settings", "Author Homepage:", None, QtGui.QApplication.UnicodeUTF8))
@@ -183,5 +182,5 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2ctrl.hotkey import A2Hotkey
 from a2ctrl.path_field import PathField
-from a2ctrl.hotkey import HotKey

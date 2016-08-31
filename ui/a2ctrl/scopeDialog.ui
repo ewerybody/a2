@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>780</width>
     <height>167</height>
    </rect>
   </property>
@@ -137,17 +137,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
-      <widget class="QPushButton" name="okButton">
-       <property name="styleSheet">
-        <string notr="true">* {background-color: #43B6FF;}</string>
-       </property>
+      <widget class="QPushButton" name="a2ok_button">
        <property name="text">
         <string>OK</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="QPushButton" name="a2cancel_button">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -165,8 +162,8 @@
   <tabstop>scopeTitle</tabstop>
   <tabstop>scopeClass</tabstop>
   <tabstop>scopeExe</tabstop>
-  <tabstop>okButton</tabstop>
-  <tabstop>cancelButton</tabstop>
+  <tabstop>a2ok_button</tabstop>
+  <tabstop>a2cancel_button</tabstop>
   <tabstop>helpButton</tabstop>
   <tabstop>titleButton</tabstop>
   <tabstop>classButton</tabstop>

@@ -58,7 +58,6 @@ class Edit(a2ctrl.EditCtrl):
                      self.ui.cfg_save_mode]:
             ctrl.clicked.connect(self._adjust_path_field)
         self.ui.cfg_file_types.editingFinished.connect(self._adjust_path_field)
-        self.mainWidget.setLayout(self.ui.editLayout)
 
     def _adjust_path_field(self):
         self.ui.cfg_value.writable = self.cfg.get('writable', False)

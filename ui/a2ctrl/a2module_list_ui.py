@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2module_list.ui'
 #
-# Created: Mon Aug 29 14:04:30 2016
+# Created: Wed Aug 31 23:18:00 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_ModuleList(object):
     def setupUi(self, ModuleList):
         ModuleList.setObjectName("ModuleList")
-        ModuleList.resize(487, 889)
+        ModuleList.resize(296, 759)
         self.module_list_layout = QtGui.QVBoxLayout(ModuleList)
         self.module_list_layout.setSpacing(5)
         self.module_list_layout.setContentsMargins(0, 5, 0, 0)
@@ -29,12 +29,12 @@ class Ui_ModuleList(object):
         self.lineEdit.setObjectName("lineEdit")
         self.horizontalLayout.addWidget(self.lineEdit)
         self.module_list_layout.addLayout(self.horizontalLayout)
-        self.list_widget = QtGui.QListWidget(ModuleList)
-        self.list_widget.setAlternatingRowColors(True)
-        self.list_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        self.list_widget.setIconSize(QtCore.QSize(32, 32))
-        self.list_widget.setObjectName("list_widget")
-        self.module_list_layout.addWidget(self.list_widget)
+        self.a2module_list_widget = QtGui.QListWidget(ModuleList)
+        self.a2module_list_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.a2module_list_widget.setAlternatingRowColors(True)
+        self.a2module_list_widget.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.a2module_list_widget.setObjectName("a2module_list_widget")
+        self.module_list_layout.addWidget(self.a2module_list_widget)
 
         self.retranslateUi(ModuleList)
         QtCore.QMetaObject.connectSlotsByName(ModuleList)
@@ -42,5 +42,5 @@ class Ui_ModuleList(object):
     def retranslateUi(self, ModuleList):
         ModuleList.setWindowTitle(QtGui.QApplication.translate("ModuleList", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.toolButton.setText(QtGui.QApplication.translate("ModuleList", "...", None, QtGui.QApplication.UnicodeUTF8))
-        self.list_widget.setSortingEnabled(True)
+        self.a2module_list_widget.setSortingEnabled(True)
 

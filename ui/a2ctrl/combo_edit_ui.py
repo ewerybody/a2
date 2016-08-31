@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\combo_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\combo_edit.ui'
 #
-# Created: Sat Jun 25 18:42:50 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Wed Aug 31 22:37:03 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,33 +12,33 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(837, 499)
-        self.editLayout = QtGui.QFormLayout(edit)
-        self.editLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.editLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.editLayout.setObjectName("editLayout")
+        edit.resize(407, 309)
+        self.edit_layout = QtGui.QFormLayout(edit)
+        self.edit_layout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.edit_layout.setObjectName("edit_layout")
         self.internalNameLabel = QtGui.QLabel(edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
-        self.editLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.internalNameLabel)
+        self.edit_layout.setWidget(0, QtGui.QFormLayout.LabelRole, self.internalNameLabel)
         self.cfg_name = QtGui.QLineEdit(edit)
         self.cfg_name.setObjectName("cfg_name")
-        self.editLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.cfg_name)
+        self.edit_layout.setWidget(0, QtGui.QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QtGui.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.editLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.displayLabelLabel)
+        self.edit_layout.setWidget(1, QtGui.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_label = QtGui.QLineEdit(edit)
         self.cfg_label.setObjectName("cfg_label")
-        self.editLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.cfg_label)
+        self.edit_layout.setWidget(1, QtGui.QFormLayout.FieldRole, self.cfg_label)
         self.cfg_items = QtGui.QListWidget(edit)
         self.cfg_items.setMaximumSize(QtCore.QSize(16777215, 145))
         self.cfg_items.setAlternatingRowColors(True)
         self.cfg_items.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.cfg_items.setObjectName("cfg_items")
-        self.editLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_items)
+        self.edit_layout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_items)
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_6 = QtGui.QLabel(edit)
@@ -62,10 +62,10 @@ class Ui_edit(object):
         self.verticalLayout_2.addWidget(self.minus_button)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.editLayout.setLayout(2, QtGui.QFormLayout.LabelRole, self.verticalLayout)
+        self.edit_layout.setLayout(2, QtGui.QFormLayout.LabelRole, self.verticalLayout)
         self.cfg_user_edit = QtGui.QCheckBox(edit)
         self.cfg_user_edit.setObjectName("cfg_user_edit")
-        self.editLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.cfg_user_edit)
+        self.edit_layout.setWidget(3, QtGui.QFormLayout.FieldRole, self.cfg_user_edit)
 
         self.retranslateUi(edit)
         QtCore.QMetaObject.connectSlotsByName(edit)

@@ -22,16 +22,16 @@ class ModuleList(QtGui.QWidget):
         self.a2 = a2core.A2Obj.inst()
         self.setup_ui()
         self.selection = None
-        self.ui.list_widget.itemSelectionChanged.connect(self.selection_change)
+        self.ui.a2module_list_widget.itemSelectionChanged.connect(self.selection_change)
 
     def selection_change(self):
         if not self._draw_phase:
-            self.selection = [item._module for item in self.ui.list_widget.selectedItems()]
+            self.selection = [item._module for item in self.ui.a2module_list_widget.selectedItems()]
             self.selection_changed.emit(self.selection)
 
     def select(self, modules=None):
         self._draw_phase = True
-        a2ctrl.qlist.deselect_all(self.ui.list_widget)
+        a2ctrl.qlist.deselect_all(self.ui.a2module_list_widget)
         selection = []
         lastitem = None
         if modules is not None:
@@ -58,7 +58,7 @@ class ModuleList(QtGui.QWidget):
                         pass
 
         if lastitem is not None:
-            self.ui.list_widget.setCurrentItem(lastitem)
+            self.ui.a2module_list_widget.setCurrentItem(lastitem)
 
         self._draw_phase = False
         if selection != self.selection:
@@ -71,14 +71,14 @@ class ModuleList(QtGui.QWidget):
         ... to match filtering, module deletion or enabling of module sources.
         """
         self._draw_phase = True
-        self.ui.list_widget.clear()
+        self.ui.a2module_list_widget.clear()
         for source in self.a2.module_sources.values():
             for mod in source.mods.values():
                 item = QtGui.QListWidgetItem(mod.name)
                 item.setIcon(mod.icon)
                 item._module = mod
                 mod._item = item
-                self.ui.list_widget.addItem(item)
+                self.ui.a2module_list_widget.addItem(item)
 
         if select_mods is None:
             select_mods = self.selection
@@ -95,12 +95,12 @@ class ModuleList(QtGui.QWidget):
     def scroll_to(self, value):
         # TODO: was this really necessary?
 #        if isinstance(value, bool):
-#            a2ctrl.qlist.deselect_all(self.ui.list_widget)
+#            a2ctrl.qlist.deselect_all(self.ui.a2module_list_widget)
 #            if value:
-#                item = self.ui.list_widget.item(0)
+#                item = self.ui.a2module_list_widget.item(0)
 #            else:
-#                item = self.ui.list_widget.item(self.ui.list_widget.count() - 1)
+#                item = self.ui.a2module_list_widget.item(self.ui.a2module_list_widget.count() - 1)
 #            item.setSelected(True)
-#            self.ui.list_widget.setCurrentItem(item)
-#            self.ui.list_widget.scrollToItem(item)
+#            self.ui.a2module_list_widget.setCurrentItem(item)
+#            self.ui.a2module_list_widget.scrollToItem(item)
         pass

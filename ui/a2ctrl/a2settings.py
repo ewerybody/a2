@@ -58,7 +58,7 @@ class A2Settings(QtGui.QWidget):
         self.ui.dev_widget.setVisible(self.main.dev_mode)
 
         self.add_source_menu = QtGui.QMenu(self)
-        self.ui.add_source_button.setMenu(self.add_source_menu)
+        self.ui.a2add_button.setMenu(self.add_source_menu)
         self.add_source_menu.aboutToShow.connect(self.build_add_source_menu)
 
         self.ui.code_editor.file_types = "Executables (*.exe)"

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>168</height>
+    <height>88</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,17 +27,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
-      <widget class="QPushButton" name="okButton">
-       <property name="styleSheet">
-        <string notr="true">* {background-color: #43B6FF;}</string>
-       </property>
+      <widget class="QPushButton" name="a2ok_button">
        <property name="text">
         <string>OK</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="QPushButton" name="a2cancel_button">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -51,8 +48,8 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>okButton</tabstop>
-  <tabstop>cancelButton</tabstop>
+  <tabstop>a2ok_button</tabstop>
+  <tabstop>a2cancel_button</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>785</width>
-    <height>454</height>
+    <width>528</width>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0">
-   <property name="spacing">
-    <number>5</number>
+  <layout class="QFormLayout" name="edit_layout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
    <property name="leftMargin">
     <number>10</number>
@@ -29,213 +29,150 @@
    <property name="bottomMargin">
     <number>5</number>
    </property>
-   <item>
-    <layout class="QHBoxLayout" name="internalNameLayout">
-     <property name="spacing">
-      <number>10</number>
+   <item row="0" column="0">
+    <widget class="QLabel" name="internalNameLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
      </property>
-     <item>
-      <widget class="QLabel" name="internalNameLabel">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>internal name:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="cfg_name">
-       <property name="text">
-        <string>extensionX_hotkey1</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="displayLabelLayout">
-     <property name="spacing">
-      <number>10</number>
+     <property name="text">
+      <string>internal name:</string>
      </property>
-     <item>
-      <widget class="QLabel" name="displayLabelLabel">
-       <property name="minimumSize">
-        <size>
-         <width>100</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>display label:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="cfg_label">
-       <property name="text">
-        <string>make some awesome stuff</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="hotkeyLayout" stretch="0,1">
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="cfg_name">
+     <property name="text">
+      <string>extensionX_hotkey1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="displayLabelLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>display label:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="cfg_label">
+     <property name="text">
+      <string>make some awesome stuff</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="hotkeyLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>hotkey:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="functionLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>function:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <layout class="QVBoxLayout" name="functionCtrlLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>6</number>
      </property>
      <property name="bottomMargin">
-      <number>10</number>
+      <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="hotkeyLabelLayout">
-       <item>
-        <widget class="QLabel" name="hotkeyLabel">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>hotkey:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="hotkeyKeyLayout">
-       <property name="spacing">
+      <layout class="QHBoxLayout" name="functionRowLayout" stretch="0,0,0">
+       <property name="topMargin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
-         <property name="horizontalSpacing">
-          <number>15</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>5</number>
-         </property>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="cfg_enabled">
-           <property name="text">
-            <string>enabled by default</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
+        <widget class="QComboBox" name="cfg_functionMode">
+         <item>
+          <property name="text">
+           <string>Run code</string>
+          </property>
          </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="cfg_disablable">
-           <property name="text">
-            <string>can be disabled</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
+         <item>
+          <property name="text">
+           <string>Open file/url</string>
+          </property>
          </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="cfg_keyChange">
-           <property name="text">
-            <string>can be changed</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
+         <item>
+          <property name="text">
+           <string>Send keystroke</string>
+          </property>
          </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="cfg_multiple">
-           <property name="text">
-            <string>allow multiple hotkeys</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="functionLayout" stretch="0,1">
-     <property name="spacing">
-      <number>10</number>
-     </property>
-     <property name="bottomMargin">
-      <number>10</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" name="functionLabelLayout">
        <item>
-        <widget class="QLabel" name="functionLabel">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
+        <widget class="QPushButton" name="functionButton">
          <property name="maximumSize">
           <size>
-           <width>200</width>
-           <height>16777215</height>
+           <width>50</width>
+           <height>35</height>
           </size>
          </property>
          <property name="text">
-          <string>function:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          <string>...</string>
          </property>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_6">
+        <spacer name="horizontalSpacer_3">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>0</height>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -243,282 +180,263 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="functionCtrlLayout">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <property name="bottomMargin">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="topMargin">
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="functionRowLayout" stretch="0,0,0">
-         <property name="topMargin">
-          <number>0</number>
-         </property>
+        <widget class="QComboBox" name="function_send_mode">
          <item>
-          <widget class="QComboBox" name="cfg_functionMode">
-           <item>
-            <property name="text">
-             <string>Run code</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Open file/url</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Send keystroke</string>
-            </property>
-           </item>
-          </widget>
+          <property name="text">
+           <string>Send</string>
+          </property>
          </item>
          <item>
-          <widget class="QPushButton" name="functionButton">
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>35</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
+          <property name="text">
+           <string>SendRaw</string>
+          </property>
          </item>
          <item>
-          <spacer name="horizontalSpacer_3">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+          <property name="text">
+           <string>SendInput</string>
+          </property>
          </item>
-        </layout>
+         <item>
+          <property name="text">
+           <string>SendPlay</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>SendEvent</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="topMargin">
-          <number>0</number>
+        <widget class="QLabel" name="run_label">
+         <property name="text">
+          <string>Run, </string>
          </property>
-         <item>
-          <widget class="QComboBox" name="function_send_mode">
-           <item>
-            <property name="text">
-             <string>Send</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SendRaw</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SendInput</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SendPlay</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>SendEvent</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="run_label">
-           <property name="text">
-            <string>Run, </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="functionText"/>
-         </item>
-        </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="functionText"/>
        </item>
       </layout>
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="scopeLayout" stretch="0,1">
+   <item row="6" column="0">
+    <widget class="QLabel" name="scopeLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>scope:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <layout class="QVBoxLayout" name="scopeCtrlLayout">
      <property name="spacing">
-      <number>10</number>
+      <number>5</number>
      </property>
      <property name="bottomMargin">
-      <number>10</number>
+      <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="scopeLabelLayout">
+      <layout class="QHBoxLayout" name="scopeRowLayout" stretch="0,0,0,0,0">
+       <property name="spacing">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QLabel" name="scopeLabel">
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>200</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>scope:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
+        <widget class="QComboBox" name="cfg_scopeMode">
+         <item>
+          <property name="text">
+           <string>global</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>only in:</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>not in:</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_4">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="scopeCtrlLayout">
-       <property name="spacing">
-        <number>5</number>
-       </property>
-       <property name="bottomMargin">
-        <number>5</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="scopeRowLayout" stretch="0,0,0,0,0">
-         <property name="spacing">
-          <number>9</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QComboBox" name="cfg_scopeMode">
-           <item>
-            <property name="text">
-             <string>global</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>only in:</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>not in:</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="scopePlus">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>35</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>+</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="scopeMinus">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>35</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>-</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cfg_scopeChange">
-           <property name="text">
-            <string>can be changed</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QListWidget" name="cfg_scope">
+        <widget class="QPushButton" name="scopePlus">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
+         <property name="maximumSize">
           <size>
-           <width>0</width>
-           <height>40</height>
+           <width>50</width>
+           <height>35</height>
           </size>
+         </property>
+         <property name="text">
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="scopeMinus">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16777215</width>
-           <height>16777215</height>
+           <width>50</width>
+           <height>35</height>
           </size>
          </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
+         <property name="text">
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="cfg_scopeChange">
+         <property name="text">
+          <string>can be changed</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QListWidget" name="cfg_scope">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>40</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="1">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>5</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="A2Hotkey" name="hotkey_button">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>Win+Shift+A</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+       <property name="horizontalSpacing">
+        <number>15</number>
+       </property>
+       <property name="verticalSpacing">
+        <number>5</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="cfg_enabled">
+         <property name="text">
+          <string>enabled by default</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="cfg_disablable">
+         <property name="text">
+          <string>can be disabled</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="cfg_keyChange">
+         <property name="text">
+          <string>can be changed</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="cfg_multiple">
+         <property name="text">
+          <string>allow multiple hotkeys</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -528,6 +446,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2Hotkey</class>
+   <extends>QPushButton</extends>
+   <header>a2ctrl.hotkey</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

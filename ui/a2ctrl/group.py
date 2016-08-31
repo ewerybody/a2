@@ -58,15 +58,10 @@ class Edit(a2ctrl.EditCtrl):
 
         controls.append(a2ctrl.EditAddElem(self.main, self.cfg['children']))
         for ctrl in controls:
-            self.ui.groupLayout.addWidget(ctrl)
-
-        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel,
-                      self.ui.label, self.ui.label_2]:
-            label.setMinimumWidth(a2ctrl.labelW)
+            self.ui.edit_layout.addWidget(ctrl)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
-        self.mainWidget.setLayout(self.ui.groupLayout)
 
     def paste(self):
         """
