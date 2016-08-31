@@ -16,13 +16,12 @@ import logging
 import webbrowser
 from os.path import exists, join, dirname, abspath, relpath
 
-
+# only spot where this is set! Use a2core.get_logger() anywhere else!
 LOG_LEVEL = logging.INFO
 log = logging.getLogger(__name__)
 log.setLevel(LOG_LEVEL)
 
 ahk, a2db, a2mod = None, None, None
-
 
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
@@ -52,7 +51,7 @@ class A2Obj(object):
         self.module_sources = {}
 
         self.paths = Paths()
-        self.urls = URLs(self.paths._variables_dict)
+        self.urls = URLs(self.paths.urls_ahk)
 
         self.db = a2db.A2db(self.paths.db)
         self._enabled = None
@@ -127,10 +126,11 @@ class A2Obj(object):
 
 
 class URLs(object):
-    def __init__(self, variables_dict):
+    def __init__(self, a2_urls_ahk):
         """
         Common a2 & ahk related web links.
         """
+        variables_dict = ahk.get_variables(a2_urls_ahk)
         self.a2 = variables_dict.get('a2_url', 'https://github.com/ewerybody/a2')
         self.help = variables_dict.get('a2_help', (self.a2 + '#a2-'))
         self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
@@ -159,10 +159,10 @@ class Paths(object):
         self.ui = dirname(abspath(__file__))
         self.a2 = dirname(self.ui)
         self.settings_ahk = os.path.join(self.a2, 'a2_settings.ahk')
+        self.urls_ahk = os.path.join(self.a2, 'a2_urls.ahk')
         self.lib = join(self.a2, 'lib')
         self.a2_script = join(self.a2, 'a2.ahk')
 
-        self._variables_dict = ahk.get_variables(self._get_settings_ahk())
         path_vars = self._fetch_a2_setting_paths()
         self.settings = path_vars['settings']
         self.modules = path_vars['modules']
@@ -190,7 +190,7 @@ class Paths(object):
         keys = ['settings', 'modules', 'ahk', 'python']
         prefix = 'a2_'
         result = {}
-        for key, value in self._variables_dict.items():
+        for key, value in ahk.get_variables(self._get_settings_ahk()).items():
             key = key[len(prefix):]
             if key in keys:
                 if os.path.isabs(value):

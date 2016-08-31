@@ -4,6 +4,7 @@
 #Persistent
 #NoTrayIcon
 #include a2_settings.ahk
+#include a2_urls.ahk
 
 script_title := "a2"
 icon_path = %A_ScriptDir%\ui\res
