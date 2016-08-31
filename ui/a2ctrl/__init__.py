@@ -135,7 +135,7 @@ class DrawCtrl(QtGui.QWidget):
         self.cfg = cfg
         self.mod = mod
         self.check_delay = 150
-        self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.name)
+        self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.key)
 
     def get_user_value(self, typ, name='value', default=None):
         """
