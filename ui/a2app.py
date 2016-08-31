@@ -44,6 +44,9 @@ def main():
 
     a2win = init_a2_win(app)
 
+    with open('a2.css') as fobj:
+        app.setStyleSheet(fobj.read())
+
     exit(app.exec_())
 
 
