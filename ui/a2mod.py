@@ -103,7 +103,6 @@ class ModSource(object):
             self.fetch_modules(state)
 
     def toggle(self, state=None):
-        print('state: %s' % state)
         if state is None:
             state = not self.enabled
         self.enabled = state
@@ -298,9 +297,6 @@ class Mod(object):
             set to userCfg
         """
         user_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
-        print('user_cfg: %s' % user_cfg)
-        print('sub_cfg: %s' % sub_cfg)
-        print('attr_name: %s: %s' % (attr_name, value))
         if attr_name in user_cfg:
             # value to set equals CURRENT value: done
             if value == user_cfg.get(attr_name):
@@ -440,7 +436,6 @@ class _NewModuleInput(a2ctrl.InputDialog):
         self.source_index.addItems(parent.source_dict['sources'])
         a2ctrl.connect.control(self.source_index, 'source_index', parent.source_dict)
         i = parent.source_dict['source_index']
-        print('source_index: %s' % i)
         self.source_index.currentIndexChanged.connect(self.check_on_source_change)
         self.ui.main_layout.insertWidget(1, self.source_index)
 
@@ -464,13 +459,15 @@ def get_icon(current_icon, folder, fallback):
         icon_path = ''
         for item in get_files(folder):
             if item in icon_types:
-                print('item: %s' % item)
                 icon_path = os.path.join(folder, item)
                 #self._icon =
                 break
         if icon_path:
-            current_icon = QtGui.QIcon(icon_path)
-            current_icon.path = icon_path
+            if item.endswith('.svg'):
+                current_icon = a2ctrl.Ico(icon_path)
+            else:
+                current_icon = QtGui.QIcon(icon_path)
+                current_icon.path = icon_path
         else:
             current_icon = fallback
 
