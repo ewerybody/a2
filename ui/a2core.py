@@ -161,6 +161,7 @@ class Paths(object):
         self.settings_ahk = os.path.join(self.a2, 'a2_settings.ahk')
         self.urls_ahk = os.path.join(self.a2, 'a2_urls.ahk')
         self.lib = join(self.a2, 'lib')
+        self._defaults = join(self.a2, 'lib', '_defaults')
         self.a2_script = join(self.a2, 'a2.ahk')
 
         path_vars = self._fetch_a2_setting_paths()
@@ -183,7 +184,7 @@ class Paths(object):
 
     def _get_settings_ahk(self):
         if not exists(self.settings_ahk):
-            return os.path.join(self.lib, '_startup_defaults', 'a2_settings.ahk')
+            return os.path.join(self._defaults, 'a2_settings.ahk')
         return self.settings_ahk
 
     def _fetch_a2_setting_paths(self):

@@ -7,14 +7,14 @@ _init_check_settings() {
     
     ifNotExist, %a2_settings%
     {
-        FileCopy, lib\_startup_defaults\%a2_settings%, %a2_settings%
+        FileCopy, lib\_defaults\%a2_settings%, %a2_settings%
         
         settings_dir = %A_ScriptDir%\settings\
         IfNotExist, %settings_dir%
             FileCreateDir, %settings_dir%
         
         ifNotExist, %settings_dir%libs.ahk
-            FileCopy, lib\_startup_defaults\libs.ahk, %settings_dir%libs.ahk
+            FileCopy, lib\_defaults\libs.ahk, %settings_dir%libs.ahk
 
         modules_dir = %A_ScriptDir%\modules\
         IfNotExist, %modules_dir%
@@ -30,7 +30,7 @@ _init_check_settings() {
         settings_created := true
     }
     IfNotExist, %a2_init%
-        FileCopy, lib\_startup_defaults\%a2_init%, %a2_init%
+        FileCopy, lib\_defaults\%a2_init%, %a2_init%
 
     Return settings_created
 }

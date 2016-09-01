@@ -1,0 +1,17 @@
+{
+    "spacing": 5,
+    "line": 15,
+    "font_size": 13,
+    "font_size_big": 14,
+    "font_size_large": 16,
+    "margin": 5,
+    "margin_h": 25,
+    "color_blue": "#43B6FF",
+    "color_green": "#37ED95",
+    "color_yellow": "#FFC23E",
+    "color_bright": "#FFF",
+    "color_button": "#CCC",
+    "color_hover": "#DDD",
+    "color_pressed": "#AAA",
+    "border_radius": 1
+}

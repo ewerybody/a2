@@ -1,31 +1,31 @@
 * {
-    font-size: {font_size};
+    font-size: %(font_size)ipx;
 }
 
 QPushButton {
-    border-radius: 1px;
-    padding: 6px;
-    padding-left: 26px;
-    padding-right: 26px;
-    background-color: "#DDD";
+    border-radius: %(border_radius)ipx;
+    padding: %(margin)ipx;
+    padding-left: %(margin_h)ipx;
+    padding-right: %(margin_h)ipx;
+    background-color: "%(color_button)s";
 }
 
 QPushButton:hover,
 QGroupBox::indicator:hover,
 QCheckBox::indicator:hover {
-    background-color: "#CCC";
+    background-color: "%(color_hover)s";
 }
 
 QGroupBox::indicator,
 QCheckBox::indicator {
-    background-color: "#FFF";
-	height: 16px;
-	width: 16px;
+    background-color: "%(color_bright)s";
+	height: %(line)ipx;
+	width: %(line)ipx;
     image: url(res/uncheck.png);
 }
 
 QGroupBox::indicator {
-    margin: 5px;
+    margin: %(margin)ipx;
 }
 
 QGroupBox::indicator:checked,
@@ -34,14 +34,14 @@ QCheckBox::indicator:checked {
 }
 
 QLabel#a2mod_view_source_label {
-    color: "#888";
+    color: "%(color_pressed)s";
 }
 
 QGroupBox {
-    font-size: 14px;
+    font-size: %(font_size_big)ipx;
 }
 QGroupBox::title {
-    margin: 5px;
+    margin: %(margin)ipx;
 }
 
 QScrollArea#a2scroll_area,
@@ -50,16 +50,15 @@ QListWidget#a2module_list_widget {
 }
 
 QLayout#a2edit_okcancel_layout {
-    padding: 6px;
-    margin: 6px;
-    background-color: "#43B6FF";
+    padding: %(margin)ipx;
+    margin: %(margin)ipx;
 }
 
 QPushButton#a2cancel_button,
 QPushButton#a2ok_button,
 QPushButton#a2add_button,
 A2Hotkey {
-    font-size: 16px;
+    font-size: %(font_size_large)ipx;
 }
 
 QPushButton#a2cancel_button {
@@ -67,19 +66,19 @@ QPushButton#a2cancel_button {
 }
 
 QPushButton#a2cancel_button:hover {
-    background-color: "#CCC";
+    background-color: "%(color_hover)s";
 }
 
 QPushButton#a2ok_button {
-    background-color: "#43B6FF";
+	background-color: "%(color_blue)s";
 }
 
 QPushButton#a2add_button {
-    background-color: "#37ED95";
+    background-color: "%(color_green)s";
 }
 
 A2Hotkey {
-    background-color: "#FFC23E";
+    background-color: "%(color_yellow)s";
 }
 
 QScrollBar:vertical,
@@ -88,10 +87,10 @@ QScrollBar:horizontal {
 	margin: 0px;
 }
 QScrollBar:vertical {
-	width: 13px;
+	width: %(font_size)ipx;
 }
 QScrollBar:horizontal {
-	height: 13px;
+	height: %(font_size)ipx;
 }
 
 QScrollBar::add-line,
@@ -103,26 +102,26 @@ QScrollBar::sub-line{
 }
 
 QScrollBar::handle {
-	background-color: "#CCC";
-	border-radius:2px;
+	background-color: "%(color_button)s";
+	border-radius: %(border_radius)ipx;
 }
 
 QScrollBar::handle:vertical {
 	margin-left:0px;
 	margin-right:0px;
-	min-height:20px;
+	min-height:%(margin_h)ipx;
 }
 
 QScrollBar::handle:horizontal {
 	margin-top:0px;
 	margin-bottom:0px;
-	min-width:20px;
+	min-width:%(margin_h)ipx;
 }
 
 QScrollBar::handle:hover {
-	background-color: "#DDD";
+	background-color: "%(color_hover)s";
 }
 
 QScrollBar::handle:pressed {
-	background-color: "#AAA";
+	background-color: "%(color_pressed)s";
 }
