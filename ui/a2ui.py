@@ -46,12 +46,12 @@ class A2Window(QtGui.QMainWindow):
         init_selection = []
         if self.a2.db.get('remember_last') or False:
             init_selection = self.a2.db.get('last_selected') or []
-        self.module_list.selection_changed.connect(self.module_selected)
+        self.module_list.selection_changed.connect(self._module_selected)
         self.module_list.draw_modules(init_selection)
 
         log.info('initialised!')
 
-    def module_selected(self, module_list):
+    def _module_selected(self, module_list):
         self.selected = module_list
         self.num_selected = len(module_list)
         if self.num_selected == 1:
@@ -242,6 +242,27 @@ class A2Window(QtGui.QMainWindow):
 
     def create_new_module(self):
         a2mod.NewModulueTool(self)
+
+    def rebuild_css(self, scale=None):
+        if scale is None:
+            scale = self.a2.db.get('ui_scale') or 1.0
+
+
+class UI_values(object):
+    spacing = 5
+    font_size = 13
+    font_size_big = 14
+    font_size_large = 16
+    margin = 5
+    margin_h = margin * 5
+    color_blue = '#43B6FF'
+    color_green = '#37ED95'
+    color_yellow = '#FFC23E'
+    color_bright = '#CCC'
+    color_hover = '#DDD'
+    color_pressed = '#AAA'
+    border_radius = 1
+
 
 
 class RestartThread(QtCore.QThread):

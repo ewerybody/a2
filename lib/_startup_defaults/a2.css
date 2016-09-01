@@ -1,0 +1,128 @@
+* {
+    font-size: {font_size};
+}
+
+QPushButton {
+    border-radius: 1px;
+    padding: 6px;
+    padding-left: 26px;
+    padding-right: 26px;
+    background-color: "#DDD";
+}
+
+QPushButton:hover,
+QGroupBox::indicator:hover,
+QCheckBox::indicator:hover {
+    background-color: "#CCC";
+}
+
+QGroupBox::indicator,
+QCheckBox::indicator {
+    background-color: "#FFF";
+	height: 16px;
+	width: 16px;
+    image: url(res/uncheck.png);
+}
+
+QGroupBox::indicator {
+    margin: 5px;
+}
+
+QGroupBox::indicator:checked,
+QCheckBox::indicator:checked {
+    image: url(res/check.png);
+}
+
+QLabel#a2mod_view_source_label {
+    color: "#888";
+}
+
+QGroupBox {
+    font-size: 14px;
+}
+QGroupBox::title {
+    margin: 5px;
+}
+
+QScrollArea#a2scroll_area,
+QListWidget#a2module_list_widget {
+    border-style: none;
+}
+
+QLayout#a2edit_okcancel_layout {
+    padding: 6px;
+    margin: 6px;
+    background-color: "#43B6FF";
+}
+
+QPushButton#a2cancel_button,
+QPushButton#a2ok_button,
+QPushButton#a2add_button,
+A2Hotkey {
+    font-size: 16px;
+}
+
+QPushButton#a2cancel_button {
+    background:transparent;
+}
+
+QPushButton#a2cancel_button:hover {
+    background-color: "#CCC";
+}
+
+QPushButton#a2ok_button {
+    background-color: "#43B6FF";
+}
+
+QPushButton#a2add_button {
+    background-color: "#37ED95";
+}
+
+A2Hotkey {
+    background-color: "#FFC23E";
+}
+
+QScrollBar:vertical,
+QScrollBar:horizontal {
+	background:transparent;
+	margin: 0px;
+}
+QScrollBar:vertical {
+	width: 13px;
+}
+QScrollBar:horizontal {
+	height: 13px;
+}
+
+QScrollBar::add-line,
+QScrollBar::sub-line{
+    background: transparent;
+	border: 0px;
+	width: 0px;
+	height: 0px;
+}
+
+QScrollBar::handle {
+	background-color: "#CCC";
+	border-radius:2px;
+}
+
+QScrollBar::handle:vertical {
+	margin-left:0px;
+	margin-right:0px;
+	min-height:20px;
+}
+
+QScrollBar::handle:horizontal {
+	margin-top:0px;
+	margin-bottom:0px;
+	min-width:20px;
+}
+
+QScrollBar::handle:hover {
+	background-color: "#DDD";
+}
+
+QScrollBar::handle:pressed {
+	background-color: "#AAA";
+}

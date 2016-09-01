@@ -8,7 +8,7 @@ a2_settings.ahk
 *.py[co]
 
 # Exclude all starting with . or _
-_*
+_ *
 .*
 
 # Include certain .somethings

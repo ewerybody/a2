@@ -89,6 +89,8 @@ class A2Settings(QtGui.QWidget):
         self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
 
+        self.ui.ui_scale_slider.valueChanged.connect(self.ui_scale_change)
+
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
         newpath = os.path.join(dirname(self.a2.paths.python), base_name)
@@ -149,6 +151,12 @@ class A2Settings(QtGui.QWidget):
 
     def create_local_source(self):
         a2mod.NewModuleSourceTool(self.main)
+
+    def ui_scale_change(self, value):
+        value = value / 100
+        print('value: %s' % value)
+
+
 
 
 class ModSourceWidget(QtGui.QWidget):

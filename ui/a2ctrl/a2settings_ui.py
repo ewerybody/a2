@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Wed Aug 31 22:42:02 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Thu Sep  1 09:19:37 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(555, 740)
+        a2settings.resize(586, 1017)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
@@ -20,6 +20,7 @@ class Ui_a2settings(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout.setContentsMargins(-1, 25, -1, 15)
         self.formLayout.setSpacing(5)
         self.formLayout.setObjectName("formLayout")
@@ -36,6 +37,16 @@ class Ui_a2settings(object):
         self.remember_selection = QtGui.QCheckBox(a2settings)
         self.remember_selection.setObjectName("remember_selection")
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.remember_selection)
+        self.ui_scale_slider = QtGui.QSlider(a2settings)
+        self.ui_scale_slider.setMinimum(0)
+        self.ui_scale_slider.setMaximum(300)
+        self.ui_scale_slider.setProperty("value", 100)
+        self.ui_scale_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.ui_scale_slider.setObjectName("ui_scale_slider")
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.ui_scale_slider)
+        self.ui_scale_label = QtGui.QLabel(a2settings)
+        self.ui_scale_label.setObjectName("ui_scale_label")
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.ui_scale_label)
         self.verticalLayout_2.addLayout(self.formLayout)
         self.groupBox = QtGui.QGroupBox(a2settings)
         self.groupBox.setObjectName("groupBox")
@@ -164,6 +175,7 @@ class Ui_a2settings(object):
         self.a2hotkey.setText(QtGui.QApplication.translate("a2settings", "Win+Shift+A", None, QtGui.QApplication.UnicodeUTF8))
         self.load_on_win_start.setText(QtGui.QApplication.translate("a2settings", "Load a2 on Windows Start", None, QtGui.QApplication.UnicodeUTF8))
         self.remember_selection.setText(QtGui.QApplication.translate("a2settings", "Remember last selected Module", None, QtGui.QApplication.UnicodeUTF8))
+        self.ui_scale_label.setText(QtGui.QApplication.translate("a2settings", "UI Scale:", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("a2settings", "Module Sources", None, QtGui.QApplication.UnicodeUTF8))
         self.no_sources_msg.setText(QtGui.QApplication.translate("a2settings", "Currently there are no modules sources listed. Go ahead and add or create one:", None, QtGui.QApplication.UnicodeUTF8))
         self.a2add_button.setText(QtGui.QApplication.translate("a2settings", "Add Source", None, QtGui.QApplication.UnicodeUTF8))
