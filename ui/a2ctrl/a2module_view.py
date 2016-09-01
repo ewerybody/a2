@@ -178,8 +178,6 @@ class ModuleView(QtGui.QWidget):
 
         # create new column layout for the module controls
         newLayout = QtGui.QVBoxLayout(new_widget)
-        newLayout.setContentsMargins(5, 5, 5, 5)
-        newLayout.setSpacing(a2ctrl.UIValues.spacing)
         # turn scroll layout content to new host widget
         self.ui.a2scroll_area.setWidget(new_widget)
 
