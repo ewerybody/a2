@@ -18,6 +18,7 @@ import a2mod
 
 log = a2core.get_logger(__name__)
 reload_modules = [a2ctrl]
+ui_defaults = None
 
 
 class A2Window(QtGui.QMainWindow):
@@ -244,12 +245,30 @@ class A2Window(QtGui.QMainWindow):
         a2mod.NewModulueTool(self)
 
     def rebuild_css(self, scale=None):
+        css_template_path = os.path.join(self.a2.paths._defaults, 'css_defaults.json')
+        css_defaults = a2core.json_read(css_template_path)
+        with open(os.path.join(self.a2.paths._defaults, 'a2.css')) as fobj:
+            css_template = fobj.read()
+
         if scale is None:
             scale = self.a2.db.get('ui_scale') or 1.0
 
+        for name, value in css_defaults.items():
+            if isinstance(value, int):
+                new_value = int(scale * float(value))
+                css_defaults[name] = new_value
 
-class UI_values(object):
+        css_template = css_template % css_defaults
+        self.app.setStyleSheet(css_template)
+
+
+class UIvs(object):
+    """
+    Values for setting visual user interface attributes and for
+    recompiling a2.css from template file.
+    """
     spacing = 5
+    line = 15
     font_size = 13
     font_size_big = 14
     font_size_large = 16
@@ -258,11 +277,11 @@ class UI_values(object):
     color_blue = '#43B6FF'
     color_green = '#37ED95'
     color_yellow = '#FFC23E'
-    color_bright = '#CCC'
+    color_bright = '#FFF'
+    color_button = '#CCC'
     color_hover = '#DDD'
     color_pressed = '#AAA'
     border_radius = 1
-
 
 
 class RestartThread(QtCore.QThread):
