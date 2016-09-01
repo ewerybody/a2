@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2ctrl\a2settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
 #
-# Created: Thu Sep  1 09:19:37 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Thu Sep  1 14:52:02 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -194,5 +194,5 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.hotkey import A2Hotkey
+from a2ctrl.a2hotkey import A2Hotkey
 from a2ctrl.path_field import PathField
