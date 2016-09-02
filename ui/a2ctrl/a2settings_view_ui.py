@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings_view.ui'
 #
-# Created: Thu Sep  1 14:52:02 2016
+# Created: Fri Sep  2 14:14:21 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(586, 1017)
+        a2settings.resize(458, 754)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
@@ -37,7 +37,7 @@ class Ui_a2settings(object):
         self.remember_selection = QtGui.QCheckBox(a2settings)
         self.remember_selection.setObjectName("remember_selection")
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.remember_selection)
-        self.ui_scale_slider = QtGui.QSlider(a2settings)
+        self.ui_scale_slider = A2Slider(a2settings)
         self.ui_scale_slider.setMinimum(0)
         self.ui_scale_slider.setMaximum(300)
         self.ui_scale_slider.setProperty("value", 100)
@@ -194,5 +194,6 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.a2hotkey import A2Hotkey
 from a2ctrl.path_field import PathField
+from a2ctrl.hotkey import A2Hotkey
+from a2ctrl.a2slider import A2Slider

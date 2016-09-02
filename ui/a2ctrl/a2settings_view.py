@@ -14,7 +14,7 @@ import ahk
 import a2mod
 import a2core
 import a2ctrl
-from a2ctrl import a2settings_ui
+from a2ctrl import a2settings_view_ui
 
 
 autohotkey_exe = 'autohotkey.exe'
@@ -42,7 +42,8 @@ class A2Settings(QtGui.QWidget):
             self.ui.mod_source_layout.addWidget(modsourcewidget)
 
     def _setup_ui(self):
-        self.ui = a2settings_ui.Ui_a2settings()
+        a2ctrl.check_ui_module(a2settings_view_ui)
+        self.ui = a2settings_view_ui.Ui_a2settings()
         self.ui.setupUi(self)
 
         a2_hotkey = self.a2.db.get('a2_hotkey') or a2core.a2default_hotkey
@@ -89,8 +90,8 @@ class A2Settings(QtGui.QWidget):
         self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
 
-        self.ui.ui_scale_slider.valueChanged.connect(self.ui_scale_change)
-        self.ui.ui_scale_slider.sliderReleased.connect(self.ui_scale_change)
+        #self.ui.ui_scale_slider.valueChanged.connect(self.ui_scale_change)
+        #self.ui.ui_scale_slider.sliderReleased.connect(self.ui_scale_change)
 
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]

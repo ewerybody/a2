@@ -10,8 +10,8 @@ from PySide import QtGui, QtCore
 
 import a2core
 import a2ctrl
+from a2ctrl import a2settings_view
 from a2ctrl import a2module_view_ui
-
 
 log = a2core.get_logger(__name__)
 
@@ -56,7 +56,7 @@ class ModuleView(QtGui.QWidget):
 
         if self.main.mod is None:
             if not self.main.num_selected:
-                self.controls.append(a2ctrl.a2settings.A2Settings(self.main))
+                self.controls.append(a2settings_view.A2Settings(self.main))
                 config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
             else:
                 config = [{'typ': 'nfo', 'author': '', 'version': '',
