@@ -9,7 +9,7 @@
 
 from PySide import QtCore, QtGui
 
-class Ui_ModuleView(object):
+class Ui_A2ModuleView(object):
     def setupUi(self, ModuleView):
         ModuleView.setObjectName("ModuleView")
         ModuleView.resize(662, 431)

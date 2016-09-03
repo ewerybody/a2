@@ -14,7 +14,7 @@ import ahk
 import a2mod
 import a2core
 import a2ctrl
-from a2ctrl import a2settings_view_ui
+from a2widget import a2settings_view_ui
 
 
 autohotkey_exe = 'autohotkey.exe'

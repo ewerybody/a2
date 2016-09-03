@@ -8,7 +8,7 @@ import subprocess
 import ahk
 import a2core
 import a2ctrl
-import a2design_ui
+from a2widget import a2design_ui
 
 from copy import deepcopy
 from functools import partial
@@ -64,8 +64,6 @@ class A2Window(QtGui.QMainWindow):
     def _setup_ui(self):
         if self.dev_mode:
             a2ctrl.check_ui_module(a2design_ui)
-            a2ctrl.check_all_ui()
-        a2ctrl.adjustSizes(self.app)
 
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)

@@ -351,17 +351,17 @@
   <customwidget>
    <class>PathField</class>
    <extends>QLineEdit</extends>
-   <header>a2ctrl.path_field</header>
+   <header>a2widget.path_field</header>
   </customwidget>
   <customwidget>
    <class>A2Hotkey</class>
    <extends>QPushButton</extends>
-   <header>a2ctrl.hotkey</header>
+   <header>a2widget.hotkey</header>
   </customwidget>
   <customwidget>
    <class>A2Slider</class>
    <extends>QSlider</extends>
-   <header>a2ctrl.a2slider</header>
+   <header>a2widget.a2slider</header>
   </customwidget>
  </customwidgets>
  <resources/>

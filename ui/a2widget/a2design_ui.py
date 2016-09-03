@@ -25,9 +25,9 @@ class Ui_a2MainWindow(object):
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
-        self.module_list = ModuleList(self.splitter)
+        self.module_list = A2ModuleList(self.splitter)
         self.module_list.setObjectName("module_list")
-        self.module_view = ModuleView(self.splitter)
+        self.module_view = A2ModuleView(self.splitter)
         self.module_view.setObjectName("module_view")
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
@@ -119,5 +119,5 @@ class Ui_a2MainWindow(object):
         self.actionReport_Issue.setText(QtGui.QApplication.translate("a2MainWindow", "Report Issue", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew_Module_Dialog.setText(QtGui.QApplication.translate("a2MainWindow", "New Module Dialog", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.a2module_list import ModuleList
-from a2ctrl.a2module_view import ModuleView
+from a2widget.a2module_list import A2ModuleList
+from a2widget.a2module_view import A2ModuleView

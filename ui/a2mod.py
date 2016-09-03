@@ -9,7 +9,8 @@ import a2ctrl
 import a2ctrl.connect
 from os.path import exists, splitext, isdir, isfile
 from shutil import copy2
-from PySide import QtGui, QtCore
+from PySide import QtGui
+from a2widget.a2input_dialog import A2InputDialog
 
 
 log = a2core.get_logger(__name__)
@@ -329,8 +330,8 @@ class NewModuleSourceTool(object):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.source_names = [m.lower() for m in self.a2.module_sources]
-        a2ctrl.InputDialog(self.main, 'New Module Source', self.create_source, self.check_name,
-                           msg='Name the new module source:', text='my_module_source')
+        A2InputDialog(self.main, 'New Module Source', self.create_source, self.check_name,
+                      msg='Name the new module source:', text='my_module_source')
 
     def check_name(self, NAME):
         """
@@ -426,7 +427,7 @@ class NewModulueTool(object):
         return True
 
 
-class _NewModuleInput(a2ctrl.InputDialog):
+class _NewModuleInput(A2InputDialog):
     def __init__(self, parent, title, okFunk, checkFunc, text, msg):
         super(_NewModuleInput, self).__init__(parent.main, title, okFunk, checkFunc, text, msg)
         self.parent = parent

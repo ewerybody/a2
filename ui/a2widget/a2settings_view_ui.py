@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\a2settings_view.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Fri Sep  2 14:14:21 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sat Sep  3 23:22:14 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -20,7 +20,7 @@ class Ui_a2settings(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.formLayout.setContentsMargins(-1, 25, -1, 15)
         self.formLayout.setSpacing(5)
         self.formLayout.setObjectName("formLayout")
@@ -81,7 +81,7 @@ class Ui_a2settings(object):
         self.dev_widget.setObjectName("dev_widget")
         self.formLayout_2 = QtGui.QFormLayout(self.dev_widget)
         self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_2.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.formLayout_2.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
         self.formLayout_2.setObjectName("formLayout_2")
         self.label_4 = QtGui.QLabel(self.dev_widget)
@@ -131,13 +131,13 @@ class Ui_a2settings(object):
         self.label_5 = QtGui.QLabel(self.dev_widget)
         self.label_5.setObjectName("label_5")
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_5)
-        self.code_editor = PathField(self.dev_widget)
+        self.code_editor = A2PathField(self.dev_widget)
         self.code_editor.setObjectName("code_editor")
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.FieldRole, self.code_editor)
         self.label_8 = QtGui.QLabel(self.dev_widget)
         self.label_8.setObjectName("label_8")
         self.formLayout_2.setWidget(3, QtGui.QFormLayout.LabelRole, self.label_8)
-        self.autohotkey = PathField(self.dev_widget)
+        self.autohotkey = A2PathField(self.dev_widget)
         self.autohotkey.setObjectName("autohotkey")
         self.formLayout_2.setWidget(3, QtGui.QFormLayout.FieldRole, self.autohotkey)
         self.label_12 = QtGui.QLabel(self.dev_widget)
@@ -194,6 +194,6 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2ctrl.path_field import PathField
-from a2ctrl.hotkey import A2Hotkey
-from a2ctrl.a2slider import A2Slider
+from a2widget.a2slider import A2Slider
+from a2widget.a2path_field import A2PathField
+from a2widget.a2hotkey import A2Hotkey

@@ -7,7 +7,7 @@ from functools import partial
 from PySide import QtGui
 
 import a2core
-from a2ctrl.path_field import PathField
+from a2widget.a2path_field import A2PathField
 
 
 log = a2core.get_logger(__name__)
@@ -72,7 +72,7 @@ def control(ctrl, name, cfg, change_signal=None):
         else:
             cfg[name] = ctrl.text()
 
-    elif isinstance(ctrl, PathField):
+    elif isinstance(ctrl, A2PathField):
         ctrl.changed.connect(partial(_updateCfgData, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
@@ -122,4 +122,3 @@ def control(ctrl, name, cfg, change_signal=None):
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                   (name, type(ctrl)))
-

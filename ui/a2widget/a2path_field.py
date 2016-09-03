@@ -21,11 +21,11 @@ class BrowseType(object):
     file = '1'
 
 
-class PathField(QtGui.QWidget):
+class A2PathField(QtGui.QWidget):
     changed = QtCore.Signal(str)
 
     def __init__(self, parent, value='', file_types='', writable=True, label_text=None, save_mode=False):
-        super(PathField, self).__init__(parent)
+        super(A2PathField, self).__init__(parent)
         self.main_layout = QtGui.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.line_field = QtGui.QLineEdit(self)

@@ -1,7 +1,6 @@
 from PySide import QtGui, QtCore
 
 import ahk
-import a2ctrl
 import a2core
 
 
@@ -27,7 +26,7 @@ class A2Hotkey(QtGui.QPushButton):
         self.buildPopup(event.globalX(), event.globalY())
 
     def buildPopup(self, x, y):
-        self.popup = a2ctrl.Popup(x, y, self)
+        self.popup = Popup(x, y, self)
         self.popup.textEdit = QtGui.QLineEdit(self.popup)
         self.popup.textEdit.setText(self.key)
         self.popup.textEdit.textChanged.connect(self.validateHotkey)
@@ -102,3 +101,31 @@ class A2Hotkey(QtGui.QPushButton):
             self.popup.textEdit.setStyleSheet(styleGood)
 
         self.tempOK = good
+
+
+class Popup(QtGui.QWidget):
+    """QtCore.Qt.Window
+    | QtCore.Qt.CustomizeWindowHint
+    """
+    def __init__(self, x, y, closeOnLeave=True, parent=None):
+        super(Popup, self).__init__(parent=parent)
+        self.setpos = (x, y)
+        self.closeOnLeave = closeOnLeave
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
+                        self, self.close)
+        self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
+
+    def placeAtCursor(self):
+        x, y = self.setpos
+        pos = self.pos()
+        pos.setX(x - (self.width() / 2))
+        pos.setY(y - (self.height() / 2))
+        self.move(pos)
+
+    def leaveEvent(self, event):
+        if self.closeOnLeave:
+            self.close()
+
+    def focusOutEvent(self, event):
+        self.close()
+        #self.focusOutEvent()

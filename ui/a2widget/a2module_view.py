@@ -10,16 +10,17 @@ from PySide import QtGui, QtCore
 
 import a2core
 import a2ctrl
-from a2ctrl import a2settings_view
-from a2ctrl import a2module_view_ui
+from a2widget import a2settings_view
+from a2widget import a2module_view_ui
+
 
 log = a2core.get_logger(__name__)
 
 
-class ModuleView(QtGui.QWidget):
+class A2ModuleView(QtGui.QWidget):
 
     def __init__(self, parent):
-        super(ModuleView, self).__init__(parent)
+        super(A2ModuleView, self).__init__(parent)
         self.main = None
         self.editing = False
         self.controls = []
@@ -27,7 +28,7 @@ class ModuleView(QtGui.QWidget):
 
     def setup_ui(self, main):
         self.main = main
-        self.ui = a2module_view_ui.Ui_ModuleView()
+        self.ui = a2module_view_ui.Ui_A2ModuleView()
         self.ui.setupUi(self)
 
         self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()

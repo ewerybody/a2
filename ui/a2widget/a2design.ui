@@ -175,13 +175,13 @@
   <customwidget>
    <class>ModuleList</class>
    <extends>QWidget</extends>
-   <header>a2ctrl.a2module_list</header>
+   <header>a2widget.a2module_list</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ModuleView</class>
    <extends>QWidget</extends>
-   <header>a2ctrl.a2module_view</header>
+   <header>a2widget.a2module_view</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

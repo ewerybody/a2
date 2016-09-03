@@ -8,17 +8,17 @@ import a2ctrl
 import a2ctrl.qlist
 import a2core
 from a2ctrl.base import Ico
-from a2ctrl import a2module_list_ui
+from a2widget import a2module_list_ui
 
 
 log = a2core.get_logger(__name__)
 
 
-class ModuleList(QtGui.QWidget):
+class A2ModuleList(QtGui.QWidget):
     selection_changed = QtCore.Signal(list)
 
     def __init__(self, parent):
-        super(ModuleList, self).__init__(parent)
+        super(A2ModuleList, self).__init__(parent)
         self.a2 = a2core.A2Obj.inst()
         self.setup_ui()
         self.selection = None
