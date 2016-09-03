@@ -9,7 +9,7 @@ import a2ctrl.qlist
 import a2core
 from PySide import QtGui
 from functools import partial
-from a2ctrl import scopeDialog_ui
+from a2widget import a2scope_dialog_ui
 
 
 log = a2core.get_logger(__name__)
@@ -26,7 +26,6 @@ class Hotkey_Scope_Handler(object):
         self.ui.scopePlus.mousePressEvent = self.scopePopup
         self.ui.scopeMinus.clicked.connect(self.scopeDelete)
         self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
-        self.ui.cfg_scope.setFont(a2ctrl.fontL)
         self.scopeUpdate()
 
     def scopeModeChanged(self, index=None):
@@ -72,16 +71,16 @@ class Hotkey_Scope_Handler(object):
 
     def scopeUpdate(self):
         allItems = a2ctrl.qlist.get_items_as_text(self.ui.cfg_scope)
-        p = a2ctrl.fontL.pointSize()
-        h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
-        self.ui.cfg_scope.setMinimumHeight(h)
+        #p = a2ctrl.fontL.pointSize()
+        #h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
+        #self.ui.cfg_scope.setMinimumHeight(h)
         self.main.cfg['scope'] = allItems
 
 
 class ScopeDialog(QtGui.QDialog):
     def __init__(self, text, x, y, parent, ok_func, *args):
         super(ScopeDialog, self).__init__(parent)
-        self.ui = scopeDialog_ui.Ui_ScopeDialog()
+        self.ui = a2scope_dialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.ok_func = ok_func

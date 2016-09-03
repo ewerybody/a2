@@ -40,9 +40,6 @@ class A2Window(QtGui.QMainWindow):
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self.devset = DevSettings(self.a2)
         self._setup_ui()
-        # shortcuts
-        self.module_list = self.ui.module_list
-        self.module_view = self.ui.module_view
 
         init_selection = []
         if self.a2.db.get('remember_last') or False:
@@ -59,7 +56,7 @@ class A2Window(QtGui.QMainWindow):
             self.mod = module_list[0]
         else:
             self.mod = None
-        self.ui.module_view.draw_mod()
+        self.module_view.draw_mod()
 
     def _setup_ui(self):
         if self.dev_mode:
@@ -67,8 +64,11 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
+        # shortcuts
+        self.module_list = self.ui.module_list
+        self.module_view = self.ui.module_view
 
-        self.ui.module_view.setup_ui(self)
+        self.module_view.setup_ui(self)
 
         self._setup_actions()
         self._setup_shortcuts()
@@ -90,7 +90,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionExplore_to_a2_dir.setIcon(a2ctrl.Icons.inst().folder)
-        self.ui.actionA2_settings.triggered.connect(partial(self.ui.module_list.select, None))
+        self.ui.actionA2_settings.triggered.connect(partial(self.module_list.select, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
         self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
         self.ui.actionExit_a2.triggered.connect(self.close)
@@ -113,9 +113,9 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                         self, self.edit_submit)
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.ui.module_view.ui.a2scroll_area,
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.module_view.ui.a2scroll_area,
                         partial(self.scroll_to, True))
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.ui.module_view.ui.a2scroll_area,
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.module_view.ui.a2scroll_area,
                         partial(self.scroll_to, False))
 
     def build_new_module_menu(self):
@@ -126,7 +126,7 @@ class A2Window(QtGui.QMainWindow):
 
     def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:
-            self.ui.module_view.edit_mod(keep_scroll)
+            self.module_view.edit_mod(keep_scroll)
 
     def toggle_dev_menu(self, state=None):
         if state is None:
@@ -147,20 +147,20 @@ class A2Window(QtGui.QMainWindow):
         If it's enabled only trigger settingsChanged when
 
         """
-        if not self.ui.module_view.editing:
+        if not self.module_view.editing:
             return
 
         self.mod.config = deepcopy(self.tempConfig)
         if self.mod.enabled:
             self.mod.change()
             self.settings_changed()
-        self.ui.module_view.draw_mod()
+        self.module_view.draw_mod()
 
     def mod_enable(self, checked=None):
         """
         Handles the module checkbox to enable/disable one or multiple modules
         """
-        check_box = self.ui.module_view.ui.modCheck
+        check_box = self.module_view.ui.modCheck
         if check_box.isTristate() or not checked:
             for mod in self.selected:
                 mod.enabled = False
@@ -184,7 +184,7 @@ class A2Window(QtGui.QMainWindow):
 
         # kill old a2 process
         threading.Thread(target=ahk.killA2process).start()
-        self.ui.module_list.draw_modules()
+        self.module_list.draw_modules()
 
         a2core.write_includes(specific)
 
@@ -192,11 +192,11 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread.start()
 
         if refresh_ui:
-            self.ui.module_view.draw_mod()
+            self.module_view.draw_mod()
 
     def escape(self):
-        if self.ui.module_view.editing:
-            self.ui.module_view.draw_mod()
+        if self.module_view.editing:
+            self.module_view.draw_mod()
         else:
             self.close()
 

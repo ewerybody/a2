@@ -4,10 +4,11 @@ a2 path control
 from PySide import QtGui
 
 import a2ctrl
-from a2ctrl import path_edit_ui, path_field
+from a2element import path_edit_ui, DrawCtrl, EditCtrl
+from a2widget import a2path_field
 
 
-class Draw(a2ctrl.DrawCtrl):
+class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
         self.value = self.get_user_value(str)
@@ -17,7 +18,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.main_layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        self.value_ctrl = path_field.PathField(self, value=self.value)
+        self.value_ctrl = a2path_field.A2PathField(self, value=self.value)
         self.value_ctrl.changed.connect(self.check)
         self.value_ctrl.writable = self.cfg.get('writable', False)
         self.value_ctrl.file_types = self.cfg.get('file_types', '')
@@ -40,7 +41,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.change('variables')
 
 
-class Edit(a2ctrl.EditCtrl):
+class Edit(EditCtrl):
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Path'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
@@ -48,8 +49,6 @@ class Edit(a2ctrl.EditCtrl):
 
         self.ui = path_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
-
-        self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
@@ -62,8 +61,8 @@ class Edit(a2ctrl.EditCtrl):
     def _adjust_path_field(self):
         self.ui.cfg_value.writable = self.cfg.get('writable', False)
         self.ui.cfg_value.file_types = self.cfg.get('file_types', '')
-        self.ui.cfg_value.browse_type = self.cfg.get('browse_type', path_field.BrowseType.file)
+        self.ui.cfg_value.browse_type = self.cfg.get('browse_type', a2path_field.BrowseType.file)
         self.ui.cfg_value.save_mode = self.cfg.get('save_mode', False)
 
-        self.ui.cfg_file_types.setEnabled(self.ui.cfg_value.browse_type == path_field.BrowseType.file)
-        self.ui.cfg_save_mode.setEnabled(self.ui.cfg_value.browse_type == path_field.BrowseType.file)
+        self.ui.cfg_file_types.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
+        self.ui.cfg_save_mode.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)

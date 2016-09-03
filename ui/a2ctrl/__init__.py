@@ -26,6 +26,7 @@ import os
 import sys
 import time
 import inspect
+import traceback
 import threading
 import importlib
 import subprocess
@@ -33,7 +34,9 @@ import collections
 from copy import deepcopy
 from functools import partial
 from pysideuic import compileUi
+from importlib import import_module
 from os.path import getmtime, dirname, basename, exists, splitext
+
 from PySide import QtGui, QtCore, QtSvg
 
 import ahk
@@ -41,7 +44,6 @@ import a2core
 from a2ctrl import connect
 from a2ctrl.base import Ico, Icons
 from a2widget.a2input_dialog import A2InputDialog
-from importlib import import_module
 
 
 log = a2core.get_logger(__name__)
@@ -93,15 +95,20 @@ def draw(main, cfg, mod):
     if cfg.get('typ') in NO_DRAW_TYPES:
         return
 
+    import a2element
+
+    element_type = cfg.get('typ')
     try:
-        element_mod_name = 'a2element.' + cfg.get('typ')
+        element_mod_name = 'a2element.' + element_type
         if element_mod_name not in sys.modules:
-            element_mod = import_module(element_mod_name)
+            element_mod = import_module(element_mod_name, 'a2element')
         else:
             element_mod = sys.modules[element_mod_name]
         return element_mod.Draw(main, cfg, mod)
-    except Exception:
-        log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod.name))
+    except Exception as error:
+        log.error(traceback.format_exc().strip())
+        print('error: %s' % error)
+        log.error('Draw type "%s" not supported (yet)! Module: %s' % (element_type, mod.name))
 
 
 def edit(cfg, main, parent_cfg):

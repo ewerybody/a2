@@ -4,7 +4,7 @@ a2element.nfo
 @created: Sep 3, 2016
 @author: eRiC
 """
-from PySide import QtGui
+from PySide import QtGui, QtCore
 
 
 class Draw(QtGui.QWidget):
@@ -17,9 +17,9 @@ class Draw(QtGui.QWidget):
         self.layout.addWidget(self.label)
 
 
-class EditNfo(QtGui.QGroupBox):
+class Edit(QtGui.QGroupBox):
     def __init__(self, cfg, main, parent_cfg):
-        super(EditNfo, self).__init__()
+        super(Edit, self).__init__()
         self.cfg = cfg
         self.typ = cfg['typ']
         self.setTitle('module information:')
@@ -52,7 +52,6 @@ class EditLine(QtGui.QWidget):
         self.parentLayout = parentLayout
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
-        self.layout.setContentsMargins(margin, 0, margin, 0)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
         self.labelCtrl.setMinimumWidth(labelW)
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
@@ -82,7 +81,6 @@ class EditText(QtGui.QWidget):
         self.updatefunc = updatefunc
         self.baselayout = QtGui.QVBoxLayout(self)
         self.baselayout.setSpacing(5)
-        self.baselayout.setContentsMargins(margin, 0, margin, 0)
         #self.labelCtrl = QtGui.QLabel('%s:' % name)
         #self.baselayout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QPlainTextEdit()

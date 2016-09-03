@@ -5,17 +5,17 @@ Created on Dec 28, 2015
 '''
 import a2ctrl
 from PySide import QtGui
-from a2ctrl import group_edit_ui
+from a2element import group_edit_ui, DrawCtrl, EditCtrl
 
 
-class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
+class Draw(QtGui.QGroupBox, DrawCtrl):
     """
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__()
-        a2ctrl.DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
+        DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
         self.setChecked(self.get_user_value(bool, 'enabled'))
@@ -32,7 +32,7 @@ class Draw(QtGui.QGroupBox, a2ctrl.DrawCtrl):
         self.change()
 
 
-class Edit(a2ctrl.EditCtrl):
+class Edit(EditCtrl):
     """
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.

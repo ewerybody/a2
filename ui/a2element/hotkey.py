@@ -8,15 +8,15 @@ from PySide import QtCore, QtGui
 import ahk
 import a2ctrl
 import a2core
-from a2ctrl import hotkey_func, hotkey_scope
-from a2ctrl.a2hotkey import A2Hotkey
+from a2element import hotkey_func, hotkey_scope, DrawCtrl, EditCtrl
+from a2widget.a2hotkey import A2Hotkey
 
 
 hotkey_edit_ui = None
 log = a2core.get_logger(__name__)
 
 
-class Draw(a2ctrl.DrawCtrl):
+class Draw(DrawCtrl):
     """
     User ui for a Hotkey control.
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
@@ -57,7 +57,6 @@ class Draw(a2ctrl.DrawCtrl):
             self.labelLayout.addWidget(self.check)
         self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
-        self.label.setMinimumHeight(a2ctrl.lenM)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
@@ -70,8 +69,6 @@ class Draw(a2ctrl.DrawCtrl):
         self.hotkeyLayout.addWidget(self.hotkeyButton)
 
         self.hotkeyOption = QtGui.QPushButton()
-        self.hotkeyOption.setMaximumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
-        self.hotkeyOption.setMinimumSize(QtCore.QSize(a2ctrl.lenM, a2ctrl.lenM))
         self.hotkeyOption.setFlat(True)
         self.hotkeyOption.setText('...')
         self.hotkeyLayout.addWidget(self.hotkeyOption)
@@ -92,7 +89,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.change('hotkeys')
 
 
-class Edit(a2ctrl.EditCtrl):
+class Edit(EditCtrl):
     """
     Oh boy... this has so many implications but it has to be done. Let's do it!
     First: Have the edit ctrl, then the display one, Then we need checks when a mod
@@ -126,16 +123,12 @@ class Edit(a2ctrl.EditCtrl):
 
         global hotkey_edit_ui
         if hotkey_edit_ui is None:
-            from a2ctrl import hotkey_edit_ui
+            from a2element import hotkey_edit_ui
         if main.dev_mode:
             a2ctrl.check_ui_module(hotkey_edit_ui)
 
         self.ui = hotkey_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
-
-        for label in [self.ui.internalNameLabel, self.ui.displayLabelLabel, self.ui.hotkeyLabel,
-                      self.ui.functionLabel, self.ui.scopeLabel]:
-            label.setMinimumWidth(a2ctrl.labelW)
 
         self.ui.hotkey_button.set_key(cfg.get('key') or '')
         self.ui.hotkey_button.ok_func = self.hotkey_change
