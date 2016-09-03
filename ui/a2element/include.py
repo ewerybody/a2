@@ -6,6 +6,7 @@ a2element.include
 """
 from a2element import EditCtrl
 from PySide import QtGui, QtCore
+from a2ctrl import BrowseScriptsMenu
 
 
 class Edit(EditCtrl):
@@ -16,7 +17,7 @@ class Edit(EditCtrl):
         self.ctrlType = 'Include'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.main = main
-        self.layout = QtGui.QHBoxLayout(self)
+        self.layout = QtGui.QHBoxLayout(self.mainWidget)
         self.layout.setSpacing(5)
         self.labelCtrl = QtGui.QLabel('script file:')
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)

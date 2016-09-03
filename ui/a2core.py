@@ -116,7 +116,6 @@ class A2Obj(object):
     def enabled(self):
         if self._enabled is None:
             self._enabled = self.db.get('enabled') or {}
-            print('self._enabled: %s' % type(self._enabled))
         return self._enabled
 
     @enabled.setter

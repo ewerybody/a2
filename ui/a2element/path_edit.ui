@@ -79,7 +79,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="PathField" name="cfg_value">
+    <widget class="A2PathField" name="cfg_value">
      <property name="text">
       <string/>
      </property>
@@ -185,9 +185,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PathField</class>
+   <class>A2PathField</class>
    <extends>QLineEdit</extends>
-   <header>a2ctrl.path_field</header>
+   <header>a2widget.a2path_field</header>
   </customwidget>
  </customwidgets>
  <resources/>

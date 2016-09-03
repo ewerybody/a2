@@ -49,6 +49,7 @@ from a2widget.a2input_dialog import A2InputDialog
 log = a2core.get_logger(__name__)
 UI_FILE_SUFFIX = '_ui'
 NO_DRAW_TYPES = ['include']
+ELEMENTS_PACKAGE = 'a2element'
 
 
 def check_ui_module(module):
@@ -97,25 +98,42 @@ def draw(main, cfg, mod):
 
     import a2element
 
-    element_type = cfg.get('typ')
-    try:
-        element_mod_name = 'a2element.' + element_type
-        if element_mod_name not in sys.modules:
-            element_mod = import_module(element_mod_name, 'a2element')
-        else:
-            element_mod = sys.modules[element_mod_name]
-        return element_mod.Draw(main, cfg, mod)
-    except Exception as error:
-        log.error(traceback.format_exc().strip())
-        print('error: %s' % error)
-        log.error('Draw type "%s" not supported (yet)! Module: %s' % (element_type, mod.name))
+    element_mod = _get_a2element(cfg.get('typ'))
+    if element_mod is not None:
+        try:
+            return element_mod.Draw(main, cfg, mod)
+        except Exception as error:
+            log.error(traceback.format_exc().strip())
+            print('error: %s' % error)
+            log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod.name))
 
 
 def edit(cfg, main, parent_cfg):
-    if cfg['typ'] in edit_classes:
-        return edit_classes[cfg['typ']](cfg, main, parent_cfg)
-    else:
-        log.error('Edit type "%s" not supported (yet)!' % cfg['typ'])
+    element_mod = _get_a2element(cfg.get('typ'))
+    if element_mod is not None:
+        try:
+            return element_mod.Edit(cfg, main, parent_cfg)
+        except Exception as error:
+            log.error(traceback.format_exc().strip())
+            print('error: %s' % error)
+            log.error('Edit type "%s" not supported (yet)!' % cfg.get('typ'))
+
+
+def _get_a2element(element_type):
+    """
+    From the "typ" tries to import the according module from a2element
+    """
+    try:
+        element_mod_name = ELEMENTS_PACKAGE + '.' + element_type
+        if element_mod_name not in sys.modules:
+            element_mod = import_module(element_mod_name, ELEMENTS_PACKAGE)
+        else:
+            element_mod = sys.modules[element_mod_name]
+        return element_mod
+    except Exception as error:
+        log.error(traceback.format_exc().strip())
+        print('error: %s' % error)
+        log.error('Could not import element type "%s"!' % element_type)
 
 
 class EditAddElem(QtGui.QWidget):

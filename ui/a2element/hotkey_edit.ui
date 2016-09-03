@@ -450,7 +450,7 @@
   <customwidget>
    <class>A2Hotkey</class>
    <extends>QPushButton</extends>
-   <header>a2ctrl.a2hotkey</header>
+   <header>a2widget.a2hotkey</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -53,7 +53,6 @@ class EditLine(QtGui.QWidget):
         self.layout = QtGui.QHBoxLayout(self)
         self.layout.setSpacing(5)
         self.labelCtrl = QtGui.QLabel('%s:' % name)
-        self.labelCtrl.setMinimumWidth(labelW)
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
         self.inputCtrl = QtGui.QLineEdit()
@@ -86,8 +85,6 @@ class EditText(QtGui.QWidget):
         self.inputCtrl = QtGui.QPlainTextEdit()
         self.inputCtrl.setPlainText(str(text))
         self.inputCtrl.setTabChangesFocus(True)
-        self.inputCtrl.setMinimumSize(QtCore.QSize(16777215, lenL))
-        self.inputCtrl.setMaximumSize(QtCore.QSize(16777215, lenL))
         self.inputCtrl.textChanged.connect(self.update)
         self.baselayout.addWidget(self.inputCtrl)
         if parent:
