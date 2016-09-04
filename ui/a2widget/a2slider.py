@@ -11,10 +11,10 @@ class A2Slider(QtGui.QWidget):
     """
     Signals:
     value_changed = immediately emitted on any value change, best for ui updates. Rapid fires on slide!
-    editing_finished = emitted when sliding ended OR slider bar was clicked or field changed
+    editing_finished = emitted when sliding ended OR slider bar was clicked or field change is finished
     """
     value_changed = QtCore.Signal(float)
-    slider_released = QtCore.Signal(float)
+    editing_finished = QtCore.Signal(float)
 
     def __init__(self, parent, has_slider=True, has_field=True, value=1.0, mini=0, maxi=100, decimals=1, step_len=1):
         super(A2Slider, self).__init__(parent)
@@ -34,14 +34,25 @@ class A2Slider(QtGui.QWidget):
         self._max = maxi
         self._value = value
         self._step_len = step_len
+        self._slider_factor = 1.0
         self._init_ctrls()
 
     def _init_ctrls(self):
         """
-        Under the hood the slider
+        Under the hood the slider always uses integers. So according to the decimals
+        we're displaying we multiply the values * 10
         """
+        f = pow(10, self._decimals)
+        self._slider_factor = f
+        self.setValue(self._value)
 
-    def set_slider_pressed(self, state):
+    def emit_changed(self):
+        self.value_changed.emit(self._value)
+
+    def emit_finished(self):
+        self.editing_finished.emit(self._value)
+
+    def _set_slider_pressed(self, state):
         self._slider_pressed = state
 
     def set_slider(self, value):
@@ -86,8 +97,8 @@ class A2Slider(QtGui.QWidget):
             self.slider = QtGui.QSlider(self)
             self.slider.setOrientation(QtCore.Qt.Horizontal)
             self.slider.valueChanged.connect(self.slider_change)
-            self.slider.sliderPressed.connect(partial(self.set_slider_pressed, True))
-            self.slider.sliderReleased.connect(partial(self.set_slider_pressed, False))
+            self.slider.sliderPressed.connect(partial(self._set_slider_pressed, True))
+            self.slider.sliderReleased.connect(partial(self._set_slider_pressed, False))
             self.slider.sliderReleased.connect(self.slider_change)
             if self.value_ctrl is not None:
                 self.value_ctrl.valueChanged.connect(self.set_slider)
@@ -109,8 +120,8 @@ class A2Slider(QtGui.QWidget):
         self._value = value
         if self.value_ctrl is not None:
             self.value_ctrl.setValue(value)
-#        if self.slider is not None:
-#            self.slider
+        if self.slider is not None:
+            self.slider.setValue(value * self._slider_factor)
 
     @property
     def decimals(self):

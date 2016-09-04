@@ -117,7 +117,6 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.module_view.ui.a2scroll_area,
                         partial(self.scroll_to, False))
 
-
     def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:
             self.module_view.edit_mod(keep_scroll)

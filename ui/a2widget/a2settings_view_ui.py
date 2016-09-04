@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Sat Sep  3 23:22:14 2016
+# Created: Sun Sep  4 15:06:15 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(458, 754)
+        a2settings.resize(624, 1017)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
@@ -195,5 +195,5 @@ class Ui_a2settings(object):
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
 from a2widget.a2slider import A2Slider
-from a2widget.a2path_field import A2PathField
 from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2path_field import A2PathField

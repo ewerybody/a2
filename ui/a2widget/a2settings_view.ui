@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>754</height>
+    <width>624</width>
+    <height>1017</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -262,7 +262,7 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="PathField" name="code_editor"/>
+          <widget class="A2PathField" name="code_editor"/>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_8">
@@ -272,7 +272,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="PathField" name="autohotkey"/>
+          <widget class="A2PathField" name="autohotkey"/>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_12">
@@ -349,19 +349,19 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PathField</class>
-   <extends>QLineEdit</extends>
-   <header>a2widget.path_field</header>
-  </customwidget>
-  <customwidget>
    <class>A2Hotkey</class>
    <extends>QPushButton</extends>
-   <header>a2widget.hotkey</header>
+   <header>a2ctrl.hotkey</header>
   </customwidget>
   <customwidget>
    <class>A2Slider</class>
    <extends>QSlider</extends>
    <header>a2widget.a2slider</header>
+  </customwidget>
+  <customwidget>
+   <class>A2PathField</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.path_field</header>
   </customwidget>
  </customwidgets>
  <resources/>
