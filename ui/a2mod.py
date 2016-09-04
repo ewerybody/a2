@@ -18,11 +18,6 @@ CONFIG_FILENAME = 'a2module.json'
 MOD_SOURCE_NAME = 'a2modsource.json'
 ICON_FILENAME = 'a2icon'
 ICON_FORMATS = ['.svg', '.png']
-VALUE_MAP = {'check': {'typ': bool, 'default': False},
-             'number': {'typ': (int, float), 'default': 0.0},
-             'string': {'typ': str, 'default': ''},
-             'combo': {'typ': str, 'default': ''},
-             'path': {'typ': str, 'default': ''}}
 
 
 def get_module_sources(main, path, modsource_dict):
@@ -158,8 +153,8 @@ class Mod(object):
         return self._config
 
     @config.setter
-    def config(self, cfgdict):
-        self._config = cfgdict
+    def config(self, cfg_dict):
+        self._config = cfg_dict
         # backup current config_file
         backup_path = os.path.join(self.path, '_config_backups')
         if not exists(backup_path):
@@ -190,51 +185,10 @@ class Mod(object):
         """
         Sets the mods own db entries
         """
-        data = {'includes': [], 'hotkeys': {}, 'variables': {}}
-        data = self.loop_cfg(self.config[1:], data)
-
-        for typ in ['includes', 'hotkeys', 'variables']:
-            self.a2.db.set(typ, data[typ], self.key)
-
-    def loop_cfg(self, cfgDict, data):
-        for cfg in cfgDict:
-
-            if cfg['typ'] == 'include':
-                data['includes'].append(cfg['file'])
-
-            elif 'name' in cfg:
-                userCfg = self.a2.db.get(cfg['name'], self.key)
-                if cfg['typ'] == 'hotkey':
-                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled'):
-                        continue
-
-                    key = a2ctrl.get_cfg_value(cfg, userCfg, 'key', str)
-                    scope = a2ctrl.get_cfg_value(cfg, userCfg, 'scope', list)
-                    scopeMode = a2ctrl.get_cfg_value(cfg, userCfg, 'scopeMode', int)
-                    function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
-                    if scopeMode not in data['hotkeys']:
-                        data['hotkeys'][scopeMode] = []
-                    # save a global if global scope set or all-but AND scope is empty
-                    if scopeMode == 0 or scopeMode == 2 and scope == '':
-                        data['hotkeys'][0].append([key, function])
-                    else:
-                        data['hotkeys'][scopeMode].append([scope, key, function])
-
-                elif cfg['typ'] in VALUE_MAP:
-                    data['variables'][cfg['name']] = a2ctrl.get_cfg_value(
-                        subCfg=cfg,
-                        userCfg=userCfg,
-                        attrName='value',
-                        typ=VALUE_MAP[cfg['typ']]['typ'],
-                        default=VALUE_MAP[cfg['typ']]['default'])
-
-                elif cfg['typ'] == 'group':
-                    #disablable
-                    if not a2ctrl.get_cfg_value(cfg, userCfg, 'enabled', bool):
-                        continue
-                    childList = cfg.get('children', [])
-                    data = self.loop_cfg(childList, data)
-        return data
+        db_dict = {}
+        a2ctrl.assemble_settings(self.key, self.config[1:], db_dict)
+        for typ, data in db_dict.items():
+            self.a2.db.set(typ, data, self.key)
 
     @property
     def scripts(self):

@@ -3,6 +3,7 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
+import a2core
 import a2ctrl
 from PySide import QtGui
 from a2element import group_edit_ui, DrawCtrl, EditCtrl
@@ -73,6 +74,6 @@ class Edit(EditCtrl):
         self.main.edit_mod()
 
 
-if __name__ == '__main__':
-    import a2app
-    a2app.main()
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    sub_cfg = cfg.get('children', [])
+    a2ctrl.assemble_settings(module_key, sub_cfg, db_dict)

@@ -97,3 +97,7 @@ class EditText(QtGui.QWidget):
     @property
     def value(self):
         return self.inputCtrl.toPlainText()
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    raise NotImplementedError('Settings for nfo are never fetched!')

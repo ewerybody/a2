@@ -42,3 +42,9 @@ class Edit(EditCtrl):
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    db_dict.setdefault('variables', {})
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=bool, default=False)
+    db_dict['variables'][cfg['name']] = value

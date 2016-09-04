@@ -66,3 +66,9 @@ class Edit(EditCtrl):
 
         self.ui.cfg_file_types.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
         self.ui.cfg_save_mode.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    db_dict.setdefault('variables', {})
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
+    db_dict['variables'][cfg['name']] = value

@@ -1,45 +1,20 @@
 """
-# create header edit controls
-def editctrl(nfoDict, keyName, typ, parent, editCtrls):
-    if keyName not in nfoDict:
-        return
-
-    label = QtGui.QLabel('%s:' % keyName)
-    parent.addWidget(label)
-    if typ == 'text':
-        inputctrl = QtGui.QPlainTextEdit()
-        inputctrl.setPlainText(nfoDict.get(keyName) or '')
-        inputctrl.setTabChangesFocus(True)
-    else:
-        inputctrl = QtGui.QLineEdit()
-        inputctrl.setText(nfoDict.get(keyName) or '')
-    parent.addWidget(inputctrl)
-    editCtrls[keyName] = inputctrl
-
-nfo item is always the 0th entry in the configuration. it just draws and holds all
-the author, name, version, description info
+a2ctrl - basic functionality for all the a2element building blocks
 
 @created: Mar 6, 2015
 @author: eRiC
 """
 import os
 import sys
-import time
-import inspect
 import traceback
-import threading
-import importlib
-import subprocess
 import collections
-from copy import deepcopy
 from functools import partial
 from pysideuic import compileUi
-from importlib import import_module
+from importlib import reload, import_module
 from os.path import getmtime, dirname, basename, exists, splitext
 
-from PySide import QtGui, QtCore, QtSvg
+from PySide import QtGui
 
-import ahk
 import a2core
 from a2ctrl import connect
 from a2ctrl.base import Ico, Icons
@@ -50,6 +25,7 @@ log = a2core.get_logger(__name__)
 UI_FILE_SUFFIX = '_ui'
 NO_DRAW_TYPES = ['include']
 ELEMENTS_PACKAGE = 'a2element'
+_element_map = {}
 
 
 def check_ui_module(module):
@@ -85,7 +61,7 @@ def check_ui_module(module):
         log.debug('%s needs compile! (age: %is)' % (pybase, diff))
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
-        importlib.reload(module)
+        reload(module)
 
 
 def draw(main, cfg, mod):
@@ -98,7 +74,7 @@ def draw(main, cfg, mod):
 
     import a2element
 
-    element_mod = _get_a2element(cfg.get('typ'))
+    element_mod = get_a2element(cfg.get('typ'))
     if element_mod is not None:
         try:
             return element_mod.Draw(main, cfg, mod)
@@ -109,7 +85,7 @@ def draw(main, cfg, mod):
 
 
 def edit(cfg, main, parent_cfg):
-    element_mod = _get_a2element(cfg.get('typ'))
+    element_mod = get_a2element(cfg.get('typ'))
     if element_mod is not None:
         try:
             return element_mod.Edit(cfg, main, parent_cfg)
@@ -119,21 +95,27 @@ def edit(cfg, main, parent_cfg):
             log.error('Edit type "%s" not supported (yet)!' % cfg.get('typ'))
 
 
-def _get_a2element(element_type):
+def get_a2element(element_type):
     """
     From the "typ" tries to import the according module from a2element
     """
     try:
-        element_mod_name = ELEMENTS_PACKAGE + '.' + element_type
-        if element_mod_name not in sys.modules:
-            element_mod = import_module(element_mod_name, ELEMENTS_PACKAGE)
-        else:
-            element_mod = sys.modules[element_mod_name]
-        return element_mod
-    except Exception as error:
-        log.error(traceback.format_exc().strip())
-        print('error: %s' % error)
-        log.error('Could not import element type "%s"!' % element_type)
+        return _element_map[element_type]
+    except KeyError:
+        try:
+            element_mod_name = ELEMENTS_PACKAGE + '.' + element_type
+            if element_mod_name not in sys.modules:
+                element_mod = import_module(element_mod_name, ELEMENTS_PACKAGE)
+            else:
+                element_mod = sys.modules[element_mod_name]
+
+            _element_map[element_type] = element_mod
+            return element_mod
+
+        except Exception as error:
+            log.error(traceback.format_exc().strip())
+            print('error: %s' % error)
+            log.error('Could not import element type "%s"!' % element_type)
 
 
 class EditAddElem(QtGui.QWidget):
@@ -235,15 +217,15 @@ class BrowseScriptsMenu(QtGui.QMenu):
     def setScript(self, name='', create=False):
         if not name:
             A2InputDialog(self.main, 'New Script', partial(self.setScript, create=True),
-                        self.main.mod.checkCreateScript, text='awesomeScript',
-                        msg='Give a name for the new script file:', size=(400, 50))
+                          self.main.mod.checkCreateScript, text='awesomeScript',
+                          msg='Give a name for the new script file:', size=(400, 50))
             return
         if create:
             name = self.main.mod.createScript(name)
         self.func('include', name)
 
 
-def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
+def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.
@@ -263,6 +245,19 @@ def get_cfg_value(subCfg, userCfg, attrName, typ=None, default=None):
                 value = default
 
     return value
+
+
+def assemble_settings(module_key, cfg_dict, db_dict):
+
+    for cfg in cfg_dict:
+        # get configs named db entry of module or None
+        user_cfg = a2core.A2Obj.inst().db.get(cfg.get('name'), module_key)
+        # pass if there is an 'enabled' entry and its False
+        if not get_cfg_value(cfg, user_cfg, 'enabled', default=True):
+            continue
+
+        cfg_pymod = get_a2element(cfg['typ'])
+        cfg_pymod.get_settings(module_key, cfg, db_dict, user_cfg)
 
 
 if __name__ == '__main__':

@@ -201,6 +201,10 @@ class Paths(object):
 
 
 def write_includes(specific=None):
+    """
+    For each enabled module writes available data to the
+    hotkey, include, variables or libs .ahk include files
+    """
     a2 = A2Obj.inst()
     a2.fetch_modules()
 

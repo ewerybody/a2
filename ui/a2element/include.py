@@ -4,9 +4,18 @@ a2element.include
 @created: Sep 3, 2016
 @author: eRiC
 """
-from a2element import EditCtrl
+import os
+import subprocess
+from os.path import exists
+
 from PySide import QtGui, QtCore
+
+import a2core
+from a2element import EditCtrl
 from a2ctrl import BrowseScriptsMenu
+
+
+log = a2core.get_logger(__name__)
 
 
 class Edit(EditCtrl):
@@ -45,3 +54,7 @@ class Edit(EditCtrl):
                               os.path.join(self.main.mod.path, self.cfg['file'])])
         else:
             log.error('No code_editor found! Set it up in settings!')
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    db_dict.setdefault('includes', []).append(cfg['file'])

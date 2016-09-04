@@ -6,10 +6,10 @@ Created on Apr 1, 2016
 import a2ctrl
 import a2ctrl.qlist
 from PySide import QtGui, QtCore
-from a2ctrl import combo_edit_ui
+from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 
-class Draw(a2ctrl.DrawCtrl):
+class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
         self.value = self.get_user_value(str)
@@ -57,7 +57,7 @@ class Draw(a2ctrl.DrawCtrl):
         raise NotImplementedError('Ohoh! I thought this was done already! :(')
 
 
-class Edit(a2ctrl.EditCtrl):
+class Edit(EditCtrl):
     """
     Checkbox to control boolean values for the a2 runtime.
     We might put them to the db and get and fetch from there or first: just write them into
@@ -71,7 +71,6 @@ class Edit(a2ctrl.EditCtrl):
         self.ui = combo_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        self.ui.internalNameLabel.setMinimumWidth(a2ctrl.labelW)
         self.ui.plus_button.clicked.connect(self.add_item)
         self.ui.minus_button.clicked.connect(self.delete_item)
 
@@ -115,6 +114,15 @@ class Edit(a2ctrl.EditCtrl):
         self.cfg['items'] = items
 
     def keyPressEvent(self, event):
+        """
+        Capture delete key to remove entries
+        """
         if event.key() == QtCore.Qt.Key_Delete:
             self.delete_item()
-        return a2ctrl.EditCtrl.keyPressEvent(self, event)
+        return EditCtrl.keyPressEvent(self, event)
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    db_dict.setdefault('variables', {})
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
+    db_dict['variables'][cfg['name']] = value

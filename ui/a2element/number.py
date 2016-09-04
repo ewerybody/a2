@@ -6,10 +6,10 @@ Created on Mar 22, 2016
 import a2ctrl
 from functools import partial
 from PySide import QtGui, QtCore
-from a2ctrl import number_edit_ui
+from a2element import number_edit_ui, DrawCtrl, EditCtrl
 
 
-class Draw(a2ctrl.DrawCtrl):
+class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
         value = self.get_user_value((float, int), default=0.0)
@@ -90,7 +90,7 @@ class Draw(a2ctrl.DrawCtrl):
         self.change('variables')
 
 
-class Edit(a2ctrl.EditCtrl):
+class Edit(EditCtrl):
     """
     Edit-control for Numbers: integer OR float!
     """
@@ -131,3 +131,9 @@ def _toggle_type(decimals, value):
     else:
         value = float(value)
     return value
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    db_dict.setdefault('variables', {})
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=(int, float), default=0.0)
+    db_dict['variables'][cfg['name']] = value

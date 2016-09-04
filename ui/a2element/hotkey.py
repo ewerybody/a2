@@ -155,3 +155,18 @@ class Edit(EditCtrl):
 
     def hotkey_change(self, newKey):
         self.cfg['key'] = newKey
+
+
+def get_settings(module_key, cfg, db_dict, user_cfg):
+    key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key', str)
+    scope = a2ctrl.get_cfg_value(cfg, user_cfg, 'scope', list)
+    scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, 'scopeMode', int)
+    function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
+
+    db_dict.setdefault('hotkeys', {})
+    db_dict['hotkeys'].setdefault(scope_mode, [])
+    # save a global if global scope set or all-but AND scope is empty
+    if scope_mode == 0 or scope_mode == 2 and scope == '':
+        db_dict['hotkeys'][0].append([key, function])
+    else:
+        db_dict['hotkeys'][scope_mode].append([scope, key, function])
