@@ -31,8 +31,8 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="ModuleList" name="module_list" native="true"/>
-      <widget class="ModuleView" name="module_view" native="true"/>
+      <widget class="A2ModuleList" name="module_list" native="true"/>
+      <widget class="A2ModuleView" name="module_view" native="true"/>
      </widget>
     </item>
    </layout>
@@ -43,7 +43,7 @@
      <x>0</x>
      <y>0</y>
      <width>1012</width>
-     <height>23</height>
+     <height>38</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -58,18 +58,15 @@
     <property name="title">
      <string>&amp;Dev</string>
     </property>
-    <widget class="QMenu" name="menuNew_Module">
-     <property name="title">
-      <string>New Module</string>
-     </property>
-     <addaction name="actionNew_Module_Dialog"/>
-    </widget>
-    <addaction name="menuNew_Module"/>
+    <addaction name="actionNew_Module_Dialog"/>
     <addaction name="actionEdit_module"/>
     <addaction name="actionExplore_to"/>
     <addaction name="separator"/>
     <addaction name="actionDisable_all_modules"/>
     <addaction name="actionExplore_to_a2_dir"/>
+    <addaction name="separator"/>
+    <addaction name="actionCreate_New_Element"/>
+    <addaction name="actionBuild_A2_Package"/>
    </widget>
    <widget class="QMenu" name="menuMain">
     <property name="title">
@@ -152,11 +149,6 @@
     <string>F5</string>
    </property>
   </action>
-  <action name="actionAsdfasdf">
-   <property name="text">
-    <string>asdfasdf</string>
-   </property>
-  </action>
   <action name="actionReport_Issue">
    <property name="text">
     <string>Report Issue</string>
@@ -164,22 +156,32 @@
   </action>
   <action name="actionNew_Module_Dialog">
    <property name="text">
-    <string>New Module Dialog</string>
+    <string>Create New Module</string>
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+N</string>
    </property>
   </action>
+  <action name="actionBuild_A2_Package">
+   <property name="text">
+    <string>Build A2 Package</string>
+   </property>
+  </action>
+  <action name="actionCreate_New_Element">
+   <property name="text">
+    <string>Create New Element</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ModuleList</class>
+   <class>A2ModuleList</class>
    <extends>QWidget</extends>
    <header>a2widget.a2module_list</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ModuleView</class>
+   <class>A2ModuleView</class>
    <extends>QWidget</extends>
    <header>a2widget.a2module_view</header>
    <container>1</container>

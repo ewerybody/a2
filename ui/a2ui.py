@@ -100,7 +100,6 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionReport_Issue.triggered.connect(partial(a2core.surfTo, self.a2.urls.help_report_issue))
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
-        self.ui.menuNew_Module.aboutToShow.connect(self.build_new_module_menu)
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
 
     def _setup_shortcuts(self):
@@ -118,11 +117,6 @@ class A2Window(QtGui.QMainWindow):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.module_view.ui.a2scroll_area,
                         partial(self.scroll_to, False))
 
-    def build_new_module_menu(self):
-        menu = self.ui.menuNew_Module
-        menu.clear()
-        menu.addAction(self.ui.actionNew_Module_Dialog)
-        menu.addAction(QtGui.QAction('NotImplemented Yet', menu))
 
     def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:

@@ -1,4 +1,4 @@
-'''
+"""
 New a2app backend hosting the actual a2ui window.
 Makes sure its only visible once through the 'siding' package
 and enables sending messages to the main app instance.
@@ -6,7 +6,7 @@ and enables sending messages to the main app instance.
 Created on Aug 7, 2015
 
 @author: eRiC
-'''
+"""
 import sys
 import logging
 import platform

@@ -3,7 +3,6 @@ Created on Dec 28, 2015
 
 @author: eRiC
 '''
-import a2core
 import a2ctrl
 from PySide import QtGui
 from a2element import group_edit_ui, DrawCtrl, EditCtrl

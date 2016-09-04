@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2design.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2design.ui'
 #
-# Created: Mon Aug 29 14:18:44 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sun Sep  4 13:40:57 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -32,14 +32,12 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 38))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         self.menuDev = QtGui.QMenu(self.menubar)
         self.menuDev.setObjectName("menuDev")
-        self.menuNew_Module = QtGui.QMenu(self.menuDev)
-        self.menuNew_Module.setObjectName("menuNew_Module")
         self.menuMain = QtGui.QMenu(self.menubar)
         self.menuMain.setObjectName("menuMain")
         a2MainWindow.setMenuBar(self.menubar)
@@ -69,23 +67,27 @@ class Ui_a2MainWindow(object):
         self.actionExit_a2.setObjectName("actionExit_a2")
         self.actionRefresh_UI = QtGui.QAction(a2MainWindow)
         self.actionRefresh_UI.setObjectName("actionRefresh_UI")
-        self.actionAsdfasdf = QtGui.QAction(a2MainWindow)
-        self.actionAsdfasdf.setObjectName("actionAsdfasdf")
         self.actionReport_Issue = QtGui.QAction(a2MainWindow)
         self.actionReport_Issue.setObjectName("actionReport_Issue")
         self.actionNew_Module_Dialog = QtGui.QAction(a2MainWindow)
         self.actionNew_Module_Dialog.setShortcut("Ctrl+N")
         self.actionNew_Module_Dialog.setObjectName("actionNew_Module_Dialog")
+        self.actionBuild_A2_Package = QtGui.QAction(a2MainWindow)
+        self.actionBuild_A2_Package.setObjectName("actionBuild_A2_Package")
+        self.actionCreate_New_Element = QtGui.QAction(a2MainWindow)
+        self.actionCreate_New_Element.setObjectName("actionCreate_New_Element")
         self.menuHelp.addAction(self.actionReport_Issue)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
-        self.menuNew_Module.addAction(self.actionNew_Module_Dialog)
-        self.menuDev.addAction(self.menuNew_Module.menuAction())
+        self.menuDev.addAction(self.actionNew_Module_Dialog)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)
         self.menuDev.addSeparator()
         self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionExplore_to_a2_dir)
+        self.menuDev.addSeparator()
+        self.menuDev.addAction(self.actionCreate_New_Element)
+        self.menuDev.addAction(self.actionBuild_A2_Package)
         self.menuMain.addAction(self.actionA2_settings)
         self.menuMain.addAction(self.actionRefresh_UI)
         self.menuMain.addAction(self.actionExit_a2)
@@ -100,7 +102,6 @@ class Ui_a2MainWindow(object):
         a2MainWindow.setWindowTitle(QtGui.QApplication.translate("a2MainWindow", "a2", None, QtGui.QApplication.UnicodeUTF8))
         self.menuHelp.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.menuDev.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Dev", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuNew_Module.setTitle(QtGui.QApplication.translate("a2MainWindow", "New Module", None, QtGui.QApplication.UnicodeUTF8))
         self.menuMain.setTitle(QtGui.QApplication.translate("a2MainWindow", "&Main", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAbout_a2.setText(QtGui.QApplication.translate("a2MainWindow", "About a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEdit_module.setText(QtGui.QApplication.translate("a2MainWindow", "Edit Module", None, QtGui.QApplication.UnicodeUTF8))
@@ -115,9 +116,10 @@ class Ui_a2MainWindow(object):
         self.actionExit_a2.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefresh_UI.setText(QtGui.QApplication.translate("a2MainWindow", "Refresh UI", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefresh_UI.setShortcut(QtGui.QApplication.translate("a2MainWindow", "F5", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionAsdfasdf.setText(QtGui.QApplication.translate("a2MainWindow", "asdfasdf", None, QtGui.QApplication.UnicodeUTF8))
         self.actionReport_Issue.setText(QtGui.QApplication.translate("a2MainWindow", "Report Issue", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNew_Module_Dialog.setText(QtGui.QApplication.translate("a2MainWindow", "New Module Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew_Module_Dialog.setText(QtGui.QApplication.translate("a2MainWindow", "Create New Module", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionBuild_A2_Package.setText(QtGui.QApplication.translate("a2MainWindow", "Build A2 Package", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCreate_New_Element.setText(QtGui.QApplication.translate("a2MainWindow", "Create New Element", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
+from a2widget.a2module_list import A2ModuleList
