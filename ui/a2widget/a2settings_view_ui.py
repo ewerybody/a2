@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2settings_view.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Sun Sep  4 15:06:15 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Tue Sep  6 15:32:17 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(624, 1017)
+        a2settings.resize(624, 615)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
@@ -20,7 +20,7 @@ class Ui_a2settings(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout.setContentsMargins(-1, 25, -1, 15)
         self.formLayout.setSpacing(5)
         self.formLayout.setObjectName("formLayout")
@@ -38,10 +38,11 @@ class Ui_a2settings(object):
         self.remember_selection.setObjectName("remember_selection")
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.remember_selection)
         self.ui_scale_slider = A2Slider(a2settings)
-        self.ui_scale_slider.setMinimum(0)
-        self.ui_scale_slider.setMaximum(300)
-        self.ui_scale_slider.setProperty("value", 100)
-        self.ui_scale_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.ui_scale_slider.setDecimals(3)
+        self.ui_scale_slider.setMinimum(0.3)
+        self.ui_scale_slider.setMaximum(2.0)
+        self.ui_scale_slider.setSingleStep(0.05)
+        self.ui_scale_slider.setProperty("value", 1.0)
         self.ui_scale_slider.setObjectName("ui_scale_slider")
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.ui_scale_slider)
         self.ui_scale_label = QtGui.QLabel(a2settings)
@@ -81,7 +82,7 @@ class Ui_a2settings(object):
         self.dev_widget.setObjectName("dev_widget")
         self.formLayout_2 = QtGui.QFormLayout(self.dev_widget)
         self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_2.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.formLayout_2.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
         self.formLayout_2.setObjectName("formLayout_2")
         self.label_4 = QtGui.QLabel(self.dev_widget)
@@ -194,6 +195,6 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2slider import A2Slider
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
+from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2slider import A2Slider

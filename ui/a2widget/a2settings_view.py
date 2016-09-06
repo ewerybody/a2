@@ -89,10 +89,7 @@ class A2Settings(QtGui.QWidget):
         ahk_vars = ahk.get_variables(self.a2.paths.settings_ahk)
         self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
-
-        self.ui.ui_scale_slider.editing_finished.connect(self.ui_scale_change)
-        #self.main.rebuild_css
-        #self.ui.ui_scale_slider.sliderReleased.connect(self.ui_scale_change)
+        self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
 
     def ui_scale_change(self, value):
         print('value: %s' % value)

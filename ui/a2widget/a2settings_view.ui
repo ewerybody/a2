@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>1017</height>
+    <height>615</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,17 +73,20 @@
      </item>
      <item row="3" column="1">
       <widget class="A2Slider" name="ui_scale_slider">
+       <property name="decimals">
+        <number>3</number>
+       </property>
        <property name="minimum">
-        <number>0</number>
+        <double>0.300000000000000</double>
        </property>
        <property name="maximum">
-        <number>300</number>
+        <double>2.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.050000000000000</double>
        </property>
        <property name="value">
-        <number>100</number>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <double>1.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -351,17 +354,17 @@
   <customwidget>
    <class>A2Hotkey</class>
    <extends>QPushButton</extends>
-   <header>a2ctrl.hotkey</header>
-  </customwidget>
-  <customwidget>
-   <class>A2Slider</class>
-   <extends>QSlider</extends>
-   <header>a2widget.a2slider</header>
+   <header>a2widget.a2hotkey</header>
   </customwidget>
   <customwidget>
    <class>A2PathField</class>
    <extends>QLineEdit</extends>
-   <header>a2widget.path_field</header>
+   <header>a2widget.a2path_field</header>
+  </customwidget>
+  <customwidget>
+   <class>A2Slider</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>a2widget.a2slider</header>
   </customwidget>
  </customwidgets>
  <resources/>
