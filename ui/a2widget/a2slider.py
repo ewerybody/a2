@@ -22,7 +22,8 @@ class A2Slider(QtGui.QWidget):
         self.setLayout(self.main_layout)
 
         self._slider_pressed = None
-        self._ignore_change = False
+        self._slider_ignore = False
+        self._field_ignore = False
 
         self.slider = None
         self.value_ctrl = None
@@ -42,8 +43,7 @@ class A2Slider(QtGui.QWidget):
         Under the hood the slider always uses integers. So according to the decimals
         we're displaying we multiply the values * 10
         """
-        f = pow(10, self._decimals)
-        self._slider_factor = f
+        self._slider_factor = pow(10, self._decimals)
         self.setValue(self._value)
 
     def emit_changed(self):
@@ -55,23 +55,34 @@ class A2Slider(QtGui.QWidget):
     def _set_slider_pressed(self, state):
         self._slider_pressed = state
 
-    def set_slider(self, value):
-        self._ignore_change = True
-        self.slider.setValue(value)
-        self._ignore_change = False
-
-    def slider_change(self, value=None):
-        if self._ignore_change:
+    def _slider_change(self, value):
+        if self._slider_ignore:
             return
 
-        if value is None:
-            value = self.value_ctrl.value()
-        else:
-            self.value_ctrl.setValue(value)
+        value = value / self._slider_factor
+        if value != self._value:
+            self._value = value
+            self._field_ignore = True
+            self.value_ctrl.setValue(self._value)
+            self._field_ignore = False
+            self.emit_changed()
 
         if self._slider_pressed:
             return
-        print('value: %s' % value)
+        self.emit_finished()
+
+    def _field_change(self, value):
+        if self._field_ignore:
+            return
+
+        if value != self._value:
+            self._value = value
+            self.emit_changed()
+
+            if self.slider is not None:
+                self._slider_ignore = True
+                self.slider.setValue(value * self._slider_factor)
+                self._slider_ignore = False
 
     @property
     def has_field(self):
@@ -81,8 +92,9 @@ class A2Slider(QtGui.QWidget):
     def has_field(self, state):
         if state and self.value_ctrl is None:
             self.value_ctrl = QtGui.QDoubleSpinBox()
-            self.value_ctrl.editingFinished.connect(self.value_changed.emit)
+            self.value_ctrl.editingFinished.connect(self.emit_finished)
             self.main_layout.addWidget(self.value_ctrl)
+            self.value_ctrl.valueChanged.connect(self._field_change)
         elif not state and self.value_ctrl is not None:
             self.value_ctrl.deleteLater()
             self.value_ctrl = None
@@ -96,12 +108,10 @@ class A2Slider(QtGui.QWidget):
         if state and self.slider is None:
             self.slider = QtGui.QSlider(self)
             self.slider.setOrientation(QtCore.Qt.Horizontal)
-            self.slider.valueChanged.connect(self.slider_change)
+            self.slider.valueChanged.connect(self._slider_change)
             self.slider.sliderPressed.connect(partial(self._set_slider_pressed, True))
             self.slider.sliderReleased.connect(partial(self._set_slider_pressed, False))
-            self.slider.sliderReleased.connect(self.slider_change)
-            if self.value_ctrl is not None:
-                self.value_ctrl.valueChanged.connect(self.set_slider)
+            self.slider.sliderReleased.connect(self.emit_finished)
             print('self.main_layout: %s' % self.main_layout)
             self.main_layout.addWidget(self.slider)
         elif not state and self.slider is not None:
@@ -135,8 +145,9 @@ class A2Slider(QtGui.QWidget):
         self._decimals = value
         if self.value_ctrl is not None:
             self.value_ctrl.setDecimals(value)
-#        if self.slider is not None:
-#            self.slider
+        if self.slider is not None:
+            self._slider_factor = pow(10, self._decimals)
+            self.setValue(self._value)
 
     @property
     def min(self):
@@ -150,8 +161,8 @@ class A2Slider(QtGui.QWidget):
         self._min = value
         if self.value_ctrl is not None:
             self.value_ctrl.setMinimum(value)
-#        if self.slider is not None:
-#            self.slider
+        if self.slider is not None:
+            self.slider.setMinimum(self._min * self._slider_factor)
 
     @property
     def max(self):
@@ -165,8 +176,8 @@ class A2Slider(QtGui.QWidget):
         self._max = value
         if self.value_ctrl is not None:
             self.value_ctrl.setMaximum(value)
-#        if self.slider is not None:
-#            self.slider
+        if self.slider is not None:
+            self.slider.setMaximum(self._max * self._slider_factor)
 
     @property
     def step_len(self):
@@ -180,22 +191,36 @@ class A2Slider(QtGui.QWidget):
         self._step_len = value
         if self.value_ctrl is not None:
             self.value_ctrl.setSingleStep(value)
+        if self.slider is not None:
+            self.slider.setSingleStep(self._step_len * self._slider_factor)
 
-#        if self.slider is not None:
-#            self.slider
-
-
-#            self.slider.setValue(self.value)
-#            self.slider.setMinimum(self.min)
-#            self.slider.setMaximum(self.max)
-#            self.slider.setSingleStep(self.step_len)
-
-#            self.value_ctrl.setMinimum(self.min)
-#            self.value_ctrl.setMaximum(self.max)
-#            self.value_ctrl.setDecimals(self.decimals)
-#            self.value_ctrl.setSingleStep(self.step_len)
-#            self.value_ctrl.setValue(self.value)
 
     def setOrientation(self, orientation):
         if self.slider is not None:
             self.slider.setOrientation(orientation)
+
+
+if __name__ == '__main__':
+    # a little slider demo
+    def finished(x):
+        print('    finished: %s' % x)
+    def changed(x):
+        print('    changed: %s' % x)
+
+    app = QtGui.QApplication([])
+    win = QtGui.QMainWindow()
+    w = QtGui.QWidget()
+    win.setCentralWidget(w)
+    l = QtGui.QVBoxLayout(w)
+    w.setLayout(l)
+    s = A2Slider(w)
+    s.setMinimumWidth(500)
+    s.setSingleStep(0.1)
+    s.setDecimals(2)
+    s.setMinimum(0)
+    s.setMaximum(2)
+    s.editing_finished.connect(finished)
+    s.value_changed.connect(changed)
+    l.addWidget(s)
+    win.show()
+    app.exec_()
