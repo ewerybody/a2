@@ -43,8 +43,7 @@ def main():
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
 
     a2win = init_a2_win(app)
-
-    exit(app.exec_())
+    app.exec_()
 
 
 def init_a2_win(app):

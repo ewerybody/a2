@@ -29,6 +29,10 @@ _element_map = {}
 
 
 def check_ui_module(module):
+    if getattr(sys, 'frozen', False):
+        log.info('frozen! no need to compile %s' % module)
+        return
+
     pyfile = module.__file__
     pybase = basename(pyfile)
     uiname = splitext(pybase)[0]
