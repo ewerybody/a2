@@ -16,6 +16,7 @@ from PySide import QtGui, QtCore
 import a2mod
 
 
+BASE_DPI = 96.0
 log = a2core.get_logger(__name__)
 reload_modules = [a2ctrl]
 ui_defaults = None
@@ -46,6 +47,8 @@ class A2Window(QtGui.QMainWindow):
             init_selection = self.a2.db.get('last_selected') or []
         self.module_list.selection_changed.connect(self._module_selected)
         self.module_list.draw_modules(init_selection)
+
+        self.rebuild_css()
 
         log.info('initialised!')
 
@@ -235,14 +238,19 @@ class A2Window(QtGui.QMainWindow):
     def create_new_module(self):
         a2mod.NewModulueTool(self)
 
-    def rebuild_css(self, scale=None):
+    def rebuild_css(self, user_scale=None):
+        if user_scale is None:
+            user_scale = self.a2.db.get('ui_scale') or 1.0
+
+        local_scale = self.app.desktop().physicalDpiX() / BASE_DPI
+        print('local_scale: %s' % local_scale)
+        scale = local_scale * user_scale
+        print('scale: %s' % scale)
+
         css_template_path = os.path.join(self.a2.paths._defaults, 'css_defaults.json')
         css_defaults = a2core.json_read(css_template_path)
         with open(os.path.join(self.a2.paths._defaults, 'a2.css')) as fobj:
             css_template = fobj.read()
-
-        if scale is None:
-            scale = self.a2.db.get('ui_scale') or 1.0
 
         for name, value in css_defaults.items():
             if isinstance(value, int):
@@ -251,6 +259,8 @@ class A2Window(QtGui.QMainWindow):
 
         css_template = css_template % css_defaults
         self.app.setStyleSheet(css_template)
+
+        self.a2.db.set('ui_scale', user_scale)
 
 
 class UIvs(object):

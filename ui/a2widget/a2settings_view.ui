@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>615</height>
+    <height>1023</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,7 +74,7 @@
      <item row="3" column="1">
       <widget class="A2Slider" name="ui_scale_slider">
        <property name="decimals">
-        <number>3</number>
+        <number>2</number>
        </property>
        <property name="minimum">
         <double>0.300000000000000</double>
