@@ -14,8 +14,6 @@ _ *
 # Include certain .somethings
 !.editorconfig
 !.github/
-!lib/_defaults/a2_init.ahk
-!lib/_defaults/a2_settings.ahk
 
 # Windows files
 desktop.ini
