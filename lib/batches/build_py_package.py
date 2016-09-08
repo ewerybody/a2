@@ -21,7 +21,7 @@ for item in os.listdir(a2path):
         continue
     path = join(a2path, item)
     if isfile(path):
-        if item.endswith('.ahk') or item.endswith('.exe')or item in ['LICENSE']:
+        if item.endswith('.ahk') or item.endswith('.exe') or item in ['LICENSE']:
             shutil.copy2(path, distpath)
 
 
@@ -40,8 +40,11 @@ for item in os.listdir(a2lib):
     else:
         shutil.copytree(path, join(distlib, item))
 
+
 print('copying ui files ...')
 a2uipath = join(a2path, 'ui')
+
+
 def ui_ignore(path, items):
     if path.endswith('\\siding'):
         return ['docs', 'examples']

@@ -4,7 +4,7 @@
 #Persistent
 #NoTrayIcon
 #include %A_ScriptDir%\..\settings\a2_settings.ahk
-#include _defaults\a2_urls.ahk
+#include %A_ScriptDir%\_defaults\a2_urls.ahk
 
 script_title := "a2"
 icon_path = %A_ScriptDir%\..\ui\res
@@ -42,7 +42,7 @@ a2UI:
 Return
 a2ui() {
     global a2_ahk
-    Run, %a2_ahk% a2ui.ahk
+    Run, %a2_ahk% lib\a2ui.ahk
 }
 
 a2ui_help:

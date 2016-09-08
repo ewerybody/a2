@@ -157,11 +157,11 @@ class Paths(object):
     def __init__(self):
         self.ui = dirname(abspath(__file__))
         self.a2 = dirname(self.ui)
-        self.settings_ahk = os.path.join(self.a2, 'a2_settings.ahk')
-        self.urls_ahk = os.path.join(self.a2, 'a2_urls.ahk')
         self.lib = join(self.a2, 'lib')
-        self._defaults = join(self.a2, 'lib', '_defaults')
-        self.a2_script = join(self.a2, 'a2.ahk')
+        self.settings_ahk = os.path.join(self.a2, 'settings', 'a2_settings.ahk')
+        self._defaults = join(self.lib, '_defaults')
+        self.urls_ahk = os.path.join(self._defaults, 'a2_urls.ahk')
+        self.a2_script = join(self.lib, 'a2.ahk')
 
         path_vars = self._fetch_a2_setting_paths()
         self.settings = path_vars['settings']

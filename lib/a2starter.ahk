@@ -1,8 +1,7 @@
-MsgBox %A_ScriptDir%
 settings_created := _init_check_settings()
 a2_ahk := _init_get_var("a2_ahk")
 
-Run, %a2_ahk% a2.ahk
+Run, %a2_ahk% lib\a2.ahk, %A_ScriptDir%
 
 if settings_created
 {
