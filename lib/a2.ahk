@@ -35,14 +35,16 @@ if a2_startup_tool_tips
     tt("a2 started!", 1)
 
 #include %A_ScriptDir%\..\settings\a2_init.ahk
-Return ; -------------------------------------------------------------------------------------------
+Return ; -----------------------------------------------------------------------------
 
 a2UI:
     a2UI()
 Return
 a2ui() {
     global a2_ahk
-    Run, %a2_ahk% lib\a2ui.ahk
+    ifNotExist, %a2_ahk%
+        a2_ahk = %A_ScriptDir%\Autohotkey\Autohotkey.exe
+    Run, %a2_ahk% %A_ScriptDir%\a2ui.ahk, %A_ScriptDir%
 }
 
 a2ui_help:
