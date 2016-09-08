@@ -6,7 +6,7 @@ StringLower, a2_startup_tool_tips, a2_startup_tool_tips
 if (a2_startup_tool_tips == "true")
     tt("a2ui...", 0.5)
 
-;Run, %a2_python% a2app.py, %A_ScriptDir%\ui\
+MsgBox a2_ui_call: %a2_ui_call%
 Run, %a2_ui_call%, %A_ScriptDir%\ui\
 sleep 500
 
