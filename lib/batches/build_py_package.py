@@ -21,8 +21,9 @@ for item in os.listdir(a2path):
         continue
     path = join(a2path, item)
     if isfile(path):
-        if item.endswith('.ahk') or item.endswith('.exe')or item in ['LICENSE', 'README.md']:
+        if item.endswith('.ahk') or item.endswith('.exe')or item in ['LICENSE']:
             shutil.copy2(path, distpath)
+
 
 print('copying lib files ...')
 distlib = join(distpath, 'lib')

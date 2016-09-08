@@ -1,3 +1,4 @@
+MsgBox %A_ScriptDir%
 settings_created := _init_check_settings()
 a2_ahk := _init_get_var("a2_ahk")
 
@@ -11,4 +12,4 @@ if settings_created
 }
 
 Return
-#include lib\_init_check.ahk
+#include a2init_check.ahk

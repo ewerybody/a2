@@ -3,11 +3,11 @@
 #SingleInstance force
 #Persistent
 #NoTrayIcon
-#include a2_settings.ahk
-#include a2_urls.ahk
+#include %A_ScriptDir%\..\settings\a2_settings.ahk
+#include _defaults\a2_urls.ahk
 
 script_title := "a2"
-icon_path = %A_ScriptDir%\ui\res
+icon_path = %A_ScriptDir%\..\ui\res
 script_icon = %icon_path%\a2.ico
 reload_icon = %icon_path%\a2reload.ico
 close_icon = %icon_path%\a2x.ico
@@ -34,7 +34,7 @@ Menu, Tray, icon, quit a2, %close_icon%
 if a2_startup_tool_tips
     tt("a2 started!", 1)
 
-#include a2_init.ahk
+#include %A_ScriptDir%\..\settings\a2_init.ahk
 Return ; -------------------------------------------------------------------------------------------
 
 a2UI:
