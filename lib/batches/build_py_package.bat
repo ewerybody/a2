@@ -1,11 +1,17 @@
 @echo off
 
+set package_name=a2 - alpha preview
 set a2path=%~dp0..\..
 set scriptpath=%a2path%\ui\a2app.py
 set pypath=C:\Python34\
 set pyinstaller=%pypath%Scripts\pyinstaller.exe
 set buildpath=%temp%\a2_temp_buildpath
 set distpath=%a2path%\_ package
+
+echo ### building a2 package "%package_name%" ###
+echo distpath: %distpath%
+echo ...
+
 
 if not exist %pypath% (
   echo ERROR: Could not find Python34 package: %pypath%!
@@ -25,7 +31,7 @@ if not exist %buildpath% (
 )
 
 if exist "%distpath%" (
-  echo removing old package ... "%distpath%"
+  echo removing old package ...
   rd "%distpath%" /Q /S
   
   if exist "%distpath%" (
@@ -39,7 +45,7 @@ echo running pyinstaller ...
 "%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0
 
 echo running py build script ...
-%pypath%python.exe build_py_package.py
+%pypath%python.exe build_py_package.py "%package_name%"
 
 echo Done!
 pause

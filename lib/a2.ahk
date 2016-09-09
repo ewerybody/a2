@@ -6,7 +6,6 @@
 #include %A_ScriptDir%\..\settings\a2_settings.ahk
 #include %A_ScriptDir%\_defaults\a2_urls.ahk
 
-script_title := "a2"
 icon_path = %A_ScriptDir%\..\ui\res
 script_icon = %icon_path%\a2.ico
 reload_icon = %icon_path%\a2reload.ico
@@ -19,7 +18,7 @@ Gui, 1:Destroy
 
 Menu, Tray, NoStandard
 Menu, Tray, DeleteAll
-Menu, Tray, Tip, %script_title%
+Menu, Tray, Tip, %a2_title%
 Menu, Tray, Click, %a2_tray_click_button% ;makes the menu act on standard "left" click
 Menu, Tray, add, open a2 user interface, a2ui
 Menu, Tray, icon, open a2 user interface, %script_icon%
@@ -32,7 +31,7 @@ Menu, Tray, add, quit a2, a2ui_exit
 Menu, Tray, icon, quit a2, %close_icon%
 
 if a2_startup_tool_tips
-    tt("a2 started!", 1)
+    tt(a2_title, 1)
 
 #include %A_ScriptDir%\..\settings\a2_init.ahk
 Return ; -----------------------------------------------------------------------------
