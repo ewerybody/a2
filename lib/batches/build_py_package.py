@@ -4,12 +4,17 @@ package builder script
 Whow! Batch files are such a pain. Petter keep them as short as possible.
 """
 import os
+import sys
 import shutil
 import compileall
 from os.path import join, dirname, abspath, isfile
 
+this_path = dirname(__file__)
+a2path = abspath(join(this_path, '..', '..'))
+uipath = join(a2path, 'ui')
+sys.path.append(uipath)
+import ahk
 
-a2path = abspath(join(dirname(__file__), '..', '..'))
 distpath = join(a2path, '_ package')
 print('distpath: %s' % distpath)
 distui = join(distpath, 'ui')
@@ -55,5 +60,8 @@ for folder in ['a2ctrl', 'a2widget', 'a2element', 'siding', 'res']:
 
 for folder in ['examples', 'docs', 'include', 'translations']:
     shutil.rmtree(join(distui, 'PySide', folder), ignore_errors=True)
+
+settings_file = join(distlib, '_defaults', 'a2_settings.ahk')
+ahk.set_variable(settings_file, 'a2_ui_call', 'a2app.exe')
 
 #compileall
