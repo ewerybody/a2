@@ -18,4 +18,4 @@ if settings_created
 }
 
 Return ; -----------------------------------------------------------------------------
-#include a2init_check.ahk
+#include ..\a2init_check.ahk

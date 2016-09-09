@@ -11,4 +11,4 @@ a2_ahk := _init_get_autohotkey_exe()
 Run, %a2_ahk% a2ui.ahk, %A_ScriptDir%\lib
 
 Return ; -----------------------------------------------------------------------------
-#include a2init_check.ahk
+#include ..\a2init_check.ahk
