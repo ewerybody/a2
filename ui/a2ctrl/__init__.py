@@ -213,19 +213,19 @@ class BrowseScriptsMenu(QtGui.QMenu):
 
         for scriptName in scriptsUnused:
             action = QtGui.QAction(icons.code, scriptName, self,
-                                   triggered=partial(self.setScript, scriptName))
+                                   triggered=partial(self.set_script, scriptName))
             self.addAction(action)
-        newIncludeAction = QtGui.QAction(icons.code, 'create new', self, triggered=self.setScript)
+        newIncludeAction = QtGui.QAction(icons.code, 'create new', self, triggered=self.set_script)
         self.addAction(newIncludeAction)
 
-    def setScript(self, name='', create=False):
+    def set_script(self, name='', create=False):
         if not name:
-            A2InputDialog(self.main, 'New Script', partial(self.setScript, create=True),
-                          self.main.mod.checkCreateScript, text='awesomeScript',
+            A2InputDialog(self.main, 'New Script', partial(self.set_script, create=True),
+                          self.main.mod.check_create_script, text='awesomeScript',
                           msg='Give a name for the new script file:', size=(400, 50))
             return
         if create:
-            name = self.main.mod.createScript(name)
+            name = self.main.mod.create_script(name, self.main.devset.author_name)
         self.func('include', name)
 
 

@@ -293,10 +293,6 @@ def write_includes(specific=None):
         fobj.write(edit_disclaimer % 'init' + '\n')
 
 
-def get_author():
-    return A2Obj.inst().db.get('devAuthor') or os.getenv('USERNAME')
-
-
 def get_date():
     now = time.localtime()
     return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)

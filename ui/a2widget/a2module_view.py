@@ -135,7 +135,7 @@ class A2ModuleView(QtGui.QWidget):
                       'description': 'Because none existed before this temporary description was '
                                      'created for "%s". Change it to describe what it does with a '
                                      'couple of words.' % self.main.mod.name,
-                      'author': a2core.get_author(),
+                      'author': self.main.devset.author_name,
                       'version': '0.1',
                       'date': a2core.get_date()}
             self.main.tempConfig.insert(0, newNfo)

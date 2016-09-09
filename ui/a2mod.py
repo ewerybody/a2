@@ -219,21 +219,21 @@ class Mod(object):
             self.a2.enabled = current
         self.change()
 
-    def createScript(self, scriptName=None):
-        if not scriptName:
+    def create_script(self, script_name, author_name):
+        if not script_name:
             return
         # make sure there is lowercase .ahk as extension
-        scriptName = '%s.ahk' % splitext(scriptName)[0]
-        scriptName = scriptName.strip()
+        script_name = '%s.ahk' % splitext(script_name)[0]
+        script_name = script_name.strip()
 
-        with open(os.path.join(self.path, scriptName), 'w') as fObj:
-            content = '; %s - %s\n' % (self.name, scriptName)
-            content += '; author: %s\n' % a2core.get_author()
+        with open(os.path.join(self.path, script_name), 'w') as fObj:
+            content = '; %s - %s\n' % (self.name, script_name)
+            content += '; author: %s\n' % author_name
             content += '; created: %s\n\n' % a2core.get_date()
             fObj.write(content)
-        return scriptName
+        return script_name
 
-    def checkCreateScript(self, name):
+    def check_create_script(self, name):
         if name.strip() == '':
             return 'Script name cannot be empty!'
         if splitext(name.lower())[0] in [splitext(s)[0].lower() for s in self.scripts]:

@@ -32,7 +32,7 @@ class Edit(EditCtrl):
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.cfg['file'])
-        self.buttonMenu = BrowseScriptsMenu(self.main, self.setScript)
+        self.buttonMenu = BrowseScriptsMenu(self.main, self.set_script)
         self.button.setMenu(self.buttonMenu)
         self.layout.addWidget(self.button)
 
@@ -44,7 +44,7 @@ class Edit(EditCtrl):
         self.layout.addItem(spacerItem)
         self.mainWidget.setLayout(self.layout)
 
-    def setScript(self, typ, name):
+    def set_script(self, typ, name):
         self.cfg['file'] = name
         self.button.setText(name)
 
