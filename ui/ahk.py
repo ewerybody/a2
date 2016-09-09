@@ -9,11 +9,6 @@ import time
 import subprocess
 from os.path import join
 
-import a2core
-
-
-log = a2core.get_logger(__name__)
-
 
 def translateHotkey(displayString):
     """
@@ -53,30 +48,6 @@ def call_cmd(cmd_name, *args):
     cmd_result = cmd_result[cmd_result.find(quote_char) + 1:cmd_result.rfind(quote_char)]
 
     return cmd_result
-
-
-def killA2process():
-    """
-    finds and kills Autohotkey processes that run a2.ahk.
-    takes a moment. so start it in a thread!
-    TODO: make sure restart happens after this finishes?
-
-    there is also:
-    ctypes.windll.kernel32.TerminateProcess(handle, 0)
-    """
-    t1 = time.time()
-    wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
-    wmicout = subprocess.check_output(wmicall)
-    wmicout = str(wmicout).split('\\r\\r\\n')
-    for line in wmicout[1:-1]:
-        if 'autohotkey.exe' in line.lower():
-            cmd, pid = line.rsplit(maxsplit=1)
-            if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid, shell=True,
-                                                 stdout=subprocess.DEVNULL)
-                taskkill_proc.wait()
-                taskkill_proc.kill()
-    log.debug('killA2process took: %fs' % (time.time() - t1))
 
 
 def get_variables(ahk_file):

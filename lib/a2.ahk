@@ -44,7 +44,7 @@ a2ui() {
     global a2_ahk
     ifNotExist, %a2_ahk%
         a2_ahk = %A_ScriptDir%\Autohotkey\Autohotkey.exe
-    Run, %a2_ahk% %A_ScriptDir%\a2ui.ahk, %A_ScriptDir%
+    Run, "%a2_ahk%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
 }
 
 a2ui_help:

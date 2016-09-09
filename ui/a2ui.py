@@ -179,7 +179,7 @@ class A2Window(QtGui.QMainWindow):
             self._restart_thread.quit()
 
         # kill old a2 process
-        threading.Thread(target=ahk.killA2process).start()
+        threading.Thread(target=a2core.killA2process).start()
         self.module_list.draw_modules()
 
         a2core.write_includes(specific)
