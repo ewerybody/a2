@@ -1,11 +1,11 @@
 @echo off
 
-set a2path=%~dp0..\..\
-set scriptpath=%a2path%ui\a2app.py
+set a2path=%~dp0..\..
+set scriptpath=%a2path%\ui\a2app.py
 set pypath=C:\Python34\
 set pyinstaller=%pypath%Scripts\pyinstaller.exe
 set buildpath=%temp%\a2_temp_buildpath
-set distpath=%~dp0..\..\_ package
+set distpath=%a2path%\_ package
 
 if not exist %pypath% (
   echo ERROR: Could not find Python34 package: %pypath%!
@@ -24,8 +24,16 @@ if not exist %buildpath% (
     echo    This may take a minute or two ...
 )
 
-echo removing old package ...
-rd "%distpath%" /Q /S
+if exist "%distpath%" (
+  echo removing old package ... "%distpath%"
+  rd "%distpath%" /Q /S
+  
+  if exist "%distpath%" (
+    echo ERROR: distpath: "%distpath%" could not be removed!
+    pause
+    exit
+  )
+)
 
 echo running pyinstaller ...
 "%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0
