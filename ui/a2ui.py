@@ -104,6 +104,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
+        self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
 
     def _setup_shortcuts(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -259,6 +260,11 @@ class A2Window(QtGui.QMainWindow):
         self.app.setStyleSheet(css_template)
 
         self.a2.db.set('ui_scale', user_scale)
+
+    def build_package(self):
+        batch_path = os.path.join(self.a2.paths.lib, 'batches')
+        batch_name = 'build_py_package.bat'
+        subprocess.Popen(['cmd.exe', '/c', 'start %s' % batch_name], cwd=batch_path)
 
 
 class UIvs(object):

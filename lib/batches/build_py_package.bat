@@ -45,7 +45,7 @@ echo running pyinstaller ...
 "%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0
 
 echo running py build script ...
-%pypath%python.exe build_py_package.py "%package_name%"
+%pypath%python.exe %~dp0build_py_package.py "%package_name%"
 
 echo Done!
 pause
