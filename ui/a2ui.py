@@ -243,9 +243,7 @@ class A2Window(QtGui.QMainWindow):
             user_scale = self.a2.db.get('ui_scale') or 1.0
 
         local_scale = self.app.desktop().physicalDpiX() / BASE_DPI
-        print('local_scale: %s' % local_scale)
         scale = local_scale * user_scale
-        print('scale: %s' % scale)
 
         css_template_path = os.path.join(self.a2.paths._defaults, 'css_defaults.json')
         css_defaults = a2core.json_read(css_template_path)

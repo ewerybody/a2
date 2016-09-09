@@ -13,5 +13,5 @@
     "color_button": "#CCC",
     "color_hover": "#DDD",
     "color_pressed": "#AAA",
-    "border_radius": 1
+    "border_radius": 2
 }

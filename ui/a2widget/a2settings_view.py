@@ -34,7 +34,6 @@ class A2Settings(QtGui.QWidget):
 
     def _draw_module_sources(self):
         enabled_list = [name for name, data in self.a2.enabled.items() if data[0]]
-        print('enabled_list: %s' % enabled_list)
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
             modsourcewidget = ModSourceWidget(source, enabled_list)
