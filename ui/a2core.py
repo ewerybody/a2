@@ -188,16 +188,18 @@ class Paths(object):
         return self.settings_ahk
 
     def _fetch_a2_setting_paths(self):
-        keys = ['settings', 'modules', 'ahk', 'python']
+        keys = ['settings', 'modules', 'python']
         prefix = 'a2_'
         result = {}
-        for key, value in ahk.get_variables(self._get_settings_ahk()).items():
+        settings_dict = ahk.get_variables(self._get_settings_ahk())
+        for key, value in settings_dict.items():
             key = key[len(prefix):]
             if key in keys:
                 if os.path.isabs(value):
                     result[key] = value
                 else:
                     result[key] = os.path.abspath(os.path.join(self.a2, value))
+        result['ahk'] = settings_dict.get('a2_ahk') or os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
         return result
 
 
