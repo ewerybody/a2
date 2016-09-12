@@ -37,19 +37,6 @@ def control(ctrl, name, cfg, change_signal=None):
     """
     Connects a single control to a name in the given cfg dict
     """
-    def _updateCfgData(cfg, name, value):
-        """
-        issued from a control change function this sets an according item in config dict
-        """
-        cfg[name] = value
-
-    def _radio_update(cfg, name, value, state):
-        """
-        almost same as _updateCfgData but dependent on a state bool arg
-        """
-        if state:
-            cfg[name] = value
-
     if isinstance(ctrl, QtGui.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
@@ -63,10 +50,10 @@ def control(ctrl, name, cfg, change_signal=None):
         else:
             cfg[name] = ctrl.isChecked()
 
-    elif isinstance(ctrl, QtGui.QLineEdit):
+    elif isinstance(ctrl, (QtGui.QLineEdit)):
         ctrl.textChanged.connect(partial(_updateCfgData, cfg, name))
         if change_signal is not None:
-            ctrl.textChanged.connect(change_signal.emit)
+            ctrl.textChanged[str].connect(change_signal.emit)
         if name in cfg:
             ctrl.setText(cfg[name])
         else:
@@ -119,6 +106,38 @@ def control(ctrl, name, cfg, change_signal=None):
         elif ctrl.isChecked():
             cfg[name] = value
 
+    elif isinstance(ctrl, QtGui.QTextEdit):
+        ctrl.textChanged.connect(partial(_text_edit_update, cfg, name, ctrl))
+        if change_signal is not None:
+            ctrl.textChanged.connect(partial(change_signal, ctrl))
+        if name in cfg:
+            ctrl.setText(cfg[name])
+        else:
+            cfg[name] = ctrl.toPlainText()
+
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                   (name, type(ctrl)))
+
+
+def _updateCfgData(cfg, name, value):
+    """
+    issued from a control change function this sets an according item in config dict
+    """
+    cfg[name] = value
+
+
+def _radio_update(cfg, name, value, state):
+    """
+    almost same as _updateCfgData but dependent on a state bool arg
+    """
+    if state:
+        cfg[name] = value
+
+
+def _text_edit_update(cfg, name, ctrl):
+    cfg[name] = ctrl.toPlainText()
+
+
+def _text_edit_send(signal, ctrl):
+    signal.emit(ctrl.toPlainText())
