@@ -93,6 +93,8 @@ class A2ModuleView(QtGui.QWidget):
         self.ui.modCheck.setTristate(False)
 
         if self.main.mod is None:
+            self.ui.a2mod_view_source_label.setText('')
+
             if not self.main.num_selected:
                 self.ui.modCheck.setVisible(False)
                 self.ui.modName.setText('a2')
@@ -108,6 +110,7 @@ class A2ModuleView(QtGui.QWidget):
                     self.ui.modCheck.setTristate(True)
                     self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
         else:
+            self.ui.a2mod_view_source_label.setText(self.main.mod.source.name)
             self.ui.modCheck.setVisible(True)
             self.ui.modName.setText(self.main.mod.name)
             # weird.. need to set false first to fix tristate effect
