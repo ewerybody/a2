@@ -20,7 +20,9 @@ log = a2core.get_logger(__name__)
 
 class Edit(EditCtrl):
     """
-    User-invisible control that you only see in edit-mode
+    User-invisible control that you only setup in edit-mode for
+    unconditional autohotkey script include. If the parent element is
+    enabled: it gets included in (enabled group or module).
     """
     def __init__(self, cfg, main, parentCfg):
         self.ctrlType = 'Include'

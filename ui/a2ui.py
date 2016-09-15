@@ -103,7 +103,8 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionReport_Issue.triggered.connect(partial(a2core.surfTo, self.a2.urls.help_report_issue))
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
-        self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
+        self.ui.actionNew_Module_Dialog.triggered.connect(partial(a2mod.NewModulueTool, self))
+        self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
 
     def _setup_shortcuts(self):
@@ -236,8 +237,8 @@ class A2Window(QtGui.QMainWindow):
         # TODO: reimplement in each widget
         pass
 
-    def create_new_module(self):
-        a2mod.NewModulueTool(self)
+    def create_new_element(self):
+        print('self: %s' % self)
 
     def rebuild_css(self, user_scale=None):
         if user_scale is None:

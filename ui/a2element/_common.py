@@ -17,6 +17,10 @@ from a2ctrl import get_cfg_value
 
 
 class DrawCtrl(QtGui.QWidget):
+    """
+    Display widget to host everything that you want to show to the
+    user for him to set up on your module.
+    """
     def __init__(self, main, cfg, mod, _init_ctrl=True):
         if _init_ctrl:
             super(DrawCtrl, self).__init__()
@@ -25,6 +29,7 @@ class DrawCtrl(QtGui.QWidget):
         self.cfg = cfg
         self.mod = mod
         self.check_delay = 150
+        self._check_scheduled = False
         self.userCfg = self.a2.db.get(self.cfg['name'], self.mod.key)
 
     def get_user_value(self, typ, name='value', default=None):
@@ -43,14 +48,29 @@ class DrawCtrl(QtGui.QWidget):
         self.mod.set_user_cfg(self.cfg, name, this)
 
     def change(self, specific=None):
+        """
+        Triggers the module to save it's settings to the database and
+        a2 include rewrite and restart if the module is enabled.
+        """
         self.mod.change()
         if self.mod.enabled:
             self.main.settings_changed(specific)
 
     def delayed_check(self, *args):
+        """
+        Calls the check method with a little delay to prevent spamming reload.
+        """
+        if self._check_scheduled:
+            return
+        self._check_scheduled = True
         QtCore.QTimer().singleShot(self.check_delay, partial(self.check, *args))
 
     def check(self, *args):
+        """
+        For the element to gather data from the widgets and call change on demand.
+        To be re-implemented when subclassing DrawCtrl.
+        """
+        self._check_scheduled = False
         pass
 
 
