@@ -239,6 +239,8 @@ def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
         value = userCfg[attrName]
     elif attrName in subCfg:
         value = subCfg[attrName]
+    else:
+        value = default
 
     if typ is not None:
         if not isinstance(value, typ):
