@@ -33,7 +33,6 @@ class Edit(EditCtrl):
     code directly and start with the variables include.
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'Checkbox'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.helpCheckbox
 
@@ -42,6 +41,14 @@ class Edit(EditCtrl):
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
+
+    @staticmethod
+    def element_name():
+        return 'CheckBox'
+
+    @staticmethod
+    def element_icon():
+        return a2ctrl.Icons.inst().check
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):

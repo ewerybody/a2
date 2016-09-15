@@ -95,7 +95,6 @@ class Edit(EditCtrl):
     Edit-control for Numbers: integer OR float!
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'Number'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.help_number
 
@@ -123,6 +122,14 @@ class Edit(EditCtrl):
             value = self.ui.value.value()
 
         self.cfg['value'] = _toggle_type(self.cfg['decimals'], value)
+
+    @staticmethod
+    def element_name():
+        return 'Number'
+
+    @staticmethod
+    def element_icon():
+        return a2ctrl.Icons.inst().number
 
 
 def _toggle_type(decimals, value):

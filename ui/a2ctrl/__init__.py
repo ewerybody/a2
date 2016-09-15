@@ -150,35 +150,24 @@ class EditAddElem(QtGui.QWidget):
         self.baselayout.addWidget(self.a2add_button)
 
         self.menu = QtGui.QMenu(self)
-        self.menu.aboutToShow.connect(self.populateMenu)
+        self.menu.aboutToShow.connect(self.populate_menu)
         self.a2add_button.setMenu(self.menu)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.baselayout.addItem(spacerItem)
 
-    def populateMenu(self):
-        icons = Icons.inst()
+    def populate_menu(self):
         self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.main, self.addCtrl)
+        self.menu_include = BrowseScriptsMenu(self.main, self.add_element)
         self.menu.addMenu(self.menu_include)
 
-        menu_items = collections.OrderedDict()
-        menu_items['check'] = ('CheckBox', icons.check)
-        menu_items['hotkey'] = ('Hotkey', icons.hotkey)
-        menu_items['group'] = ('GroupBox', icons.group)
-        menu_items['string'] = ('String', icons.string)
-        menu_items['number'] = ('Number', icons.number)
-        menu_items['combo'] = ('ComboBox', icons.combo)
-        menu_items['path'] = ('Path', icons.folder)
-        #'text'] = ('TextField', None),
-        #'button'] = ('Button', None)
-
-        for typ, values in menu_items.items():
-            action = QtGui.QAction(values[0], self.menu, triggered=partial(self.addCtrl, typ))
-            if values[1]:
-                action.setIcon(values[1])
+        import a2element
+        for name, display_name, icon in a2element.get_list():
+            action = QtGui.QAction(display_name, self.menu, triggered=partial(self.add_element, name))
+            if icon:
+                action.setIcon(icon)
             self.menu.addAction(action)
 
-    def addCtrl(self, typ, name=''):
+    def add_element(self, typ, name=''):
         """Just adds a new dict with the accodting typ value to the tempConfig.
         Only if it's an include we already enter the file selected.
         Every other default value will be handled by the very control element.

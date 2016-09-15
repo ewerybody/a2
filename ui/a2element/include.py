@@ -10,9 +10,9 @@ from os.path import exists
 
 from PySide import QtGui, QtCore
 
+import a2ctrl
 import a2core
 from a2element import EditCtrl
-from a2ctrl import BrowseScriptsMenu
 
 
 log = a2core.get_logger(__name__)
@@ -25,7 +25,6 @@ class Edit(EditCtrl):
     enabled: it gets included in (enabled group or module).
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'Include'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.main = main
         self.layout = QtGui.QHBoxLayout(self.mainWidget)
@@ -34,7 +33,7 @@ class Edit(EditCtrl):
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.cfg['file'])
-        self.buttonMenu = BrowseScriptsMenu(self.main, self.set_script)
+        self.buttonMenu = a2ctrl.BrowseScriptsMenu(self.main, self.set_script)
         self.button.setMenu(self.buttonMenu)
         self.layout.addWidget(self.button)
 
@@ -56,6 +55,14 @@ class Edit(EditCtrl):
                               os.path.join(self.main.mod.path, self.cfg['file'])])
         else:
             log.error('No code_editor found! Set it up in settings!')
+
+    @staticmethod
+    def element_name():
+        return 'Include'
+
+    @staticmethod
+    def element_icon():
+        return a2ctrl.Icons.inst().code
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):

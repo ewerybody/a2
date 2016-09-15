@@ -91,16 +91,22 @@ class EditCtrl(QtGui.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
-    ctrlType = 'EditCtrl'
-
     def __init__(self, cfg, main, parentCfg, addLayout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
         self.cfg = cfg
         self.main = main
         self.parentCfg = parentCfg
-        self._setupUi(addLayout)
+        self._setup_ui(addLayout)
         self.helpUrl = self.a2.urls.helpEditCtrl
+
+    @staticmethod
+    def element_name():
+        return 'EditCtrl'
+
+    @staticmethod
+    def element_icon():
+        return None
 
     def move(self, value, *args):
         if self.parentCfg and self.parentCfg[0].get('typ', '') == 'nfo':
@@ -148,7 +154,7 @@ class EditCtrl(QtGui.QGroupBox):
     def help(self):
         a2core.surfTo(self.helpUrl)
 
-    def _setupUi(self, addLayout):
+    def _setup_ui(self, addLayout):
         self.setTitle(self.cfg['typ'])
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
@@ -181,13 +187,14 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrlLayout.setStretch(0, 1)
 
         self._ctrlMenu = QtGui.QMenu(self)
-        self._ctrlMenu.aboutToShow.connect(self.buildMenu)
+        self._ctrlMenu.aboutToShow.connect(self._build_menu)
         self._ctrlButton.setMenu(self._ctrlMenu)
 
-    def buildMenu(self):
+    def _build_menu(self):
         """
         TODO: don't show top/to top, bottom/to bottom when already at top/bottom
         """
+        print('self.cfg: %s' % self.cfg)
         self._ctrlMenu.clear()
         icons = Icons.inst()
         menu_items = [('Up', partial(self.move, -1), icons.up),
@@ -196,13 +203,13 @@ class EditCtrl(QtGui.QGroupBox):
                       ('To Bottom', partial(self.move, False), icons.down_align),
                       ('Delete', self.delete, icons.delete),
                       ('Duplicate', self.duplicate, icons.copy),
-                      ('Help on %s' % self.ctrlType, self.help, icons.help)]
+                      ('Help on %s' % self.element_name(), self.help, icons.help)]
 
         clipboard_count = ''
         if self.main.edit_clipboard:
             clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
 
-        if self.ctrlType == 'Groupbox':
+        if self.cfg.get('typ') == 'group':
             menu_items.insert(-1, ('Paste' + clipboard_count, self.paste, icons.paste))
         else:
             menu_items.insert(-1, ('Cut' + clipboard_count, self.cut, icons.cut))
@@ -221,7 +228,7 @@ class EditCtrl(QtGui.QGroupBox):
         """
         if 'name' not in self.cfg:
             #build the base control name
-            new_name = '%s_%s' % (self.main.mod.name, self.ctrlType)
+            new_name = '%s_%s' % (self.main.mod.name, self.element_name())
             # find biggest number
             this_type = self.cfg['typ']
             controls = [cfg.get('name', '') for cfg in self.main.tempConfig

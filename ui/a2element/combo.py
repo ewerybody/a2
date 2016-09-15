@@ -3,7 +3,6 @@ Created on Apr 1, 2016
 
 @author: eRiC
 '''
-import a2ctrl
 import a2ctrl.qlist
 from PySide import QtGui, QtCore
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
@@ -64,7 +63,6 @@ class Edit(EditCtrl):
     code directly and start with the variables include.
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'ComboBox'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.help_number
 
@@ -120,6 +118,14 @@ class Edit(EditCtrl):
         if event.key() == QtCore.Qt.Key_Delete:
             self.delete_item()
         return EditCtrl.keyPressEvent(self, event)
+
+    @staticmethod
+    def element_name():
+        return 'ComboBox'
+
+    @staticmethod
+    def element_icon():
+        return a2ctrl.Icons.inst().combo
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):

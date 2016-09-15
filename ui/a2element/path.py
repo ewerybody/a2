@@ -43,7 +43,6 @@ class Draw(DrawCtrl):
 
 class Edit(EditCtrl):
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'Path'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         self.helpUrl = self.a2.urls.help_path
 
@@ -66,6 +65,14 @@ class Edit(EditCtrl):
 
         self.ui.cfg_file_types.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
         self.ui.cfg_save_mode.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
+
+    @staticmethod
+    def element_name():
+        return 'Path'
+
+    @staticmethod
+    def element_icon():
+        return a2ctrl.Icons.inst().folder
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):

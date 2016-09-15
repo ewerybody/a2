@@ -43,7 +43,6 @@ class Edit(EditCtrl):
         not go deeper than this to keep complexity under the lid)
     """
     def __init__(self, cfg, main, parentCfg):
-        self.ctrlType = 'Groupbox'
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
         if 'children' not in self.cfg:
             self.cfg['children'] = []
@@ -71,6 +70,14 @@ class Edit(EditCtrl):
             self.cfg['children'].append(cfg)
         self.main.edit_clipboard = []
         self.main.edit_mod()
+
+    @staticmethod
+    def element_name():
+        return 'GroupBox'
+
+    @staticmethod
+    def element_icon():
+        return a2ctrl.Icons.inst().group
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
