@@ -33,6 +33,10 @@ QCheckBox::indicator:checked {
     image: url(res/check.png);
 }
 
+QCheckBox::indicator:indeterminate {
+    image: url(res/check_med.png);
+}
+
 QLabel#a2mod_view_source_label {
     color: "%(color_pressed)s";
 }
