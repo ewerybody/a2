@@ -238,7 +238,8 @@ class A2Window(QtGui.QMainWindow):
         pass
 
     def create_new_element(self):
-        print('self: %s' % self)
+        from a2widget import new_element_tool
+        new_element_tool.NewElementDialog(self)
 
     def rebuild_css(self, user_scale=None):
         if user_scale is None:

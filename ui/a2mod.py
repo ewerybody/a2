@@ -304,7 +304,7 @@ class NewModuleSourceTool(object):
         if not all([(l in a2core.ALLOWED_CHARS) for l in name]):
             return 'Name can only have letters, digits, _ and -'
         if name in a2core.ILLEGAL_NAMES:
-            return 'Name cannot be reserved Windows device name!'
+            return 'Name cannot be reserved OS device name!'
         if not any([(l in a2core.string.ascii_letters) for l in name]):
             return 'Come one have at least 1 letter in the name!'
         return True
@@ -390,7 +390,6 @@ class _NewModuleInput(A2InputDialog):
         self.source_index = QtGui.QComboBox(self)
         self.source_index.addItems(parent.source_dict['sources'])
         a2ctrl.connect.control(self.source_index, 'source_index', parent.source_dict)
-        i = parent.source_dict['source_index']
         self.source_index.currentIndexChanged.connect(self.check_on_source_change)
         self.ui.main_layout.insertWidget(1, self.source_index)
 
