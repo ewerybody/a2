@@ -5,7 +5,6 @@ import os
 import threading
 import subprocess
 
-import ahk
 import a2core
 import a2ctrl
 from a2widget import a2design_ui
@@ -13,7 +12,6 @@ from a2widget import a2design_ui
 from copy import deepcopy
 from functools import partial
 from PySide import QtGui, QtCore
-import a2mod
 
 
 BASE_DPI = 96.0
@@ -103,7 +101,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionReport_Issue.triggered.connect(partial(a2core.surfTo, self.a2.urls.help_report_issue))
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
-        self.ui.actionNew_Module_Dialog.triggered.connect(partial(a2mod.NewModulueTool, self))
+        self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
 
@@ -240,6 +238,10 @@ class A2Window(QtGui.QMainWindow):
     def create_new_element(self):
         from a2widget import new_element_tool
         new_element_tool.NewElementDialog(self)
+
+    def create_new_module(self):
+        from a2widget import new_module_tool
+        new_module_tool.NewModulueTool(self)
 
     def rebuild_css(self, user_scale=None):
         if user_scale is None:
