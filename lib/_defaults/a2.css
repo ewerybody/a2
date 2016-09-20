@@ -43,16 +43,19 @@ QLabel#a2mod_view_source_label {
 
 QGroupBox {
 	margin: %(margin)ipx;
+	margin-top: %(group_label_space)ipx;
 	border-width: 1px;
     border-style: solid;
     border-radius: %(border_radius)ipx;
     border-color: "%(color_hover)s";
+    qproperty-insideMargin: %(margin)ipx;
 }
 QGroupBox::title {
 	font-size: %(font_size_big)ipx;
-	margin: %(margin)ipx;
-	padding-bottom: %(margin)ipx;
-    margin-top: -%(margin)ipx;
+    left: %(line)ipx;
+    top: -%(group_label_space)ipx;
+    padding-left: %(spacing)ipx;
+    padding-right: %(spacing)ipx;
 }
 
 QScrollArea#a2scroll_area,
