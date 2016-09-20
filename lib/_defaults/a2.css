@@ -48,7 +48,6 @@ QGroupBox {
     border-style: solid;
     border-radius: %(border_radius)ipx;
     border-color: "%(color_hover)s";
-    qproperty-insideMargin: %(margin)ipx;
 }
 QGroupBox::title {
 	font-size: %(font_size_big)ipx;
