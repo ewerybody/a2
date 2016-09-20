@@ -228,13 +228,18 @@ def write_includes(specific=None):
         source_enabled, enabled_modules = data
         if not source_enabled:
             continue
+
+        source = a2.module_sources.get(source_name)
+        if source is None:
+            log.debug('Source: "%s" is enabled but missing!' % source_name)
+            continue
+
         print('source_name: %s' % source_name)
-        source = a2.module_sources[source_name]
         for modname in enabled_modules:
             print('  modname: %s' % modname)
             module = source.mods[modname]
             if module.key not in mod_settings:
-                print('  modname: %s' % modname)
+                print('  change: %s' % modname)
                 module.change()
 
             includes = a2.db.get('includes', module.key) or []
