@@ -149,12 +149,8 @@ class A2Settings(QtGui.QWidget):
     def build_add_source_menu(self):
         self.add_source_menu.clear()
         self.add_source_menu.addAction(
-            QtGui.QAction('Create Local', self, triggered=self.create_local_source))
+            QtGui.QAction('Create Local', self, triggered=self.main.create_local_source))
         self.add_source_menu.addAction(QtGui.QAction('Add From URL', self))
-
-    def create_local_source(self):
-        from a2widget import new_module_source_tool
-        new_module_source_tool.NewModuleSourceTool(self.main)
 
 
 class ModSourceWidget(QtGui.QWidget):

@@ -16,6 +16,19 @@ class NewModulueTool(A2InputDialog):
     def __init__(self, main, module_source=None):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
+
+        if not self.a2.module_sources:
+            title = 'No Module Source!'
+            msg = ('There is no <b>module source</b> to create a module in!\n'
+                   'Would you like to create a local one?')
+            reply = QtGui.QMessageBox.question(None, title, msg, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+
+            if reply is QtGui.QMessageBox.Yes:
+                self.main.create_local_source()
+                return
+            else:
+                return
+
         self.source_dict = {'sources': list(self.a2.module_sources.keys()), 'names': {}}
         if module_source is None:
             module_source = self.a2.db.get('last_module_create_source') or self.source_dict['sources'][0]

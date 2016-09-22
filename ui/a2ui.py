@@ -243,6 +243,10 @@ class A2Window(QtGui.QMainWindow):
         from a2widget import new_module_tool
         new_module_tool.NewModulueTool(self)
 
+    def create_local_source(self):
+        from a2widget import new_module_source_tool
+        new_module_source_tool.NewModuleSourceTool(self)
+
     def rebuild_css(self, user_scale=None):
         if user_scale is None:
             user_scale = self.a2.db.get('ui_scale') or 1.0
