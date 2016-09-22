@@ -15,7 +15,7 @@ IfNotExist %a2dir%
     Return
 }
 
-a2_script_path := a2dir "\a2.ahk"
+a2_script_path := a2dir "\a2.exe"
 link_path := A_Startup "\a2.lnk"
 ico_path := a2dir "\ui\a2.ico"
 
