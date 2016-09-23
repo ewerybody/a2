@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\inputDialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2input_dialog.ui'
 #
-# Created: Wed Aug 31 22:42:02 2016
+# Created: Fri Sep 23 14:37:23 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_A2InputDialog(object):
     def setupUi(self, A2InputDialog):
         A2InputDialog.setObjectName("A2InputDialog")
-        A2InputDialog.resize(800, 88)
+        A2InputDialog.resize(368, 88)
         self.main_layout = QtGui.QVBoxLayout(A2InputDialog)
         self.main_layout.setObjectName("main_layout")
         self.label = QtGui.QLabel(A2InputDialog)

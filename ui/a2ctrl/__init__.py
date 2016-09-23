@@ -211,7 +211,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
         if not name:
             A2InputDialog(self.main, 'New Script', partial(self.set_script, create=True),
                           self.main.mod.check_create_script, text='awesomeScript',
-                          msg='Give a name for the new script file:', size=(400, 50))
+                          msg='Give a name for the new script file:')
             return
         if create:
             name = self.main.mod.create_script(name, self.main.devset.author_name)

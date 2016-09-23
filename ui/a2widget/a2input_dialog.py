@@ -6,22 +6,24 @@ a2widget.a2input_dialog
 """
 from PySide import QtGui
 
+import a2ctrl
 from a2widget import a2input_dialog_ui
 
 
 class A2InputDialog(QtGui.QDialog):
-    def __init__(self, parent, title, okFunc=None, checkFunk=None,
+    def __init__(self, parent, title, okFunc=None, checkFunc=None,
                  text='', msg='', size=None, *args):
         super(A2InputDialog, self).__init__(parent)
+        a2ctrl.check_ui_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.okFunc = okFunc
-        self.checkFunk = checkFunk
+        self.checkFunc = checkFunc
         self.setWindowTitle(title)
         self.output = None
 
-        if self.checkFunk is not None:
+        if self.checkFunc is not None:
             self.ui.textField.textChanged.connect(self.check)
 
         self.ui.a2ok_button.clicked.connect(self.okay)
@@ -30,17 +32,14 @@ class A2InputDialog(QtGui.QDialog):
         self.ui.textField.setText(text)
         self.ui.textField.setFocus()
 
-        if size:
-            self.resize(size[0], size[1])
-
         self.show()
 
     def check(self, name=None):
         if name is None:
             name = self.ui.textField.text()
 
-        if self.checkFunk is not None:
-            answer = self.checkFunk(name)
+        if self.checkFunc is not None:
+            answer = self.checkFunc(name)
             if answer is True:
                 self.ui.a2ok_button.setEnabled(True)
                 self.ui.a2ok_button.setText('OK')
