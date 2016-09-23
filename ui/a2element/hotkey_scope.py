@@ -93,18 +93,12 @@ class ScopeDialog(QtGui.QDialog):
         self.setScopeText(text)
 
     def setupUi(self, x, y):
-        self.resize(self.width() * a2ctrl.uiScale, self.minimumSizeHint().height())
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
         pos.setY(y - (self.height() / 2))
         self.move(pos)
-        self.ui.scopeText.setStyleSheet('* {background-color:#E0E0E0}')
-        for ui in [self.ui.scopeText, self.ui.okButton, self.ui.cancelButton]:
-            ui.setFont(a2ctrl.fontXL)
-        #for ui in [self.ui.helpButton, self.ui.titleButton, self.ui.classButton, self.ui.exeButton]:
-        #    ui.setMinimumWidth(labelW)
-        self.ui.okButton.clicked.connect(self.ok_func)
-        self.ui.cancelButton.clicked.connect(self.close)
+        self.ui.a2ok_button.clicked.connect(self.ok_func)
+        self.ui.a2cancel_button.clicked.connect(self.close)
         self.ui.scopeTitle.setFocus()
 
         for ctrl in [self.ui.scopeTitle, self.ui.scopeClass, self.ui.scopeExe]:
@@ -125,7 +119,6 @@ class ScopeDialog(QtGui.QDialog):
                     action = QtGui.QAction(item, submenu, triggered=partial(self.setScope, i, item))
                     submenu.addAction(action)
                 ctrl.setMenu(menu)
-            ctrl.setMinimumWidth(a2ctrl.labelW)
 
         menu = QtGui.QMenu(self)
         submenu = QtGui.QMenu(menu)
