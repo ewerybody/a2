@@ -65,7 +65,7 @@ class NewModulueTool(A2InputDialog):
         self.a2.fetch_modules()
         self.main.module_list.draw_modules('%s|%s' % (source.name, name))
 
-    def check_name(self, NAME):
+    def check_name(self, name):
         """
         Runs on keystroke when creating new module source
         to give way to okaying creation.
@@ -76,19 +76,5 @@ class NewModulueTool(A2InputDialog):
             names = get_folders(self.a2.module_sources[source].path)
             self.source_dict['names'][source] = list(map(str.lower, names))
 
-        name = NAME.lower()
-        if NAME == '':
-            return 'Name cannot be empty!'
-        if name == 'a2':
-            return 'You cannot take the name "a2"! Ok?'
-        if name in self.source_dict['names'][source]:
-            return 'Module name "%s" is in use!' % name
-        if any([(l in a2core.string.whitespace) for l in name]):
-            return 'No whitespace! Use _ or - insead!'
-        if not all([(l in a2core.ALLOWED_CHARS) for l in name]):
-            return 'Name can only have letters, digits, _-'
-        if name in a2core.ILLEGAL_NAMES:
-            return 'Name is reserved OS device name!'
-        if not any([(l in a2core.string.ascii_letters) for l in name]):
-            return 'Have at least 1 letter in the name!'
-        return True
+        self._module_list = self.source_dict['names'][source]
+        return a2core.standard_name_check(name, self._module_list, 'Module name "%s" is in use!')

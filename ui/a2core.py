@@ -157,6 +157,8 @@ class Paths(object):
     """
     def __init__(self):
         self.ui = dirname(abspath(__file__))
+        self.elements = join(self.ui, 'a2element')
+        self.widgets = join(self.ui, 'a2widget')
         self.a2 = dirname(self.ui)
         self.lib = join(self.a2, 'lib')
         self.settings_ahk = os.path.join(self.a2, 'settings', 'a2_settings.ahk')
@@ -410,6 +412,25 @@ def set_loglevel(debug=False):
     for name, logger in log.manager.loggerDict.items():
         if name.startswith('a2'):
             logger.setLevel(level)
+
+
+def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already in use!'):
+        name = NAME.lower()
+        if NAME == '':
+            return 'Name cannot be empty!'
+        if name == 'a2':
+            return 'You just cannot name it "a2"! Ok?'
+        if black_list is not None and name in black_list:
+            return black_list_msg % name
+        if any([(l in string.whitespace) for l in name]):
+            return 'Name cannot have whitespace! Use _ or - insead!'
+        if not all([(l in ALLOWED_CHARS) for l in name]):
+            return 'Name can only have letters, digits, _ and -'
+        if name in ILLEGAL_NAMES:
+            return 'Name cannot be reserved OS device name!'
+        if not any([(l in string.ascii_letters) for l in name]):
+            return 'Have at least 1 letter in the name!'
+        return True
 
 
 if __name__ == '__main__':

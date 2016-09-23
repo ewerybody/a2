@@ -21,27 +21,12 @@ class NewModuleSourceTool(A2InputDialog):
             self.main, 'New Module Source', self.create_source, self.check_name,
             msg='Name the new module source:', text='my_module_source')
 
-    def check_name(self, NAME):
+    def check_name(self, name):
         """
         Runs on keystroke when creating new module source
         to give way to okaying creation.
         """
-        name = NAME.lower()
-        if NAME == '':
-            return 'Name cannot be empty!'
-        if name == 'a2':
-            return 'You just cannot name your module "a2"! Ok?'
-        if name in self.source_names:
-            return 'Module source name "%s" is in use!' % name
-        if any([(l in a2core.string.whitespace) for l in name]):
-            return 'Name cannot have whitespace! Use _ or - insead!'
-        if not all([(l in a2core.ALLOWED_CHARS) for l in name]):
-            return 'Name can only have letters, digits, _ and -'
-        if name in a2core.ILLEGAL_NAMES:
-            return 'Name cannot be reserved OS device name!'
-        if not any([(l in a2core.string.ascii_letters) for l in name]):
-            return 'Come one have at least 1 letter in the name!'
-        return True
+        return a2core.standard_name_check(name, self.source_names, 'Module source name "%s" is in use!')
 
     def create_source(self, name):
         if not self.check_name(name):
