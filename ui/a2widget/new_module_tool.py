@@ -31,7 +31,12 @@ class NewModulueTool(A2InputDialog):
 
         self.source_dict = {'sources': list(self.a2.module_sources.keys()), 'names': {}}
         if module_source is None:
-            module_source = self.a2.db.get('last_module_create_source') or self.source_dict['sources'][0]
+            last_source = self.a2.db.get('last_module_create_source')
+            if last_source and last_source in self.source_dict['sources']:
+                module_source = last_source
+            else:
+                module_source = self.source_dict['sources'][0]
+
         self.source_dict['seleceted_source'] = module_source
         self.source_dict['source_index'] = self.source_dict['sources'].index(module_source)
 
