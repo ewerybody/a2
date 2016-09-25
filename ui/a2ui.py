@@ -35,6 +35,8 @@ class A2Window(QtGui.QMainWindow):
         self.selected = []
         self.mod = None
         self.scopes = {}
+        self.css_values = {}
+        self.rebuild_css()
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self.devset = DevSettings(self.a2)
@@ -45,8 +47,6 @@ class A2Window(QtGui.QMainWindow):
             init_selection = self.a2.db.get('last_selected') or []
         self.module_list.selection_changed.connect(self._module_selected)
         self.module_list.draw_modules(init_selection)
-
-        self.rebuild_css()
 
         log.info('initialised!')
 
@@ -261,12 +261,11 @@ class A2Window(QtGui.QMainWindow):
 
         for name, value in css_defaults.items():
             if isinstance(value, int):
-                new_value = int(scale * float(value))
-                css_defaults[name] = new_value
+                value = int(scale * float(value))
+            self.css_values[name] = value
 
-        css_template = css_template % css_defaults
+        css_template = css_template % self.css_values
         self.app.setStyleSheet(css_template)
-
         self.a2.db.set('ui_scale', user_scale)
 
     def build_package(self):
