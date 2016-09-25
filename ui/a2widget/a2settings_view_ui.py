@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Wed Sep  7 22:27:39 2016
+# Created: Sat Sep 24 12:38:07 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,16 +49,16 @@ class Ui_a2settings(object):
         self.ui_scale_label.setObjectName("ui_scale_label")
         self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.ui_scale_label)
         self.verticalLayout_2.addLayout(self.formLayout)
-        self.groupBox = QtGui.QGroupBox(a2settings)
-        self.groupBox.setObjectName("groupBox")
-        self.mod_source_box_layout = QtGui.QVBoxLayout(self.groupBox)
+        self.module_source_box = QtGui.QGroupBox(a2settings)
+        self.module_source_box.setObjectName("module_source_box")
+        self.mod_source_box_layout = QtGui.QVBoxLayout(self.module_source_box)
         self.mod_source_box_layout.setSpacing(10)
         self.mod_source_box_layout.setObjectName("mod_source_box_layout")
         self.mod_source_layout = QtGui.QVBoxLayout()
         self.mod_source_layout.setSpacing(2)
         self.mod_source_layout.setObjectName("mod_source_layout")
         self.mod_source_box_layout.addLayout(self.mod_source_layout)
-        self.no_sources_msg = QtGui.QLabel(self.groupBox)
+        self.no_sources_msg = QtGui.QLabel(self.module_source_box)
         self.no_sources_msg.setAlignment(QtCore.Qt.AlignCenter)
         self.no_sources_msg.setWordWrap(True)
         self.no_sources_msg.setObjectName("no_sources_msg")
@@ -66,13 +66,13 @@ class Ui_a2settings(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.a2add_button = QtGui.QPushButton(self.groupBox)
+        self.a2add_button = QtGui.QPushButton(self.module_source_box)
         self.a2add_button.setObjectName("a2add_button")
         self.horizontalLayout.addWidget(self.a2add_button)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
-        self.verticalLayout_2.addWidget(self.groupBox)
+        self.verticalLayout_2.addWidget(self.module_source_box)
         self.dev_box = QtGui.QGroupBox(a2settings)
         self.dev_box.setCheckable(True)
         self.dev_box.setObjectName("dev_box")
@@ -177,7 +177,7 @@ class Ui_a2settings(object):
         self.load_on_win_start.setText(QtGui.QApplication.translate("a2settings", "Load a2 on Windows Start", None, QtGui.QApplication.UnicodeUTF8))
         self.remember_selection.setText(QtGui.QApplication.translate("a2settings", "Remember last selected Module", None, QtGui.QApplication.UnicodeUTF8))
         self.ui_scale_label.setText(QtGui.QApplication.translate("a2settings", "UI Scale:", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("a2settings", "Module Sources", None, QtGui.QApplication.UnicodeUTF8))
+        self.module_source_box.setTitle(QtGui.QApplication.translate("a2settings", "Module Sources", None, QtGui.QApplication.UnicodeUTF8))
         self.no_sources_msg.setText(QtGui.QApplication.translate("a2settings", "Currently there are no modules sources listed. Go ahead and add or create one:", None, QtGui.QApplication.UnicodeUTF8))
         self.a2add_button.setText(QtGui.QApplication.translate("a2settings", "Add Source", None, QtGui.QApplication.UnicodeUTF8))
         self.dev_box.setTitle(QtGui.QApplication.translate("a2settings", "a2 dev mode", None, QtGui.QApplication.UnicodeUTF8))
@@ -195,6 +195,6 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
-from a2widget.a2hotkey import A2Hotkey

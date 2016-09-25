@@ -21,11 +21,18 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.setChecked(self.get_user_value(bool, 'enabled'))
         self.clicked[bool].connect(self.check)
 
-        self.layout = QtGui.QVBoxLayout(self)
+        self.a2_group_layout = QtGui.QVBoxLayout(self)
+        # FIXME: for some reason items in this GroupBox are 0px close to the
+        # group box title. It works in settings view tho. I'm unable so far to fix this
+        # via CSS. Enlighten me!
+        self.a2_group_marging_top = QtGui.QWidget()
+        self.a2_group_marging_top.setMaximumHeight(self.main.css_values['margin_h'])
+        self.a2_group_layout.addWidget(self.a2_group_marging_top)
+
         for child in self.cfg.get('children', []):
             ctrl = a2ctrl.draw(self.main, child, self.mod)
             if ctrl:
-                self.layout.addWidget(ctrl)
+                self.a2_group_layout.addWidget(ctrl)
 
     def check(self, state):
         self.set_user_value(state, 'enabled')
