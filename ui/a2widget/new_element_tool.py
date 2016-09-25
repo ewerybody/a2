@@ -12,11 +12,11 @@ import subprocess
 class NewElementDialog(A2InputDialog):
     def __init__(self, main):
         self.main = main
+        self._current_elements = [os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)]
         super(NewElementDialog, self).__init__(
             self.main, 'New Element Dialog', msg='Name the new element:', text='name',
             okFunc=self.create_element,
             checkFunc=self.check_element_name)
-        self._current_elements = [os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)]
 
     def check_element_name(self, name):
         return a2core.standard_name_check(name, self._current_elements)
