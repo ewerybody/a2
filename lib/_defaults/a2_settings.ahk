@@ -1,6 +1,6 @@
 a2_settings = settings
 a2_modules = modules
-a2_ahk = lib\Autohotkey\Autohotkey.exe
+a2_ahk =
 a2_python = pythonw.exe
 a2_ui_call = pythonw.exe a2app.py
 SetTitleMatchMode, 2
