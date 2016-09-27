@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2design.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui'
 #
-# Created: Sun Sep  4 13:40:57 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Sep 26 21:13:24 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2MainWindow(object):
     def setupUi(self, a2MainWindow):
         a2MainWindow.setObjectName("a2MainWindow")
-        a2MainWindow.resize(1012, 824)
+        a2MainWindow.resize(766, 635)
         font = QtGui.QFont()
         font.setPointSize(10)
         a2MainWindow.setFont(font)
@@ -32,7 +32,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1012, 38))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 23))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")

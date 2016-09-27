@@ -14,5 +14,6 @@
     "color_button": "#CCC",
     "color_hover": "#DDD",
     "color_pressed": "#AAA",
-    "border_radius": 2
+    "border_radius": 2,
+    "help_button_size": 20    
 }

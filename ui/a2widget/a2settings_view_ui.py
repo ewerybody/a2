@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2settings_view.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Sat Sep 24 12:38:07 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Sep 26 21:18:19 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(624, 1023)
+        a2settings.resize(489, 713)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
         self.verticalLayout_2.setSpacing(12)
@@ -178,7 +178,8 @@ class Ui_a2settings(object):
         self.remember_selection.setText(QtGui.QApplication.translate("a2settings", "Remember last selected Module", None, QtGui.QApplication.UnicodeUTF8))
         self.ui_scale_label.setText(QtGui.QApplication.translate("a2settings", "UI Scale:", None, QtGui.QApplication.UnicodeUTF8))
         self.module_source_box.setTitle(QtGui.QApplication.translate("a2settings", "Module Sources", None, QtGui.QApplication.UnicodeUTF8))
-        self.no_sources_msg.setText(QtGui.QApplication.translate("a2settings", "Currently there are no modules sources listed. Go ahead and add or create one:", None, QtGui.QApplication.UnicodeUTF8))
+        self.no_sources_msg.setText(QtGui.QApplication.translate("a2settings", "Currently there are no modules sources listed.\n"
+"Go ahead and add or create one:", None, QtGui.QApplication.UnicodeUTF8))
         self.a2add_button.setText(QtGui.QApplication.translate("a2settings", "Add Source", None, QtGui.QApplication.UnicodeUTF8))
         self.dev_box.setTitle(QtGui.QApplication.translate("a2settings", "a2 dev mode", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("a2settings", "Author Name:", None, QtGui.QApplication.UnicodeUTF8))
@@ -195,6 +196,6 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
+from a2widget.a2hotkey import A2Hotkey

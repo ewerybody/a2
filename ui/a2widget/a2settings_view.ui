@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>1023</height>
+    <width>489</width>
+    <height>713</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,7 +118,8 @@
       <item>
        <widget class="QLabel" name="no_sources_msg">
         <property name="text">
-         <string>Currently there are no modules sources listed. Go ahead and add or create one:</string>
+         <string>Currently there are no modules sources listed.
+Go ahead and add or create one:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

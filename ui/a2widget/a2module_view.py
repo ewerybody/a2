@@ -28,19 +28,20 @@ class A2ModuleView(QtGui.QWidget):
 
     def setup_ui(self, main):
         self.main = main
+        a2ctrl.check_ui_module(a2module_view_ui)
         self.ui = a2module_view_ui.Ui_A2ModuleView()
         self.ui.setupUi(self)
 
         self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()
 
-        self.mainlayout = self.ui.scrollAreaContents.layout()
+        self.mainlayout = self.ui.scroll_area_contents.layout()
         self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
                                            QtGui.QSizePolicy.Expanding)
         self.mainlayout.addItem(self.ui.spacer)
-        self.settings_widget = self.ui.scrollAreaContents
+        self.settings_widget = self.ui.scroll_area_contents
 
         self.ui.modCheck.clicked[bool].connect(self.main.mod_enable)
-        self.ui.modInfoButton.clicked.connect(self.mod_info)
+        self.ui.a2help_button.clicked.connect(self.mod_info)
 
         self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
