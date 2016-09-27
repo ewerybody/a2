@@ -35,6 +35,7 @@ class Edit(QtGui.QGroupBox):
         self.main_widget = QtGui.QWidget(self)
         self.boxlayout.addWidget(self.main_widget)
 
+        a2ctrl.check_ui_module(nfo_edit_ui)
         self.ui = nfo_edit_ui.Ui_edit()
         self.ui.setupUi(self.main_widget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)

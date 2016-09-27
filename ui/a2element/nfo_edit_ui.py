@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2element\nfo_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui'
 #
-# Created: Mon Sep 12 23:50:01 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Sep 26 21:19:08 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,12 +12,13 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(737, 356)
+        edit.resize(737, 288)
         self.edit_layout = QtGui.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.edit_layout.setObjectName("edit_layout")
         self.cfg_description = QtGui.QTextEdit(edit)
+        self.cfg_description.setMaximumSize(QtCore.QSize(16777215, 100))
         self.cfg_description.setObjectName("cfg_description")
         self.edit_layout.setWidget(0, QtGui.QFormLayout.SpanningRole, self.cfg_description)
         self.internalNameLabel = QtGui.QLabel(edit)
