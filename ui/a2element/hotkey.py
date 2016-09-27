@@ -112,7 +112,7 @@ class Edit(EditCtrl):
     """
     def __init__(self, cfg, main, parentCfg):
         super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
-        defaults = [('key', 'Win+G'), ('mode', 'ahk')]
+        defaults = [('key', 'Win+F'), ('mode', 'ahk')]
         for key, value in defaults:
             if key not in self.cfg:
                 self.cfg[key] = value
