@@ -167,6 +167,18 @@ class EditAddElem(QtGui.QWidget):
                 action.setIcon(icon)
             self.menu.addAction(action)
 
+        self.menu.addSeparator()
+        self.menu.addAction(self.main.ui.actionCreate_New_Element)
+
+        if self.main.mod is not None:
+            for item in os.listdir(self.main.mod.path):
+                itempath = os.path.join(self.main.mod.path, item)
+                if not os.path.isfile(itempath):
+                    continue
+                base, ext = os.path.splitext(item)
+                if ext.lower() == '.py':
+                    print('base: %s' % base)
+
     def add_element(self, typ, name=''):
         """Just adds a new dict with the accodting typ value to the tempConfig.
         Only if it's an include we already enter the file selected.
@@ -186,7 +198,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
         self.func = func
         self.main = main
         self.setIcon(Icons.inst().code)
-        self.setTitle('Include')
+        self.setTitle('Include Script')
         self.aboutToShow.connect(self.buildMenu)
         self.tempConfig = self.main.tempConfig
 
@@ -201,10 +213,11 @@ class BrowseScriptsMenu(QtGui.QMenu):
         scriptsUnused = set(self.main.mod.scripts) - scriptsInUse
 
         for scriptName in scriptsUnused:
-            action = QtGui.QAction(icons.code, scriptName, self,
-                                   triggered=partial(self.set_script, scriptName))
-            self.addAction(action)
-        newIncludeAction = QtGui.QAction(icons.code, 'create new', self, triggered=self.set_script)
+            self.addAction(QtGui.QAction(icons.code, scriptName, self,
+                                         triggered=partial(self.set_script, scriptName)))
+        if scriptsUnused:
+            self.addSeparator()
+        newIncludeAction = QtGui.QAction(icons.code, 'Create New Script', self, triggered=self.set_script)
         self.addAction(newIncludeAction)
 
     def set_script(self, name='', create=False):
