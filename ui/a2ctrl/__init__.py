@@ -108,10 +108,10 @@ def get_a2element(element_type):
     except KeyError:
         try:
             element_mod_name = ELEMENTS_PACKAGE + '.' + element_type
-            if element_mod_name not in sys.modules:
-                element_mod = import_module(element_mod_name, ELEMENTS_PACKAGE)
-            else:
+            if element_mod_name in sys.modules:
                 element_mod = sys.modules[element_mod_name]
+            else:
+                element_mod = import_module(element_mod_name, ELEMENTS_PACKAGE)
 
             _element_map[element_type] = element_mod
             return element_mod
@@ -157,29 +157,21 @@ class EditAddElem(QtGui.QWidget):
 
     def populate_menu(self):
         self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.main, self.add_element)
+        self.menu_include = BrowseScriptsMenu(self.main, self._add_element)
         self.menu.addMenu(self.menu_include)
 
         import a2element
         for name, display_name, icon in a2element.get_list():
-            action = QtGui.QAction(display_name, self.menu, triggered=partial(self.add_element, name))
+            action = QtGui.QAction(display_name, self.menu, triggered=partial(self._add_element, name))
             if icon:
                 action.setIcon(icon)
             self.menu.addAction(action)
 
         self.menu.addSeparator()
         self.menu.addAction(self.main.ui.actionCreate_New_Element)
+        self._check_for_local_element_mods()
 
-        if self.main.mod is not None:
-            for item in os.listdir(self.main.mod.path):
-                itempath = os.path.join(self.main.mod.path, item)
-                if not os.path.isfile(itempath):
-                    continue
-                base, ext = os.path.splitext(item)
-                if ext.lower() == '.py':
-                    print('base: %s' % base)
-
-    def add_element(self, typ, name=''):
+    def _add_element(self, typ, name=''):
         """Just adds a new dict with the accodting typ value to the tempConfig.
         Only if it's an include we already enter the file selected.
         Every other default value will be handled by the very control element.
@@ -191,6 +183,34 @@ class EditAddElem(QtGui.QWidget):
         self.config.append(cfg)
         self.main.edit_mod()
 
+    def _check_for_local_element_mods(self):
+        if self.main.mod is None:
+            return
+
+        for item in os.listdir(self.main.mod.path):
+            itempath = os.path.join(self.main.mod.path, item)
+            if not os.path.isfile(itempath):
+                continue
+            base, ext = os.path.splitext(item)
+            if ext.lower() != '.py':
+                continue
+            with open(itempath) as fobj:
+                element_content = fobj.read()
+            try:
+                element_objects = {}
+                exec(element_content, element_objects)
+
+                element_objects.pop('__builtins__')
+                print('element_objects: %s' % element_objects)
+                if 'Edit' in element_objects:
+                    name = element_objects['Edit'].element_name()
+                    self.menu.addAction(QtGui.QAction(name, self))
+
+                #elmod = type('element_module', (object,), {})()
+            except Exception:
+                log.error(traceback.format_exc().strip())
+                log.error('Could not exec code from "%s"' % base)
+
 
 class BrowseScriptsMenu(QtGui.QMenu):
     def __init__(self, main, func):
@@ -199,13 +219,12 @@ class BrowseScriptsMenu(QtGui.QMenu):
         self.main = main
         self.setIcon(Icons.inst().code)
         self.setTitle('Include Script')
-        self.aboutToShow.connect(self.buildMenu)
-        self.tempConfig = self.main.tempConfig
+        self.aboutToShow.connect(self.build_menu)
 
-    def buildMenu(self):
+    def build_menu(self):
         self.clear()
         scriptsInUse = set()
-        for cfg in self.tempConfig:
+        for cfg in self.main.tempConfig:
             if cfg['typ'] == 'include':
                 scriptsInUse.add(cfg['file'])
 
