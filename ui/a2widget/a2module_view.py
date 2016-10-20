@@ -133,7 +133,6 @@ class A2ModuleView(QtGui.QWidget):
         if self.main.tempConfig is None:
             self.main.tempConfig = deepcopy(self.main.mod.config)
 
-        #if not mod.config: is None or mod.config is []
         if not len(self.main.tempConfig):
             newNfo = {'typ': 'nfo',
                       'description': 'Because none existed before this temporary description was '
@@ -220,8 +219,8 @@ class A2ModuleView(QtGui.QWidget):
 
     def scroll_to(self):
         # TODO:
-        #if self.ui.module_view.ui.scrollArea.hasFocus():
-        #print('self.ui.scrollArea.hasFocus(): %s' % self.ui.scrollArea.hasFocus())
+        # if self.ui.module_view.ui.scrollArea.hasFocus():
+        # print('self.ui.scrollArea.hasFocus(): %s' % self.ui.scrollArea.hasFocus())
         #    current = self.ui.scrollBar.value()
         #    scroll_end = self.ui.scrollBar.maximum()
         #    if isinstance(value, bool):
