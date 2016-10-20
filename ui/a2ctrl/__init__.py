@@ -41,7 +41,6 @@ def check_ui_module(module):
 
     if uiname.endswith(UI_FILE_SUFFIX):
         uibase = uiname[:-len(UI_FILE_SUFFIX)] + '.ui'
-        #log.debug('checkUiModule from name: %s' % uibase)
     else:
         with open(pyfile, 'r') as fobj:
             line = fobj.readline()
@@ -78,28 +77,41 @@ def draw(main, cfg, mod):
 
     import a2element
 
-    element_mod = get_a2element(cfg.get('typ'))
-    if element_mod is not None:
+    mod_path = None if mod is None else mod.path
+    ElementDrawClass = get_a2element_object('Draw', cfg.get('typ'), mod_path)
+
+    if ElementDrawClass is not None:
         try:
-            return element_mod.Draw(main, cfg, mod)
-        except Exception as error:
+            return ElementDrawClass(main, cfg, mod)
+        except Exception:
             log.error(traceback.format_exc().strip())
-            print('error: %s' % error)
-            log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod.name))
+    log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod))
 
 
 def edit(cfg, main, parent_cfg):
-    element_mod = get_a2element(cfg.get('typ'))
-    if element_mod is not None:
+    mod_path = None if main.mod is None else main.mod.path
+    ElementEditClass = get_a2element_object('Edit', cfg.get('typ'), mod_path)
+    print('ElementEditClass: %s' % ElementEditClass)
+    if ElementEditClass is not None:
         try:
-            return element_mod.Edit(cfg, main, parent_cfg)
-        except Exception as error:
+            return ElementEditClass(cfg, main, parent_cfg)
+        except Exception:
             log.error(traceback.format_exc().strip())
-            print('error: %s' % error)
-            log.error('Edit type "%s" not supported (yet)!' % cfg.get('typ'))
+    log.error('Edit type "%s" not supported (yet)!' % cfg.get('typ'))
 
 
-def get_a2element(element_type):
+def get_a2element_object(obj_name, element_type, module_path=None):
+    element_mod = get_a2element(element_type, _silent=True)
+    if element_mod is not None:
+        return getattr(element_mod, obj_name)
+    elif module_path:
+        element_objects = get_local_element(os.path.join(module_path, element_type + '.py'))
+        return element_objects[obj_name]
+    else:
+        log.error('Could not get object "%s" from element_type "%s"' % (obj_name, element_type))
+
+
+def get_a2element(element_type, _silent=False):
     """
     From the "typ" tries to import the according module from a2element
     """
@@ -116,10 +128,10 @@ def get_a2element(element_type):
             _element_map[element_type] = element_mod
             return element_mod
 
-        except Exception as error:
-            log.error(traceback.format_exc().strip())
-            print('error: %s' % error)
-            log.error('Could not import element type "%s"!' % element_type)
+        except Exception:
+            if not _silent:
+                log.error(traceback.format_exc().strip())
+                log.error('Could not import element type "%s"!' % element_type)
 
 
 class EditAddElem(QtGui.QWidget):
@@ -194,22 +206,16 @@ class EditAddElem(QtGui.QWidget):
             base, ext = os.path.splitext(item)
             if ext.lower() != '.py':
                 continue
-            with open(itempath) as fobj:
-                element_content = fobj.read()
-            try:
-                element_objects = {}
-                exec(element_content, element_objects)
 
-                element_objects.pop('__builtins__')
-                print('element_objects: %s' % element_objects)
-                if 'Edit' in element_objects:
-                    name = element_objects['Edit'].element_name()
-                    self.menu.addAction(QtGui.QAction(name, self))
+            element_objects = get_local_element(itempath)
+            if element_objects is not None and 'Edit' in element_objects:
+                name = element_objects['Edit'].element_name()
+                icon = element_objects['Edit'].element_icon()
 
-                #elmod = type('element_module', (object,), {})()
-            except Exception:
-                log.error(traceback.format_exc().strip())
-                log.error('Could not exec code from "%s"' % base)
+                action = QtGui.QAction(name, self.menu, triggered=partial(self._add_element, base))
+                if icon:
+                    action.setIcon(icon)
+                self.menu.addAction(action)
 
 
 class BrowseScriptsMenu(QtGui.QMenu):
@@ -250,6 +256,23 @@ class BrowseScriptsMenu(QtGui.QMenu):
         self.func('include', name)
 
 
+def get_local_element(itempath):
+    if os.path.exists(itempath):
+        with open(itempath) as fobj:
+            element_content = fobj.read()
+
+        try:
+            element_objects = {}
+            exec(element_content, element_objects)
+
+            # element_objects.pop('__builtins__')
+            return element_objects
+
+        except Exception:
+            log.error(traceback.format_exc().strip())
+            log.error('Could not exec code from "%s"' % itempath)
+
+
 def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
@@ -274,17 +297,18 @@ def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
     return value
 
 
-def assemble_settings(module_key, cfg_dict, db_dict):
+def assemble_settings(module_key, cfg_dict, db_dict, module_path=None):
 
     for cfg in cfg_dict:
         # get configs named db entry of module or None
         user_cfg = a2core.A2Obj.inst().db.get(cfg.get('name'), module_key)
-        # pass if there is an 'enabled' entry and its False
+        # pass if there is an 'enabled' entry and it's False
         if not get_cfg_value(cfg, user_cfg, 'enabled', default=True):
             continue
 
-        cfg_pymod = get_a2element(cfg['typ'])
-        cfg_pymod.get_settings(module_key, cfg, db_dict, user_cfg)
+        element_get_settings = get_a2element_object('get_settings', cfg['typ'], module_path)
+        if element_get_settings is not None:
+            element_get_settings(module_key, cfg, db_dict, user_cfg)
 
 
 if __name__ == '__main__':

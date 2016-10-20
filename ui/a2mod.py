@@ -184,7 +184,7 @@ class Mod(object):
         Sets the mods own db entries
         """
         db_dict = {'variables': {}, 'hotkeys': {}, 'includes': []}
-        a2ctrl.assemble_settings(self.key, self.config[1:], db_dict)
+        a2ctrl.assemble_settings(self.key, self.config[1:], db_dict, self.path)
         for typ, data in db_dict.items():
             self.a2.db.set(typ, data, self.key)
 
