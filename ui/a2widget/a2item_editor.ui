@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,2">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -42,7 +42,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QListView" name="list"/>
+      <widget class="QListWidget" name="item_list"/>
      </item>
     </layout>
    </item>

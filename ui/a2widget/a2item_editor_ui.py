@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2item_editor.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Mon Oct 24 00:04:38 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Oct 24 14:22:23 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -29,9 +29,9 @@ class Ui_A2ItemEditor(object):
         self.del_entry_button.setObjectName("del_entry_button")
         self.horizontalLayout.addWidget(self.del_entry_button)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.list = QtGui.QListView(A2ItemEditor)
-        self.list.setObjectName("list")
-        self.verticalLayout.addWidget(self.list)
+        self.item_list = QtGui.QListWidget(A2ItemEditor)
+        self.item_list.setObjectName("item_list")
+        self.verticalLayout.addWidget(self.item_list)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.config_layout = QtGui.QVBoxLayout()
         self.config_layout.setObjectName("config_layout")
@@ -47,7 +47,8 @@ class Ui_A2ItemEditor(object):
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.config_layout.addItem(spacerItem)
         self.horizontalLayout_2.addLayout(self.config_layout)
-        self.horizontalLayout_2.setStretch(1, 1)
+        self.horizontalLayout_2.setStretch(0, 1)
+        self.horizontalLayout_2.setStretch(1, 2)
 
         self.retranslateUi(A2ItemEditor)
         QtCore.QMetaObject.connectSlotsByName(A2ItemEditor)
