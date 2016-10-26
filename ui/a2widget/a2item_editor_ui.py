@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Mon Oct 24 14:22:23 2016
+# Created: Wed Oct 26 14:21:48 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PySide import QtCore, QtGui
 class Ui_A2ItemEditor(object):
     def setupUi(self, A2ItemEditor):
         A2ItemEditor.setObjectName("A2ItemEditor")
-        A2ItemEditor.resize(726, 731)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(A2ItemEditor)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        A2ItemEditor.resize(273, 431)
+        self.item_editor_layout = QtGui.QHBoxLayout(A2ItemEditor)
+        self.item_editor_layout.setObjectName("item_editor_layout")
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.search_field = QtGui.QLineEdit(A2ItemEditor)
@@ -30,25 +30,11 @@ class Ui_A2ItemEditor(object):
         self.horizontalLayout.addWidget(self.del_entry_button)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.item_list = QtGui.QListWidget(A2ItemEditor)
+        self.item_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.item_list.setObjectName("item_list")
         self.verticalLayout.addWidget(self.item_list)
-        self.horizontalLayout_2.addLayout(self.verticalLayout)
-        self.config_layout = QtGui.QVBoxLayout()
-        self.config_layout.setObjectName("config_layout")
-        self.horizontalLayout_3 = QtGui.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label = QtGui.QLabel(A2ItemEditor)
-        self.label.setObjectName("label")
-        self.horizontalLayout_3.addWidget(self.label)
-        self.entry_name = QtGui.QLineEdit(A2ItemEditor)
-        self.entry_name.setObjectName("entry_name")
-        self.horizontalLayout_3.addWidget(self.entry_name)
-        self.config_layout.addLayout(self.horizontalLayout_3)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.config_layout.addItem(spacerItem)
-        self.horizontalLayout_2.addLayout(self.config_layout)
-        self.horizontalLayout_2.setStretch(0, 1)
-        self.horizontalLayout_2.setStretch(1, 2)
+        self.item_editor_layout.addLayout(self.verticalLayout)
+        self.item_editor_layout.setStretch(0, 1)
 
         self.retranslateUi(A2ItemEditor)
         QtCore.QMetaObject.connectSlotsByName(A2ItemEditor)
@@ -58,5 +44,4 @@ class Ui_A2ItemEditor(object):
         self.search_field.setPlaceholderText(QtGui.QApplication.translate("A2ItemEditor", "search", None, QtGui.QApplication.UnicodeUTF8))
         self.add_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Add Entry", None, QtGui.QApplication.UnicodeUTF8))
         self.del_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Remove Entry", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("A2ItemEditor", "Entry Name", None, QtGui.QApplication.UnicodeUTF8))
 

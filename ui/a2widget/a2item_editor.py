@@ -10,16 +10,37 @@ from a2widget import a2item_editor_ui
 
 
 class A2ItemEditor(QtGui.QWidget):
+    selected_text_changed = QtCore.Signal(str)
+    selection_changed = QtCore.Signal(list)
+
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)
         a2ctrl.check_ui_module(a2item_editor_ui)
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
 
+        self._selected_text = ''
+
         self.ui.item_list.itemChanged.connect(self.update_items)
         self.ui.item_list.keyPressEvent = self.item_list_keyPressEvent
         self.ui.add_entry_button.clicked.connect(self.add_item)
         self.ui.del_entry_button.clicked.connect(self.delete_item)
+
+        self.ui.item_list.itemSelectionChanged.connect(self.selection_change)
+        # self.ui.item_list.currentTextChanged.connect(self.selection_change)
+
+    @property
+    def selected_text(self):
+        return self._selected_text
+
+    def selection_change(self):
+        item_objs = self.ui.item_list.selectedItems()
+        self.selection_changed.emit(item_objs)
+
+        text = item_objs[0].text() if item_objs else ''
+        if text != self._selected_text:
+            self._selected_text = text
+            self.selected_text_changed.emit(text)
 
     def item_list_keyPressEvent(self, event):
         """
