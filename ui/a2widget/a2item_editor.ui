@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>731</height>
+    <width>273</width>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
+  <layout class="QHBoxLayout" name="item_editor_layout" stretch="1">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>

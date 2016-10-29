@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Mon Oct 24 22:55:04 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Wed Oct 26 14:21:48 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,9 +12,9 @@ from PySide import QtCore, QtGui
 class Ui_A2ItemEditor(object):
     def setupUi(self, A2ItemEditor):
         A2ItemEditor.setObjectName("A2ItemEditor")
-        A2ItemEditor.resize(726, 731)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(A2ItemEditor)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        A2ItemEditor.resize(273, 431)
+        self.item_editor_layout = QtGui.QHBoxLayout(A2ItemEditor)
+        self.item_editor_layout.setObjectName("item_editor_layout")
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.search_field = QtGui.QLineEdit(A2ItemEditor)
@@ -30,13 +30,11 @@ class Ui_A2ItemEditor(object):
         self.horizontalLayout.addWidget(self.del_entry_button)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.item_list = QtGui.QListWidget(A2ItemEditor)
+        self.item_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.item_list.setObjectName("item_list")
         self.verticalLayout.addWidget(self.item_list)
-        self.horizontalLayout_2.addLayout(self.verticalLayout)
-        self.formLayout = QtGui.QFormLayout()
-        self.formLayout.setObjectName("formLayout")
-        self.horizontalLayout_2.addLayout(self.formLayout)
-        self.horizontalLayout_2.setStretch(0, 1)
+        self.item_editor_layout.addLayout(self.verticalLayout)
+        self.item_editor_layout.setStretch(0, 1)
 
         self.retranslateUi(A2ItemEditor)
         QtCore.QMetaObject.connectSlotsByName(A2ItemEditor)
@@ -46,4 +44,3 @@ class Ui_A2ItemEditor(object):
         self.search_field.setPlaceholderText(QtGui.QApplication.translate("A2ItemEditor", "search", None, QtGui.QApplication.UnicodeUTF8))
         self.add_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Add", None, QtGui.QApplication.UnicodeUTF8))
         self.del_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Remove", None, QtGui.QApplication.UnicodeUTF8))
-
