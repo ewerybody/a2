@@ -28,27 +28,26 @@
        <item>
         <widget class="QPushButton" name="add_entry_button">
          <property name="text">
-          <string>Add Entry</string>
+          <string>Add</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="del_entry_button">
          <property name="text">
-          <string>Remove Entry</string>
+          <string>Remove</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
      <item>
-      <widget class="QListWidget" name="item_list">
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-      </widget>
+      <widget class="QListWidget" name="item_list"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="config_layout"/>
    </item>
   </layout>
  </widget>

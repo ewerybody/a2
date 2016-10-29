@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
+# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
 # Created: Wed Oct 26 14:21:48 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
@@ -42,6 +42,5 @@ class Ui_A2ItemEditor(object):
     def retranslateUi(self, A2ItemEditor):
         A2ItemEditor.setWindowTitle(QtGui.QApplication.translate("A2ItemEditor", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.search_field.setPlaceholderText(QtGui.QApplication.translate("A2ItemEditor", "search", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Add Entry", None, QtGui.QApplication.UnicodeUTF8))
-        self.del_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Remove Entry", None, QtGui.QApplication.UnicodeUTF8))
-
+        self.add_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Add", None, QtGui.QApplication.UnicodeUTF8))
+        self.del_entry_button.setText(QtGui.QApplication.translate("A2ItemEditor", "Remove", None, QtGui.QApplication.UnicodeUTF8))
