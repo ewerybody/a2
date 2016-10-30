@@ -226,6 +226,7 @@ def write_includes(specific=None):
     # browse the enabled modules to collect the include data
     mod_settings = a2.db.tables()
     mod_path = relpath(a2.paths.modules, a2.paths.a2)
+    settings_path = relpath(a2.paths.settings, a2.paths.a2)
     for source_name, data in a2.enabled.items():
         source_enabled, enabled_modules = data
         if not source_enabled:
@@ -244,14 +245,16 @@ def write_includes(specific=None):
                 print('  change: %s' % modname)
                 module.change()
 
-            includes = a2.db.get('includes', module.key) or []
+            for include_type, include_dir in [('includes', os.path.join(mod_path, source.name, modname)),
+                                              ('settings_includes', settings_path)]:
+                includes = a2.db.get(include_type, module.key) or []
+                if not isinstance(includes, list):
+                    log.warn('%s not a list: %s' % (include_type, includes))
+                    includes = [includes]
 
-            if not isinstance(includes, list):
-                log.warn('includes not a list: %s' % includes)
-                includes = [includes]
-
-            includeAhk += ['#include %s\%s\%s\%s'
-                           % (mod_path, source.name, modname, i) for i in includes]
+                for include in includes:
+                    include_path = os.path.join(include_dir, include)
+                    includeAhk += ['#include %s' % include]
 
             hotkeys = a2.db.get('hotkeys', module.key) or {}
             for typ in hotkeys:
