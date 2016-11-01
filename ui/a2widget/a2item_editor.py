@@ -42,6 +42,9 @@ class A2ItemEditor(QtGui.QWidget):
             self._selected_text = text
             self.selected_text_changed.emit(text)
 
+        self.ui.config_widget.setEnabled(text != '')
+        self.ui.del_entry_button.setEnabled(text != '')
+
     def item_list_keyPressEvent(self, event):
         """
         Capture delete key to remove entries

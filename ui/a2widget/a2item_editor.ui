@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>273</width>
-    <height>431</height>
+    <width>409</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="item_editor_layout" stretch="1">
+  <layout class="QHBoxLayout" name="item_editor_layout" stretch="1,3">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
@@ -34,6 +34,9 @@
        </item>
        <item>
         <widget class="QPushButton" name="del_entry_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Remove</string>
          </property>
@@ -47,7 +50,12 @@
     </layout>
    </item>
    <item>
-    <layout class="QFormLayout" name="config_layout"/>
+    <widget class="QWidget" name="config_widget" native="true">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="config_layout"/>
+    </widget>
    </item>
   </layout>
  </widget>
