@@ -254,7 +254,7 @@ def write_includes(specific=None):
 
                 for include in includes:
                     include_path = os.path.join(include_dir, include)
-                    includeAhk += ['#include %s' % include]
+                    includeAhk += ['#include %s' % include_path]
 
             hotkeys = a2.db.get('hotkeys', module.key) or {}
             for typ in hotkeys:

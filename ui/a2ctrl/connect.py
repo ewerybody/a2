@@ -7,7 +7,7 @@ from functools import partial
 from PySide import QtGui
 
 import a2core
-from a2widget.a2path_field import A2PathField
+from a2widget import A2PathField, TextField_AutoHeight
 
 
 log = a2core.get_logger(__name__)
@@ -80,7 +80,7 @@ def control(ctrl, name, cfg, change_signal=None):
     elif isinstance(ctrl, QtGui.QListWidget):
         # so far only to fill the control
         # since it's not a widget that changes data by default
-        #ctrl.itemChanged.connect(partial(_list_widget_test, name))
+        # ctrl.itemChanged.connect(partial(_list_widget_test, name))
         if name in cfg:
             ctrl.insertItems(0, cfg[name])
         else:
@@ -106,10 +106,10 @@ def control(ctrl, name, cfg, change_signal=None):
         elif ctrl.isChecked():
             cfg[name] = value
 
-    elif isinstance(ctrl, QtGui.QTextEdit):
+    elif isinstance(ctrl, (QtGui.QTextEdit, TextField_AutoHeight)):
         ctrl.textChanged.connect(partial(_text_edit_update, cfg, name, ctrl))
         if change_signal is not None:
-            ctrl.textChanged.connect(partial(change_signal, ctrl))
+            ctrl.textChanged.connect(partial(change_signal.emit, ctrl))
         if name in cfg:
             ctrl.setText(cfg[name])
         else:
