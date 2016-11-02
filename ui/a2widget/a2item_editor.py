@@ -10,8 +10,10 @@ from a2widget import a2item_editor_ui
 
 
 class A2ItemEditor(QtGui.QWidget):
-    selected_text_changed = QtCore.Signal(str)
+    selected_name_changed = QtCore.Signal(str)
     selection_changed = QtCore.Signal(list)
+    item_changed = QtCore.Signal(tuple)
+    item_deleted = QtCore.Signal(str)
 
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)
@@ -19,15 +21,22 @@ class A2ItemEditor(QtGui.QWidget):
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
 
-        self._selected_text = ''
+        self._selected_name = ''
 
-        self.ui.item_list.itemChanged.connect(self.update_items)
+        self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.keyPressEvent = self.item_list_keyPressEvent
         self.ui.add_entry_button.clicked.connect(self.add_item)
         self.ui.del_entry_button.clicked.connect(self.delete_item)
 
         self.ui.item_list.itemSelectionChanged.connect(self.selection_change)
         # self.ui.item_list.currentTextChanged.connect(self.selection_change)
+
+    def check_item_change(self, item):
+        new_name = item.text()
+        old_name = self._selected_name
+        if new_name != old_name:
+            self._selected_name = new_name
+            self.item_changed.emit((old_name, new_name, item))
 
     @property
     def item_names(self):
@@ -38,17 +47,17 @@ class A2ItemEditor(QtGui.QWidget):
             self._add_and_setup_item(item_name)
 
     @property
-    def selected_text(self):
-        return self._selected_text
+    def selected_name(self):
+        return self._selected_name
 
     def selection_change(self):
         item_objs = self.ui.item_list.selectedItems()
         self.selection_changed.emit(item_objs)
 
         text = item_objs[0].text() if item_objs else ''
-        if text != self._selected_text:
-            self._selected_text = text
-            self.selected_text_changed.emit(text)
+        if text != self._selected_name:
+            self._selected_name = text
+            self.selected_name_changed.emit(text)
 
         self.ui.config_widget.setEnabled(text != '')
         self.ui.del_entry_button.setEnabled(text != '')
@@ -74,22 +83,16 @@ class A2ItemEditor(QtGui.QWidget):
         item = self._add_and_setup_item(new_item_name)
         current_items.append(new_item_name)
         self.ui.item_list.editItem(item)
+        a2ctrl.qlist.select_items(self.ui.item_list, item)
 
     def delete_item(self):
         item_objs = self.ui.item_list.selectedItems()
-        sel_items = [i.text() for i in item_objs]
-        all_items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
-        new_items = [i for i in all_items if i not in sel_items]
-        self.update_items(items=new_items)
+        # sel_items = [i.text() for i in item_objs]
+        # all_items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
+        # new_items = [i for i in all_items if i not in sel_items]
         for item in item_objs:
-            # doesnt doanything :(
-            # self.ui.cfg_items.removeItemWidget(item)
             item_row = self.ui.item_list.row(item)
             self.ui.item_list.takeItem(item_row)
-
-    def update_items(self, item=None, items=None):
-        if item is not None:
-            a2ctrl.qlist.select_items(self.ui.item_list, item)
-            # item.setSelected(True)
-        if items is None:
-            items = self.item_names
+        item_name = item_objs[0].text()
+        print('delete_item: %s' % item_name)
+        self.item_deleted.emit(item_name)
