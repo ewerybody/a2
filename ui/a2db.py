@@ -89,9 +89,9 @@ class A2db(object):
                 log.debug('updating value!\n  %s' % statement)
             self._execute(statement)
             self._con.commit()
-        #except sqlite3.DatabaseError as error:
+        # except sqlite3.DatabaseError as error:
         except Exception as error:
-            #except:
+            # except:
             log.debug('setting db failed...')
             if table not in self.tables():
                 log.debug('creating table and retry...')
@@ -101,7 +101,7 @@ class A2db(object):
             else:
                 log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s'
                           % (value, key, table, error))
-                #log.error('could not set value: "%s" on key:"%s" in section:"%s"'
+                # log.error('could not set value: "%s" on key:"%s" in section:"%s"'
                 #          % (value, key, table))
 
     def pop(self, key, table=_defaultTable):
@@ -147,7 +147,7 @@ class A2db(object):
             self._cur.execute(statement)
         except Exception as err:
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
-            #log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
+            # log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def all(self):
         tables = self.tables()

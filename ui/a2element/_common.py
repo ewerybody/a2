@@ -31,7 +31,6 @@ class DrawCtrl(QtGui.QWidget):
         self.check_delay = 150
         self._check_scheduled = False
         self.userCfg = self.a2.db.get(self.cfg.get('name', ''), self.mod.key)
-        print('self.userCfg: %s' % self.userCfg)
 
     def get_user_value(self, typ, name='value', default=None):
         """
@@ -72,7 +71,6 @@ class DrawCtrl(QtGui.QWidget):
         To be re-implemented when subclassing DrawCtrl.
         """
         self._check_scheduled = False
-        pass
 
 
 class EditCtrl(QtGui.QGroupBox):
@@ -120,8 +118,8 @@ class EditCtrl(QtGui.QGroupBox):
         if isinstance(value, bool):
             if value:
                 newindex = top_index
-                #self.main.ui.scrollArea.scrollToTop()
-                #self.main.ui.scrollArea
+                # self.main.ui.scrollArea.scrollToTop()
+                # self.main.ui.scrollArea
             else:
                 newindex = maxIndex
                 self.scroll_to_bottom()
@@ -129,10 +127,10 @@ class EditCtrl(QtGui.QGroupBox):
             newindex = index + value
         # hop out if already at start or end
         if index == newindex or newindex < top_index or newindex > maxIndex:
-            #print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
+            # print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
 
-        #cfg = self.parentCfg.pop(index)
+        # cfg = self.parentCfg.pop(index)
         self.parentCfg.pop(index)
         self.parentCfg.insert(newindex, self.cfg)
         self.main.edit_mod(keep_scroll=True)
@@ -228,7 +226,7 @@ class EditCtrl(QtGui.QGroupBox):
         name for the control from the module name + control type + incremental number
         """
         if 'name' not in self.cfg:
-            #build the base control name
+            # build the base control name
             new_name = '%s_%s' % (self.main.mod.name, self.element_name())
             # find biggest number
             this_type = self.cfg['typ']
@@ -245,7 +243,7 @@ class EditCtrl(QtGui.QGroupBox):
         self._scrollValB4 = self.main.ui.scrollBar.value()
         self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
         print('scroll_to_bottom...')
-        #QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
+        # QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
         threading.Thread(target=self._scroll_to_bottom).start()
 
     def _scroll_to_bottom(self, *args):
@@ -257,7 +255,7 @@ class EditCtrl(QtGui.QGroupBox):
         steps = tmax / res
         tsteps = 1 / steps
         t = 0.0
-        #this = self.main.ui.scrollBar.value()
+        # this = self.main.ui.scrollBar.value()
         scrollEnd = self.main.ui.scrollBar.maximum()
         print('scrollEnd: %s' % scrollEnd)
         if not scrollEnd:

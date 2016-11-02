@@ -30,6 +30,14 @@ class A2ItemEditor(QtGui.QWidget):
         # self.ui.item_list.currentTextChanged.connect(self.selection_change)
 
     @property
+    def item_names(self):
+        return a2ctrl.qlist.get_items_as_text(self.ui.item_list)
+
+    def fill_items(self, item_list):
+        for item_name in item_list:
+            self._add_and_setup_item(item_name)
+
+    @property
     def selected_text(self):
         return self._selected_text
 
@@ -53,15 +61,18 @@ class A2ItemEditor(QtGui.QWidget):
             self.delete_item()
         return QtGui.QListWidget.keyPressEvent(self.ui.item_list, event)
 
-    def add_item(self):
-        current_items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
-        new_item_name = ''
-        item = QtGui.QListWidgetItem(new_item_name)
-        current_items.append(new_item_name)
-        self.update_items(items=current_items)
+    def _add_and_setup_item(self, name):
+        item = QtGui.QListWidgetItem(name)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
                       QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
         self.ui.item_list.addItem(item)
+        return item
+
+    def add_item(self):
+        current_items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
+        new_item_name = ''
+        item = self._add_and_setup_item(new_item_name)
+        current_items.append(new_item_name)
         self.ui.item_list.editItem(item)
 
     def delete_item(self):
@@ -81,4 +92,4 @@ class A2ItemEditor(QtGui.QWidget):
             a2ctrl.qlist.select_items(self.ui.item_list, item)
             # item.setSelected(True)
         if items is None:
-            items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
+            items = self.item_names

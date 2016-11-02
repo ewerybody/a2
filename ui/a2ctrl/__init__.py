@@ -288,10 +288,10 @@ def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
 
     if typ is not None:
         if not isinstance(value, typ):
-            log.error('Fetched wrong type for attrName %s: %s' % (attrName, value))
             if default is None:
                 value = typ()
             else:
+                log.error('Fetched wrong type for attrName %s: %s' % (attrName, value))
                 value = default
 
     return value
