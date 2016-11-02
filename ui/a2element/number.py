@@ -85,8 +85,7 @@ class Draw(DrawCtrl):
             return
 
         self.value = _toggle_type(self.cfg.get('decimals', 0), value)
-        #self.mod.set_user_cfg(self.cfg, 'value', self.value)
-        self.set_user_value(self.value, 'value')
+        self.set_user_value(self.value)
         self.change('variables')
 
 

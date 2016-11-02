@@ -273,16 +273,20 @@ def get_local_element(itempath):
             log.error('Could not exec code from "%s"' % itempath)
 
 
-def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
+def get_cfg_value(subCfg, user_cfg, attr_name=None, typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.
     """
     value = None
-    if userCfg is not None and attrName in userCfg:
-        value = userCfg[attrName]
-    elif attrName in subCfg:
-        value = subCfg[attrName]
+    if user_cfg is not None and attr_name is None:
+        value = user_cfg
+    elif isinstance(user_cfg, dict) and attr_name in user_cfg:
+        value = user_cfg[attr_name]
+    elif attr_name is None:
+        value = subCfg['value']
+    elif attr_name in subCfg:
+        value = subCfg[attr_name]
     else:
         value = default
 
@@ -291,7 +295,7 @@ def get_cfg_value(subCfg, userCfg, attrName='value', typ=None, default=None):
             if default is None:
                 value = typ()
             else:
-                log.error('Fetched wrong type for attrName %s: %s' % (attrName, value))
+                log.error('Fetched wrong type for attr_name %s: %s' % (attr_name, value))
                 value = default
 
     return value

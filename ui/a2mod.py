@@ -238,8 +238,10 @@ class Mod(object):
             return 'Module has already a script named "%s"!' % name
         return True
 
-    def set_user_cfg(self, sub_cfg, attr_name, value):
+    def set_user_cfg(self, sub_cfg, value, attr_name=None):
         """
+        Sets an elements user value.
+
         Helps to keep the user config as small as possible. For instance if there is a value
         'enabled' True by default only setting it to False will be saved. User setting it to True
         would delete it from user settings, so it's taking the default again.
@@ -249,18 +251,24 @@ class Mod(object):
         user sets True AND default it False:
             set to userCfg
         """
-        user_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
-        if attr_name in user_cfg:
-            # value to set equals CURRENT value: done
-            if value == user_cfg.get(attr_name):
+        current_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
+        if attr_name is None:
+            if value == current_cfg:
                 return
-            # in any other case: delete to make changes
-            user_cfg.pop(attr_name)
+            current_cfg = value
+        else:
+            if attr_name in current_cfg:
+                # value to set equals CURRENT value: done
+                if value == current_cfg.get(attr_name):
+                    return
+                # in any other case: delete to make changes
+                current_cfg.pop(attr_name)
 
-        # value to set equals CONFIG value: done. otherwise: save it:
-        if value != sub_cfg.get(attr_name):
-            user_cfg[attr_name] = value
-        self.a2.db.set(sub_cfg['name'], user_cfg, self.key)
+            # value to set equals CONFIG value: done. otherwise: save it:
+            if value != sub_cfg.get(attr_name):
+                current_cfg[attr_name] = value
+
+        self.a2.db.set(sub_cfg['name'], current_cfg, self.key)
 
     def help(self):
         try:

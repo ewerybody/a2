@@ -49,7 +49,7 @@ class Draw(DrawCtrl):
             self.set_user_value(items, 'items')
 
         self.value = value
-        self.set_user_value(value)
+        self.set_user_value(value, 'value')
         self.change('variables')
 
     def check_user_items(self, *args):
@@ -99,14 +99,14 @@ class Edit(EditCtrl):
         self.update_items(items=new_items)
         for item in item_objs:
             # doesnt doanything :(
-            #self.ui.cfg_items.removeItemWidget(item)
+            # self.ui.cfg_items.removeItemWidget(item)
             item_row = self.ui.cfg_items.row(item)
             self.ui.cfg_items.takeItem(item_row)
 
     def update_items(self, item=None, items=None):
         if item is not None:
             a2ctrl.qlist.select_items(self.ui.cfg_items, item)
-            #item.setSelected(True)
+            # item.setSelected(True)
         if items is None:
             items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)
         self.cfg['items'] = items
@@ -130,5 +130,5 @@ class Edit(EditCtrl):
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
-    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, 'value', typ=str, default='')
     db_dict['variables'][cfg['name']] = value
