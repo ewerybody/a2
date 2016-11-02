@@ -23,6 +23,9 @@ class TextField_AutoHeight(QtGui.QPlainTextEdit):
         self.blockCountChanged.connect(self._set_height_to_block_count)
         self._set_height_to_block_count(1)
 
+    def setText(self, this):
+        self.setPlainText(this)
+
     def _set_height_to_block_count(self, block_count):
         cursor_height = self.cursorRect().height()
         magic_height = (cursor_height / 3) + 5
