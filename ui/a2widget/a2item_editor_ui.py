@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Wed Nov  2 15:15:10 2016
+# Created: Thu Nov  3 20:59:30 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,6 +46,8 @@ class Ui_A2ItemEditor(object):
         self.config_layout.setContentsMargins(0, 0, 0, 0)
         self.config_layout.setObjectName("config_layout")
         self.item_editor_layout.addWidget(self.config_widget)
+        self.item_editor_layout.setStretch(0, 1)
+        self.item_editor_layout.setStretch(1, 3)
 
         self.retranslateUi(A2ItemEditor)
         QtCore.QMetaObject.connectSlotsByName(A2ItemEditor)

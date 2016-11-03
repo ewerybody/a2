@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="item_editor_layout" stretch="0,0">
+  <layout class="QHBoxLayout" name="item_editor_layout" stretch="1,3">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>

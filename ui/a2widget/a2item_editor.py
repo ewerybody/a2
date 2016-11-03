@@ -59,8 +59,8 @@ class A2ItemEditor(QtGui.QWidget):
             self._selected_name = text
             self.selected_name_changed.emit(text)
 
-        self.ui.config_widget.setEnabled(text != '')
-        self.ui.del_entry_button.setEnabled(text != '')
+        self.ui.config_widget.setEnabled(item_objs != [])
+        self.ui.del_entry_button.setEnabled(item_objs != [])
 
     def item_list_keyPressEvent(self, event):
         """
