@@ -5,7 +5,7 @@ Created on Aug 7, 2015
 
 @author: eRiC
 """
-import time
+import codecs
 import subprocess
 from os.path import join
 
@@ -56,9 +56,9 @@ def get_variables(ahk_file):
     Ignores any indented ones.
     Returns a dict with the variables.
     """
-    with open(ahk_file) as fobj:
+    with codecs.open(ahk_file, encoding='utf-8-sig') as fobj:
         lines = [l.split('=', 1) for l in fobj.read().split('\n') if l]
-    lines = [(l[0], l[1].strip('" ')) for l in lines if len(l) == 2]
+    lines = [(l[0], l[1].strip('" \r')) for l in lines if len(l) == 2]
     result = {}
     for key, value in lines:
         _key = key.strip(': ')
