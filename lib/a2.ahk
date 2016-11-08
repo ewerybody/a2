@@ -1,4 +1,4 @@
-; a2 - modular Autohotkey script envirionment
+﻿; a2 - modular Autohotkey script envirionment
 ; main file! This basically gathers all resources
 #SingleInstance force
 #Persistent
