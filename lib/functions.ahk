@@ -1,4 +1,4 @@
-
+﻿
 getSelection( clipWaitTime=0.5 )
 {
 	SavedClipboard := ClipboardAll
@@ -8,7 +8,7 @@ getSelection( clipWaitTime=0.5 )
 	; also watch for the process-executable instead of just window title:
 	WinGetClass, Class, A
 	WinGet, this_process, ProcessName, ahk_class %Class%
-	
+
 	; sending keystroke Ctrl+C in maya can cause a "scene clipboard save" which can be heavy
 	; to avoid this we go sure we are in the text editor window of maya
 	if (this_process == "maya.exe")
@@ -17,7 +17,7 @@ getSelection( clipWaitTime=0.5 )
 		if (this_title != "Script Editor")
 			Return ""
 	}
-	
+
 	;Send, {Blind}%resetModifiers%^c%restoreModifiers%
 	if (this_process == "Photoshop.exe")
 	{
@@ -37,10 +37,10 @@ getSelection( clipWaitTime=0.5 )
 			ClipWait, %clipWaitTime%
 	}
 	Sleep,0
-	
+
 	Selection := Clipboard
 	Clipboard := SavedClipboard
-	
+
 	Return Selection
 }
 
@@ -156,7 +156,7 @@ trim(string)
 }
 
 
-; WIP: Which version do you like more?!?! 
+; WIP: Which version do you like more?!?!
 ; strips whitespace from start and end of a string:
 strip(byref inputString)
 {

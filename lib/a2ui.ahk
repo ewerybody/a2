@@ -1,4 +1,4 @@
-a2_ui_call := _init_get_var("a2_ui_call")
+﻿a2_ui_call := _init_get_var("a2_ui_call")
 
 a2_startup_tool_tips := _init_get_var("a2_startup_tool_tips")
 

@@ -1,13 +1,13 @@
-﻿/*
+/*
 	Library for getting info from a specific explorer window (if window handle not specified, the currently active
 	window will be used).  Requires AHK_L or similar.  Works with the desktop.  Does not currently work with save
 	dialogs and such.
-	
-	
+
+
 	Explorer_GetSelected(hwnd="")   - paths of target window's selected items
 	Explorer_GetAll(hwnd="")        - paths of all items in the target window's folder
 	Explorer_GetPath(hwnd="")       - path of target window's folder
-	
+
 	example:
 		F1::
 			path := Explorer_GetPath()
@@ -17,7 +17,7 @@
 			MsgBox % all
 			MsgBox % sel
 		return
-	
+
 	Joshua A. Kinnison
 	2011-04-27, 16:12
 */
@@ -31,8 +31,8 @@ Explorer_GetPath(hwnd="")
 	path := window.LocationURL
 	path := RegExReplace(path, "ftp://.*@","ftp://")
 	StringReplace, path, path, file:///
-	StringReplace, path, path, /, \, All 
-	
+	StringReplace, path, path, /, \, All
+
 	; thanks to polyethene
 	Loop
 		If RegExMatch(path, "i)(?<=%)[\da-f]{1,2}", hex)
@@ -54,7 +54,7 @@ Explorer_GetWindow(hwnd="")
 	; thanks to jethrow for some pointers here
     WinGet, process, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
     WinGetClass class, ahk_id %hwnd%
-	
+
 	if (process!="explorer.exe")
 		return
 	if (class ~= "(Cabinet|Explore)WClass")
@@ -63,7 +63,7 @@ Explorer_GetWindow(hwnd="")
 			Try if (window.hwnd==hwnd)
 				return window
 	}
-	else if (class ~= "Progman|WorkerW") 
+	else if (class ~= "Progman|WorkerW")
 		return "desktop" ; desktop found
 }
 Explorer_Get(hwnd="",selection=false)

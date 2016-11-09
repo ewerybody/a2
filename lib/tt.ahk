@@ -1,4 +1,4 @@
-; tt() - aka eZtt another tiny tooltip script:
+﻿; tt() - aka eZtt another tiny tooltip script:
 ; mouse follow
 ; timeout
 ; adding to the tooltip

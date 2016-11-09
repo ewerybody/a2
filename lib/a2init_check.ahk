@@ -1,4 +1,4 @@
-; these init checks are for the root executable scripts
+﻿; these init checks are for the root executable scripts
 
 _init_check_settings() {
     ; looks for the essential settings files to be there.
