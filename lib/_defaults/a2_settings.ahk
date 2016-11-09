@@ -1,4 +1,4 @@
-a2_settings = settings
+﻿a2_settings = settings
 a2_modules = modules
 a2_ahk =
 a2_python = pythonw.exe
