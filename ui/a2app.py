@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 New a2app backend hosting the actual a2ui window.
 Makes sure its only visible once through the 'siding' package
@@ -31,7 +32,7 @@ def main():
     app = QSingleApplication(sys.argv)
     # ensure_single will already exit() after sending the message
     if not sys.argv[1:]:
-        #app.ensure_single(['--show'])
+        # app.ensure_single(['--show'])
         app.ensure_single(['--show'])
     else:
         app.ensure_single()
@@ -51,7 +52,7 @@ def init_a2_win(app):
     try:
         import a2core
         a2 = a2core.A2Obj.inst()
-        #TODO: remove this:
+        # TODO: remove this:
         a2core._dbCleanup()
         a2.start_up()
 
