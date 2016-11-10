@@ -8,6 +8,7 @@ Created on Aug 7, 2015
 
 @author: eRiC
 """
+import os
 import sys
 import logging
 import platform
@@ -16,6 +17,7 @@ from ctypes import windll
 from importlib import reload
 
 from siding import QSingleApplication
+from PySide import QtGui
 
 # first basicConfic. No need for more.
 logging.basicConfig()
@@ -28,6 +30,7 @@ a2win = None
 
 
 def main():
+
     global app, a2win
     app = QSingleApplication(sys.argv)
     # ensure_single will already exit() after sending the message
@@ -37,6 +40,10 @@ def main():
     else:
         app.ensure_single()
 
+    # adding PySide plugin paths. e.g. to make all the imageformats available
+    pyside_plugin_path = os.path.join(sys.modules['PySide'].__path__[0], 'plugins')
+    QtGui.QApplication.addLibraryPath(pyside_plugin_path)
+
     winfo = platform.uname()
     log.info('initialised!\n  python: %s\n  windows: %s' % (sys.version, str(winfo)[31:-1]))
     app.messageReceived.connect(app_msg_get)
@@ -44,6 +51,7 @@ def main():
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
 
     a2win = init_a2_win(app)
+
     app.exec_()
 
 

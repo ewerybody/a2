@@ -1,8 +1,15 @@
-'''
-Created on Jul 9, 2015
+"""
+All about a2 modules.
+Modules in a2 always come in module sources. These are collections of 1 or more modules.
+A module always comes with a module source.
 
+The module sources can come from arbitrary locations. Basically just locally or
+from an FTP, github project, another URL, network location.
+They can be enabled/disabled individually affecting all their child modules.
+
+@created Jul 9, 2015
 @author: eRiC
-'''
+"""
 import os
 import a2core
 import a2ctrl
@@ -15,7 +22,8 @@ log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
 MOD_SOURCE_NAME = 'a2modsource.json'
 ICON_FILENAME = 'a2icon'
-ICON_FORMATS = ['.svg', '.png']
+ICON_FORMATS = ['.svg', '.png', '.ico']
+ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
 
 
 def get_module_sources(main, path, modsource_dict):
@@ -32,9 +40,6 @@ def get_module_sources(main, path, modsource_dict):
     for name in modsources:
         if not exists(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
-#        if name not in modsource_dict:
-#            modsource_dict[name] = ModSource(main, name)
-#        modsource_dict[name].fetch_modules()
         modsource_dict.setdefault(name, ModSource(main, name)).fetch_modules()
 
 
@@ -293,14 +298,11 @@ def get_folders(path):
     return [f for f in os.listdir(path) if isdir(os.path.join(path, f))]
 
 
-icon_types = [ICON_FILENAME + ext for ext in ICON_FORMATS]
-
-
 def get_icon(current_icon, folder, fallback):
     if current_icon is None or not exists(current_icon.path):
         icon_path = ''
         for item in get_files(folder):
-            if item in icon_types:
+            if item in ICON_TYPES:
                 icon_path = os.path.join(folder, item)
 
                 break
