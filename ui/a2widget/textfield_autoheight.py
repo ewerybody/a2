@@ -9,7 +9,6 @@ from PySide import QtGui, QtCore
 
 class TextField_AutoHeight(QtGui.QPlainTextEdit):
 
-
     def __init__(self, parent=None, *args, **kwargs):
         super(TextField_AutoHeight, self).__init__(parent, *args, **kwargs)
         # self.leaveEvent()

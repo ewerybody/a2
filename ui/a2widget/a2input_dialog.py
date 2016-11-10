@@ -29,17 +29,25 @@ class A2InputDialog(QtGui.QDialog):
         self.ui.a2ok_button.clicked.connect(self.okay)
         self.ui.a2cancel_button.clicked.connect(self.close)
         self.ui.label.setText(msg)
-        self.ui.textField.setText(text)
+
+        self._text = text
+        self.ui.textField.setText(self._text)
         self.ui.textField.setFocus()
 
         self.show()
 
-    def check(self, name=None):
-        if name is None:
-            name = self.ui.textField.text()
+    @property
+    def text(self):
+        return self._text
+
+    def check(self, text=None):
+        if text is None:
+            text = self.ui.textField.text()
+
+        self._text = text
 
         if self.checkFunc is not None:
-            answer = self.checkFunc(name)
+            answer = self.checkFunc(text)
             if answer is True:
                 self.ui.a2ok_button.setEnabled(True)
                 self.ui.a2ok_button.setText('OK')
