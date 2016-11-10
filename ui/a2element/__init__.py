@@ -3,18 +3,18 @@ from a2element._common import DrawCtrl, EditCtrl
 
 
 # amend with new elements to show in edit mode on Add Element-buttons:
-DISPLAY_ELEMENTS = ['check', 'combo', 'group', 'hotkey', 'number', 'path', 'string']
+DISPLAY_ELEMENTS = ['check', 'combo', 'group', 'hotkey', 'label', 'number', 'path', 'string']
 
 _UI_DATA = None
 log = a2core.get_logger(__name__)
 
 
-def get_list():
+def get_list(force=False):
     """
     Loads the python modules of the given DISPLAY_ELEMENTS to fetch display names and icons
     so they can be listed in a2 module edit mode.
     """
-    if not _UI_DATA:
+    if not _UI_DATA and not force:
         _load_ui_data()
     return _UI_DATA
 
