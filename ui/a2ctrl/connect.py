@@ -104,7 +104,7 @@ def control(ctrl, name, cfg, change_signal=None):
         name, value = name.rsplit('_', 1)
         ctrl.toggled.connect(partial(_radio_update, cfg, name, value))
         if change_signal is not None:
-            ctrl.toggled.connect(change_signal.emit)
+            ctrl.clicked[bool].connect(change_signal.emit)
         if name in cfg:
             ctrl.setChecked(cfg[name] == value)
         elif ctrl.isChecked():
