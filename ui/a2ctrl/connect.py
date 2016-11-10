@@ -30,6 +30,10 @@ def control_list(controls, cfg, change_signal=None):
     Connects a list of controls to their names in a given cfg dictionary
     """
     for ctrl in controls:
+        object_name = ctrl.objectName()
+        if not object_name:
+            raise RuntimeError('Cannot connect widget without objectName!\n  '
+                               'Please do "widget.setObjectName(\'attribname\')"')
         control(ctrl, ctrl.objectName(), cfg, change_signal)
 
 
