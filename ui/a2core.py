@@ -26,7 +26,7 @@ ahk, a2db, a2mod = None, None, None
 
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
-ALLOWED_CHARS = string.ascii_letters + string.digits + '_-'
+ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
 ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 '
                  'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
 JSON_INDENT = 2
@@ -428,7 +428,7 @@ def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already
         if any([(l in string.whitespace) for l in name]):
             return 'Name cannot have whitespace! Use _ or - insead!'
         if not all([(l in ALLOWED_CHARS) for l in name]):
-            return 'Name can only have letters, digits, _ and -'
+            return 'Name can only have letters, digits and "_.-"'
         if name in ILLEGAL_NAMES:
             return 'Name cannot be reserved OS device name!'
         if not any([(l in string.ascii_letters) for l in name]):
