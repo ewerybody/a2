@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 {description}
 
@@ -25,7 +26,7 @@ class Edit(EditCtrl):
     visible when editing the module.
     """
     def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg)
 
     @staticmethod
     def element_name():

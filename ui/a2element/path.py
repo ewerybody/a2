@@ -43,7 +43,7 @@ class Draw(DrawCtrl):
 
 class Edit(EditCtrl):
     def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_path
 
         self.ui = path_edit_ui.Ui_edit()

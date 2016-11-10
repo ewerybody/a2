@@ -25,7 +25,7 @@ class Edit(EditCtrl):
     enabled: it gets included in (enabled group or module).
     """
     def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
         self.main = main
         self.layout = QtGui.QHBoxLayout(self.mainWidget)
         self.layout.setSpacing(5)

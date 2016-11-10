@@ -50,7 +50,7 @@ class Edit(EditCtrl):
         not go deeper than this to keep complexity under the lid)
     """
     def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
         if 'children' not in self.cfg:
             self.cfg['children'] = []
 

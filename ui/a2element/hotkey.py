@@ -111,7 +111,7 @@ class Edit(EditCtrl):
         cfg['label'] = 'do awesome stuff on:'
     """
     def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, addLayout=False)
+        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
         defaults = [('key', 'Win+F'), ('mode', 'ahk')]
         for key, value in defaults:
             if key not in self.cfg:

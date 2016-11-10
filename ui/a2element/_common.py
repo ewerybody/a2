@@ -79,8 +79,8 @@ class EditCtrl(QtGui.QGroupBox):
     control up & down as well as deleting the control.
 
     It's made to work with handwritten and compiled Uis right away.
-    To embedd a compiled ui tell it so addLayout=False in the super()-statement:
-        super(MyNewCtrl, self).__init__(addLayout=False)
+    To embedd a compiled ui tell it so add_layout=False in the super()-statement:
+        super(MyNewCtrl, self).__init__(add_layout=False)
     state the mainWidget in setupUi:
         self.ui.setupUi(self.mainWidget)
     and then set the self.mainWidget-layout to your top layout in the compiled ui:
@@ -90,13 +90,13 @@ class EditCtrl(QtGui.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
-    def __init__(self, cfg, main, parentCfg, addLayout=True):
+    def __init__(self, cfg, main, parentCfg, add_layout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
         self.cfg = cfg
         self.main = main
         self.parentCfg = parentCfg
-        self._setup_ui(addLayout)
+        self._setup_ui(add_layout)
         self.helpUrl = self.a2.urls.helpEditCtrl
 
     @staticmethod
@@ -153,7 +153,7 @@ class EditCtrl(QtGui.QGroupBox):
     def help(self):
         a2core.surfTo(self.helpUrl)
 
-    def _setup_ui(self, addLayout):
+    def _setup_ui(self, add_layout):
         self.setTitle(self.cfg['typ'])
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
@@ -161,7 +161,7 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrlLayout.setSpacing(0)
         self._ctrlLayout.setContentsMargins(0, 0, 0, 0)
         self.mainWidget = QtGui.QWidget(self)
-        if addLayout:
+        if add_layout:
             self.mainLayout = QtGui.QVBoxLayout()
             self.mainLayout.setContentsMargins(5, 5, 5, 5)
             self.mainWidget.setLayout(self.mainLayout)
