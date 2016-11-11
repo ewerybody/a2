@@ -10,6 +10,7 @@ from PySide import QtGui
 from a2element import DrawCtrl, EditCtrl
 from a2widget import TextField_AutoHeight
 
+
 class Draw(DrawCtrl):
     """
     The frontend widget visible to the user with options

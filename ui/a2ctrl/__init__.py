@@ -24,7 +24,7 @@ from a2widget.a2input_dialog import A2InputDialog
 
 log = a2core.get_logger(__name__)
 UI_FILE_SUFFIX = '_ui'
-NO_DRAW_TYPES = ['include']
+NO_DRAW_TYPES = ['include', 'init']
 ELEMENTS_PACKAGE = 'a2element'
 _element_map = {}
 

@@ -223,11 +223,13 @@ def write_includes(specific=None):
     # TODO: this needs to be implemented dynamically
     libsAhk = [edit_disclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
                                             ['tt', 'functions', 'Explorer_Get']]
+    initAhk = edit_disclaimer % 'init' + '\na2_init_calls() {\n'
 
     # browse the enabled modules to collect the include data
     mod_settings = a2.db.tables()
     mod_path = relpath(a2.paths.modules, a2.paths.a2)
     settings_path = relpath(a2.paths.settings, a2.paths.a2)
+
     for source_name, data in a2.enabled.items():
         source_enabled, enabled_modules = data
         if not source_enabled:
@@ -287,6 +289,15 @@ def write_includes(specific=None):
                               % (type(value), var_name, str(value)))
                     variablesAhk.append('%s := %s' % (var_name, str(value)))
 
+            init_calls = a2.db.get('init_calls', module.key) or []
+            if init_calls:
+                initAhk += '    ; %s\n' % module.key
+                for call in init_calls:
+                    call = '    ' + call.replace('\n', '\n    ')
+                    if not call.endswith('\n'):
+                        call += '\n'
+                    initAhk += call
+
     # write all the include files
     with codecs.open(join(a2.paths.settings, 'variables.ahk'), 'w', encoding='utf-8-sig') as fobj:
         fobj.write('\n'.join(variablesAhk))
@@ -304,7 +315,8 @@ def write_includes(specific=None):
         fobj.write(content)
 
     with codecs.open(join(a2.paths.settings, 'init.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write(edit_disclaimer % 'init' + '\n')
+        initAhk += ('}\n')
+        fobj.write(initAhk)
 
 
 def get_date():

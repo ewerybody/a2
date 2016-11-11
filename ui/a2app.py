@@ -74,7 +74,6 @@ def init_a2_win(app):
         msg = ('Could not call A2Window! Error:\n%s\n'
                'Traceback:%s\n\nPress Ctrl+C to copy this message.'
                % (error, traceback.format_exc().strip()))
-        from PySide import QtGui
         QtGui.QMessageBox.critical(None, title, msg)
         raise RuntimeError(msg)
     return a2win
