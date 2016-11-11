@@ -33,10 +33,8 @@ Menu, Tray, icon, quit a2, %close_icon%
 if a2_startup_tool_tips
     tt(a2_title, 1)
 
-a2_init_calls()
-
-Return ; -----------------------------------------------------------------------------
 #include %A_ScriptDir%\..\settings\a2_init.ahk
+Return ; -----------------------------------------------------------------------------
 
 a2UI:
     a2UI()
