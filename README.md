@@ -4,6 +4,8 @@ Script managing and developing framework for [Autohotkey](http://ahkscript.org/)
 See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially the page about [setting you up](https://github.com/ewerybody/a2/wiki/setting-you-up).
 
 ## news:
+* Quite some stuff: **New Element Dialog** can now add to local module or globally and enlist in the display list.
+ **Unicode HotStrings** start to work a bit. Keep crossing fingers! **New Label element**. I added some stuff to the [gallery](http://imgur.com/a/xvoxy)
 * **animated gifs ftw!** I created a [gallery on imgur](http://imgur.com/a/xvoxy) to make latest changes a little more visual. Something between a video and just writing a proper commit msg. I know I need to make videos! Please be patient! :]
 * **package building** :package: works now! Using [PyInstaller](https://github.com/pyinstaller/pyinstaller) and some batch and py scripting we can now build self-containing a2 packages with no further dependencies. To do that of course there is now one more dependency: `pip install PyInstaller`. [The milestone](https://github.com/ewerybody/a2/milestones/alpha%20preview) is coming closer!!
 * since there is no option for a default issue view [**backlog**](https://github.com/ewerybody/a2/issues?q=label%3Abacklog) and [**wontfix**](https://github.com/ewerybody/a2/issues?q=label%3Awontfix) issues have been "closed" for better overview (and looking like there is less todo). They are still there! That's why I put the links. When such an issue is tackled it will be opened again. When closed the wontfix or backlog label will be removed.
