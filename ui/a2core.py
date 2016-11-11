@@ -16,6 +16,7 @@ import logging
 import subprocess
 import webbrowser
 from os.path import exists, join, dirname, abspath, relpath
+import codecs
 
 # only spot where this is set! Use a2core.get_logger() anywhere else!
 LOG_LEVEL = logging.INFO
@@ -287,21 +288,22 @@ def write_includes(specific=None):
                     variablesAhk.append('%s := %s' % (var_name, str(value)))
 
     # write all the include files
-    with open(join(a2.paths.settings, 'variables.ahk'), 'w') as fobj:
+    with codecs.open(join(a2.paths.settings, 'variables.ahk'), 'w', encoding='utf-8-sig') as fobj:
         fobj.write('\n'.join(variablesAhk))
 
-    with open(join(a2.paths.settings, 'libs.ahk'), 'w') as fobj:
+    with codecs.open(join(a2.paths.settings, 'libs.ahk'), 'w', encoding='utf-8-sig') as fobj:
         fobj.write('\n'.join(libsAhk))
 
-    with open(join(a2.paths.settings, 'includes.ahk'), 'w') as fobj:
+    with codecs.open(join(a2.paths.settings, 'includes.ahk'), 'w', encoding='utf-8-sig') as fobj:
         fobj.write('\n'.join(includeAhk))
 
-    with open(join(a2.paths.settings, 'hotkeys.ahk'), 'w') as fobj:
-        fobj.write(edit_disclaimer % 'hotkeys' + '\n')
+    with codecs.open(join(a2.paths.settings, 'hotkeys.ahk'), 'w', encoding='utf-8-sig') as fobj:
+        content = edit_disclaimer % 'hotkeys' + '\n'
         for key in sorted(hotkeysAhk.keys()):
-            fobj.write('\n'.join([key] + hotkeysAhk[key]) + '\n\n')
+            content += '\n'.join([key] + hotkeysAhk[key]) + '\n\n'
+        fobj.write(content)
 
-    with open(join(a2.paths.settings, 'init.ahk'), 'w') as fobj:
+    with codecs.open(join(a2.paths.settings, 'init.ahk'), 'w', encoding='utf-8-sig') as fobj:
         fobj.write(edit_disclaimer % 'init' + '\n')
 
 
