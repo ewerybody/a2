@@ -25,6 +25,10 @@ class a2TextField(QtGui.QPlainTextEdit):
         self._cursor_height = None
         self._backup_height = 16
 
+    def showEvent(self, *args, **kwargs):
+        self._set_height_to_block_count()
+        return QtGui.QPlainTextEdit.showEvent(self, *args, **kwargs)
+
     def setText(self, this):
         self.setPlainText(this)
         self._set_height_to_block_count()
