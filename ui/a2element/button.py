@@ -70,7 +70,7 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().check
+        return a2ctrl.Icons.inst().button
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
