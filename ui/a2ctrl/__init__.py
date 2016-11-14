@@ -92,13 +92,13 @@ def draw(main, cfg, mod):
 def edit(cfg, main, parent_cfg):
     mod_path = None if main.mod is None else main.mod.path
     ElementEditClass = get_a2element_object('Edit', cfg.get('typ'), mod_path)
-    print('ElementEditClass: %s' % ElementEditClass)
     if ElementEditClass is not None:
         try:
             return ElementEditClass(cfg, main, parent_cfg)
         except Exception:
             log.error(traceback.format_exc().strip())
-    log.error('Edit type "%s" not supported (yet)!' % cfg.get('typ'))
+    log.error('Error getting Edit class for type "%s"!'
+              ' Type not supported (yet)?!' % cfg.get('typ'))
 
 
 def get_a2element_object(obj_name, element_type, module_path=None):

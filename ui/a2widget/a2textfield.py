@@ -7,10 +7,10 @@ Text field that automatically gets bigger the more lines you add.
 from PySide import QtGui, QtCore
 
 
-class TextField_AutoHeight(QtGui.QPlainTextEdit):
+class a2TextField(QtGui.QPlainTextEdit):
 
     def __init__(self, parent=None, *args, **kwargs):
-        super(TextField_AutoHeight, self).__init__(parent, *args, **kwargs)
+        super(a2TextField, self).__init__(parent, *args, **kwargs)
         # self.leaveEvent()
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -24,15 +24,17 @@ class TextField_AutoHeight(QtGui.QPlainTextEdit):
         self.blockCountChanged.connect(self._set_height_to_block_count)
         self._cursor_height = None
         self._backup_height = 16
-        self._set_height_to_block_count(1)
 
     def setText(self, this):
         self.setPlainText(this)
+        self._set_height_to_block_count()
 
-    def _set_height_to_block_count(self, block_count):
+    def _set_height_to_block_count(self, block_count=None):
+        if block_count is None:
+            block_count = self.blockCount()
+
         cursor_height = self.cursorRect().height()
         if cursor_height:
-            print('cursor_height: %s' % cursor_height)
             self._cursor_height = cursor_height
         elif self._cursor_height is None:
             cursor_height = self._backup_height
@@ -41,5 +43,14 @@ class TextField_AutoHeight(QtGui.QPlainTextEdit):
 
         magic_height = (cursor_height / 3) + 5
         height = (cursor_height * block_count) + magic_height
+
         self.setMinimumHeight(height)
         self.setMaximumHeight(height)
+
+
+class a2CodeField(a2TextField):
+    """
+    Just subclassed to be identifyable via CSS to apply a monospace font.
+    """
+    def __init__(self, parent=None, *args, **kwargs):
+        a2TextField.__init__(self, parent, *args, **kwargs)
