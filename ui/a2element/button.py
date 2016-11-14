@@ -40,7 +40,10 @@ class Draw(DrawCtrl):
             raise RuntimeError('Button has no code to execute!')
         else:
             try:
-                exec(code)
+                # amend the globals dict with some useful info
+                globals_dict = globals()
+                globals_dict.update({'a2path': self.mod.path})
+                exec(code, globals_dict)
             except Exception:
                 log.error(traceback.format_exc().strip())
                 log.error('Failed to call button code in "%s":\n  %s'
