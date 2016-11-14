@@ -24,6 +24,7 @@ MOD_SOURCE_NAME = 'a2modsource.json'
 ICON_FILENAME = 'a2icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
+EXCLUDE_FOLDERS = ['.git']
 
 
 def get_module_sources(main, path, modsource_dict):
@@ -69,7 +70,7 @@ class ModSource(object):
 
         # add new ones
         for modname in mods_in_path:
-            if modname not in ['.git'] and modname not in self.mods:
+            if modname not in self.mods:
                 self.mods[modname] = Mod(self, modname)
 
     @property
@@ -294,8 +295,10 @@ def get_files(path):
     return [f for f in os.listdir(path) if isfile(os.path.join(path, f))]
 
 
-def get_folders(path):
-    return [f for f in os.listdir(path) if isdir(os.path.join(path, f))]
+def get_folders(path, exclude=None):
+    if exclude is None:
+        exclude = EXCLUDE_FOLDERS
+    return [f for f in os.listdir(path) if isdir(os.path.join(path, f)) and f not in exclude]
 
 
 def get_icon(current_icon, folder, fallback):
