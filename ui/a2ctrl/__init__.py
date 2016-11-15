@@ -92,13 +92,13 @@ def draw(main, cfg, mod):
 def edit(cfg, main, parent_cfg):
     mod_path = None if main.mod is None else main.mod.path
     ElementEditClass = get_a2element_object('Edit', cfg.get('typ'), mod_path)
-    print('ElementEditClass: %s' % ElementEditClass)
     if ElementEditClass is not None:
         try:
             return ElementEditClass(cfg, main, parent_cfg)
         except Exception:
             log.error(traceback.format_exc().strip())
-    log.error('Edit type "%s" not supported (yet)!' % cfg.get('typ'))
+    log.error('Error getting Edit class for type "%s"!'
+              ' Type not supported (yet)?!' % cfg.get('typ'))
 
 
 def get_a2element_object(obj_name, element_type, module_path=None):
@@ -274,7 +274,7 @@ def get_local_element(itempath):
             log.error('Could not exec code from "%s"' % itempath)
 
 
-def get_cfg_value(subCfg, user_cfg, attr_name=None, typ=None, default=None):
+def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.
@@ -284,10 +284,10 @@ def get_cfg_value(subCfg, user_cfg, attr_name=None, typ=None, default=None):
         value = user_cfg
     elif isinstance(user_cfg, dict) and attr_name in user_cfg:
         value = user_cfg[attr_name]
-    elif attr_name is None:
-        value = subCfg['value']
-    elif attr_name in subCfg:
-        value = subCfg[attr_name]
+    elif attr_name is None and 'value' in element_cfg:
+        value = element_cfg.get('value')
+    elif attr_name in element_cfg:
+        value = element_cfg[attr_name]
     else:
         value = default
 

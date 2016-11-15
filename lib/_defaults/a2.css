@@ -155,3 +155,7 @@ QScrollBar::handle:hover {
 QScrollBar::handle:pressed {
 	background-color: "%(color_pressed)s";
 }
+
+a2CodeField {
+	font-family: "Consolas";
+}

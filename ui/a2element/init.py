@@ -6,7 +6,7 @@
 import a2ctrl
 from PySide import QtGui
 from a2element import EditCtrl
-from a2widget import TextField_AutoHeight
+from a2widget import a2CodeField
 
 
 class Edit(EditCtrl):
@@ -18,7 +18,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg)
 
         self.mainLayout.addWidget(QtGui.QLabel('Some code to be executed on a2 runtime start:'))
-        self.text_field = TextField_AutoHeight()
+        self.text_field = a2CodeField()
         self.mainLayout.addWidget(self.text_field)
         a2ctrl.connect.control(self.text_field, 'code', self.cfg)
 

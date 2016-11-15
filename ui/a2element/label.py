@@ -8,7 +8,7 @@ Some element description ...
 import a2ctrl
 from PySide import QtGui
 from a2element import DrawCtrl, EditCtrl
-from a2widget import TextField_AutoHeight
+from a2widget import a2TextField
 
 
 class Draw(DrawCtrl):
@@ -36,7 +36,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg)
 
         self.mainLayout.addWidget(QtGui.QLabel('Some text to show in the module frontend:'))
-        self.text_field = TextField_AutoHeight()
+        self.text_field = a2TextField()
         self.mainLayout.addWidget(self.text_field)
         a2ctrl.connect.control(self.text_field, 'text', self.cfg)
 
@@ -47,7 +47,7 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().string
+        return a2ctrl.Icons.inst().text
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
