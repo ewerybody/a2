@@ -35,6 +35,7 @@ class Draw(DrawCtrl):
         self.value = value
         self.set_user_value(value)
         self.change('variables')
+        super(Draw, self).check()
 
 
 class Edit(EditCtrl):
