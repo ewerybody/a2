@@ -24,6 +24,7 @@ class Draw(DrawCtrl):
     def check(self, state):
         self.set_user_value(state)
         self.change('variables')
+        super(Draw, self).check()
 
 
 class Edit(EditCtrl):

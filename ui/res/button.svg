@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="256"
+   width="256"
+   id="svg4136"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="button.svg">
+  <defs
+     id="defs4142" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="3440"
+     inkscape:window-height="1420"
+     id="namedview4140"
+     showgrid="false"
+     inkscape:zoom="2.461063"
+     inkscape:cx="-17.281705"
+     inkscape:cy="112.26288"
+     inkscape:window-x="-8"
+     inkscape:window-y="377"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4136"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-grids="false"
+     inkscape:snap-to-guides="false"
+     inkscape:snap-others="false"
+     inkscape:snap-nodes="false"
+     inkscape:snap-global="false" />
+  <path
+     style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:100;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:1;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     d="m 70.293197,66.821558 117.261893,0 c 17.98873,0 32.47062,14.481896 32.47062,32.470611 l -0.18965,54.406161 36.15953,-0.11892 -0.0428,42.41202 -255.93331981,0 0.1056767,-42.36663 37.71661211,-0.1727 -0.0193,-54.159911 c 0,-17.988716 14.56513,-32.477525 32.470621,-32.470611 z"
+     id="rect4150"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="csccccccccsc" />
+</svg>
