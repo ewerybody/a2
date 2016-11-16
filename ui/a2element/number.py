@@ -87,6 +87,7 @@ class Draw(DrawCtrl):
         self.value = _toggle_type(self.cfg.get('decimals', 0), value)
         self.set_user_value(self.value)
         self.change('variables')
+        super(Draw, self).check()
 
 
 class Edit(EditCtrl):

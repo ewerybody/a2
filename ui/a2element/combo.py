@@ -51,6 +51,7 @@ class Draw(DrawCtrl):
         self.value = value
         self.set_user_value(value, 'value')
         self.change('variables')
+        super(Draw, self).check()
 
     def check_user_items(self, *args):
         raise NotImplementedError('Ohoh! I thought this was done already! :(')
