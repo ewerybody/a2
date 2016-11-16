@@ -3,3 +3,4 @@
 #include lib/ahklib/functions.ahk
 #include lib/ahklib/Anchor.ahk
 #include lib/ahklib/gdip.ahk
+#include lib/ahklib/ahk_functions.ahk
