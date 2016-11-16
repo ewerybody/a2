@@ -5,3 +5,4 @@
 #include lib/ahklib/gdip.ahk
 #include lib/ahklib/ahk_functions.ahk
 #include lib/ahklib/ObjectTools.ahk
+#include lib/ahklib/RichObject.ahk
