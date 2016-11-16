@@ -21,7 +21,7 @@ class A2ItemEditor(QtGui.QWidget):
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
 
-        self._selected_name = ''
+        self._selected_name = None
 
         self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.keyPressEvent = self.item_list_keyPressEvent
