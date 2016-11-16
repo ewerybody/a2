@@ -569,3 +569,18 @@ GetFullPathName(sPath)
     DllCall("GetLongPathName", Str, sPath, Str, lPath, UInt, 260)
     return lPath
 }
+
+/**
+ * Helper Function
+ *     Get the version ID of the current Windows installation
+ *
+ * @sample
+ *     GetWindowsVersion()     ; ie: returns 10.0
+ *
+ * @return  integer
+ */
+GetWindowsVersion()
+{
+    Version := DllCall("GetVersion", "uint") & 0xFFFF
+    return (Version & 0xFF) "." (Version >> 8)
+}
