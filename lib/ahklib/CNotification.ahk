@@ -4,6 +4,19 @@ Notify(Title, Text, Timeout = "", Icon = "", Action = "", Progress = "", Style =
 {
     return new CNotificationWindow(Title, Text, Icon, Timeout, Action, Progress, Style)
 }
+
+Class CNotifyIcons
+{
+    Info := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 222 : 136)
+    Error := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 78 : 110)
+    Success := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 145 : 136)
+    Internet := ExtractIcon(WINDIR . "\System32\shell32.dll", 136)
+    Sound := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 169 : 110)
+    SoundMute := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 220 : 169)
+    Question := ExtractIcon(WINDIR . "\System32\shell32.dll", 24)
+}
+global NotifyIcons := new CNotifyIcons()
+
 Class CNotification
 {
     static Windows := Array()
