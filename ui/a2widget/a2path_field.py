@@ -42,9 +42,9 @@ class A2PathField(QtGui.QWidget):
         self.save_mode = save_mode
         self.browse_type = BrowseType.file
         self.label_text = label_text
-        self._writable = writable
 
-        self.writable = self._writable
+        self._writable = None
+        self.writable = writable
 
     @property
     def writable(self):
