@@ -1,15 +1,13 @@
-﻿; a2 - modular Autohotkey script envirionment
+; a2 - modular Autohotkey script envirionment
 ; main file! This basically gathers all resources
 #SingleInstance force
 #Persistent
 #NoTrayIcon
 SetWorkingDir %A_ScriptDir%\..
 a2Dir := A_ScriptDir "\.."
+#include lib\Globals.ahk
 #include settings\a2_settings.ahk
 #include lib\_defaults\a2_urls.ahk
-
-UIresources := a2Dir "\ui\res"
-libs := a2Dir "\lib\ahklib"
 
 Menu, Tray, Icon, %UIresources%\a2.ico, , 1
 Menu, Tray, Icon
