@@ -12,7 +12,7 @@ reload_icon = %icon_path%\a2reload.ico
 close_icon = %icon_path%\a2x.ico
 help_icon = %icon_path%\a2help.ico
 
-Menu, Tray, Icon, %script_icon%, %script_icon#%, 1
+Menu, Tray, Icon, %script_icon%,, 1
 Menu, Tray, Icon
 Gui, 1:Destroy
 
