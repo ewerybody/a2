@@ -221,7 +221,7 @@ def write_includes(specific=None):
     hotkeysAhk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
     variablesAhk = [edit_disclaimer % 'variables']
     # TODO: this needs to be implemented dynamically
-    libsAhk = [edit_disclaimer % 'libs'] + ['#include lib/%s.ahk' % lib for lib in
+    libsAhk = [edit_disclaimer % 'libs'] + ['#include lib/ahklib/%s.ahk' % lib for lib in
                                             ['tt', 'functions', 'Explorer_Get', 'gdip']]
     initAhk = edit_disclaimer % 'init' + '\na2_init_calls() {\n'
 
