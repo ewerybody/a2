@@ -1,4 +1,4 @@
-#include lib\CGUI.ahk
+#include lib\ahklib\CGUI\CGUI.ahk
 
 Notify(Title, Text, Timeout = "", Icon = "", Action = "", Progress = "", Style = "")
 {
