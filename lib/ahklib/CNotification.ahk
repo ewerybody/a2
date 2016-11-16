@@ -7,15 +7,14 @@ Notify(Title, Text, Timeout = "", Icon = "", Action = "", Progress = "", Style =
 
 Class CNotifyIcons
 {
-    Info := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 222 : 136)
-    Error := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 78 : 110)
-    Success := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 145 : 136)
-    Internet := ExtractIcon(WINDIR . "\System32\shell32.dll", 136)
-    Sound := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 169 : 110)
-    SoundMute := ExtractIcon(WINDIR . "\System32\shell32.dll", WinVer >= WIN_Vista ? 220 : 169)
-    Question := ExtractIcon(WINDIR . "\System32\shell32.dll", 24)
+    Info := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 222 : 136)
+    Error := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 78 : 110)
+    Success := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 145 : 136)
+    Internet := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 136)
+    Sound := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 169 : 110)
+    SoundMute := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 220 : 169)
+    Question := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 24)
 }
-global NotifyIcons := new CNotifyIcons()
 
 Class CNotification
 {
@@ -32,13 +31,13 @@ Class CNotification
         {
             static FontSize := 8
             static FontWeight := 625
-            static FontColor := "DDDDDD"
+            static FontColor := "e1ffff"
             static Font := "Arial"
         }
         Class Text
         {
             static FontSize := 8
-            static FontColor := "DDDDDD"
+            static FontColor := "e1ffff"
             static FontWeight := 550
             static Font := "Arial"
         }
@@ -200,7 +199,7 @@ Class CNotificationWindow Extends CGUI
         ; Revert to basic functions here so the font can be set before the control is added
         Gui, % this.GUINum ":Font", % "s" Style.Title.FontSize " w" Style.Title.FontWeight " c" Style.Title.FontColor, % Style.Title.Font
         this.txtTitle := this.AddControl("Text", "txtTitle", Icon ? "x+5" : "", Title)
-        this.txtTitle.AutoSize()
+        ; this.txtTitle.AutoSize() ; TODO fix
         ; Progress control
         if (Progress)
             this.prgProgress := this.AddControl("Progress", "prgProgress", "y+5 Range" Progress.Min "-" Progress.Max, Progress.Value)
