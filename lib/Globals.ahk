@@ -1,3 +1,4 @@
+global Settings := {} ;empty object for setting to be injected into
 
 global UIresources := a2Dir "\ui\res"
 global libs := a2Dir "\lib\ahklib"
