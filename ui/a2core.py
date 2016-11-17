@@ -221,8 +221,9 @@ def write_includes(specific=None):
     hotkeysAhk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
     variablesAhk = [edit_disclaimer % 'variables']
     # TODO: this needs to be implemented dynamically
-    libsAhk = [edit_disclaimer % 'libs'] + ['#include lib/ahklib/%s.ahk' % lib for lib in
-        ['Globals', 'tt', 'functions', 'Explorer_Get', 'gdip', 'ahk_functions', 'ObjectTools', 'RichObject', 'Array']]
+    libsAhk = [edit_disclaimer % 'libs', '#include lib/Globals.ahk']
+    libsAhk += ['#include lib/ahklib/%s.ahk' % lib for lib in
+                ['tt', 'functions', 'Explorer_Get', 'gdip', 'ahk_functions', 'ObjectTools', 'RichObject', 'Array']]
     initAhk = edit_disclaimer % 'init' + '\na2_init_calls() {\n'
 
     # browse the enabled modules to collect the include data
