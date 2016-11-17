@@ -126,7 +126,7 @@ aagetSelection( copyAsText=1, copyOnly=0, clipWaitTime=0.5 )
 }
 
 ; to remove whitespace from strings start + end
-trim(string)
+strtrim(string)
 {
     start := 1
     stringLen, end, string
