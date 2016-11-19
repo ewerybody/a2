@@ -9,6 +9,7 @@ Class CNotifyIcons
 {
     Info := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 222 : 136)
     Error := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 78 : 110)
+    Warning := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 78)
     Success := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 145 : 136)
     Internet := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 136)
     Sound := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 169 : 110)
