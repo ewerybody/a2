@@ -28,8 +28,8 @@ Class CNotifyIcons
     Warning := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 78)
     Success := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 145 : 136)
     Internet := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 136)
-    Sound := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 169 : 110)
-    SoundMute := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), WinVer >= WIN_Vista ? 220 : 169)
+    Sound := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\SndVol.exe"), 2)
+    SoundMute := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\SndVol.exe"), 3)
     Question := ExtractIcon(ExpandPathPlaceholders("%WINDIR%\System32\shell32.dll"), 24)
 }
 
