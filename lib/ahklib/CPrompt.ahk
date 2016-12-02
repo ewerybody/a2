@@ -32,6 +32,7 @@ class CPrompt
      */
     prompt()
     {
+        this.response := false
         this.DisplayDialog()
 
         Loop
@@ -197,16 +198,16 @@ class CPrompt
 }
 
 Action_Input_Edit:
-    ScreenShotTools_PromptObject.InputBoxEdit()
+    Prompt.InputBoxEdit()
 return
 InputBox_Browse:
-    ScreenShotTools_PromptObject.InputBoxBrowse()
+    Prompt.InputBoxBrowse()
 return
 InputboxClose:
 InputboxEscape:
 InputBox_Cancel:
-    ScreenShotTools_PromptObject.InputBoxCancel()
+    Prompt.InputBoxCancel()
 return
 InputBox_OK:
-    ScreenShotTools_PromptObject.InputBoxOK()
+    Prompt.InputBoxOK()
 return

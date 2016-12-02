@@ -11,3 +11,7 @@ global WIN_7 := 6.1
 global WIN_8 := 6.2
 global WIN_10 := 10.0
 global NotifyIcons := new CNotifyIcons()
+global Prompt := new CPrompt()
+
+GroupAdd, ExplorerGroup, ahk_class ExploreWClass
+GroupAdd, ExplorerGroup, ahk_class CabinetWClass
