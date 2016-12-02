@@ -126,32 +126,79 @@ aagetSelection( copyAsText=1, copyOnly=0, clipWaitTime=0.5 )
 }
 
 ; to remove whitespace from strings start + end
-strtrim(string)
+; strtrim(string)
+; {
+;     start := 1
+;     stringLen, end, string
+;     loop, %end% ; fix the start
+;     {
+;         l := SubStr(string, A_Index, 1)
+;         if (l != A_Space && l != A_Tab && l != "`n" && l != "`r")
+;         {
+;             start := A_Index
+;             break
+;         }
+;     }
+;     string := SubStr(string, start)
+;     stringLen, end, string
+;     loop, %end% ; fix the end
+;     {
+;         i := - A_Index + 1
+;         l := SubStr(string, i, 1)
+;         if (l != A_Space && l != A_Tab && l != "`n" && l != "`r")
+;         {
+;             end := A_Index - 1
+;             break
+;         }
+;     }
+;     StringTrimRight, string, string, %end%
+;     return string
+; }
+
+; Determines if a string starts with another string. NOTE: It's a bit faster to simply use InStr(string, start) = 1
+strStartsWith(string,start)
 {
-    start := 1
-    stringLen, end, string
-    loop, %end% ; fix the start
+    return InStr(string, start) = 1
+}
+
+; Determines if a string ends with another string
+strEndsWith(string, end)
+{
+    return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
+}
+
+strTrim(string, trim)
+{
+    return strTrimLeft(strTrimRight(string, trim), trim)
+}
+
+; Removes all occurences of trim at the beginning of string
+; trim can be an array of strings that should be removed.
+strTrimLeft(string, trim)
+{
+    if (!IsObject(trim))
+        trim := [trim]
+    for index, trimString in trim
     {
-        l := SubStr(string, A_Index, 1)
-        if (l != A_Space && l != A_Tab && l != "`n" && l != "`r")
-        {
-            start := A_Index
-            break
-        }
+        len := strLen(trimString)
+        while(InStr(string, trimString) = 1)
+            StringTrimLeft, string, string, %len%
     }
-    string := SubStr(string, start)
-    stringLen, end, string
-    loop, %end% ; fix the end
+    return string
+}
+
+; Removes all occurences of trim at the end of string
+; trim can be an array of strings that should be removed.
+strTrimRight(string, trim)
+{
+    if (!IsObject(trim))
+        trim := [trim]
+    for index, trimString in trim
     {
-        i := - A_Index + 1
-        l := SubStr(string, i, 1)
-        if (l != A_Space && l != A_Tab && l != "`n" && l != "`r")
-        {
-            end := A_Index - 1
-            break
-        }
+        len := strLen(trimString)
+        while(strEndsWith(string, trimString))
+            StringTrimRight, string, string, %len%
     }
-    StringTrimRight, string, string, %end%
     return string
 }
 
@@ -648,13 +695,228 @@ ExtractIcon(Filename, IconNumber = 0, IconSize = 64)
 /**
   * Fake Debug function while a2 doesn't offer a global one
   */
-WriteDebug(Title, InputObject = "", Delimiter = "`n", prefiex = "[a2] ")
+WriteDebug(Title, InputObject = "", Delimiter = "`n", prefix = "[a2] ")
 {
     if (Settings.Debug.Enabled)
     {
-        OutputDebug % prefix Title
+        OutputDebug % Title
         if (InputObject)
             Loop, Parse, InputObject, %Delimiter%
                 WriteDebug("    " A_LoopField)
+    }
+}
+
+/**
+ * Helper Function
+ *     Starts a timer that can cal functions and object methods
+ *
+ * @param   func    Function     A function or method reference to be called
+ * @param   integer Period      Period/Timer in ms to call the Fcunction / value "OFF" deactivates a timer
+ * @param           ParmObject
+ * @param           Priority
+ * @return
+ */
+SetTimerF( Function, Period=0, ParmObject=0, Priority=0 ) {
+    Static current,tmrs:=Object() ;current will hold timer that is currently running
+    If IsFunc( Function ) || IsObject( Function ) {
+        if IsObject(tmr:=tmrs[Function]) ;destroy timer before creating a new one
+            ret := DllCall( "KillTimer", UInt,0, UInt, tmr.tmr)
+                , DllCall("GlobalFree", UInt, tmr.CBA)
+                , tmrs.Remove(Function)
+        if (Period = 0 || Period ? "off")
+            return ret ;Return as we want to turn off timer
+        ; create object that will hold information for timer, it will be passed trough A_EventInfo when Timer is launched
+        tmr:=tmrs[Function]:=Object("func",Function,"Period",Period="on" ? 250 : Period,"Priority",Priority
+                            ,"OneTime",(Period<0),"params",IsObject(ParmObject)?ParmObject:Object()
+                            ,"Tick",A_TickCount)
+        tmr.CBA := RegisterCallback(A_ThisFunc,"F",4,&tmr)
+        return !!(tmr.tmr  := DllCall("SetTimer", UInt,0, UInt,0, UInt
+                            , (Period && Period!="On") ? Abs(Period) : (Period := 250)
+                            , UInt,tmr.CBA)) ;Create Timer and return true if a timer was created
+                            , tmr.Tick:=A_TickCount
+    }
+    tmr := Object(A_EventInfo) ;A_Event holds object which contains timer information
+    if IsObject(tmr) {
+        DllCall("KillTimer", UInt,0, UInt,tmr.tmr) ;deactivate timer so it does not run again while we are processing the function
+        If (!tmr.active && tmr.Priority<(current.priority ? current.priority : 0)) ;Timer with higher priority is already current so return
+           Return (tmr.tmr:=DllCall("SetTimer", UInt,0, UInt,0, UInt, 100, UInt,tmr.CBA)) ;call timer again asap
+        current:=tmr
+        tmr.tick:=ErrorLevel :=Priority ;update tick to launch function on time
+        func := tmr.func.(tmr.params*) ;call function
+        current= ;reset timer
+        if (tmr.OneTime) ;One time timer, deactivate and delete it
+           return DllCall("GlobalFree", UInt,tmr.CBA)
+                 ,tmrs.Remove(tmr.func)
+        tmr.tmr:= DllCall("SetTimer", UInt,0, UInt,0, UInt ;reset timer
+                ,((A_TickCount-tmr.Tick) > tmr.Period) ? 0 : (tmr.Period-(A_TickCount-tmr.Tick)), UInt,tmr.CBA)
+    }
+}
+
+/**
+ * Helper Function
+ *     Returns the workspace area covered by the active monitor
+ *
+ * @param   var    MonLeft       Variable in which to write the monitor's left coords
+ * @param   var    MonTop        Variable in which to write the monitor's top coords
+ * @param   var    MonW          Variable in which to write the monitor's height
+ * @param   var    MonH          Variable in which to write the monitor's height
+ * @param   var    hWndOrMouseX  Window handler or Mouse X coords from which to guess the monitor in question
+ * @param   var    MouseY                          Mouse Y coords from which to guess the monitor in question
+ */
+GetActiveMonitorWorkspaceArea(ByRef MonLeft, ByRef MonTop, ByRef MonW, ByRef MonH,hWndOrMouseX, MouseY = "")
+{
+    mon := GetActiveMonitor(hWndOrMouseX, MouseY)
+    if (mon>=0)
+    {
+        SysGet, Mon, MonitorWorkArea, %mon%
+        MonW := MonRight - MonLeft
+        MonH := MonBottom - MonTop
+    }
+}
+
+/**
+ * Helper Function
+ *     Returns the monitor the mouse or the active window is in
+ *
+ * @param   var    hWndOrMouseX  Window handler or Mouse X coords from which to guess the monitor in question
+ * @param   var    MouseY                          Mouse Y coords from which to guess the monitor in question
+ * @return  int   MonitorID
+ */
+GetActiveMonitor(hWndOrMouseX, MouseY = "")
+{
+    if (MouseY="")
+    {
+        WinGetPos,x,y,w,h,ahk_id %hWndOrMouseX%
+        if (!x && !y && !w && !h)
+        {
+            MsgBox GetActiveMonitor(): invalid window handle!
+            return -1
+        }
+        x := x + Round(w/2)
+        y := y + Round(h/2)
+    }
+    else
+    {
+        x := hWndOrMouseX
+        y := MouseY
+    }
+    ; Loop through every monitor and calculate the distance to each monitor
+    iBestD := 0xFFFFFFFF
+    SysGet, Mon0, MonitorCount
+    Loop %Mon0% { ;Loop through each monitor
+        SysGet, Mon%A_Index%, Monitor, %A_Index%
+        Mon%A_Index%MidX := Mon%A_Index%Left + Ceil((Mon%A_Index%Right - Mon%A_Index%Left) / 2)
+        Mon%A_Index%MidY := Mon%A_Index%Top + Ceil((Mon%A_Index%Top - Mon%A_Index%Bottom) / 2)
+    }
+    Loop % Mon0 {
+      D := Sqrt((x - Mon%A_Index%MidX)**2 + (y - Mon%A_Index%MidY)**2)
+      If (D < iBestD) {
+         iBestD := D
+         iMonitor := A_Index
+      }
+   }
+   return iMonitor
+}
+
+
+TranslateMUI(resDll, resID)
+{
+    VarSetCapacity(buf, 256)
+    hDll := DllCall("LoadLibrary", "str", resDll, "Ptr")
+    Result := DllCall("LoadString", "Ptr", hDll, "uint", resID, "str", buf, "int", 128)
+    return buf
+}
+
+/**
+ * Helper Function
+ *     Formats a file size in bytes to a human-readable size string
+ *
+ * @sample
+ *     x := FormatFileSize(31236)
+ *
+ * @param   int     Bytes      Number of bytes to be formated
+ * @param   int     Decimals   Number of decimals to be shown
+ * @param   int     Prefixes   List of which the best matching prefix will be used
+ * @return  string
+ */
+FormatFileSize(Bytes, Decimals = 1, Prefixes = "B,KB,MB,GB,TB,PB,EB,ZB,YB")
+{
+    StringSplit, Prefix, Prefixes, `,
+    Loop, Parse, Prefixes, `,
+        if (Bytes < e := 1024 ** A_Index)
+            return % Round(Bytes / (e / 1024), decimals) Prefix%A_Index%
+}
+
+/**
+ * Helper Function
+ *     Runs a command as user (whether as as admin)
+ *
+ * @param   string  Command     Command to be executed
+ * @param   string  WorkingDir
+ * @param   string  Options
+ * @return  string  PID         ProcessID of the started command
+ */
+RunAsUser(Command, WorkingDir = "", Options = "")
+{
+    result := DllCall(Settings.DllPath "\Explorer.dll\CreateProcessMediumIL", Str, Command, Str, WorkingDir, Str, Options, "UInt")
+    if (A_LastError = 740) ;ERROR_ELEVATION_REQUIRED
+    {
+        Run, %Command% , %WorkingDir%, %Mode% UseErrorLevel, v
+        if (A_LastError)
+            Notify("Error", "Error launching " Target, 5, NotifyIcons.Error)
+        Return, v
+    }
+}
+
+/**
+ * Helper Function
+ *     Runs a command as admin
+ *
+ * @param   string  Command     Command to be executed
+ * @param   string  WorkingDir
+ * @param   string  Options
+ * @return  bool                 Did user confirm the UAC dialog
+ */
+RunAsAdmin(Command, WorkingDir = "", Options = "")
+{
+    uacrep := DllCall("shell32\ShellExecute", uint, 0, str, "RunAs", str, Command, str, Options, str, WorkingDir, int, 1)
+    return uacrep = 42 ;UAC dialog confirmed
+}
+
+; Remove quotes from a string if necessary
+UnQuote(string)
+{
+    if (InStr(string, """") = 1 && strEndsWith(string, """"))
+        return strTrim(string, """")
+    return string
+}
+
+; checks if a point is in a rectangle
+IsInArea(px, py, x, y, w, h)
+{
+    return (px > x && py > y && px < x + w && py < y + h)
+}
+
+; Append two paths together and treat possibly double or missing backslashes
+AppendPaths(BasePath, RelativePath)
+{
+    if (!BasePath)
+    return RelativePath
+    if (!RelativePath)
+    return BasePath
+    return StringTrimLeft(BasePath, "\") "\" StringTrimLeft(RelativePath, "\")
+}
+
+; Gets ClassNN from hwnd
+HWNDToClassNN(hwnd)
+{
+    win := DllCall("GetParent", "PTR", hwnd, "PTR")
+    WinGet ctrlList, ControlList, ahk_id %win%
+    ; Built an array indexing the control names by their hwnd
+    Loop Parse, ctrlList, `n
+    {
+        ControlGet hwnd1, Hwnd, , %A_LoopField%, ahk_id %win%
+        if (hwnd1=hwnd)
+        return A_LoopField
     }
 }
