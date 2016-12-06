@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>508</width>
-    <height>82</height>
+    <width>442</width>
+    <height>105</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,6 +95,16 @@
     <widget class="QLineEdit" name="cfg_value">
      <property name="text">
       <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Normal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QCheckBox" name="cfg_password_mode">
+     <property name="text">
+      <string notr="true">password mode</string>
      </property>
     </widget>
    </item>
