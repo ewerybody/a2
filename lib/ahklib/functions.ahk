@@ -695,14 +695,20 @@ ExtractIcon(Filename, IconNumber = 0, IconSize = 64)
 /**
   * Fake Debug function while a2 doesn't offer a global one
   */
-WriteDebug(Title, InputObject = "", Delimiter = "`n", prefix = "[a2] ")
+WriteDebug(Title, InputObject = "", level = "info", module = "", delay = 0, Delimiter = "`n")
 {
+    _prefix := level ? "[" level "] " : ""
+    _module := module ? "[" module "] " : ""
+
     if (Settings.Debug.Enabled)
     {
-        OutputDebug % Title
+        sleep, %delay%
+        FileAppend  % _prefix _module Title "`n", *
         if (InputObject)
+        {
             Loop, Parse, InputObject, %Delimiter%
-                WriteDebug("    " A_LoopField)
+                WriteDebug("    " A_LoopField, "", level, module, delay)
+        }
     }
 }
 
