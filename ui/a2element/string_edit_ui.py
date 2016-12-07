@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\string_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\string_edit.ui'
 #
-# Created: Wed Aug 31 22:44:11 2016
+# Created: Tue Dec  6 22:29:24 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(508, 82)
+        edit.resize(442, 105)
         self.edit_layout = QtGui.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.edit_layout.setContentsMargins(10, 5, 0, 5)
@@ -40,8 +40,13 @@ class Ui_edit(object):
         self.edit_layout.setWidget(2, QtGui.QFormLayout.LabelRole, self.displayLabelLabel_2)
         self.cfg_value = QtGui.QLineEdit(edit)
         self.cfg_value.setText("")
+        self.cfg_value.setEchoMode(QtGui.QLineEdit.Normal)
         self.cfg_value.setObjectName("cfg_value")
         self.edit_layout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_value)
+        self.cfg_password_mode = QtGui.QCheckBox(edit)
+        self.cfg_password_mode.setText("password mode")
+        self.cfg_password_mode.setObjectName("cfg_password_mode")
+        self.edit_layout.setWidget(3, QtGui.QFormLayout.FieldRole, self.cfg_password_mode)
 
         self.retranslateUi(edit)
         QtCore.QMetaObject.connectSlotsByName(edit)

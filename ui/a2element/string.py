@@ -24,6 +24,9 @@ class Draw(DrawCtrl):
         self.layout.addWidget(self.value_ctrl)
         self.setLayout(self.layout)
 
+        if self.cfg.get('password_mode', False):
+            self.value_ctrl.setEchoMode(QtGui.QLineEdit.Password)
+
     def check(self, value=None):
         if value is None:
             value = self.value_ctrl.text()
@@ -48,6 +51,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_string
 
+        a2ctrl.check_ui_module(string_edit_ui)
         self.ui = string_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
