@@ -1,3 +1,4 @@
+#include lib\ahklib\ExplorerHelpers.ahk
 ; Adds a row of controls to a GUI using a value associated with ValueObject. Control handles are stored in GUI, and can be stored back and have the controls delete by CSubEvent.GUISubmit
 AddControl(ValueObj, GUI, type, name, text = "", glabel = "", description = "", Button1Text = "", Button1gLabel = "", Button2Text = "", Button2gLabel = "", Tooltip = "")
 {
