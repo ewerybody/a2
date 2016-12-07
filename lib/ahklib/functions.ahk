@@ -897,6 +897,20 @@ UnQuote(string)
     return string
 }
 
+; Add quotes to a string only if necessary
+Quote(string, once = 1)
+{
+    if (once)
+    {
+        if (InStr(string, """") != 1)
+            string := """" string
+        if (!strEndsWith(string, """"))
+            string := string """"
+        return string
+    }
+    return """" string """"
+}
+
 ; checks if a point is in a rectangle
 IsInArea(px, py, x, y, w, h)
 {
