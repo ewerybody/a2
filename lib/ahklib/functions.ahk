@@ -862,6 +862,7 @@ FormatFileSize(Bytes, Decimals = 1, Prefixes = "B,KB,MB,GB,TB,PB,EB,ZB,YB")
  * @param   string  Options
  * @return  string  PID         ProcessID of the started command
  */
+#include lib\ahklib\CNotification.ahk
 RunAsUser(Command, WorkingDir = "", Options = "")
 {
     result := DllCall(Settings.DllPath "\Explorer.dll\CreateProcessMediumIL", Str, Command, Str, WorkingDir, Str, Options, "UInt")
