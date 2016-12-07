@@ -726,3 +726,4 @@ Class CControl ;Never created directly
 #include lib\ahklib\CGUI\CSliderControl.ahk
 #include lib\ahklib\CGUI\CHotkeyControl.ahk
 #include lib\ahklib\CGUI\CActiveXControl.ahk
+#include lib\ahklib\CGUI\GUIBuilder.ahk
