@@ -21,6 +21,11 @@ class Draw(DrawCtrl):
 
         self.layout = QtGui.QVBoxLayout(self)
         text = self.cfg.get('text', 'Nothing yet').replace('\n', '<br>')
+
+        # TODO: This might be used in other places. Make it a DrawCtrl method?
+        if '%module_path%' in text:
+            text = text.replace('%module_path%', self.mod.path)
+
         self.label = QtGui.QLabel(text, self)
         self.label.setOpenExternalLinks(True)
         self.layout.addWidget(self.label)
