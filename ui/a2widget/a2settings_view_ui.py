@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Mon Sep 26 21:18:19 2016
+# Created: Fri Dec  9 21:06:56 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,44 +12,49 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(489, 713)
+        a2settings.resize(748, 1017)
         a2settings.setWindowTitle("a2settings")
         self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
-        self.verticalLayout_2.setSpacing(12)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.tabWidget = QtGui.QTabWidget(a2settings)
+        self.tabWidget.setObjectName("tabWidget")
+        self.tab_2 = QtGui.QWidget()
+        self.tab_2.setObjectName("tab_2")
+        self.verticalLayout = QtGui.QVBoxLayout(self.tab_2)
+        self.verticalLayout.setObjectName("verticalLayout")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout.setContentsMargins(-1, 25, -1, 15)
         self.formLayout.setSpacing(5)
         self.formLayout.setObjectName("formLayout")
-        self.label_3 = QtGui.QLabel(a2settings)
+        self.label_3 = QtGui.QLabel(self.tab_2)
         self.label_3.setObjectName("label_3")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
-        self.a2hotkey = A2Hotkey(a2settings)
+        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.a2hotkey = A2Hotkey(self.tab_2)
         self.a2hotkey.setEnabled(True)
         self.a2hotkey.setObjectName("a2hotkey")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.a2hotkey)
-        self.load_on_win_start = QtGui.QCheckBox(a2settings)
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.a2hotkey)
+        self.load_on_win_start = QtGui.QCheckBox(self.tab_2)
         self.load_on_win_start.setObjectName("load_on_win_start")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.load_on_win_start)
-        self.remember_selection = QtGui.QCheckBox(a2settings)
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.load_on_win_start)
+        self.remember_selection = QtGui.QCheckBox(self.tab_2)
         self.remember_selection.setObjectName("remember_selection")
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.remember_selection)
-        self.ui_scale_slider = A2Slider(a2settings)
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.remember_selection)
+        self.ui_scale_slider = A2Slider(self.tab_2)
         self.ui_scale_slider.setDecimals(2)
         self.ui_scale_slider.setMinimum(0.3)
         self.ui_scale_slider.setMaximum(2.0)
         self.ui_scale_slider.setSingleStep(0.05)
         self.ui_scale_slider.setProperty("value", 1.0)
         self.ui_scale_slider.setObjectName("ui_scale_slider")
-        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.ui_scale_slider)
-        self.ui_scale_label = QtGui.QLabel(a2settings)
+        self.formLayout.setWidget(4, QtGui.QFormLayout.FieldRole, self.ui_scale_slider)
+        self.ui_scale_label = QtGui.QLabel(self.tab_2)
         self.ui_scale_label.setObjectName("ui_scale_label")
-        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.ui_scale_label)
-        self.verticalLayout_2.addLayout(self.formLayout)
-        self.module_source_box = QtGui.QGroupBox(a2settings)
+        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.ui_scale_label)
+        self.verticalLayout.addLayout(self.formLayout)
+        self.module_source_box = QtGui.QGroupBox(self.tab_2)
         self.module_source_box.setObjectName("module_source_box")
         self.mod_source_box_layout = QtGui.QVBoxLayout(self.module_source_box)
         self.mod_source_box_layout.setSpacing(10)
@@ -72,8 +77,8 @@ class Ui_a2settings(object):
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
-        self.verticalLayout_2.addWidget(self.module_source_box)
-        self.dev_box = QtGui.QGroupBox(a2settings)
+        self.verticalLayout.addWidget(self.module_source_box)
+        self.dev_box = QtGui.QGroupBox(self.tab_2)
         self.dev_box.setCheckable(True)
         self.dev_box.setObjectName("dev_box")
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.dev_box)
@@ -164,11 +169,17 @@ class Ui_a2settings(object):
         self.json_indent.setObjectName("json_indent")
         self.formLayout_2.setWidget(7, QtGui.QFormLayout.FieldRole, self.json_indent)
         self.verticalLayout_3.addWidget(self.dev_widget)
-        self.verticalLayout_2.addWidget(self.dev_box)
-        spacerItem1 = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem1)
+        self.verticalLayout.addWidget(self.dev_box)
+        spacerItem1 = QtGui.QSpacerItem(0, 222, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem1)
+        self.tabWidget.addTab(self.tab_2, "")
+        self.tab = QtGui.QWidget()
+        self.tab.setObjectName("tab")
+        self.tabWidget.addTab(self.tab, "")
+        self.verticalLayout_2.addWidget(self.tabWidget)
 
         self.retranslateUi(a2settings)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(a2settings)
 
     def retranslateUi(self, a2settings):
@@ -195,7 +206,9 @@ class Ui_a2settings(object):
         self.loglevel_debug.setText(QtGui.QApplication.translate("a2settings", "LogLevel:DEBUG", None, QtGui.QApplication.UnicodeUTF8))
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtGui.QApplication.translate("a2settings", "a2 Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("a2settings", "Advanced", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
+from a2widget.a2path_field import A2PathField
 from a2widget.a2hotkey import A2Hotkey

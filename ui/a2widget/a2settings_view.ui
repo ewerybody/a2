@@ -6,348 +6,364 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
-    <height>713</height>
+    <width>748</width>
+    <height>913</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">a2settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>12</number>
-   </property>
    <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="labelAlignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="horizontalSpacing">
-      <number>5</number>
-     </property>
-     <property name="verticalSpacing">
-      <number>5</number>
-     </property>
-     <property name="topMargin">
-      <number>25</number>
-     </property>
-     <property name="bottomMargin">
-      <number>15</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Open a2 Dialog:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="A2Hotkey" name="a2hotkey">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="text">
-        <string>Win+Shift+A</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QCheckBox" name="load_on_win_start">
-       <property name="text">
-        <string>Load a2 on Windows Start</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QCheckBox" name="remember_selection">
-       <property name="text">
-        <string>Remember last selected Module</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="A2Slider" name="ui_scale_slider">
-       <property name="decimals">
-        <number>2</number>
-       </property>
-       <property name="minimum">
-        <double>0.300000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>2.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.050000000000000</double>
-       </property>
-       <property name="value">
-        <double>1.000000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="ui_scale_label">
-       <property name="text">
-        <string>UI Scale:</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="module_source_box">
-     <property name="title">
-      <string>Module Sources</string>
-     </property>
-     <layout class="QVBoxLayout" name="mod_source_box_layout">
-      <property name="spacing">
-       <number>10</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" name="mod_source_layout">
-        <property name="spacing">
-         <number>2</number>
-        </property>
-       </layout>
-      </item>
-      <item>
-       <widget class="QLabel" name="no_sources_msg">
-        <property name="text">
-         <string>Currently there are no modules sources listed.
-Go ahead and add or create one:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="a2add_button">
-          <property name="text">
-           <string>Add Source</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="dev_box">
-     <property name="title">
-      <string>a2 dev mode</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <widget class="QWidget" name="dev_widget" native="true">
-        <layout class="QFormLayout" name="formLayout_2">
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>a2 Settings</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
          <property name="fieldGrowthPolicy">
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
          <property name="labelAlignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="text">
-            <string>Author Name:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="author_name"/>
-         </item>
+         <property name="horizontalSpacing">
+          <number>5</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>5</number>
+         </property>
+         <property name="topMargin">
+          <number>25</number>
+         </property>
+         <property name="bottomMargin">
+          <number>15</number>
+         </property>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_6">
+          <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Author Homepage:</string>
+            <string>Open a2 Dialog:</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="author_url"/>
-         </item>
-         <item row="11" column="0" colspan="2">
-          <widget class="Line" name="line">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Settings Folder:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="12" column="1">
-          <widget class="QLineEdit" name="settings_folder">
+          <widget class="A2Hotkey" name="a2hotkey">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
-          </widget>
-         </item>
-         <item row="13" column="0">
-          <widget class="QLabel" name="label_7">
            <property name="text">
-            <string>Modules Folder:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="13" column="1">
-          <widget class="QLineEdit" name="module_folder">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>Python Executable:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="14" column="1">
-          <widget class="QLineEdit" name="python_executable">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_5">
-           <property name="text">
-            <string>Autohotkey Code Editor:</string>
+            <string>Win+Shift+A</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="A2PathField" name="code_editor"/>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_8">
+          <widget class="QCheckBox" name="load_on_win_start">
            <property name="text">
-            <string>Autohotkey Executable:</string>
+            <string>Load a2 on Windows Start</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="A2PathField" name="autohotkey"/>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_12">
+          <widget class="QCheckBox" name="remember_selection">
            <property name="text">
-            <string>a2 runtime:</string>
+            <string>Remember last selected Module</string>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QCheckBox" name="startup_tooltips">
-           <property name="text">
-            <string>Enable Startup Tooltips</string>
+          <widget class="A2Slider" name="ui_scale_slider">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="minimum">
+            <double>0.300000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>2.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.050000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.000000000000000</double>
            </property>
           </widget>
          </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="label_11">
+         <item row="4" column="0">
+          <widget class="QLabel" name="ui_scale_label">
            <property name="text">
-            <string>Python Output:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QCheckBox" name="loglevel_debug">
-           <property name="text">
-            <string>LogLevel:DEBUG</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1">
-          <widget class="QCheckBox" name="show_console">
-           <property name="text">
-            <string>Show Console</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="label_9">
-           <property name="text">
-            <string>JSON Indent:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QSpinBox" name="json_indent">
-           <property name="maximumSize">
-            <size>
-             <width>70</width>
-             <height>16777215</height>
-            </size>
+            <string>UI Scale:</string>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-      </item>
-     </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="module_source_box">
+         <property name="title">
+          <string>Module Sources</string>
+         </property>
+         <layout class="QVBoxLayout" name="mod_source_box_layout">
+          <property name="spacing">
+           <number>10</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" name="mod_source_layout">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="no_sources_msg">
+            <property name="text">
+             <string>Currently there are no modules sources listed.
+Go ahead and add or create one:</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="a2add_button">
+              <property name="text">
+               <string>Add Source</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="dev_box">
+         <property name="title">
+          <string>a2 dev mode</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QWidget" name="dev_widget" native="true">
+            <layout class="QFormLayout" name="formLayout_2">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
+             <property name="labelAlignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Author Name:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="author_name"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Author Homepage:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="author_url"/>
+             </item>
+             <item row="11" column="0" colspan="2">
+              <widget class="Line" name="line">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Settings Folder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="1">
+              <widget class="QLineEdit" name="settings_folder">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Modules Folder:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="1">
+              <widget class="QLineEdit" name="module_folder">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="14" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>Python Executable:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="14" column="1">
+              <widget class="QLineEdit" name="python_executable">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Autohotkey Code Editor:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="A2PathField" name="code_editor"/>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Autohotkey Executable:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="A2PathField" name="autohotkey"/>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_12">
+               <property name="text">
+                <string>a2 runtime:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="startup_tooltips">
+               <property name="text">
+                <string>Enable Startup Tooltips</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_11">
+               <property name="text">
+                <string>Python Output:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QCheckBox" name="loglevel_debug">
+               <property name="text">
+                <string>LogLevel:DEBUG</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QCheckBox" name="show_console">
+               <property name="text">
+                <string>Show Console</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>JSON Indent:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QSpinBox" name="json_indent">
+               <property name="maximumSize">
+                <size>
+                 <width>70</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>0</width>
+           <height>222</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Advanced</string>
+      </attribute>
+     </widget>
     </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
