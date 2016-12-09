@@ -8,7 +8,13 @@ If (!A_IsCompiled)
 settings_created := _init_check_settings()
 a2_ahk := _init_get_autohotkey_exe()
 
-Run, %a2_ahk% lib\a2.ahk
+params := ""
+Loop, %0%  ; For each parameter:
+{
+    param := %A_Index%  ; Fetch the contents of the variable whose name is contained in A_Index.
+    params .= (params) ? A_Space param : param
+}
+Run, %a2_ahk% lib\a2.ahk %params%
 
 if settings_created
 {
