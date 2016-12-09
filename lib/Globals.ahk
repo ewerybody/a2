@@ -1,5 +1,8 @@
-global a2 := {Title: "a2", Path: A_ScriptDir "\..", Modules: a2_modules}
-global Settings := {} ;empty object for setting to be injected into
+ifNotExist, %a2_ahk%
+    a2_ahk = %A_ScriptDir%\Autohotkey\Autohotkey.exe
+global a2 := {Title: "a2", Path: A_ScriptDir "\..", Modules: a2_modules, Exe: a2_ahk}
+global Settings := RichObject() ;empty object for setting to be injected into
+global Triggers := RichObject() ; empty object where modules can register for external triggers
 
 global UIresources := a2.Path "\ui\res"
 global libs := a2.Path "\lib\ahklib"
