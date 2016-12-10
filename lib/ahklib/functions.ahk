@@ -585,9 +585,11 @@ IsNumeric(InputObject)
  *     It's basically ExpandEnvironmentStrings() with some additional directories
  *
  * @sample
- *     ExpandPathPlaceholders("%ProgramFiles")
+ *     ExpandPathPlaceholders("%ProgramFiles%")
  * @sample
  *     ExpandPathPlaceholders("Temp")
+ * @sample
+ *     ExpandPathPlaceholders("%Desktop%")
  *
  * @param   string  InputString     The path to be resolved
  * @return  string
@@ -601,13 +603,6 @@ ExpandPathPlaceholders(InputString)
                             , "StartMenu" :            GetFullPathName(A_StartMenu)
                             , "StartMenuCommon" :     GetFullPathName(A_StartMenuCommon)
                             , "a2Dir" :            A_ScriptDir "\.."}
-    if (!Replacements.7plusDrive)
-    {
-        SplitPath, A_ScriptDir,,,,,s7plusDrive
-        Replacements.7plusDrive := s7plusDrive
-    }
-    Replacements.ImageEditor := Settings.Misc.DefaultImageEditor
-    Replacements.TextEditor := Settings.Misc.DefaultTextEditor
 
     for Placeholder, Replacement in Replacements
         while(InStr(InputString, Placeholder) && A_Index < 10)
