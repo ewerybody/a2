@@ -10,6 +10,7 @@ from PySide import QtGui
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
 import traceback
+import os
 
 
 log = get_logger(__name__)
@@ -42,12 +43,20 @@ class Draw(DrawCtrl):
             try:
                 # amend the globals dict with some useful info
                 globals_dict = globals()
+                globals_dict.update({'a2path': self.mod.path,
+                                     'call_local_ahk': self.call_local_ahk})
                 globals_dict.update({'a2path': self.mod.path})
                 exec(code, globals_dict)
             except Exception:
                 log.error(traceback.format_exc().strip())
                 log.error('Failed to call button code in "%s":\n  %s'
                           % (self.mod.name, code))
+
+    def call_local_ahk(self, script_name, *args):
+        import ahk
+        script_name = ahk.ensure_ahk_ext(script_name)
+        script_path = os.path.join(self.mod.path, script_name)
+        return ahk.call_cmd(script_path, *args)
 
 
 class Edit(EditCtrl):
