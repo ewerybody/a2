@@ -5,8 +5,8 @@
 #NoTrayIcon
 SetWorkingDir %A_ScriptDir%\..
 a2Dir := A_ScriptDir "\.."
-#include lib\Globals.ahk
 #include settings\a2_settings.ahk
+#include lib\Globals.ahk
 #include lib\_defaults\a2_urls.ahk
 
 Menu, Tray, Icon, %UIresources%\a2.ico, , 1
