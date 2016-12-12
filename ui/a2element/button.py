@@ -66,7 +66,7 @@ class Edit(EditCtrl):
     """
     def __init__(self, cfg, main, parentCfg):
         super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
-
+        self.helpUrl = 'https://github.com/ewerybody/a2/wiki/Button-element'
         a2ctrl.check_ui_module(button_edit_ui)
         self.ui = button_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
