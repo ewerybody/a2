@@ -125,7 +125,7 @@ class A2Settings(QtGui.QWidget):
         log.info('Log level INFO: active')
 
     def _check_win_startup(self):
-        win_startup_path = ahk.call_cmd('get_win_startup_path')
+        win_startup_path = ahk.call_lib_cmd('get_win_startup_path')
         win_startup_lnk = os.path.join(win_startup_path, 'a2.lnk')
         self.ui.load_on_win_start.setChecked(exists(win_startup_lnk))
         self.ui.load_on_win_start.clicked[bool].connect(a2core.set_windows_startup)

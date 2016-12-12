@@ -329,7 +329,7 @@ def set_windows_startup(state=True):
     """
     might be doable via python but this is just too easy with AHKs A_Startup
     """
-    ahk.call_cmd('set_windows_startup', A2Obj.inst().paths.a2, int(state))
+    ahk.call_lib_cmd('set_windows_startup', A2Obj.inst().paths.a2, int(state))
 
 
 def surfTo(url):

@@ -71,9 +71,9 @@ class Hotkey_Scope_Handler(object):
 
     def scopeUpdate(self):
         allItems = a2ctrl.qlist.get_items_as_text(self.ui.cfg_scope)
-        #p = a2ctrl.fontL.pointSize()
-        #h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
-        #self.ui.cfg_scope.setMinimumHeight(h)
+        # p = a2ctrl.fontL.pointSize()
+        # h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
+        # self.ui.cfg_scope.setMinimumHeight(h)
         self.main.cfg['scope'] = allItems
 
 
@@ -161,7 +161,7 @@ class ScopeDialog(QtGui.QDialog):
 
     def get_scope_nfo(self):
         # call AHK script to get all window classes, titles and executables
-        scope_nfo = ahk.call_cmd('get_scope_nfo')
+        scope_nfo = ahk.call_lib_cmd('get_scope_nfo')
         scope_nfo = scope_nfo.split('\\n')
         if not scope_nfo:
             log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)

@@ -5,9 +5,9 @@ Created on Aug 7, 2015
 
 @author: eRiC
 """
+import os
 import codecs
 import subprocess
-from os.path import join
 
 
 def translateHotkey(displayString):
@@ -26,18 +26,26 @@ def translateHotkey(displayString):
     return ahkKey
 
 
-def call_cmd(cmd_name, *args):
-    if not cmd_name.endswith('.ahk'):
-        cmd_name += '.ahk'
+def ensure_ahk_ext(filename):
+    if not filename.lower().endswith('.ahk'):
+        filename += '.ahk'
+    return filename
 
+
+def call_lib_cmd(cmd_name, *args):
     import a2core
     a2 = a2core.A2Obj.inst()
-    cmd_path = join(a2.paths.lib, 'cmds', cmd_name)
+    ensure_ahk_ext(cmd_name)
+    cmd_path = os.path.join(a2.paths.lib, 'cmds', cmd_name)
+    return call_cmd(cmd_path, *args)
+
+
+def call_cmd(cmd_path, *args):
+    import a2core
+    a2 = a2core.A2Obj.inst()
+
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
-
-#        ahkProcess = QtCore.QProcess()
-#        ahkProcess.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
 
     cmd_result = str(proc.communicate()[0])
     proc.kill()
