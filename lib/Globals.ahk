@@ -1,4 +1,4 @@
-global a2 := {Title: "a2", Path: A_ScriptDir "\..", Modules: a2_modules}
+global a2 := new Ca2()
 global Settings := {} ;empty object for setting to be injected into
 
 global UIresources := a2.Path "\ui\res"
