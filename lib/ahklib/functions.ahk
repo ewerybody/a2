@@ -694,11 +694,12 @@ WriteDebug(Title, InputObject = "", level = "info", module = "", delay = 0, Deli
 {
     _prefix := level ? "[" level "] " : ""
     _module := module ? "[" module "] " : ""
+    _time   := "[" FormatTime(A_Now, "HH:mm:ss") "] "
 
     if (Settings.Debug.Enabled)
     {
         sleep, %delay%
-        FileAppend  % _prefix _module Title "`n", *
+        FileAppend % _time _prefix _module Title "`n", *
         if (InputObject)
         {
             Loop, Parse, InputObject, %Delimiter%
