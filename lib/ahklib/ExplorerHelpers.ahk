@@ -245,7 +245,7 @@ CreateTooltipControl(hwind)
 AttachToolWindow(hParent, GUINumber, AutoClose)
 {
     global ToolWindows
-    WriteDebug("AttachToolWindow " GUINumber " to " hParent)
+    WriteDebug("AttachToolWindow " GUINumber " to " hParent, "", "debug", "ExplorerHelpers")
     if (!IsObject(ToolWindows))
     ToolWindows := Object()
     if (!WinExist("ahk_id " hParent))
