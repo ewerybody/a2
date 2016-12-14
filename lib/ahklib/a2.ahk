@@ -151,7 +151,6 @@ class Ca2
             if (!IsNumeric(currentValue))
                 return -2
 
-
             value := ((currentValue) ? currentValue : 0) + step
 
             this.set(modulePack, moduleName, key, value)
@@ -172,11 +171,13 @@ class Ca2
         {
             this.__openConnection()
 
-            sql := "SELECT value FROM '" moduleTable "' WHERE key = '" key "'"
-            recordSet := ""
-            if (!this.dbObject.Query(sql, recordSet))
             row := ""
             result := ""
+            recordSet := ""
+
+            sql := "SELECT value FROM '" moduleTable "' WHERE key = '" key "'"
+            this.dbObject.Query(sql, recordSet) ; no error handle
+
             if (recordSet.HasRows)
                 Loop % recordSet.HasRows
                 {
