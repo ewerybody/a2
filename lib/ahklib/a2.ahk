@@ -59,7 +59,7 @@ class Ca2
 
             this.dbObject := new SQLiteDB
             If (!this.dbObject.OpenDB(this.path))
-                throw Exception(this.dbObject.ErrorMsg, this.dbObject.ErrorCode)
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
         /**
@@ -198,7 +198,7 @@ class Ca2
         {
             sql := "INSERT INTO '" moduleTable "' ('key', 'value') VALUES ('" key "', '" value "')"
             if (!this.dbObject.Exec(sql))
-                throw Exception(this.dbObject.ErrorMsg, this.dbObject.ErrorCode)
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
         /**
@@ -214,7 +214,7 @@ class Ca2
         {
             sql := "UPDATE '" moduleTable "' set value = '" value "' WHERE key = '" key "'"
             if (!this.dbObject.Exec(sql))
-                throw Exception(this.dbObject.ErrorMsg, this.dbObject.ErrorCode)
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
         /**
@@ -229,7 +229,7 @@ class Ca2
         {
             sql := "DELETE FROM '" moduleTable "' WHERE key = '" key "'"
             if (!this.dbObject.Exec(sql))
-                throw Exception(this.dbObject.ErrorMsg, this.dbObject.ErrorCode)
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
         /**
@@ -258,7 +258,7 @@ class Ca2
             sql := "SELECT COUNT(*) FROM '" moduleTable "'"
             table := ""
             if (!this.dbObject.getTable(sql, table))
-                throw Exception(this.dbObject.ErrorMsg, this.dbObject.ErrorCode)
+                throw . Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
     }
 }
