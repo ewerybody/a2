@@ -58,8 +58,6 @@ class Ca2
                 throw Exception("Database could not be found", -1)
 
             this.dbObject := new SQLiteDB
-            If (!this.dbObject.OpenDB(this.path))
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
         /**
@@ -153,6 +151,7 @@ class Ca2
             if (!IsNumeric(currentValue))
                 return -2
 
+
             value := ((currentValue) ? currentValue : 0) + step
 
             this.set(modulePack, moduleName, key, value)
@@ -171,17 +170,24 @@ class Ca2
          */
         __get(moduleTable, key)
         {
+            this.__openConnection()
+
             sql := "SELECT value FROM '" moduleTable "' WHERE key = '" key "'"
-            recordset := ""
-            if (!this.dbObject.Query(sql, recordset))
+            recordSet := ""
+            if (!this.dbObject.Query(sql, recordSet))
             row := ""
             result := ""
-            if (recordset.HasRows)
-                Loop % recordset.HasRows
+            if (recordSet.HasRows)
+                Loop % recordSet.HasRows
                 {
-                    recordset.next(row)
+                    recordSet.next(row)
                     result := row[1]
                 }
+            recordSet.Free()
+
+            ; Close connection to DB to unlock the file
+            this.__closeConnection()
+
             return (result) ? result : false
         }
 
@@ -196,9 +202,14 @@ class Ca2
          */
         __insert(moduleTable, key, value)
         {
+            this.__openConnection()
+
             sql := "INSERT INTO '" moduleTable "' ('key', 'value') VALUES ('" key "', '" value "')"
             if (!this.dbObject.Exec(sql))
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+
+            ; Close connection to DB to unlock the file
+            this.__closeConnection()
         }
 
         /**
@@ -212,9 +223,14 @@ class Ca2
          */
         __update(moduleTable, key, value)
         {
+            this.__openConnection()
+
             sql := "UPDATE '" moduleTable "' set value = '" value "' WHERE key = '" key "'"
             if (!this.dbObject.Exec(sql))
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+
+            ; Close connection to DB to unlock the file
+            this.__closeConnection()
         }
 
         /**
@@ -227,9 +243,14 @@ class Ca2
          */
         __remove(moduleTable, key)
         {
+            this.__openConnection()
+
             sql := "DELETE FROM '" moduleTable "' WHERE key = '" key "'"
             if (!this.dbObject.Exec(sql))
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+
+            ; Close connection to DB to unlock the file
+            this.__closeConnection()
         }
 
         /**
@@ -255,10 +276,46 @@ class Ca2
          */
         __validateTable(moduleTable)
         {
+            this.__openConnection()
+
             sql := "SELECT COUNT(*) FROM '" moduleTable "'"
             table := ""
             if (!this.dbObject.getTable(sql, table))
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+
+            ; Close connection to DB to unlock the file
+            this.__closeConnection()
         }
+
+        /**
+         * Private Method
+         *     Handles the establishing of the connection to the DB
+         */
+        __openConnection()
+        {
+            if (!this.dbObject._Handle)
+            {
+                Loop, 5
+                    if (this.dbObject.OpenDB(this.path))
+                        break
+                    else
+                        sleep 50
+            }
+
+            if (!this.dbObject._Handle)
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        }
+
+        /**
+         * Private Method
+         *     Handles the terminate of the connection to the DB
+         */
+        __closeConnection()
+        {
+            if (this.dbObject._Handle)
+                if (!this.dbObject.CloseDB())
+                    throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        }
+
     }
 }
