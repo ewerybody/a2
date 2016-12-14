@@ -294,14 +294,12 @@ class Ca2
          */
         __openConnection()
         {
-            if (!this.dbObject._Handle)
-            {
+            if (!this.dbObject._Handle)  ; connection is already open
                 Loop, 5
                     if (this.dbObject.OpenDB(this.path))
                         break
                     else
                         sleep 50
-            }
 
             if (!this.dbObject._Handle)
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
@@ -313,9 +311,8 @@ class Ca2
          */
         __closeConnection()
         {
-            if (this.dbObject._Handle)
-                if (!this.dbObject.CloseDB())
-                    throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+            if (!this.dbObject.CloseDB())
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
     }
