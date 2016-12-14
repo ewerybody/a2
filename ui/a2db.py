@@ -1,4 +1,4 @@
-﻿"""
+"""
 a2db - wrapper to the a2 database
 
 Mainly we store key value pairs. So the 'tables' are more or less
@@ -32,9 +32,16 @@ _defaultSep = '|'
 class A2db(object):
     def __init__(self, a2dbFile):
         self._file = a2dbFile
-        self._con = sqlite3.connect(a2dbFile)
-        self._cur = self._con.cursor()
         log.info('initialised! (%s)' % self._file)
+
+    def connect(self):
+        self._con = sqlite3.connect(self._file)
+        self._cur = self._con.cursor()
+        return self
+
+    def disconnect(self):
+        self._con.close()
+        return self
 
     def get(self, key, table=_defaultTable, check=True, asjson=True):
         """
@@ -87,8 +94,7 @@ class A2db(object):
             else:
                 statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, jvalue, key)
                 log.debug('updating value!\n  %s' % statement)
-            self._execute(statement)
-            self._con.commit()
+            self._commit(statement)
         # except sqlite3.DatabaseError as error:
         except Exception as error:
             # except:
@@ -114,8 +120,7 @@ class A2db(object):
 #         delete from where key
 #             statement = 'delete "%s" set value="%s" WHERE key="%s"' % (table, value, key)
 #             log.debug('updating value!\n  %s' % statement)
-        self._execute(statement)
-        self._con.commit()
+        self._commit(statement)
 
     def tables(self):
         tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
@@ -124,16 +129,21 @@ class A2db(object):
     def dropTable(self, table):
         if table not in self.tables():
             return
-        self._execute('drop table "%s"' % table)
-        self._con.commit()
+        self._commit('drop table "%s"' % table)
 
     def keys(self, table=_defaultTable):
         data = self._fetch('select key from "%s"' % table)
         return [k[0] for k in data]
 
     def _fetch(self, statement):
-        self._execute(statement)
-        return self._cur.fetchall()
+        try:
+            self.connect()
+            self._cur.execute(statement)
+            results = self._cur.fetchall()
+            self.disconnect()
+        except Exception as err:
+            raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
+        return results
 
     def createTable(self, table):
         if table in self.tables():
@@ -142,9 +152,21 @@ class A2db(object):
         log.debug('createTable statement:\n\t%s' % statement)
         self._execute(statement)
 
+    def _commit(self, statement):
+        try:
+            self.connect()
+            self._cur.execute(statement)
+            self._con.commit()
+            self.disconnect()
+        except Exception as err:
+            raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
+            # log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
+
     def _execute(self, statement):
         try:
+            self.connect()
             self._cur.execute(statement)
+            self.disconnect()
         except Exception as err:
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
             # log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
