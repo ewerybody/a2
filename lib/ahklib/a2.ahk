@@ -148,10 +148,10 @@ class Ca2
 
             this.__validateTable(moduleTable) ; will throw an error if invalid
 
+            currentValue := this.__get(moduleTable, key)
+
             if (!IsNumeric(currentValue))
                 return -2
-
-            currentValue := this.__get(moduleTable, key)
 
             value := ((currentValue) ? currentValue : 0) + step
 
@@ -258,7 +258,7 @@ class Ca2
             sql := "SELECT COUNT(*) FROM '" moduleTable "'"
             table := ""
             if (!this.dbObject.getTable(sql, table))
-                throw . Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
     }
 }
