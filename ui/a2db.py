@@ -32,16 +32,16 @@ _defaultSep = '|'
 class A2db(object):
     def __init__(self, a2dbFile):
         self._file = a2dbFile
+        self._con = None
+        self._cur = None
         log.info('initialised! (%s)' % self._file)
 
     def connect(self):
         self._con = sqlite3.connect(self._file)
         self._cur = self._con.cursor()
-        return self
 
     def disconnect(self):
         self._con.close()
-        return self
 
     def get(self, key, table=_defaultTable, check=True, asjson=True):
         """
