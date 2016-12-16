@@ -24,7 +24,7 @@ class Ca2
      *
      * @type string
      */
-    static modules := a2_modules
+    static modules := ""
 
     /**
      * Constructor
@@ -32,6 +32,8 @@ class Ca2
      */
     __New()
     {
+        global a2_modules
+        this.modules := a2_modules
         this.db := new this.Ca2DB()
     }
 
