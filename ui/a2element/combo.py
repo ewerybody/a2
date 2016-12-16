@@ -37,6 +37,7 @@ class Draw(DrawCtrl):
             self.value_ctrl.setCurrentIndex(index)
 
     def check(self, value=None):
+        super(Draw, self).check()
         if value is None:
             value = self.value_ctrl.currentText()
 
@@ -49,7 +50,7 @@ class Draw(DrawCtrl):
             self.set_user_value(items, 'items')
 
         self.value = value
-        self.set_user_value(value, 'value')
+        self.set_user_value(value)
         self.change('variables')
         super(Draw, self).check()
 
@@ -131,5 +132,5 @@ class Edit(EditCtrl):
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
-    value = a2ctrl.get_cfg_value(cfg, user_cfg, 'value', typ=str, default='')
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
     db_dict['variables'][cfg['name']] = value
