@@ -391,6 +391,32 @@ GetMonitorIndexFromWindow(hwnd)
     return %monitorIndex%
 }
 
+GetMonitorIndexFromCoords(coords)
+{
+    n := StrSplit(coords, ",")
+    nX := n[1]
+    nY := n[2]
+    nW := n[3]
+    nH := n[4]
+
+    centerX := nX + nW/2
+    centerY := nY + nH/2
+
+    ; Starts with 1.
+    monitorIndex := 1
+    SysGet, monitorCount, MonitorCount
+    Loop, %monitorCount%
+    {
+        SysGet, tempMon, Monitor, %A_Index%
+
+        ; Compare location to determine the monitor index.
+        If ((centerX >= tempMonLeft) AND (centerX <= tempMonRight) AND (centerY >= tempMonTop) AND (centerY <= tempMonBottom))
+            return A_Index
+    }
+
+    return monitorIndex
+}
+
 /**
  * Helper Function
  *     Evaluate if the input is a number
@@ -935,5 +961,61 @@ HWNDToClassNN(hwnd)
         ControlGet hwnd1, Hwnd, , %A_LoopField%, ahk_id %win%
         if (hwnd1=hwnd)
         return A_LoopField
+    }
+}
+
+; Gets width of all screens combined. NOTE: Single screens may have different vertical resolutions so some parts of the area returned here might not belong to any screens!
+GetVirtualScreenCoordinates(ByRef x, ByRef y, ByRef w, ByRef h)
+{
+    SysGet, x, 76 ;Get virtual screen coordinates of all monitors
+    SysGet, y, 77
+    SysGet, w, 78
+    SysGet, h, 79
+}
+
+
+fixMaximizedScreenCoord(Window, ByRef maxL, ByRef maxT, ByRef maxW, ByRef maxH, newBase=0)
+{
+    if ((Window == "A") OR (!Window))
+        Monitor := GetMonitorIndexFromWindow(WinExist("A"))
+    else {
+        WinGetPos, WinX, WinY, WinW, WinH, % Window
+        Monitor := GetMonitorIndexFromCoords(WinX ", " WinY ", " WinW ", " WinH)
+    }
+    Monitor := Monitor ? Monitor : 0
+
+    SysGet, tempArea, MonitorWorkArea, % Monitor
+    SysGet, WorkArea, MonitorWorkArea, % Monitor
+    SysGet, Monitor, Monitor, % Monitor
+    WorkAreaWidth := WorkAreaRight - WorkAreaLeft
+    WorkAreaHeight := WorkAreaBottom - WorkAreaTop
+    MonitorWidth := MonitorRight - MonitorLeft
+    MonitorHeight := MonitorBottom - MonitorTop
+
+    If (tempAreaLeft < WorkAreaLeft)
+        WorkAreaLeft := tempAreaLeft
+    If (tempAreaRight > WorkAreaRight)
+        WorkAreaRight := tempAreaRight
+    If (tempAreaTop < WorkAreaTop)
+        WorkAreaTop := tempAreaTop
+    If (tempAreaBottom > WorkAreaBottom)
+        WorkAreaBottom := tempAreaBottom
+
+    WinGet, MinMax, MinMax, "ahk_id " hWnd
+    WinGet, Style, Style, "ahk_id " hWnd
+    If (MinMax = 1 AND (Style & 0x40000)) {
+        If (maxL < WorkArea%scr_Monitor%Left)
+            maxL := ( (newBase=1) ? (maxW-WorkAreaWidth)/2 : WorkAreaLeft)
+        If (maxT < WorkAreaTop)
+            maxT := ( (newBase=1) ? (maxH-WorkAreaHeight)/2 : WorkAreaTop)
+        If (maxW > WorkAreaWidth)
+            maxW := ( (newBase=1) ? WorkAreaWidth : WorkAreaWidth)
+        If (maxH > WorkAreaHeight)
+            maxH := ( (newBase=1) ? WorkAreaHeight : WorkAreaHeight)
+    }
+    Else If newBase = 1
+    {
+        maxL = 0
+        maxT = 0
     }
 }
