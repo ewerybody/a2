@@ -2,17 +2,18 @@
  * Object to Prompt the user for input
  *
  * Usage:
- *     fileName := new Prompt()           ; Create an instance of Prompt
- *     fileName.Cancel := true            ; Add "Cancel" button to UI
- *     fileName.Placeholder := ""         ; Set a placeholder in the text area
- *     fileName.DataType := "Text"        ; Set input type. Can be: Text (default), Path, File, Number, Time, Selection
- *     fileName.Validation := true        ; Validate field before allow user to click "OK"
- *     fileName.Title := "Select file"    ; Title of the Prompt window
- *     fileName.Text := "chose you file"  ; Text to display in the Prompt window
- *     fileName.Width := 200              ; Width of the Prompt window
- *     fileName.Rows := 1                 ; Rows the Prompt windows shoud have in height
- *     fileName.prompt()                  ; Execute the Prompt
+ *     prompt := new Prompt()           ; Ensure a new - unsused - instance of Prompt is being used
+ *     Prompt.Cancel := true            ; Add "Cancel" button to UI
+ *     Prompt.Placeholder := ""         ; Set a placeholder in the text area
+ *     Prompt.DataType := "Text"        ; Set input type. Can be: Text (default), Path, File, Number, Time, Selection
+ *     Prompt.Validation := true        ; Validate field before allow user to click "OK"
+ *     Prompt.Title := "Select file"    ; Title of the Prompt window
+ *     Prompt.Text := "choose you file" ; Text to display in the Prompt window
+ *     Prompt.Width := 200              ; Width of the Prompt window
+ *     Prompt.Rows := 1                 ; Rows the Prompt windows shoud have in height
+ *     Prompt.prompt()                  ; Execute the Prompt
  */
+ global Prompt := new CPrompt()
 class CPrompt
 {
     static Cancel := false
@@ -35,9 +36,9 @@ class CPrompt
         this.response := false
         this.DisplayDialog()
 
-        Loop
-            if (this.response)
-                return % this.response
+        While (!this.response)
+            sleep 50
+        return this.response
     }
 
     /**
