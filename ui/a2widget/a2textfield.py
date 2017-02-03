@@ -13,7 +13,7 @@ class a2TextField(QtGui.QPlainTextEdit):
     Has an editing_finished-signal similar to the one on the Line edit. The difference is:
     The trigger here is timed and on focus loss. Enter adds a new line as expected.
     """
-    editing_finished = QtCore.Signal(str)
+    editing_finished = QtCore.Signal()
 
     def __init__(self, parent=None, *args, **kwargs):
         super(a2TextField, self).__init__(parent, *args, **kwargs)
@@ -79,7 +79,7 @@ class a2TextField(QtGui.QPlainTextEdit):
     def finish_editing(self):
         if self._timer.isActive():
             self._timer.stop()
-        self.editing_finished.emit(self.toPlainText())
+        self.editing_finished.emit()
 
 
 class a2CodeField(a2TextField):
