@@ -37,9 +37,15 @@ def control_list(controls, cfg, change_signal=None):
         control(ctrl, ctrl.objectName(), cfg, change_signal)
 
 
-def control(ctrl, name, cfg, change_signal=None):
+def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     """
     Connects a single control to a name in the given cfg dict
+
+    :param QWidget ctrl: The Qt object to work on.
+    :param str name: The key name to look for in the dict.
+    :param dict cfg: The whole config dictionary object to connect to.
+    :param QtCore.Signal change_signal: Optional. A signal to emit on change.
+    :param QtCore.Signal trigger_signal: Optional. The signal get the change event from.
     """
     if isinstance(ctrl, QtGui.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
@@ -111,9 +117,14 @@ def control(ctrl, name, cfg, change_signal=None):
             cfg[name] = value
 
     elif isinstance(ctrl, (QtGui.QTextEdit, a2TextField, a2CodeField)):
-        ctrl.textChanged.connect(partial(_text_edit_update, cfg, name, ctrl))
+        # For if a not immediate change signal is wanted
+        # TODO: Do this for the other ctrl types
+        if trigger_signal is None:
+            trigger_signal = ctrl.textChanged
+
+        trigger_signal.connect(partial(_text_edit_update, cfg, name, ctrl))
         if change_signal is not None:
-            ctrl.textChanged.connect(partial(change_signal.emit, ctrl))
+            trigger_signal.connect(partial(change_signal.emit, ctrl))
         if name in cfg:
             ctrl.setText(cfg[name])
         else:
