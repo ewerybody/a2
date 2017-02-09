@@ -217,7 +217,7 @@ def write_includes(specific=None):
     hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
 
     includeAhk = [edit_disclaimer % 'includes']
-    a2_hotkey = ahk.translateHotkey(a2.db.get('a2_hotkey') or a2default_hotkey)
+    a2_hotkey = ahk.translate_hotkey(a2.db.get('a2_hotkey') or a2default_hotkey)
     hotkeysAhk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
     variablesAhk = [edit_disclaimer % 'variables']
     # TODO: this needs to be implemented dynamically
@@ -268,11 +268,11 @@ def write_includes(specific=None):
                 for hk in hotkeys.get(typ) or []:
                     # type 0 is global, append under the #IfWinActive label
                     if typ == '0':
-                        hkstring = ahk.translateHotkey(hk[0]) + '::' + hk[1]
+                        hkstring = ahk.translate_hotkey(hk[0]) + '::' + hk[1]
                         hotkeysAhk[hkmode['1']].append(hkstring)
                     # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
                     else:
-                        hkstring = ahk.translateHotkey(hk[1]) + '::' + hk[2]
+                        hkstring = ahk.translate_hotkey(hk[1]) + '::' + hk[2]
                         for scopeStr in hk[0]:
                             scopeKey = '%s %s' % (hkmode[typ], scopeStr)
                             if scopeKey not in hotkeysAhk:

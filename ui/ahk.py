@@ -10,7 +10,7 @@ import codecs
 import subprocess
 
 
-def translateHotkey(displayString):
+def translate_hotkey(displayString):
     """
     Creates AHK readable string out of a human readable like:
     Win+Ctrl+M > #^m
