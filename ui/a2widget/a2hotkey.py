@@ -10,7 +10,7 @@ log = a2core.get_logger(__name__)
 class A2Hotkey(QtGui.QPushButton):
     def __init__(self, parent=None, key=None, ok_func=None):
         # i'd love to use super here. But it introduces problems with reload
-        #super(HotKey, self).__init__()
+        # super(HotKey, self).__init__()
         QtGui.QPushButton.__init__(self)
         self.key = key
         self.tempKey = key
@@ -49,7 +49,7 @@ class A2Hotkey(QtGui.QPushButton):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self.popup, self.ok)
 
         self.popup.show()
-        self.popup.placeAtCursor()
+        self.popup.place_at_cursor()
 
     def ok(self):
         log.info('key: %s' % self.tempKey)
@@ -107,15 +107,20 @@ class Popup(QtGui.QWidget):
     """QtCore.Qt.Window
     | QtCore.Qt.CustomizeWindowHint
     """
-    def __init__(self, x, y, closeOnLeave=True, parent=None):
+    def __init__(self, x, y, parent=None):
         super(Popup, self).__init__(parent=parent)
         self.setpos = (x, y)
-        self.closeOnLeave = closeOnLeave
+        self.leave_close_timeout = 1000
+        self._close = False
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.close)
         self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
 
-    def placeAtCursor(self):
+        self._close_timer = QtCore.QTimer()
+        self._close_timer.setInterval(self.leave_close_timeout)
+        self._close_timer.timeout.connect(self.leave_timeout_reached)
+
+    def place_at_cursor(self):
         x, y = self.setpos
         pos = self.pos()
         pos.setX(x - (self.width() / 2))
@@ -123,9 +128,18 @@ class Popup(QtGui.QWidget):
         self.move(pos)
 
     def leaveEvent(self, event):
-        if self.closeOnLeave:
-            self.close()
+        self._close_timer.start()
+        return QtGui.QWidget.leaveEvent(self, event)
 
-    def focusOutEvent(self, event):
+    def enterEvent(self, event):
+        if self._close_timer.isActive():
+            self._close_timer.stop()
+        return QtGui.QWidget.enterEvent(self, event)
+
+    def leave_timeout_reached(self):
+        self._close_timer.stop()
         self.close()
-        #self.focusOutEvent()
+
+    def closeEvent(self, event):
+        self._close_timer.stop()
+        return QtGui.QWidget.closeEvent(self, event)
