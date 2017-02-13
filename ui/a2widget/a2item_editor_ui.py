@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Thu Nov  3 20:59:30 2016
+# Created: Mon Feb 13 11:09:44 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ class Ui_A2ItemEditor(object):
     def setupUi(self, A2ItemEditor):
         A2ItemEditor.setObjectName("A2ItemEditor")
         A2ItemEditor.resize(608, 452)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(A2ItemEditor.sizePolicy().hasHeightForWidth())
@@ -36,6 +36,12 @@ class Ui_A2ItemEditor(object):
         self.horizontalLayout.addWidget(self.del_entry_button)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.item_list = QtGui.QListWidget(A2ItemEditor)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.MinimumExpanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.item_list.sizePolicy().hasHeightForWidth())
+        self.item_list.setSizePolicy(sizePolicy)
+        self.item_list.setAlternatingRowColors(True)
         self.item_list.setObjectName("item_list")
         self.verticalLayout.addWidget(self.item_list)
         self.item_editor_layout.addLayout(self.verticalLayout)

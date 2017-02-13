@@ -31,6 +31,7 @@ class DrawCtrl(QtGui.QWidget):
         self.check_delay = 150
         self._check_scheduled = False
         self.userCfg = self.a2.db.get(self.cfg.get('name', ''), self.mod.key)
+        self.is_expandable_widget = False
 
     def get_user_value(self, typ, name=None, default=None):
         """
@@ -98,6 +99,7 @@ class EditCtrl(QtGui.QGroupBox):
         self.parentCfg = parentCfg
         self._setup_ui(add_layout)
         self.helpUrl = self.a2.urls.helpEditCtrl
+        self.is_expandable_widget = False
 
     @staticmethod
     def element_name():

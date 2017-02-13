@@ -12,6 +12,7 @@ import a2core
 import a2ctrl
 from a2widget import a2settings_view
 from a2widget import a2module_view_ui
+from a2element import DrawCtrl, EditCtrl
 
 
 log = a2core.get_logger(__name__)
@@ -36,7 +37,7 @@ class A2ModuleView(QtGui.QWidget):
 
         self.mainlayout = self.ui.scroll_area_contents.layout()
         self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
-                                           QtGui.QSizePolicy.Expanding)
+                                           QtGui.QSizePolicy.Minimum)
         self.mainlayout.addItem(self.ui.spacer)
         self.settings_widget = self.ui.scroll_area_contents
 
@@ -187,14 +188,20 @@ class A2ModuleView(QtGui.QWidget):
 
         # make the new inner layout the mainLayout
         # add the controls to it
+        has_expandable_widget = False
         for ctrl in self.controls:
             if ctrl:
                 newLayout.addWidget(ctrl)
+
+                if not has_expandable_widget and isinstance(ctrl, (DrawCtrl, EditCtrl)) and ctrl.is_expandable_widget:
+                    has_expandable_widget = True
+
         # amend the spacer
         newLayout.addItem(self.ui.spacer)
 
-        new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                   QtGui.QSizePolicy.Maximum))
+        vertical_policy = QtGui.QSizePolicy.Minimum if has_expandable_widget else QtGui.QSizePolicy.Maximum
+        new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, vertical_policy))
+
         if keep_scroll:
             self.ui.scrollBar.setValue(current_scroll_value)
 
