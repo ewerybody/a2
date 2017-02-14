@@ -235,3 +235,18 @@ WinGetTitle(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
     WinGetTitle, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
     Return, v
 }
+
+DetectHiddenWindows(state=-1) {
+    ; To make some sense out of this command
+    ; this here accepts and returns only 0/1 true/false values.
+    ; The original works with the strings "On" and "Off" m(
+    if (state = -1) {
+        if (A_DetectHiddenWindows = "on")
+            return true
+        else
+            return false
+    } else if (state = 1)
+        DetectHiddenWindows, On
+    else
+        DetectHiddenWindows, Off
+}
