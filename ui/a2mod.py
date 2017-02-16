@@ -253,9 +253,9 @@ class Mod(object):
         would delete it from user settings, so it's taking the default again.
 
         user sets True AND default is True:
-            delete from userCfg
+            delete from user_cfg
         user sets True AND default it False:
-            set to userCfg
+            set to user_cfg
         """
         current_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
         if attr_name is None:

@@ -78,21 +78,15 @@ class A2ItemEditor(QtGui.QWidget):
         return item
 
     def add_item(self):
-        current_items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
         new_item_name = ''
         item = self._add_and_setup_item(new_item_name)
-        current_items.append(new_item_name)
         self.ui.item_list.editItem(item)
         a2ctrl.qlist.select_items(self.ui.item_list, item)
 
     def delete_item(self):
         item_objs = self.ui.item_list.selectedItems()
-        # sel_items = [i.text() for i in item_objs]
-        # all_items = a2ctrl.qlist.get_items_as_text(self.ui.item_list)
-        # new_items = [i for i in all_items if i not in sel_items]
         for item in item_objs:
             item_row = self.ui.item_list.row(item)
             self.ui.item_list.takeItem(item_row)
         item_name = item_objs[0].text()
-        print('delete_item: %s' % item_name)
         self.item_deleted.emit(item_name)

@@ -30,7 +30,7 @@ class DrawCtrl(QtGui.QWidget):
         self.mod = mod
         self.check_delay = 150
         self._check_scheduled = False
-        self.userCfg = self.a2.db.get(self.cfg.get('name', ''), self.mod.key)
+        self.user_cfg = self.a2.db.get(self.cfg.get('name', ''), self.mod.key)
         self.is_expandable_widget = False
 
     def get_user_value(self, typ, name=None, default=None):
@@ -38,7 +38,7 @@ class DrawCtrl(QtGui.QWidget):
         Get a user value. 'value'
         Name is 'value' by default so you can just get the default value by stating the type. Voila!
         """
-        return get_cfg_value(self.cfg, self.userCfg, name, typ, default)
+        return get_cfg_value(self.cfg, self.user_cfg, name, typ, default)
 
     def set_user_value(self, this, name=None):
         """
