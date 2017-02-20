@@ -13,11 +13,15 @@ from a2element import nfo_edit_ui
 class Draw(QtGui.QWidget):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__()
-        self.layout = QtGui.QVBoxLayout(self)
-        self.label = QtGui.QLabel(self)
-        self.label.setText(cfg.get('description') or '')
-        self.label.setWordWrap(True)
-        self.layout.addWidget(self.label)
+        self.main_layout = QtGui.QVBoxLayout(self)
+        text = cfg.get('description', '')
+        if text:
+            self.label = QtGui.QLabel(self)
+            self.label.setText(text)
+            self.label.setWordWrap(True)
+            self.main_layout.addWidget(self.label)
+        else:
+            self.main_layout.setContentsMargins(0, 0, 0, 0)
 
 
 class Edit(QtGui.QGroupBox):
