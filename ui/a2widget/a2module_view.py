@@ -182,7 +182,8 @@ class A2ModuleView(QtGui.QWidget):
             new_widget.setMinimumHeight(current_height)
 
         # create new column layout for the module controls
-        newLayout = QtGui.QVBoxLayout(new_widget)
+        new_layout = QtGui.QVBoxLayout(new_widget)
+
         # turn scroll layout content to new host widget
         self.ui.a2scroll_area.setWidget(new_widget)
 
@@ -191,13 +192,15 @@ class A2ModuleView(QtGui.QWidget):
         has_expandable_widget = False
         for ctrl in self.controls:
             if ctrl:
-                newLayout.addWidget(ctrl)
-
-                if not has_expandable_widget and isinstance(ctrl, (DrawCtrl, EditCtrl)) and ctrl.is_expandable_widget:
-                    has_expandable_widget = True
+                new_layout.addWidget(ctrl)
+                try:
+                    if ctrl.is_expandable_widget:
+                        has_expandable_widget = True
+                except Exception:
+                    pass
 
         # amend the spacer
-        newLayout.addItem(self.ui.spacer)
+        new_layout.addItem(self.ui.spacer)
 
         vertical_policy = QtGui.QSizePolicy.Minimum if has_expandable_widget else QtGui.QSizePolicy.Maximum
         new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, vertical_policy))
@@ -205,7 +208,7 @@ class A2ModuleView(QtGui.QWidget):
         if keep_scroll:
             self.ui.scrollBar.setValue(current_scroll_value)
 
-        self.mainlayout = newLayout
+        self.mainlayout = new_layout
         self.settings_widget = new_widget
 
     def toggle_edit(self, state):
