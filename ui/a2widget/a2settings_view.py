@@ -31,6 +31,7 @@ class A2Settings(QtGui.QWidget):
         self._setup_ui()
         self._check_win_startup()
         self._draw_module_sources()
+        self.is_expandable_widget = True
 
     def _draw_module_sources(self):
         enabled_list = [name for name, data in self.a2.enabled.items() if data[0]]
