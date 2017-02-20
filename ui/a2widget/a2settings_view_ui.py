@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eRiC\io\code\a2\ui\a2widget\a2settings_view.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Mon Feb 13 09:02:19 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Feb 20 15:50:51 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,13 +12,16 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(881, 1132)
+        a2settings.resize(881, 1090)
         a2settings.setWindowTitle("a2settings")
-        self.verticalLayout_2 = QtGui.QVBoxLayout(a2settings)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        a2settings.setStyleSheet("b")
+        self.a2settings_view_layout = QtGui.QVBoxLayout(a2settings)
+        self.a2settings_view_layout.setContentsMargins(-1, -1, -1, 0)
+        self.a2settings_view_layout.setObjectName("a2settings_view_layout")
         self.tabWidget = QtGui.QTabWidget(a2settings)
         self.tabWidget.setObjectName("tabWidget")
         self.tab_2 = QtGui.QWidget()
+        self.tab_2.setStyleSheet("Q")
         self.tab_2.setObjectName("tab_2")
         self.verticalLayout = QtGui.QVBoxLayout(self.tab_2)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -189,8 +192,14 @@ class Ui_a2settings(object):
         self.tabWidget.addTab(self.tab_4, "")
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName("tab_3")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.tab_3)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label = QtGui.QLabel(self.tab_3)
+        self.label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.label.setObjectName("label")
+        self.verticalLayout_2.addWidget(self.label)
         self.tabWidget.addTab(self.tab_3, "")
-        self.verticalLayout_2.addWidget(self.tabWidget)
+        self.a2settings_view_layout.addWidget(self.tabWidget)
 
         self.retranslateUi(a2settings)
         self.tabWidget.setCurrentIndex(0)
@@ -223,8 +232,9 @@ class Ui_a2settings(object):
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("a2settings", "Advanced", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("a2settings", "Database View", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("a2settings", "<html><head/><body><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-weight:600;\">AutoHotkey</span> - a scripting language for desktop automation</p><p align=\"center\"><a href=\"https://autohotkey.com\"><span style=\" text-decoration: underline; color:#0000ff;\">https://autohotkey.com</span></a> - GNU GPLv2</p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-weight:600;\">Python</span> - high-level programming language</p><p align=\"center\"><a href=\"https://www.python.org/\"><span style=\" text-decoration: underline; color:#0000ff;\">https://www.python.org</span></a> - Python Software Foundation License - GPL compatible</p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-weight:600;\">PySide</span> - Python binding of the cross-platform GUI toolkit Qt</p><p align=\"center\"><a href=\"https://wiki.qt.io/Pyside\"><span style=\" text-decoration: underline; color:#0000ff;\">https://wiki.qt.io/Pyside</span></a> - LGPL</p><p align=\"center\"><br/></p><p align=\"center\"><span style=\" font-weight:600;\">Material Icons</span> - Material Design icons by Google</p><p align=\"center\"><a href=\"https://material.io/icons\"><span style=\" text-decoration: underline; color:#0000ff;\">https://material.io/icons</span></a> - Apache License Version 2.0</p><p align=\"center\"><br/></p><p align=\"center\">Thanks!</p><p align=\"center\">...</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("a2settings", "Licenses", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2slider import A2Slider
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
+from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2slider import A2Slider
