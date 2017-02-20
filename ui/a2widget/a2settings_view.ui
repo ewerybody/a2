@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>881</width>
+    <width>763</width>
     <height>1090</height>
    </rect>
   </property>
@@ -383,13 +383,47 @@ Go ahead and add or create one:</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AutoHotkey&lt;/span&gt; - a scripting language for desktop automation&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://autohotkey.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://autohotkey.com&lt;/span&gt;&lt;/a&gt; - GNU GPLv2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Python&lt;/span&gt; - high-level programming language&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.python.org/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.python.org&lt;/span&gt;&lt;/a&gt; - Python Software Foundation License - GPL compatible&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;PySide&lt;/span&gt; - Python binding of the cross-platform GUI toolkit Qt&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://wiki.qt.io/Pyside&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://wiki.qt.io/Pyside&lt;/span&gt;&lt;/a&gt; - LGPL&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Material Icons&lt;/span&gt; - Material Design icons by Google&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://material.io/icons&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://material.io/icons&lt;/span&gt;&lt;/a&gt; - Apache License Version 2.0&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Thanks!&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         <property name="widgetResizable">
+          <bool>true</bool>
          </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>719</width>
+            <height>1035</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="a2license_text">
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_ahk.png&quot;/&gt;&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AutoHotkey&lt;/span&gt; - a scripting language for desktop automation&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://autohotkey.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://autohotkey.com&lt;/span&gt;&lt;/a&gt; - GNU GPLv2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_python.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Python&lt;/span&gt; - high-level programming language&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.python.org/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://www.python.org&lt;/span&gt;&lt;/a&gt; - Python Software Foundation License - GPL compatible&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_pyside.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;PySide&lt;/span&gt; - Python binding of the cross-platform GUI toolkit Qt&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://wiki.qt.io/Pyside&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://wiki.qt.io/Pyside&lt;/span&gt;&lt;/a&gt; - LGPL&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_material.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Material Icons&lt;/span&gt; - Material Design icons by Google&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://material.io/icons&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://material.io/icons&lt;/span&gt;&lt;/a&gt; - Apache License Version 2.0&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Thanks!&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>

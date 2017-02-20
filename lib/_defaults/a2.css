@@ -159,3 +159,7 @@ QScrollBar::handle:pressed {
 a2CodeField {
 	font-family: "Consolas";
 }
+
+QLabel#a2license_text {
+    background-color: "%(color_bright)s";
+}
