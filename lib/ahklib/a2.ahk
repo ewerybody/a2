@@ -10,15 +10,14 @@ class Ca2
      *
      * @type string
      */
-    static title := "a2"
+    static title := ""
 
     /**
      * Root path of the a2 instance
      *
      * @type string
      */
-    static path := A_ScriptDir "\.."
-
+    static path := ""
     /**
      * Path to the module folder of the a2 instance
      *
@@ -33,6 +32,8 @@ class Ca2
     __New()
     {
         global a2_modules
+        this.title := "a2"
+        this.path := A_ScriptDir "\.."
         this.modules := a2_modules
         this.db := new this.Ca2DB()
     }
