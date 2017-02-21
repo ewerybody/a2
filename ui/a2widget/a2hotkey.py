@@ -104,9 +104,6 @@ class A2Hotkey(QtGui.QPushButton):
 
 
 class Popup(QtGui.QWidget):
-    """QtCore.Qt.Window
-    | QtCore.Qt.CustomizeWindowHint
-    """
     def __init__(self, x, y, parent=None):
         super(Popup, self).__init__(parent=parent)
         self.setpos = (x, y)
@@ -114,7 +111,7 @@ class Popup(QtGui.QWidget):
         self._close = False
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                         self, self.close)
-        self.setWindowFlags(QtCore.Qt.CustomizeWindowHint)
+        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
 
         self._close_timer = QtCore.QTimer()
         self._close_timer.setInterval(self.leave_close_timeout)
