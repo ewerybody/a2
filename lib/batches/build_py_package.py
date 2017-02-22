@@ -15,7 +15,7 @@ def main(package_name):
     a2path = abspath(join(this_path, '..', '..'))
     uipath = join(a2path, 'ui')
     sys.path.append(uipath)
-    import ahk
+    import a2ahk
 
     distpath = join(a2path, '_ package')
     print('distpath: %s' % distpath)
@@ -61,8 +61,8 @@ def main(package_name):
         shutil.rmtree(join(distui, 'PySide', folder), ignore_errors=True)
 
     settings_file = join(distlib, '_defaults', 'a2_settings.ahk')
-    ahk.set_variable(settings_file, 'a2_ui_call', 'a2app.exe')
-    ahk.set_variable(settings_file, 'a2_title', package_name)
+    a2ahk.set_variable(settings_file, 'a2_ui_call', 'a2app.exe')
+    a2ahk.set_variable(settings_file, 'a2_title', package_name)
 
 if __name__ == '__main__':
     main(sys.argv[1])
