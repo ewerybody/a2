@@ -10,7 +10,7 @@ from os.path import exists, dirname, basename, relpath
 
 from PySide import QtGui, QtCore
 
-import ahk
+import a2ahk
 import a2mod
 import a2core
 import a2ctrl
@@ -86,7 +86,7 @@ class A2Settings(QtGui.QWidget):
         self.ui.show_console.setChecked(basename(self.a2.paths.python).lower() == 'python.exe')
         self.ui.show_console.clicked[bool].connect(self.toggle_console)
 
-        ahk_vars = ahk.get_variables(self.a2.paths.settings_ahk)
+        ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
         self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
@@ -95,12 +95,12 @@ class A2Settings(QtGui.QWidget):
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
         newpath = os.path.join(dirname(self.a2.paths.python), base_name)
-        ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', newpath)
+        a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', newpath)
         self.a2.paths.python = newpath
         self.ui.python_executable.setText(newpath)
 
     def toggle_startup_tooltips(self, state):
-        ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
+        a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
     def set_autohotkey(self, path):
         if basename(path).lower() != autohotkey_exe:
@@ -111,9 +111,9 @@ class A2Settings(QtGui.QWidget):
 
         rel = relpath(path, self.a2.paths.a2)
         if rel.startswith('..'):
-            ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', path)
+            a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', path)
         else:
-            ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', rel)
+            a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', rel)
         self.a2.paths.autohotkey = path
         self.main.settings_changed()
 
@@ -126,7 +126,7 @@ class A2Settings(QtGui.QWidget):
         log.info('Log level INFO: active')
 
     def _check_win_startup(self):
-        win_startup_path = ahk.call_lib_cmd('get_win_startup_path')
+        win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
         win_startup_lnk = os.path.join(win_startup_path, 'a2.lnk')
         self.ui.load_on_win_start.setChecked(exists(win_startup_lnk))
         self.ui.load_on_win_start.clicked[bool].connect(a2core.set_windows_startup)

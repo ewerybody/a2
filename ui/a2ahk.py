@@ -133,6 +133,48 @@ def _convert_string_to_type(string):
             return string
 
 
+def py_value_to_ahk_string(py_obj):
+    if isinstance(py_obj, bool):
+        return py_bool_to_ahk_string(py_obj)
+    elif isinstance(py_obj, str):
+        return py_string_to_ahk_string(py_obj)
+    elif isinstance(py_obj, float):
+        return py_float_to_ahk_string(py_obj)
+    elif isinstance(py_obj, int):
+        return py_int_to_ahk_string(py_obj)
+    elif isinstance(py_obj, list):
+        return py_list_to_ahk_string(py_obj)
+
+
+def py_bool_to_ahk_string(py_bool):
+    return str(py_bool).lower()
+
+
+def py_string_to_ahk_string(py_str):
+    return '"%s"' % py_str
+
+
+def py_float_to_ahk_string(py_float, decimals=None):
+    template = '%f'
+    if decimals is not None:
+        template = '%.' + str(decimals) + 'f'
+    return (template % py_float).rstrip('0')
+
+
+def py_int_to_ahk_string(py_int):
+    return '%i' % py_int
+
+
+def py_list_to_ahk_string(list_obj):
+    result = '['
+    for item in list_obj:
+        result += py_value_to_ahk_string(item) + ', '
+
+    if result.endswith(', '):
+        result = result[:-2]
+    return result + ']'
+
+
 """
 http://www.autohotkey.com/docs/KeyList.htm
 """

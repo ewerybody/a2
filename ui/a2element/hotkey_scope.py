@@ -3,7 +3,7 @@ Created on Apr 30, 2016
 
 @author: eRiC
 """
-import ahk
+import a2ahk
 import a2ctrl
 import a2ctrl.qlist
 import a2core
@@ -161,7 +161,7 @@ class ScopeDialog(QtGui.QDialog):
 
     def get_scope_nfo(self):
         # call AHK script to get all window classes, titles and executables
-        scope_nfo = ahk.call_lib_cmd('get_scope_nfo')
+        scope_nfo = a2ahk.call_lib_cmd('get_scope_nfo')
         scope_nfo = scope_nfo.split('\\n')
         if not scope_nfo:
             log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)

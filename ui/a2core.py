@@ -23,7 +23,7 @@ LOG_LEVEL = logging.INFO
 log = logging.getLogger(__name__)
 log.setLevel(LOG_LEVEL)
 
-ahk, a2db, a2mod = None, None, None
+a2ahk, a2db, a2mod = None, None, None
 
 edit_disclaimer = ("; a2 %s.ahk - Don't bother editing! - File is generated automatically!")
 a2default_hotkey = 'Win+Shift+A'
@@ -44,8 +44,8 @@ class A2Obj(object):
 
     def __init__(self):
         # lazy import so importing a2core does not depend on other a2 module
-        global ahk, a2db, a2mod
-        import ahk
+        global a2ahk, a2db, a2mod
+        import a2ahk
         import a2db
         import a2mod
         self.app = None
@@ -131,7 +131,7 @@ class URLs(object):
         """
         Common a2 & ahk related web links.
         """
-        variables_dict = ahk.get_variables(a2_urls_ahk)
+        variables_dict = a2ahk.get_variables(a2_urls_ahk)
         self.a2 = variables_dict.get('a2_url', 'https://github.com/ewerybody/a2')
         self.help = variables_dict.get('a2_help', (self.a2 + '#a2-'))
         self.helpEditCtrl = self.a2 + '/wiki/EditCtrls'
@@ -194,7 +194,7 @@ class Paths(object):
         keys = ['settings', 'modules', 'python']
         prefix = 'a2_'
         result = {}
-        settings_dict = ahk.get_variables(self._get_settings_ahk())
+        settings_dict = a2ahk.get_variables(self._get_settings_ahk())
         for key, value in settings_dict.items():
             key = key[len(prefix):]
             if key in keys:
@@ -216,15 +216,15 @@ def write_includes(specific=None):
 
     hkmode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
 
-    includeAhk = [edit_disclaimer % 'includes']
-    a2_hotkey = ahk.translate_hotkey(a2.db.get('a2_hotkey') or a2default_hotkey)
-    hotkeysAhk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
-    variablesAhk = [edit_disclaimer % 'variables']
+    include_ahk = [edit_disclaimer % 'includes']
+    a2_hotkey = a2ahk.translate_hotkey(a2.db.get('a2_hotkey') or a2default_hotkey)
+    hotkeys_ahk = {hkmode['1']: [a2_hotkey + '::a2UI()']}
+    variables_ahk = [edit_disclaimer % 'variables']
     # TODO: this needs to be implemented dynamically
-    libsAhk = [edit_disclaimer % 'libs']
-    libsAhk += ['#include lib/ahklib/%s.ahk' % lib for lib in
+    libs_ahk = [edit_disclaimer % 'libs']
+    libs_ahk += ['#include lib/ahklib/%s.ahk' % lib for lib in
                 ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools', 'RichObject', 'Array']]
-    initAhk = edit_disclaimer % 'init' + '\na2_init_calls() {\n'
+    init_ahk = edit_disclaimer % 'init' + '\na2_init_calls() {\n'
 
     # browse the enabled modules to collect the include data
     mod_settings = a2.db.tables()
@@ -261,66 +261,55 @@ def write_includes(specific=None):
 
                 for include in includes:
                     include_path = os.path.join(include_dir, include)
-                    includeAhk += ['#include %s' % include_path]
+                    include_ahk += ['#include %s' % include_path]
 
             hotkeys = a2.db.get('hotkeys', module.key) or {}
             for typ in hotkeys:
                 for hk in hotkeys.get(typ) or []:
                     # type 0 is global, append under the #IfWinActive label
                     if typ == '0':
-                        hkstring = ahk.translate_hotkey(hk[0]) + '::' + hk[1]
-                        hotkeysAhk[hkmode['1']].append(hkstring)
+                        hkstring = a2ahk.translate_hotkey(hk[0]) + '::' + hk[1]
+                        hotkeys_ahk[hkmode['1']].append(hkstring)
                     # assemble type 1 and 2 in hotkeysAhks keys with the hotkey strings listed
                     else:
-                        hkstring = ahk.translate_hotkey(hk[1]) + '::' + hk[2]
+                        hkstring = a2ahk.translate_hotkey(hk[1]) + '::' + hk[2]
                         for scopeStr in hk[0]:
                             scopeKey = '%s %s' % (hkmode[typ], scopeStr)
-                            if scopeKey not in hotkeysAhk:
-                                hotkeysAhk[scopeKey] = []
-                            hotkeysAhk[scopeKey].append(hkstring)
+                            if scopeKey not in hotkeys_ahk:
+                                hotkeys_ahk[scopeKey] = []
+                            hotkeys_ahk[scopeKey].append(hkstring)
 
             for var_name, value in (a2.db.get('variables', module.key) or {}).items():
-                if isinstance(value, bool):
-                    variablesAhk.append('%s := %s' % (var_name, str(value).lower()))
-                elif isinstance(value, str):
-                    variablesAhk.append('%s := "%s"' % (var_name, value))
-                elif isinstance(value, float):
-                    variablesAhk.append('%s := %f' % (var_name, value))
-                elif isinstance(value, int):
-                    variablesAhk.append('%s := %i' % (var_name, value))
-                else:
-                    log.error('Please check handling variable type "%s" (%s: %s)'
-                              % (type(value), var_name, str(value)))
-                    variablesAhk.append('%s := %s' % (var_name, str(value)))
+                variables_ahk.append('%s := %s' % (var_name, a2ahk.py_value_to_ahk_string(value)))
 
             init_calls = a2.db.get('init_calls', module.key) or []
             if init_calls:
-                initAhk += '    ; %s\n' % module.key
+                init_ahk += '    ; %s\n' % module.key
                 for call in init_calls:
                     call = '    ' + call.replace('\n', '\n    ')
                     if not call.endswith('\n'):
                         call += '\n'
-                    initAhk += call
+                    init_ahk += call
 
     # write all the include files
     with codecs.open(join(a2.paths.settings, 'variables.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write('\n'.join(variablesAhk))
+        fobj.write('\n'.join(variables_ahk))
 
     with codecs.open(join(a2.paths.settings, 'libs.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write('\n'.join(libsAhk))
+        fobj.write('\n'.join(libs_ahk))
 
     with codecs.open(join(a2.paths.settings, 'includes.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write('\n'.join(includeAhk))
+        fobj.write('\n'.join(include_ahk))
 
     with codecs.open(join(a2.paths.settings, 'hotkeys.ahk'), 'w', encoding='utf-8-sig') as fobj:
         content = edit_disclaimer % 'hotkeys' + '\n'
-        for key in sorted(hotkeysAhk.keys()):
-            content += '\n'.join([key] + hotkeysAhk[key]) + '\n\n'
+        for key in sorted(hotkeys_ahk.keys()):
+            content += '\n'.join([key] + hotkeys_ahk[key]) + '\n\n'
         fobj.write(content)
 
     with codecs.open(join(a2.paths.settings, 'init.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        initAhk += ('}\n')
-        fobj.write(initAhk)
+        init_ahk += ('}\n')
+        fobj.write(init_ahk)
 
 
 def get_date():
@@ -332,7 +321,7 @@ def set_windows_startup(state=True):
     """
     might be doable via python but this is just too easy with AHKs A_Startup
     """
-    ahk.call_lib_cmd('set_windows_startup', A2Obj.inst().paths.a2, int(state))
+    a2ahk.call_lib_cmd('set_windows_startup', A2Obj.inst().paths.a2, int(state))
 
 
 def surfTo(url):

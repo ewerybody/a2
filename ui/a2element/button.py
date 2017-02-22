@@ -53,10 +53,10 @@ class Draw(DrawCtrl):
                           % (self.mod.name, code))
 
     def call_local_ahk(self, script_name, *args):
-        import ahk
-        script_name = ahk.ensure_ahk_ext(script_name)
+        import a2ahk
+        script_name = a2ahk.ensure_ahk_ext(script_name)
         script_path = os.path.join(self.mod.path, script_name)
-        return ahk.call_cmd(script_path, *args)
+        return a2ahk.call_cmd(script_path, *args)
 
 
 class Edit(EditCtrl):

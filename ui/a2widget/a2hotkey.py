@@ -1,6 +1,6 @@
 from PySide import QtGui, QtCore
 
-import ahk
+import a2ahk
 import a2core
 
 
@@ -75,7 +75,7 @@ class A2Hotkey(QtGui.QPushButton):
         tilde = ''
         # TODO: implement check for joystick keys and scancodes: 2joy4, SCnnn
         # http://www.autohotkey.com/docs/KeyList.htm#SpecialKeys
-        if len(key) != 1 and key not in ahk.keys:
+        if len(key) != 1 and key not in a2ahk.keys:
             msg = 'Invalid key! (%s)' % key
         elif len(hkparts) == 1:
             good = True
@@ -84,7 +84,7 @@ class A2Hotkey(QtGui.QPushButton):
             if modifier[0].startswith('~'):
                 tilde = '~'
                 modifier[0] = modifier[0][1:]
-            badModifier = [k for k in modifier if k not in ahk.modifiers]
+            badModifier = [k for k in modifier if k not in a2ahk.modifiers]
             if badModifier:
                 msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(badModifier))
             else:
