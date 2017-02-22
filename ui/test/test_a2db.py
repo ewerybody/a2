@@ -48,7 +48,7 @@ class Test(unittest.TestCase):
         self.assertTrue(now == changes)
         db.pop(key, table)
         self.assertFalse(key in db.keys(table))
-        db.dropTable(table)
+        db.drop_table(table)
         self.assertFalse(table in db.tables())
 
     def test2_get_changes(self):
@@ -69,7 +69,7 @@ class Test(unittest.TestCase):
         self.assertNotEqual(defaults['value'], fetched['value'])
         db.pop(key, table)
         self.assertFalse(key in db.keys(table))
-        db.dropTable(table)
+        db.drop_table(table)
         self.assertFalse(table in db.tables())
 
     def test4_shutdown(self):

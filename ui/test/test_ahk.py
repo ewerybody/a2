@@ -58,6 +58,17 @@ class Test(unittest.TestCase):
         result = a2ahk._convert_string_to_type('345243.')
         self.assertTrue(isinstance(result, float))
 
+    def test_py_value_to_string(self):
+        for item, result in [(True, 'true'),
+                             (False, 'false'),
+                             ('String', '"String"'),
+                             (0.333, '0.333'),
+                             (1337, '1337'),
+                             (['something', 42, 13.37], '["something", 42, 13.37]')]:
+
+            converted = a2ahk.py_value_to_ahk_string(item)
+            self.assertEqual(converted, result)
+
 
 if __name__ == "__main__":
     unittest.main()
