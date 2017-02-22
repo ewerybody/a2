@@ -107,6 +107,8 @@ def get_a2element_object(obj_name, element_type, module_path=None):
         return getattr(element_mod, obj_name)
     elif module_path:
         element_objects = get_local_element(os.path.join(module_path, element_type + '.py'))
+        if obj_name not in element_objects:
+            raise RuntimeError('Local Element "%s" has no object "%s"!!' % (element_type, obj_name))
         return element_objects[obj_name]
     else:
         log.error('Could not get object "%s" from element_type "%s"' % (obj_name, element_type))
