@@ -25,8 +25,7 @@ import a2core
 
 
 log = a2core.get_logger(__name__)
-_defaultTable = 'a2'
-_defaultSep = '|'
+_DEFAULTTABLE = 'a2'
 
 
 class A2db(object):
@@ -43,7 +42,7 @@ class A2db(object):
     def disconnect(self):
         self._con.close()
 
-    def get(self, key, table=_defaultTable, check=True, asjson=True):
+    def get(self, key, table=_DEFAULTTABLE, check=True, asjson=True):
         """
         Gets you a value from a keyName and tableName.
 
@@ -66,8 +65,6 @@ class A2db(object):
             if not asjson:
                 return data
             return json.loads(data)
-#             except:
-#                 raise Exception('Failed converting data: %s' % data)
 
         except Exception as error:
             if table not in self.tables():
@@ -80,7 +77,7 @@ class A2db(object):
                 log.error('Error getting data from key "%s" from table "%s"' % (key, table))
                 raise error
 
-    def set(self, key, value, table=_defaultTable):
+    def set(self, key, value, table=_DEFAULTTABLE, _table_create_flag=False):
         """
         update TableName SET valueName=value WHERE key=keyName
         """
@@ -95,43 +92,39 @@ class A2db(object):
                 statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, jvalue, key)
                 log.debug('updating value!\n  %s' % statement)
             self._commit(statement)
-        # except sqlite3.DatabaseError as error:
+
         except Exception as error:
-            # except:
             log.debug('setting db failed...')
             if table not in self.tables():
-                log.debug('creating table and retry...')
-                self.createTable(table)
-                # TODO: resolve loop:
-                self.set(key, value, table)
+                if _table_create_flag:
+                    raise RuntimeError('a2db table creation was already attempted, failed again!')
+                else:
+                    log.debug('creating table and retry...')
+                    self.create_table(table)
+                    self.set(key, value, table, _table_create_flag=True)
             else:
                 log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s'
                           % (value, key, table, error))
-                # log.error('could not set value: "%s" on key:"%s" in section:"%s"'
-                #          % (value, key, table))
 
-    def pop(self, key, table=_defaultTable):
+    def pop(self, key, table=_DEFAULTTABLE):
         """
         removes a whole entry from a table. So the whole row: index, key and value will be gone
         """
         if key not in self.keys(table):
             return
         statement = ('delete from "%s" where key="%s"' % (table, key))
-#         delete from where key
-#             statement = 'delete "%s" set value="%s" WHERE key="%s"' % (table, value, key)
-#             log.debug('updating value!\n  %s' % statement)
         self._commit(statement)
 
     def tables(self):
         tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
         return [t[0] for t in tablelist]
 
-    def dropTable(self, table):
+    def drop_table(self, table):
         if table not in self.tables():
             return
         self._commit('drop table "%s"' % table)
 
-    def keys(self, table=_defaultTable):
+    def keys(self, table=_DEFAULTTABLE):
         data = self._fetch('select key from "%s"' % table)
         return [k[0] for k in data]
 
@@ -145,11 +138,11 @@ class A2db(object):
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
         return results
 
-    def createTable(self, table):
+    def create_table(self, table):
         if table in self.tables():
             return
         statement = 'create table "%s" (id integer primary key, key TEXT, value TEXT)' % table
-        log.debug('createTable statement:\n\t%s' % statement)
+        log.debug('create_table statement:\n\t%s' % statement)
         self._execute(statement)
 
     def _commit(self, statement):
@@ -160,7 +153,6 @@ class A2db(object):
             self.disconnect()
         except Exception as err:
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
-            # log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def _execute(self, statement):
         try:
@@ -169,7 +161,6 @@ class A2db(object):
             self.disconnect()
         except Exception as err:
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
-            # log.error('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def all(self):
         tables = self.tables()
@@ -179,7 +170,7 @@ class A2db(object):
                      % (t, columns, '-' * 40,
                         '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
 
-    def set_changes(self, key, changes_dict, defaults_dict, table=_defaultTable):
+    def set_changes(self, key, changes_dict, defaults_dict, table=_DEFAULTTABLE):
         """
         Writes differences from defaults_dict to the db.
 
@@ -213,7 +204,7 @@ class A2db(object):
             else:
                 self.pop(key, table)
 
-    def get_changes(self, key, default_dict, table=_defaultTable):
+    def get_changes(self, key, default_dict, table=_DEFAULTTABLE):
         """
         Fetches settings from the db if set in the db and different from the
         given default_dict.
