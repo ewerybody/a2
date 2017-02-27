@@ -395,8 +395,8 @@ Go ahead and add or create one:</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>719</width>
-            <height>1035</height>
+            <width>119</width>
+            <height>711</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
