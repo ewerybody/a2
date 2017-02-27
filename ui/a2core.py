@@ -443,6 +443,39 @@ def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already
         return True
 
 
+def get_next_free_number(name, name_list, separator=''):
+    """
+    Browses a list of names to find a free new version of the given name + integer number.
+    Just returns the name if its not even in the name_list. Otherwise the first next will be 2.
+
+    Example:
+
+        name = 'trumpet'
+        name_list = ['swamp', 'noodle']
+        result: 'trumpet'
+
+        name = 'bob'
+        name_list = ['bob', 'alice', 'bob 2', 'bob 4']
+        result: 'bob 3'
+
+    :param str name: Base name to look up in the list
+    :param list name_list: List to look for instances of "name"
+    :param str separator: string to put between the initial name and the integer number.
+    :rtype: str
+    """
+    if name not in name_list:
+        return name
+
+    number = 2
+    try_name = name + separator + str(number)
+
+    while try_name in name_list:
+        number += 1
+        try_name = name + separator + str(number)
+
+    return try_name
+
+
 if __name__ == '__main__':
     import a2app
     a2app.main()

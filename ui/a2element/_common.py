@@ -234,12 +234,9 @@ class EditCtrl(QtGui.QGroupBox):
             this_type = self.cfg['typ']
             controls = [cfg.get('name', '') for cfg in self.main.tempConfig
                         if cfg.get('typ') == this_type]
-            number = len(controls)
-            try_name = new_name + str(number)
-            while try_name in controls:
-                number += 1
-                try_name = new_name + str(number)
-            self.cfg['name'] = try_name
+
+            new_name = a2core.get_next_free_number(new_name, controls)
+            self.cfg['name'] = new_name
 
     def scroll_to_bottom(self):
         self._scrollValB4 = self.main.ui.scrollBar.value()
