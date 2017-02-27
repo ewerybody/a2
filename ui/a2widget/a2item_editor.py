@@ -14,12 +14,18 @@ class A2ItemEditor(QtGui.QWidget):
     selection_changed = QtCore.Signal(list)
     item_changed = QtCore.Signal(tuple)
     item_deleted = QtCore.Signal(str)
+    data_changed = QtCore.Signal()
+
+    data = {}
+    draw_labels = True
 
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)
         a2ctrl.check_ui_module(a2item_editor_ui)
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
+
+        self.fill_item_list()
 
         self._selected_name = None
 
@@ -29,7 +35,6 @@ class A2ItemEditor(QtGui.QWidget):
         self.ui.del_entry_button.clicked.connect(self.delete_item)
 
         self.ui.item_list.itemSelectionChanged.connect(self.selection_change)
-        # self.ui.item_list.currentTextChanged.connect(self.selection_change)
 
     def check_item_change(self, item):
         new_name = item.text()
@@ -42,8 +47,9 @@ class A2ItemEditor(QtGui.QWidget):
     def item_names(self):
         return a2ctrl.qlist.get_items_as_text(self.ui.item_list)
 
-    def fill_items(self, item_list):
-        for item_name in item_list:
+    def fill_item_list(self):
+        self.ui.item_list.clear()
+        for item_name in sorted(self.data.keys(), key=str.lower):
             self._add_and_setup_item(item_name)
 
     @property
