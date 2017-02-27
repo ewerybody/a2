@@ -274,6 +274,8 @@ def get_local_element(itempath):
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error('Could not exec code from "%s"' % itempath)
+    else:
+        raise RuntimeError('Cannot load local element! File does not exist! (%s)' % itempath)
 
 
 def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None):
