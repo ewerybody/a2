@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>608</width>
-    <height>452</height>
+    <width>697</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,7 +70,6 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <layout class="QVBoxLayout" name="config_layout"/>
     </widget>
    </item>
   </layout>

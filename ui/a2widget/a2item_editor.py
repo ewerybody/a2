@@ -7,6 +7,7 @@ a2widget.a2item_editor
 import a2ctrl.qlist
 from PySide import QtGui, QtCore
 from a2widget import a2item_editor_ui
+from collections import OrderedDict
 
 
 class A2ItemEditor(QtGui.QWidget):
@@ -15,6 +16,7 @@ class A2ItemEditor(QtGui.QWidget):
     item_changed = QtCore.Signal(tuple)
     item_deleted = QtCore.Signal(str)
     data_changed = QtCore.Signal()
+    _value_changed = QtCore.Signal(str)
 
     data = {}
     draw_labels = True
@@ -22,8 +24,17 @@ class A2ItemEditor(QtGui.QWidget):
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)
         a2ctrl.check_ui_module(a2item_editor_ui)
+        self._drawing = True
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
+
+        if self.draw_labels:
+            self.ui.config_layout = QtGui.QFormLayout(self.ui.config_widget)
+        else:
+            self.ui.config_layout = QtGui.QVBoxLayout(self.ui.config_widget)
+        self.ui.config_widget.setLayout(self.ui.config_layout)
+        self._data_widgets_count = 0
+        self._data_widgets = OrderedDict()
 
         self.fill_item_list()
 
@@ -35,12 +46,72 @@ class A2ItemEditor(QtGui.QWidget):
         self.ui.del_entry_button.clicked.connect(self.delete_item)
 
         self.ui.item_list.itemSelectionChanged.connect(self.selection_change)
+        self._drawing = False
+        self._current_data = {}
+        self.selected_name_changed.connect(self.draw_data)
+
+        self._value_changed.connect(self.update_data)
+
+    def add_data_widget(self, value_name, widget, set_function, change_signal=None,
+                        default_value=None, label=None):
+
+        self._drawing = True
+        if self.draw_labels:
+            this_label = label if label is not None else value_name.title()
+            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.LabelRole, QtGui.QLabel(this_label))
+            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.FieldRole, widget)
+            self._data_widgets_count += 1
+        else:
+            self.ui.config_layout.addWidget(widget)
+
+        self._data_widgets[value_name] = {'widget': widget,
+                                          'set_function': set_function,
+                                          'change_signal': change_signal,
+                                          'default_value': default_value}
+
+        a2ctrl.connect.control(widget, value_name, self._current_data, self._value_changed, change_signal)
+
+        self._drawing = False
+
+    def draw_data(self, item_name):
+        self._drawing = True
+        print('self._drawing: %s' % self._drawing)
+        for value_name, widget_dict in self._data_widgets.items():
+            value = self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
+            widget_dict['set_function'](value)
+            self._current_data[value_name] = value
+
+        self._drawing = False
+
+    def update_data(self):
+        """
+        Shall always update the config but not trigger change if there was no text set
+        and text was not deleted.
+        """
+        if self._drawing:
+            return
+
+        diff_dict = {}
+        for value_name, widget_dict in self._data_widgets.items():
+            value = self._current_data.get(value_name)
+            if value != widget_dict['default_value']:
+                diff_dict[value_name] = value
+
+        if self.data[self.selected_name] != diff_dict:
+            self.data[self.selected_name] = diff_dict
+            self.data_changed.emit()
 
     def check_item_change(self, item):
         new_name = item.text()
         old_name = self._selected_name
         if new_name != old_name:
             self._selected_name = new_name
+            data = self.data.pop(old_name) if old_name else {}
+
+            self.data[new_name] = data
+            self.draw_data(new_name)
+
+            self.data_changed.emit()
             self.item_changed.emit((old_name, new_name, item))
 
     @property
@@ -95,4 +166,6 @@ class A2ItemEditor(QtGui.QWidget):
             item_row = self.ui.item_list.row(item)
             self.ui.item_list.takeItem(item_row)
         item_name = item_objs[0].text()
+        self.data.pop(item_name)
+        self.data_changed.emit()
         self.item_deleted.emit(item_name)

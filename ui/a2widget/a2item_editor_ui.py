@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Mon Feb 13 11:09:44 2017
+# Created: Tue Feb 28 19:00:15 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_A2ItemEditor(object):
     def setupUi(self, A2ItemEditor):
         A2ItemEditor.setObjectName("A2ItemEditor")
-        A2ItemEditor.resize(608, 452)
+        A2ItemEditor.resize(697, 448)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -48,9 +48,6 @@ class Ui_A2ItemEditor(object):
         self.config_widget = QtGui.QWidget(A2ItemEditor)
         self.config_widget.setEnabled(False)
         self.config_widget.setObjectName("config_widget")
-        self.config_layout = QtGui.QVBoxLayout(self.config_widget)
-        self.config_layout.setContentsMargins(0, 0, 0, 0)
-        self.config_layout.setObjectName("config_layout")
         self.item_editor_layout.addWidget(self.config_widget)
         self.item_editor_layout.setStretch(0, 1)
         self.item_editor_layout.setStretch(1, 3)
