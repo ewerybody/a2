@@ -51,8 +51,10 @@ class A2TextField(QtGui.QPlainTextEdit):
         return QtGui.QPlainTextEdit.focusOutEvent(self, *args, **kwargs)
 
     def setText(self, this):
+        self._internal_change = True
         self.setPlainText(this)
         self._set_height_to_block_count()
+        self._internal_change = False
 
     def _set_height_to_block_count(self, block_count=None):
         if block_count is None:
@@ -73,6 +75,8 @@ class A2TextField(QtGui.QPlainTextEdit):
         self.setMaximumHeight(height)
 
     def check_editing_finished(self):
+        if self._internal_change:
+            return
         # rewinds the timer
         self._timer.start()
 
