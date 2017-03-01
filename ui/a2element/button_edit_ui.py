@@ -41,7 +41,7 @@ class Ui_edit(object):
         self.displayLabelLabel_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel_3.setObjectName("displayLabelLabel_3")
         self.edit_layout.setWidget(2, QtGui.QFormLayout.LabelRole, self.displayLabelLabel_3)
-        self.cfg_code = a2CodeField(edit)
+        self.cfg_code = A2CodeField(edit)
         self.cfg_code.setObjectName("cfg_code")
         self.edit_layout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_code)
 
@@ -55,4 +55,4 @@ class Ui_edit(object):
         self.cfg_buttontext.setPlaceholderText(QtGui.QApplication.translate("edit", "text to show on the button", None, QtGui.QApplication.UnicodeUTF8))
         self.displayLabelLabel_3.setText(QtGui.QApplication.translate("edit", "Python Code:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget import a2CodeField
+from a2widget import A2CodeField

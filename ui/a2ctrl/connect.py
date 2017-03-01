@@ -7,7 +7,7 @@ from functools import partial
 from PySide import QtGui
 
 import a2core
-from a2widget import A2PathField, a2TextField, a2CodeField
+from a2widget import A2PathField, A2TextField, A2CodeField
 
 
 log = a2core.get_logger(__name__)
@@ -51,7 +51,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
         # solution: ctrl.clicked[bool] sends the state already!
-        ctrl.clicked[bool].connect(partial(_updateCfgData, cfg, name))
+        ctrl.clicked[bool].connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.clicked[bool].connect(change_signal.emit)
         # set ctrl according to config or set config from ctrl
@@ -61,7 +61,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.isChecked()
 
     elif isinstance(ctrl, (QtGui.QLineEdit)):
-        ctrl.textChanged.connect(partial(_updateCfgData, cfg, name))
+        ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.textChanged[str].connect(change_signal.emit)
         if name in cfg:
@@ -70,7 +70,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.text()
 
     elif isinstance(ctrl, A2PathField):
-        ctrl.changed.connect(partial(_updateCfgData, cfg, name))
+        ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
         if name in cfg:
@@ -79,7 +79,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.value
 
     elif isinstance(ctrl, QtGui.QComboBox):
-        ctrl.currentIndexChanged.connect(partial(_updateCfgData, cfg, name))
+        ctrl.currentIndexChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.currentIndexChanged.connect(change_signal.emit)
         if name in cfg:
@@ -98,7 +98,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = items
 
     elif isinstance(ctrl, (QtGui.QSpinBox, QtGui.QDoubleSpinBox)):
-        ctrl.valueChanged.connect(partial(_updateCfgData, cfg, name))
+        ctrl.valueChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.valueChanged.connect(change_signal.emit)
         if name in cfg:
@@ -116,7 +116,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         elif ctrl.isChecked():
             cfg[name] = value
 
-    elif isinstance(ctrl, (QtGui.QTextEdit, a2TextField, a2CodeField)):
+    elif isinstance(ctrl, (QtGui.QTextEdit, A2TextField, A2CodeField)):
         # For if a not immediate change signal is wanted
         # TODO: Do this for the other ctrl types
         if trigger_signal is None:
@@ -135,7 +135,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
                   (name, type(ctrl)))
 
 
-def _updateCfgData(cfg, name, value):
+def _update_cfg_data(cfg, name, value):
     """
     issued from a control change function this sets an according item in config dict
     """
@@ -144,7 +144,7 @@ def _updateCfgData(cfg, name, value):
 
 def _radio_update(cfg, name, value, state):
     """
-    almost same as _updateCfgData but dependent on a state bool arg
+    almost same as _update_cfg_data but dependent on a state bool arg
     """
     if state:
         cfg[name] = value

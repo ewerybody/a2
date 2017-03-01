@@ -7,7 +7,7 @@ Text field that automatically gets bigger the more lines you add.
 from PySide import QtGui, QtCore
 
 
-class a2TextField(QtGui.QPlainTextEdit):
+class A2TextField(QtGui.QPlainTextEdit):
     """
     Can be set in QDesigner from PlainTextEdit.
     Has an editing_finished-signal similar to the one on the Line edit. The difference is:
@@ -16,7 +16,7 @@ class a2TextField(QtGui.QPlainTextEdit):
     editing_finished = QtCore.Signal()
 
     def __init__(self, parent=None, *args, **kwargs):
-        super(a2TextField, self).__init__(parent, *args, **kwargs)
+        super(A2TextField, self).__init__(parent, *args, **kwargs)
 
         self.finish_delay = 1500
 
@@ -82,9 +82,9 @@ class a2TextField(QtGui.QPlainTextEdit):
         self.editing_finished.emit()
 
 
-class a2CodeField(a2TextField):
+class A2CodeField(A2TextField):
     """
     Just subclassed to be identifyable via CSS to apply a monospace font.
     """
     def __init__(self, parent=None, *args, **kwargs):
-        a2TextField.__init__(self, parent, *args, **kwargs)
+        A2TextField.__init__(self, parent, *args, **kwargs)
