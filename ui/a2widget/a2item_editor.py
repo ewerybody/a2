@@ -75,7 +75,6 @@ class A2ItemEditor(QtGui.QWidget):
 
     def draw_data(self, item_name):
         self._drawing = True
-        print('self._drawing: %s' % self._drawing)
         for value_name, widget_dict in self._data_widgets.items():
             value = self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
             widget_dict['set_function'](value)
