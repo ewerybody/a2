@@ -37,7 +37,13 @@ else
 	; check if a2_python is version 3.4.x ==============================================
 	check_version(check_pypath)
 	
-	;TODO: check if a2_call contains python.exe or pythonw.exe
+	; check if a2_call contains more than the a2app-string =============================
+	if (InStr(a2_ui_call, "python.exe") || InStr(a2_ui_call, "pythonw.exe"))
+	{
+		MsgBox, 16, a2_ui_call contains .exe!, In Settings "a2_ui_call" contrains a python executable name!`nThis was just changed! Make sure it's just the .py file Your want to call!`nBending it to default "a2app.py" now...
+		a2_ui_call := "a2app.py" 
+	}
+	
 	this_call := a2_python " " a2_ui_call
 }
 
