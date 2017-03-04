@@ -191,7 +191,7 @@ class Paths(object):
         return self.settings_ahk
 
     def _fetch_a2_setting_paths(self):
-        keys = ['settings', 'modules', 'python']
+        keys = ['settings', 'modules']
         prefix = 'a2_'
         result = {}
         settings_dict = a2ahk.get_variables(self._get_settings_ahk())
@@ -203,6 +203,8 @@ class Paths(object):
                 else:
                     result[key] = os.path.abspath(os.path.join(self.a2, value))
         result['ahk'] = settings_dict.get('a2_ahk') or os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
+        # Python path can be relative! So we take anything here.
+        result['python'] = settings_dict.get('a2_python')
         return result
 
 
