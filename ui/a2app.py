@@ -35,7 +35,6 @@ def main():
     app = QSingleApplication(sys.argv)
     # ensure_single will already exit() after sending the message
     if not sys.argv[1:]:
-        # app.ensure_single(['--show'])
         app.ensure_single(['--show'])
     else:
         app.ensure_single()
