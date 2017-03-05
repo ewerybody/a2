@@ -11,12 +11,12 @@ They can be enabled/disabled individually affecting all their child modules.
 @author: eRiC
 """
 import os
-import a2core
-import a2ctrl
-from os.path import exists, splitext, isdir, isfile
 from shutil import copy2
+
 from PySide import QtGui
 
+import a2core
+import a2ctrl
 
 log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
@@ -39,7 +39,7 @@ def get_module_sources(main, path, modsource_dict):
     [modsource_dict.pop(m) for m in list(modsource_dict) if m not in modsources]
 
     for name in modsources:
-        if not exists(os.path.join(path, name, MOD_SOURCE_NAME)):
+        if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
         modsource_dict.setdefault(name, ModSource(main, name)).fetch_modules()
 
@@ -51,6 +51,8 @@ class ModSource(object):
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
+        self.mod_count = 0
+        self.enabled_count = 0
         self._icon = None
 
     def fetch_modules(self, state=None):
@@ -142,13 +144,13 @@ class Mod(object):
         self.ui = None
         # the compound modulesource|modulename identifier
         self.key = self.source.name + '|' + self.name
-        # to itentify the module in the module list widget e.g. for selection
+        # to identify the module in the module list widget e.g. for selection
         self._item = None
         self._icon = None
 
     @property
     def has_config_file(self):
-        return exists(self.config_file)
+        return os.path.exists(self.config_file)
 
     @property
     def config(self):
@@ -161,7 +163,7 @@ class Mod(object):
         self._config = cfg_dict
         # backup current config_file
         backup_path = os.path.join(self.path, '_config_backups')
-        if not exists(backup_path):
+        if not os.path.exists(backup_path):
             os.mkdir(backup_path)
         _config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
         if _config_backups:
@@ -227,7 +229,7 @@ class Mod(object):
         if not script_name:
             return
         # make sure there is lowercase .ahk as extension
-        script_name = '%s.ahk' % splitext(script_name)[0]
+        script_name = '%s.ahk' % os.path.splitext(script_name)[0]
         script_name = script_name.strip()
 
         with open(os.path.join(self.path, script_name), 'w') as fObj:
@@ -240,7 +242,7 @@ class Mod(object):
     def check_create_script(self, name):
         if name.strip() == '':
             return 'Script name cannot be empty!'
-        if splitext(name.lower())[0] in [splitext(s)[0].lower() for s in self.scripts]:
+        if os.path.splitext(name.lower())[0] in [os.path.splitext(s)[0].lower() for s in self.scripts]:
             return 'Module has already a script named "%s"!' % name
         return True
 
@@ -293,17 +295,17 @@ class Mod(object):
 
 
 def get_files(path):
-    return [f for f in os.listdir(path) if isfile(os.path.join(path, f))]
+    return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 
 def get_folders(path, exclude=None):
     if exclude is None:
         exclude = EXCLUDE_FOLDERS
-    return [f for f in os.listdir(path) if isdir(os.path.join(path, f)) and f not in exclude]
+    return [f for f in os.listdir(path) if os.path.isdir(os.path.join(path, f)) and f not in exclude]
 
 
 def get_icon(current_icon, folder, fallback):
-    if current_icon is None or not exists(current_icon.path):
+    if current_icon is None or not os.path.exists(current_icon.path):
         icon_path = ''
         for item in get_files(folder):
             if item in ICON_TYPES:
