@@ -64,8 +64,8 @@ class Edit(EditCtrl):
     The background widget that sets up how the user can edit the element,
     visible when editing the module.
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = 'https://github.com/ewerybody/a2/wiki/Button-element'
         a2ctrl.check_ui_module(button_edit_ui)
         self.ui = button_edit_ui.Ui_edit()

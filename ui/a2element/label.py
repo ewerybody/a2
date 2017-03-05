@@ -37,8 +37,8 @@ class Edit(EditCtrl):
     The background widget that sets up how the user can edit the element,
     visible when editing the module.
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg)
 
         self.mainLayout.addWidget(QtGui.QLabel('Some text to show in the module frontend:'))
         self.text_field = A2TextField()

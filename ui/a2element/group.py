@@ -49,8 +49,8 @@ class Edit(EditCtrl):
         properly implemented it would probably work very well, we will
         not go deeper than this to keep complexity under the lid)
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         if 'children' not in self.cfg:
             self.cfg['children'] = []
 

@@ -94,8 +94,8 @@ class Edit(EditCtrl):
     """
     Edit-control for Numbers: integer OR float!
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number
 
         self.ui = number_edit_ui.Ui_edit()

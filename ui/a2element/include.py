@@ -24,8 +24,8 @@ class Edit(EditCtrl):
     unconditional autohotkey script include. If the parent element is
     enabled: it gets included in (enabled group or module).
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.main = main
         self.layout = QtGui.QHBoxLayout(self.mainWidget)
         self.layout.setSpacing(5)

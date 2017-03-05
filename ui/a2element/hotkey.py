@@ -110,8 +110,8 @@ class Edit(EditCtrl):
         cfg['name'] = 'someModule_hotkey1',
         cfg['label'] = 'do awesome stuff on:'
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         defaults = [('key', 'Win+F'), ('mode', 'ahk')]
         for key, value in defaults:
             if key not in self.cfg:

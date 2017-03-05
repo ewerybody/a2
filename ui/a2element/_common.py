@@ -91,12 +91,12 @@ class EditCtrl(QtGui.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
-    def __init__(self, cfg, main, parentCfg, add_layout=True):
+    def __init__(self, cfg, main, parent_cfg, add_layout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
         self.cfg = cfg
         self.main = main
-        self.parentCfg = parentCfg
+        self.parent_cfg = parent_cfg
         self._setup_ui(add_layout)
         self.helpUrl = self.a2.urls.helpEditCtrl
         self.is_expandable_widget = False
@@ -110,13 +110,13 @@ class EditCtrl(QtGui.QGroupBox):
         return None
 
     def move(self, value, *args):
-        if self.parentCfg and self.parentCfg[0].get('typ', '') == 'nfo':
+        if self.parent_cfg and self.parent_cfg[0].get('typ', '') == 'nfo':
             top_index = 1
         else:
             top_index = 0
 
-        index = self.parentCfg.index(self.cfg)
-        maxIndex = len(self.parentCfg) - 1
+        index = self.parent_cfg.index(self.cfg)
+        maxIndex = len(self.parent_cfg) - 1
         if isinstance(value, bool):
             if value:
                 newindex = top_index
@@ -132,19 +132,19 @@ class EditCtrl(QtGui.QGroupBox):
             # print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
             return
 
-        # cfg = self.parentCfg.pop(index)
-        self.parentCfg.pop(index)
-        self.parentCfg.insert(newindex, self.cfg)
+        # cfg = self.parent_cfg.pop(index)
+        self.parent_cfg.pop(index)
+        self.parent_cfg.insert(newindex, self.cfg)
         self.main.edit_mod(keep_scroll=True)
 
     def delete(self):
-        if self.cfg in self.parentCfg:
-            self.parentCfg.remove(self.cfg)
+        if self.cfg in self.parent_cfg:
+            self.parent_cfg.remove(self.cfg)
             self.main.edit_mod(keep_scroll=True)
 
     def duplicate(self):
         newCfg = deepcopy(self.cfg)
-        self.parentCfg.append(newCfg)
+        self.parent_cfg.append(newCfg)
         self.main.edit_mod()
         self.scroll_to_bottom()
 

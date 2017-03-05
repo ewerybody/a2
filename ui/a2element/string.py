@@ -47,8 +47,8 @@ class Edit(EditCtrl):
     We might put them to the db and get and fetch from there or first: just write them into
     code directly and start with the variables include.
     """
-    def __init__(self, cfg, main, parentCfg):
-        super(Edit, self).__init__(cfg, main, parentCfg, add_layout=False)
+    def __init__(self, cfg, main, parent_cfg):
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_string
 
         a2ctrl.check_ui_module(string_edit_ui)
