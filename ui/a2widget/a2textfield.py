@@ -19,6 +19,7 @@ class A2TextField(QtGui.QPlainTextEdit):
         super(A2TextField, self).__init__(parent, *args, **kwargs)
 
         self.finish_delay = 1500
+        self._internal_change = False
 
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
