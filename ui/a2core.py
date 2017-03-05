@@ -478,6 +478,19 @@ def get_next_free_number(name, name_list, separator=''):
     return try_name
 
 
+def get_cfg_default_name(cfg):
+    """
+
+    :param dict cfg: Element configuration dictionary.
+    :rtype: str
+    """
+    cfg_name = cfg.get('name', cfg.get('typ'))
+    if cfg_name is None:
+        raise RuntimeError('Could not find name for config piece!\n'
+                           'Make sure "name" or "typ" is given in the config dict!')
+    return cfg_name
+
+
 if __name__ == '__main__':
     import a2app
     a2app.main()

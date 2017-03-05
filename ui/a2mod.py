@@ -257,11 +257,7 @@ class Mod(object):
         user sets True AND default it False:
             set to user_cfg
         """
-        cfg_name = sub_cfg.get('name', sub_cfg.get('typ'))
-        if cfg_name is None:
-            raise RuntimeError('Could not find name for config piece!\n'
-                               'Make sure "name" or "typ" is given in the config dict!')
-
+        cfg_name = a2core.get_cfg_default_name(sub_cfg)
         current_cfg = self.a2.db.get(cfg_name, self.key) or {}
         if attr_name is None:
             if value == current_cfg:
