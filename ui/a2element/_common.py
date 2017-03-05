@@ -28,7 +28,7 @@ class DrawCtrl(QtGui.QWidget):
         self.main = main
         self.cfg = cfg
         self.mod = mod
-        self.check_delay = 150
+        self.check_delay = 250
         self._check_scheduled = False
         cfg_name = a2core.get_cfg_default_name(self.cfg)
         self.user_cfg = self.a2.db.get(cfg_name, self.mod.key)
