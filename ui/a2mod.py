@@ -257,7 +257,12 @@ class Mod(object):
         user sets True AND default it False:
             set to user_cfg
         """
-        current_cfg = self.a2.db.get(sub_cfg['name'], self.key) or {}
+        cfg_name = sub_cfg.get('name', sub_cfg.get('typ'))
+        if cfg_name is None:
+            raise RuntimeError('Could not find name for config piece!\n'
+                               'Make sure "name" or "typ" is given in the config dict!')
+
+        current_cfg = self.a2.db.get(cfg_name, self.key) or {}
         if attr_name is None:
             if value == current_cfg:
                 return
@@ -274,7 +279,7 @@ class Mod(object):
             if value != sub_cfg.get(attr_name):
                 current_cfg[attr_name] = value
 
-        self.a2.db.set(sub_cfg['name'], current_cfg, self.key)
+        self.a2.db.set(cfg_name, current_cfg, self.key)
 
     def help(self):
         try:
