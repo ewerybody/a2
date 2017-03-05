@@ -54,12 +54,23 @@ class A2ItemEditor(QtGui.QWidget):
 
     def add_data_widget(self, value_name, widget, set_function, change_signal=None,
                         default_value=None, label=None):
+        """
+        Fills the config_layout with a control and connects it to the data.
 
+        :param str value_name: Name of the data item to control.
+        :param QtGui.QtWidget widget: The QtWidget object to put into the layout.
+        :param function set_function: Function object of the widget to use to display the current data.
+        :param QtCore.Signal change_signal: Optional signal to use for data change notification.
+        :param * default_value: Fallback and reference value to check against.
+        :param str label: Optional string to put into the Label Field of a FormLayout.
+        """
         self._drawing = True
         if self.draw_labels:
             this_label = label if label is not None else value_name.title()
-            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.LabelRole, QtGui.QLabel(this_label))
-            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.FieldRole, widget)
+            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.LabelRole,
+                                            QtGui.QLabel(this_label))
+            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.FieldRole,
+                                            widget)
             self._data_widgets_count += 1
         else:
             self.ui.config_layout.addWidget(widget)

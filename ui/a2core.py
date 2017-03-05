@@ -461,7 +461,7 @@ def get_next_free_number(name, name_list, separator=''):
         result: 'bob 3'
 
     :param str name: Base name to look up in the list
-    :param list name_list: List to look for instances of "name"
+    :param iterable name_list: List to look for instances of "name"
     :param str separator: string to put between the initial name and the integer number.
     :rtype: str
     """

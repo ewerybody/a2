@@ -47,8 +47,6 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     :param QtCore.Signal change_signal: Optional. A signal to emit on change.
     :param QtCore.Signal trigger_signal: Optional. The signal get the change event from.
     """
-    # if hasattr(ctrl, 'a2_change_signal'):
-
     if isinstance(ctrl, QtGui.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
@@ -62,7 +60,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.isChecked()
 
-    elif isinstance(ctrl, (QtGui.QLineEdit)):
+    elif isinstance(ctrl, QtGui.QLineEdit):
         ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.textChanged[str].connect(change_signal.emit)
