@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Mon Feb 27 13:41:18 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sun Mar  5 20:59:58 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(763, 1090)
+        a2settings.resize(834, 1090)
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtGui.QVBoxLayout(a2settings)
@@ -189,6 +189,11 @@ class Ui_a2settings(object):
         self.tabWidget.addTab(self.tab, "")
         self.tab_4 = QtGui.QWidget()
         self.tab_4.setObjectName("tab_4")
+        self.verticalLayout_5 = QtGui.QVBoxLayout(self.tab_4)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.db_print_all_button = QtGui.QPushButton(self.tab_4)
+        self.db_print_all_button.setObjectName("db_print_all_button")
+        self.verticalLayout_5.addWidget(self.db_print_all_button)
         self.tabWidget.addTab(self.tab_4, "")
         self.tab_3 = QtGui.QWidget()
         self.tab_3.setObjectName("tab_3")
@@ -199,7 +204,7 @@ class Ui_a2settings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 119, 711))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 695, 1068))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setSpacing(0)
@@ -246,10 +251,11 @@ class Ui_a2settings(object):
         self.show_console.setText(QtGui.QApplication.translate("a2settings", "Show Console", None, QtGui.QApplication.UnicodeUTF8))
         self.label_9.setText(QtGui.QApplication.translate("a2settings", "JSON Indent:", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtGui.QApplication.translate("a2settings", "Advanced", None, QtGui.QApplication.UnicodeUTF8))
+        self.db_print_all_button.setText(QtGui.QApplication.translate("a2settings", "workaround: print db.all()", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), QtGui.QApplication.translate("a2settings", "Database View", None, QtGui.QApplication.UnicodeUTF8))
         self.a2license_text.setText(QtGui.QApplication.translate("a2settings", "<html><head/><body><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_ahk.png\"/><br/><span style=\" font-weight:600;\">AutoHotkey</span> - a scripting language for desktop automation</p><p align=\"center\"><a href=\"https://autohotkey.com\"><span style=\" text-decoration: underline; color:#0000ff;\">https://autohotkey.com</span></a> - GNU GPLv2</p><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_python.png\"/></p><p align=\"center\"><span style=\" font-weight:600;\">Python</span> - high-level programming language</p><p align=\"center\"><a href=\"https://www.python.org/\"><span style=\" text-decoration: underline; color:#0000ff;\">https://www.python.org</span></a> - Python Software Foundation License - GPL compatible</p><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_pyside.png\"/></p><p align=\"center\"><span style=\" font-weight:600;\">PySide</span> - Python binding of the cross-platform GUI toolkit Qt</p><p align=\"center\"><a href=\"https://wiki.qt.io/Pyside\"><span style=\" text-decoration: underline; color:#0000ff;\">https://wiki.qt.io/Pyside</span></a> - LGPL</p><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_material.png\"/></p><p align=\"center\"><span style=\" font-weight:600;\">Material Icons</span> - Material Design icons by Google</p><p align=\"center\"><a href=\"https://material.io/icons\"><span style=\" text-decoration: underline; color:#0000ff;\">https://material.io/icons</span></a> - Apache License Version 2.0</p><p align=\"center\"><br/></p><p align=\"center\">Thanks!</p><p align=\"center\">...</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("a2settings", "Licenses", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2slider import A2Slider
-from a2widget.a2path_field import A2PathField
 from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2path_field import A2PathField
+from a2widget.a2slider import A2Slider

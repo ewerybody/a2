@@ -92,6 +92,8 @@ class A2Settings(QtGui.QWidget):
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
 
+        self.ui.db_print_all_button.clicked.connect(self.a2.db.all)
+
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
         newpath = os.path.join(dirname(self.a2.paths.python), base_name)

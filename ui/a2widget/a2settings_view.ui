@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>763</width>
+    <width>834</width>
     <height>1090</height>
    </rect>
   </property>
@@ -376,6 +376,15 @@ Go ahead and add or create one:</string>
       <attribute name="title">
        <string>Database View</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QPushButton" name="db_print_all_button">
+         <property name="text">
+          <string>workaround: print db.all()</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -395,8 +404,8 @@ Go ahead and add or create one:</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>119</width>
-            <height>711</height>
+            <width>695</width>
+            <height>1068</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
