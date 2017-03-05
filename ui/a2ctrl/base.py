@@ -78,6 +78,7 @@ class Icons(object):
         self.code = Ico('code')
         self.copy = Ico('copy')
         self.combo = Ico('combo')
+        self.clear = Ico('clear')
         self.cut = Ico('cut')
         self.delete = Ico('delete')
         self.down = Ico('down')

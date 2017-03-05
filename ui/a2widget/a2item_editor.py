@@ -51,6 +51,11 @@ class A2ItemEditor(QtGui.QWidget):
         self.selected_name_changed.connect(self.draw_data)
 
         self._value_changed.connect(self.update_data)
+        self._filtered = False
+        self.ui.search_field.textChanged.connect(self.update_filter)
+        self.ui.a2item_editorx.clicked.connect(self.reset_filter)
+        self.ui.a2item_editorx.setIcon(a2ctrl.Icons().clear)
+        self.update_filter()
 
     def add_data_widget(self, value_name, widget, set_function, change_signal=None,
                         default_value=None, label=None):
@@ -179,3 +184,18 @@ class A2ItemEditor(QtGui.QWidget):
         self.data.pop(item_name)
         self.data_changed.emit()
         self.item_deleted.emit(item_name)
+
+    def update_filter(self, text=None):
+        all_items = a2ctrl.qlist.get_all_items(self.ui.item_list)
+        if not text:
+            self.ui.a2item_editorx.setVisible(False)
+            [i.setHidden(False) for i in all_items]
+        else:
+            self.ui.a2item_editorx.setVisible(True)
+            items = self.ui.item_list.findItems(text, QtCore.Qt.MatchContains)
+            item_ids = [id(i) for i in items]
+            for item in all_items:
+                item.setHidden(id(item) not in item_ids)
+
+    def reset_filter(self):
+        self.ui.search_field.setText('')

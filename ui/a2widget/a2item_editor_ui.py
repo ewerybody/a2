@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Tue Feb 28 19:00:15 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sun Mar  5 23:43:39 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -22,9 +22,17 @@ class Ui_A2ItemEditor(object):
         self.item_editor_layout.setObjectName("item_editor_layout")
         self.verticalLayout = QtGui.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.search_field = QtGui.QLineEdit(A2ItemEditor)
         self.search_field.setObjectName("search_field")
-        self.verticalLayout.addWidget(self.search_field)
+        self.horizontalLayout_2.addWidget(self.search_field)
+        self.a2item_editorx = QtGui.QPushButton(A2ItemEditor)
+        self.a2item_editorx.setText("")
+        self.a2item_editorx.setFlat(True)
+        self.a2item_editorx.setObjectName("a2item_editorx")
+        self.horizontalLayout_2.addWidget(self.a2item_editorx)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.add_entry_button = QtGui.QPushButton(A2ItemEditor)
