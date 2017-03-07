@@ -40,12 +40,15 @@ def call_lib_cmd(cmd_name, *args):
     return call_cmd(cmd_path, *args)
 
 
-def call_cmd(cmd_path, *args):
+def call_cmd(cmd_path, *args, **kwargs):
     import a2core
     a2 = a2core.A2Obj.inst()
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
-    proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
+    if 'cwd' in kwargs:
+        proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE, cwd=kwargs['cwd'])
+    else:
+        proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
 
     cmd_result = str(proc.communicate()[0])
     proc.kill()
