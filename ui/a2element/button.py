@@ -56,7 +56,7 @@ class Draw(DrawCtrl):
         import a2ahk
         script_name = a2ahk.ensure_ahk_ext(script_name)
         script_path = os.path.join(self.mod.path, script_name)
-        return a2ahk.call_cmd(script_path, *args)
+        return a2ahk.call_cmd(script_path, cwd=self.mod.path, *args)
 
 
 class Edit(EditCtrl):
