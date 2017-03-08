@@ -11,9 +11,8 @@ from os.path import exists, dirname, basename, relpath
 from PySide import QtGui, QtCore
 
 import a2ahk
-import a2mod
 import a2core
-import a2ctrl
+import a2ctrl.connect
 from a2widget import a2settings_view_ui
 
 

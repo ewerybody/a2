@@ -7,7 +7,7 @@ import os
 from PySide import QtGui
 
 import a2core
-import a2ctrl
+import a2ctrl.connect
 from a2mod import get_folders
 from a2widget.a2input_dialog import A2InputDialog
 

@@ -5,7 +5,7 @@ Some element description ...
 @created: 2016 11 10
 @author: Eric Werner
 """
-import a2ctrl
+import a2ctrl.connect
 from PySide import QtGui
 from a2element import DrawCtrl, EditCtrl
 from a2widget import A2TextField

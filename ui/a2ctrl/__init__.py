@@ -17,9 +17,7 @@ from os.path import getmtime, dirname, basename, exists, splitext
 from PySide import QtGui
 
 import a2core
-from a2ctrl import connect
 from a2ctrl.base import Ico, Icons
-from a2widget.a2input_dialog import A2InputDialog
 
 
 log = a2core.get_logger(__name__)
@@ -250,6 +248,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
 
     def set_script(self, name='', create=False):
         if not name:
+            from a2widget.a2input_dialog import A2InputDialog
             A2InputDialog(self.main, 'New Script', partial(self.set_script, create=True),
                           self.main.mod.check_create_script, text='awesomeScript',
                           msg='Give a name for the new script file:')

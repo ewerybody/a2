@@ -7,7 +7,7 @@ from functools import partial
 from PySide import QtGui
 
 import a2core
-from a2widget import A2PathField, A2TextField, A2CodeField
+a2widget = None
 
 
 log = a2core.get_logger(__name__)
@@ -47,6 +47,10 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     :param QtCore.Signal change_signal: Optional. A signal to emit on change.
     :param QtCore.Signal trigger_signal: Optional. The signal get the change event from.
     """
+    global a2widget
+    if a2widget is None:
+        import a2widget
+
     if isinstance(ctrl, QtGui.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
@@ -69,7 +73,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.text()
 
-    elif isinstance(ctrl, A2PathField):
+    elif isinstance(ctrl, a2widget.A2PathField):
         ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
@@ -116,7 +120,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         elif ctrl.isChecked():
             cfg[name] = value
 
-    elif isinstance(ctrl, (QtGui.QTextEdit, A2TextField, A2CodeField)):
+    elif isinstance(ctrl, (QtGui.QTextEdit, a2widget.A2TextField, a2widget.A2CodeField)):
         # For if a not immediate change signal is wanted
         # TODO: Do this for the other ctrl types
         if trigger_signal is None:

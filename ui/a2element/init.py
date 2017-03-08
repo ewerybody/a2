@@ -3,7 +3,7 @@
 @created: 2016 11 11
 @author: Eric Werner
 """
-import a2ctrl
+import a2ctrl.connect
 from PySide import QtGui
 from a2element import EditCtrl
 from a2widget import A2CodeField

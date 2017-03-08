@@ -7,7 +7,7 @@ import subprocess
 from PySide import QtGui, QtCore
 
 import a2core
-import a2ctrl
+import a2ctrl.connect
 from a2widget.a2input_dialog import A2InputDialog
 import json
 import importlib
