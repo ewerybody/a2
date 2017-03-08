@@ -38,6 +38,7 @@ class Draw(DrawCtrl):
             self.suffix_label = QtGui.QLabel(self.cfg.get('suffix'))
             self.layout.addWidget(self.suffix_label)
         if self.cfg.get('slider'):
+            # TODO: use A2Slider # 135
             self.slider = QtGui.QSlider(self)
             self.slider.setValue(self.value)
             self.slider.setOrientation(QtCore.Qt.Horizontal)

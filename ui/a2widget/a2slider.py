@@ -1,6 +1,8 @@
 """
-A slider widget that emits proper signals when the slider range is clicked,
-solves the field<>slider juggling and allows for float values right away.
+A Qt/PySide slider widget that:
+* emits proper signals when the slider range is clicked,
+* solves the field<>slider juggling and
+* allows for float values right away
 """
 from functools import partial
 
@@ -88,6 +90,7 @@ class A2Slider(QtGui.QWidget):
         if self._field_ignore:
             return
 
+        value = round(value, self.decimals)
         if value != self._value:
             self._value = value
             self.emit_changed()
