@@ -18,7 +18,7 @@ class A2Slider(QtGui.QWidget):
     value_changed = QtCore.Signal(float)
     editing_finished = QtCore.Signal(float)
 
-    def __init__(self, parent, has_field=True, value=1.0, mini=0, maxi=100, decimals=2, step_len=1):
+    def __init__(self, parent=None, has_field=True, value=1.0, mini=0, maxi=100, decimals=2, step_len=1):
         super(A2Slider, self).__init__(parent)
         self.main_layout = QtGui.QHBoxLayout(self)
         self.setLayout(self.main_layout)
@@ -107,9 +107,9 @@ class A2Slider(QtGui.QWidget):
     def has_field(self, state):
         if state and self.value_ctrl is None:
             self.value_ctrl = QtGui.QDoubleSpinBox()
-            self.value_ctrl.editingFinished.connect(self.emit_finished)
             self.main_layout.addWidget(self.value_ctrl)
             self.value_ctrl.valueChanged.connect(self._field_change)
+            self.value_ctrl.editingFinished.connect(self.emit_finished)
         elif not state and self.value_ctrl is not None:
             self.value_ctrl.deleteLater()
             self.value_ctrl = None
@@ -174,6 +174,15 @@ class A2Slider(QtGui.QWidget):
         if self.value_ctrl is not None:
             self.value_ctrl.setMaximum(self._max)
         self.slider.setMaximum(self._max * self._slider_factor)
+
+    @property
+    def minmax(self):
+        return (self._min, self._max)
+
+    @minmax.setter
+    def minmax(self, these):
+        self.min = these[0]
+        self.max = these[1]
 
     @property
     def step_len(self):
