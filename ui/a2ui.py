@@ -179,13 +179,16 @@ class A2Window(QtGui.QMainWindow):
             self._restart_thread.quit()
 
         # kill old a2 process
-        threading.Thread(target=a2core.killA2process).start()
+        # TODO: make process killing optional:
+        #   remember process id, restart, see if new process spawned, remove the old one
+        #   if there is only one: keep it like it is,
+        # threading.Thread(target=a2core.killA2process).start()
+
         self.module_list.draw_modules()
 
         a2core.write_includes(specific)
 
-        self._restart_thread = RestartThread(self.a2, self)
-        self._restart_thread.start()
+        self._restart_thread = RestartThread(self.a2, self).start()
 
         if refresh_ui:
             self.module_view.draw_mod()
@@ -303,8 +306,16 @@ class RestartThread(QtCore.QThread):
 
     def run(self, *args, **kwargs):
         self.msleep(300)
-        ahkProcess = QtCore.QProcess()
-        ahkProcess.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
+        ahk_process = QtCore.QProcess()
+        ahk_process.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
+
+        # tested code from subprocess docs to have a detached process. Doesn't work so far:
+        # startup_nfo = subprocess.STARTUPINFO()
+        # startup_nfo.wShowWindow = subprocess.SW_HIDE
+        # startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        # pid = subprocess.Popen([self.a2.paths.autohotkey, self.a2.paths.a2_script],
+        #                        cwd=self.a2.paths.a2, shell=True, startupinfo=startup_nfo).pid
+
         return QtCore.QThread.run(self, *args, **kwargs)
 
 
