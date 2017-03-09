@@ -64,7 +64,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.isChecked()
 
-    elif isinstance(ctrl, QtGui.QLineEdit):
+    elif isinstance(ctrl, (QtGui.QLineEdit, a2widget.A2ButtonField)):
         ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.textChanged[str].connect(change_signal.emit)
