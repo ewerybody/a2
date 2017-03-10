@@ -4,7 +4,7 @@ a2ctrl.base
 @created: Aug 3, 2016
 @author: eRiC
 """
-from os.path import exists, join
+import os.path
 from PySide import QtGui, QtCore, QtSvg
 
 import a2core
@@ -15,44 +15,77 @@ ICO_PATH = None
 
 
 class Ico(QtGui.QIcon):
-    def __init__(self, ico_name, px=512, scale=1.0, color=None):
+    def __init__(self, ico_name, px=512, alpha=None):
         super(Ico, self).__init__()
-        if exists(ico_name):
+
+        self.px = px
+        self._tinted = None
+        self._alpha = alpha
+
+        self._painter = None
+        self._image = None
+
+        if os.path.exists(ico_name):
             self.path = ico_name
         else:
             global ICO_PATH
             if ICO_PATH is None:
-                ICO_PATH = join(a2core.A2Obj.inst().paths.a2, 'ui', 'res', '%s.svg')
+                ICO_PATH = os.path.join(a2core.A2Obj.inst().paths.a2, 'ui', 'res', '%s.svg')
+
             self.path = ICO_PATH % ico_name
-            if not exists(self.path):
+            if not os.path.exists(self.path):
                 log.error('SVG_icon: could not find path to "%s"!' % ico_name)
                 return
 
+        ext = os.path.splitext(self.path)[1].lower()
+        if ext == '.svg':
+            self._render_svg()
+        else:
+            self._render()
+
+        self._paint()
+
+    def _render_svg(self):
         renderer = QtSvg.QSvgRenderer(self.path)
-        image = QtGui.QImage(QtCore.QSize(px, px), QtGui.QImage.Format_ARGB32)
-        painter = QtGui.QPainter(image)
+        self._image = QtGui.QImage(QtCore.QSize(self.px, self.px), QtGui.QImage.Format_ARGB32)
+        self._painter = QtGui.QPainter(self._image)
 
-        if scale != 1.0:
-            t = (px / 2) * (1 - scale)
-            painter.translate(t, t)
-            painter.scale(scale, scale)
+        if self._alpha is not None:
+            self._painter.setOpacity(self._alpha)
 
-        renderer.render(painter)
+        renderer.render(self._painter)
 
-        if color:
-            if isinstance(color, (int, float)):
-                color = [int(color)] * 3
-            if isinstance(color, (tuple, list)):
-                color = QtGui.QColor(color[0], color[1], color[2])
-            if isinstance(color, QtGui.QColor):
-                painter.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
-                painter.fillRect(image.rect(), color)
-            else:
-                log.error('Cannot use color: "%s"' % str(color))
+    def _render(self):
+        self._image = QtGui.QImage(QtCore.QSize(self.px, self.px), QtGui.QImage.Format_ARGB32)
 
-        pixmap = QtGui.QPixmap.fromImage(image)
+        if self._alpha is not None:
+            self._painter = QtGui.QPainter(self._image)
+            image = QtGui.QImage(QtCore.QSize(self.px, self.px), QtGui.QImage.Format_ARGB32)
+            image = self._load_path_to_image(image)
+            self._painter.setOpacity(self._alpha)
+            self._painter.drawImage(self._image.rect(), image)
+            self._painter.end()
+        else:
+            self._image = self._load_path_to_image(self._image)
+            self._painter = QtGui.QPainter(self._image)
+
+    def _load_path_to_image(self, image):
+        image.load(self.path)
+        if image.format() == QtGui.QImage.Format.Format_Indexed8:
+            image = image.convertToFormat(QtGui.QImage.Format_ARGB32)
+        return image
+
+    def _paint(self):
+        pixmap = QtGui.QPixmap.fromImage(self._image)
         self.addPixmap(pixmap)
-        painter.end()
+
+    @property
+    def tinted(self):
+        if self._tinted is not None:
+            return self._tinted
+
+        self._tinted = Ico(self.path, self.px, alpha=0.3)
+        return self._tinted
 
 
 class Icons(object):
