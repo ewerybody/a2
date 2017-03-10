@@ -243,15 +243,12 @@ def write_includes(specific=None):
             log.debug('Source: "%s" is enabled but missing!' % source_name)
             continue
 
-        print('source_name: %s' % source_name)
         for modname in enabled_modules:
             if modname not in source.mods:
                 continue
 
-            print('  modname: %s' % modname)
             module = source.mods[modname]
             if module.key not in mod_settings:
-                print('  change: %s' % modname)
                 module.change()
 
             for include_type, include_dir in [('includes', os.path.join(mod_path, source.name, modname)),

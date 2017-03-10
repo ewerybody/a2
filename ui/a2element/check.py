@@ -1,8 +1,7 @@
-'''
-Created on Dec 28, 2015
-
+"""
+@created: Dec 28, 2015
 @author: eRiC
-'''
+"""
 import a2ctrl
 from PySide import QtGui
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
@@ -53,6 +52,5 @@ class Edit(EditCtrl):
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
-    db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=bool, default=False)
-    db_dict['variables'][cfg['name']] = value
+    db_dict.setdefault('variables', {})[cfg['name']] = value
