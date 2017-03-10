@@ -11,6 +11,8 @@ from a2ctrl.base import Ico
 from a2widget import a2module_list_ui
 
 
+DISABLED_GREY = 120
+_DISABLED_BRUSH = QtGui.QBrush(QtGui.QColor(DISABLED_GREY, DISABLED_GREY, DISABLED_GREY))
 log = a2core.get_logger(__name__)
 
 
@@ -75,7 +77,11 @@ class A2ModuleList(QtGui.QWidget):
         for source in self.a2.module_sources.values():
             for mod in source.mods.values():
                 item = QtGui.QListWidgetItem(mod.name)
-                item.setIcon(mod.icon)
+                if mod.enabled:
+                    item.setIcon(mod.icon)
+                else:
+                    item.setIcon(mod.icon.tinted)
+                    item.setForeground(_DISABLED_BRUSH)
                 item._module = mod
                 mod._item = item
                 self.ui.a2module_list_widget.addItem(item)
@@ -87,6 +93,7 @@ class A2ModuleList(QtGui.QWidget):
         self._draw_phase = False
 
     def setup_ui(self):
+        a2ctrl.check_ui_module(a2module_list_ui)
         self.ui = a2module_list_ui.Ui_ModuleList()
         self.ui.setupUi(self)
 
