@@ -188,7 +188,8 @@ class A2Window(QtGui.QMainWindow):
 
         a2core.write_includes(specific)
 
-        self._restart_thread = RestartThread(self.a2, self).start()
+        self._restart_thread = RestartThread(self.a2, self)
+        self._restart_thread.start()
 
         if refresh_ui:
             self.module_view.draw_mod()

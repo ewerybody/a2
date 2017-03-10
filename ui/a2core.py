@@ -225,7 +225,7 @@ def write_includes(specific=None):
     # TODO: this needs to be implemented dynamically
     libs_ahk = [edit_disclaimer % 'libs']
     libs_ahk += ['#include lib/ahklib/%s.ahk' % lib for lib in
-                ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools', 'RichObject', 'Array']]
+                 ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools', 'RichObject', 'Array']]
     init_ahk = edit_disclaimer % 'init' + '\na2_init_calls() {\n'
 
     # browse the enabled modules to collect the include data
