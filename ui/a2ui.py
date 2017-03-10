@@ -183,16 +183,20 @@ class A2Window(QtGui.QMainWindow):
         #   remember process id, restart, see if old process still there, remove it
         #   if there is only one: keep it like it is,
         # threading.Thread(target=a2core.killA2process).start()
-
+        log.info('Runtime refresh called!')
+        log.info('  Refreshing Ui ...')
         self.module_list.draw_modules()
 
+        log.info('  Writing includes ...')
         a2core.write_includes(specific)
 
+        log.info('  Restarting runtime ...')
         self._restart_thread = RestartThread(self.a2, self)
         self._restart_thread.start()
 
         if refresh_ui:
             self.module_view.draw_mod()
+        log.info('  Done!')
 
     def escape(self):
         if self.module_view.editing:
@@ -308,8 +312,8 @@ class RestartThread(QtCore.QThread):
     def run(self, *args, **kwargs):
         self.msleep(300)
         ahk_process = QtCore.QProcess()
-        _retval, pid = ahk_process.startDetached(self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
-        log.info('RestartThread pid: %s' % pid)
+        _retval, _pid = ahk_process.startDetached(
+            self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
         return QtCore.QThread.run(self, *args, **kwargs)
 
 
