@@ -52,7 +52,6 @@ class ModSource(object):
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
         self.mod_count = 0
-        self.enabled_count = 0
         self._icon = None
 
     def fetch_modules(self, state=None):
@@ -88,8 +87,7 @@ class ModSource(object):
 
     @property
     def enabled(self):
-        state, enabled_mods = self.a2.enabled.get(self.name, (False, []))
-        self.enabled_count = len(enabled_mods)
+        state, _ = self.a2.enabled.get(self.name, (False, []))
         return state
 
     @enabled.setter
@@ -103,6 +101,15 @@ class ModSource(object):
                 current[self.name] = (state, enabled_mods)
             self.a2.enabled = current
             self.fetch_modules(state)
+
+    @property
+    def enabled_mods(self):
+        _state, enabled_mods = self.a2.enabled.get(self.name, (False, []))
+        return enabled_mods
+
+    @property
+    def enabled_count(self):
+        return len(self.enabled_mods)
 
     def toggle(self, state=None):
         if state is None:
@@ -207,9 +214,7 @@ class Mod(object):
 
     @property
     def enabled(self):
-        current = self.a2.enabled
-        _, enabled_mods = current.get(self.source.name, [False, []])
-        return self.name in enabled_mods
+        return self.name in self.source.enabled_mods
 
     @enabled.setter
     def enabled(self, state):
@@ -313,11 +318,7 @@ def get_icon(current_icon, folder, fallback):
 
                 break
         if icon_path:
-            if item.endswith('.svg'):
-                current_icon = a2ctrl.Ico(icon_path)
-            else:
-                current_icon = QtGui.QIcon(icon_path)
-                current_icon.path = icon_path
+            current_icon = a2ctrl.Ico(icon_path)
         else:
             current_icon = fallback
 
