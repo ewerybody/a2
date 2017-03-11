@@ -32,7 +32,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="a2item_editorx">
+        <widget class="QPushButton" name="a2search_x_button">
          <property name="text">
           <string/>
          </property>

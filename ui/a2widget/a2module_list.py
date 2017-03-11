@@ -11,7 +11,7 @@ from a2ctrl.base import Ico
 from a2widget import a2module_list_ui
 
 
-DISABLED_GREY = 120
+DISABLED_GREY = 160
 _DISABLED_BRUSH = QtGui.QBrush(QtGui.QColor(DISABLED_GREY, DISABLED_GREY, DISABLED_GREY))
 log = a2core.get_logger(__name__)
 
@@ -25,6 +25,9 @@ class A2ModuleList(QtGui.QWidget):
         self.setup_ui()
         self.selection = None
         self.ui.a2module_list_widget.itemSelectionChanged.connect(self.selection_change)
+        self._filtered = False
+        self._show_enabled_only = self.a2.db.get('modlist_show_enabled_only') or False
+        self.update_filter()
 
     def selection_change(self):
         if not self._draw_phase:
@@ -76,6 +79,11 @@ class A2ModuleList(QtGui.QWidget):
         self.ui.a2module_list_widget.clear()
         for source in self.a2.module_sources.values():
             for mod in source.mods.values():
+                if self._filtered and self._filter_phrase not in mod.name.lower():
+                    continue
+                if self._show_enabled_only and not mod.enabled:
+                    continue
+
                 item = QtGui.QListWidgetItem(mod.name)
                 if mod.enabled:
                     item.setIcon(mod.icon)
@@ -97,17 +105,37 @@ class A2ModuleList(QtGui.QWidget):
         self.ui = a2module_list_ui.Ui_ModuleList()
         self.ui.setupUi(self)
 
+        self.ui.a2search_x_button.setIcon(a2ctrl.Icons().clear)
+        self.ui.search_field.textChanged.connect(self.update_filter)
+        self.ui.a2search_x_button.clicked.connect(self.reset_filter)
+        self.ui.filter_menu_button.clicked.connect(self.build_filter_menu)
         self.setLayout(self.ui.module_list_layout)
 
-    def scroll_to(self, value):
-        # TODO: was this really necessary?
-#        if isinstance(value, bool):
-#            a2ctrl.qlist.deselect_all(self.ui.a2module_list_widget)
-#            if value:
-#                item = self.ui.a2module_list_widget.item(0)
-#            else:
-#                item = self.ui.a2module_list_widget.item(self.ui.a2module_list_widget.count() - 1)
-#            item.setSelected(True)
-#            self.ui.a2module_list_widget.setCurrentItem(item)
-#            self.ui.a2module_list_widget.scrollToItem(item)
-        pass
+        self.filter_menu = QtGui.QMenu()
+
+    def update_filter(self, phrase=''):
+        self._filter_phrase = phrase
+        self._filtered = phrase != ''
+        self.ui.a2search_x_button.setVisible(self._filtered)
+        self.draw_modules()
+
+    def reset_filter(self):
+        self.ui.search_field.setText('')
+
+    def build_filter_menu(self):
+        self.filter_menu.clear()
+
+        action = QtGui.QAction('Only Enabled', self)
+        action.setCheckable(True)
+        action.setChecked(self._show_enabled_only)
+        action.triggered[bool].connect(self.toggle_show_enabled)
+        self.filter_menu.addAction(action)
+
+        pos = self.ui.filter_menu_button.mapToGlobal(self.ui.filter_menu_button.pos())
+        pos.setY(pos.y() - 5)
+        self.filter_menu.popup(pos)
+
+    def toggle_show_enabled(self, state):
+        self._show_enabled_only = state
+        self.a2.db.set('modlist_show_enabled_only', state)
+        self.draw_modules()

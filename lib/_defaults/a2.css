@@ -107,7 +107,7 @@ QPushButton#a2help_button {
     color: "%(color_pressed)s";
 }
 
-QPushButton#a2item_editorx {
+QPushButton#a2search_x_button {
 	padding: 0px;
     margin: 0px;
 	max-height: %(search_x_button_size)ipx;

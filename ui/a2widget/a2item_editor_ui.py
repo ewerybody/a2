@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
 #
-# Created: Sun Mar  5 23:43:39 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Sat Mar 11 00:23:59 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,11 +27,11 @@ class Ui_A2ItemEditor(object):
         self.search_field = QtGui.QLineEdit(A2ItemEditor)
         self.search_field.setObjectName("search_field")
         self.horizontalLayout_2.addWidget(self.search_field)
-        self.a2item_editorx = QtGui.QPushButton(A2ItemEditor)
-        self.a2item_editorx.setText("")
-        self.a2item_editorx.setFlat(True)
-        self.a2item_editorx.setObjectName("a2item_editorx")
-        self.horizontalLayout_2.addWidget(self.a2item_editorx)
+        self.a2search_x_button = QtGui.QPushButton(A2ItemEditor)
+        self.a2search_x_button.setText("")
+        self.a2search_x_button.setFlat(True)
+        self.a2search_x_button.setObjectName("a2search_x_button")
+        self.horizontalLayout_2.addWidget(self.a2search_x_button)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
