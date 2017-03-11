@@ -134,6 +134,15 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.toPlainText()
 
+    elif isinstance(ctrl, a2widget.A2CoordsField):
+        ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
+        if change_signal is not None:
+            ctrl.changed.connect(change_signal.emit)
+        if name in cfg:
+            ctrl.value = cfg[name]
+        else:
+            cfg[name] = ctrl.value
+
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
                   (name, type(ctrl)))
