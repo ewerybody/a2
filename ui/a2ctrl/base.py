@@ -19,6 +19,7 @@ class Ico(QtGui.QIcon):
         super(Ico, self).__init__()
 
         self.px = px
+
         self._tinted = None
         self._alpha = alpha
 
@@ -64,7 +65,6 @@ class Ico(QtGui.QIcon):
             image = self._load_path_to_image(image)
             self._painter.setOpacity(self._alpha)
             self._painter.drawImage(self._image.rect(), image)
-            self._painter.end()
         else:
             self._image = self._load_path_to_image(self._image)
             self._painter = QtGui.QPainter(self._image)
@@ -78,6 +78,7 @@ class Ico(QtGui.QIcon):
     def _paint(self):
         pixmap = QtGui.QPixmap.fromImage(self._image)
         self.addPixmap(pixmap)
+        self._painter.end()
 
     @property
     def tinted(self):
