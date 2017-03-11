@@ -34,7 +34,6 @@ class A2ItemEditor(QtGui.QWidget):
         else:
             self.ui.config_layout = QtGui.QVBoxLayout(self.ui.config_widget)
         self.ui.config_widget.setLayout(self.ui.config_layout)
-        self._data_widgets_count = 0
         self._data_widgets = OrderedDict()
 
         self.fill_item_list()
@@ -73,11 +72,9 @@ class A2ItemEditor(QtGui.QWidget):
         self._drawing = True
         if self.draw_labels:
             this_label = label if label is not None else value_name.title()
-            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.LabelRole,
-                                            QtGui.QLabel(this_label))
-            self.ui.config_layout.setWidget(self._data_widgets_count, QtGui.QFormLayout.FieldRole,
-                                            widget)
-            self._data_widgets_count += 1
+            row_index = self.ui.config_layout.rowCount()
+            self.ui.config_layout.setWidget(row_index, QtGui.QFormLayout.LabelRole, QtGui.QLabel(this_label))
+            self.ui.config_layout.setWidget(row_index, QtGui.QFormLayout.FieldRole, widget)
         else:
             self.ui.config_layout.addWidget(widget)
 
