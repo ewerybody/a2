@@ -46,11 +46,15 @@ class A2Window(QtGui.QMainWindow):
 
         self._setup_ui()
 
+        self.num_selected = 0
         init_selection = []
         if self.a2.db.get('remember_last') or False:
             init_selection = self.a2.db.get('last_selected') or []
+        init_settings_view = init_selection == []
         self.module_list.selection_changed.connect(self._module_selected)
         self.module_list.draw_modules(init_selection)
+        if init_settings_view:
+            self.module_view.draw_mod()
 
         log.info('initialised!')
 

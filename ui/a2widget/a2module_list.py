@@ -28,6 +28,7 @@ class A2ModuleList(QtGui.QWidget):
         self._filtered = False
         self._show_enabled_only = self.a2.db.get('modlist_show_enabled_only') or False
         self.update_filter()
+        self._draw_phase = False
 
     def selection_change(self):
         if not self._draw_phase:
