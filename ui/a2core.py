@@ -422,7 +422,12 @@ def set_loglevel(debug=False):
     level = [logging.INFO, logging.DEBUG][debug]
     for name, logger in log.manager.loggerDict.items():
         if name.startswith('a2'):
-            logger.setLevel(level)
+            try:
+                logger.setLevel(level)
+            except AttributeError as error:
+                if not isinstance(logger, logging.PlaceHolder):
+                    log.info('Could not set log level on logger object "%s": %s' % (name, str(logger)))
+                    log.error(error)
 
 
 def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already in use!'):

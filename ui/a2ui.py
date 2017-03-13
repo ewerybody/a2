@@ -40,6 +40,10 @@ class A2Window(QtGui.QMainWindow):
 
         self.dev_mode = self.a2.db.get('dev_mode') or False
         self.devset = DevSettings(self.a2)
+        if self.devset.loglevel_debug:
+            a2core.set_loglevel(debug=True)
+            log.debug('Loglevel set to DEBUG!')
+
         self._setup_ui()
 
         init_selection = []
@@ -324,6 +328,7 @@ class DevSettings(object):
         self.author_url = ''
         self.code_editor = ''
         self.json_indent = 2
+        self.loglevel_debug = False
 
         self._a2 = a2
         self._defaults = {
