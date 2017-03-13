@@ -334,6 +334,9 @@ class DevSettings(object):
             'loglevel_debug': False}
         self.get()
 
+        log.info('self.loglevel_debug: %s' % self.loglevel_debug)
+        log.debug('self.loglevel_debug: %s' % self.loglevel_debug)
+
     def get(self):
         settings = self._a2.db.get_changes('dev_settings', self._defaults)
         self._set_attrs(settings)
