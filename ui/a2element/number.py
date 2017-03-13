@@ -20,10 +20,10 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtGui.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
-        self.layout.addWidget(self.label)
+        self.main_layout.addWidget(self.label)
 
         if self.cfg.get('suffix'):
             self.suffix_label = QtGui.QLabel(self.cfg.get('suffix'))
@@ -34,7 +34,7 @@ class Draw(DrawCtrl):
             self.slider.minmax = (self.cfg.get('min', 0), self.cfg.get('max', 100))
             self.slider.setSingleStep(self.cfg.get('step_len', 1))
             self.slider.editing_finished.connect(self.delayed_check)
-            self.layout.addWidget(self.slider)
+            self.main_layout.addWidget(self.slider)
             if self.cfg.get('suffix'):
                 self.slider.main_layout.insertWidget(1, self.suffix_label)
         else:
@@ -45,11 +45,11 @@ class Draw(DrawCtrl):
             self.value_ctrl.setSingleStep(self.cfg.get('step_len', 1))
             self.value_ctrl.setValue(self.value)
             self.value_ctrl.editingFinished.connect(self.delayed_check)
-            self.layout.addWidget(self.value_ctrl)
+            self.main_layout.addWidget(self.value_ctrl)
             if self.cfg.get('suffix'):
-                self.layout.addWidget(self.suffix_label)
+                self.main_layout.addWidget(self.suffix_label)
 
-        self.setLayout(self.layout)
+        self.setLayout(self.main_layout)
 
     def check(self, value=None):
         if value is None:
@@ -68,11 +68,15 @@ class Draw(DrawCtrl):
 class Edit(EditCtrl):
     """
     Edit-control for Numbers: integer OR float!
+
+    The actual 'value' field is not covered by cfg_controls because
+    we want to change the int/float type according to the decimals value.
     """
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number
 
+        a2ctrl.check_ui_module(number_edit_ui)
         self.ui = number_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 

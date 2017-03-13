@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\path_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\path_edit.ui'
 #
-# Created: Wed Aug 31 22:44:11 2016
+# Created: Mon Mar 13 14:54:24 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,15 +12,15 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(464, 229)
+        edit.resize(488, 240)
         self.edit_layout = QtGui.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.edit_layout.setContentsMargins(10, 5, 0, 5)
         self.edit_layout.setObjectName("edit_layout")
         self.internalNameLabel = QtGui.QLabel(edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.edit_layout.setWidget(0, QtGui.QFormLayout.LabelRole, self.internalNameLabel)
         self.cfg_name = QtGui.QLineEdit(edit)
@@ -28,7 +28,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(0, QtGui.QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QtGui.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.edit_layout.setWidget(1, QtGui.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_label = QtGui.QLineEdit(edit)
@@ -40,7 +40,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(2, QtGui.QFormLayout.FieldRole, self.cfg_value)
         self.defaultPathLabel = QtGui.QLabel(edit)
         self.defaultPathLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.defaultPathLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.defaultPathLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.defaultPathLabel.setObjectName("defaultPathLabel")
         self.edit_layout.setWidget(2, QtGui.QFormLayout.LabelRole, self.defaultPathLabel)
         self.cfg_writable = QtGui.QCheckBox(edit)
@@ -63,13 +63,13 @@ class Ui_edit(object):
         self.edit_layout.setLayout(4, QtGui.QFormLayout.FieldRole, self.horizontalLayout_2)
         self.label_3 = QtGui.QLabel(edit)
         self.label_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_3.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_3.setObjectName("label_3")
         self.edit_layout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_3)
         self.label_4 = QtGui.QLabel(edit)
         self.label_4.setEnabled(True)
         self.label_4.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_4.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.label_4.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_4.setObjectName("label_4")
         self.edit_layout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_4)
         self.cfg_file_types = QtGui.QLineEdit(edit)
@@ -94,4 +94,4 @@ class Ui_edit(object):
         self.label_3.setText(QtGui.QApplication.translate("edit", "browse mode:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("edit", "file types:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2path_field import A2PathField
+from a2widget import A2PathField

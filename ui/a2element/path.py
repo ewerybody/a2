@@ -46,6 +46,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_path
 
+        a2ctrl.check_ui_module(path_edit_ui)
         self.ui = path_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 

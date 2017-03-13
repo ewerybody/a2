@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>229</height>
+    <width>488</width>
+    <height>240</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -187,7 +187,7 @@
   <customwidget>
    <class>A2PathField</class>
    <extends>QLineEdit</extends>
-   <header>a2widget.a2path_field</header>
+   <header>a2widget</header>
   </customwidget>
  </customwidgets>
  <resources/>

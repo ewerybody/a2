@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\number_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\number_edit.ui'
 #
-# Created: Wed Aug 31 22:44:11 2016
+# Created: Mon Mar 13 14:52:05 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
