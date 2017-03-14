@@ -18,12 +18,30 @@ class Draw(DrawCtrl):
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        self.value = self.get_user_value(tuple, (0, 0))
-        self.main_layout = QtGui.QVBoxLayout(self)
+        self.value = self.get_user_value((list, tuple), default=(0, 0))
+        self.main_layout = QtGui.QHBoxLayout(self)
         self.setLayout(self.main_layout)
 
+        self.label = QtGui.QLabel(self.cfg.get('label', ''), self)
+        self.main_layout.addWidget(self.label)
+
         self.value_ctrl = A2CoordsField()
-        self.main_layout(self.value_ctrl)
+        self.value_ctrl.value = self.value
+        self.main_layout.addWidget(self.value_ctrl)
+        self.value_ctrl.changed.connect(self.delayed_check)
+
+    def check(self, value=None):
+        super(Draw, self).check()
+        if value is None:
+            value = self.value_ctrl.value
+
+        # prevent being called double
+        if self.value == value:
+            return
+
+        self.value = value
+        self.set_user_value(value)
+        self.change('variables')
 
 
 class Edit(EditCtrl):
@@ -32,10 +50,13 @@ class Edit(EditCtrl):
     visible when editing the module.
     """
     def __init__(self, cfg, main, parent_cfg):
-        super(Edit, self).__init__(cfg, main, parent_cfg)
+        super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         a2ctrl.check_ui_module(coords_edit_ui)
-        #self.ui = coords_edit_ui.Ui_edit()
-        #self.ui.setupUi(self.mainWidget)
+
+        self.ui = coords_edit_ui.Ui_edit()
+        self.ui.setupUi(self.mainWidget)
+        self.check_new_name()
+        a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
     @staticmethod
     def element_name():
@@ -74,4 +95,5 @@ def get_settings(module_key, cfg, db_dict, user_cfg):
 
     * "includes" - a simple list with ahk script paths
     """
-    pass
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
+    db_dict.setdefault('variables', {})[cfg['name']] = value

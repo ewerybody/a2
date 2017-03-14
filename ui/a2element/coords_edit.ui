@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>165</height>
+    <width>1010</width>
+    <height>194</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,7 +86,7 @@
   <customwidget>
    <class>A2CoordsField</class>
    <extends>QSpinBox</extends>
-   <header>a2widgets</header>
+   <header>a2widget</header>
   </customwidget>
  </customwidgets>
  <resources/>
