@@ -33,6 +33,10 @@ class DrawCtrl(QtGui.QWidget):
         cfg_name = a2core.get_cfg_default_name(self.cfg)
         self.user_cfg = self.a2.db.get(cfg_name, self.mod.key)
         self.is_expandable_widget = False
+        self._check_timer = QtCore.QTimer()
+        self._check_timer.setInterval(self.check_delay)
+        self._check_timer.timeout.connect(self._check)
+        self._check_args = None
 
     def get_user_value(self, typ, name=None, default=None):
         """
@@ -62,17 +66,20 @@ class DrawCtrl(QtGui.QWidget):
         """
         Calls the check method with a little delay to prevent spamming reload.
         """
-        if self._check_scheduled:
-            return
-        self._check_scheduled = True
-        QtCore.QTimer().singleShot(self.check_delay, partial(self.check, *args))
+        self._check_args = args
+        self._check_timer.start()
+
+    def _check(self):
+        if self._check_timer.isActive():
+            self._check_timer.stop()
+        self.check(*self._check_args)
 
     def check(self, *args):
         """
         For the element to gather data from the widgets and call change on demand.
         To be re-implemented when subclassing DrawCtrl.
         """
-        self._check_scheduled = False
+        pass
 
 
 class EditCtrl(QtGui.QGroupBox):
