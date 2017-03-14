@@ -43,7 +43,7 @@
      <x>0</x>
      <y>0</y>
      <width>766</width>
-     <height>23</height>
+     <height>47</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -74,9 +74,20 @@
     </property>
     <addaction name="actionA2_settings"/>
     <addaction name="actionRefresh_UI"/>
+    <addaction name="actionReload_a2_Runtime"/>
+    <addaction name="actionUnload_a2_Runtime"/>
+    <addaction name="separator"/>
     <addaction name="actionExit_a2"/>
    </widget>
+   <widget class="QMenu" name="menuModule">
+    <property name="title">
+     <string>Module</string>
+    </property>
+    <addaction name="actionHelp_on_Module"/>
+    <addaction name="actionRevert_Settings"/>
+   </widget>
    <addaction name="menuMain"/>
+   <addaction name="menuModule"/>
    <addaction name="menuDev"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -138,7 +149,7 @@
   </action>
   <action name="actionExit_a2">
    <property name="text">
-    <string>Exit a2</string>
+    <string>Exit a2UI</string>
    </property>
   </action>
   <action name="actionRefresh_UI">
@@ -170,6 +181,26 @@
   <action name="actionCreate_New_Element">
    <property name="text">
     <string>Create New Element</string>
+   </property>
+  </action>
+  <action name="actionHelp_on_Module">
+   <property name="text">
+    <string>Help on Module</string>
+   </property>
+  </action>
+  <action name="actionRevert_Settings">
+   <property name="text">
+    <string>Revert Settings</string>
+   </property>
+  </action>
+  <action name="actionReload_a2_Runtime">
+   <property name="text">
+    <string>Reload a2 Runtime</string>
+   </property>
+  </action>
+  <action name="actionUnload_a2_Runtime">
+   <property name="text">
+    <string>Unload a2 Runtime</string>
    </property>
   </action>
  </widget>
