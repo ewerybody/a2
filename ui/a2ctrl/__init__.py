@@ -100,7 +100,7 @@ def edit(cfg, main, parent_cfg):
 
 
 def get_a2element_object(obj_name, element_type, module_path=None):
-    element_mod = get_a2element(element_type, _silent=True)
+    element_mod = get_a2element(element_type, _silent=False)
     if element_mod is not None:
         return getattr(element_mod, obj_name)
     elif module_path:
