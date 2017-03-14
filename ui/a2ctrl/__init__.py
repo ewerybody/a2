@@ -100,7 +100,7 @@ def edit(cfg, main, parent_cfg):
 
 
 def get_a2element_object(obj_name, element_type, module_path=None):
-    element_mod = get_a2element(element_type, _silent=False)
+    element_mod = get_a2element(element_type)
     if element_mod is not None:
         return getattr(element_mod, obj_name)
     elif module_path:
@@ -112,7 +112,7 @@ def get_a2element_object(obj_name, element_type, module_path=None):
         log.error('Could not get object "%s" from element_type "%s"' % (obj_name, element_type))
 
 
-def get_a2element(element_type, _silent=False):
+def get_a2element(element_type):
     """
     From the "typ" tries to import the according module from a2element
     """
@@ -129,10 +129,12 @@ def get_a2element(element_type, _silent=False):
             _element_map[element_type] = element_mod
             return element_mod
 
+        # import error is expected if the element is local only
+        except ImportError:
+            pass
         except Exception:
-            if not _silent:
-                log.error(traceback.format_exc().strip())
-                log.error('Could not import element type "%s"!' % element_type)
+            log.error(traceback.format_exc().strip())
+            log.error('Could not import element type "%s"!' % element_type)
 
 
 class EditAddElem(QtGui.QWidget):
