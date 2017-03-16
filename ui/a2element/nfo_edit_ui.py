@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui'
 #
-# Created: Mon Sep 26 21:19:08 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Thu Mar 16 09:16:24 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(737, 288)
+        edit.resize(1059, 579)
         self.edit_layout = QtGui.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
@@ -53,6 +53,12 @@ class Ui_edit(object):
         self.cfg_url.setText("")
         self.cfg_url.setObjectName("cfg_url")
         self.edit_layout.setWidget(4, QtGui.QFormLayout.FieldRole, self.cfg_url)
+        self.label_3 = QtGui.QLabel(edit)
+        self.label_3.setObjectName("label_3")
+        self.edit_layout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.a2tag_field = A2TagField(edit)
+        self.a2tag_field.setObjectName("a2tag_field")
+        self.edit_layout.setWidget(5, QtGui.QFormLayout.FieldRole, self.a2tag_field)
 
         self.retranslateUi(edit)
         QtCore.QMetaObject.connectSlotsByName(edit)
@@ -63,4 +69,6 @@ class Ui_edit(object):
         self.displayLabelLabel.setText(QtGui.QApplication.translate("edit", "Version:", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("edit", "Date:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("edit", "URL:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("edit", "Tags:", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2widget import A2TagField
