@@ -14,6 +14,8 @@ global WIN_10 := 10.0
 
 global NotifyIcons := new CNotifyIcons()
 
+global WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
+
 ; Groups for explorer classes
 GroupAdd, ExplorerGroup, ahk_class ExploreWClass
 GroupAdd, ExplorerGroup, ahk_class CabinetWClass

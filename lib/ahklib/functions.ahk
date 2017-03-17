@@ -1035,3 +1035,18 @@ extract_integer(ByRef pSource, pOffset=0, pIsSigned=false, pSize=4)
 	; Otherwise, convert the value (now known to be 32-bit) to its signed counterpart:
 	return -(0xFFFFFFFF - result + 1)
 }
+
+
+is_web_adress(string) {
+    if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
+        return true
+    else {
+;        global WEB_TLDS
+        Loop, % WEB_TLDS.MaxIndex() {
+            ext := WEB_TLDS[A_Index]
+            sub := SubStr(string, - StrLen(ext))
+            if (sub == "." ext)
+                return true
+        }
+    }
+}
