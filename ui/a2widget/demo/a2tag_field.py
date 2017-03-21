@@ -11,13 +11,15 @@ class TagFieldDemo(QtGui.QMainWindow):
         w.setLayout(l)
 
         self.c = A2TagField()
+        self.c.value = ['bla', 'lala']
+        self.c.changed.connect(self.bla)
 
         l.setWidget(0, QtGui.QFormLayout.LabelRole, QtGui.QLabel('Tags:'))
         l.setWidget(0, QtGui.QFormLayout.FieldRole, self.c)
 
     def bla(self):
-        self.c.value = 'Blaab blaa!'
         print(self.c.value)
+        #self.c.value = 'Blaab blaa!'
 
 
 def show():

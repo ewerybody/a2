@@ -122,6 +122,8 @@ class Icons(object):
         self.github = Ico('github')
         self.help = Ico('help')
         self.hotkey = Ico('keyboard')
+        self.label = Ico('label')
+        self.label_plus = Ico('label_plus')
         self.number = Ico('number')
         self.paste = Ico('paste')
         self.text = Ico('text')
