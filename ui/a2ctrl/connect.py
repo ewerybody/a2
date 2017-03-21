@@ -134,7 +134,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.toPlainText()
 
-    elif isinstance(ctrl, a2widget.A2CoordsField):
+    elif isinstance(ctrl, (a2widget.A2CoordsField, a2widget.A2TagField)):
         ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)

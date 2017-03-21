@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui'
 #
-# Created: Thu Mar 16 09:16:24 2017
+# Created: Tue Mar 21 09:12:04 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,9 +56,9 @@ class Ui_edit(object):
         self.label_3 = QtGui.QLabel(edit)
         self.label_3.setObjectName("label_3")
         self.edit_layout.setWidget(5, QtGui.QFormLayout.LabelRole, self.label_3)
-        self.a2tag_field = A2TagField(edit)
-        self.a2tag_field.setObjectName("a2tag_field")
-        self.edit_layout.setWidget(5, QtGui.QFormLayout.FieldRole, self.a2tag_field)
+        self.cfg_tags = A2TagField(edit)
+        self.cfg_tags.setObjectName("cfg_tags")
+        self.edit_layout.setWidget(5, QtGui.QFormLayout.FieldRole, self.cfg_tags)
 
         self.retranslateUi(edit)
         QtCore.QMetaObject.connectSlotsByName(edit)

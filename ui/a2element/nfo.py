@@ -7,6 +7,7 @@ a2element.nfo
 from PySide import QtGui
 
 import a2ctrl
+import a2ctrl.connect
 from a2element import nfo_edit_ui
 
 
