@@ -1,3 +1,5 @@
+from functools import partial
+
 from PySide import QtCore, QtGui
 
 import a2ctrl
@@ -12,12 +14,33 @@ class A2TagField(QtGui.QWidget):
         self.main_layout = FlowLayout(self)
 
         self.plus_button = QtGui.QToolButton()
+        self.plus_menu = QtGui.QMenu(self)
         self.plus_button.setIcon(a2ctrl.Icons().label_plus)
+        self.plus_button.clicked.connect(self.build_plus_menu)
         self.main_layout.addWidget(self.plus_button)
 
         self._tags = []
         self._tags_backup = []
         self._tag_widgets = []
+        self._available_tags = []
+
+    def build_plus_menu(self):
+        self.plus_menu.clear()
+        action = QtGui.QAction(a2ctrl.Icons().label_plus, 'New Tag', self, triggered=self.create_tag)
+        self.plus_menu.addAction(action)
+        if self._available_tags:
+            self.plus_menu.addSeparator()
+            for tag in self._available_tags:
+                if tag in self._tags:
+                    continue
+                action = QtGui.QAction(a2ctrl.Icons().label, tag, self,
+                                       triggered=partial(self.add, tag))
+                self.plus_menu.addAction(action)
+
+        self.plus_menu.popup(self.cursor().pos())
+
+    def create_tag(self):
+        print('create_tag...')
 
     def set_tags(self, these):
         """
@@ -67,6 +90,9 @@ class A2TagField(QtGui.QWidget):
             return
         elif isinstance(tag_name, str):
             self._tags.append(tag_name)
+            if tag_name not in self._available_tags:
+                self._available_tags.append(tag_name)
+
             widget = A2Tag(self, tag_name)
             widget.delete_requested.connect(self.delete)
             self._tag_widgets.append(widget)
@@ -81,6 +107,23 @@ class A2TagField(QtGui.QWidget):
         if sorted_tags != self._tags_backup:
             self._tags_backup = sorted_tags
             self.changed.emit(self._tags)
+
+    @property
+    def available_tags(self):
+        return self._available_tags
+
+    @available_tags.setter
+    def available_tags(self, these):
+        if isinstance(these, str):
+            self._available_tags = [these]
+        elif isinstance(these, (tuple, list)):
+            # make sure to make these unique
+            these = set(these)
+            self._available_tags = list(these)
+        elif not isinstance(these, set):
+            raise AttributeError('Available tags need to be set with types str, list, tuple or set!')
+        else:
+            self._available_tags = list(these)
 
 
 class A2Tag(QtGui.QPushButton):

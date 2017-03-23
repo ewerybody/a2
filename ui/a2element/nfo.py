@@ -8,6 +8,7 @@ from PySide import QtGui
 
 import a2ctrl
 import a2ctrl.connect
+import a2ui
 from a2element import nfo_edit_ui
 
 
@@ -43,6 +44,7 @@ class Edit(QtGui.QGroupBox):
         a2ctrl.check_ui_module(nfo_edit_ui)
         self.ui = nfo_edit_ui.Ui_edit()
         self.ui.setupUi(self.main_widget)
+        self.ui.cfg_tags.available_tags = list(a2ui.A2_TAGS)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
 
