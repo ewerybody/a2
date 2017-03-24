@@ -29,8 +29,8 @@ class NewElementDialog(A2InputDialog):
         self._current_elements = [os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)]
         super(NewElementDialog, self).__init__(
             self.main, 'New Element Dialog', msg='Name the new element:', text='name',
-            okFunc=self.create_element,
-            checkFunc=self.check_element_name)
+            ok_func=self.create_element,
+            check_func=self.check_element_name)
         self.element_cfg = {'target': 'global', 'enlist': True}
         self.setup_ui()
 
@@ -114,9 +114,6 @@ class NewElementDialog(A2InputDialog):
             fobj.write(new_element_code)
 
         subprocess.Popen(['explorer.exe', '/select,', os.path.normpath(new_path)])
-
-
-
 
 
 if __name__ == '__main__':
