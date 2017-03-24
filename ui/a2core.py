@@ -31,6 +31,13 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
 ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 '
                  'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
 JSON_INDENT = 2
+a2tags = {'file': 'File system',
+          'window': 'Window handling',
+          'text': 'Text manipulation',
+          'code': 'Programming',
+          'lookup': 'Searching things',
+          'web': 'Internet related',
+          'wip': 'Experimental'}
 
 
 class A2Obj(object):

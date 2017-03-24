@@ -4,11 +4,10 @@ a2ctrl.module_list
 from PySide import QtGui, QtCore
 
 import a2mod
-import a2ctrl
 import a2ctrl.qlist
 import a2core
-from a2ctrl.base import Ico
 from a2widget import a2module_list_ui
+from functools import partial
 
 
 DISABLED_GREY = 160
@@ -26,9 +25,12 @@ class A2ModuleList(QtGui.QWidget):
         self.selection = None
         self.ui.a2module_list_widget.itemSelectionChanged.connect(self.selection_change)
         self._filtered = False
+        self._filter_tags = []
         self._show_enabled_only = self.a2.db.get('modlist_show_enabled_only') or False
         self.update_filter()
         self._draw_phase = False
+
+        self.icon_label = a2ctrl.Icons().label
 
     def selection_change(self):
         if not self._draw_phase:
@@ -80,7 +82,7 @@ class A2ModuleList(QtGui.QWidget):
         self.ui.a2module_list_widget.clear()
         for source in self.a2.module_sources.values():
             for mod in source.mods.values():
-                if self._filtered and self._filter_phrase not in mod.name.lower():
+                if self.is_filtered(mod):
                     continue
                 if self._show_enabled_only and not mod.enabled:
                     continue
@@ -100,6 +102,21 @@ class A2ModuleList(QtGui.QWidget):
         self.select(select_mods)
 
         self._draw_phase = False
+
+    def is_filtered(self, mod):
+        if self._filtered and self._filter_phrase not in mod.name.lower():
+            return True
+        if self._filter_tags:
+            if not mod.config:
+                return True
+            for tag in mod.config[0].get('tags', []):
+                if tag in self._filter_tags:
+                    return False
+            return True
+#            print('this_tags: %s' % this_tags)
+#            print('self._filter_tags: %s' % self._filter_tags)
+#            print('%s config: %s' % (mod.name, mod.config))
+        return False
 
     def setup_ui(self):
         a2ctrl.check_ui_module(a2module_list_ui)
@@ -132,9 +149,34 @@ class A2ModuleList(QtGui.QWidget):
         action.triggered[bool].connect(self.toggle_show_enabled)
         self.filter_menu.addAction(action)
 
+        self.filter_menu.addSeparator()
+
+        if self._filter_tags:
+            action = QtGui.QAction(a2ctrl.Icons().clear, 'Clear Tags', self)
+            action.triggered.connect(self.clear_filter_tags)
+            self.filter_menu.addAction(action)
+
+        for tag in a2core.a2tags:
+            action = QtGui.QAction(self.icon_label, tag, self)
+            action.setCheckable(True)
+            action.setChecked(tag in self._filter_tags)
+            action.triggered.connect(partial(self.do_filter_tags, tag))
+            self.filter_menu.addAction(action)
+
         pos = self.ui.filter_menu_button.mapToGlobal(self.ui.filter_menu_button.pos())
         pos.setY(pos.y() - 5)
         self.filter_menu.popup(pos)
+
+    def clear_filter_tags(self):
+        self._filter_tags = []
+        self.draw_modules()
+
+    def do_filter_tags(self, tag_name):
+        if tag_name in self._filter_tags:
+            self._filter_tags.remove(tag_name)
+        else:
+            self._filter_tags.append(tag_name)
+        self.draw_modules()
 
     def toggle_show_enabled(self, state):
         self._show_enabled_only = state
