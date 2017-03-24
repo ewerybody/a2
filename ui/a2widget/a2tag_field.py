@@ -1,9 +1,10 @@
-from functools import partial
+from _functools import partial
 
 from PySide import QtCore, QtGui
 
 import a2ctrl
 from a2widget.flowlayout import FlowLayout
+from a2widget import A2InputDialog
 
 
 class A2TagField(QtGui.QWidget):
@@ -22,9 +23,11 @@ class A2TagField(QtGui.QWidget):
         self._tags = []
         self._tags_backup = []
         self._tag_widgets = []
-        self._available_tags = []
+        self._available_tags = None
 
     def build_plus_menu(self):
+        pos = self.cursor().pos()
+        label_icon = a2ctrl.Icons().label
         self.plus_menu.clear()
         action = QtGui.QAction(a2ctrl.Icons().label_plus, 'New Tag', self, triggered=self.create_tag)
         self.plus_menu.addAction(action)
@@ -33,14 +36,13 @@ class A2TagField(QtGui.QWidget):
             for tag in self._available_tags:
                 if tag in self._tags:
                     continue
-                action = QtGui.QAction(a2ctrl.Icons().label, tag, self,
-                                       triggered=partial(self.add, tag))
+                action = QtGui.QAction(label_icon, tag, self, triggered=partial(self.add, tag))
                 self.plus_menu.addAction(action)
 
-        self.plus_menu.popup(self.cursor().pos())
+        self.plus_menu.popup(pos)
 
     def create_tag(self):
-        print('create_tag...')
+        A2InputDialog(self, 'Create New Tag', ok_func=self.add)
 
     def set_tags(self, these):
         """
@@ -90,8 +92,7 @@ class A2TagField(QtGui.QWidget):
             return
         elif isinstance(tag_name, str):
             self._tags.append(tag_name)
-            if tag_name not in self._available_tags:
-                self._available_tags.append(tag_name)
+            self._append_to_available(tag_name)
 
             widget = A2Tag(self, tag_name)
             widget.delete_requested.connect(self.delete)
@@ -102,8 +103,6 @@ class A2TagField(QtGui.QWidget):
 
     def _check_changed(self):
         sorted_tags = sorted(self._tags)
-        print('sorted_tags: %s' % sorted_tags)
-        print('self._tags_backup: %s' % self._tags_backup)
         if sorted_tags != self._tags_backup:
             self._tags_backup = sorted_tags
             self.changed.emit(self._tags)
@@ -112,18 +111,27 @@ class A2TagField(QtGui.QWidget):
     def available_tags(self):
         return self._available_tags
 
-    @available_tags.setter
-    def available_tags(self, these):
-        if isinstance(these, str):
-            self._available_tags = [these]
-        elif isinstance(these, (tuple, list)):
-            # make sure to make these unique
-            these = set(these)
-            self._available_tags = list(these)
-        elif not isinstance(these, set):
-            raise AttributeError('Available tags need to be set with types str, list, tuple or set!')
-        else:
-            self._available_tags = list(these)
+    def set_available_tags(self, these):
+        """
+        Connects the tag field to an iterable object
+        """
+        if not isinstance(these, (tuple, list, set, dict)):
+            raise AttributeError('Available tags need to be set with an iterable! (list, tuple, set, dict)')
+
+        self._available_tags = these
+
+    def _append_to_available(self, tag_name):
+        if tag_name in self._available_tags:
+            return
+
+        if isinstance(self._available_tags, list):
+            self._available_tags.append(tag_name)
+        elif isinstance(self._available_tags, set):
+            self._available_tags.add(tag_name)
+        elif isinstance(self._available_tags, dict):
+            self._available_tags[tag_name] = tag_name.title()
+        elif isinstance(self._available_tags, tuple):
+            self._available_tags[tag_name] += (tag_name,)
 
 
 class A2Tag(QtGui.QPushButton):
@@ -138,15 +146,20 @@ class A2Tag(QtGui.QPushButton):
         self.clicked.connect(self.build_menu)
 
     def build_menu(self):
+        pos = self.cursor().pos()
         if self.button_menu is None:
             self.button_menu = QtGui.QMenu()
             action = QtGui.QAction(a2ctrl.Icons().delete, 'Delete "%s"' % self.name, self.button_menu,
                                    triggered=self.delete)
             self.button_menu.addAction(action)
-        self.button_menu.popup(self.cursor().pos())
+        self.button_menu.popup(pos)
 
     def delete(self):
         self.delete_requested.emit(self.name)
+
+
+class CreateTagDialog():
+    pass
 
 
 if __name__ == '__main__':

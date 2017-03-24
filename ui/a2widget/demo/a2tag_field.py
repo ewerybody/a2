@@ -12,7 +12,8 @@ class TagFieldDemo(QtGui.QMainWindow):
         w.setLayout(l)
 
         self.c = A2TagField()
-        self.c.available_tags = ['muppets', 'mopets', 'muffins']
+        tags = ['muppets', 'mopets', 'muffins']
+        self.c.set_available_tags(tags)
         self.c.value = ['bla', 'lala']
         self.c.changed.connect(self.bla)
 
