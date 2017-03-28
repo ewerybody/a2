@@ -203,7 +203,6 @@ class EditCtrl(QtGui.QGroupBox):
         """
         TODO: don't show top/to top, bottom/to bottom when already at top/bottom
         """
-        print('self.cfg: %s' % self.cfg)
         self._ctrlMenu.clear()
         icons = Icons.inst()
         menu_items = [('Up', partial(self.move, -1), icons.up),

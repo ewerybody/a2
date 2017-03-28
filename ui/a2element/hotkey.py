@@ -5,7 +5,6 @@ Created on Dec 28, 2015
 '''
 from PySide import QtCore, QtGui
 
-import a2ahk
 import a2ctrl
 import a2core
 from a2element import hotkey_func, hotkey_scope, DrawCtrl, EditCtrl
