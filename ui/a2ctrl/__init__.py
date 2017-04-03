@@ -317,9 +317,13 @@ def assemble_settings(module_key, cfg_dict, db_dict, module_path=None):
         if not get_cfg_value(cfg, user_cfg, 'enabled', default=True):
             continue
 
-        element_get_settings = get_a2element_object('get_settings', cfg['typ'], module_path)
-        if element_get_settings is not None:
-            element_get_settings(module_key, cfg, db_dict, user_cfg)
+        element_get_settings_func = get_a2element_object('get_settings', cfg['typ'], module_path)
+        if element_get_settings_func is not None:
+            try:
+                element_get_settings_func(module_key, cfg, db_dict, user_cfg)
+            except Exception as error:
+                log.error(traceback.format_exc().strip())
+                log.error('Error calling get_settings function for module: "%s"' % module_key)
 
 
 if __name__ == '__main__':
