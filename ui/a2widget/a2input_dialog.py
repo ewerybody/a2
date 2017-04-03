@@ -37,6 +37,7 @@ class A2InputDialog(QtGui.QDialog):
         self.ui.textField.setText(self._text)
         self.ui.textField.setFocus()
 
+        self.rejected.connect(self.canceled.emit)
         self.show()
 
     @property
