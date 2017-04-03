@@ -147,6 +147,8 @@ def py_value_to_ahk_string(py_obj):
         return py_int_to_ahk_string(py_obj)
     elif isinstance(py_obj, list):
         return py_list_to_ahk_string(py_obj)
+    elif isinstance(py_obj, dict):
+        return py_dict_to_ahk_string(py_obj)
 
 
 def py_bool_to_ahk_string(py_bool):
@@ -176,6 +178,16 @@ def py_list_to_ahk_string(list_obj):
     if result.endswith(', '):
         result = result[:-2]
     return result + ']'
+
+
+def py_dict_to_ahk_string(dict_obj):
+    result = '{'
+    for key, value in dict_obj.items():
+        result += '"%s": ' % key + py_value_to_ahk_string(value) + ', '
+
+    if result.endswith(', '):
+        result = result[:-2]
+    return result + '}'
 
 
 """
