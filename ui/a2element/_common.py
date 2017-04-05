@@ -132,7 +132,8 @@ class EditCtrl(QtGui.QGroupBox):
                 # self.main.ui.scrollArea
             else:
                 newindex = maxIndex
-                self.scroll_to_bottom()
+                # TODO: scrolling should be done in module_view
+                # self.scroll_to_bottom()
         else:
             newindex = index + value
         # hop out if already at start or end
@@ -246,14 +247,14 @@ class EditCtrl(QtGui.QGroupBox):
             self.cfg['name'] = new_name
 
     def scroll_to_bottom(self):
-        self._scrollValB4 = self.main.ui.scrollBar.value()
-        self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
-        print('scroll_to_bottom...')
+        # self._scrollValB4 = self.main.ui.scrollBar.value()
+        # self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
+        # print('scroll_to_bottom...')
         # QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
         threading.Thread(target=self._scroll_to_bottom).start()
 
     def _scroll_to_bottom(self, *args):
-        print('scrollValB4: %s' % self._scrollValB4)
+        #print('scrollValB4: %s' % self._scrollValB4)
         time.sleep(0.1)
         tmax = 0.3
         curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
