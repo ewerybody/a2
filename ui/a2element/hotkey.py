@@ -58,7 +58,7 @@ class Draw(DrawCtrl):
         self.label.setWordWrap(True)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
-        self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
+        # self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.labelBoxLayout)
 
         self.hotkeyListLayout = QtGui.QVBoxLayout()
@@ -73,7 +73,7 @@ class Draw(DrawCtrl):
         self.hotkeyLayout.addWidget(self.hotkeyOption)
 
         self.hotkeyListLayout.addLayout(self.hotkeyLayout)
-        self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
+        # self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrllayout.addLayout(self.hotkeyListLayout)
         self.ctrllayout.setStretch(2, 1)
         self.setLayout(self.ctrllayout)
