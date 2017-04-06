@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2ctrl\group_edit.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\group_edit.ui'
 #
-# Created: Thu Sep  1 00:02:23 2016
+# Created: Thu Apr  6 19:54:07 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -14,8 +14,7 @@ class Ui_edit(object):
         edit.setObjectName("edit")
         edit.resize(822, 130)
         self.edit_layout = QtGui.QVBoxLayout(edit)
-        self.edit_layout.setSpacing(0)
-        self.edit_layout.setContentsMargins(10, 0, 0, 0)
+        self.edit_layout.setContentsMargins(-1, -1, 0, -1)
         self.edit_layout.setObjectName("edit_layout")
         self.formLayout = QtGui.QFormLayout()
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
@@ -58,6 +57,6 @@ class Ui_edit(object):
         self.cfg_name.setText(QtGui.QApplication.translate("edit", "extensionX_group1", None, QtGui.QApplication.UnicodeUTF8))
         self.displayLabelLabel.setText(QtGui.QApplication.translate("edit", "display label:", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_label.setText(QtGui.QApplication.translate("edit", "some group name", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_disablable.setText(QtGui.QApplication.translate("edit", "disablable", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_disablable.setText(QtGui.QApplication.translate("edit", "checkable", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_enabled.setText(QtGui.QApplication.translate("edit", "enabled by default", None, QtGui.QApplication.UnicodeUTF8))
 
