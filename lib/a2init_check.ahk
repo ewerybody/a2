@@ -29,6 +29,10 @@ _init_check_settings() {
             FileAppend, %msg%, %A_ScriptDir%\settings\%filename%.ahk
         }
 
+        a2db_path = %settings_dir%\a2.db
+        ifNotExist, %a2db_path%
+            FileAppend, , %a2db_path%
+        
         settings_created := true
     }
     IfNotExist, %settings_dir%\%a2_init%

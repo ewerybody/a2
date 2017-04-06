@@ -6,7 +6,6 @@ Whow! Batch files are such a pain. Petter keep them as short as possible.
 import os
 import sys
 import shutil
-#import compileall
 from os.path import join, dirname, abspath, isfile
 
 
@@ -63,6 +62,7 @@ def main(package_name):
     settings_file = join(distlib, '_defaults', 'a2_settings.ahk')
     a2ahk.set_variable(settings_file, 'a2_ui_call', 'a2app.exe')
     a2ahk.set_variable(settings_file, 'a2_title', package_name)
+
 
 if __name__ == '__main__':
     main(sys.argv[1])
