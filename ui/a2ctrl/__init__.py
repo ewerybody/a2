@@ -103,11 +103,13 @@ def get_a2element_object(obj_name, element_type, module_path=None):
     element_mod = get_a2element(element_type)
     if element_mod is not None:
         return getattr(element_mod, obj_name)
+
     elif module_path:
         element_objects = get_local_element(os.path.join(module_path, element_type + '.py'))
         if obj_name not in element_objects:
             raise RuntimeError('Local Element "%s" has no object "%s"!!' % (element_type, obj_name))
         return element_objects[obj_name]
+
     else:
         log.error('Could not get object "%s" from element_type "%s"' % (obj_name, element_type))
 
@@ -311,17 +313,25 @@ def assemble_settings(module_key, cfg_dict, db_dict, module_path=None):
 
     for cfg in cfg_dict:
         # get configs named db entry of module or None
+        a2obj = a2core.A2Obj.inst()
         cfg_name = a2core.get_cfg_default_name(cfg)
-        user_cfg = a2core.A2Obj.inst().db.get(cfg_name, module_key)
+        user_cfg = a2obj.db.get(cfg_name, module_key)
         # pass if there is an 'enabled' entry and it's False
         if not get_cfg_value(cfg, user_cfg, 'enabled', default=True):
             continue
 
         element_get_settings_func = get_a2element_object('get_settings', cfg['typ'], module_path)
+
+        # no result try again with getting the module path:
+        if element_get_settings_func is None and module_path is None:
+            source_name, mod_name = module_key.split('|')
+            module_path = a2obj.module_sources[source_name].mods[mod_name].path
+            element_get_settings_func = get_a2element_object('get_settings', cfg['typ'], module_path)
+
         if element_get_settings_func is not None:
             try:
                 element_get_settings_func(module_key, cfg, db_dict, user_cfg)
-            except Exception as error:
+            except Exception:
                 log.error(traceback.format_exc().strip())
                 log.error('Error calling get_settings function for module: "%s"' % module_key)
 
