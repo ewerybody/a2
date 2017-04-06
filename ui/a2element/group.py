@@ -14,6 +14,7 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
     enabled/disables all at once.
     """
     def __init__(self, main, cfg, mod):
+        self.is_expandable_widget = False
         super(Draw, self).__init__()
         DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
@@ -22,6 +23,7 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.clicked[bool].connect(self.check)
 
         self.a2_group_layout = QtGui.QVBoxLayout(self)
+
         # FIXME: for some reason items in this GroupBox are 0px close to the
         # group box title. It works in settings view tho. I'm unable so far to fix this
         # via CSS. Enlighten me!
@@ -29,10 +31,15 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.a2_group_marging_top.setMaximumHeight(self.main.css_values['margin_h'])
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
 
+        expandable = False
         for child in self.cfg.get('children', []):
             ctrl = a2ctrl.draw(self.main, child, self.mod)
+            if ctrl is not None and ctrl.is_expandable_widget:
+                expandable = True
             if ctrl:
                 self.a2_group_layout.addWidget(ctrl)
+        if expandable:
+            self.is_expandable_widget = True
 
     def check(self, state):
         self.set_user_value(state, 'enabled')
@@ -54,6 +61,7 @@ class Edit(EditCtrl):
         if 'children' not in self.cfg:
             self.cfg['children'] = []
 
+        a2ctrl.check_ui_module(group_edit_ui)
         self.ui = group_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
@@ -68,6 +76,9 @@ class Edit(EditCtrl):
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
+        self._check_checkable()
+        self.ui.cfg_disablable.clicked[bool].connect(self._check_checkable)
+
     def paste(self):
         """
         Amends child list with cfgs from the main edit_clipboard
@@ -77,6 +88,16 @@ class Edit(EditCtrl):
             self.cfg['children'].append(cfg)
         self.main.edit_clipboard = []
         self.main.edit_mod()
+
+    def _check_checkable(self, checked=None):
+        """If not checkable the group is automatically enabled!"""
+        if checked is None:
+            checked = self.cfg.get('disablable', True)
+
+        if not checked:
+            self.ui.cfg_enabled.setChecked(True)
+            self.cfg['enabled'] = True
+        self.ui.cfg_enabled.setVisible(checked)
 
     @staticmethod
     def element_name():
