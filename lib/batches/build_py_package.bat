@@ -3,6 +3,7 @@
 set package_name=a2 - alpha preview
 set a2path=%~dp0..\..
 set scriptpath=%a2path%\ui\a2app.py
+set iconpath=%a2path%\ui\res\a2.ico
 set pypath=C:\Python34\
 set pyinstaller=%pypath%Scripts\pyinstaller.exe
 set buildpath=%temp%\a2_temp_buildpath
@@ -42,7 +43,7 @@ if exist "%distpath%" (
 )
 
 echo running pyinstaller ...
-"%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0
+"%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0 --icon "%iconpath%"
 
 echo running py build script ...
 %pypath%python.exe %~dp0build_py_package.py "%package_name%"
