@@ -86,19 +86,7 @@ def app_msg_get(msg):
         log.info('received show command ...')
         a2win.showRaise()
     elif '--reload' in msg:
-        log.info('attempting reload ...')
-        import a2ui
-        import a2core
-        a2win.close()
-        reload(a2core)
-        reload(a2ui)
-
-        for main_mod in [a2core, a2ui, a2ui.a2ctrl]:
-            for module in main_mod.reload_modules:
-                log.debug('reloading module: %s' % module.__name__)
-                reload(module)
-
-        a2win = init_a2_win(app)
+        log.error('reload is deprecated!')
 
     else:
         log.info('received unhandled message: %s' % ' '.join(msg))
