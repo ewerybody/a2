@@ -12,6 +12,7 @@ from functools import partial
 from PySide import QtGui, QtCore
 
 import a2core
+import a2util
 from a2ctrl.base import Icons
 from a2ctrl import get_cfg_value
 
@@ -30,7 +31,7 @@ class DrawCtrl(QtGui.QWidget):
         self.mod = mod
         self.check_delay = 250
         self._check_scheduled = False
-        cfg_name = a2core.get_cfg_default_name(self.cfg)
+        cfg_name = a2util.get_cfg_default_name(self.cfg)
         self.user_cfg = self.a2.db.get(cfg_name, self.mod.key)
         self.is_expandable_widget = False
         self._check_timer = QtCore.QTimer()
@@ -162,7 +163,7 @@ class EditCtrl(QtGui.QGroupBox):
         self.delete()
 
     def help(self):
-        a2core.surfTo(self.helpUrl)
+        a2util.surf_to(self.helpUrl)
 
     def _setup_ui(self, add_layout):
         self.setTitle(self.cfg['typ'])
@@ -243,7 +244,7 @@ class EditCtrl(QtGui.QGroupBox):
             controls = [cfg.get('name', '') for cfg in self.main.tempConfig
                         if cfg.get('typ') == this_type]
 
-            new_name = a2core.get_next_free_number(new_name, controls)
+            new_name = a2util.get_next_free_number(new_name, controls)
             self.cfg['name'] = new_name
 
     def scroll_to_bottom(self):

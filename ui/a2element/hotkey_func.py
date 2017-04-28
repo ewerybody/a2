@@ -33,7 +33,7 @@ class Hotkey_Function_Handler(object):
             # fsubmenu1 = self.menu.addMenu('local functions')
             # fsubmenu2 = self.menu.addMenu('built-in functions')
             action = QtGui.QAction('Help on Autohotkey commands', self.menu,
-                                   triggered=partial(a2core.surfTo, self.main.a2.urls.ahk_commands))
+                                   triggered=partial(a2util.surf_to, self.main.a2.urls.ahk_commands))
             self.menu.addAction(action)
 
         elif index == 1:
@@ -41,7 +41,7 @@ class Hotkey_Function_Handler(object):
                                 ('browse file...', self.browse_file),
                                 ('explore to...', self.explore),
                                 ('Help on Autohotkey "Run"',
-                                 partial(a2core.surfTo, self.main.a2.urls.ahk_run))]:
+                                 partial(a2util.surf_to, self.main.a2.urls.ahk_run))]:
                 action = QtGui.QAction(label, self.menu, triggered=func)
                 self.menu.addAction(action)
 
@@ -56,9 +56,9 @@ class Hotkey_Function_Handler(object):
 #                 action = QtGui.QAction(var, fsubmenu2, triggered=partial(self.set_sendmode, var))
 #                 fsubmenu2.addAction(action)
             for label, func in [('Help on Autohotkey "Send"',
-                                 partial(a2core.surfTo, self.main.a2.urls.ahksend)),
+                                 partial(a2util.surf_to, self.main.a2.urls.ahksend)),
                                 ('Help on Autohotkey Built-in Variables',
-                                 partial(a2core.surfTo, self.main.a2.urls.ahk_builtin_vars))]:
+                                 partial(a2util.surf_to, self.main.a2.urls.ahk_builtin_vars))]:
                 action = QtGui.QAction(label, self.menu, triggered=func)
                 self.menu.addAction(action)
 

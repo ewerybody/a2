@@ -7,6 +7,7 @@ import subprocess
 
 import a2core
 import a2ctrl
+import a2util
 from a2widget import a2design_ui
 
 from copy import deepcopy
@@ -92,8 +93,8 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionExplore_to.setIcon(a2ctrl.Icons.inst().folder)
-        self.ui.actionAbout_a2.triggered.connect(partial(a2core.surfTo, self.a2.urls.help))
-        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2core.surfTo, self.a2.urls.ahk))
+        self.ui.actionAbout_a2.triggered.connect(partial(a2util.surf_to, self.a2.urls.help))
+        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2util.surf_to, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(a2ctrl.Icons.inst().a2help)
         self.ui.actionAbout_Autohotkey.setIcon(a2ctrl.Icons.inst().autohotkey)
 
@@ -106,7 +107,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionRefresh_UI.triggered.connect(partial(self.settings_changed, refresh_ui=True))
         self.ui.actionRefresh_UI.setIcon(a2ctrl.Icons.inst().a2reload)
 
-        self.ui.actionReport_Issue.triggered.connect(partial(a2core.surfTo, self.a2.urls.help_report_issue))
+        self.ui.actionReport_Issue.triggered.connect(partial(a2util.surf_to, self.a2.urls.help_report_issue))
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
@@ -271,7 +272,7 @@ class A2Window(QtGui.QMainWindow):
         scale = local_scale * user_scale
 
         css_template_path = os.path.join(self.a2.paths._defaults, 'css_defaults.json')
-        css_defaults = a2core.json_read(css_template_path)
+        css_defaults = a2util.json_read(css_template_path)
         with open(os.path.join(self.a2.paths._defaults, 'a2.css')) as fobj:
             css_template = fobj.read()
 

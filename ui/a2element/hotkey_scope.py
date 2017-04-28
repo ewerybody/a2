@@ -130,7 +130,7 @@ class ScopeDialog(QtGui.QDialog):
         for title, url in [('Help on Scope Setup', self.a2.urls.helpScopes),
                            ('Help on AHK WinActive', self.a2.urls.ahkWinActive),
                            ('Help on AHK WinTitle', self.a2.urls.ahkWinTitle)]:
-            action = QtGui.QAction(title, menu, triggered=partial(a2core.surfTo, url))
+            action = QtGui.QAction(title, menu, triggered=partial(a2util.surf_to, url))
             menu.addAction(action)
         self.ui.helpButton.setMenu(menu)
 

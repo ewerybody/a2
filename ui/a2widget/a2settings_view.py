@@ -12,6 +12,7 @@ from PySide import QtGui, QtCore
 
 import a2ahk
 import a2core
+import a2util
 import a2ctrl.connect
 from a2widget import a2settings_view_ui
 
@@ -130,7 +131,7 @@ class A2Settings(QtGui.QWidget):
         win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
         win_startup_lnk = os.path.join(win_startup_path, 'a2.lnk')
         self.ui.load_on_win_start.setChecked(exists(win_startup_lnk))
-        self.ui.load_on_win_start.clicked[bool].connect(a2core.set_windows_startup)
+        self.ui.load_on_win_start.clicked[bool].connect(a2util.set_windows_startup)
 
     def dev_mode_toggle(self, dev_mode):
         self.a2.db.set('dev_mode', dev_mode)

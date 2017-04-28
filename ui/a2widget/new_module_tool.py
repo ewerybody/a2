@@ -7,6 +7,7 @@ import os
 from PySide import QtGui
 
 import a2core
+import a2util
 import a2ctrl.connect
 from a2mod import get_folders
 from a2widget import A2InputDialog
@@ -82,4 +83,4 @@ class NewModulueTool(A2InputDialog):
             self.source_dict['names'][source] = list(map(str.lower, names))
 
         self._module_list = self.source_dict['names'][source]
-        return a2core.standard_name_check(name, self._module_list, 'Module name "%s" is in use!')
+        return a2util.standard_name_check(name, self._module_list, 'Module name "%s" is in use!')

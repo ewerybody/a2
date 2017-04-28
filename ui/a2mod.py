@@ -13,10 +13,10 @@ They can be enabled/disabled individually affecting all their child modules.
 import os
 from shutil import copy2
 
-from PySide import QtGui
-
 import a2core
 import a2ctrl
+import a2util
+
 
 log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
@@ -77,13 +77,13 @@ class ModSource(object):
     @property
     def config(self):
         try:
-            return a2core.json_read(self.config_file)
+            return a2util.json_read(self.config_file)
         except Exception:
             return {}
 
     @config.setter
     def config(self, data):
-        a2core.json_write(self.config_file, data)
+        a2util.json_write(self.config_file, data)
 
     @property
     def enabled(self):
@@ -182,12 +182,12 @@ class Mod(object):
             copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
 
         # overwrite config_file
-        a2core.json_write(self.config_file, self._config)
+        a2util.json_write(self.config_file, self._config)
 
     def get_config(self):
         if self.has_config_file:
             try:
-                self._config = a2core.json_read(self.config_file)
+                self._config = a2util.json_read(self.config_file)
                 return
             except Exception as error:
                 log.error('config exists but could not be loaded!: '
@@ -240,7 +240,7 @@ class Mod(object):
         with open(os.path.join(self.path, script_name), 'w') as fObj:
             content = '; %s - %s\n' % (self.name, script_name)
             content += '; author: %s\n' % author_name
-            content += '; created: %s\n\n' % a2core.get_date()
+            content += '; created: %s\n\n' % a2util.get_date()
             fObj.write(content)
         return script_name
 
@@ -264,7 +264,7 @@ class Mod(object):
         user sets True AND default it False:
             set to user_cfg
         """
-        cfg_name = a2core.get_cfg_default_name(sub_cfg)
+        cfg_name = a2util.get_cfg_default_name(sub_cfg)
         current_cfg = self.a2.db.get(cfg_name, self.key) or {}
         if attr_name is None:
             if value == current_cfg:
@@ -286,7 +286,7 @@ class Mod(object):
 
     def help(self):
         try:
-            a2core.surfTo(self.config[0].get('url'))
+            a2util.surf_to(self.config[0].get('url'))
         except Exception as error:
             log.error('Error calling help() on module: %s\n:%s' % (self.name, error))
 

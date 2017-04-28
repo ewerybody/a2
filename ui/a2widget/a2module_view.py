@@ -10,9 +10,9 @@ from PySide import QtGui, QtCore
 
 import a2core
 import a2ctrl
+import a2util
 from a2widget import a2settings_view
 from a2widget import a2module_view_ui
-from a2element import DrawCtrl, EditCtrl
 
 
 log = a2core.get_logger(__name__)
@@ -141,7 +141,7 @@ class A2ModuleView(QtGui.QWidget):
                                      'couple of words.' % self.main.mod.name,
                       'author': self.main.devset.author_name,
                       'version': '0.1',
-                      'date': a2core.get_date()}
+                      'date': a2util.get_date()}
             self.main.tempConfig.insert(0, newNfo)
 
         for cfg in self.main.tempConfig:
@@ -223,7 +223,7 @@ class A2ModuleView(QtGui.QWidget):
         Open help of the selected module or a2 help
         """
         if self.main.mod is None:
-            a2core.surfTo(self.a2.urls.help)
+            a2util.surf_to(self.a2.urls.help)
         else:
             self.main.mod.help()
 

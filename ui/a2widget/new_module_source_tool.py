@@ -5,6 +5,7 @@
 import os
 
 import a2core
+import a2util
 from a2mod import MOD_SOURCE_NAME
 from a2widget.a2input_dialog import A2InputDialog
 
@@ -26,7 +27,7 @@ class NewModuleSourceTool(A2InputDialog):
         Runs on keystroke when creating new module source
         to give way to okaying creation.
         """
-        return a2core.standard_name_check(name, self.source_names, 'Module source name "%s" is in use!')
+        return a2util.standard_name_check(name, self.source_names, 'Module source name "%s" is in use!')
 
     def create_source(self, name):
         if not self.check_name(name):
@@ -38,6 +39,6 @@ class NewModuleSourceTool(A2InputDialog):
         source_path = os.path.join(self.a2.paths.modules, name)
         source_cfg = os.path.join(source_path, MOD_SOURCE_NAME)
         os.mkdir(source_path)
-        a2core.json_write(source_cfg, {})
+        a2util.json_write(source_cfg, {})
         self.a2.fetch_modules()
         self.main.ui.module_view.draw_mod()

@@ -7,6 +7,7 @@ import subprocess
 from PySide import QtGui, QtCore
 
 import a2core
+import a2util
 import a2ctrl.connect
 from a2widget.a2input_dialog import A2InputDialog
 import json
@@ -76,7 +77,7 @@ class NewElementDialog(A2InputDialog):
         except Exception:
             pass
 
-        return a2core.standard_name_check(name, self._current_elements)
+        return a2util.standard_name_check(name, self._current_elements)
 
     def create_element(self, NAME):
         name = NAME.lower()
@@ -85,7 +86,7 @@ class NewElementDialog(A2InputDialog):
         with open(template) as fobj:
             new_element_code = fobj.read().format(
                 description='Some element description ...',
-                creation_date=a2core.get_date(),
+                creation_date=a2util.get_date(),
                 author_name=self.main.devset.author_name,
                 element_name=name.title())
 
