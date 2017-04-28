@@ -17,7 +17,6 @@ from PySide import QtGui, QtCore
 
 BASE_DPI = 96.0
 log = a2core.get_logger(__name__)
-reload_modules = [a2ctrl]
 ui_defaults = None
 
 
