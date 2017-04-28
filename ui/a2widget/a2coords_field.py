@@ -33,6 +33,7 @@ class A2CoordsField(QtGui.QWidget):
 
         self.tool_button = QtGui.QToolButton(self)
         self.tool_button.clicked.connect(self.show_menu)
+        self.tool_button.setArrowType(QtCore.Qt.DownArrow)
         self.main_layout.addWidget(self.tool_button)
 
         self.menu_items = OrderedDict()
