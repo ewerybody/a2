@@ -39,9 +39,9 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.ctrllayout = QtGui.QHBoxLayout(self)
+        self.ctrl_layout = QtGui.QHBoxLayout(self)
         # left, top, right, bottom
-        self.ctrllayout.setContentsMargins(0, 0, 0, 0)
+        self.ctrl_layout.setContentsMargins(0, 0, 0, 0)
         self.labelBoxLayout = QtGui.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
@@ -59,24 +59,25 @@ class Draw(DrawCtrl):
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         # self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
-        self.ctrllayout.addLayout(self.labelBoxLayout)
+        self.ctrl_layout.addLayout(self.labelBoxLayout)
 
-        self.hotkeyListLayout = QtGui.QVBoxLayout()
-        self.hotkeyLayout = QtGui.QHBoxLayout()
-        self.hotkeyButton = A2Hotkey(self, self.get_user_value(str, 'key'), self.hotkey_change)
-        self.hotkeyButton.setEnabled(self.cfg['keyChange'])
-        self.hotkeyLayout.addWidget(self.hotkeyButton)
+        self.hotkey_list_layout = QtGui.QVBoxLayout()
+        self.hotkey_layout = QtGui.QHBoxLayout()
+        self.hotkey_button = A2Hotkey(self, self.get_user_value(str, 'key'))
+        self.hotkey_button.setEnabled(self.cfg['keyChange'])
+        self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
+        self.hotkey_layout.addWidget(self.hotkey_button)
 
-        self.hotkeyOption = QtGui.QPushButton()
-        self.hotkeyOption.setFlat(True)
-        self.hotkeyOption.setText('...')
-        self.hotkeyLayout.addWidget(self.hotkeyOption)
+        self.hotkey_option = QtGui.QPushButton()
+        self.hotkey_option.setFlat(True)
+        self.hotkey_option.setText('...')
+        self.hotkey_layout.addWidget(self.hotkey_option)
 
-        self.hotkeyListLayout.addLayout(self.hotkeyLayout)
+        self.hotkey_list_layout.addLayout(self.hotkey_layout)
         # self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
-        self.ctrllayout.addLayout(self.hotkeyListLayout)
-        self.ctrllayout.setStretch(2, 1)
-        self.setLayout(self.ctrllayout)
+        self.ctrl_layout.addLayout(self.hotkey_list_layout)
+        self.ctrl_layout.setStretch(2, 1)
+        self.setLayout(self.ctrl_layout)
 
     def hotkey_check(self):
         state = self.check.isChecked()
