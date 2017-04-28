@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from PySide import QtGui, QtCore
 
 import a2ahk
@@ -5,123 +7,138 @@ import a2core
 
 
 log = a2core.get_logger(__name__)
+LEAVE_CLOSE_TIMEOUT = 1000
+STYLE_BAD = '* {color:#F00}'
+STYLE_GOOD = '* {color:#0F0}'
+_dialog_size = None
 
 
 class A2Hotkey(QtGui.QPushButton):
+    hotkey_changed = QtCore.Signal(str)
+
     def __init__(self, parent=None, key=None, ok_func=None):
-        # i'd love to use super here. But it introduces problems with reload
-        # super(HotKey, self).__init__()
-        QtGui.QPushButton.__init__(self)
+        super(A2Hotkey, self).__init__(parent)
         self.key = key
-        self.tempKey = key
-        self.tempOK = True
         self.ok_func = ok_func
         self.setText(key)
+        self.clicked.connect(self.popup_dialog)
 
     def set_key(self, key):
-        self.key = key
-        self.setText(key)
+        if key != self.key:
+            self.key = key
+            self.setText(key)
+            self.hotkey_changed.emit(key)
+            if self.ok_func is not None:
+                log.warning('Avoid using ok_func()! Do it with the hotket_set Signal!')
+                self.ok_func(key)
 
-    def mousePressEvent(self, event):
-        self.buildPopup(event.globalX(), event.globalY())
+    def popup_dialog(self):
+        dialog = HotkeyDialog(self)
+        dialog.hotkey_set.connect(self.set_key)
 
-    def buildPopup(self, x, y):
-        self.popup = Popup(x, y, self)
-        self.popup.textEdit = QtGui.QLineEdit(self.popup)
-        self.popup.textEdit.setText(self.key)
-        self.popup.textEdit.textChanged.connect(self.validateHotkey)
-        self.popup.textEdit.returnPressed.connect(self.ok)
 
-        self.popup.buttonLyt = QtGui.QHBoxLayout()
-        self.popup.okButton = QtGui.QPushButton("OK")
-        self.popup.okButton.clicked.connect(self.ok)
-        self.popup.closeButton = QtGui.QPushButton("&Cancel")
-        self.popup.closeButton.clicked.connect(self.popup.close)
-        self.popup.buttonLyt.addWidget(self.popup.okButton)
-        self.popup.buttonLyt.addWidget(self.popup.closeButton)
+class HotkeyDialog(QtGui.QWidget):
+    hotkey_set = QtCore.Signal(str)
 
-        self.popup.layout = QtGui.QVBoxLayout()
-        self.popup.layout.addWidget(self.popup.textEdit)
-        self.popup.layout.addLayout(self.popup.buttonLyt)
-        self.popup.setLayout(self.popup.layout)
-        self.validateHotkey(self.key)
+    def __init__(self, parent):
+        super(HotkeyDialog, self).__init__(parent)
+        self.parent_widget = parent
+        self.a2 = a2core.A2Obj.inst()
+        self.setup_ui()
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self.popup, self.ok)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
 
-        self.popup.show()
-        self.popup.place_at_cursor()
+        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
+
+        self._close_timer = QtCore.QTimer()
+        self._close_timer.setInterval(LEAVE_CLOSE_TIMEOUT)
+        self._close_timer.timeout.connect(self.leave_timeout_reached)
+
+        self.key = self.parent_widget.key
+        self.okay_state = True
+        self.validate_hotkey(self.key)
+
+        self.place_at_cursor()
+        self.show()
+        self._init_dialog_size()
+
+        hotkeys = self.a2.get_used_hotkeys()
+        pprint(hotkeys)
+
+    def setup_ui(self):
+        self.text_edit = QtGui.QLineEdit(self)
+        self.text_edit.setText(self.parent_widget.key)
+        self.text_edit.textChanged.connect(self.validate_hotkey)
+        self.text_edit.returnPressed.connect(self.ok)
+
+        self.button_layout = QtGui.QHBoxLayout()
+        self.ok_button = QtGui.QPushButton("OK")
+        self.ok_button.clicked.connect(self.ok)
+        self.button_layout.addWidget(self.ok_button)
+
+        self.close_button = QtGui.QPushButton("&Cancel")
+        self.close_button.clicked.connect(self.close)
+        self.button_layout.addWidget(self.close_button)
+
+        self.main_layout = QtGui.QVBoxLayout(self)
+        self.main_layout.addWidget(self.text_edit)
+        self.main_layout.addLayout(self.button_layout)
 
     def ok(self):
-        log.info('key: %s' % self.tempKey)
-        log.info('ok: %s' % self.tempOK)
-        if self.tempOK:
-            self.set_key(self.tempKey)
-            self.popup.close()
-            self.ok_func(self.key)
+        log.info('key: %s' % self.key)
+        log.info('ok: %s' % self.okay_state)
+        if self.okay_state:
+            self.hotkey_set.emit(self.key)
+            self.close()
 
-    def validateHotkey(self, hkstring):
+    def validate_hotkey(self, hk_string):
         """
-        first implementation: checks for valid modifyers + a single key
+        first implementation: checks for valid modifiers + a single key
         TODO: handle F1-F12, Del, Home...
               handle single keys when in scope,
               check availability ...
         """
-        styleBad = '* {color:#F00}'
-        styleGood = '* {color:#0F0}'
-        good = False
-        hkparts = hkstring.split('+')
-        key = hkparts[-1].strip().lower()
+        okay_state = False
+        hk_parts = hk_string.split('+')
+        key = hk_parts[-1].strip().lower()
         modifier = []
         tilde = ''
         # TODO: implement check for joystick keys and scancodes: 2joy4, SCnnn
         # http://www.autohotkey.com/docs/KeyList.htm#SpecialKeys
         if len(key) != 1 and key not in a2ahk.keys:
             msg = 'Invalid key! (%s)' % key
-        elif len(hkparts) == 1:
-            good = True
+        elif len(hk_parts) == 1:
+            okay_state = True
         else:
-            modifier = [k.strip().lower() for k in hkparts[:-1]]
+            modifier = [k.strip().lower() for k in hk_parts[:-1]]
             if modifier[0].startswith('~'):
                 tilde = '~'
                 modifier[0] = modifier[0][1:]
-            badModifier = [k for k in modifier if k not in a2ahk.modifiers]
-            if badModifier:
-                msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(badModifier))
+            bad_modifier = [k for k in modifier if k not in a2ahk.modifiers]
+            if bad_modifier:
+                msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(bad_modifier))
             else:
-                good = True
+                okay_state = True
 
-        if not good:
-            self.popup.textEdit.setStyleSheet(styleBad)
+        if not okay_state:
+            self.text_edit.setStyleSheet(STYLE_BAD)
             log.error(msg)
         else:
             modifier = [k.title() for k in modifier]
             key = key.title()
-            self.tempKey = tilde + '+'.join(modifier + [key])
-            log.info('tempKey %s:' % self.tempKey)
-            self.popup.textEdit.setStyleSheet(styleGood)
+            self.key = tilde + '+'.join(modifier + [key])
+            log.info('tempKey %s:' % self.key)
+            self.text_edit.setStyleSheet(STYLE_GOOD)
 
-        self.tempOK = good
-
-
-class Popup(QtGui.QWidget):
-    def __init__(self, x, y, parent=None):
-        super(Popup, self).__init__(parent=parent)
-        self.setpos = (x, y)
-        self.leave_close_timeout = 1000
-        self._close = False
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
-                        self, self.close)
-        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
-
-        self._close_timer = QtCore.QTimer()
-        self._close_timer.setInterval(self.leave_close_timeout)
-        self._close_timer.timeout.connect(self.leave_timeout_reached)
+        self.okay_state = okay_state
 
     def place_at_cursor(self):
-        x, y = self.setpos
+        cursor_pos = QtGui.QCursor.pos()
         pos = self.pos()
-        pos.setX(x - (self.width() / 2))
-        pos.setY(y - (self.height() / 2))
+        dialog_size = _dialog_size if _dialog_size else (200, 100)
+        pos.setX(cursor_pos.x() - (dialog_size[0] / 2))
+        pos.setY(cursor_pos.y() - (dialog_size[1] / 2))
         self.move(pos)
 
     def leaveEvent(self, event):
@@ -140,3 +157,7 @@ class Popup(QtGui.QWidget):
     def closeEvent(self, event):
         self._close_timer.stop()
         return QtGui.QWidget.closeEvent(self, event)
+
+    def _init_dialog_size(self):
+        global _dialog_size
+        _dialog_size = (self.width(), self.height())
