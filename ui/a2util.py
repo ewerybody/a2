@@ -5,6 +5,7 @@ This is all too random to be core.
 import json
 import time
 import string
+import codecs
 import webbrowser
 
 import a2ahk
@@ -107,3 +108,8 @@ def set_windows_startup(state=True):
 def surf_to(url):
     if url:
         webbrowser.get().open(url)
+
+
+def write_utf8(path, content):
+    with codecs.open(path, 'w', encoding='utf-8-sig') as fobj:
+        fobj.write(content)

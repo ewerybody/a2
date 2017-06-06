@@ -357,29 +357,19 @@ def write_includes(specific=None):
                     init_ahk += call
 
     # write all the include files
-    with codecs.open(join(a2.paths.settings, 'variables.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write('\n'.join(variables_ahk))
+    import a2util
+    a2util.write_utf8(os.path.join(a2.paths.settings, 'variables.ahk'), '\n'.join(variables_ahk))
 
-    with codecs.open(join(a2.paths.settings, 'libs.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write('\n'.join(libs_ahk))
+    a2util.write_utf8(os.path.join(a2.paths.settings, 'libs.ahk'), '\n'.join(libs_ahk))
 
-    with codecs.open(join(a2.paths.settings, 'includes.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        fobj.write('\n'.join(include_ahk))
+    a2util.write_utf8(os.path.join(a2.paths.settings, 'includes.ahk'), '\n'.join(include_ahk))
 
-    with codecs.open(join(a2.paths.settings, 'hotkeys.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        content = edit_disclaimer % 'hotkeys' + '\n'
-        for key in sorted(hotkeys_ahk.keys()):
-            content += '\n'.join([key] + hotkeys_ahk[key]) + '\n\n'
-        fobj.write(content)
+    content = edit_disclaimer % 'hotkeys' + '\n'
+    for key in sorted(hotkeys_ahk.keys()):
+        content += '\n'.join([key] + hotkeys_ahk[key]) + '\n\n'
+    a2util.write_utf8(os.path.join(a2.paths.settings, 'hotkeys.ahk'), content)
 
-    with codecs.open(join(a2.paths.settings, 'init.ahk'), 'w', encoding='utf-8-sig') as fobj:
-        init_ahk += '}\n'
-        fobj.write(init_ahk)
-
-
-def _write_file(path, content):
-    with codecs.open(path, 'w', encoding='utf-8-sig') as fobj:
-        fobj.write(content)
+    a2util.write_utf8(os.path.join(a2.paths.settings, 'init.ahk'), init_ahk + '}\n')
 
 
 def _dbCleanup():
