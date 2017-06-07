@@ -57,8 +57,8 @@ class A2ModuleList(QtGui.QWidget):
 
                 elif isinstance(item, str):
                     srcname, modname = item.split('|', 1)
-                    mod = self.a2.module_sources.get(srcname, {}).mods.get(modname, {})
                     try:
+                        mod = self.a2.module_sources[srcname].mods[modname]
                         mod._item.setSelected(True)
                         lastitem = mod._item
                         selection.append(mod)
