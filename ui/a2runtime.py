@@ -10,6 +10,7 @@ import a2core
 import a2util
 
 EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
+a2default_hotkey = 'Win+Shift+A'
 log = a2core.get_logger(__name__)
 
 
@@ -122,6 +123,33 @@ class HotkeysCollection(_Collection):
     def __init__(self, a2obj_instance):
         super(HotkeysCollection, self).__init__(a2obj_instance)
         self.name = 'hotkeys'
+        self.hk_mode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
+        self.hd_dict = {}
+
+    def gather(self, mod):
+
+        a2_hotkey = a2ahk.translate_hotkey(self.a2.db.get('a2_hotkey') or a2default_hotkey)
+        self.hd_dict = {self.hk_mode['1']: [a2_hotkey + '::a2UI()']}
+
+        hotkeys = self.a2.db.get('hotkeys', mod.key) or {}
+        for typ in hotkeys:
+            for hk in hotkeys.get(typ) or []:
+                # type 0 is global, append under the #IfWinActive label
+                if typ == '0':
+                    hk_string = a2ahk.translate_hotkey(hk[0]) + '::' + hk[1]
+                    self.hd_dict[self.hk_mode['1']].append(hk_string)
+                # assemble type 1 and 2 in hotkeys_ahk keys with the hotkey strings listed
+                else:
+                    hk_string = a2ahk.translate_hotkey(hk[1]) + '::' + hk[2]
+                    for scope_string in hk[0]:
+                        scope_key = '%s %s' % (self.hk_mode[typ], scope_string)
+                        self.hd_dict.setdefault(scope_key, []).append(hk_string)
+
+    def get_content(self):
+        content = ''
+        for key in sorted(self.hk_dict.keys()):
+            content += '\n'.join([key] + self.hk_dict[key]) + '\n\n'
+        return content
 
 
 class HotkeyManager(object):

@@ -255,7 +255,7 @@ def write_includes(specific=None):
                                               ('settings_includes', settings_path)]:
                 includes = a2.db.get(include_type, module.key) or []
                 if not isinstance(includes, list):
-                    log.warn('%s not a list: %s' % (include_type, includes))
+                    log.warning('%s not a list: %s' % (include_type, includes))
                     includes = [includes]
 
                 for include in includes:
