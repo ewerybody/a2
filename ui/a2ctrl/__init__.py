@@ -120,6 +120,9 @@ def get_a2element(element_type):
     except KeyError:
         try:
             element_mod_name = ELEMENTS_PACKAGE + '.' + element_type
+            if ELEMENTS_PACKAGE not in sys.modules:
+                import_module(ELEMENTS_PACKAGE)
+
             if element_mod_name in sys.modules:
                 element_mod = sys.modules[element_mod_name]
             else:
