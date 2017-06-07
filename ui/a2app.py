@@ -69,6 +69,8 @@ def init_a2_win(app):
         a2.app = app
         a2win.showRaise()
     except Exception as error:
+        # TODO: provide more detailed startup error report
+        # error_class, error_msg, trace_back = sys.exc_info()
         title = 'a2app: Error on "init_a2_win()"!'
         msg = ('Could not call A2Window! Error:\n%s\n'
                'Traceback:%s\n\nPress Ctrl+C to copy this message.'
