@@ -109,6 +109,7 @@ class A2CoordsField(QtGui.QWidget):
             x, y = text.split()
         self.value = (int(x.strip()), int(y.strip()))
 
+
 if __name__ == '__main__':
     import a2widget.demo.a2coords_field
     a2widget.demo.a2coords_field.show()
