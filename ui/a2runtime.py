@@ -13,6 +13,9 @@ EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated autom
 a2default_hotkey = 'Win+Shift+A'
 log = a2core.get_logger(__name__)
 
+TODO_DEFAULT_LIBS = ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools',
+                     'RichObject', 'Array', 'uri_encode', 'HTTPRequest', 'base64']
+
 
 class IncludeDataCollector(object):
     def __init__(self):
@@ -119,6 +122,50 @@ class VariablesCollection(_Collection):
         return '\n'.join(self.var_list)
 
 
+class LibsCollection(_Collection):
+    def __init__(self, a2obj_instance):
+        super(LibsCollection, self).__init__(a2obj_instance)
+        self.name = 'libs'
+        # TODO: we might use a set thats filled with the used libs
+        # that are gathered when browsing the modules ...
+        # self.libs = set()
+
+    def gather(self, mod):
+        # TODO: Used Libraries also need to be collected
+        # from all the active modules!
+        pass
+
+    def get_content(self):
+        # TODO: currently this just packs a list of commonly used default libraries.
+        libs_ahk = ['#include lib/ahklib/%s.ahk' % lib for lib in TODO_DEFAULT_LIBS]
+        return '\n'.join(libs_ahk)
+
+
+class IncludesCollection(_Collection):
+    def __init__(self, a2obj_instance):
+        super(IncludesCollection, self).__init__(a2obj_instance)
+        self.name = 'includes'
+        self.modules_path = os.path.relpath(self.a2.paths.modules, self.a2.paths.a2)
+        self.settings_path = os.path.relpath(self.a2.paths.settings, self.a2.paths.a2)
+        self.include_paths = []
+
+    def gather(self, mod):
+        this_include_path = os.path.join(self.modules_path, mod.source.name, mod.name)
+
+        for include_type, include_dir in [('includes', this_include_path),
+                                          ('settings_includes', self.settings_path)]:
+            includes = self.a2.db.get(include_type, mod.key) or []
+            if not isinstance(includes, list):
+                log.warning('%s not a list: %s' % (include_type, includes))
+                includes = [includes]
+
+            for include in includes:
+                self.include_paths.append(os.path.join(include_dir, include))
+
+    def get_content(self):
+        return '\n'.join(['#include %s' % p for p in self.include_paths])
+
+
 class HotkeysCollection(_Collection):
     def __init__(self, a2obj_instance):
         super(HotkeysCollection, self).__init__(a2obj_instance)
@@ -155,6 +202,27 @@ class HotkeysCollection(_Collection):
 class HotkeyManager(object):
     def __init__(self):
         pass
+
+
+class InitCollection(_Collection):
+    def __init__(self, a2obj_instance):
+        super(InitCollection, self).__init__(a2obj_instance)
+        self.name = 'init'
+        self.init_code = 'a2_init_calls() {\n'
+
+    def gather(self, mod):
+        init_calls = self.a2.db.get('init_calls', mod.key) or []
+        if init_calls:
+            self.init_code += '    ; %s\n' % mod.key
+            for call in init_calls:
+                call = '    ' + call.replace('\n', '\n    ')
+                if not call.endswith('\n'):
+                    call += '\n'
+                self.init_code += call
+
+    def get_content(self):
+        self.init_code += '}\n'
+        return self.init_code
 
 
 def kill_a2_process():
