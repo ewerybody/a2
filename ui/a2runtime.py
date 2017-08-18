@@ -49,19 +49,20 @@ class IncludeDataCollector(object):
                 if mod.key not in mod_settings:
                     mod.change()
 
-                for collection in self.all_collections:
+                for collection in self.collections:
                     if collection is None:
                         continue
                     collection.gather(mod)
 
     def write(self):
-        for collection in self.all_collections:
+        for collection in self.collections:
             if collection is None:
                 continue
             collection.write()
 
     @property
-    def all_collections(self):
+    def collections(self):
+        """property to be dynamically fillable"""
         return [self.variables, self.libs, self.includes, self.hotkeys, self.init]
 
     def get_vars(self):
@@ -94,7 +95,7 @@ class _Collection(object):
 
     def write(self):
         path = os.path.join(self.a2.paths.settings, self.name + '.ahk')
-        a2util.write_utf8(path, self._final_content())
+        a2util.write_utf8(path, self._final_content)
 
     def gather(self, mod):
         raise NotImplementedError
@@ -112,14 +113,23 @@ class VariablesCollection(_Collection):
     def __init__(self, a2obj_instance):
         super(VariablesCollection, self).__init__(a2obj_instance)
         self.name = 'variables'
-        self.var_list = []
+        self.data = {}
 
     def gather(self, mod):
         for var_name, value in (self.a2.db.get('variables', mod.key) or {}).items():
-            self.var_list.append('%s := %s' % (var_name, a2ahk.py_value_to_ahk_string(value)))
+            if var_name in self.data:
+                log.error('Value name already collected!!\n'
+                          '  module: %s\n'
+                          '  value name: %s' % (mod.name, var_name))
+                continue
+
+            self.data[var_name] = value
 
     def get_content(self):
-        return '\n'.join(self.var_list)
+        content = ''
+        for var_name, value in sorted(self.data.items(), key=lambda k: k[0].lower()):
+            content += '%s := %s\n' % (var_name, a2ahk.py_value_to_ahk_string(value))
+        return content
 
 
 class LibsCollection(_Collection):
@@ -171,26 +181,26 @@ class HotkeysCollection(_Collection):
         super(HotkeysCollection, self).__init__(a2obj_instance)
         self.name = 'hotkeys'
         self.hk_mode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
-        self.hd_dict = {}
+        self.hk_dict = {}
+
+        # add a2 standard hotkeys
+        a2_hotkey = a2ahk.translate_hotkey(self.a2.db.get('a2_hotkey') or a2default_hotkey)
+        self.hk_dict = {self.hk_mode['1']: [a2_hotkey + '::a2UI()']}
 
     def gather(self, mod):
-
-        a2_hotkey = a2ahk.translate_hotkey(self.a2.db.get('a2_hotkey') or a2default_hotkey)
-        self.hd_dict = {self.hk_mode['1']: [a2_hotkey + '::a2UI()']}
-
         hotkeys = self.a2.db.get('hotkeys', mod.key) or {}
         for typ in hotkeys:
             for hk in hotkeys.get(typ) or []:
                 # type 0 is global, append under the #IfWinActive label
                 if typ == '0':
                     hk_string = a2ahk.translate_hotkey(hk[0]) + '::' + hk[1]
-                    self.hd_dict[self.hk_mode['1']].append(hk_string)
+                    self.hk_dict[self.hk_mode['1']].append(hk_string)
                 # assemble type 1 and 2 in hotkeys_ahk keys with the hotkey strings listed
                 else:
                     hk_string = a2ahk.translate_hotkey(hk[1]) + '::' + hk[2]
                     for scope_string in hk[0]:
                         scope_key = '%s %s' % (self.hk_mode[typ], scope_string)
-                        self.hd_dict.setdefault(scope_key, []).append(hk_string)
+                        self.hk_dict.setdefault(scope_key, []).append(hk_string)
 
     def get_content(self):
         content = ''
@@ -252,7 +262,8 @@ def kill_a2_process():
 
 
 if __name__ == '__main__':
+    # test the collectors
     idc = IncludeDataCollector()
-    idc.get_vars()
+    idc.get_all_collections()
     idc.collect()
     idc.write()
