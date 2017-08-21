@@ -43,7 +43,7 @@
      <x>0</x>
      <y>0</y>
      <width>766</width>
-     <height>47</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -74,7 +74,9 @@
     </property>
     <addaction name="actionA2_settings"/>
     <addaction name="actionRefresh_UI"/>
+    <addaction name="separator"/>
     <addaction name="actionReload_a2_Runtime"/>
+    <addaction name="actionLoad_a2_Runtime"/>
     <addaction name="actionUnload_a2_Runtime"/>
     <addaction name="separator"/>
     <addaction name="actionExit_a2"/>
@@ -201,6 +203,11 @@
   <action name="actionUnload_a2_Runtime">
    <property name="text">
     <string>Unload a2 Runtime</string>
+   </property>
+  </action>
+  <action name="actionLoad_a2_Runtime">
+   <property name="text">
+    <string>Load a2 Runtime</string>
    </property>
   </action>
  </widget>

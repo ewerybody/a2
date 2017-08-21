@@ -55,6 +55,7 @@ class IncludeDataCollector(object):
                 if mod is None:
                     continue
 
+                # ensure settings have been written once at least
                 if mod.key not in mod_settings:
                     mod.change()
 
@@ -271,13 +272,34 @@ def kill_a2_process():
     takes a moment. so start it in a thread!
     TODO: make sure restart happens after this finishes?
 
-    there is also:
+    note there is also:
     ctypes.windll.kernel32.TerminateProcess(handle, 0)
     """
-    t1 = time.time()
+    pid = get_a2_runtime_pid()
+
+    if pid:
+        startup_nfo = subprocess.STARTUPINFO()
+        startup_nfo.wShowWindow = subprocess.SW_HIDE
+        startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
+        taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid, shell=True, startupinfo=startup_nfo)
+        taskkill_proc.wait()
+        taskkill_proc.kill()
+        return pid
+
+
+def get_a2_runtime_pid():
+    """
+    Uses WMIC to get the PID and commandline arguments from any Autohotkey processes
+    to find a running a2 instance.
+
+    :return: PID string of the Autohotkey process running a2
+    :rtype: str
+    """
     startup_nfo = subprocess.STARTUPINFO()
     startup_nfo.wShowWindow = subprocess.SW_HIDE
     startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+
     wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
     wmicout = subprocess.check_output(wmicall, startupinfo=startup_nfo)
     wmicout = str(wmicout).split('\\r\\r\\n')
@@ -285,15 +307,19 @@ def kill_a2_process():
         if 'autohotkey.exe' in line.lower():
             cmd, pid = line.rsplit(maxsplit=1)
             if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
-                taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid, shell=True, startupinfo=startup_nfo)
-                taskkill_proc.wait()
-                taskkill_proc.kill()
-    log.debug('killA2process took: %fs' % (time.time() - t1))
+                return pid
+
+
+def is_runtime_live():
+    pid = get_a2_runtime_pid()
+    return pid is not None
 
 
 if __name__ == '__main__':
-    # test the collectors
-    idc = IncludeDataCollector()
-    idc.get_all_collections()
-    idc.collect()
-    idc.write()
+    pid = get_a2_runtime_pid()
+    print('pid: %s' % pid)
+    print('is_runtime_live(): %s' % is_runtime_live())
+#    idc = IncludeDataCollector()
+#    idc.get_all_collections()
+#    idc.collect()
+#    idc.write()

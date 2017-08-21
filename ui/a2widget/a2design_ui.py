@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui'
 #
-# Created: Thu Mar 16 09:16:20 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Aug 21 15:53:55 2017
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -32,7 +32,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 47))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 25))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
@@ -86,6 +86,8 @@ class Ui_a2MainWindow(object):
         self.actionReload_a2_Runtime.setObjectName("actionReload_a2_Runtime")
         self.actionUnload_a2_Runtime = QtGui.QAction(a2MainWindow)
         self.actionUnload_a2_Runtime.setObjectName("actionUnload_a2_Runtime")
+        self.actionLoad_a2_Runtime = QtGui.QAction(a2MainWindow)
+        self.actionLoad_a2_Runtime.setObjectName("actionLoad_a2_Runtime")
         self.menuHelp.addAction(self.actionReport_Issue)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
@@ -100,7 +102,9 @@ class Ui_a2MainWindow(object):
         self.menuDev.addAction(self.actionBuild_A2_Package)
         self.menuMain.addAction(self.actionA2_settings)
         self.menuMain.addAction(self.actionRefresh_UI)
+        self.menuMain.addSeparator()
         self.menuMain.addAction(self.actionReload_a2_Runtime)
+        self.menuMain.addAction(self.actionLoad_a2_Runtime)
         self.menuMain.addAction(self.actionUnload_a2_Runtime)
         self.menuMain.addSeparator()
         self.menuMain.addAction(self.actionExit_a2)
@@ -141,6 +145,7 @@ class Ui_a2MainWindow(object):
         self.actionRevert_Settings.setText(QtGui.QApplication.translate("a2MainWindow", "Revert Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionReload_a2_Runtime.setText(QtGui.QApplication.translate("a2MainWindow", "Reload a2 Runtime", None, QtGui.QApplication.UnicodeUTF8))
         self.actionUnload_a2_Runtime.setText(QtGui.QApplication.translate("a2MainWindow", "Unload a2 Runtime", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoad_a2_Runtime.setText(QtGui.QApplication.translate("a2MainWindow", "Load a2 Runtime", None, QtGui.QApplication.UnicodeUTF8))
 
 from a2widget.a2module_view import A2ModuleView
 from a2widget.a2module_list import A2ModuleList

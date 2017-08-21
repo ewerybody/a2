@@ -29,6 +29,7 @@ class A2Window(QtGui.QMainWindow):
         self.a2 = a2core.A2Obj.inst()
         self.app = app
         self._restart_thread = None
+        self._shutdown_thread = None
 
         self.edit_clipboard = []
         self.tempConfig = None
@@ -56,7 +57,17 @@ class A2Window(QtGui.QMainWindow):
         if init_settings_view:
             self.module_view.draw_mod()
 
+        self.runtime_watcher = RuntimeWatcher(self)
+        self.runtime_watcher.message.connect(self.runtime_watcher_message)
+        self.runtime_watcher.start()
+
         log.info('initialised!')
+
+    def runtime_watcher_message(self, message):
+        if not message:
+            self.setWindowTitle('a2')
+        else:
+            self.setWindowTitle('a2 - %s' % message)
 
     def _module_selected(self, module_list):
         self.selected = module_list
@@ -103,7 +114,7 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
         self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
         self.ui.actionExit_a2.triggered.connect(self.close)
-        self.ui.actionRefresh_UI.triggered.connect(partial(self.settings_changed, refresh_ui=True))
+        self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
         self.ui.actionRefresh_UI.setIcon(a2ctrl.Icons.inst().a2reload)
 
         self.ui.actionReport_Issue.triggered.connect(partial(a2util.surf_to, self.a2.urls.help_report_issue))
@@ -112,6 +123,11 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
+
+        self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
+        self.ui.actionReload_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
+        self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
+        self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
     def _setup_shortcuts(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -223,8 +239,11 @@ class A2Window(QtGui.QMainWindow):
         binprefs = str(self.saveGeometry().toPercentEncoding())
         self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
         self.a2.db.set('last_selected', [m.key for m in self.selected])
-        if self._restart_thread is not None:
-            self._restart_thread.quit()
+
+        for thread in [self._restart_thread, self.runtime_watcher, self._shutdown_thread]:
+            if thread is not None:
+                thread.quit()
+
         QtGui.QMainWindow.closeEvent(self, event)
 
     def restoreA2ui(self):
@@ -289,6 +308,19 @@ class A2Window(QtGui.QMainWindow):
         batch_name = 'build_py_package.bat'
         subprocess.Popen(['cmd.exe', '/c', 'start %s' % batch_name], cwd=batch_path)
 
+    def _set_runtime_actions_vis(self):
+        live = self.runtime_watcher.is_live
+        self.ui.actionUnload_a2_Runtime.setVisible(live)
+        self.ui.actionReload_a2_Runtime.setVisible(live)
+        self.ui.actionLoad_a2_Runtime.setVisible(not live)
+
+    def shut_down_runtime(self):
+        self._shutdown_thread = ShutdownThread(self)
+        self._shutdown_thread.start()
+
+    def load_runtime_and_ui(self):
+        self.settings_changed(refresh_ui=True)
+
 
 class UIvs(object):
     """
@@ -314,8 +346,8 @@ class UIvs(object):
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):
-        self.a2 = a2
         super(RestartThread, self).__init__(parent)
+        self.a2 = a2
 
     def run(self, *args, **kwargs):
         self.msleep(300)
@@ -323,6 +355,47 @@ class RestartThread(QtCore.QThread):
         _retval, _pid = ahk_process.startDetached(
             self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
         return QtCore.QThread.run(self, *args, **kwargs)
+
+
+class ShutdownThread(QtCore.QThread):
+    def __init__(self, parent):
+        super(ShutdownThread, self).__init__(parent)
+
+    def run(self, *args, **kwargs):
+        pid = a2runtime.kill_a2_process()
+        if pid:
+            log.info('Shut down process with PID: %s' % pid)
+        return QtCore.QThread.run(self, *args, **kwargs)
+
+
+class RuntimeWatcher(QtCore.QThread):
+    message = QtCore.Signal(str)
+
+    def __init__(self, parent):
+        super(RuntimeWatcher, self).__init__(parent)
+        self.lifetime = 0
+        self.is_live = False
+
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000)
+        self.timer.start()
+
+    def run(self, *args, **kwargs):
+        self.timer.timeout.connect(self.tick)
+        return QtCore.QThread.run(self, *args, **kwargs)
+
+    def tick(self):
+        self.is_live = a2runtime.is_runtime_live()
+
+        if self.is_live:
+            self.lifetime += 1
+            if self.lifetime < 5:
+                self.message.emit('Runtime is Live!')
+            else:
+                self.message.emit('')
+        else:
+            self.lifetime = 0
+            self.message.emit('Runtime is Offline!')
 
 
 class DevSettings(object):
