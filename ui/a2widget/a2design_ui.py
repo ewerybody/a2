@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui'
 #
-# Created: Mon Aug 21 15:53:55 2017
+# Created: Mon Aug 21 16:34:17 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,8 +65,8 @@ class Ui_a2MainWindow(object):
         self.actionNew_module.setObjectName("actionNew_module")
         self.actionA2_settings = QtGui.QAction(a2MainWindow)
         self.actionA2_settings.setObjectName("actionA2_settings")
-        self.actionExit_a2 = QtGui.QAction(a2MainWindow)
-        self.actionExit_a2.setObjectName("actionExit_a2")
+        self.actionExit_a2ui = QtGui.QAction(a2MainWindow)
+        self.actionExit_a2ui.setObjectName("actionExit_a2ui")
         self.actionRefresh_UI = QtGui.QAction(a2MainWindow)
         self.actionRefresh_UI.setObjectName("actionRefresh_UI")
         self.actionReport_Issue = QtGui.QAction(a2MainWindow)
@@ -107,7 +107,7 @@ class Ui_a2MainWindow(object):
         self.menuMain.addAction(self.actionLoad_a2_Runtime)
         self.menuMain.addAction(self.actionUnload_a2_Runtime)
         self.menuMain.addSeparator()
-        self.menuMain.addAction(self.actionExit_a2)
+        self.menuMain.addAction(self.actionExit_a2ui)
         self.menuModule.addAction(self.actionHelp_on_Module)
         self.menuModule.addAction(self.actionRevert_Settings)
         self.menubar.addAction(self.menuMain.menuAction())
@@ -134,7 +134,7 @@ class Ui_a2MainWindow(object):
         self.actionTest_restorewin.setText(QtGui.QApplication.translate("a2MainWindow", "test restoring window outside of screen", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew_module.setText(QtGui.QApplication.translate("a2MainWindow", "New Module", None, QtGui.QApplication.UnicodeUTF8))
         self.actionA2_settings.setText(QtGui.QApplication.translate("a2MainWindow", "a2 Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionExit_a2.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2UI", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit_a2ui.setText(QtGui.QApplication.translate("a2MainWindow", "Exit a2UI", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefresh_UI.setText(QtGui.QApplication.translate("a2MainWindow", "Refresh UI", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRefresh_UI.setShortcut(QtGui.QApplication.translate("a2MainWindow", "F5", None, QtGui.QApplication.UnicodeUTF8))
         self.actionReport_Issue.setText(QtGui.QApplication.translate("a2MainWindow", "Report Issue", None, QtGui.QApplication.UnicodeUTF8))
@@ -147,5 +147,5 @@ class Ui_a2MainWindow(object):
         self.actionUnload_a2_Runtime.setText(QtGui.QApplication.translate("a2MainWindow", "Unload a2 Runtime", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoad_a2_Runtime.setText(QtGui.QApplication.translate("a2MainWindow", "Load a2 Runtime", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2module_view import A2ModuleView
 from a2widget.a2module_list import A2ModuleList
+from a2widget.a2module_view import A2ModuleView

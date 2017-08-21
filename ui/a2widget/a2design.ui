@@ -79,7 +79,7 @@
     <addaction name="actionLoad_a2_Runtime"/>
     <addaction name="actionUnload_a2_Runtime"/>
     <addaction name="separator"/>
-    <addaction name="actionExit_a2"/>
+    <addaction name="actionExit_a2ui"/>
    </widget>
    <widget class="QMenu" name="menuModule">
     <property name="title">
@@ -149,7 +149,7 @@
     <string>a2 Settings</string>
    </property>
   </action>
-  <action name="actionExit_a2">
+  <action name="actionExit_a2ui">
    <property name="text">
     <string>Exit a2UI</string>
    </property>

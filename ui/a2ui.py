@@ -112,10 +112,9 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionExplore_to_a2_dir.setIcon(a2ctrl.Icons.inst().folder)
         self.ui.actionA2_settings.triggered.connect(partial(self.module_list.select, None))
         self.ui.actionA2_settings.setIcon(a2ctrl.Icons.inst().a2)
-        self.ui.actionExit_a2.setIcon(a2ctrl.Icons.inst().a2close)
-        self.ui.actionExit_a2.triggered.connect(self.close)
+        self.ui.actionExit_a2ui.triggered.connect(self.close)
+        self.ui.actionExit_a2ui.setIcon(a2ctrl.Icons.inst().clear)
         self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
-        self.ui.actionRefresh_UI.setIcon(a2ctrl.Icons.inst().a2reload)
 
         self.ui.actionReport_Issue.triggered.connect(partial(a2util.surf_to, self.a2.urls.help_report_issue))
         self.ui.actionReport_Issue.setIcon(a2ctrl.Icons.inst().github)
@@ -125,7 +124,9 @@ class A2Window(QtGui.QMainWindow):
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
+        self.ui.actionUnload_a2_Runtime.setIcon(a2ctrl.Icons.inst().a2close)
         self.ui.actionReload_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
+        self.ui.actionReload_a2_Runtime.setIcon(a2ctrl.Icons.inst().a2reload)
         self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
