@@ -3,6 +3,7 @@ Functionality all around managing the Autohotkey runtime of a2.
 """
 import os
 import time
+import enum
 import subprocess
 
 import a2ahk
@@ -15,6 +16,14 @@ log = a2core.get_logger(__name__)
 
 TODO_DEFAULT_LIBS = ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools',
                      'RichObject', 'Array', 'uri_encode', 'HTTPRequest', 'base64']
+
+
+class IncludeType(enum.Enum):
+    variables = 0
+    libs = 1
+    includes = 2
+    hotkeys = 3
+    init = 4
 
 
 class IncludeDataCollector(object):
@@ -233,6 +242,27 @@ class InitCollection(_Collection):
     def get_content(self):
         self.init_code += '}\n'
         return self.init_code
+
+
+def collect_includes(specific=None):
+    idc = IncludeDataCollector()
+
+    if not specific:
+        idc.get_all_collections()
+    elif specific in IncludeType:
+        if specific is IncludeType.variables:
+            idc.get_vars()
+        elif specific is IncludeType.libs:
+            idc.get_libs()
+        elif specific is IncludeType.includes:
+            idc.get_includes()
+        elif specific is IncludeType.hotkeys:
+            idc.get_hotkeys()
+        elif specific is IncludeType.init:
+            idc.get_init()
+
+    idc.collect()
+    idc.write()
 
 
 def kill_a2_process():

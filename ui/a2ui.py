@@ -2,7 +2,6 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
-import threading
 import subprocess
 
 import a2core
@@ -13,6 +12,7 @@ from a2widget import a2design_ui
 from copy import deepcopy
 from functools import partial
 from PySide import QtGui, QtCore
+import a2runtime
 
 
 BASE_DPI = 96.0
@@ -196,7 +196,7 @@ class A2Window(QtGui.QMainWindow):
         self.module_list.draw_modules()
 
         log.info('  Writing includes ...')
-        a2core.write_includes(specific)
+        a2runtime.collect_includes(specific)
 
         log.info('  Restarting runtime ...')
         self._restart_thread = RestartThread(self.a2, self)
