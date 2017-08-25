@@ -112,11 +112,30 @@ class A2CoordsField(QtGui.QWidget):
         self.set_string_value(text)
 
     def set_string_value(self, text):
-        if ',' in text:
-            x, y = text.split(',')
-        elif ' ' in text:
-            x, y = text.split()
-        self.value = (int(x.strip()), int(y.strip()))
+        if not isinstance(text, str):
+            log.error('Cannot set non-string value!')
+            return
+
+        if not text.strip():
+            log.error('Nothing to set!')
+            return
+
+        try:
+            if ',' in text:
+                x, y = text.split(',')
+            elif ' ' in text:
+                x, y = text.split()
+            else:
+                log.error('No separator found to split values!')
+                return
+
+            ints = [int(x), int(y)]
+
+        except ValueError:
+            log.error('Unable to split clipboard string to values!')
+            return
+
+        self.value = (ints[0], ints[1])
 
 
 if __name__ == '__main__':
