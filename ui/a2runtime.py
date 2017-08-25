@@ -227,9 +227,10 @@ class HotkeysCollection(_Collection):
                     text += '%s::%s\n' % (a2ahk.translate_hotkey(key), command)
             return text
 
+        # write global hotkey text
         content = scope_modes['1'] + ',\n'
         content += create_hotkey_text(self.hotkeys_global)
-
+        # write the scoped stuff
         for mode, scope_dict in self._scope_types.items():
             for scope, hotkey_data in scope_dict.items():
                 content += '\n%s, %s\n' % (scope_modes[mode], scope)

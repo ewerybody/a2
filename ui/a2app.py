@@ -14,7 +14,7 @@ import logging
 import platform
 import traceback
 from ctypes import windll
-from importlib import reload
+
 
 from siding import QSingleApplication
 from PySide import QtGui
