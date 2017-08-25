@@ -10,6 +10,9 @@ import a2ahk
 import a2core
 
 
+log = a2core.get_logger(__name__)
+
+
 class A2CoordsField(QtGui.QWidget):
     changed = QtCore.Signal(tuple)
 
@@ -18,6 +21,7 @@ class A2CoordsField(QtGui.QWidget):
 
         self.main_layout = QtGui.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self._internal_change = False
 
         self.x_field = QtGui.QSpinBox(self)
         self.x_field.setMinimum(-16777214)
@@ -75,8 +79,11 @@ class A2CoordsField(QtGui.QWidget):
         elif isinstance(values, QtCore.QSize):
             values = values.width(), values.height()
 
+        self._internal_change = True
         self.x_field.setValue(values[0])
+        self._internal_change = False
         self.y_field.setValue(values[1])
+        # self.changed.emit((self.x, self.y))
 
     def show_menu(self):
         self.menu.clear()
@@ -88,6 +95,8 @@ class A2CoordsField(QtGui.QWidget):
         self.menu.popup(QtGui.QCursor.pos())
 
     def change_triggered(self):
+        if self._internal_change:
+            return
         self.changed.emit((self.x, self.y))
 
     def copy(self):
