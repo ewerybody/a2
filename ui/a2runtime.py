@@ -11,7 +11,7 @@ import a2core
 import a2util
 
 EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
-a2default_hotkey = 'Win+Shift+A'
+A2DEFAULT_HOTKEY = 'Win+Shift+A'
 log = a2core.get_logger(__name__)
 
 TODO_DEFAULT_LIBS = ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools',
@@ -190,32 +190,51 @@ class HotkeysCollection(_Collection):
     def __init__(self, a2obj_instance):
         super(HotkeysCollection, self).__init__(a2obj_instance)
         self.name = 'hotkeys'
-        self.hk_mode = {'1': '#IfWinActive,', '2': '#IfWinNotActive,'}
-        self.hk_dict = {}
+
+        self.hotkeys_global = []
+        self.hotkeys_scope_incl = {}
+        self.hotkeys_scope_excl = {}
+        self._scope_types = {'1': self.hotkeys_scope_incl, '2': self.hotkeys_scope_excl}
 
         # add a2 standard hotkeys
-        a2_hotkey = a2ahk.translate_hotkey(self.a2.db.get('a2_hotkey') or a2default_hotkey)
-        self.hk_dict = {self.hk_mode['1']: [a2_hotkey + '::a2UI()']}
+        self.hotkeys_global.append((self.a2.db.get('a2_hotkey') or A2DEFAULT_HOTKEY, 'a2UI()'))
 
     def gather(self, mod):
-        hotkeys = self.a2.db.get('hotkeys', mod.key) or {}
-        for typ in hotkeys:
-            for hk in hotkeys.get(typ) or []:
-                # type 0 is global, append under the #IfWinActive label
-                if typ == '0':
-                    hk_string = a2ahk.translate_hotkey(hk[0]) + '::' + hk[1]
-                    self.hk_dict[self.hk_mode['1']].append(hk_string)
-                # assemble type 1 and 2 in hotkeys_ahk keys with the hotkey strings listed
+        mod_hotkey_data = self.a2.db.get('hotkeys', mod.key) or {}
+
+        for scope_type, hotkey_list in mod_hotkey_data.items():
+            for hotkey_data in hotkey_list:
+                # type 0 is global, gather hotkeys (0) and commands (1) in tuples
+                if scope_type == '0':
+                    self.hotkeys_global.append((hotkey_data[0], hotkey_data[1]))
+                # '1' & '2' are include/exclude scopes
+                # gather per type (0) hotkeys (1) and commands (2)
                 else:
-                    hk_string = a2ahk.translate_hotkey(hk[1]) + '::' + hk[2]
-                    for scope_string in hk[0]:
-                        scope_key = '%s %s' % (self.hk_mode[typ], scope_string)
-                        self.hk_dict.setdefault(scope_key, []).append(hk_string)
+                    for scope_string in hotkey_data[0]:
+                        self._scope_types[scope_type].setdefault(scope_string, []).append(
+                            (hotkey_data[1], hotkey_data[2]))
 
     def get_content(self):
-        content = ''
-        for key in sorted(self.hk_dict.keys()):
-            content += '\n'.join([key] + self.hk_dict[key]) + '\n\n'
+        scope_modes = {'1': '#IfWinActive', '2': '#IfWinNotActive'}
+
+        def create_hotkey_text(hotkey_data):
+            text = ''
+            for hotkeys, command in hotkey_data:
+                # ensure list: we can have multiple hotkeys for same command
+                if isinstance(hotkeys, str):
+                    hotkeys = [hotkeys]
+                for key in hotkeys:
+                    text += '%s::%s\n' % (a2ahk.translate_hotkey(key), command)
+            return text
+
+        content = scope_modes['1'] + ',\n'
+        content += create_hotkey_text(self.hotkeys_global)
+
+        for mode, scope_dict in self._scope_types.items():
+            for scope, hotkey_data in scope_dict.items():
+                content += '\n%s, %s\n' % (scope_modes[mode], scope)
+                content += create_hotkey_text(hotkey_data)
+
         return content
 
 
@@ -316,10 +335,11 @@ def is_runtime_live():
 
 
 if __name__ == '__main__':
-    pid = get_a2_runtime_pid()
-    print('pid: %s' % pid)
-    print('is_runtime_live(): %s' % is_runtime_live())
-#    idc = IncludeDataCollector()
-#    idc.get_all_collections()
-#    idc.collect()
-#    idc.write()
+#    pid = get_a2_runtime_pid()
+#    print('pid: %s' % pid)
+#    print('is_runtime_live(): %s' % is_runtime_live())
+    idc = IncludeDataCollector()
+    idc.get_hotkeys()
+    idc.collect()
+    print('idc.hotkeys: %s' % idc.hotkeys)
+    #idc.write()
