@@ -376,27 +376,24 @@ class RuntimeWatcher(QtCore.QThread):
         super(RuntimeWatcher, self).__init__(parent)
         self.lifetime = 0
         self.is_live = False
-
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(1000)
-        self.timer.start()
+        self.stopped = False
 
     def run(self, *args, **kwargs):
-        self.timer.timeout.connect(self.tick)
-        return QtCore.QThread.run(self, *args, **kwargs)
+        while not self.stopped:
+            self.msleep(1000)
+            self.is_live = a2runtime.is_runtime_live()
 
-    def tick(self):
-        self.is_live = a2runtime.is_runtime_live()
-
-        if self.is_live:
-            self.lifetime += 1
-            if self.lifetime < 5:
-                self.message.emit('Runtime is Live!')
+            if self.is_live:
+                self.lifetime += 1
+                if self.lifetime < 5:
+                    self.message.emit('Runtime is Live!')
+                else:
+                    self.message.emit('')
             else:
-                self.message.emit('')
-        else:
-            self.lifetime = 0
-            self.message.emit('Runtime is Offline!')
+                self.lifetime = 0
+                self.message.emit('Runtime is Offline!')
+
+        return QtCore.QThread.run(self, *args, **kwargs)
 
 
 class DevSettings(object):
