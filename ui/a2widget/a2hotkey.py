@@ -15,10 +15,13 @@ STYLE_GOOD = '* {color:#0F0}'
 _dialog_size = None
 
 
-STYLE_BUTTON = """QPushButton {
-    padding: 0px;
-    min-width: 1px;
-}"""
+STYLE_BUTTON = """
+    QPushButton {
+        padding: 5px;
+        min-width: 1px;
+        font-size: 12px;
+    }
+    """
 #    padding-left: 0px;
 #    padding-right: 0px;
 
@@ -83,6 +86,45 @@ class HotkeyDialog2(QtGui.QDialog):
         self.ui.up_key.setText('↑')
         self.ui.down_key.setText('↓')
         self.ui.right_key.setText('→')
+
+        for i in range(1, 13):
+            self.add_key('f%i_key' % i, 'F%i' % i, self.ui.f_row)
+
+        # TODO: This needs to be subclassed for an english keyboard
+        self.add_key('tick_key', '`', self.ui.number_row, 0)
+        for i in range(1, 10):
+            self.add_key('digit%i_key' % i, str(i), self.ui.number_row, i)
+        for i, l, name in [(10, '0', 'digit0'), (11, '-', 'minus'), (12, '=', 'equals')]:
+            self.add_key('%s_key' % name, l, self.ui.number_row, i)
+
+        for l in 'qwertyuiop':
+            self.add_key('%s_key' % l, l, self.ui.letter_row_top)
+        self.add_key('bracke_open_key', '[', self.ui.letter_row_top)
+        self.add_key('bracke_close_key', ']', self.ui.letter_row_top)
+        self.add_key('backslash_key', '\\', self.ui.letter_row_top)
+
+        for l in 'asdfghjkl':
+            self.add_key('%s_key' % l, l, self.ui.letter_row_middle)
+        self.add_key('semicolon_key', ';', self.ui.letter_row_middle)
+        self.add_key('quote_key', "'", self.ui.letter_row_middle)
+        self.add_key('return_key', "Enter", self.ui.letter_row_middle)
+
+        letters = 'zxcvbnm'
+        for i in range(len(letters)):
+            self.add_key('%s_key' % letters[i], letters[i], self.ui.letter_row_bottom, i + 1)
+        for i, l, name in [(8, ',', 'comma'), (9, '.', 'dot'), (10, '/', 'slash')]:
+            self.add_key('%s_key' % name, l, self.ui.letter_row_bottom, i)
+
+
+    def add_key(self, name, label, layout, index=None):
+        button = QtGui.QPushButton(self.ui.keys_widget)
+        button.setObjectName(name)
+        button.setText(label)
+        if index is None:
+            layout.addWidget(button)
+        else:
+            layout.insertWidget(index, button)
+        setattr(self.ui, name, button)
 
     def ok(self):
         log.info('key: %s' % self.key)

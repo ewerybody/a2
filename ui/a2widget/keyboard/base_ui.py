@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\keyboard\base.ui'
 #
-# Created: Wed Aug 30 15:10:17 2017
+# Created: Thu Aug 31 18:12:48 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Keyboard(object):
     def setupUi(self, Keyboard):
         Keyboard.setObjectName("Keyboard")
-        Keyboard.resize(1324, 315)
+        Keyboard.resize(1324, 313)
         self.verticalLayout = QtGui.QVBoxLayout(Keyboard)
         self.verticalLayout.setObjectName("verticalLayout")
         self.a2hotkey_label = QtGui.QLabel(Keyboard)
@@ -24,7 +24,6 @@ class Ui_Keyboard(object):
         self.keys_widget = QtGui.QWidget(Keyboard)
         self.keys_widget.setObjectName("keys_widget")
         self.keys_layout = QtGui.QHBoxLayout(self.keys_widget)
-        self.keys_layout.setSpacing(15)
         self.keys_layout.setContentsMargins(0, 0, 0, 0)
         self.keys_layout.setContentsMargins(0, 0, 0, 0)
         self.keys_layout.setObjectName("keys_layout")
@@ -249,8 +248,10 @@ class Ui_Keyboard(object):
         self.r_alt_key.setText(QtGui.QApplication.translate("Keyboard", "Alt", None, QtGui.QApplication.UnicodeUTF8))
         self.r_win_key.setText(QtGui.QApplication.translate("Keyboard", "Win", None, QtGui.QApplication.UnicodeUTF8))
         self.r_ctrl_key.setText(QtGui.QApplication.translate("Keyboard", "Ctrl", None, QtGui.QApplication.UnicodeUTF8))
-        self.print_key.setText(QtGui.QApplication.translate("Keyboard", "Print Screen", None, QtGui.QApplication.UnicodeUTF8))
-        self.scroll_key.setText(QtGui.QApplication.translate("Keyboard", "Scroll Lock", None, QtGui.QApplication.UnicodeUTF8))
+        self.print_key.setText(QtGui.QApplication.translate("Keyboard", "Print\n"
+"Screen", None, QtGui.QApplication.UnicodeUTF8))
+        self.scroll_key.setText(QtGui.QApplication.translate("Keyboard", "Scroll\n"
+"Lock", None, QtGui.QApplication.UnicodeUTF8))
         self.pause_key.setText(QtGui.QApplication.translate("Keyboard", "Pause", None, QtGui.QApplication.UnicodeUTF8))
         self.up_key.setText(QtGui.QApplication.translate("Keyboard", "u", None, QtGui.QApplication.UnicodeUTF8))
         self.left_key.setText(QtGui.QApplication.translate("Keyboard", "l", None, QtGui.QApplication.UnicodeUTF8))
