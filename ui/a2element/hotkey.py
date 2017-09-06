@@ -9,6 +9,7 @@ import a2ctrl
 import a2core
 from a2element import hotkey_func, hotkey_scope, DrawCtrl, EditCtrl
 from a2widget.a2hotkey import A2Hotkey
+from functools import partial
 
 
 hotkey_edit_ui = None
@@ -36,6 +37,7 @@ class Draw(DrawCtrl):
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
+        self.hotkey_option_menu = QtGui.QMenu(self)
         self._setupUi()
 
     def _setupUi(self):
@@ -74,8 +76,8 @@ class Draw(DrawCtrl):
         self.a2option_button = QtGui.QToolButton(self)
         self.a2option_button.setArrowType(QtCore.Qt.DownArrow)
         self.a2option_button.setAutoRaise(True)
-        self.a2option_button.setIconSize(QtCore.QSize(20, 20))
         self.a2option_button.setObjectName('a2option_button')
+        self.a2option_button.clicked.connect(self.build_hotkey_options_menu)
         self.hotkey_layout.addWidget(self.a2option_button)
 
         self.hotkey_list_layout.addLayout(self.hotkey_layout)
@@ -92,6 +94,25 @@ class Draw(DrawCtrl):
     def hotkey_change(self, newKey):
         self.set_user_value(newKey, 'key')
         self.change('hotkeys')
+
+    def build_hotkey_options_menu(self):
+        menu = self.hotkey_option_menu
+        menu.clear()
+        menu.addAction('Add another Hotkey')
+        menu.addAction('Revert to Default')
+        menu.addSeparator()
+
+        submenu = QtGui.QMenu('Hotkey Dialog Style', menu)
+        current_style = self.a2.db.get('hotkey_dialog_style') or ''
+        for hotkey_dialog_style in self.hotkey_button.dialog_styles:
+            this_name = hotkey_dialog_style.__name__
+            action = submenu.addAction(hotkey_dialog_style.label)
+            action.setCheckable(True)
+            action.setChecked(current_style == this_name)
+            action.triggered.connect(partial(self.a2.db.set, 'hotkey_dialog_style', this_name))
+
+        menu.addMenu(submenu)
+        menu.popup(QtGui.QCursor.pos())
 
 
 class Edit(EditCtrl):
@@ -122,7 +143,6 @@ class Edit(EditCtrl):
             if key not in self.cfg:
                 self.cfg[key] = value
 
-        self.a2 = a2core.A2Obj.inst()
         self.helpUrl = self.a2.urls.helpHotkey
 
         global hotkey_edit_ui

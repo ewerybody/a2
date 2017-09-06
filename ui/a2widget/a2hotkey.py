@@ -31,10 +31,15 @@ class A2Hotkey(QtGui.QPushButton):
 
     def __init__(self, parent=None, key=None, ok_func=None):
         super(A2Hotkey, self).__init__(parent)
+        self.a2 = a2core.A2Obj.inst()
         self.key = key
         self.ok_func = ok_func
         self.setText(key)
         self.clicked.connect(self.popup_dialog)
+
+        self.dialog_styles = [HotkeyDialog2]
+        self.dialog_default = HotkeyDialog1
+        self.dialog_styles.append(self.dialog_default)
 
     def set_key(self, key):
         if key != self.key:
@@ -46,13 +51,22 @@ class A2Hotkey(QtGui.QPushButton):
                 self.ok_func(key)
 
     def popup_dialog(self):
-        dialog = HotkeyDialog1(self)
+        style = self.a2.db.get('hotkey_dialog_style')
+        if style:
+            for hotkey_dialog_class in self.dialog_styles:
+                if hotkey_dialog_class.__name__ == style:
+                    break
+        else:
+            hotkey_dialog_class = self.dialog_default
+
+        dialog = hotkey_dialog_class(self)
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 
 
 class HotkeyDialog2(QtGui.QDialog):
     hotkey_set = QtCore.Signal(str)
+    label = 'Hotkey Keyboard'
 
     def __init__(self, parent):
         super(HotkeyDialog2, self).__init__(parent)
@@ -192,6 +206,7 @@ class HotkeyDialog2(QtGui.QDialog):
 
 class HotkeyDialog1(QtGui.QWidget):
     hotkey_set = QtCore.Signal(str)
+    label = 'Simple Dialog'
 
     def __init__(self, parent):
         super(HotkeyDialog1, self).__init__(parent)
