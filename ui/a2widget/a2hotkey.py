@@ -231,9 +231,6 @@ class HotkeyDialog1(QtGui.QWidget):
         self.show()
         self._init_dialog_size()
 
-        hotkeys = self.a2.get_used_hotkeys()
-        pprint(hotkeys)
-
     def setup_ui(self):
         self.text_edit = QtGui.QLineEdit(self)
         self.text_edit.setText(self.parent_widget.key)
