@@ -4,9 +4,9 @@ Created on 08.03.2017
 @author: eric
 """
 from PySide import QtGui, QtCore
-from collections import OrderedDict
 
 import a2ahk
+import a2ctrl
 import a2core
 
 
@@ -40,10 +40,6 @@ class A2CoordsField(QtGui.QWidget):
         self.tool_button.setArrowType(QtCore.Qt.DownArrow)
         self.main_layout.addWidget(self.tool_button)
 
-        self.menu_items = OrderedDict()
-        self.menu_items['copy'] = QtGui.QAction('Copy Coordinates', self, triggered=self.copy)
-        self.menu_items['paste'] = QtGui.QAction('Paste Coordinates', self, triggered=self.paste)
-        self.menu_items['pick'] = QtGui.QAction('Pick Coordinates', self, triggered=self.pick)
         self.menu = QtGui.QMenu()
 
     @property
@@ -87,11 +83,10 @@ class A2CoordsField(QtGui.QWidget):
 
     def show_menu(self):
         self.menu.clear()
-        for action in self.menu_items.values():
-            self.menu.addAction(action)
-        # copy coordinates
-        # paste coordinates
-        # pick coordinates
+        for func, icon in [(self.copy, a2ctrl.Icons.inst().copy),
+                           (self.paste, a2ctrl.Icons.inst().paste),
+                           (self.pick, a2ctrl.Icons.inst().number)]:
+            self.menu.addAction(icon, '%s Coordinates' % func.__name__.title(), func)
         self.menu.popup(QtGui.QCursor.pos())
 
     def change_triggered(self):
