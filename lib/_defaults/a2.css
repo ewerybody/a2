@@ -173,3 +173,7 @@ A2CodeField {
 QLabel#a2license_text {
     background-color: "%(color_bright)s";
 }
+
+QToolButton#a2option_button {
+    color: "%(color_darkgrey)s";
+}

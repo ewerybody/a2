@@ -36,6 +36,8 @@ class A2CoordsField(QtGui.QWidget):
         self.main_layout.addWidget(self.y_field)
 
         self.tool_button = QtGui.QToolButton(self)
+        self.tool_button.setAutoRaise(True)
+        self.tool_button.setObjectName('a2option_button')
         self.tool_button.clicked.connect(self.show_menu)
         self.tool_button.setArrowType(QtCore.Qt.DownArrow)
         self.main_layout.addWidget(self.tool_button)

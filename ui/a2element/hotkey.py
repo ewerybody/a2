@@ -45,15 +45,18 @@ class Draw(DrawCtrl):
         self.labelBoxLayout = QtGui.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtGui.QHBoxLayout()
+
         if self.cfg['disablable']:
             state = self.get_user_value(bool, 'enabled', True)
             self.check = QtGui.QCheckBox(self)
             cbSize = 27
             self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
             self.check.setMaximumSize(QtCore.QSize(cbSize, cbSize))
+
             self.check.setChecked(state)
             self.check.clicked.connect(self.hotkey_check)
             self.labelLayout.addWidget(self.check)
+
         self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
         self.labelLayout.addWidget(self.label)
@@ -68,10 +71,12 @@ class Draw(DrawCtrl):
         self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
         self.hotkey_layout.addWidget(self.hotkey_button)
 
-        self.hotkey_option = QtGui.QPushButton()
-        self.hotkey_option.setFlat(True)
-        self.hotkey_option.setText('...')
-        self.hotkey_layout.addWidget(self.hotkey_option)
+        self.a2option_button = QtGui.QToolButton(self)
+        self.a2option_button.setArrowType(QtCore.Qt.DownArrow)
+        self.a2option_button.setAutoRaise(True)
+        self.a2option_button.setIconSize(QtCore.QSize(20, 20))
+        self.a2option_button.setObjectName('a2option_button')
+        self.hotkey_layout.addWidget(self.a2option_button)
 
         self.hotkey_list_layout.addLayout(self.hotkey_layout)
         # self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
