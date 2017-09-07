@@ -16,6 +16,12 @@ QCheckBox::indicator:hover {
     background-color: "%(color_hover)s";
 }
 
+QPushButton:pressed,
+QGroupBox::indicator:pressed,
+QCheckBox::indicator:pressed {
+    background-color: "%(color_pressed)s";
+}
+
 QGroupBox::indicator,
 QCheckBox::indicator {
     background-color: "%(color_bright)s";
@@ -81,9 +87,18 @@ QPushButton#a2cancel_button {
 QPushButton#a2cancel_button:hover {
     background-color: "%(color_hover)s";
 }
+QPushButton#a2cancel_button:pressed {
+    background-color: "%(color_pressed)s";
+}
 
 QPushButton#a2ok_button {
 	background-color: "%(color_blue)s";
+}
+QPushButton#a2ok_button:hover {
+	background-color: "%(color_liteblue)s";
+}
+QPushButton#a2ok_button:pressed {
+	background-color: "%(color_darkblue)s";
 }
 
 QPushButton#a2add_button {

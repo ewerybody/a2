@@ -8,6 +8,8 @@
     "margin": 5,
     "margin_h": 15,
     "color_blue": "#43B6FF",
+    "color_darkblue": "#2396DF",
+    "color_liteblue": "#53C6FF",
     "color_green": "#37ED95",
     "color_yellow": "#FFC23E",
     "color_bright": "#FFF",

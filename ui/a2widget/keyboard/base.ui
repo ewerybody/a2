@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1324</width>
-    <height>313</height>
+    <width>1364</width>
+    <height>319</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,12 +28,15 @@
    </item>
    <item>
     <widget class="QWidget" name="keys_widget" native="true">
-     <layout class="QHBoxLayout" name="keys_layout">
+     <layout class="QHBoxLayout" name="keys_layout" stretch="1,0,0">
       <property name="margin">
        <number>0</number>
       </property>
       <item>
        <layout class="QVBoxLayout" name="main_block">
+        <property name="rightMargin">
+         <number>30</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="f_row">
           <item>
@@ -93,6 +96,12 @@
          <layout class="QHBoxLayout" name="letter_row_bottom">
           <item>
            <widget class="QPushButton" name="l_shift_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Shift</string>
             </property>
@@ -100,6 +109,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="r_shift_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Shift</string>
             </property>
@@ -108,9 +123,15 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="bottom_row">
+         <layout class="QHBoxLayout" name="bottom_row" stretch="0,0,0,1,0,0,0">
           <item>
            <widget class="QPushButton" name="l_ctrl_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Ctrl</string>
             </property>
@@ -118,6 +139,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="l_winl_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Win</string>
             </property>
@@ -125,6 +152,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="l_alt_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Alt</string>
             </property>
@@ -139,6 +172,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="r_alt_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Alt</string>
             </property>
@@ -146,6 +185,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="r_win_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Win</string>
             </property>
@@ -153,6 +198,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="r_ctrl_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>Ctrl</string>
             </property>
@@ -164,6 +215,9 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="cursor_block">
+        <property name="rightMargin">
+         <number>30</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" name="print_block">
           <item>
@@ -201,6 +255,12 @@ Lock</string>
          <layout class="QGridLayout" name="gridLayout">
           <item row="3" column="1">
            <widget class="QPushButton" name="up_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>u</string>
             </property>
@@ -208,6 +268,12 @@ Lock</string>
           </item>
           <item row="4" column="0">
            <widget class="QPushButton" name="left_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>l</string>
             </property>
@@ -259,6 +325,12 @@ Down</string>
           </item>
           <item row="4" column="2">
            <widget class="QPushButton" name="right_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>r</string>
             </property>
@@ -266,6 +338,12 @@ Down</string>
           </item>
           <item row="4" column="1">
            <widget class="QPushButton" name="down_key">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>d</string>
             </property>

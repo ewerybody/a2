@@ -17,7 +17,7 @@ _dialog_size = None
 
 STYLE_BUTTON = """
     QPushButton {
-        padding: 5px;
+        padding: 3px;
         min-width: 1px;
         font-size: 12px;
     }
@@ -59,7 +59,7 @@ class A2Hotkey(QtGui.QPushButton):
         else:
             hotkey_dialog_class = self.dialog_default
 
-        dialog = hotkey_dialog_class(self)
+        dialog = hotkey_dialog_class(self, self.key)
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 
@@ -68,9 +68,10 @@ class HotkeyDialog2(QtGui.QDialog):
     hotkey_set = QtCore.Signal(str)
     label = 'Hotkey Keyboard'
 
-    def __init__(self, parent):
+    def __init__(self, parent, key):
         super(HotkeyDialog2, self).__init__(parent)
-        self.parent_widget = parent
+        #self.parent_widget = parent
+        self.key = key
         self.setModal(True)
         self.a2 = a2core.A2Obj.inst()
         a2ctrl.check_ui_module(a2widget.keyboard.base_ui)
@@ -113,8 +114,8 @@ class HotkeyDialog2(QtGui.QDialog):
 
         for l in 'qwertyuiop':
             self.add_key('%s_key' % l, l, self.ui.letter_row_top)
-        self.add_key('bracke_open_key', '[', self.ui.letter_row_top)
-        self.add_key('bracke_close_key', ']', self.ui.letter_row_top)
+        self.add_key('bracket_open_key', '[', self.ui.letter_row_top)
+        self.add_key('bracket_close_key', ']', self.ui.letter_row_top)
         self.add_key('backslash_key', '\\', self.ui.letter_row_top)
 
         for l in 'asdfghjkl':
@@ -128,7 +129,6 @@ class HotkeyDialog2(QtGui.QDialog):
             self.add_key('%s_key' % letters[i], letters[i], self.ui.letter_row_bottom, i + 1)
         for i, l, name in [(8, ',', 'comma'), (9, '.', 'dot'), (10, '/', 'slash')]:
             self.add_key('%s_key' % name, l, self.ui.letter_row_bottom, i)
-
 
     def add_key(self, name, label, layout, index=None):
         button = QtGui.QPushButton(self.ui.keys_widget)
@@ -208,9 +208,10 @@ class HotkeyDialog1(QtGui.QWidget):
     hotkey_set = QtCore.Signal(str)
     label = 'Simple Dialog'
 
-    def __init__(self, parent):
+    def __init__(self, parent, key):
         super(HotkeyDialog1, self).__init__(parent)
-        self.parent_widget = parent
+        #self.parent_widget = parent
+        self.key = key
         self.a2 = a2core.A2Obj.inst()
         self.setup_ui()
 
@@ -223,7 +224,6 @@ class HotkeyDialog1(QtGui.QWidget):
         self._close_timer.setInterval(LEAVE_CLOSE_TIMEOUT)
         self._close_timer.timeout.connect(self.leave_timeout_reached)
 
-        self.key = self.parent_widget.key
         self.okay_state = True
         self.validate_hotkey(self.key)
 
@@ -233,7 +233,7 @@ class HotkeyDialog1(QtGui.QWidget):
 
     def setup_ui(self):
         self.text_edit = QtGui.QLineEdit(self)
-        self.text_edit.setText(self.parent_widget.key)
+        self.text_edit.setText(self.key)
         self.text_edit.textChanged.connect(self.validate_hotkey)
         self.text_edit.returnPressed.connect(self.ok)
 
