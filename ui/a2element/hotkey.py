@@ -38,9 +38,14 @@ class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
         self.hotkey_option_menu = QtGui.QMenu(self)
-        self._setupUi()
+        self._setup_ui()
 
-    def _setupUi(self):
+    def _setup_hotkey(self):
+        self.hotkey_button.set_key(self.get_user_value(str, 'key'))
+        self.hotkey_button.setEnabled(self.cfg['keyChange'])
+        self.hotkey_button.scope_data = self.cfg
+
+    def _setup_ui(self):
         self.ctrl_layout = QtGui.QHBoxLayout(self)
         # left, top, right, bottom
         self.ctrl_layout.setContentsMargins(0, 0, 0, 0)
@@ -68,8 +73,8 @@ class Draw(DrawCtrl):
 
         self.hotkey_list_layout = QtGui.QVBoxLayout()
         self.hotkey_layout = QtGui.QHBoxLayout()
-        self.hotkey_button = A2Hotkey(self, self.get_user_value(str, 'key'))
-        self.hotkey_button.setEnabled(self.cfg['keyChange'])
+        self.hotkey_button = A2Hotkey(self)
+        self._setup_hotkey()
         self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
         self.hotkey_layout.addWidget(self.hotkey_button)
 
@@ -155,7 +160,7 @@ class Edit(EditCtrl):
         self.ui.setupUi(self.mainWidget)
 
         self.ui.hotkey_button.set_key(cfg.get('key') or '')
-        self.ui.hotkey_button.ok_func = self.hotkey_change
+        self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)

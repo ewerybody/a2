@@ -5,6 +5,7 @@ from PySide import QtGui, QtCore
 import a2ahk
 import a2core
 import a2ctrl
+import a2runtime
 import a2widget.keyboard.base_ui
 
 
@@ -29,12 +30,18 @@ STYLE_BUTTON = """
 class A2Hotkey(QtGui.QPushButton):
     hotkey_changed = QtCore.Signal(str)
 
-    def __init__(self, parent=None, key=None, ok_func=None):
+    def __init__(self, parent=None, key=None, scope_data=None):
+        """
+        :param QWidget parent: Parent Qt object.
+        :param str key: Key string
+        :param dict scope_data: [optional] Dictionary object for Hotkey dialog to look
+            up scope information.
+        """
         super(A2Hotkey, self).__init__(parent)
         self.a2 = a2core.A2Obj.inst()
-        self.key = key
-        self.ok_func = ok_func
+        self.key = key or ''
         self.setText(key)
+        self.scope_data = scope_data
         self.clicked.connect(self.popup_dialog)
 
         self.dialog_styles = [HotkeyDialog2]
@@ -46,20 +53,17 @@ class A2Hotkey(QtGui.QPushButton):
             self.key = key
             self.setText(key)
             self.hotkey_changed.emit(key)
-            if self.ok_func is not None:
-                log.warning('Avoid using ok_func()! Do it with the hotket_set Signal!')
-                self.ok_func(key)
 
     def popup_dialog(self):
-        style = self.a2.db.get('hotkey_dialog_style')
-        if style:
+        class_name = self.a2.db.get('hotkey_dialog_style')
+        if class_name:
             for hotkey_dialog_class in self.dialog_styles:
-                if hotkey_dialog_class.__name__ == style:
+                if hotkey_dialog_class.__name__ == class_name:
                     break
         else:
             hotkey_dialog_class = self.dialog_default
 
-        dialog = hotkey_dialog_class(self, self.key)
+        dialog = hotkey_dialog_class(self, self.key, self.scope_data)
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 
@@ -68,31 +72,19 @@ class HotkeyDialog2(QtGui.QDialog):
     hotkey_set = QtCore.Signal(str)
     label = 'Hotkey Keyboard'
 
-    def __init__(self, parent, key):
+    def __init__(self, parent, key, scope_data=None):
         super(HotkeyDialog2, self).__init__(parent)
-        #self.parent_widget = parent
         self.key = key
+        self.scope_data = scope_data
         self.setModal(True)
         self.a2 = a2core.A2Obj.inst()
-        a2ctrl.check_ui_module(a2widget.keyboard.base_ui)
+
         self.setup_ui()
-#        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
-#        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
-#
-#        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
-#
-#        self.key = self.parent_widget.key
-#        self.okay_state = True
-#        self.validate_hotkey(self.key)
-#
         self.place_at_cursor()
-#        self.show()
         self._init_dialog_size()
-#
-#        hotkeys = self.a2.get_used_hotkeys()
-#        pprint(hotkeys)
 
     def setup_ui(self):
+        a2ctrl.check_ui_module(a2widget.keyboard.base_ui)
         self.ui = a2widget.keyboard.base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
@@ -208,10 +200,10 @@ class HotkeyDialog1(QtGui.QWidget):
     hotkey_set = QtCore.Signal(str)
     label = 'Simple Dialog'
 
-    def __init__(self, parent, key):
+    def __init__(self, parent, key, scope_data=None):
         super(HotkeyDialog1, self).__init__(parent)
-        #self.parent_widget = parent
         self.key = key
+        self.scope_data = scope_data
         self.a2 = a2core.A2Obj.inst()
         self.setup_ui()
 
