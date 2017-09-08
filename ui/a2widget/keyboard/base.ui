@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1364</width>
+    <width>1455</width>
     <height>319</height>
    </rect>
   </property>
@@ -123,7 +123,7 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="bottom_row" stretch="0,0,0,1,0,0,0">
+         <layout class="QHBoxLayout" name="bottom_row" stretch="0,0,0,1,0,0,0,0">
           <item>
            <widget class="QPushButton" name="l_ctrl_key">
             <property name="font">
@@ -168,6 +168,9 @@
             <property name="text">
              <string>Space</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -193,6 +196,13 @@
             </property>
             <property name="text">
              <string>Win</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="r_apps_key">
+            <property name="text">
+             <string>AppsKey</string>
             </property>
            </widget>
           </item>

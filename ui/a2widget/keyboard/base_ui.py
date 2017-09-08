@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\keyboard\base.ui'
 #
-# Created: Thu Sep  7 19:41:47 2017
+# Created: Fri Sep  8 12:36:03 2017
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Keyboard(object):
     def setupUi(self, Keyboard):
         Keyboard.setObjectName("Keyboard")
-        Keyboard.resize(1364, 319)
+        Keyboard.resize(1455, 319)
         self.verticalLayout = QtGui.QVBoxLayout(Keyboard)
         self.verticalLayout.setObjectName("verticalLayout")
         self.a2hotkey_label = QtGui.QLabel(Keyboard)
@@ -104,6 +104,7 @@ class Ui_Keyboard(object):
         self.l_alt_key.setObjectName("l_alt_key")
         self.bottom_row.addWidget(self.l_alt_key)
         self.space_key = QtGui.QPushButton(self.keys_widget)
+        self.space_key.setCheckable(True)
         self.space_key.setObjectName("space_key")
         self.bottom_row.addWidget(self.space_key)
         self.r_alt_key = QtGui.QPushButton(self.keys_widget)
@@ -120,6 +121,9 @@ class Ui_Keyboard(object):
         self.r_win_key.setFont(font)
         self.r_win_key.setObjectName("r_win_key")
         self.bottom_row.addWidget(self.r_win_key)
+        self.r_apps_key = QtGui.QPushButton(self.keys_widget)
+        self.r_apps_key.setObjectName("r_apps_key")
+        self.bottom_row.addWidget(self.r_apps_key)
         self.r_ctrl_key = QtGui.QPushButton(self.keys_widget)
         font = QtGui.QFont()
         font.setWeight(75)
@@ -299,6 +303,7 @@ class Ui_Keyboard(object):
         self.space_key.setText(QtGui.QApplication.translate("Keyboard", "Space", None, QtGui.QApplication.UnicodeUTF8))
         self.r_alt_key.setText(QtGui.QApplication.translate("Keyboard", "Alt", None, QtGui.QApplication.UnicodeUTF8))
         self.r_win_key.setText(QtGui.QApplication.translate("Keyboard", "Win", None, QtGui.QApplication.UnicodeUTF8))
+        self.r_apps_key.setText(QtGui.QApplication.translate("Keyboard", "AppsKey", None, QtGui.QApplication.UnicodeUTF8))
         self.r_ctrl_key.setText(QtGui.QApplication.translate("Keyboard", "Ctrl", None, QtGui.QApplication.UnicodeUTF8))
         self.print_key.setText(QtGui.QApplication.translate("Keyboard", "Print\n"
 "Screen", None, QtGui.QApplication.UnicodeUTF8))
