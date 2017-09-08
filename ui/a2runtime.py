@@ -266,24 +266,37 @@ class InitCollection(_Collection):
 
 
 def collect_includes(specific=None):
-    idc = IncludeDataCollector()
+    collector = IncludeDataCollector()
 
     if not specific:
-        idc.get_all_collections()
+        collector.get_all_collections()
     elif specific in IncludeType:
         if specific is IncludeType.variables:
-            idc.get_vars()
+            collector.get_vars()
         elif specific is IncludeType.libs:
-            idc.get_libs()
+            collector.get_libs()
         elif specific is IncludeType.includes:
-            idc.get_includes()
+            collector.get_includes()
         elif specific is IncludeType.hotkeys:
-            idc.get_hotkeys()
+            collector.get_hotkeys()
         elif specific is IncludeType.init:
-            idc.get_init()
+            collector.get_init()
 
-    idc.collect()
-    idc.write()
+    collector.collect()
+    return collector
+
+
+def write_includes(specific=None):
+    collector = collect_includes(specific)
+    collector.write()
+
+
+def collect_hotkeys():
+    collector = collect_includes(IncludeType.hotkeys)
+    data = [collector.hotkeys.hotkeys_global,
+            collector.hotkeys.hotkeys_scope_incl,
+            collector.hotkeys.hotkeys_scope_excl]
+    return data
 
 
 def kill_a2_process():

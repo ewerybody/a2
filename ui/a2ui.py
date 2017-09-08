@@ -213,7 +213,7 @@ class A2Window(QtGui.QMainWindow):
         self.module_list.draw_modules()
 
         log.info('  Writing includes ...')
-        a2runtime.collect_includes(specific)
+        a2runtime.write_includes(specific)
 
         log.info('  Restarting runtime ...')
         self._restart_thread = RestartThread(self.a2, self)
