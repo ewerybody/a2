@@ -138,7 +138,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="l_winl_key">
+           <widget class="QPushButton" name="l_win_key">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -200,7 +200,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="r_apps_key">
+           <widget class="QPushButton" name="apps_key">
             <property name="text">
              <string>AppsKey</string>
             </property>
