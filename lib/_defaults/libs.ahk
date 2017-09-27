@@ -2,6 +2,8 @@
 #include lib/ahklib/a2.ahk
 #include lib/ahklib/tt.ahk
 #include lib/ahklib/functions.ahk
+#include lib/ahklib/func_file.ahk
+#include lib/ahklib/func_string.ahk
 #include lib/ahklib/Explorer_Get.ahk
 #include lib/ahklib/ahk_functions.ahk
 #include lib/ahklib/ObjectTools.ahk

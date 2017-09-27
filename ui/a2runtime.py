@@ -14,8 +14,9 @@ EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated autom
 A2DEFAULT_HOTKEY = 'Win+Shift+A'
 log = a2core.get_logger(__name__)
 
-TODO_DEFAULT_LIBS = ['a2', 'tt', 'functions', 'Explorer_Get', 'ahk_functions', 'ObjectTools',
-                     'RichObject', 'Array', 'uri_encode', 'HTTPRequest', 'base64']
+TODO_DEFAULT_LIBS = ['a2', 'tt', 'func_file', 'func_string', 'functions', 'Explorer_Get',
+                     'ahk_functions', 'ObjectTools', 'RichObject', 'Array', 'uri_encode',
+                     'HTTPRequest', 'base64']
 
 
 class IncludeType(enum.Enum):
