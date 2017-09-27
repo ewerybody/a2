@@ -27,6 +27,7 @@ class Draw(DrawCtrl):
             text = text.replace('%module_path%', self.mod.path)
 
         self.label = QtGui.QLabel(text, self)
+        self.label.setWordWrap(True)
         self.label.setOpenExternalLinks(True)
         self.layout.addWidget(self.label)
         self.setLayout(self.layout)
