@@ -21,7 +21,7 @@ def main(keyboard):
         keyboard.add_key(l, keyboard.ui.letter_row_middle)
     keyboard.add_key(';', keyboard.ui.letter_row_middle)
     keyboard.add_key("'", keyboard.ui.letter_row_middle)
-    keyboard.add_key('Enter', keyboard.ui.letter_row_middle, label='Enter')
+    keyboard.add_key('enter', keyboard.ui.letter_row_middle, label='Enter')
 #    keyboard.add_key('semicolon_key', ';', keyboard.ui.letter_row_middle)
 #    keyboard.add_key('quote_key', "'", keyboard.ui.letter_row_middle)
 #    keyboard.add_key('return_key', "Enter", keyboard.ui.letter_row_middle)

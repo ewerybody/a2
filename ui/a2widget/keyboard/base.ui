@@ -6,29 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1455</width>
+    <width>1914</width>
     <height>319</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Hotkey Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
-   <item>
-    <widget class="QLabel" name="a2hotkey_label">
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-   </item>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
    <item>
     <widget class="QWidget" name="keys_widget" native="true">
-     <layout class="QHBoxLayout" name="keys_layout" stretch="1,0,0">
+     <layout class="QHBoxLayout" name="keys_layout" stretch="1,0,0,0">
       <property name="margin">
        <number>0</number>
       </property>
@@ -373,7 +361,26 @@ Down</string>
       <item>
        <layout class="QVBoxLayout" name="num_block">
         <item>
-         <widget class="QWidget" name="num_spacer" native="true"/>
+         <widget class="QWidget" name="num_spacer" native="true">
+          <widget class="QLabel" name="a2hotkey_label">
+           <property name="geometry">
+            <rect>
+             <x>-1000</x>
+             <y>-10</y>
+             <width>1435</width>
+             <height>29</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </widget>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -494,6 +501,73 @@ Lock</string>
            <widget class="QPushButton" name="num_0_key">
             <property name="text">
              <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="mouse_block">
+        <item>
+         <layout class="QGridLayout" name="mouse_layout">
+          <item row="1" column="2">
+           <widget class="QPushButton" name="mbutton">
+            <property name="text">
+             <string>mbutton</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="wheelup">
+            <property name="text">
+             <string>wheelup</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" rowspan="2" colspan="5">
+           <widget class="QPushButton" name="_blindbutton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QPushButton" name="wheeldown">
+            <property name="text">
+             <string>wheeldown</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" rowspan="3">
+           <widget class="QPushButton" name="lbutton">
+            <property name="text">
+             <string>lbutton</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="3">
+           <widget class="QPushButton" name="wheelleft">
+            <property name="text">
+             <string>wheelleft</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" rowspan="3">
+           <widget class="QPushButton" name="wheelright">
+            <property name="text">
+             <string>wheelright</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4" rowspan="3">
+           <widget class="QPushButton" name="rbutton">
+            <property name="text">
+             <string>rbutton</string>
             </property>
            </widget>
           </item>
