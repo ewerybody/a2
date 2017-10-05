@@ -200,7 +200,7 @@ for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control'
     modifiers['r' + _key] = '>' + _code
 
 
-keys = (['lbutton', 'rbutton', 'mbutton', 'advanced', 'xbutton1', 'xbutton2', 'wheel',
+keys = (['lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2',
          'wheeldown', 'wheelup', 'wheelleft', 'wheelright', 'capslock', 'space', 'tab',
          'enter', 'return', 'escape', 'esc', 'backspace', 'bs', 'scrolllock', 'delete',
          'del', 'insert', 'ins', 'home', 'end', 'pgup', 'pgdn', 'up', 'down', 'left',
