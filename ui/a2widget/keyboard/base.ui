@@ -6,17 +6,51 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1914</width>
-    <height>319</height>
+    <width>1669</width>
+    <height>361</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Hotkey Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="topMargin">
+      <number>10</number>
+     </property>
+     <property name="bottomMargin">
+      <number>10</number>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="key_field"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Show:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="check_numpad">
+       <property name="text">
+        <string>Num Pad</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="check_mouse">
+       <property name="text">
+        <string>Mouse</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QWidget" name="keys_widget" native="true">
-     <layout class="QHBoxLayout" name="keys_layout" stretch="1,0,0,0">
+     <layout class="QHBoxLayout" name="keys_layout">
       <property name="margin">
        <number>0</number>
       </property>
@@ -361,26 +395,7 @@ Down</string>
       <item>
        <layout class="QVBoxLayout" name="num_block">
         <item>
-         <widget class="QWidget" name="num_spacer" native="true">
-          <widget class="QLabel" name="a2hotkey_label">
-           <property name="geometry">
-            <rect>
-             <x>-1000</x>
-             <y>-10</y>
-             <width>1435</width>
-             <height>29</height>
-            </rect>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>16</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
-         </widget>
+         <widget class="QWidget" name="num_spacer" native="true"/>
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
@@ -515,19 +530,19 @@ Lock</string>
           <item row="1" column="2">
            <widget class="QPushButton" name="mbutton">
             <property name="text">
-             <string>mbutton</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="wheelup">
             <property name="text">
-             <string>wheelup</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="3" column="0" rowspan="2" colspan="5">
-           <widget class="QPushButton" name="_blindbutton">
+           <widget class="QPushButton" name="_mouse_body">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -539,35 +554,35 @@ Lock</string>
           <item row="2" column="2">
            <widget class="QPushButton" name="wheeldown">
             <property name="text">
-             <string>wheeldown</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="0" column="0" rowspan="3">
            <widget class="QPushButton" name="lbutton">
             <property name="text">
-             <string>lbutton</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="0" column="1" rowspan="3">
            <widget class="QPushButton" name="wheelleft">
             <property name="text">
-             <string>wheelleft</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="0" column="3" rowspan="3">
            <widget class="QPushButton" name="wheelright">
             <property name="text">
-             <string>wheelright</string>
+             <string/>
             </property>
            </widget>
           </item>
           <item row="0" column="4" rowspan="3">
            <widget class="QPushButton" name="rbutton">
             <property name="text">
-             <string>rbutton</string>
+             <string/>
             </property>
            </widget>
           </item>

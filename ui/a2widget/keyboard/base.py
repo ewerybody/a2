@@ -16,6 +16,8 @@ STYLE_BUTTON = """
         padding: 3px;
         min-width: 1px;
         font-size: 12px;
+        min-height: 25px;
+        max-height: 25px;
     }
     """
 #    padding-left: 0px;
@@ -53,6 +55,9 @@ class KeyboardDialogBase(QtGui.QDialog):
         # for i, l, name in [(10, '0', 'digit0'), (11, '-', 'minus'), (12, '=', 'equals')]:
         for i, k in [(10, '0'), (11, '-'), (12, '=')]:
             self.insert_key(i, k, self.ui.number_row)
+
+        self.ui.check_numpad.clicked[bool].connect(self._toggle_numpad)
+        self.ui.check_mouse.clicked[bool].connect(self._toggle_mouse)
 
     def insert_key(self, index, key, layout, label=None, tooltip=None):
         button = self._create_key(key, label, tooltip)
@@ -103,3 +108,9 @@ class KeyboardDialogBase(QtGui.QDialog):
         if keyboard_id == 'en_us':
             import a2widget.keyboard.en_us
             a2widget.keyboard.en_us.main(self)
+
+    def _toggle_numpad(self, state):
+        print('state: %s' % state)
+
+    def _toggle_mouse(self, state):
+        print('state: %s' % state)
