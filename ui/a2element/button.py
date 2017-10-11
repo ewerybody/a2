@@ -45,7 +45,6 @@ class Draw(DrawCtrl):
                 globals_dict = globals()
                 globals_dict.update({'a2path': self.mod.path,
                                      'call_local_ahk': self.call_local_ahk})
-                globals_dict.update({'a2path': self.mod.path})
                 exec(code, globals_dict)
             except Exception:
                 log.error(traceback.format_exc().strip())
