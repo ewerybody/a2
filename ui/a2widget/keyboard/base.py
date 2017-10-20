@@ -6,7 +6,7 @@ Created on 11.09.2017
 from enum import Enum
 
 import a2ctrl
-
+import a2core
 import a2widget.keyboard.base_ui
 from PySide import QtGui, QtCore
 
@@ -29,11 +29,15 @@ class KeyboardDialogBase(QtGui.QDialog):
         super(KeyboardDialogBase, self).__init__(parent)
         self.setModal(True)
 
+        self.a2 = a2core.A2Obj.inst()
         self.keydict = {}
         self.modifier = {}
 
         self._setup_ui()
         self._fill_keydict()
+
+        self._toggle_numpad()
+        self._toggle_mouse()
 
     def _setup_ui(self):
         a2ctrl.check_ui_module(a2widget.keyboard.base_ui)
@@ -109,8 +113,20 @@ class KeyboardDialogBase(QtGui.QDialog):
             import a2widget.keyboard.en_us
             a2widget.keyboard.en_us.main(self)
 
-    def _toggle_numpad(self, state):
-        print('state: %s' % state)
+    def _toggle_numpad(self, state=None):
+        if state is None:
+            state = self.a2.db.get('hotkey_dialog_show_numpad') or False
+            self.ui.check_numpad.setChecked(state)
+            #state = not state
 
-    def _toggle_mouse(self, state):
-        print('state: %s' % state)
+        self.ui.num_block_widget.setVisible(state)
+        self.a2.db.set('hotkey_dialog_show_numpad', state)
+
+    def _toggle_mouse(self, state=None):
+        if state is None:
+            state = self.a2.db.get('hotkey_dialog_show_mouse') or False
+            self.ui.check_mouse.setChecked(state)
+            #state = not state
+
+        self.ui.mouse_block_widget.setVisible(state)
+        self.a2.db.set('hotkey_dialog_show_mouse', state)
