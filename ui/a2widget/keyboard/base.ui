@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1701</width>
-    <height>435</height>
+    <width>3708</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@
         <item>
          <layout class="QHBoxLayout" name="f_row">
           <item>
-           <widget class="QPushButton" name="esc_key">
+           <widget class="QPushButton" name="escape">
             <property name="text">
              <string>Esc</string>
             </property>
@@ -80,7 +80,7 @@
             <item>
              <layout class="QHBoxLayout" name="number_row">
               <item>
-               <widget class="QPushButton" name="backspace_key">
+               <widget class="QPushButton" name="backspace">
                 <property name="text">
                  <string>Backspace</string>
                 </property>
@@ -91,7 +91,7 @@
             <item>
              <layout class="QHBoxLayout" name="letter_row_top">
               <item>
-               <widget class="QPushButton" name="tab_key">
+               <widget class="QPushButton" name="tab">
                 <property name="text">
                  <string>Tab</string>
                 </property>
@@ -106,7 +106,7 @@
         <item>
          <layout class="QHBoxLayout" name="letter_row_middle">
           <item>
-           <widget class="QPushButton" name="caps_lock_key">
+           <widget class="QPushButton" name="capslock">
             <property name="text">
              <string>Caps Lock</string>
             </property>
@@ -186,7 +186,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="space_key">
+           <widget class="QPushButton" name="space">
             <property name="text">
              <string>Space</string>
             </property>
@@ -222,7 +222,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="apps_key">
+           <widget class="QPushButton" name="appskey">
             <property name="text">
              <string>AppsKey</string>
             </property>
@@ -253,7 +253,7 @@
         <item>
          <layout class="QHBoxLayout" name="print_block">
           <item>
-           <widget class="QPushButton" name="print_key">
+           <widget class="QPushButton" name="printscreen">
             <property name="text">
              <string>Print
 Screen</string>
@@ -269,7 +269,7 @@ Lock</string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pause_key">
+           <widget class="QPushButton" name="pause">
             <property name="text">
              <string>Pause</string>
             </property>
@@ -286,7 +286,7 @@ Lock</string>
         <item>
          <layout class="QGridLayout" name="gridLayout">
           <item row="3" column="1">
-           <widget class="QPushButton" name="up_key">
+           <widget class="QPushButton" name="up">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -299,7 +299,7 @@ Lock</string>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QPushButton" name="left_key">
+           <widget class="QPushButton" name="left">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -312,21 +312,21 @@ Lock</string>
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QPushButton" name="ins_key">
+           <widget class="QPushButton" name="insert">
             <property name="text">
              <string>Insert</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="home_key">
+           <widget class="QPushButton" name="home">
             <property name="text">
              <string>Home</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QPushButton" name="pageup_key">
+           <widget class="QPushButton" name="pgup">
             <property name="text">
              <string>Page
 Up</string>
@@ -334,21 +334,21 @@ Up</string>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QPushButton" name="del_key">
+           <widget class="QPushButton" name="delete">
             <property name="text">
              <string>Del</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="end_key">
+           <widget class="QPushButton" name="end">
             <property name="text">
              <string>End</string>
             </property>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QPushButton" name="pagedown_key">
+           <widget class="QPushButton" name="pgdn">
             <property name="text">
              <string>Page
 Down</string>
@@ -356,7 +356,7 @@ Down</string>
            </widget>
           </item>
           <item row="4" column="2">
-           <widget class="QPushButton" name="right_key">
+           <widget class="QPushButton" name="right">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -369,7 +369,7 @@ Down</string>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QPushButton" name="down_key">
+           <widget class="QPushButton" name="down">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -399,7 +399,7 @@ Down</string>
           <widget class="QWidget" name="num_spacer" native="true"/>
          </item>
          <item row="1" column="0">
-          <widget class="QPushButton" name="num_lock_key">
+          <widget class="QPushButton" name="numlock">
            <property name="text">
             <string>Num
 Lock</string>
@@ -407,112 +407,112 @@ Lock</string>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QPushButton" name="num_slash_key">
+          <widget class="QPushButton" name="numpaddiv">
            <property name="text">
             <string>/</string>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QPushButton" name="num_asterisk_key">
+          <widget class="QPushButton" name="numpadmult">
            <property name="text">
             <string>*</string>
            </property>
           </widget>
          </item>
          <item row="1" column="3">
-          <widget class="QPushButton" name="num_minus_key">
+          <widget class="QPushButton" name="numpadsub">
            <property name="text">
             <string>-</string>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
-          <widget class="QPushButton" name="num_7_key">
+          <widget class="QPushButton" name="numpad7">
            <property name="text">
             <string>7</string>
            </property>
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QPushButton" name="num_8_key">
+          <widget class="QPushButton" name="numpad8">
            <property name="text">
             <string>8</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QPushButton" name="num_9_key">
+          <widget class="QPushButton" name="numpad9">
            <property name="text">
             <string>9</string>
            </property>
           </widget>
          </item>
          <item row="2" column="3" rowspan="2">
-          <widget class="QPushButton" name="num_plus_key">
+          <widget class="QPushButton" name="numpadadd">
            <property name="text">
             <string>+</string>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
-          <widget class="QPushButton" name="num_4_key">
+          <widget class="QPushButton" name="numpad4">
            <property name="text">
             <string>4</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QPushButton" name="num_5_key">
+          <widget class="QPushButton" name="numpad5">
            <property name="text">
             <string>5</string>
            </property>
           </widget>
          </item>
          <item row="3" column="2">
-          <widget class="QPushButton" name="num_6_key">
+          <widget class="QPushButton" name="numpad6">
            <property name="text">
             <string>6</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
-          <widget class="QPushButton" name="num_1_key">
+          <widget class="QPushButton" name="numpad1">
            <property name="text">
             <string>1</string>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QPushButton" name="num_2_key">
+          <widget class="QPushButton" name="numpad2">
            <property name="text">
             <string>2</string>
            </property>
           </widget>
          </item>
          <item row="4" column="2">
-          <widget class="QPushButton" name="num_3_key">
+          <widget class="QPushButton" name="numpad3">
            <property name="text">
             <string>3</string>
            </property>
           </widget>
          </item>
          <item row="4" column="3" rowspan="2">
-          <widget class="QPushButton" name="num_enter_key">
+          <widget class="QPushButton" name="numpadenter">
            <property name="text">
             <string>Enter</string>
            </property>
           </widget>
          </item>
          <item row="5" column="0" colspan="2">
-          <widget class="QPushButton" name="num_0_key">
+          <widget class="QPushButton" name="numpad0">
            <property name="text">
             <string>0</string>
            </property>
           </widget>
          </item>
          <item row="5" column="2">
-          <widget class="QPushButton" name="num_dot_key">
+          <widget class="QPushButton" name="numpaddot">
            <property name="text">
             <string>.</string>
            </property>

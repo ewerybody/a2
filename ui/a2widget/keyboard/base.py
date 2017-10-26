@@ -4,7 +4,9 @@ Created on 11.09.2017
 @author: eric
 """
 from enum import Enum
+from pprint import pprint
 
+import a2ahk
 import a2ctrl
 import a2core
 import a2widget.keyboard.base_ui
@@ -13,9 +15,8 @@ from PySide import QtGui, QtCore
 
 STYLE_BUTTON = """
     QPushButton {
-        padding: 3px;
-        min-width: 1px;
-        font-size: 12px;
+        padding: 15px;
+        min-width: 10px;
         min-height: 25px;
         max-height: 25px;
     }
@@ -46,10 +47,10 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
 
-        self.ui.left_key.setText('←')
-        self.ui.up_key.setText('↑')
-        self.ui.down_key.setText('↓')
-        self.ui.right_key.setText('→')
+        self.ui.left.setText('←')
+        self.ui.up.setText('↑')
+        self.ui.down.setText('↓')
+        self.ui.right.setText('→')
 
         for i in range(1, 13):
             self.add_key('f%i' % i, self.ui.f_row)
@@ -96,10 +97,10 @@ class KeyboardDialogBase(QtGui.QDialog):
         return button
 
     def _fill_keydict(self):
-        self.keydict['left'] = self.ui.left_key
-        self.keydict['up'] = self.ui.up_key
-        self.keydict['down'] = self.ui.down_key
-        self.keydict['right'] = self.ui.right_key
+        self.keydict['left'] = self.ui.left
+        self.keydict['up'] = self.ui.up
+        self.keydict['down'] = self.ui.down
+        self.keydict['right'] = self.ui.right
 
         for modkeyname in ['alt', 'ctrl', 'shift', 'win']:
             self.keydict[modkeyname] = []
@@ -107,6 +108,20 @@ class KeyboardDialogBase(QtGui.QDialog):
                 button = getattr(self.ui, '%s_%s_key' % (side, modkeyname))
                 self.keydict[side + modkeyname] = button
                 self.keydict[modkeyname].append(button)
+
+        pprint(self.keydict)
+        for key in a2ahk.keys:
+            print(key)
+
+        for objname in dir(self.ui):
+            obj = getattr(self.ui, objname)
+            if not isinstance(obj, QtGui.QPushButton):
+                continue
+
+            if objname in self.keydict or objname + '_key' in self.keydict:
+                print('IS IN!: %s' % objname)
+            else:
+                print('NOT IN!: %s' % objname)
 
     def build_keyboad(self, keyboard_id):
         if keyboard_id == 'en_us':
@@ -117,7 +132,6 @@ class KeyboardDialogBase(QtGui.QDialog):
         if state is None:
             state = self.a2.db.get('hotkey_dialog_show_numpad') or False
             self.ui.check_numpad.setChecked(state)
-            #state = not state
 
         self.ui.num_block_widget.setVisible(state)
         self.a2.db.set('hotkey_dialog_show_numpad', state)
@@ -126,7 +140,6 @@ class KeyboardDialogBase(QtGui.QDialog):
         if state is None:
             state = self.a2.db.get('hotkey_dialog_show_mouse') or False
             self.ui.check_mouse.setChecked(state)
-            #state = not state
 
         self.ui.mouse_block_widget.setVisible(state)
         self.a2.db.set('hotkey_dialog_show_mouse', state)
