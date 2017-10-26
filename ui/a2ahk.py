@@ -127,7 +127,7 @@ def _convert_string_to_type(string):
     except ValueError:
         try:
             return float(string)
-        except:
+        except ValueError:
             lowstring = string.lower()
             if lowstring == 'true':
                 return True
@@ -203,13 +203,11 @@ for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control'
 keys = (['lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2',
          'wheeldown', 'wheelup', 'wheelleft', 'wheelright', 'capslock', 'space', 'tab',
          'enter', 'return', 'escape', 'esc', 'backspace', 'bs', 'scrolllock', 'delete',
-         'del', 'insert', 'ins', 'home', 'end', 'pgup', 'pgdn', 'up', 'down', 'left',
-         'right', 'numpad', 'numlock', 'numlock', 'numpad0', 'numpadins', 'numpad1',
-         'numpadend', 'numpad2', 'numpaddown', 'numpad3', 'numpadpgdn', 'numpad4',
-         'numpadleft', 'numpad5', 'numpadclear', 'numpad6', 'numpadright', 'numpad7',
-         'numpadhome', 'numpad8', 'numpadup', 'numpad9', 'numpadpgup', 'numpaddot',
-         'numpaddel', 'numpaddiv', 'numpaddiv', 'numpadmult', 'numpadmult', 'numpadadd',
-         'numpadadd', 'numpadsub', 'numpadsub', 'numpadenter',
+         'del', 'insert', 'ins', 'home', 'end', 'pgup', 'pgdn', 'up', 'down', 'left', 'right',
+         'numlock', 'numpadins', 'numpadend', 'numpadpgup', 'numpadpgdn', 'numpaddown', 'numpadleft',
+         'numpadright', 'numpadclear', 'numpadhome', 'numpadup', 'numpaddot', 'numpaddel',
+         'numpad0', 'numpad1', 'numpad2', 'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7',
+         'numpad8', 'numpad9', 'numpaddiv', 'numpadmult', 'numpadadd', 'numpadsub', 'numpadenter',
          'browser_back', 'browser_forward', 'browser_refresh', 'browser_stop',
          'browser_search', 'browser_favorites', 'browser_home', 'volume_mute',
          'volume_down', 'volume_up', 'media_next', 'media_prev', 'media_stop',
