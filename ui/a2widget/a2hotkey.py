@@ -7,7 +7,6 @@ import a2core
 import a2ctrl
 import a2runtime
 from a2widget.keyboard.base import KeyboardDialogBase
-import a2widget.keyboard.base_ui
 
 
 log = a2core.get_logger(__name__)
@@ -15,15 +14,6 @@ LEAVE_CLOSE_TIMEOUT = 1000
 STYLE_BAD = '* {color:#F00}'
 STYLE_GOOD = '* {color:#0F0}'
 _dialog_size = None
-
-
-STYLE_BUTTON = """
-    QPushButton {
-        padding: 3px;
-        min-width: 1px;
-        font-size: 12px;
-    }
-    """
 
 
 class A2Hotkey(QtGui.QPushButton):
