@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>3708</width>
-    <height>706</height>
+    <width>1701</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -117,7 +117,7 @@
         <item>
          <layout class="QHBoxLayout" name="letter_row_bottom">
           <item>
-           <widget class="QPushButton" name="l_shift_key">
+           <widget class="QPushButton" name="lshift">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -130,7 +130,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="r_shift_key">
+           <widget class="QPushButton" name="rshift">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -147,7 +147,7 @@
         <item>
          <layout class="QHBoxLayout" name="bottom_row" stretch="0,0,0,1,0,0,0,0">
           <item>
-           <widget class="QPushButton" name="l_ctrl_key">
+           <widget class="QPushButton" name="lctrl">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -160,7 +160,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="l_win_key">
+           <widget class="QPushButton" name="lwin">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -173,7 +173,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="l_alt_key">
+           <widget class="QPushButton" name="lalt">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -196,7 +196,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="r_alt_key">
+           <widget class="QPushButton" name="ralt">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -209,7 +209,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="r_win_key">
+           <widget class="QPushButton" name="rwin">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -229,7 +229,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="r_ctrl_key">
+           <widget class="QPushButton" name="rctrl">
             <property name="font">
              <font>
               <weight>75</weight>
@@ -261,7 +261,7 @@ Screen</string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="scroll_key">
+           <widget class="QPushButton" name="scrolllock">
             <property name="text">
              <string>Scroll
 Lock</string>

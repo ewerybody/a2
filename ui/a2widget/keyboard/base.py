@@ -13,12 +13,15 @@ import a2widget.keyboard.base_ui
 from PySide import QtGui, QtCore
 
 
+log = a2core.get_logger('keyboard_base')
+KEYFONT_SIZE_FACTOR = 0.9
 STYLE_BUTTON = """
     QPushButton {
-        padding: 15px;
-        min-width: 10px;
-        min-height: 25px;
-        max-height: 25px;
+        font-size: %(font-size)ipx;
+        padding: 3px;
+        min-width: 15px;
+        min-height: 22px;
+        max-height: 22px;
     }
     """
 #    padding-left: 0px;
@@ -45,6 +48,9 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui = a2widget.keyboard.base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
 
+        global STYLE_BUTTON
+        font_size = self.a2.win.css_values['font_size'] * KEYFONT_SIZE_FACTOR
+        STYLE_BUTTON = STYLE_BUTTON % {'font-size': font_size}
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
 
         self.ui.left.setText('←')
@@ -97,31 +103,32 @@ class KeyboardDialogBase(QtGui.QDialog):
         return button
 
     def _fill_keydict(self):
-        self.keydict['left'] = self.ui.left
-        self.keydict['up'] = self.ui.up
-        self.keydict['down'] = self.ui.down
-        self.keydict['right'] = self.ui.right
-
         for modkeyname in ['alt', 'ctrl', 'shift', 'win']:
             self.keydict[modkeyname] = []
             for side in 'lr':
-                button = getattr(self.ui, '%s_%s_key' % (side, modkeyname))
+                button = getattr(self.ui, '%s%s' % (side, modkeyname))
                 self.keydict[side + modkeyname] = button
                 self.keydict[modkeyname].append(button)
 
-        pprint(self.keydict)
-        for key in a2ahk.keys:
-            print(key)
+        for keyname in a2ahk.keys:
+            try:
+                obj = getattr(self.ui, keyname)
+                if not isinstance(obj, QtGui.QPushButton):
+                    continue
+                if keyname not in self.keydict:
+                    self.keydict[keyname] = obj
+            except AttributeError:
+                pass
 
+        # self._check_keys()
+
+    def _check_keys(self):
         for objname in dir(self.ui):
             obj = getattr(self.ui, objname)
             if not isinstance(obj, QtGui.QPushButton):
                 continue
-
-            if objname in self.keydict or objname + '_key' in self.keydict:
-                print('IS IN!: %s' % objname)
-            else:
-                print('NOT IN!: %s' % objname)
+            if objname not in self.keydict:
+                log.error('NOT IN!: %s' % objname)
 
     def build_keyboad(self, keyboard_id):
         if keyboard_id == 'en_us':
