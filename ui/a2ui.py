@@ -265,7 +265,7 @@ class A2Window(QtGui.QMainWindow):
     def showRaise(self):
         self.show()
         self.activateWindow()
-        #self.setFocus()
+        # self.setFocus()
 
     def scroll_to(self, value, smooth=False):
         # TODO: reimplement in each widget
@@ -321,28 +321,6 @@ class A2Window(QtGui.QMainWindow):
 
     def load_runtime_and_ui(self):
         self.settings_changed(refresh_ui=True)
-
-
-class UIvs(object):
-    """
-    Values for setting visual user interface attributes and for
-    recompiling a2.css from template file.
-    """
-    spacing = 5
-    line = 15
-    font_size = 13
-    font_size_big = 14
-    font_size_large = 16
-    margin = 5
-    margin_h = margin * 5
-    color_blue = '#43B6FF'
-    color_green = '#37ED95'
-    color_yellow = '#FFC23E'
-    color_bright = '#FFF'
-    color_button = '#CCC'
-    color_hover = '#DDD'
-    color_pressed = '#AAA'
-    border_radius = 1
 
 
 class RestartThread(QtCore.QThread):
