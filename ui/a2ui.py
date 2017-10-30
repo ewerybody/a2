@@ -356,6 +356,10 @@ class RuntimeWatcher(QtCore.QThread):
         self.is_live = False
         self.stopped = False
 
+    def quit(self, *args, **kwargs):
+        self.stopped = True
+        self.terminate()
+
     def run(self, *args, **kwargs):
         while not self.stopped:
             self.msleep(1000)
