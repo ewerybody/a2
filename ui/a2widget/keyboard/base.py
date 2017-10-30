@@ -63,9 +63,8 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         for i in range(0, 10):
             self.insert_key(i, str(i), self.ui.number_row)
-        # for i, l, name in [(10, '0', 'digit0'), (11, '-', 'minus'), (12, '=', 'equals')]:
-        for i, k in [(10, '0'), (11, '-'), (12, '=')]:
-            self.insert_key(i, k, self.ui.number_row)
+
+        self.insert_key(10, '0', self.ui.number_row)
 
         self.ui.check_numpad.clicked[bool].connect(self._toggle_numpad)
         self.ui.check_mouse.clicked[bool].connect(self._toggle_mouse)

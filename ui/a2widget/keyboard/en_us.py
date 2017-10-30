@@ -7,6 +7,8 @@ Created on 13.09.2017
 
 def main(keyboard):
     keyboard.insert_key(0, '`', keyboard.ui.number_row, tooltip='Tick')
+    for i, k in [(11, '-'), (12, '=')]:
+        keyboard.insert_key(i, k, keyboard.ui.number_row)
 
     for l in 'qwertyuiop':
         keyboard.add_key(l, keyboard.ui.letter_row_top)
