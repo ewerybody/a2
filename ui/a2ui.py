@@ -286,9 +286,12 @@ class A2Window(QtGui.QMainWindow):
     def rebuild_css(self, user_scale=None):
         if user_scale is None:
             user_scale = self.a2.db.get('ui_scale') or 1.0
+        self.css_values['user_scale'] = user_scale
 
         local_scale = self.app.desktop().physicalDpiX() / BASE_DPI
-        scale = local_scale * user_scale
+        self.css_values['local_scale'] = local_scale
+        scale = self.css_values['local_scale'] * user_scale
+        self.css_values['scale'] = scale
 
         css_template_path = os.path.join(self.a2.paths._defaults, 'css_defaults.json')
         css_defaults = a2util.json_read(css_template_path)

@@ -14,7 +14,7 @@ from PySide import QtGui, QtCore
 
 
 log = a2core.get_logger('keyboard_base')
-KEYFONT_SIZE_FACTOR = 0.9
+KEYFONT_SIZE_FACTOR = 0.8
 STYLE_BUTTON = """
     QPushButton {
         font-size: %(font-size)ipx;
@@ -22,6 +22,9 @@ STYLE_BUTTON = """
         min-width: 15px;
         min-height: 22px;
         max-height: 22px;
+    }
+    QPushButton:checked {
+        background-color: "%(color)s";
     }
     """
 #    padding-left: 0px;
@@ -43,6 +46,24 @@ class KeyboardDialogBase(QtGui.QDialog):
         self._toggle_numpad()
         self._toggle_mouse()
 
+    def set_key(self):
+        if not self.key:
+            return
+
+        keys = self.key.lower().split('+')
+        key_objs = []
+        for k in keys:
+            kobj = self.keydict.get(k)
+            if not kobj:
+                continue
+            if isinstance(kobj, list):
+                key_objs = key_objs + kobj
+            else:
+                key_objs.append(kobj)
+
+        for ko in key_objs:
+            ko.setChecked(True)
+
     def _setup_ui(self):
         a2ctrl.check_ui_module(a2widget.keyboard.base_ui)
         self.ui = a2widget.keyboard.base_ui.Ui_Keyboard()
@@ -50,7 +71,13 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         global STYLE_BUTTON
         font_size = self.a2.win.css_values['font_size'] * KEYFONT_SIZE_FACTOR
-        STYLE_BUTTON = STYLE_BUTTON % {'font-size': font_size}
+        color = self.a2.win.css_values['color_yellow']
+        STYLE_BUTTON = STYLE_BUTTON % {'font-size': font_size, 'color': color}
+        s = self.a2.win.css_values['scale']
+        STYLE_BUTTON += '\nQPushButton#_mouse_body {min-height: %ipx;}' % (80 * s)
+        STYLE_BUTTON += '\nQPushButton#lbutton {min-height: %ipx;}' % (50 * s)
+        STYLE_BUTTON += '\nQPushButton#mbutton {min-height: %ipx;}' % (30 * s)
+        STYLE_BUTTON += '\nQPushButton#rbutton {min-height: %ipx;}' % (50 * s)
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
 
         self.ui.left.setText('←')
@@ -87,6 +114,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         """
         # name = key + '_key'
         button = QtGui.QPushButton(self.ui.keys_widget)
+        button.setCheckable(True)
         # button.setObjectName(name)
         # setattr(self.ui, name, button)
 
@@ -106,6 +134,7 @@ class KeyboardDialogBase(QtGui.QDialog):
             self.keydict[modkeyname] = []
             for side in 'lr':
                 button = getattr(self.ui, '%s%s' % (side, modkeyname))
+                button.setCheckable(True)
                 self.keydict[side + modkeyname] = button
                 self.keydict[modkeyname].append(button)
 
@@ -114,6 +143,7 @@ class KeyboardDialogBase(QtGui.QDialog):
                 obj = getattr(self.ui, keyname)
                 if not isinstance(obj, QtGui.QPushButton):
                     continue
+                obj.setCheckable(True)
                 if keyname not in self.keydict:
                     self.keydict[keyname] = obj
             except AttributeError:

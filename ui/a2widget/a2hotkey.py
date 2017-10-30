@@ -77,6 +77,7 @@ class HotKeyBoard(KeyboardDialogBase, _HotkeyBase):
 
         keyboard_id = self.a2.db.get('keyboard_id') or 'en_us'
         self.build_keyboad(keyboard_id)
+        self.set_key()
 
 
 class HotkeyDialog1(QtGui.QWidget, _HotkeyBase):
