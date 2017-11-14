@@ -7,6 +7,7 @@ Created on 13.09.2017
 
 def main(keyboard):
     keyboard.insert_key(0, '`', keyboard.ui.number_row, tooltip='Tick')
+    # add those before the Backspace key
     for i, k in [(11, '-'), (12, '=')]:
         keyboard.insert_key(i, k, keyboard.ui.number_row)
 

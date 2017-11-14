@@ -3,17 +3,16 @@ Created on 11.09.2017
 
 @author: eric
 """
-from enum import Enum
-from pprint import pprint
-
 import a2ahk
 import a2ctrl
 import a2core
 import a2widget.keyboard.base_ui
 from PySide import QtGui, QtCore
 
-
 log = a2core.get_logger('keyboard_base')
+
+BASE_MODIFIERS = ['alt', 'ctrl', 'shift', 'win']
+SIDES = 'lr'
 KEYFONT_SIZE_FACTOR = 0.8
 STYLE_BUTTON = """
     QPushButton {
@@ -32,6 +31,7 @@ STYLE_BUTTON = """
 
 
 class KeyboardDialogBase(QtGui.QDialog):
+
     def __init__(self, parent):
         super(KeyboardDialogBase, self).__init__(parent)
         self.setModal(True)
@@ -39,6 +39,8 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.a2 = a2core.A2Obj.inst()
         self.keydict = {}
         self.modifier = {}
+        self.checked_key = None
+        self.checked_modifier = []
 
         self._setup_ui()
         self._fill_keydict()
@@ -51,18 +53,21 @@ class KeyboardDialogBase(QtGui.QDialog):
             return
 
         keys = self.key.lower().split('+')
-        key_objs = []
+        buttons = []
         for k in keys:
-            kobj = self.keydict.get(k)
-            if not kobj:
-                continue
-            if isinstance(kobj, list):
-                key_objs = key_objs + kobj
-            else:
-                key_objs.append(kobj)
+            button = self.keydict.get(k)
+            if button:
+                buttons.append(button)
+            elif k in BASE_MODIFIERS:
+                button = self.modifier.get('l' + k)
+                buddy = self.modifier[button.a2buddy]
+                buttons += [button, buddy]
 
-        for ko in key_objs:
-            ko.setChecked(True)
+        for button in buttons:
+            button.setChecked(True)
+            self._key_press(button, False)
+
+        self.ui.key_field.setText(self.key)
 
     def _setup_ui(self):
         a2ctrl.check_ui_module(a2widget.keyboard.base_ui)
@@ -88,10 +93,10 @@ class KeyboardDialogBase(QtGui.QDialog):
         for i in range(1, 13):
             self.add_key('f%i' % i, self.ui.f_row)
 
-        for i in range(0, 10):
-            self.insert_key(i, str(i), self.ui.number_row)
+        for i in range(1, 10):
+            self.insert_key(i - 1, str(i), self.ui.number_row)
 
-        self.insert_key(10, '0', self.ui.number_row)
+        self.insert_key(9, '0', self.ui.number_row)
 
         self.ui.check_numpad.clicked[bool].connect(self._toggle_numpad)
         self.ui.check_mouse.clicked[bool].connect(self._toggle_mouse)
@@ -127,25 +132,72 @@ class KeyboardDialogBase(QtGui.QDialog):
             button.setToolTip(tooltip)
 
         self.keydict[key] = button
+        button.a2key = key
+        button.clicked.connect(self._key_press)
         return button
 
+    def _key_press(self, button=None, update_label=True):
+        if button is None:
+            button = self.sender()
+
+        # modifiers can be toggled however you like
+        if button.a2key in self.modifier:
+            checked = button.isChecked()
+            if checked and button.a2key not in self.checked_modifier:
+                self.checked_modifier.append(button.a2key)
+            elif not checked and button.a2key in self.checked_modifier:
+                self.checked_modifier.remove(button.a2key)
+        # there always has to be a trigger key tho:
+        else:
+            if button.a2key == self.checked_key:
+                self.keydict[button.a2key].setChecked(True)
+            else:
+                if self.checked_key is not None:
+                    self.keydict[self.checked_key].setChecked(False)
+                self.checked_key = button.a2key
+
+        if update_label:
+            new_key_label = []
+            handled = []
+            for modkeyname in self.checked_modifier:
+                if modkeyname in handled:
+                    continue
+
+                modkey = self.keydict[modkeyname]
+                if modkey.a2buddy in self.checked_modifier:
+                    handled.append(modkey.a2buddy)
+                    new_key_label.append(modkey.a2modifier)
+                else:
+                    new_key_label.append(modkeyname)
+            new_key_label.append(self.checked_key)
+
+            self.key = '+'.join([k.title() for k in new_key_label])
+            self.ui.key_field.setText(self.key)
+
     def _fill_keydict(self):
-        for modkeyname in ['alt', 'ctrl', 'shift', 'win']:
-            self.keydict[modkeyname] = []
-            for side in 'lr':
-                button = getattr(self.ui, '%s%s' % (side, modkeyname))
+        for modkeyname in BASE_MODIFIERS:
+            for i in [0, 1]:
+                side = SIDES[i]
+                keyname = side + modkeyname
+                button = getattr(self.ui, keyname)
                 button.setCheckable(True)
-                self.keydict[side + modkeyname] = button
-                self.keydict[modkeyname].append(button)
+                button.clicked.connect(self._key_press)
+                button.a2key = keyname
+                button.a2modifier = modkeyname
+                button.a2buddy = SIDES[int(not i)] + modkeyname
+
+                self.keydict[keyname] = button
+                self.modifier[keyname] = button
 
         for keyname in a2ahk.keys:
             try:
                 obj = getattr(self.ui, keyname)
-                if not isinstance(obj, QtGui.QPushButton):
-                    continue
-                obj.setCheckable(True)
-                if keyname not in self.keydict:
-                    self.keydict[keyname] = obj
+                if isinstance(obj, QtGui.QPushButton):
+                    if keyname not in self.keydict:
+                        obj.a2key = keyname
+                        obj.setCheckable(True)
+                        obj.clicked.connect(self._key_press)
+                        self.keydict[keyname] = obj
             except AttributeError:
                 pass
 
