@@ -5,6 +5,7 @@ Some element description ...
 @created: 2016 11 14
 @author: Eric Werner
 """
+import a2ahk
 import a2ctrl
 from PySide import QtGui
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
@@ -44,7 +45,8 @@ class Draw(DrawCtrl):
                 # amend the globals dict with some useful info
                 globals_dict = globals()
                 globals_dict.update({'a2path': self.mod.path,
-                                     'call_local_ahk': self.call_local_ahk})
+                                     'call_local_ahk': self.call_local_ahk,
+                                     'call_lib_cmd': a2ahk.call_lib_cmd})
                 exec(code, globals_dict)
             except Exception:
                 log.error(traceback.format_exc().strip())
@@ -52,7 +54,6 @@ class Draw(DrawCtrl):
                           % (self.mod.name, code))
 
     def call_local_ahk(self, script_name, *args):
-        import a2ahk
         script_name = a2ahk.ensure_ahk_ext(script_name)
         script_path = os.path.join(self.mod.path, script_name)
         return a2ahk.call_cmd(script_path, cwd=self.mod.path, *args)
