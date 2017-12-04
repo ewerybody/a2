@@ -101,6 +101,9 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.check_numpad.clicked[bool].connect(self._toggle_numpad)
         self.ui.check_mouse.clicked[bool].connect(self._toggle_mouse)
 
+        self.ui.a2ok_button.clicked.connect(self.ok)
+        self.ui.a2cancel_button.clicked.connect(self.close)
+
     def insert_key(self, index, key, layout, label=None, tooltip=None):
         button = self._create_key(key, label, tooltip)
         layout.insertWidget(index, button)

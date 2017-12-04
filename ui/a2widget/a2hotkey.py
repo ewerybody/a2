@@ -78,7 +78,12 @@ class HotKeyBoard(KeyboardDialogBase, _HotkeyBase):
         keyboard_id = self.a2.db.get('keyboard_id') or 'en_us'
         self.build_keyboad(keyboard_id)
         self.set_key()
+        self.okay_state = True
 
+    def ok(self):
+        if self.okay_state:
+            self.hotkey_set.emit(self.key)
+            self.close()
 
 class HotkeyDialog1(QtGui.QWidget, _HotkeyBase):
     label = 'Simple Dialog'
@@ -126,8 +131,6 @@ class HotkeyDialog1(QtGui.QWidget, _HotkeyBase):
         self.main_layout.addLayout(self.button_layout)
 
     def ok(self):
-        log.info('key: %s' % self.key)
-        log.info('ok: %s' % self.okay_state)
         if self.okay_state:
             self.hotkey_set.emit(self.key)
             self.close()
@@ -168,7 +171,6 @@ class HotkeyDialog1(QtGui.QWidget, _HotkeyBase):
             modifier = [k.title() for k in modifier]
             key = key.title()
             self.key = tilde + '+'.join(modifier + [key])
-            log.info('tempKey %s:' % self.key)
             self.text_edit.setStyleSheet(STYLE_GOOD)
 
         self.okay_state = okay_state
