@@ -7,6 +7,7 @@ import time
 import string
 import codecs
 import webbrowser
+import subprocess
 
 import a2ahk
 import a2core
@@ -113,3 +114,7 @@ def surf_to(url):
 def write_utf8(path, content):
     with codecs.open(path, 'w', encoding='utf-8-sig') as fobj:
         fobj.write(content)
+
+
+def explore(path):
+    subprocess.Popen(['explorer.exe', path])

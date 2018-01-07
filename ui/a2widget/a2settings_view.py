@@ -5,7 +5,6 @@ a2ctrl.a2settings
 @author: eric
 """
 import os
-import subprocess
 from os.path import exists, dirname, basename, relpath
 
 from PySide import QtGui, QtCore
@@ -14,7 +13,7 @@ import a2ahk
 import a2core
 import a2util
 import a2ctrl.connect
-from a2widget import a2settings_view_ui
+from a2widget import a2settings_view_ui, a2module_source
 
 
 autohotkey_exe = 'autohotkey.exe'
@@ -37,7 +36,7 @@ class A2Settings(QtGui.QWidget):
         enabled_list = [name for name, data in self.a2.enabled.items() if data[0]]
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
-            modsourcewidget = ModSourceWidget(source, enabled_list)
+            modsourcewidget = a2module_source.ModSourceWidget(source, enabled_list)
             modsourcewidget.toggled.connect(self.main.settings_changed)
             self.ui.mod_source_layout.addWidget(modsourcewidget)
 
@@ -151,44 +150,3 @@ class A2Settings(QtGui.QWidget):
         self.add_source_menu.addAction(
             QtGui.QAction('Create Local', self, triggered=self.main.create_local_source))
         self.add_source_menu.addAction(QtGui.QAction('Add From URL', self))
-
-
-class ModSourceWidget(QtGui.QWidget):
-    toggled = QtCore.Signal()
-
-    def __init__(self, mod_source, enabled_list):
-        super(ModSourceWidget, self).__init__()
-        self.mod_source = mod_source
-        self.mainlayout = QtGui.QHBoxLayout(self)
-        m = 1
-        self.mainlayout.setContentsMargins(m, m, m, m)
-        self.check = QtGui.QCheckBox(mod_source.name)
-        self.check.setChecked(mod_source.name in enabled_list)
-        self.mainlayout.addWidget(self.check)
-        self.check.clicked[bool].connect(mod_source.toggle)
-        self.check.clicked.connect(self.toggled.emit)
-
-        self.mod_count = QtGui.QLabel('%i modules, %i enabled'
-                                      % (mod_source.mod_count, mod_source.enabled_count,))
-        self.mainlayout.addWidget(self.mod_count)
-
-        self.button = QtGui.QPushButton('settings')
-        self.mainlayout.setStretch(0, 1)
-        self.mainlayout.setStretch(1, 1)
-        self.mainlayout.addWidget(self.button)
-        self.setLayout(self.mainlayout)
-
-        self.menu = QtGui.QMenu(self)
-        self.button.setMenu(self.menu)
-        self.menu.aboutToShow.connect(self.build_menu)
-
-    def build_menu(self):
-        self.menu.clear()
-        self.menu.addAction(QtGui.QAction('Details...', self, triggered=self.show_details))
-        self.menu.addAction(QtGui.QAction('Explore to ...', self, triggered=self.explore_source))
-
-    def show_details(self):
-        raise NotImplementedError('Module Source Dialog tbd...')
-
-    def explore_source(self):
-        subprocess.Popen(['explorer.exe', self.mod_source.path])
