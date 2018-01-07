@@ -17,7 +17,7 @@ KEYFONT_SIZE_FACTOR = 0.8
 STYLE_BUTTON = """
     QPushButton {
         font-size: %(font-size)ipx;
-        padding: 3px;
+        padding: %(padding)ipx;
         min-width: 15px;
         min-height: 22px;
         max-height: 22px;
@@ -75,15 +75,22 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.setupUi(self)
 
         global STYLE_BUTTON
-        font_size = self.a2.win.css_values['font_size'] * KEYFONT_SIZE_FACTOR
+        scale = self.a2.win.css_values['scale']
+        print('scale: %i' % scale)
         color = self.a2.win.css_values['color_yellow']
-        STYLE_BUTTON = STYLE_BUTTON % {'font-size': font_size, 'color': color}
-        s = self.a2.win.css_values['scale']
-        STYLE_BUTTON += '\nQPushButton#_mouse_body {min-height: %ipx;}' % (80 * s)
-        STYLE_BUTTON += '\nQPushButton#lbutton {min-height: %ipx;}' % (50 * s)
-        STYLE_BUTTON += '\nQPushButton#mbutton {min-height: %ipx;}' % (30 * s)
-        STYLE_BUTTON += '\nQPushButton#rbutton {min-height: %ipx;}' % (50 * s)
+
+        font_size = self.a2.win.css_values['font_size'] * KEYFONT_SIZE_FACTOR
+        STYLE_BUTTON = STYLE_BUTTON % {'font-size': font_size, 'color': color, 'padding': scale * 3}
+        STYLE_BUTTON += '\nQPushButton#_mouse_body {min-height: %ipx;}' % (30 * scale)
+        STYLE_BUTTON += '\nQPushButton#lbutton {min-height: %ipx;}' % (50 * scale)
+        STYLE_BUTTON += '\nQPushButton#wheelleft {min-height: %ipx;max-width: %ipx;}' % (50 * scale, 5 * scale)
+        STYLE_BUTTON += '\nQPushButton#wheelright {min-height: %ipx;max-width: %ipx;}' % (50 * scale, 5 * scale)
+        STYLE_BUTTON += '\nQPushButton#mbutton {min-height: %ipx;}' % (30 * scale)
+        STYLE_BUTTON += '\nQPushButton#rbutton {min-height: %ipx;}' % (50 * scale)
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
+
+        self.ui.mouse_layout_1.setSpacing(scale * 2)
+        self.ui.mouse_layout_2.setSpacing(scale * 2)
 
         self.ui.left.setText('←')
         self.ui.up.setText('↑')

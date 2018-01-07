@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1754</width>
-    <height>330</height>
+    <width>3345</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -525,9 +525,15 @@ Lock</string>
        <widget class="QWidget" name="mouse_block_widget" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <layout class="QHBoxLayout" name="mouse_layout_1">
+           <property name="topMargin">
+            <number>1</number>
+           </property>
            <item>
             <widget class="QPushButton" name="lbutton">
+             <property name="toolTip">
+              <string>Left Mouse Button</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -535,15 +541,21 @@ Lock</string>
            </item>
            <item>
             <widget class="QPushButton" name="wheelleft">
+             <property name="toolTip">
+              <string>Wheel Left</string>
+             </property>
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,0">
+            <layout class="QVBoxLayout" name="mouse_layout_2">
              <item>
               <widget class="QPushButton" name="wheelup">
+               <property name="toolTip">
+                <string>Wheel Up</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -551,6 +563,9 @@ Lock</string>
              </item>
              <item>
               <widget class="QPushButton" name="mbutton">
+               <property name="toolTip">
+                <string>Middle Mouse Button</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -558,6 +573,9 @@ Lock</string>
              </item>
              <item>
               <widget class="QPushButton" name="wheeldown">
+               <property name="toolTip">
+                <string>Wheel Down</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -567,6 +585,9 @@ Lock</string>
            </item>
            <item>
             <widget class="QPushButton" name="wheelright">
+             <property name="toolTip">
+              <string>Wheel Right</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -574,6 +595,9 @@ Lock</string>
            </item>
            <item>
             <widget class="QPushButton" name="rbutton">
+             <property name="toolTip">
+              <string>Right Mouse Button</string>
+             </property>
              <property name="text">
               <string/>
              </property>
