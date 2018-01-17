@@ -90,7 +90,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
 
         self.ui.mouse_layout_1.setSpacing(scale * 2)
-        self.ui.mouse_layout_2.setSpacing(scale * 2)
+        # self.ui.mouse_layout_2.setSpacing(scale * 2)
 
         self.ui.left.setText('←')
         self.ui.up.setText('↑')
@@ -124,7 +124,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         A key can have different things:
         * printed on it
         * as dictionary name
-        #* as an internal name
+        * as an internal name
         * showing as a tooltip
         """
         # name = key + '_key'
@@ -221,7 +221,7 @@ class KeyboardDialogBase(QtGui.QDialog):
             if objname not in self.keydict:
                 log.error('NOT IN!: %s' % objname)
 
-    def build_keyboad(self, keyboard_id):
+    def build_keyboard(self, keyboard_id):
         if keyboard_id == 'en_us':
             import a2widget.keyboard.en_us
             a2widget.keyboard.en_us.main(self)

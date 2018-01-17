@@ -395,21 +395,25 @@ Down</string>
       <item>
        <widget class="QWidget" name="num_block_widget" native="true">
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0" colspan="4">
-          <widget class="QWidget" name="num_spacer" native="true"/>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="numpaddiv">
+           <property name="text">
+            <string>/</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="numpad7">
+           <property name="text">
+            <string>7</string>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QPushButton" name="numlock">
            <property name="text">
             <string>Num
 Lock</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="numpaddiv">
-           <property name="text">
-            <string>/</string>
            </property>
           </widget>
          </item>
@@ -427,59 +431,10 @@ Lock</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QPushButton" name="numpad7">
-           <property name="text">
-            <string>7</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QPushButton" name="numpad8">
-           <property name="text">
-            <string>8</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QPushButton" name="numpad9">
-           <property name="text">
-            <string>9</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3" rowspan="2">
-          <widget class="QPushButton" name="numpadadd">
-           <property name="text">
-            <string>+</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QPushButton" name="numpad4">
-           <property name="text">
-            <string>4</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QPushButton" name="numpad5">
-           <property name="text">
-            <string>5</string>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="2">
           <widget class="QPushButton" name="numpad6">
            <property name="text">
             <string>6</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QPushButton" name="numpad1">
-           <property name="text">
-            <string>1</string>
            </property>
           </widget>
          </item>
@@ -490,13 +445,6 @@ Lock</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="2">
-          <widget class="QPushButton" name="numpad3">
-           <property name="text">
-            <string>3</string>
-           </property>
-          </widget>
-         </item>
          <item row="4" column="3" rowspan="2">
           <widget class="QPushButton" name="numpadenter">
            <property name="text">
@@ -504,10 +452,45 @@ Lock</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="2">
-          <widget class="QPushButton" name="numpad0">
+         <item row="2" column="1">
+          <widget class="QPushButton" name="numpad8">
            <property name="text">
-            <string>0</string>
+            <string>8</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QPushButton" name="numpad3">
+           <property name="text">
+            <string>3</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="numpad4">
+           <property name="text">
+            <string>4</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="numpad1">
+           <property name="text">
+            <string>1</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QPushButton" name="numpad9">
+           <property name="text">
+            <string>9</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QPushButton" name="numpad5">
+           <property name="text">
+            <string>5</string>
            </property>
           </widget>
          </item>
@@ -518,6 +501,23 @@ Lock</string>
            </property>
           </widget>
          </item>
+         <item row="5" column="0" colspan="2">
+          <widget class="QPushButton" name="numpad0">
+           <property name="text">
+            <string>0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3" rowspan="2">
+          <widget class="QPushButton" name="numpadadd">
+           <property name="text">
+            <string>+</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="4">
+          <widget class="QWidget" name="num_spacer" native="true"/>
+         </item>
         </layout>
        </widget>
       </item>
@@ -526,11 +526,17 @@ Lock</string>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
           <layout class="QHBoxLayout" name="mouse_layout_1">
-           <property name="topMargin">
-            <number>1</number>
+           <property name="sizeConstraint">
+            <enum>QLayout::SetNoConstraint</enum>
            </property>
-           <item>
+           <item alignment="Qt::AlignTop">
             <widget class="QPushButton" name="lbutton">
+             <property name="baseSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Left Mouse Button</string>
              </property>
@@ -539,7 +545,7 @@ Lock</string>
              </property>
             </widget>
            </item>
-           <item>
+           <item alignment="Qt::AlignTop">
             <widget class="QPushButton" name="wheelleft">
              <property name="toolTip">
               <string>Wheel Left</string>
@@ -550,8 +556,11 @@ Lock</string>
             </widget>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="mouse_layout_2">
-             <item>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinAndMaxSize</enum>
+             </property>
+             <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="wheelup">
                <property name="toolTip">
                 <string>Wheel Up</string>
@@ -561,7 +570,7 @@ Lock</string>
                </property>
               </widget>
              </item>
-             <item>
+             <item alignment="Qt::AlignVCenter">
               <widget class="QPushButton" name="mbutton">
                <property name="toolTip">
                 <string>Middle Mouse Button</string>
@@ -571,7 +580,7 @@ Lock</string>
                </property>
               </widget>
              </item>
-             <item>
+             <item alignment="Qt::AlignBottom">
               <widget class="QPushButton" name="wheeldown">
                <property name="toolTip">
                 <string>Wheel Down</string>
@@ -583,7 +592,7 @@ Lock</string>
              </item>
             </layout>
            </item>
-           <item>
+           <item alignment="Qt::AlignTop">
             <widget class="QPushButton" name="wheelright">
              <property name="toolTip">
               <string>Wheel Right</string>
@@ -593,7 +602,7 @@ Lock</string>
              </property>
             </widget>
            </item>
-           <item>
+           <item alignment="Qt::AlignTop">
             <widget class="QPushButton" name="rbutton">
              <property name="toolTip">
               <string>Right Mouse Button</string>
