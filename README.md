@@ -18,5 +18,5 @@ See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially
 * [a2 – the first humble steps](http://goodsoul.de/?p=780)
 
 ## <a name="dev-team"></a>Authors/Contributors  
-* [ewerybody](https://github.com/ewerybody)
+* [Eric Werner (ewerybody)](https://github.com/ewerybody)
 * [Oliver Lipkau](https://github.com/lipkau)
