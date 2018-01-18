@@ -61,11 +61,17 @@ class Edit(EditCtrl):
     def _adjust_path_field(self):
         self.ui.cfg_value.writable = self.cfg.get('writable', False)
         self.ui.cfg_value.file_types = self.cfg.get('file_types', '')
-        self.ui.cfg_value.browse_type = self.cfg.get('browse_type', a2path_field.BrowseType.file)
         self.ui.cfg_value.save_mode = self.cfg.get('save_mode', False)
+        browse_type = self.cfg.get('browse_type', a2path_field.BrowseType.file)
+        self.ui.cfg_value.browse_type = browse_type
 
-        self.ui.cfg_file_types.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
-        self.ui.cfg_save_mode.setEnabled(self.ui.cfg_value.browse_type == a2path_field.BrowseType.file)
+        file_ctrls_visible = browse_type == a2path_field.BrowseType.file
+        self.ui.cfg_file_types.setVisible(file_ctrls_visible)
+        self.ui.cfg_save_mode.setVisible(file_ctrls_visible)
+        self.ui.file_types_label.setVisible(file_ctrls_visible)
+        #
+        self.ui.browse_type_layout.setStretch(2, file_ctrls_visible)
+        self.ui.browse_type_layout.setStretch(1, not file_ctrls_visible)
 
     @staticmethod
     def element_name():
