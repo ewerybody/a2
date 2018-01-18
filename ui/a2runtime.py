@@ -269,6 +269,9 @@ class InitCollection(_Collection):
 def collect_includes(specific=None):
     collector = IncludeDataCollector()
 
+    if isinstance(specific, str):
+        specific = IncludeType.__members__.get(specific)
+
     if not specific:
         collector.get_all_collections()
     elif specific in IncludeType:
