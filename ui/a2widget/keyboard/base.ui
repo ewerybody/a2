@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>3345</width>
-    <height>630</height>
+    <width>1860</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -529,37 +529,49 @@ Lock</string>
            <property name="sizeConstraint">
             <enum>QLayout::SetNoConstraint</enum>
            </property>
-           <item alignment="Qt::AlignTop">
-            <widget class="QPushButton" name="lbutton">
-             <property name="baseSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Left Mouse Button</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignTop">
-            <widget class="QPushButton" name="wheelleft">
-             <property name="toolTip">
-              <string>Wheel Left</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="QPushButton" name="lbutton">
+                 <property name="baseSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Left Mouse Button</string>
+                 </property>
+                 <property name="text">
+                  <string>L</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="wheelleft">
+                 <property name="toolTip">
+                  <string>Wheel Left</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_3">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetMinAndMaxSize</enum>
-             </property>
              <item alignment="Qt::AlignTop">
               <widget class="QPushButton" name="wheelup">
                <property name="toolTip">
@@ -576,7 +588,7 @@ Lock</string>
                 <string>Middle Mouse Button</string>
                </property>
                <property name="text">
-                <string/>
+                <string>M</string>
                </property>
               </widget>
              </item>
@@ -592,25 +604,40 @@ Lock</string>
              </item>
             </layout>
            </item>
-           <item alignment="Qt::AlignTop">
-            <widget class="QPushButton" name="wheelright">
-             <property name="toolTip">
-              <string>Wheel Right</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item alignment="Qt::AlignTop">
-            <widget class="QPushButton" name="rbutton">
-             <property name="toolTip">
-              <string>Right Mouse Button</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QPushButton" name="wheelright">
+                 <property name="toolTip">
+                  <string>Wheel Right</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="rbutton">
+                 <property name="toolTip">
+                  <string>Right Mouse Button</string>
+                 </property>
+                 <property name="text">
+                  <string>R</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>

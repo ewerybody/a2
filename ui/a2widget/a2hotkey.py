@@ -76,7 +76,7 @@ class HotKeyBoard(KeyboardDialogBase, _HotkeyBase):
         _HotkeyBase.__init__(self, parent, key, scope_data)
 
         keyboard_id = self.a2.db.get('keyboard_id') or 'en_us'
-        self.build_keyboad(keyboard_id)
+        self.build_keyboard(keyboard_id)
         self.set_key()
         self.okay_state = True
 

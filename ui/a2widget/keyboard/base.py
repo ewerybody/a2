@@ -90,7 +90,6 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.keys_widget.setStyleSheet(STYLE_BUTTON)
 
         self.ui.mouse_layout_1.setSpacing(scale * 2)
-        # self.ui.mouse_layout_2.setSpacing(scale * 2)
 
         self.ui.left.setText('←')
         self.ui.up.setText('↑')
