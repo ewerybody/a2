@@ -6,7 +6,7 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl
-from PySide import QtGui
+from PySide import QtGui, QtCore
 from a2element import pathlist_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2PathField
 
@@ -25,23 +25,34 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.a2_group_layout = QtGui.QVBoxLayout(self)
 
         self.path_widgets = []
-        for i, path in enumerate(self.get_user_value(list)):
-            self.path_widgets.append(self._make_path_widget(i, path))
+        for path in self.get_user_value(list):
+            self.add_path(path)
 
-    def add_path(self):
-        path_widget = self._make_path_widget(self.a2_group_layout.count())
+    def add_path(self, path=''):
+        path_widget = PathEntry(self, self.a2_group_layout.count(),
+                                self.cfg.get('browse_type', 0), path)
+        path_widget.changed.connect(self.check)
+        path_widget.add_path.connect(self.add_path)
+        path_widget.delete_me.connect(self._path_removed)
+        self.a2_group_layout.addWidget(path_widget)
         self.path_widgets.append(path_widget)
 
-    def remove_path(self):
-        widget = self.path_widgets.pop(self.sender().path_index)
-        widget.parent().deleteLater()
-        self.check()
+    def _path_removed(self, del_index):
+        del_widget = self.path_widgets.pop(del_index)
+        # fix index labels
+        for i, widget in enumerate(self.path_widgets):
+            widget.index = i
+
+        # avoid check when path was empty
+        if del_widget.path:
+            self.check()
 
     def _make_path_widget(self, i, path=''):
-        widget = QtGui.QWidget()
+        widget = QtGui.QWidget(self)
         layout = QtGui.QHBoxLayout(widget)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(QtGui.QLabel(str(i + 1)))
+        widget.label = QtGui.QLabel(str(i + 1))
+        layout.addWidget(widget.label)
         field = A2PathField(widget, path, writable=False)
         field.browse_type = self.cfg.get('browse_type', 0)
         field.changed.connect(self.check)
@@ -58,8 +69,12 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.a2_group_layout.addWidget(widget)
         return field
 
+    def _check_indices(self):
+        for i, widget in enumerate(self.path_widgets):
+            print('widget.label.text() %i: %s' % (i, widget.label.text()))
+
     def check(self):
-        path_list = [w.value for w in self.path_widgets]
+        path_list = [w.path for w in self.path_widgets if w.path]
         self.set_user_value(path_list)
         self.change('variables')
 
@@ -85,6 +100,54 @@ class Edit(EditCtrl):
     @staticmethod
     def element_icon():
         return a2ctrl.Icons.inst().check
+
+
+class PathEntry(QtGui.QWidget):
+    changed = QtCore.Signal(str)
+    delete_me = QtCore.Signal(int)
+    add_path = QtCore.Signal()
+
+    def __init__(self, parent, index, browse_type, path=''):
+        super(PathEntry, self).__init__(parent)
+        layout = QtGui.QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self._index = 0
+        self._label = QtGui.QLabel()
+        self.index = index
+        layout.addWidget(self._label)
+        self._field = A2PathField(self, path, writable=False)
+        self._field.browse_type = browse_type
+        self._field.changed.connect(self.changed.emit)
+        layout.addWidget(self._field)
+
+        button = QtGui.QToolButton(self)
+        if index:
+            button.setIcon(a2ctrl.Icons.inst().clear)
+            button.clicked.connect(self.delete)
+        else:
+            button.setIcon(a2ctrl.Icons.inst().label_plus)
+            button.clicked.connect(self.add_path.emit)
+        layout.addWidget(button)
+
+    @property
+    def path(self):
+        return self._field.value
+
+    @property
+    def index(self):
+        return self._index
+
+    @index.setter
+    def index(self, value):
+        self._index = value
+        self._label.setText(str(value + 1))
+
+    def delete(self):
+        self.deleteLater()
+        self.delete_me.emit(self.index)
+
+    def __repr__(self, *args, **kwargs):
+        return '<PathEntry %i "%s" at %s>' % (self.index, self.path, id(self))
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
