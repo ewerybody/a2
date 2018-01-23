@@ -1,0 +1,7 @@
+QPushButton#lbutton {{
+    border-top-left-radius: {big_radius}px;
+}}
+
+QPushButton#rbutton {{
+    border-top-right-radius: {big_radius}px;
+}}

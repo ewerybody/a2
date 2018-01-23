@@ -1,0 +1,16 @@
+QPushButton {{
+    font-size: {font_size}px;
+}}
+
+QPushButton:checked {{
+    background-color: "{color}";
+}}
+
+QPushButton#pgdn,
+QPushButton#pgup,
+QPushButton#scrolllock,
+QPushButton#printscreen {{
+    font-size: {font_size_small}px;
+    max-height: {key_height}px;
+    padding: 0px;
+}}
