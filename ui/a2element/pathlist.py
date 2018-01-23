@@ -25,7 +25,7 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.a2_group_layout = QtGui.QVBoxLayout(self)
 
         self.path_widgets = []
-        for path in self.get_user_value(list):
+        for path in self.get_user_value(list, default=['']):
             self.add_path(path)
 
     def add_path(self, path=''):
