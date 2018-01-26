@@ -1,0 +1,13 @@
+{
+    "font_size_factor": 0.6,
+    "small_font_factor": 0.5,
+    "big_radius": 30,
+    "big_width": 15,
+    "big_height": 80,
+    "middle_height": 40,
+    "wheel_sides": 60,
+    "slim": 12,
+    "key_height": 25,
+    "big_spacing": 20,
+    "small_spacing": 5
+}

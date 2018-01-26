@@ -5,3 +5,49 @@ QPushButton#lbutton {{
 QPushButton#rbutton {{
     border-top-right-radius: {big_radius}px;
 }}
+
+QPushButton#lbutton,
+QPushButton#rbutton,
+QPushButton#mbutton,
+QPushButton#wheelup,
+QPushButton#wheeldown {{
+    max-width: {big_width}px;
+    min-width: {big_width}px;
+}}
+
+QPushButton#lbutton,
+QPushButton#rbutton,
+QPushButton#mbutton,
+QPushButton#wheelup,
+QPushButton#wheeldown {{
+    max-width: {big_width}px;
+    min-width: {big_width}px;
+}}
+
+QPushButton#lbutton,
+QPushButton#rbutton {{
+    max-height: {big_height}px;
+    min-height: {big_height}px;
+}}
+QPushButton#mbutton {{
+    max-height: {middle_height}px;
+    min-height: {middle_height}px;
+}}
+
+QPushButton#wheelup,
+QPushButton#wheeldown {{
+    max-height: {slim}px;
+    min-height: {slim}px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}}
+
+QPushButton#wheelleft,
+QPushButton#wheelright {{
+    max-width: {slim}px;
+    min-width: {slim}px;
+    min-height: {wheel_sides}px;
+    max-height: {wheel_sides}px;
+    padding-left: 0px;
+    padding-right: 0px;
+}}

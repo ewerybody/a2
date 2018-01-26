@@ -7,18 +7,18 @@ import os
 import a2ahk
 import a2ctrl
 import a2core
+import a2util
 from a2widget.keyboard import base_ui, mouse_ui, numpad_ui
 
 from PySide import QtGui, QtCore
-
+import pprint
 
 log = a2core.get_logger('keyboard_base')
 BASE_MODIFIERS = ['alt', 'ctrl', 'shift', 'win']
 SIDES = 'lr'
-KEYFONT_SIZE_FACTOR = 0.5
-KEYFONT_SIZE_FACTOR_SMALL = 0.2
 DB_KEY_MOUSE = 'hotkey_dialog_show_mouse'
 DB_KEY_NUMPAD = 'hotkey_dialog_show_numpad'
+_HERE = os.path.dirname(__file__)
 
 
 class KeyboardDialogBase(QtGui.QDialog):
@@ -69,32 +69,15 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.key_field.setText(self.key)
 
     def _setup_ui(self):
-        scale = self.a2.win.css_values['scale']
-        color = self.a2.win.css_values['color_yellow']
-        font_size = self.a2.win.css_values['font_size'] * KEYFONT_SIZE_FACTOR
-        font_size_small = self.a2.win.css_values['font_size'] * KEYFONT_SIZE_FACTOR_SMALL
-        key_height = scale * 25
-
-        css = load_css('main')
-        css = css.format(font_size=font_size, color=color, font_size_small=font_size_small,
-                         key_height=key_height)
-
-        # for key_name in ['pgup', 'pgdn', 'scrolllock', 'printscreen']:
-        #     self.key_dict[key_name].setMaximumHeight(key_height)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
 
         self.ui.mouse_block_widget = MouseWidget(self)
         self.ui.keys_layout.addWidget(self.ui.mouse_block_widget)
-        self.ui.mouse_block_widget.set_style(scale)
-
-        self.ui.keys_layout.setSpacing(scale * 20)
-        self.ui.main_block.setSpacing(scale * 5)
-        self.ui.cursor_block.setSpacing(scale * 5)
 
         self.ui.left.setText('←')
         self.ui.up.setText('↑')
         self.ui.down.setText('↓')
         self.ui.right.setText('→')
-        self.ui.keys_widget.setStyleSheet(css)
 
         for i in range(1, 13):
             self.add_key('f%i' % i, self.ui.f_row)
@@ -232,7 +215,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         if state is None:
             state = self.a2.db.get(DB_KEY_NUMPAD) or False
             self.ui.check_numpad.setChecked(state)
-        #self.ui.num_block_widget.setVisible(state)
+        # self.ui.num_block_widget.setVisible(state)
         self.a2.db.set(DB_KEY_NUMPAD, state)
 
     def _toggle_mouse(self, state=None):
@@ -242,6 +225,29 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.mouse_block_widget.setVisible(state)
         self.a2.db.set(DB_KEY_MOUSE, state)
 
+    def refresh_style(self):
+        scale = self.a2.win.css_values['scale']
+        values = a2util.json_read(os.path.join(_HERE, 'style_values.json'))
+        values = dict([(k, v * scale) for k, v in values.items()])
+        values['color'] = self.a2.win.css_values['color_yellow']
+        values['font_size'] = int(self.a2.win.css_values['font_size'] * values['font_size_factor'])
+        values['font_size_small'] = int(self.a2.win.css_values['font_size'] * values['small_font_factor'])
+
+        log.info('setting spaces ...')
+        self.ui.keys_layout.setSpacing(values['big_spacing'])
+        self.ui.main_block.setSpacing(values['small_spacing'])
+        self.ui.cursor_block.setSpacing(values['small_spacing'])
+        self.ui.mouse_block_widget.set_spacing(values['small_spacing'])
+
+        log.info('setting main style ...')
+        main_css = load_css('main').format(**values)
+        self.ui.keys_widget.setStyleSheet(main_css)
+
+        log.info('setting mouse style ...')
+        mouse_css = load_css('mouse').format(**values)
+        self.ui.mouse_block_widget.setStyleSheet(mouse_css)
+        log.info('style refreshed ...\n  %s' % pprint.pformat(values))
+
 
 class MouseWidget(QtGui.QWidget):
     def __init__(self, parent):
@@ -249,13 +255,13 @@ class MouseWidget(QtGui.QWidget):
         self.ui = mouse_ui.Ui_Mouse()
         self.ui.setupUi(self)
 
-    def set_style(self, scale):
-        css = load_css('mouse').format(big_radius=scale * 30)
-        self.setStyleSheet(css)
+    def set_spacing(self, spacing):
+        self.ui.main_layout.setSpacing(spacing)
+        self.ui.middle_layout.setSpacing(spacing)
 
 
 def load_css(name):
-    template_file = os.path.join(os.path.dirname(__file__), '%s.css.template' % name)
+    template_file = os.path.join(_HERE, '%s.css.template' % name)
     with open(template_file) as fobj:
         css = fobj.read()
     return css
