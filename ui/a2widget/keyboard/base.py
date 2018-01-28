@@ -93,6 +93,8 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.a2ok_button.clicked.connect(self.ok)
         self.ui.a2cancel_button.clicked.connect(self.close)
 
+        self.refresh_style()
+
     def insert_key(self, index, key, layout, label=None, tooltip=None):
         button = self._create_key(key, label, tooltip)
         layout.insertWidget(index, button)
@@ -227,11 +229,12 @@ class KeyboardDialogBase(QtGui.QDialog):
 
     def refresh_style(self):
         scale = self.a2.win.css_values['scale']
+        log.info('scale: %s' % scale)
         values = a2util.json_read(os.path.join(_HERE, 'style_values.json'))
         values = dict([(k, v * scale) for k, v in values.items()])
         values['color'] = self.a2.win.css_values['color_yellow']
-        values['font_size'] = int(self.a2.win.css_values['font_size'] * values['font_size_factor'])
-        values['font_size_small'] = int(self.a2.win.css_values['font_size'] * values['small_font_factor'])
+        values['font_size'] = self.a2.win.css_values['font_size'] * values['font_size_factor']
+        values['font_size_small'] = self.a2.win.css_values['font_size'] * values['small_font_factor']
 
         log.info('setting spaces ...')
         self.ui.keys_layout.setSpacing(values['big_spacing'])
@@ -240,11 +243,11 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui.mouse_block_widget.set_spacing(values['small_spacing'])
 
         log.info('setting main style ...')
-        main_css = load_css('main').format(**values)
+        main_css = load_css('main') % values
         self.ui.keys_widget.setStyleSheet(main_css)
 
         log.info('setting mouse style ...')
-        mouse_css = load_css('mouse').format(**values)
+        mouse_css = load_css('mouse') % values
         self.ui.mouse_block_widget.setStyleSheet(mouse_css)
         log.info('style refreshed ...\n  %s' % pprint.pformat(values))
 

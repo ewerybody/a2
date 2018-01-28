@@ -1,16 +1,16 @@
-QPushButton {{
-    font-size: {font_size}px;
-}}
+QPushButton {
+    font-size: %(font_size)ipx;
+}
 
-QPushButton:checked {{
-    background-color: "{color}";
-}}
+QPushButton:checked {
+    background-color: "%(color)s";
+}
 
 QPushButton#pgdn,
 QPushButton#pgup,
 QPushButton#scrolllock,
-QPushButton#printscreen {{
-    font-size: {font_size_small}px;
-    max-height: {key_height}px;
-    padding: 0px;
-}}
+QPushButton#printscreen {
+    font-size: %(font_size_small)ipx;
+    max-height: %(key_height)ipx;
+    padding: %(twoline_key_padding)ipx;
+}

@@ -1,6 +1,6 @@
 {
-    "font_size_factor": 0.6,
-    "small_font_factor": 0.5,
+    "font_size_factor": 0.3,
+    "small_font_factor": 0.26,
     "big_radius": 30,
     "big_width": 15,
     "big_height": 80,
@@ -9,5 +9,6 @@
     "slim": 12,
     "key_height": 25,
     "big_spacing": 20,
-    "small_spacing": 5
+    "small_spacing": 5,
+    "twoline_key_padding": 1
 }
