@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\keyboard\mouse.ui'
 #
-# Created: Mon Jan 22 23:42:01 2018
+# Created: Sun Jan 28 22:51:28 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Mouse(object):
     def setupUi(self, Mouse):
         Mouse.setObjectName("Mouse")
-        Mouse.resize(420, 278)
+        Mouse.resize(420, 289)
         self.verticalLayout = QtGui.QVBoxLayout(Mouse)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")

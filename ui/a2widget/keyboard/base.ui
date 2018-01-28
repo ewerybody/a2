@@ -6,16 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2076</width>
-    <height>630</height>
+    <width>1753</width>
+    <height>648</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Hotkey Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1,0">
+  <layout class="QVBoxLayout" name="dialog_layout" stretch="0,1,0">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="top_layout">
      <property name="topMargin">
       <number>10</number>
      </property>
@@ -35,14 +38,14 @@
      <item>
       <widget class="QCheckBox" name="check_numpad">
        <property name="text">
-        <string>Num Pad</string>
+        <string notr="true">Num Pad</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="check_mouse">
        <property name="text">
-        <string>Mouse</string>
+        <string notr="true">Mouse</string>
        </property>
       </widget>
      </item>
@@ -51,363 +54,221 @@
    <item>
     <widget class="QWidget" name="keys_widget" native="true">
      <layout class="QHBoxLayout" name="keys_layout">
-      <property name="spacing">
-       <number>50</number>
-      </property>
       <property name="margin">
        <number>0</number>
       </property>
       <item>
-       <layout class="QVBoxLayout" name="main_block" stretch="0,1,0,0,0,0">
-        <item>
-         <layout class="QHBoxLayout" name="f_row">
-          <item>
-           <widget class="QPushButton" name="escape">
-            <property name="text">
-             <string>Esc</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QWidget" name="f_spacer" native="true"/>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="enter_key_rows">
-          <item>
-           <layout class="QVBoxLayout" name="top_letter_rows">
-            <item>
-             <layout class="QHBoxLayout" name="number_row">
-              <item>
-               <widget class="QPushButton" name="backspace">
-                <property name="text">
-                 <string>Backspace</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="letter_row_top">
-              <item>
-               <widget class="QPushButton" name="tab">
-                <property name="text">
-                 <string>Tab</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="letter_row_middle">
-          <item>
-           <widget class="QPushButton" name="capslock">
-            <property name="text">
-             <string>Caps Lock</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="letter_row_bottom">
-          <item>
-           <widget class="QPushButton" name="lshift">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Shift</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="rshift">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Shift</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="bottom_row" stretch="0,0,0,1,0,0,0,0">
-          <item>
-           <widget class="QPushButton" name="lctrl">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Ctrl</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="lwin">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Win</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="lalt">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Alt</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="space">
-            <property name="text">
-             <string>Space</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="ralt">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Alt</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="rwin">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Win</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="appskey">
-            <property name="text">
-             <string>AppsKey</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="rctrl">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Ctrl</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="cursor_block" stretch="0,1,0">
-        <item>
-         <layout class="QHBoxLayout" name="print_block">
-          <item>
-           <widget class="QPushButton" name="printscreen">
-            <property name="text">
-             <string>Print
-Screen</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="scrolllock">
-            <property name="text">
-             <string>Scroll
-Lock</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pause">
-            <property name="text">
-             <string>Pause</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="print_spacer" native="true"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QWidget" name="cursor_spacer" native="true"/>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="3" column="1">
-           <widget class="QPushButton" name="up">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>u</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QPushButton" name="left">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>l</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="insert">
-            <property name="text">
-             <string>Insert</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="home">
-            <property name="text">
-             <string>Home</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pgup">
-            <property name="text">
-             <string>Page
-Up</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="delete">
-            <property name="text">
-             <string>Del</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="end">
-            <property name="text">
-             <string>End</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QPushButton" name="pgdn">
-            <property name="text">
-             <string>Page
-Down</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="right">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>r</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="down">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>d</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <widget class="QWidget" name="main_widget" native="true">
+        <layout class="QVBoxLayout" name="main_layout">
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="f_row">
+           <item>
+            <widget class="QPushButton" name="escape">
+             <property name="text">
+              <string notr="true">Esc</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QWidget" name="f_spacer" native="true"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="enter_key_rows">
+           <item>
+            <layout class="QVBoxLayout" name="top_letter_rows">
+             <item>
+              <layout class="QHBoxLayout" name="number_row">
+               <item>
+                <widget class="QPushButton" name="backspace">
+                 <property name="text">
+                  <string notr="true">Backspace</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="letter_row_top">
+               <item>
+                <widget class="QPushButton" name="tab">
+                 <property name="text">
+                  <string notr="true">Tab</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="letter_row_middle">
+           <item>
+            <widget class="QPushButton" name="capslock">
+             <property name="text">
+              <string notr="true">Caps Lock</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="letter_row_bottom">
+           <item>
+            <widget class="QPushButton" name="lshift">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Shift</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rshift">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Shift</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="bottom_row" stretch="0,0,0,1,0,0,0,0">
+           <item>
+            <widget class="QPushButton" name="lctrl">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Ctrl</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="lwin">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Win</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="lalt">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Alt</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="space">
+             <property name="text">
+              <string notr="true">Space</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="ralt">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Alt</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rwin">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Win</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="appskey">
+             <property name="text">
+              <string notr="true">AppsKey</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="rctrl">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string notr="true">Ctrl</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
+    <layout class="QHBoxLayout" name="bottom_layout" stretch="1,0">
      <property name="topMargin">
       <number>15</number>
      </property>
      <item>
       <widget class="QPushButton" name="a2ok_button">
        <property name="text">
-        <string>OK</string>
+        <string notr="true">OK</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="a2cancel_button">
        <property name="text">
-        <string>Cancel</string>
+        <string notr="true">Cancel</string>
        </property>
        <property name="flat">
         <bool>true</bool>

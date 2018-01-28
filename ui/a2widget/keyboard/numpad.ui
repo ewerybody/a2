@@ -6,17 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>751</width>
-    <height>444</height>
+    <width>726</width>
+    <height>550</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="4">
-    <widget class="QWidget" name="num_spacer" native="true"/>
-   </item>
+  <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0,0,0">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="1" column="0">
     <widget class="QPushButton" name="numlock">
      <property name="text">
@@ -32,52 +32,10 @@ Lock</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="numpadmult">
+   <item row="4" column="0">
+    <widget class="QPushButton" name="numpad1">
      <property name="text">
-      <string>*</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="numpadsub">
-     <property name="text">
-      <string>-</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="numpad7">
-     <property name="text">
-      <string>7</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="numpad8">
-     <property name="text">
-      <string>8</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QPushButton" name="numpad9">
-     <property name="text">
-      <string>9</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3" rowspan="2">
-    <widget class="QPushButton" name="numpadadd">
-     <property name="text">
-      <string>+</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QPushButton" name="numpad4">
-     <property name="text">
-      <string>4</string>
+      <string>1</string>
      </property>
     </widget>
    </item>
@@ -88,24 +46,24 @@ Lock</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QPushButton" name="numpad6">
+   <item row="1" column="2">
+    <widget class="QPushButton" name="numpadmult">
      <property name="text">
-      <string>6</string>
+      <string>*</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QPushButton" name="numpad1">
+   <item row="2" column="1">
+    <widget class="QPushButton" name="numpad8">
      <property name="text">
-      <string>1</string>
+      <string>8</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QPushButton" name="numpad2">
+   <item row="3" column="0">
+    <widget class="QPushButton" name="numpad4">
      <property name="text">
-      <string>2</string>
+      <string>4</string>
      </property>
     </widget>
    </item>
@@ -116,10 +74,38 @@ Lock</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="3" rowspan="2">
-    <widget class="QPushButton" name="numpadenter">
+   <item row="3" column="2">
+    <widget class="QPushButton" name="numpad6">
      <property name="text">
-      <string>Enter</string>
+      <string>6</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QPushButton" name="numpad7">
+     <property name="text">
+      <string>7</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="numpad2">
+     <property name="text">
+      <string>2</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QPushButton" name="numpaddot">
+     <property name="text">
+      <string>.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="numpad9">
+     <property name="text">
+      <string>9</string>
      </property>
     </widget>
    </item>
@@ -130,12 +116,80 @@ Lock</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="2">
-    <widget class="QPushButton" name="numpaddot">
+   <item row="1" column="3">
+    <widget class="QPushButton" name="numpadsub">
      <property name="text">
-      <string>.</string>
+      <string>-</string>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0" colspan="5">
+    <widget class="QWidget" name="num_spacer" native="true">
+     <zorder>numpadsub</zorder>
+    </widget>
+   </item>
+   <item row="2" column="3" rowspan="2">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item alignment="Qt::AlignTop">
+      <widget class="QPushButton" name="numpadadd">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>+</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="3" rowspan="2">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="numpadenter">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>90</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Enter</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

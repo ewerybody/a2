@@ -4,11 +4,12 @@ Created on 11.09.2017
 @author: eric
 """
 import os
+
 import a2ahk
 import a2ctrl
 import a2core
 import a2util
-from a2widget.keyboard import base_ui, mouse_ui, numpad_ui
+from a2widget.keyboard import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
 from PySide import QtGui, QtCore
 import pprint
@@ -36,16 +37,15 @@ class KeyboardDialogBase(QtGui.QDialog):
         a2ctrl.check_ui_module(base_ui)
         a2ctrl.check_ui_module(mouse_ui)
         a2ctrl.check_ui_module(numpad_ui)
+        a2ctrl.check_ui_module(cursor_block_ui)
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
-        self.ui.num_block_widget = numpad_ui.Ui_Numpad()
-        self.ui.num_block_widget.setupUi(self)
+        self.cursor_block_widget = CursorBlockWidget(self)
+        self.numpad_widget = NumpadWidget(self)
+        self.mouse_block_widget = MouseWidget(self)
 
         self._fill_key_dict()
         self._setup_ui()
-
-        self._toggle_numpad()
-        self._toggle_mouse()
 
     def set_key(self):
         if not self.key:
@@ -71,13 +71,9 @@ class KeyboardDialogBase(QtGui.QDialog):
     def _setup_ui(self):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
 
-        self.ui.mouse_block_widget = MouseWidget(self)
-        self.ui.keys_layout.addWidget(self.ui.mouse_block_widget)
-
-        self.ui.left.setText('←')
-        self.ui.up.setText('↑')
-        self.ui.down.setText('↓')
-        self.ui.right.setText('→')
+        self.ui.keys_layout.addWidget(self.cursor_block_widget)
+        self.ui.keys_layout.addWidget(self.numpad_widget)
+        self.ui.keys_layout.addWidget(self.mouse_block_widget)
 
         for i in range(1, 13):
             self.add_key('f%i' % i, self.ui.f_row)
@@ -87,8 +83,10 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self.insert_key(9, '0', self.ui.number_row)
 
-        self.ui.check_numpad.clicked[bool].connect(self._toggle_numpad)
-        self.ui.check_mouse.clicked[bool].connect(self._toggle_mouse)
+        self.ui.check_numpad.setChecked(self.a2.db.get(DB_KEY_NUMPAD) or False)
+        self.ui.check_mouse.setChecked(self.a2.db.get(DB_KEY_MOUSE) or False)
+        self.ui.check_numpad.clicked[bool].connect(self.numpad_widget.toggle)
+        self.ui.check_mouse.clicked[bool].connect(self.mouse_block_widget.toggle)
 
         self.ui.a2ok_button.clicked.connect(self.ok)
         self.ui.a2cancel_button.clicked.connect(self.close)
@@ -213,20 +211,6 @@ class KeyboardDialogBase(QtGui.QDialog):
             import a2widget.keyboard.en_us
             a2widget.keyboard.en_us.main(self)
 
-    def _toggle_numpad(self, state=None):
-        if state is None:
-            state = self.a2.db.get(DB_KEY_NUMPAD) or False
-            self.ui.check_numpad.setChecked(state)
-        # self.ui.num_block_widget.setVisible(state)
-        self.a2.db.set(DB_KEY_NUMPAD, state)
-
-    def _toggle_mouse(self, state=None):
-        if state is None:
-            state = self.a2.db.get(DB_KEY_MOUSE) or False
-            self.ui.check_mouse.setChecked(state)
-        self.ui.mouse_block_widget.setVisible(state)
-        self.a2.db.set(DB_KEY_MOUSE, state)
-
     def refresh_style(self):
         scale = self.a2.win.css_values['scale']
         log.info('scale: %s' % scale)
@@ -235,32 +219,78 @@ class KeyboardDialogBase(QtGui.QDialog):
         values['color'] = self.a2.win.css_values['color_yellow']
         values['font_size'] = self.a2.win.css_values['font_size'] * values['font_size_factor']
         values['font_size_small'] = self.a2.win.css_values['font_size'] * values['small_font_factor']
+        values['long_key'] = values['key_height'] * 2 + values['small_spacing']
+        values['wide_key'] = values['key_width'] * 2 + values['small_spacing']
 
         log.info('setting spaces ...')
         self.ui.keys_layout.setSpacing(values['big_spacing'])
-        self.ui.main_block.setSpacing(values['small_spacing'])
-        self.ui.cursor_block.setSpacing(values['small_spacing'])
-        self.ui.mouse_block_widget.set_spacing(values['small_spacing'])
+        self.ui.main_layout.setSpacing(values['small_spacing'])
+        self.cursor_block_widget.set_spacing(values['small_spacing'])
+        self.mouse_block_widget.set_spacing(values['small_spacing'])
 
         log.info('setting main style ...')
+        self.ui.keys_widget.setStyleSheet('QPushButton {padding: 0px;}')
         main_css = load_css('main') % values
         self.ui.keys_widget.setStyleSheet(main_css)
 
+        cursorblock_css = load_css('cursorblock') % values
+        self.cursor_block_widget.setStyleSheet(cursorblock_css)
+        self.numpad_widget.setStyleSheet(cursorblock_css)
         log.info('setting mouse style ...')
         mouse_css = load_css('mouse') % values
-        self.ui.mouse_block_widget.setStyleSheet(mouse_css)
+        self.mouse_block_widget.setStyleSheet(mouse_css)
         log.info('style refreshed ...\n  %s' % pprint.pformat(values))
+
+    def sizeHint(self):
+        return QtCore.QSize(50, 50)
+
+    def minimumSize(self):
+        size = QtCore.QSize()
+
+
+class CursorBlockWidget(QtGui.QWidget):
+    def __init__(self, parent):
+        super(CursorBlockWidget, self).__init__(parent)
+        self.ui = cursor_block_ui.Ui_CursorBlock()
+        self.ui.setupUi(self)
+
+        self.ui.left.setText('←')
+        self.ui.up.setText('↑')
+        self.ui.down.setText('↓')
+        self.ui.right.setText('→')
+
+    def set_spacing(self, spacing):
+        pass
+
+
+class NumpadWidget(QtGui.QWidget):
+    def __init__(self, parent):
+        super(NumpadWidget, self).__init__(parent)
+        self.a2 = parent.a2
+        self.ui = numpad_ui.Ui_Numpad()
+        self.ui.setupUi(self)
+        self.setVisible(self.a2.db.get(DB_KEY_NUMPAD) or False)
+
+    def toggle(self, state):
+        self.setVisible(state)
+        self.a2.db.set(DB_KEY_NUMPAD, state)
 
 
 class MouseWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(MouseWidget, self).__init__(parent)
+        self.a2 = parent.a2
         self.ui = mouse_ui.Ui_Mouse()
         self.ui.setupUi(self)
+        self.setVisible(self.a2.db.get(DB_KEY_MOUSE) or False)
 
     def set_spacing(self, spacing):
         self.ui.main_layout.setSpacing(spacing)
         self.ui.middle_layout.setSpacing(spacing)
+
+    def toggle(self, state):
+        self.setVisible(state)
+        self.a2.db.set(DB_KEY_MOUSE, state)
 
 
 def load_css(name):

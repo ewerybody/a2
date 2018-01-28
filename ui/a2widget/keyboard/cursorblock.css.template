@@ -1,0 +1,17 @@
+QPushButton {
+    min-width: %(key_width)ipx;
+    min-height: %(key_height)ipx;
+    max-width: %(key_width)ipx;
+    max-height: %(key_height)ipx;
+    padding: %(key_padding)ipx;
+}
+
+QPushButton#numpadadd,
+QPushButton#numpadenter {
+    font-size: %(font_size_small)ipx;
+    min-height: %(long_key)ipx;
+}
+
+QPushButton#numpad0 {
+    min-width: %(wide_key)ipx;
+}

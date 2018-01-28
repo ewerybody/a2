@@ -9,8 +9,13 @@ QPushButton:checked {
 QPushButton#pgdn,
 QPushButton#pgup,
 QPushButton#scrolllock,
-QPushButton#printscreen {
+QPushButton#printscreen,
+QPushButton#numlock {
     font-size: %(font_size_small)ipx;
     max-height: %(key_height)ipx;
     padding: %(twoline_key_padding)ipx;
+}
+
+QWidget#f_spacer {
+    min-height: %(big_spacing)ipx;
 }

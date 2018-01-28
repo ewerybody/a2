@@ -7,8 +7,10 @@
     "middle_height": 40,
     "wheel_sides": 60,
     "slim": 12,
-    "key_height": 25,
-    "big_spacing": 20,
-    "small_spacing": 5,
-    "twoline_key_padding": 1
+    "big_spacing": 18,
+    "small_spacing": 4,
+    "key_padding": 1,
+    "twoline_key_padding": 0,
+    "key_height": 18,
+    "key_width": 25
 }
