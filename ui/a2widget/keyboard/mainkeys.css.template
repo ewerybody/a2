@@ -1,3 +1,0 @@
-QPushButton {
-    padding: %(key_padding)ipx;
-}

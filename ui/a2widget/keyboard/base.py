@@ -232,7 +232,6 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.cursor_block_widget.set_spacing(values['small_spacing'])
         self.mouse_block_widget.set_spacing(values['small_spacing'])
 
-        self.ui.keys_widget.setStyleSheet('QPushButton {padding: 0px;}')
         main_css = load_css('main') % values
         self.ui.keys_widget.setStyleSheet(main_css)
 
