@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
-    <height>486</height>
+    <width>360</width>
+    <height>302</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -127,7 +127,7 @@ Down</string>
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QPushButton" name="delete_2">
+      <widget class="QPushButton" name="delete">
        <property name="text">
         <string notr="true">Del</string>
        </property>

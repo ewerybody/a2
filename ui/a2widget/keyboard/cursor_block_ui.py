@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\keyboard\cursor_block.ui'
 #
-# Created: Sun Jan 28 23:46:15 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Jan 29 21:54:53 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_CursorBlock(object):
     def setupUi(self, CursorBlock):
         CursorBlock.setObjectName("CursorBlock")
-        CursorBlock.resize(595, 486)
+        CursorBlock.resize(360, 302)
         self.verticalLayout = QtGui.QVBoxLayout(CursorBlock)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -86,10 +86,10 @@ class Ui_CursorBlock(object):
         self.left.setText("l")
         self.left.setObjectName("left")
         self.gridLayout.addWidget(self.left, 3, 0, 1, 1)
-        self.delete_2 = QtGui.QPushButton(CursorBlock)
-        self.delete_2.setText("Del")
-        self.delete_2.setObjectName("delete_2")
-        self.gridLayout.addWidget(self.delete_2, 1, 0, 1, 1)
+        self.delete = QtGui.QPushButton(CursorBlock)
+        self.delete.setText("Del")
+        self.delete.setObjectName("delete")
+        self.gridLayout.addWidget(self.delete, 1, 0, 1, 1)
         self.pgup = QtGui.QPushButton(CursorBlock)
         self.pgup.setText("Page\n"
 "Up")
