@@ -46,6 +46,7 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self._fill_key_dict()
         self._setup_ui()
+        self.rejected.connect(self._print_size)
 
     def set_key(self):
         if not self.key:
@@ -221,18 +222,16 @@ class KeyboardDialogBase(QtGui.QDialog):
                 values[key] = value * scale
         # calculating some more values
         values['color'] = self.a2.win.css_values['color_yellow']
-        values['font_size'] = self.a2.win.css_values['font_size'] * values['font_size_factor']
-        values['font_size_small'] = self.a2.win.css_values['font_size'] * values['small_font_factor']
+        values['font_size'] = self.a2.win.css_values['font_size'] * values['_font_size_factor']
+        values['font_size_small'] = self.a2.win.css_values['font_size'] * values['_small_font_factor']
         values['long_key'] = values['key_height'] * 2 + values['small_spacing']
         values['wide_key'] = values['key_width'] * 2 + values['small_spacing']
 
-        log.info('setting spaces ...')
         self.ui.keys_layout.setSpacing(values['big_spacing'])
         self.ui.main_layout.setSpacing(values['small_spacing'])
         self.cursor_block_widget.set_spacing(values['small_spacing'])
         self.mouse_block_widget.set_spacing(values['small_spacing'])
 
-        log.info('setting main style ...')
         self.ui.keys_widget.setStyleSheet('QPushButton {padding: 0px;}')
         main_css = load_css('main') % values
         self.ui.keys_widget.setStyleSheet(main_css)
@@ -240,16 +239,13 @@ class KeyboardDialogBase(QtGui.QDialog):
         cursorblock_css = load_css('cursorblock') % values
         self.cursor_block_widget.setStyleSheet(cursorblock_css)
         self.numpad_widget.setStyleSheet(cursorblock_css)
-        log.info('setting mouse style ...')
         mouse_css = load_css('mouse') % values
         self.mouse_block_widget.setStyleSheet(mouse_css)
         log.info('style refreshed ...\n  %s' % pprint.pformat(values))
 
-    def sizeHint(self):
-        return QtCore.QSize(50, 50)
-
-    def minimumSize(self):
-        size = QtCore.QSize()
+    def _print_size(self):
+        dialog_width_height = self.width(), self.height()
+        print('dialog_width_height: %s' % str(dialog_width_height))
 
 
 class CursorBlockWidget(QtGui.QWidget):
