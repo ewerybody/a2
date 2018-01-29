@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\keyboard\base.ui'
 #
-# Created: Mon Jan 29 00:45:37 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Jan 29 10:45:58 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,9 +12,9 @@ from PySide import QtCore, QtGui
 class Ui_Keyboard(object):
     def setupUi(self, Keyboard):
         Keyboard.setObjectName("Keyboard")
-        Keyboard.resize(1543, 648)
+        Keyboard.resize(1753, 332)
         self.dialog_layout = QtGui.QVBoxLayout(Keyboard)
-        self.dialog_layout.setSizeConstraint(QtGui.QLayout.SetMinimumSize)
+        self.dialog_layout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.dialog_layout.setObjectName("dialog_layout")
         self.top_layout = QtGui.QHBoxLayout()
         self.top_layout.setContentsMargins(-1, 10, -1, 10)

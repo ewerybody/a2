@@ -215,7 +215,11 @@ class KeyboardDialogBase(QtGui.QDialog):
         scale = self.a2.win.css_values['scale']
         log.info('scale: %s' % scale)
         values = a2util.json_read(os.path.join(_HERE, 'style_values.json'))
-        values = dict([(k, v * scale) for k, v in values.items()])
+        # scale values for current screen, skipping the ones with "_*"
+        for key, value in values.items():
+            if not key.startswith('_'):
+                values[key] = value * scale
+        # calculating some more values
         values['color'] = self.a2.win.css_values['color_yellow']
         values['font_size'] = self.a2.win.css_values['font_size'] * values['font_size_factor']
         values['font_size_small'] = self.a2.win.css_values['font_size'] * values['small_font_factor']

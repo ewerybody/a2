@@ -1,6 +1,6 @@
 {
-    "font_size_factor": 0.3,
-    "small_font_factor": 0.26,
+    "_font_size_factor": 0.75,
+    "_small_font_factor": 0.55,
     "big_radius": 30,
     "big_width": 15,
     "big_height": 80,
