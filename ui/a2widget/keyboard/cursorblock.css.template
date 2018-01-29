@@ -10,8 +10,10 @@ QPushButton#numpadadd,
 QPushButton#numpadenter {
     font-size: %(font_size_small)ipx;
     min-height: %(long_key)ipx;
+    max-height: %(long_key)ipx;
 }
 
 QPushButton#numpad0 {
     min-width: %(wide_key)ipx;
+    max-width: %(wide_key)ipx;
 }

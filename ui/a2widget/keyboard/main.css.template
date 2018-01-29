@@ -10,7 +10,12 @@ QPushButton#pgdn,
 QPushButton#pgup,
 QPushButton#scrolllock,
 QPushButton#printscreen,
-QPushButton#numlock {
+QPushButton#numlock,
+QPushButton#insert,
+QPushButton#home,
+QPushButton#end,
+QPushButton#delete,
+QPushButton#pause {
     font-size: %(font_size_small)ipx;
     max-height: %(key_height)ipx;
     padding: %(twoline_key_padding)ipx;
@@ -18,4 +23,10 @@ QPushButton#numlock {
 
 QWidget#f_spacer {
     min-height: %(big_spacing)ipx;
+}
+
+
+QWidget#main_widget QPushButton {
+    padding-left: %(main_key_padding)ipx;
+    padding-right: %(main_key_padding)ipx;
 }

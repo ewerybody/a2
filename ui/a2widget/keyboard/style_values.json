@@ -1,16 +1,17 @@
 {
-    "_font_size_factor": 0.75,
-    "_small_font_factor": 0.55,
+    "_font_size_factor": 0.9,
+    "_small_font_factor": 0.7,
     "big_radius": 30,
-    "big_width": 15,
-    "big_height": 80,
+    "big_width": 10,
+    "big_height": 70,
     "middle_height": 40,
     "wheel_sides": 60,
     "slim": 12,
     "big_spacing": 18,
     "small_spacing": 4,
+    "main_key_padding": 7,
     "key_padding": 1,
     "twoline_key_padding": 0,
     "key_height": 18,
-    "key_width": 25
+    "key_width": 23
 }
