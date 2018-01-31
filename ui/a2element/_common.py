@@ -21,6 +21,8 @@ class DrawCtrl(QtGui.QWidget):
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
+
+    :param bool _init_ctrl: Set False when using multiple inheritance to keep it from calling super() again.
     """
     def __init__(self, main, cfg, mod, _init_ctrl=True):
         if _init_ctrl:
@@ -252,10 +254,11 @@ class EditCtrl(QtGui.QGroupBox):
         # self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
         # print('scroll_to_bottom...')
         # QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
-        threading.Thread(target=self._scroll_to_bottom).start()
+        # threading.Thread(target=self._scroll_to_bottom).start()
+        pass
 
     def _scroll_to_bottom(self, *args):
-        #print('scrollValB4: %s' % self._scrollValB4)
+        # print('scrollValB4: %s' % self._scrollValB4)
         time.sleep(0.1)
         tmax = 0.3
         curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
@@ -265,7 +268,6 @@ class EditCtrl(QtGui.QGroupBox):
         t = 0.0
         # this = self.main.ui.scrollBar.value()
         scrollEnd = self.main.ui.scrollBar.maximum()
-        print('scrollEnd: %s' % scrollEnd)
         if not scrollEnd:
             scrollEnd = self._scrollMaxB4 + 100
         r = scrollEnd - self._scrollValB4

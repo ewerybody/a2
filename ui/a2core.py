@@ -172,7 +172,7 @@ class Paths(object):
 
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.modules, self.settings, self.ui]
-        missing = [p for p in main_items if not os.path.isdir(p)]
+        missing = [p for p in main_items if not os.path.exists(p)]
         if missing:
             raise Exception('a2ui start interrupted! %s not found in main dir!'
                             % missing)

@@ -13,6 +13,8 @@ from a2widget.keyboard import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
 from PySide import QtGui, QtCore
 import pprint
+import inspect
+
 
 log = a2core.get_logger('keyboard_base')
 BASE_MODIFIERS = ['alt', 'ctrl', 'shift', 'win']
@@ -20,6 +22,7 @@ SIDES = 'lr'
 DB_KEY_MOUSE = 'hotkey_dialog_show_mouse'
 DB_KEY_NUMPAD = 'hotkey_dialog_show_numpad'
 _HERE = os.path.dirname(__file__)
+_IGNORE_BUTTONS = ['a2cancel_button', 'a2ok_button']
 
 
 class KeyboardDialogBase(QtGui.QDialog):
@@ -38,6 +41,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         a2ctrl.check_ui_module(mouse_ui)
         a2ctrl.check_ui_module(numpad_ui)
         a2ctrl.check_ui_module(cursor_block_ui)
+
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
         self.cursor_block_widget = CursorBlockWidget(self)
@@ -49,27 +53,38 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.rejected.connect(self._print_size)
 
     def set_key(self):
+        """
+        Sets the dialog to the given key sequence,
+        updates key field, dictionaries and toggles the according buttons.
+        """
         if not self.key:
+            self.checked_key = None
+            self.checked_modifier = []
             return
 
-        keys = self.key.lower().split('+')
         buttons = []
-        for k in keys:
-            button = self.key_dict.get(k)
+        for key in self.key.lower().split('+'):
+            button = self.key_dict.get(key)
+            # all single buttons
             if button:
                 buttons.append(button)
-            elif k in BASE_MODIFIERS:
-                button = self.modifier.get('l' + k)
+            # in BASE_MODIFIERS means 2 buttons left + right
+            elif key in BASE_MODIFIERS:
+                button = self.modifier.get('l' + key)
                 buddy = self.modifier[button.a2buddy]
-                buttons += [button, buddy]
+                buttons.extend([button, buddy])
 
         for button in buttons:
             button.setChecked(True)
-            self._key_press(button, False)
+            if button.a2key in self.modifier:
+                self._check_modifier(button)
+            else:
+                self._check_key(button)
 
         self.ui.key_field.setText(self.key)
 
     def _setup_ui(self):
+        # css debug shortcut
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
 
         self.ui.keys_layout.addWidget(self.cursor_block_widget)
@@ -126,49 +141,65 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self.key_dict[key] = button
         button.a2key = key
-        button.clicked.connect(self._key_press)
+        button.clicked.connect(self.on_key_press)
         return button
 
-    def _key_press(self, button=None, update_hotkey_label=True):
-        if button is None:
-            button = self.sender()
+    def on_key_press(self):
+        button = self.sender()
+        self._check_key(button)
+        self.update_hotkey_label()
 
-        height = button.height()
-        print('height: %s' % height)
+    def on_modifier_press(self):
+        button = self.sender()
+        self._check_modifier(button)
+        self.update_hotkey_label()
 
+    def _check_modifier(self, button):
         # modifiers can be toggled however you like
-        if button.a2key in self.modifier:
-            checked = button.isChecked()
-            if checked and button.a2key not in self.checked_modifier:
+        checked = button.isChecked()
+        ctrl_modifier = QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+
+        if checked:
+            if button.a2key not in self.checked_modifier:
                 self.checked_modifier.append(button.a2key)
-            elif not checked and button.a2key in self.checked_modifier:
-                self.checked_modifier.remove(button.a2key)
-        # there always has to be a trigger key tho:
+            if ctrl_modifier and button.a2buddy not in self.checked_modifier:
+                self.checked_modifier.append(button.a2buddy)
+                self.modifier[button.a2buddy].setChecked(True)
+
         else:
-            if button.a2key == self.checked_key:
-                self.key_dict[button.a2key].setChecked(True)
+            if button.a2key in self.checked_modifier:
+                self.checked_modifier.remove(button.a2key)
+            if ctrl_modifier and button.a2buddy in self.checked_modifier:
+                self.checked_modifier.remove(button.a2buddy)
+                self.modifier[button.a2buddy].setChecked(False)
+
+    def _check_key(self, button):
+        # there always has to be a trigger key tho:
+        if button.a2key == self.checked_key:
+            self.key_dict[button.a2key].setChecked(True)
+        else:
+            if self.checked_key is not None:
+                self.key_dict[self.checked_key].setChecked(False)
+            self.checked_key = button.a2key
+
+    def update_hotkey_label(self):
+        new_key_label = []
+        handled = []
+        for modkeyname in self.checked_modifier:
+            if modkeyname in handled:
+                continue
+
+            modkey = self.key_dict[modkeyname]
+            if modkey.a2buddy in self.checked_modifier:
+                handled.append(modkey.a2buddy)
+                new_key_label.append(modkey.a2modifier)
             else:
-                if self.checked_key is not None:
-                    self.key_dict[self.checked_key].setChecked(False)
-                self.checked_key = button.a2key
+                new_key_label.append(modkeyname)
 
-        if update_hotkey_label:
-            new_key_label = []
-            handled = []
-            for modkeyname in self.checked_modifier:
-                if modkeyname in handled:
-                    continue
+        new_key_label.append(self.checked_key)
 
-                modkey = self.key_dict[modkeyname]
-                if modkey.a2buddy in self.checked_modifier:
-                    handled.append(modkey.a2buddy)
-                    new_key_label.append(modkey.a2modifier)
-                else:
-                    new_key_label.append(modkeyname)
-            new_key_label.append(self.checked_key)
-
-            self.key = '+'.join([k.title() for k in new_key_label])
-            self.ui.key_field.setText(self.key)
+        self.key = '+'.join([k.title() for k in new_key_label])
+        self.ui.key_field.setText(self.key)
 
     def _fill_key_dict(self):
         for modkeyname in BASE_MODIFIERS:
@@ -177,7 +208,7 @@ class KeyboardDialogBase(QtGui.QDialog):
                 key_name = side + modkeyname
                 button = getattr(self.ui, key_name)
                 button.setCheckable(True)
-                button.clicked.connect(self._key_press)
+                button.clicked.connect(self.on_modifier_press)
                 button.a2key = key_name
                 button.a2modifier = modkeyname
                 button.a2buddy = SIDES[int(not i)] + modkeyname
@@ -185,22 +216,32 @@ class KeyboardDialogBase(QtGui.QDialog):
                 self.key_dict[key_name] = button
                 self.modifier[key_name] = button
 
-        for key_name in a2ahk.keys:
-            try:
-                obj = getattr(self.ui, key_name)
-                if isinstance(obj, QtGui.QPushButton):
-                    if key_name not in self.key_dict:
-                        obj.a2key = key_name
-                        obj.setCheckable(True)
-                        obj.clicked.connect(self._key_press)
-                        self.key_dict[key_name] = obj
-            except AttributeError:
-                pass
+        # rather than browsing all the ahk keys
+        # we crawl through the ui objects for QPushButtons:
+        for ui_obj in [self.ui, self.cursor_block_widget.ui,
+                       self.numpad_widget.ui, self.mouse_block_widget.ui]:
+            for key_name, button in inspect.getmembers(ui_obj, _is_pushbutton):
+                if key_name in _IGNORE_BUTTONS:
+                    continue
+                # skip the already listed modifier keys
+                if key_name in self.key_dict:
+                    continue
 
-        # self._check_keys()
+                button.a2key = key_name
+                button.setCheckable(True)
+                button.clicked.connect(self.on_key_press)
+                self.key_dict[key_name] = button
 
-    def _check_keys(self):
+                if key_name not in a2ahk.keys:
+                    log.warn('What kind of key is this?!? %s' % key_name)
+
+        self._look_for_unlisted_keys()
+
+    def _look_for_unlisted_keys(self):
         for objname in dir(self.ui):
+            if objname in _IGNORE_BUTTONS:
+                continue
+
             obj = getattr(self.ui, objname)
             if not isinstance(obj, QtGui.QPushButton):
                 continue
@@ -240,11 +281,28 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.numpad_widget.setStyleSheet(cursorblock_css)
         mouse_css = load_css('mouse') % values
         self.mouse_block_widget.setStyleSheet(mouse_css)
-        log.info('style refreshed ...\n  %s' % pprint.pformat(values))
+        log.info('style refreshed ...')
+        # pprint.pprint(values)
 
     def _print_size(self):
-        dialog_width_height = self.width(), self.height()
-        print('dialog_width_height: %s' % str(dialog_width_height))
+        """
+        Eventually I want to put the dialog under the cursor. But for that we need to
+        find out how big the dialog is on different DPI and scale values. I'm gathering
+        some values here from my own testings to later be able to estimate the size and
+        center point. I don't wanna shift around the dialog after it popped up of course...
+
+        110 dpi, height 313, scale 1.1458333333333333
+            597 alone
+            753 numpad 156
+            794 mouse 197
+            950 both 353
+        """
+
+        thisdpi = QtGui.qApp.desktop().physicalDpiX()
+        scale = self.a2.win.css_values['scale']
+        print('thisdpi: %s' % thisdpi)
+        print('scale: %s' % scale)
+        print('  width: %s\n  height: %s' % (self.width(), self.height()))
 
 
 class CursorBlockWidget(QtGui.QWidget):
@@ -283,6 +341,9 @@ class MouseWidget(QtGui.QWidget):
         self.ui.main_layout.setSpacing(spacing)
         self.ui.middle_layout.setSpacing(spacing)
 
+
+def _is_pushbutton(obj):
+    return isinstance(obj, QtGui.QPushButton)
 
 
 def load_css(name):
