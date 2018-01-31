@@ -11,7 +11,6 @@ import traceback
 from functools import partial
 from pysideuic import compileUi
 from importlib import reload, import_module
-from os.path import getmtime, dirname, basename, exists, splitext
 
 from PySide import QtGui
 
@@ -33,9 +32,9 @@ def check_ui_module(module):
         return
 
     pyfile = module.__file__
-    pybase = basename(pyfile)
-    uiname = splitext(pybase)[0]
-    folder = dirname(pyfile)
+    pybase = os.path.basename(pyfile)
+    uiname = os.path.splitext(pybase)[0]
+    folder = os.path.dirname(pyfile)
     uibase = None
 
     if uiname.endswith(UI_FILE_SUFFIX):
@@ -47,17 +46,17 @@ def check_ui_module(module):
                 line = line.strip()
                 if line.startswith('# Form implementation '):
                     uibase = line[line.rfind("'", 0, -1) + 1:-1]
-                    uibase = basename(uibase.strip())
+                    uibase = os.path.basename(uibase.strip())
                     log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
 
     uifile = os.path.join(folder, uibase)
-    if not uibase or not exists(uifile):
+    if not uibase or not os.path.isfile(uifile):
         log.error('Ui-file not found: %s' % pybase)
         return
 
-    pyTime = getmtime(pyfile)
-    uiTime = getmtime(uifile)
+    pyTime = os.path.getmtime(pyfile)
+    uiTime = os.path.getmtime(uifile)
     diff = pyTime - uiTime
     if diff < 0:
         log.debug('%s needs compile! (age: %is)' % (pybase, diff))
@@ -263,7 +262,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
 
 
 def get_local_element(itempath):
-    if os.path.exists(itempath):
+    if os.path.isfile(itempath):
         with open(itempath) as fobj:
             element_content = fobj.read()
 

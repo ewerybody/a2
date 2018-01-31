@@ -10,8 +10,6 @@ to make functionality available without passing the main ui object.
 """
 import os
 import logging
-from os.path import exists, join, dirname, abspath, relpath
-import codecs
 
 # only spot where this is set! Use a2core.get_logger() anywhere else!
 LOG_LEVEL = logging.INFO
@@ -156,15 +154,15 @@ class Paths(object):
     Aquires and hosts common paths around a2.
     """
     def __init__(self):
-        self.ui = dirname(abspath(__file__))
-        self.elements = join(self.ui, 'a2element')
-        self.widgets = join(self.ui, 'a2widget')
-        self.a2 = dirname(self.ui)
-        self.lib = join(self.a2, 'lib')
+        self.ui = os.path.dirname(os.path.abspath(__file__))
+        self.elements = os.path.join(self.ui, 'a2element')
+        self.widgets = os.path.join(self.ui, 'a2widget')
+        self.a2 = os.path.dirname(self.ui)
+        self.lib = os.path.join(self.a2, 'lib')
         self.settings_ahk = os.path.join(self.a2, 'settings', 'a2_settings.ahk')
-        self._defaults = join(self.lib, '_defaults')
+        self._defaults = os.path.join(self.lib, '_defaults')
         self.urls_ahk = os.path.join(self._defaults, 'a2_urls.ahk')
-        self.a2_script = join(self.lib, 'a2.ahk')
+        self.a2_script = os.path.join(self.lib, 'a2.ahk')
 
         path_vars = self._fetch_a2_setting_paths()
         self.settings = path_vars['settings']
@@ -174,7 +172,7 @@ class Paths(object):
 
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.modules, self.settings, self.ui]
-        missing = [p for p in main_items if not exists(p)]
+        missing = [p for p in main_items if not os.path.isdir(p)]
         if missing:
             raise Exception('a2ui start interrupted! %s not found in main dir!'
                             % missing)
@@ -182,10 +180,10 @@ class Paths(object):
             raise Exception('a2ui start interrupted! %s inaccessable!'
                             % self.settings)
 
-        self.db = join(self.settings, 'a2.db')
+        self.db = os.path.join(self.settings, 'a2.db')
 
     def _get_settings_ahk(self):
-        if not exists(self.settings_ahk):
+        if not os.path.isfile(self.settings_ahk):
             return os.path.join(self._defaults, 'a2_settings.ahk')
         return self.settings_ahk
 
