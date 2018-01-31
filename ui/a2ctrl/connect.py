@@ -169,3 +169,29 @@ def _text_edit_update(cfg, name, ctrl):
 
 def _text_edit_send(signal, ctrl):
     signal.emit(ctrl.toPlainText())
+
+
+def control_to_db(widget, db, key, default_value=None):
+    """
+    Only for direct connections to the default db table.
+
+    :param QtGui.QWidget widget: Some Qt Widget to connect to.
+    """
+    if isinstance(widget, QtGui.QCheckBox):
+        _connect_checkbox_to_db(widget, db, key, default_value)
+
+
+def _connect_checkbox_to_db(widget, db, key, default_value):
+    if default_value is None:
+        default_value = False
+
+    def _db_setter(value, db_object=db, setting_key=key, *args):
+        print('get value: %s' % value)
+        print('args: %s' % str(args))
+        db_object.set(setting_key, value)
+
+        value = db_object.get(setting_key)
+        print('set value now: %s' % value)
+
+    widget.setChecked(db.get(key) or default_value)
+    widget.clicked[bool].connect(_db_setter)

@@ -6,9 +6,9 @@ Created on 11.09.2017
 import os
 
 import a2ahk
-import a2ctrl
 import a2core
 import a2util
+import a2ctrl.connect
 from a2widget.keyboard import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
 from PySide import QtGui, QtCore
@@ -84,10 +84,10 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self.insert_key(9, '0', self.ui.number_row)
 
-        self.ui.check_numpad.setChecked(self.a2.db.get(DB_KEY_NUMPAD) or False)
-        self.ui.check_mouse.setChecked(self.a2.db.get(DB_KEY_MOUSE) or False)
-        self.ui.check_numpad.clicked[bool].connect(self.numpad_widget.toggle)
-        self.ui.check_mouse.clicked[bool].connect(self.mouse_block_widget.toggle)
+        a2ctrl.connect.control_to_db(self.ui.check_numpad, self.a2.db, DB_KEY_NUMPAD)
+        a2ctrl.connect.control_to_db(self.ui.check_mouse, self.a2.db, DB_KEY_MOUSE)
+        self.ui.check_numpad.clicked[bool].connect(self.numpad_widget.setVisible)
+        self.ui.check_mouse.clicked[bool].connect(self.mouse_block_widget.setVisible)
 
         self.ui.a2ok_button.clicked.connect(self.ok)
         self.ui.a2cancel_button.clicked.connect(self.close)
@@ -270,10 +270,6 @@ class NumpadWidget(QtGui.QWidget):
         self.ui.setupUi(self)
         self.setVisible(self.a2.db.get(DB_KEY_NUMPAD) or False)
 
-    def toggle(self, state):
-        self.setVisible(state)
-        self.a2.db.set(DB_KEY_NUMPAD, state)
-
 
 class MouseWidget(QtGui.QWidget):
     def __init__(self, parent):
@@ -287,9 +283,6 @@ class MouseWidget(QtGui.QWidget):
         self.ui.main_layout.setSpacing(spacing)
         self.ui.middle_layout.setSpacing(spacing)
 
-    def toggle(self, state):
-        self.setVisible(state)
-        self.a2.db.set(DB_KEY_MOUSE, state)
 
 
 def load_css(name):
