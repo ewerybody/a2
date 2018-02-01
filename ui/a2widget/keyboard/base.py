@@ -45,7 +45,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
         self.cursor_block_widget = CursorBlockWidget(self)
-        self.numpad_widget = NumpadWidget(self)
+        self.numpad_block_widget = NumpadWidget(self)
         self.mouse_block_widget = MouseWidget(self)
 
         self._fill_key_dict()
@@ -74,6 +74,11 @@ class KeyboardDialogBase(QtGui.QDialog):
                 buddy = self.modifier[button.a2buddy]
                 buttons.extend([button, buddy])
 
+            if key in a2ahk.mouse_keys:
+                self.mouse_block_widget.setVisible(True)
+            elif key in a2ahk.numpad_keys:
+                self.numpad_block_widget.setVisible(True)
+
         for button in buttons:
             button.setChecked(True)
             if button.a2key in self.modifier:
@@ -88,7 +93,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
 
         self.ui.keys_layout.addWidget(self.cursor_block_widget)
-        self.ui.keys_layout.addWidget(self.numpad_widget)
+        self.ui.keys_layout.addWidget(self.numpad_block_widget)
         self.ui.keys_layout.addWidget(self.mouse_block_widget)
 
         for i in range(1, 13):
@@ -101,7 +106,7 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         a2ctrl.connect.control_to_db(self.ui.check_numpad, self.a2.db, DB_KEY_NUMPAD)
         a2ctrl.connect.control_to_db(self.ui.check_mouse, self.a2.db, DB_KEY_MOUSE)
-        self.ui.check_numpad.clicked[bool].connect(self.numpad_widget.setVisible)
+        self.ui.check_numpad.clicked[bool].connect(self.numpad_block_widget.setVisible)
         self.ui.check_mouse.clicked[bool].connect(self.mouse_block_widget.setVisible)
 
         self.ui.a2ok_button.clicked.connect(self.ok)
@@ -219,7 +224,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         # rather than browsing all the ahk keys
         # we crawl through the ui objects for QPushButtons:
         for ui_obj in [self.ui, self.cursor_block_widget.ui,
-                       self.numpad_widget.ui, self.mouse_block_widget.ui]:
+                       self.numpad_block_widget.ui, self.mouse_block_widget.ui]:
             for key_name, button in inspect.getmembers(ui_obj, _is_pushbutton):
                 if key_name in _IGNORE_BUTTONS:
                     continue
@@ -263,6 +268,7 @@ class KeyboardDialogBase(QtGui.QDialog):
                 values[key] = value * scale
         # calculating some more values
         values['color'] = self.a2.win.css_values['color_yellow']
+        values['color_button'] = self.a2.win.css_values['color_button']
         values['font_size'] = self.a2.win.css_values['font_size'] * values['_font_size_factor']
         values['font_size_small'] = self.a2.win.css_values['font_size'] * values['_small_font_factor']
         values['long_key'] = values['key_height'] * 2 + values['small_spacing']
@@ -278,7 +284,7 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         cursorblock_css = load_css('cursorblock') % values
         self.cursor_block_widget.setStyleSheet(cursorblock_css)
-        self.numpad_widget.setStyleSheet(cursorblock_css)
+        self.numpad_block_widget.setStyleSheet(cursorblock_css)
         mouse_css = load_css('mouse') % values
         self.mouse_block_widget.setStyleSheet(mouse_css)
         log.info('style refreshed ...')
