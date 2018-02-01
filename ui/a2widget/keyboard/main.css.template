@@ -25,7 +25,6 @@ QWidget#f_spacer {
     min-height: %(big_spacing)ipx;
 }
 
-
 QWidget#main_widget QPushButton {
     padding-left: %(main_key_padding)ipx;
     padding-right: %(main_key_padding)ipx;

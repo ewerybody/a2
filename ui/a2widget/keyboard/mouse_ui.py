@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\keyboard\mouse.ui'
 #
-# Created: Sun Jan 28 22:51:28 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Thu Feb  1 20:20:16 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Mouse(object):
     def setupUi(self, Mouse):
         Mouse.setObjectName("Mouse")
-        Mouse.resize(420, 289)
+        Mouse.resize(420, 380)
         self.verticalLayout = QtGui.QVBoxLayout(Mouse)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -65,9 +65,16 @@ class Ui_Mouse(object):
         self.rbutton.setObjectName("rbutton")
         self.main_layout.addWidget(self.rbutton)
         self.verticalLayout.addWidget(self.inner_widget)
-        self._mouse_body = QtGui.QWidget(Mouse)
+        self._mouse_body = QtGui.QPushButton(Mouse)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self._mouse_body.sizePolicy().hasHeightForWidth())
+        self._mouse_body.setSizePolicy(sizePolicy)
+        self._mouse_body.setText("")
         self._mouse_body.setObjectName("_mouse_body")
         self.verticalLayout.addWidget(self._mouse_body)
+        self.verticalLayout.setStretch(1, 1)
 
         self.retranslateUi(Mouse)
         QtCore.QMetaObject.connectSlotsByName(Mouse)

@@ -7,21 +7,16 @@ QPushButton#rbutton {
 }
 
 QPushButton#lbutton,
-QPushButton#rbutton,
-QPushButton#mbutton,
-QPushButton#wheelup,
-QPushButton#wheeldown {
+QPushButton#rbutton {
     max-width: %(big_width)ipx;
     min-width: %(big_width)ipx;
 }
 
-QPushButton#lbutton,
-QPushButton#rbutton,
 QPushButton#mbutton,
 QPushButton#wheelup,
 QPushButton#wheeldown {
-    max-width: %(big_width)ipx;
-    min-width: %(big_width)ipx;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 QPushButton#lbutton,
@@ -53,5 +48,7 @@ QPushButton#wheelright {
 }
 
 QWidget#_mouse_body {
-    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 "%(color_button)s", stop:1 rgba(255, 255, 255, 0));
+    border-bottom-left-radius: %(big_radius)ipx;
+    border-bottom-right-radius: %(big_radius)ipx;
 }
