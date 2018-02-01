@@ -285,8 +285,6 @@ class KeyboardDialogBase(QtGui.QDialog):
         cursorblock_css = load_css('cursorblock') % values
         self.cursor_block_widget.setStyleSheet(cursorblock_css)
         self.numpad_block_widget.setStyleSheet(cursorblock_css)
-        mouse_css = load_css('mouse') % values
-        self.mouse_block_widget.setStyleSheet(mouse_css)
         log.info('style refreshed ...')
         # pprint.pprint(values)
 

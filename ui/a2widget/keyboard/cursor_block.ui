@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>302</height>
+    <width>368</width>
+    <height>234</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,24 +52,10 @@ Lock</string>
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="2">
-      <widget class="QPushButton" name="pgdn">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="delete">
        <property name="text">
-        <string notr="true">Page
-Down</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="right">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string notr="true">r</string>
+        <string notr="true">Del</string>
        </property>
       </widget>
      </item>
@@ -80,27 +66,7 @@ Down</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QPushButton" name="up">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string notr="true">u</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="home">
-       <property name="text">
-        <string notr="true">Home</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="QPushButton" name="down">
        <property name="font">
         <font>
@@ -113,7 +79,22 @@ Down</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="insert">
+       <property name="text">
+        <string notr="true">Insert</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="pgup">
+       <property name="text">
+        <string notr="true">Page
+Up</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
       <widget class="QPushButton" name="left">
        <property name="font">
         <font>
@@ -126,27 +107,49 @@ Down</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="delete">
+     <item row="0" column="1">
+      <widget class="QPushButton" name="home">
        <property name="text">
-        <string notr="true">Del</string>
+        <string notr="true">Home</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QPushButton" name="pgup">
+     <item row="3" column="1">
+      <widget class="QPushButton" name="up">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string notr="true">u</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="pgdn">
        <property name="text">
         <string notr="true">Page
-Up</string>
+Down</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="insert">
+     <item row="4" column="2">
+      <widget class="QPushButton" name="right">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="text">
-        <string notr="true">Insert</string>
+        <string notr="true">r</string>
        </property>
       </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QWidget" name="f_spacer_2" native="true"/>
      </item>
     </layout>
    </item>

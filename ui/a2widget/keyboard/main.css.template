@@ -21,11 +21,79 @@ QPushButton#pause {
     padding: %(twoline_key_padding)ipx;
 }
 
-QWidget#f_spacer {
+QWidget#f_spacer,
+QWidget#f_spacer_2 {
     min-height: %(big_spacing)ipx;
 }
 
 QWidget#main_widget QPushButton {
     padding-left: %(main_key_padding)ipx;
     padding-right: %(main_key_padding)ipx;
+}
+
+QPushButton#numpadadd,
+QPushButton#numpadenter {
+    font-size: %(font_size_small)ipx;
+    min-height: %(long_key)ipx;
+    max-height: %(long_key)ipx;
+}
+
+QPushButton#numpad0 {
+    min-width: %(wide_key)ipx;
+    max-width: %(wide_key)ipx;
+}
+
+QPushButton#lbutton {
+    border-top-left-radius: %(big_radius)ipx;
+}
+
+QPushButton#rbutton {
+    border-top-right-radius: %(big_radius)ipx;
+}
+
+QPushButton#lbutton,
+QPushButton#rbutton {
+    max-width: %(big_width)ipx;
+    min-width: %(big_width)ipx;
+}
+
+QPushButton#mbutton,
+QPushButton#wheelup,
+QPushButton#wheeldown {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+QPushButton#lbutton,
+QPushButton#rbutton {
+    max-height: %(big_height)ipx;
+    min-height: %(big_height)ipx;
+}
+QPushButton#mbutton {
+    max-height: %(middle_height)ipx;
+    min-height: %(middle_height)ipx;
+}
+
+QPushButton#wheelup,
+QPushButton#wheeldown {
+    max-height: %(slim)ipx;
+    min-height: %(slim)ipx;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+QPushButton#wheelleft,
+QPushButton#wheelright {
+    max-width: %(slim)ipx;
+    min-width: %(slim)ipx;
+    min-height: %(wheel_sides)ipx;
+    max-height: %(wheel_sides)ipx;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+QWidget#_mouse_body {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 "%(color_button)s", stop:1 rgba(255, 255, 255, 0));
+    border-bottom-left-radius: %(big_radius)ipx;
+    border-bottom-right-radius: %(big_radius)ipx;
 }
