@@ -91,7 +91,7 @@ class A2Settings(QtGui.QWidget):
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
 
-        self.ui.db_print_all_button.clicked.connect(self.a2.db.all)
+        self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
@@ -150,3 +150,7 @@ class A2Settings(QtGui.QWidget):
         self.add_source_menu.addAction(
             QtGui.QAction('Create Local', self, triggered=self.main.create_local_source))
         self.add_source_menu.addAction(QtGui.QAction('Add From URL', self))
+
+    def get_db_digest(self):
+        self.ui.db_printout.clear()
+        self.ui.db_printout.setText(self.a2.db._get_digest())

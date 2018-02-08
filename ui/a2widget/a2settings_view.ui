@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>834</width>
-    <height>1090</height>
+    <height>814</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -380,7 +380,20 @@ Go ahead and add or create one:</string>
        <item>
         <widget class="QPushButton" name="db_print_all_button">
          <property name="text">
-          <string>workaround: print db.all()</string>
+          <string>get db digest</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="db_printout">
+         <property name="font">
+          <font>
+           <family>Consolas</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -404,8 +417,8 @@ Go ahead and add or create one:</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>695</width>
-            <height>1068</height>
+            <width>786</width>
+            <height>755</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">

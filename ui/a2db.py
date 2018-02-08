@@ -163,12 +163,20 @@ class A2db(object):
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def all(self):
-        tables = self.tables()
+        log.info(self._get_digest())
+
+    def _get_digest(self):
+        tables = sorted(self.tables())
+        header = ('\n\n{line}table "%s"\n'
+                  '  id - key - value\n'
+                  '{line}  ').format(line='-' * 40 + '\n')
+        text = 'database dump from %s\n' % self._file
+        text += '%i tables: %s' % (len(tables), ', '.join(tables))
         for t in tables:
-            columns = ' - '.join([i[1] for i in self._fetch('PRAGMA table_info("%s")' % t)])
-            log.info('\ntable: "%s":\n  %s\n  %s\n  %s'
-                     % (t, columns, '-' * 40,
-                        '\n  '.join([str(i)[1:-1] for i in self._fetch('select * from "%s"' % t)])))
+            data = self._fetch('select * from "%s"' % t)
+            text += header % t
+            text += '\n  '.join([str(i)[1:-1] for i in data])
+        return text
 
     def set_changes(self, key, changes_dict, defaults_dict, table=_DEFAULTTABLE):
         """
