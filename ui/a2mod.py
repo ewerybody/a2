@@ -78,7 +78,9 @@ class ModSource(object):
     def config(self):
         try:
             return a2util.json_read(self.config_file)
-        except Exception:
+        except Exception as error:
+            log.error('Error loading config file for "%s" (%s)\n'
+                      '  %s' % (self.name, self.config_file, error))
             return {}
 
     @config.setter
