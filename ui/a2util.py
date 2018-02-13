@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Misc functions - gathered from the a2core module.
 This is all too random to be core.
@@ -85,13 +86,13 @@ def get_next_free_number(name, name_list, separator=''):
 
 
 def json_read(path):
-    with open(path) as fob:
-        return json.load(fob)
+    with codecs.open(path, encoding='utf-8-sig') as fobj:
+        return json.load(fobj)
 
 
 def json_write(path, data):
-    with open(path, 'w') as fob:
-        json.dump(data, fob, indent=JSON_INDENT, sort_keys=True)
+    with codecs.open(path, 'w', encoding='utf-8-sig') as fobj:
+        json.dump(data, fobj, indent=JSON_INDENT, sort_keys=True)
 
 
 def get_date():
