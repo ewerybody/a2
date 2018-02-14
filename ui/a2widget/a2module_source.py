@@ -33,7 +33,18 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.version_label.setText(mod_source.config.get('version', 'x.x.x'))
         self.ui.maintainer_label.setText(mod_source.config.get('maintainer', ''))
         self.ui.description_label.setText(mod_source.config.get('description', ''))
-        self.ui.homepage_label.setText(mod_source.config.get('url', ''))
+        self.ui.local_path.writable = False
+        self.ui.local_path.value = mod_source.path
+
+        url = mod_source.config.get('url', '')
+        url_label = url
+        for url_sceme in ['http://', 'https://']:
+            if url_label.startswith(url_sceme):
+                url_label = url_label[len(url_sceme):]
+                break
+        if url_label.startswith('www.'):
+            url_label = url_label[4:]
+        self.ui.homepage_label.setText('<a href="%s">%s</a>' % (url, url_label))
 
     def build_menu(self):
         self.menu.clear()

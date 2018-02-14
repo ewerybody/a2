@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1050</width>
-    <height>532</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,6 +35,9 @@
        <property name="text">
         <string notr="true">...</string>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
        <property name="arrowType">
         <enum>Qt::LeftArrow</enum>
        </property>
@@ -48,7 +51,7 @@
       <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">
@@ -72,6 +75,9 @@
        <widget class="QLabel" name="homepage_label">
         <property name="text">
          <string>x</string>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -107,8 +113,11 @@
         </item>
         <item>
          <widget class="QPushButton" name="update_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
-           <string>PushButton</string>
+           <string>check for updates ...</string>
           </property>
          </widget>
         </item>
