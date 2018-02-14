@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>834</width>
-    <height>814</height>
+    <height>840</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -100,11 +100,7 @@
            <number>10</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="mod_source_layout">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-           </layout>
+           <layout class="QVBoxLayout" name="mod_source_layout"/>
           </item>
           <item>
            <widget class="QLabel" name="no_sources_msg">
@@ -417,8 +413,8 @@ Go ahead and add or create one:</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>786</width>
-            <height>755</height>
+            <width>708</width>
+            <height>912</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
