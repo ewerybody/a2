@@ -60,5 +60,5 @@ class ModSourceWidget(QtGui.QWidget):
     def toggle_details(self):
         state = self.ui.frame.isVisible()
         self.ui.frame.setVisible(not state)
-        a = [QtCore.Qt.DownArrow, QtCore.Qt.LeftArrow]
+        a = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
         self.ui.tool_button.setArrowType(a[state])

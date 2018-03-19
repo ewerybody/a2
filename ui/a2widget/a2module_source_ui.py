@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source.ui'
 #
-# Created: Wed Feb 14 01:22:50 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon Mar 19 19:44:49 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,23 +12,23 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1050, 370)
+        Form.resize(763, 188)
         self.modsource_layout = QtGui.QVBoxLayout(Form)
         self.modsource_layout.setObjectName("modsource_layout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.tool_button = QtGui.QToolButton(Form)
+        self.tool_button.setText("...")
+        self.tool_button.setAutoRaise(True)
+        self.tool_button.setArrowType(QtCore.Qt.RightArrow)
+        self.tool_button.setObjectName("tool_button")
+        self.horizontalLayout.addWidget(self.tool_button)
         self.check = QtGui.QCheckBox(Form)
         self.check.setObjectName("check")
         self.horizontalLayout.addWidget(self.check)
         self.mod_count = QtGui.QLabel(Form)
         self.mod_count.setObjectName("mod_count")
         self.horizontalLayout.addWidget(self.mod_count)
-        self.tool_button = QtGui.QToolButton(Form)
-        self.tool_button.setText("...")
-        self.tool_button.setAutoRaise(True)
-        self.tool_button.setArrowType(QtCore.Qt.LeftArrow)
-        self.tool_button.setObjectName("tool_button")
-        self.horizontalLayout.addWidget(self.tool_button)
         self.modsource_layout.addLayout(self.horizontalLayout)
         self.frame = QtGui.QFrame(Form)
         self.frame.setFrameShape(QtGui.QFrame.StyledPanel)
