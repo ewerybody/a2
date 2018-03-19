@@ -3,16 +3,16 @@ a2ui - setup interface for an Autohotkey environment.
 """
 import os
 import subprocess
+from copy import deepcopy
+from functools import partial
 
 import a2core
 import a2ctrl
 import a2util
+import a2runtime
 from a2widget import a2design_ui
 
-from copy import deepcopy
-from functools import partial
 from PySide import QtGui, QtCore
-import a2runtime
 
 
 BASE_DPI = 96.0
@@ -325,6 +325,24 @@ class A2Window(QtGui.QMainWindow):
     def load_runtime_and_ui(self):
         self.settings_changed(refresh_ui=True)
 
+    def edit_code(self, file_path):
+        if os.path.isfile(self.devset.code_editor):
+            subprocess.Popen([self.devset.code_editor, file_path])
+        else:
+            _TASK_MSG = 'browse for a code editor executable'
+            _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
+
+            reply = QtGui.QMessageBox.question(
+                self, 'No Valid Code Editor Set!', _QUEST_MSG,
+                QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel)
+
+            if reply == QtGui.QMessageBox.Yes:
+                exepath, _ = QtGui.QFileDialog.getOpenFileName(
+                    self, _TASK_MSG.title(), self.devset.code_editor, 'Executable (*.exe)')
+                if exepath:
+                    self.devset.set_var('code_editor', exepath)
+                    self.edit_code(file_path)
+
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):
@@ -402,8 +420,11 @@ class DevSettings(object):
         log.info('self.loglevel_debug: %s' % self.loglevel_debug)
         log.debug('self.loglevel_debug: %s' % self.loglevel_debug)
 
+    def _get_from_db(self):
+        return self._a2.db.get_changes('dev_settings', self._defaults)
+
     def get(self):
-        settings = self._a2.db.get_changes('dev_settings', self._defaults)
+        settings = self._get_from_db()
         self._set_attrs(settings)
         return settings
 
@@ -414,6 +435,11 @@ class DevSettings(object):
     def set(self, these):
         self._a2.db.set_changes('dev_settings', these, self._defaults)
         self._set_attrs(these)
+
+    def set_var(self, key, value):
+        settings = self._get_from_db()
+        settings[key] = value
+        self.set(settings)
 
 
 if __name__ == '__main__':

@@ -5,8 +5,6 @@ a2element.include
 @author: eRiC
 """
 import os
-import subprocess
-from os.path import exists
 
 from PySide import QtGui, QtCore
 
@@ -26,7 +24,6 @@ class Edit(EditCtrl):
     """
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        self.main = main
         self.layout = QtGui.QHBoxLayout(self.mainWidget)
         self.layout.setSpacing(5)
         self.labelCtrl = QtGui.QLabel('script file:')
@@ -50,11 +47,8 @@ class Edit(EditCtrl):
         self.button.setText(name)
 
     def edit_script(self):
-        if exists(self.main.devset.code_editor):
-            subprocess.Popen([self.main.devset.code_editor,
-                              os.path.join(self.main.mod.path, self.cfg['file'])])
-        else:
-            log.error('No code_editor found! Set it up in settings!')
+        script_path = os.path.join(self.main.mod.path, self.cfg['file'])
+        self.main.edit_code(script_path)
 
     @staticmethod
     def element_name():
