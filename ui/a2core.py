@@ -18,10 +18,8 @@ log.setLevel(LOG_LEVEL)
 
 a2ahk, a2db, a2mod = None, None, None
 
-edit_disclaimer = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
-a2default_hotkey = 'Win+Shift+A'
-
-a2tags = {'file': 'File system',
+A2DEFAULT_HOTKEY = 'Win+Shift+A'
+A2TAGS = {'file': 'File system',
           'window': 'Window handling',
           'text': 'Text manipulation',
           'code': 'Programming',

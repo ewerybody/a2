@@ -43,7 +43,7 @@ class Edit(QtGui.QGroupBox):
         a2ctrl.check_ui_module(nfo_edit_ui)
         self.ui = nfo_edit_ui.Ui_edit()
         self.ui.setupUi(self.main_widget)
-        self.ui.cfg_tags.set_available_tags(a2core.a2tags)
+        self.ui.cfg_tags.set_available_tags(a2core.A2TAGS)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
 

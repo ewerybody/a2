@@ -156,7 +156,7 @@ class A2ModuleList(QtGui.QWidget):
             action.triggered.connect(self.clear_filter_tags)
             self.filter_menu.addAction(action)
 
-        for tag in a2core.a2tags:
+        for tag in a2core.A2TAGS:
             action = QtGui.QAction(self.icon_label, tag, self)
             action.setCheckable(True)
             action.setChecked(tag in self._filter_tags)

@@ -11,7 +11,6 @@ import a2core
 import a2util
 
 EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
-A2DEFAULT_HOTKEY = 'Win+Shift+A'
 log = a2core.get_logger(__name__)
 
 TODO_DEFAULT_LIBS = ['a2', 'tt', 'func_file', 'func_string', 'functions', 'Explorer_Get',
@@ -198,7 +197,8 @@ class HotkeysCollection(_Collection):
         self._scope_types = {'1': self.hotkeys_scope_incl, '2': self.hotkeys_scope_excl}
 
         # add a2 standard hotkeys
-        self.hotkeys_global.append((self.a2.db.get('a2_hotkey') or A2DEFAULT_HOTKEY, 'a2UI()'))
+        self.hotkeys_global.append(
+            (self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY, 'a2UI()'))
 
     def gather(self, mod):
         mod_hotkey_data = self.a2.db.get('hotkeys', mod.key) or {}

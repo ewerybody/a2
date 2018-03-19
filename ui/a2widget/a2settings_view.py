@@ -45,7 +45,7 @@ class A2Settings(QtGui.QWidget):
         self.ui = a2settings_view_ui.Ui_a2settings()
         self.ui.setupUi(self)
 
-        a2_hotkey = self.a2.db.get('a2_hotkey') or a2core.a2default_hotkey
+        a2_hotkey = self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY
         self.ui.a2hotkey.set_key(a2_hotkey)
         self.ui.a2hotkey.ok_func = self.set_a2_hotkey
 
