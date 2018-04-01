@@ -13,12 +13,13 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.layout = QtGui.QVBoxLayout(self)
+        self.main_layout = QtGui.QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
         self.checkbox.setChecked(self.get_user_value(bool))
         self.checkbox.clicked[bool].connect(self.delayed_check)
-        self.layout.addWidget(self.checkbox)
-        self.setLayout(self.layout)
+        self.main_layout.addWidget(self.checkbox)
+        self.setLayout(self.main_layout)
 
     def check(self, state):
         self.set_user_value(state)

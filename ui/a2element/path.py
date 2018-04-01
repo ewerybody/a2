@@ -16,6 +16,7 @@ class Draw(DrawCtrl):
 
     def _setupUi(self):
         self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.label_text = self.cfg.get('label', '')
         self.label = QtGui.QLabel(self.label_text, self)
         self.value_ctrl = a2path_field.A2PathField(self, value=self.value)

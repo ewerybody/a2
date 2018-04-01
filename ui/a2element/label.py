@@ -19,7 +19,8 @@ class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
 
-        self.layout = QtGui.QVBoxLayout(self)
+        self.main_layout = QtGui.QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         text = self.cfg.get('text', 'Nothing yet').replace('\n', '<br>')
 
         # TODO: This might be used in other places. Make it a DrawCtrl method?
@@ -29,8 +30,8 @@ class Draw(DrawCtrl):
         self.label = QtGui.QLabel(text, self)
         self.label.setWordWrap(True)
         self.label.setOpenExternalLinks(True)
-        self.layout.addWidget(self.label)
-        self.setLayout(self.layout)
+        self.main_layout.addWidget(self.label)
+        self.setLayout(self.main_layout)
 
 
 class Edit(EditCtrl):

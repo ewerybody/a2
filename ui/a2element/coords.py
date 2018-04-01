@@ -20,6 +20,7 @@ class Draw(DrawCtrl):
         super(Draw, self).__init__(main, cfg, mod)
         self.value = self.get_user_value((list, tuple), default=(0, 0))
         self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.main_layout)
 
         self.label = QtGui.QLabel(self.cfg.get('label', ''), self)
