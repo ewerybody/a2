@@ -15,6 +15,9 @@ TODO: add recent paths, copy path, explore to path on the button
 import os
 from PySide import QtGui, QtCore
 
+import a2ctrl
+import a2util
+
 
 class BrowseType(object):
     folder = '0'
@@ -24,7 +27,7 @@ class BrowseType(object):
 class A2PathField(QtGui.QWidget):
     changed = QtCore.Signal(str)
 
-    def __init__(self, parent, value='', file_types='', writable=True, label_text=None, save_mode=False):
+    def __init__(self, parent, value='', file_types='', writable=True, label_text=None, save_mode=False, changable=True):
         super(A2PathField, self).__init__(parent)
         self.main_layout = QtGui.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -32,6 +35,8 @@ class A2PathField(QtGui.QWidget):
         self.line_field.setText(value)
         self.main_layout.addWidget(self.line_field)
         self.browse_button = QtGui.QPushButton('Browse...', self)
+        self.browse_button.setIcon(a2ctrl.Icons.inst().folder2)
+        self.browse_button.setIconSize(QtCore.QSize(16, 16))
         self.browse_button.clicked.connect(self.browse)
         self.main_layout.addWidget(self.browse_button)
         self._set_delay = 150
@@ -43,6 +48,8 @@ class A2PathField(QtGui.QWidget):
         self.browse_type = BrowseType.file
         self.label_text = label_text
 
+        self._changable = None
+        self.changable = changable
         self._writable = None
         self.writable = writable
 
@@ -54,6 +61,10 @@ class A2PathField(QtGui.QWidget):
     def writable(self, state):
         if state == self._writable:
             return
+
+        if state and not self.changable:
+            raise RuntimeError('PathField cannot be set writable while not being changable at the same time!')
+
         self._writable = state
         self.line_field.setReadOnly(not state)
         if state:
@@ -61,21 +72,35 @@ class A2PathField(QtGui.QWidget):
         else:
             try:
                 self.line_field.editingFinished.disconnect(self._delayed_set)
-            except:
+            except Exception:
                 pass
+
+    @property
+    def changable(self):
+        return self._changable
+
+    @changable.setter
+    def changable(self, state):
+        if state == self._changable:
+            return
+
+        if not state and self.writable:
+            self.writable = False
+        self._changable = state
+        self.browse_button.setVisible(state)
 
     def browse(self):
         if self.browse_type == BrowseType.file:
             file_types = 'All Files (*)' if not self.file_types else self.file_types
             if self.save_mode:
-                filepath, _ = QtGui.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
+                file_path, _ = QtGui.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
             else:
-                filepath, _ = QtGui.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
+                file_path, _ = QtGui.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
         else:
-            filepath = QtGui.QFileDialog.getExistingDirectory(self, caption=self.label_text, dir=self._value)
+            file_path = QtGui.QFileDialog.getExistingDirectory(self, caption=self.label_text, dir=self._value)
 
-        if filepath:
-            self.value = filepath
+        if file_path:
+            self.value = file_path
 
     def _delayed_set(self):
         if self._field_set:

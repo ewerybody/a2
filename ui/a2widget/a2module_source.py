@@ -33,7 +33,7 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.version_label.setText(mod_source.config.get('version', 'x.x.x'))
         self.ui.maintainer_label.setText(mod_source.config.get('maintainer', ''))
         self.ui.description_label.setText(mod_source.config.get('description', ''))
-        self.ui.local_path.writable = False
+        self.ui.local_path.changable = False
         self.ui.local_path.value = mod_source.path
 
         url = mod_source.config.get('url', '')
