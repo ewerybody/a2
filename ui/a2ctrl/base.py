@@ -118,6 +118,7 @@ class Icons(object):
         self.down = Ico('down')
         self.down_align = Ico('down_align')
         self.folder = Ico('folder')
+        self.folder2 = Ico('folder2')
         self.group = Ico('group')
         self.github = Ico('github')
         self.help = Ico('help')
