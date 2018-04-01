@@ -36,9 +36,17 @@ class A2PathField(QtGui.QWidget):
         self.main_layout.addWidget(self.line_field)
         self.browse_button = QtGui.QPushButton('Browse...', self)
         self.browse_button.setIcon(a2ctrl.Icons.inst().folder2)
-        self.browse_button.setIconSize(QtCore.QSize(16, 16))
         self.browse_button.clicked.connect(self.browse)
         self.main_layout.addWidget(self.browse_button)
+
+        self.options_menu = QtGui.QMenu()
+        self.options_button = QtGui.QToolButton(self)
+        self.options_button.setObjectName('a2option_button')
+        self.options_button.setAutoRaise(True)
+        self.options_button.setArrowType(QtCore.Qt.DownArrow)
+        self.options_button.clicked.connect(self.show_options_menu)
+        self.main_layout.addWidget(self.options_button)
+
         self._set_delay = 150
         self._field_set = False
 
@@ -126,3 +134,16 @@ class A2PathField(QtGui.QWidget):
         self.line_field.setText(self._value)
         self.changed.emit(self._value)
         self._field_set = False
+
+    def show_options_menu(self):
+        icons = a2ctrl.Icons.inst()
+        self.options_menu.clear()
+        self.options_menu.addAction(icons.copy, 'Copy Path', self.copy_path)
+        self.options_menu.addAction(icons.folder, 'Explore Path', self.explore_path)
+        self.options_menu.popup(QtGui.QCursor.pos())
+
+    def explore_path(self):
+        a2util.explore(self.value)
+
+    def copy_path(self):
+        QtGui.QApplication.clipboard().setText(self.value)

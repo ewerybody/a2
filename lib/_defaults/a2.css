@@ -8,6 +8,7 @@ QPushButton {
     padding-left: %(margin_h)ipx;
     padding-right: %(margin_h)ipx;
     background-color: "%(color_button)s";
+    icon-size: %(font_size)ipx;
 }
 
 QPushButton:hover,
