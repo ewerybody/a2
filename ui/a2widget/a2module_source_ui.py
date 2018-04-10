@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source.ui'
 #
-# Created: Mon Mar 19 19:44:49 2018
+# Created: Tue Apr 10 18:52:19 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,16 +56,22 @@ class Ui_Form(object):
         self.maintainer_label = QtGui.QLabel(self.frame)
         self.maintainer_label.setObjectName("maintainer_label")
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.maintainer_label)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.update_layout = QtGui.QHBoxLayout()
+        self.update_layout.setObjectName("update_layout")
         self.version_label = QtGui.QLabel(self.frame)
         self.version_label.setObjectName("version_label")
-        self.horizontalLayout_2.addWidget(self.version_label)
+        self.update_layout.addWidget(self.version_label)
         self.update_button = QtGui.QPushButton(self.frame)
-        self.update_button.setEnabled(False)
         self.update_button.setObjectName("update_button")
-        self.horizontalLayout_2.addWidget(self.update_button)
-        self.formLayout.setLayout(1, QtGui.QFormLayout.FieldRole, self.horizontalLayout_2)
+        self.update_layout.addWidget(self.update_button)
+        self.version_tool_button = QtGui.QToolButton(self.frame)
+        self.version_tool_button.setText("...")
+        self.version_tool_button.setAutoRaise(True)
+        self.version_tool_button.setArrowType(QtCore.Qt.DownArrow)
+        self.version_tool_button.setObjectName("version_tool_button")
+        self.update_layout.addWidget(self.version_tool_button)
+        self.update_layout.setStretch(0, 1)
+        self.formLayout.setLayout(1, QtGui.QFormLayout.FieldRole, self.update_layout)
         self.label_5 = QtGui.QLabel(self.frame)
         self.label_5.setObjectName("label_5")
         self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_5)
