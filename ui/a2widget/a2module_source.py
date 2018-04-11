@@ -1,9 +1,19 @@
+import os
+
+import a2mod
+import a2util
 import a2ctrl
 from PySide import QtGui, QtCore
 from a2widget import a2module_source_ui
+import a2core
 
-
+log = a2core.get_logger(__name__)
 MOD_COUNT_TEXT = '%i modules, %i enabled'
+UPDATE_LABEL = 'Check for Updates'
+MSG_UPTODATE = 'You are Up-To-Date!'
+MSG_NO_UPDATE_URL = 'No update-URL given!'
+MSG_UPDATE_AVAILABLE = 'Update Available! %s'
+MSG_UPDATE_URL_INVALID = 'Update_url Invalid'
 
 
 class ModSourceWidget(QtGui.QWidget):
@@ -18,8 +28,8 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.setupUi(self)
 
         self.ui.frame.setVisible(False)
-        m = 1
-        self.ui.modsource_layout.setContentsMargins(m, m, m, m)
+        margin = 1
+        self.ui.modsource_layout.setContentsMargins(margin, margin, margin, margin)
 
         self.ui.check.setText(mod_source.name)
         self.ui.check.setChecked(mod_source.name in enabled_list)
@@ -45,6 +55,10 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.busy_icon = BusyIcon(self)
         self.ui.update_layout.insertWidget(1, self.ui.busy_icon)
 
+        self._reset_timer = QtCore.QTimer()
+        self._reset_timer.setSingleShot(True)
+        self._reset_timer.timeout.connect(self.update_msg)
+
     def _set_homepage_label(self):
         url = self.mod_source.config.get('url', '')
         url_label = url
@@ -65,16 +79,42 @@ class ModSourceWidget(QtGui.QWidget):
     def check_update(self):
         update_url = self.mod_source.config.get('update_url', '')
         if not update_url:
-            self.ui.update_button.setEnabled(False)
-            self.ui.update_button.setText('No update-URL given!')
+            self.update_msg(MSG_NO_UPDATE_URL)
             return
 
         self.ui.busy_icon.set_busy()
 
-        if not update_url.startswith('http'):
+        if update_url.startswith('http') or 'github.com/' in update_url:
             pass
         else:
-            pass
+            # TODO: This has to be done in a thread!
+            if os.path.exists(update_url):
+                try:
+                    _, base = os.path.split(update_url)
+                    if base.lower() != a2mod.MOD_SOURCE_NAME:
+                        update_url = os.path.join(update_url, a2mod.MOD_SOURCE_NAME)
+                    remote_data = a2util.json_read(update_url)
+                    remote_version = remote_data.get('version')
+                    if remote_data['version'] == self.mod_source.config.get('version'):
+                        self.update_msg(MSG_UPTODATE)
+                    else:
+                        self.update_msg(MSG_UPDATE_AVAILABLE % remote_version)
+                except Exception as error:
+                    self.update_msg(str(error))
+            else:
+                self.update_msg(MSG_UPDATE_URL_INVALID)
+
+        self.ui.busy_icon.set_busy()
+
+    def update_msg(self, msg=None):
+        if msg is None:
+            self._reset_timer.stop()
+            self.ui.update_button.setText(UPDATE_LABEL)
+            self.ui.update_button.setEnabled(True)
+        else:
+            self._reset_timer.start(1000)
+            self.ui.update_button.setText(msg)
+            self.ui.update_button.setEnabled(False)
 
 
 class BusyIcon(QtGui.QLabel):
