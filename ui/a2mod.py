@@ -16,6 +16,7 @@ from shutil import copy2
 import a2core
 import a2ctrl
 import a2util
+import time
 
 
 log = a2core.get_logger(__name__)
@@ -25,6 +26,7 @@ ICON_FILENAME = 'a2icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
 EXCLUDE_FOLDERS = ['.git']
+STALE_CONFIG_TIMEOUT = 0.5
 
 
 def get_module_sources(main, path, modsource_dict):
@@ -52,7 +54,10 @@ class ModSource(object):
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
         self.mods = {}
         self.mod_count = 0
+
         self._icon = None
+        self._cfg_fetched = None
+        self._last_config = None
 
     def fetch_modules(self, state=None):
         mods_in_path = get_folders(self.path)
@@ -77,7 +82,11 @@ class ModSource(object):
     @property
     def config(self):
         try:
-            return a2util.json_read(self.config_file)
+            now = time.time()
+            if not self._cfg_fetched or now - self._cfg_fetched > STALE_CONFIG_TIMEOUT:
+                self._cfg_fetched = now
+                self._last_config = a2util.json_read(self.config_file)
+            return self._last_config
         except Exception as error:
             log.error('Error loading config file for "%s" (%s)\n'
                       '  %s' % (self.name, self.config_file, error))
