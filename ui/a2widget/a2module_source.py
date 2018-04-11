@@ -80,17 +80,20 @@ class ModSourceWidget(QtGui.QWidget):
 class BusyIcon(QtGui.QLabel):
     def __init__(self, parent):
         super(BusyIcon, self).__init__(parent)
-        self._rotation = 0
         self.anim_timer = QtCore.QTimer()
-        self.anim_timer.setInterval(30)
+        self.anim_timer.setInterval(25)
         self.anim_timer.timeout.connect(self.update_rotation)
-        self.icon = a2ctrl.Icons.inst().clear
-        self.setMaximumHeight(32)
-        self.setMinimumHeight(32)
-        self.setMaximumWidth(32)
-        self.setMinimumWidth(32)
+        self.icon = a2ctrl.Icons.inst().a2reload
+        self.icon_size = 24
+        self.rotation_speed = 22
+        self.setMaximumHeight(self.icon_size)
+        self.setMinimumHeight(self.icon_size)
+        self.setMaximumWidth(self.icon_size)
+        self.setMinimumWidth(self.icon_size)
         self.setPixmap(None)
+
         self._state = False
+        self._rotation = 0
 
     def set_busy(self):
         self._state = not self._state
@@ -101,9 +104,10 @@ class BusyIcon(QtGui.QLabel):
             self.anim_timer.stop()
 
     def update_rotation(self):
-        self._rotation = self._rotation + 11 % 360
-        pixmap = self.icon.pixmap(24, 24)
-        trans = QtGui.QTransform()
-        trans.rotate(self._rotation)
-        pixmap = pixmap.transformed(trans)
-        self.setPixmap(pixmap)
+        self._rotation = self._rotation + self.rotation_speed % 360
+        pixmap = self.icon.pixmap(self.icon_size, self.icon_size)
+        pixmap = pixmap.transformed(QtGui.QTransform().rotate(self._rotation),
+                                    QtCore.Qt.SmoothTransformation)
+        xoff = (pixmap.width() - self.icon_size) / 2
+        yoff = (pixmap.height() - self.icon_size) / 2
+        self.setPixmap(pixmap.copy(xoff, yoff, self.icon_size, self.icon_size))
