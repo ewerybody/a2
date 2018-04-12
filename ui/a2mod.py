@@ -1,22 +1,23 @@
 """
 All about a2 modules.
-Modules in a2 always come in module sources. These are collections of 1 or more modules.
+Modules in a2 always come in packages aka module sources.
+These are collections of 1 or more modules.
 A module always comes with a module source.
 
 The module sources can come from arbitrary locations. Basically just locally or
-from an FTP, github project, another URL, network location.
+from an FTP, github project, another URL, network location ...
 They can be enabled/disabled individually affecting all their child modules.
 
 @created Jul 9, 2015
 @author: eRiC
 """
 import os
+import time
 from shutil import copy2
 
 import a2core
 import a2ctrl
 import a2util
-import time
 
 
 log = a2core.get_logger(__name__)
@@ -132,8 +133,61 @@ class ModSource(object):
         self._icon = get_icon(self._icon, self.path, a2ctrl.Icons.inst().a2)
         return self._icon
 
+    def get_update_checker(self):
+        """
+        To check for newer versions via its configs update_url.
+        Provides a thread object for the according Module Source instance.
+        Connect to its Signals:
+
+         - update_error(str) - Error message as string.
+         - is_uptodate() - no args
+         - update_available(str) - Remote version as string.
+
+        and kick it off by .start()-ing it.
+
+        :rtype: QtCore.QThread
+        """
+        pass
+
+    def get_updater(self, version):
+        """
+        To change the version of the package.
+        Aka updating from a remote location OR rolling back to a backed up version.
+
+        First it will back up the installed version if not done already.
+        The passed version will then be checked against the backed up versions.
+        If found:
+            copy the backup in place.
+        else:
+            download the version from the remote location.
+
+        Provides a thread object for the according Module Source instance.
+        Connect to its Signals:
+
+         - finished() - no args
+         - failed(str) - Error message as string.
+
+        and kick it off by .start()-ing it.
+
+        :rtype: QtCore.QThread
+        """
+        pass
+
+    def get_backup_versions(self):
+        """
+        Looks up a2s temp storage for versions of the package
+        to roll back to if wanted.
+
+        :return: List of strings of stored versions.
+        :rtype: list
+        """
+        pass
+
     def __repr__(self):
         return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
+
+
+
 
 
 class Mod(object):

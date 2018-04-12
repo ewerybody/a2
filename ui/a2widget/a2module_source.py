@@ -84,10 +84,10 @@ class ModSourceWidget(QtGui.QWidget):
 
         self.ui.busy_icon.set_busy()
 
+        # TODO: Implement this functionality in a2Mod.ModSource
         if update_url.startswith('http') or 'github.com/' in update_url:
             pass
         else:
-            # TODO: This has to be done in a thread!
             if os.path.exists(update_url):
                 try:
                     _, base = os.path.split(update_url)
