@@ -18,6 +18,7 @@ from shutil import copy2
 import a2core
 import a2ctrl
 import a2util
+from PySide import QtCore
 
 
 log = a2core.get_logger(__name__)
@@ -28,6 +29,9 @@ ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
 EXCLUDE_FOLDERS = ['.git']
 STALE_CONFIG_TIMEOUT = 0.5
+
+MSG_NO_UPDATE_URL = 'No update-URL given!'
+MSG_UPDATE_URL_INVALID = 'Update URL Invalid'
 
 
 def get_module_sources(main, path, modsource_dict):
@@ -133,7 +137,7 @@ class ModSource(object):
         self._icon = get_icon(self._icon, self.path, a2ctrl.Icons.inst().a2)
         return self._icon
 
-    def get_update_checker(self):
+    def get_update_checker(self, parent):
         """
         To check for newer versions via its configs update_url.
         Provides a thread object for the according Module Source instance.
@@ -147,7 +151,8 @@ class ModSource(object):
 
         :rtype: QtCore.QThread
         """
-        pass
+        update_check_thread = _ModSourceUpdateCheckThread(self, parent)
+        return update_check_thread
 
     def get_updater(self, version):
         """
@@ -187,7 +192,42 @@ class ModSource(object):
         return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
 
 
+class _ModSourceUpdateCheckThread(QtCore.QThread):
+    is_uptodate = QtCore.Signal()
+    update_available = QtCore.Signal(str)
+    update_error = QtCore.Signal(str)
 
+    def __init__(self, mod_source, parent):
+        super(_ModSourceUpdateCheckThread, self).__init__(parent)
+        self.mod_source = mod_source
+
+    def _error(self, msg):
+        self.update_error.emit(str(msg))
+        self.quit()
+
+    def run(self):
+        update_url = self.mod_source.config.get('update_url', '')
+        if not update_url:
+            self._error(MSG_NO_UPDATE_URL)
+
+        if update_url.startswith('http') or 'github.com/' in update_url:
+            pass
+        else:
+            if os.path.exists(update_url):
+                try:
+                    _, base = os.path.split(update_url)
+                    if base.lower() != MOD_SOURCE_NAME:
+                        update_url = os.path.join(update_url, MOD_SOURCE_NAME)
+                    remote_data = a2util.json_read(update_url)
+                    remote_version = remote_data.get('version')
+                    if remote_data['version'] == self.mod_source.config.get('version'):
+                        self.is_uptodate.emit()
+                    else:
+                        self.update_available.emit(remote_version)
+                except Exception as error:
+                    self._error(str(error))
+            else:
+                self._error(MSG_UPDATE_URL_INVALID)
 
 
 class Mod(object):

@@ -1,26 +1,21 @@
-import os
-
-import a2mod
-import a2util
+import a2core
 import a2ctrl
 from PySide import QtGui, QtCore
 from a2widget import a2module_source_ui
-import a2core
 
 log = a2core.get_logger(__name__)
 MOD_COUNT_TEXT = '%i modules, %i enabled'
 UPDATE_LABEL = 'Check for Updates'
 MSG_UPTODATE = 'You are Up-To-Date!'
-MSG_NO_UPDATE_URL = 'No update-URL given!'
 MSG_UPDATE_AVAILABLE = 'Update Available! %s'
-MSG_UPDATE_URL_INVALID = 'Update_url Invalid'
 
 
 class ModSourceWidget(QtGui.QWidget):
     toggled = QtCore.Signal()
 
-    def __init__(self, mod_source, enabled_list):
+    def __init__(self, parent, mod_source, show_enabled=False):
         super(ModSourceWidget, self).__init__()
+        self.parent = parent
         self.mod_source = mod_source
 
         a2ctrl.check_ui_module(a2module_source_ui)
@@ -32,18 +27,18 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.modsource_layout.setContentsMargins(margin, margin, margin, margin)
 
         self.ui.check.setText(mod_source.name)
-        self.ui.check.setChecked(mod_source.name in enabled_list)
+        self.ui.check.setChecked(show_enabled)
         self.ui.check.clicked[bool].connect(mod_source.toggle)
         self.ui.check.clicked.connect(self.toggled.emit)
 
         self.ui.mod_count.setText(MOD_COUNT_TEXT % (mod_source.mod_count, mod_source.enabled_count))
-        self.ui.tool_button.clicked.connect(self.toggle_details)
+        self.ui.tool_button.clicked.connect(self._toggle_details)
 
         self.ui.version_label.setText(mod_source.config.get('version', 'x.x.x'))
         self.ui.maintainer_label.setText(mod_source.config.get('maintainer', ''))
         self.ui.local_path.changable = False
         self.ui.local_path.value = mod_source.path
-        self.ui.update_button.clicked.connect(self.check_update)
+        self.ui.update_button.clicked.connect(self._check_update)
         self._set_homepage_label()
 
         desc = mod_source.config.get('description', '')
@@ -57,7 +52,7 @@ class ModSourceWidget(QtGui.QWidget):
 
         self._reset_timer = QtCore.QTimer()
         self._reset_timer.setSingleShot(True)
-        self._reset_timer.timeout.connect(self.update_msg)
+        self._reset_timer.timeout.connect(self._update_msg)
 
     def _set_homepage_label(self):
         url = self.mod_source.config.get('url', '')
@@ -70,43 +65,34 @@ class ModSourceWidget(QtGui.QWidget):
             url_label = url_label[4:]
         self.ui.homepage_label.setText('<a href="%s">%s</a>' % (url, url_label))
 
-    def toggle_details(self):
+    def _toggle_details(self):
         state = self.ui.frame.isVisible()
         self.ui.frame.setVisible(not state)
         a = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
         self.ui.tool_button.setArrowType(a[state])
 
-    def check_update(self):
-        update_url = self.mod_source.config.get('update_url', '')
-        if not update_url:
-            self.update_msg(MSG_NO_UPDATE_URL)
-            return
+    def _check_update(self):
+        self.ui.busy_icon.set_busy()
+        update_check_thread = self.mod_source.get_update_checker(self.parent)
+        update_check_thread.is_uptodate.connect(self._show_uptodate)
+        update_check_thread.update_available.connect(self._show_update_available)
+        update_check_thread.update_error.connect(self._show_update_error)
+        update_check_thread.start()
 
+    def _show_uptodate(self):
+        self._update_msg(MSG_UPTODATE)
         self.ui.busy_icon.set_busy()
 
-        # TODO: Implement this functionality in a2Mod.ModSource
-        if update_url.startswith('http') or 'github.com/' in update_url:
-            pass
-        else:
-            if os.path.exists(update_url):
-                try:
-                    _, base = os.path.split(update_url)
-                    if base.lower() != a2mod.MOD_SOURCE_NAME:
-                        update_url = os.path.join(update_url, a2mod.MOD_SOURCE_NAME)
-                    remote_data = a2util.json_read(update_url)
-                    remote_version = remote_data.get('version')
-                    if remote_data['version'] == self.mod_source.config.get('version'):
-                        self.update_msg(MSG_UPTODATE)
-                    else:
-                        self.update_msg(MSG_UPDATE_AVAILABLE % remote_version)
-                except Exception as error:
-                    self.update_msg(str(error))
-            else:
-                self.update_msg(MSG_UPDATE_URL_INVALID)
-
+    def _show_update_available(self, version):
+        # TODO: Turn into 'update to version x'-button
+        self._update_msg(MSG_UPDATE_AVAILABLE % version)
         self.ui.busy_icon.set_busy()
 
-    def update_msg(self, msg=None):
+    def _show_update_error(self, msg):
+        self._update_msg(msg)
+        self.ui.busy_icon.set_busy()
+
+    def _update_msg(self, msg=None):
         if msg is None:
             self._reset_timer.stop()
             self.ui.update_button.setText(UPDATE_LABEL)
