@@ -30,7 +30,6 @@ a2win = None
 
 
 def main():
-
     global app, a2win
     app = QSingleApplication(sys.argv)
     # ensure_single will already exit() after sending the message

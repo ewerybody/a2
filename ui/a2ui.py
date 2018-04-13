@@ -18,6 +18,8 @@ from PySide import QtGui, QtCore
 BASE_DPI = 96.0
 log = a2core.get_logger(__name__)
 ui_defaults = None
+RESTART_DELAY = 300
+RUNTIME_WATCH_INTERVAL = 1000
 
 
 class A2Window(QtGui.QMainWindow):
@@ -350,7 +352,7 @@ class RestartThread(QtCore.QThread):
         self.a2 = a2
 
     def run(self, *args, **kwargs):
-        self.msleep(300)
+        self.msleep(RESTART_DELAY)
         ahk_process = QtCore.QProcess()
         _retval, _pid = ahk_process.startDetached(
             self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
@@ -383,7 +385,7 @@ class RuntimeWatcher(QtCore.QThread):
 
     def run(self, *args, **kwargs):
         while not self.stopped:
-            self.msleep(1000)
+            self.msleep(RUNTIME_WATCH_INTERVAL)
             self.is_live = a2runtime.is_runtime_live()
 
             if self.is_live:
