@@ -39,7 +39,7 @@ class A2Settings(QtGui.QWidget):
             modsourcewidget = a2module_source.ModSourceWidget(
                 self.main, module_source,
                 show_enabled=module_source.name in enabled_list)
-            modsourcewidget.toggled.connect(self.main.settings_changed)
+            modsourcewidget.changed.connect(self.main.settings_changed)
             self.ui.mod_source_layout.addWidget(modsourcewidget)
 
     def _setup_ui(self):

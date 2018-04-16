@@ -13,11 +13,12 @@ They can be enabled/disabled individually affecting all their child modules.
 """
 import os
 import time
-from shutil import copy2
+import uuid
 
 import a2core
 import a2ctrl
 import a2util
+import shutil
 from PySide import QtCore
 
 
@@ -31,6 +32,11 @@ EXCLUDE_FOLDERS = ['.git']
 STALE_CONFIG_TIMEOUT = 0.5
 
 MSG_NO_UPDATE_URL = 'No update-URL given!'
+MSG_DOWNLOAD = 'Downloading %s'
+MSG_UNPACK = 'Unpacking %s'
+MSG_BACKUP = 'Backing up %s'
+MSG_BACKUP_ERROR = 'Error Backing up %s'
+MSG_INSTALL = 'Installing %s'
 MSG_UPDATE_URL_INVALID = 'Update URL Invalid'
 
 
@@ -65,6 +71,7 @@ class ModSource(object):
         self._last_config = None
 
     def fetch_modules(self, state=None):
+        self._cfg_fetched = None
         mods_in_path = get_folders(self.path)
         if not mods_in_path:
             log.debug('No modules in module source: %s' % self.path)
@@ -139,44 +146,19 @@ class ModSource(object):
 
     def get_update_checker(self, parent):
         """
-        To check for newer versions via its configs update_url.
         Provides a thread object for the according Module Source instance.
-        Connect to its Signals:
 
-         - update_error(str) - Error message as string.
-         - is_uptodate() - no args
-         - update_available(str) - Remote version as string.
-
-        and kick it off by .start()-ing it.
-
-        :rtype: QtCore.QThread
+        :rtype: _ModSourceUpdateCheckThread
         """
-        update_check_thread = _ModSourceUpdateCheckThread(self, parent)
-        return update_check_thread
+        return _ModSourceUpdateCheckThread(self, parent)
 
-    def get_updater(self, version):
+    def get_updater(self, version, parent):
         """
-        To change the version of the package.
-        Aka updating from a remote location OR rolling back to a backed up version.
-
-        First it will back up the installed version if not done already.
-        The passed version will then be checked against the backed up versions.
-        If found:
-            copy the backup in place.
-        else:
-            download the version from the remote location.
-
         Provides a thread object for the according Module Source instance.
-        Connect to its Signals:
 
-         - finished() - no args
-         - failed(str) - Error message as string.
-
-        and kick it off by .start()-ing it.
-
-        :rtype: QtCore.QThread
+        :rtype: _ModSourceUpdateThread
         """
-        pass
+        return _ModSourceUpdateThread(self, version, parent)
 
     def get_backup_versions(self):
         """
@@ -191,8 +173,39 @@ class ModSource(object):
     def __repr__(self):
         return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
 
+    def _move_to_temp_backup(self):
+        this_version = self.config.get('version')
+        this_temp_path = os.path.join(self.a2.paths.a2_temp, self.name)
+        version_tmpath = os.path.join(this_temp_path, this_version)
+
+        # not yet backed up: move current version to temp
+        if not os.path.isdir(this_temp_path):
+            log.info('backing up %s %s' % (self.name, this_version))
+            os.makedirs(this_temp_path, exist_ok=True)
+            os.rename(self.path, version_tmpath)
+            return not os.path.isdir(self.path)
+
+        # if backed up: move current to temp then delete
+        else:
+            log.info('backed up already!\n'
+                     '    removing: %s %s' % (self.name, this_version))
+            trash_path = os.path.join(os.getenv('TEMP'), str(uuid.uuid4()))
+            os.rename(self.path, trash_path)
+            shutil.rmtree(trash_path)
+            return not os.path.isdir(self.path) and not os.path.isdir(trash_path)
+
 
 class _ModSourceUpdateCheckThread(QtCore.QThread):
+    """
+    To check for newer versions via its configs update_url.
+    Connect to its Signals:
+
+     - update_error(str) - Error message as string.
+     - is_uptodate() - no args
+     - update_available(str) - Remote version as string.
+
+    and kick it off by .start()-ing it.
+    """
     is_uptodate = QtCore.Signal()
     update_available = QtCore.Signal(str)
     update_error = QtCore.Signal(str)
@@ -211,6 +224,7 @@ class _ModSourceUpdateCheckThread(QtCore.QThread):
             self._error(MSG_NO_UPDATE_URL)
 
         if update_url.startswith('http') or 'github.com/' in update_url:
+            # TODO: web update check
             pass
         else:
             if os.path.exists(update_url):
@@ -228,6 +242,95 @@ class _ModSourceUpdateCheckThread(QtCore.QThread):
                     self._error(str(error))
             else:
                 self._error(MSG_UPDATE_URL_INVALID)
+
+
+class _ModSourceUpdateThread(QtCore.QThread):
+    """
+    To change the version of the package.
+    Aka updating from a remote location OR rolling back to a backed up version.
+
+    First it will back up the installed version if not done already.
+    The passed version will then be checked against the backed up versions.
+    If found:
+        copy the backup in place.
+    else:
+        download the version from the remote location.
+
+    Connect to its Signals:
+
+     - finished() - no args
+     - failed(str) - Error message as string.
+
+    and kick it off by .start()-ing it.
+    """
+    finished = QtCore.Signal()
+    failed = QtCore.Signal(str)
+    status = QtCore.Signal(str)
+
+    def __init__(self, mod_source, version, parent):
+        super(_ModSourceUpdateThread, self).__init__(parent)
+        self.version = version
+        self.mod_source = mod_source
+
+    def _error(self, msg):
+        self.failed.emit(str(msg))
+        self.quit()
+
+    def run(self):
+        old_version = self.mod_source.config.get('version')
+        if old_version == self.version:
+            self.finished.emit()
+            return
+
+        update_url = self.mod_source.config.get('update_url', '')
+        if not update_url:
+            self._error(MSG_NO_UPDATE_URL)
+            return
+
+        a2_temp = a2core.A2Obj.inst().paths.a2_temp
+        temp_modsource = os.path.join(a2_temp, self.mod_source.name)
+        temp_new_version = os.path.join(temp_modsource, self.version)
+        # temp_old_version = os.path.join(temp_modsource, old_version)
+
+        self.status.emit(MSG_BACKUP % old_version)
+        try:
+            self.mod_source._move_to_temp_backup()
+        except Exception as error:
+            log.error('Could not backup %s (%s)!' % (old_version, self.mod_source.path))
+            log.error(error)
+            self._error(MSG_BACKUP_ERROR % old_version)
+            return
+
+        if not os.path.isdir(temp_new_version):
+            self.status.emit(MSG_DOWNLOAD % self.version)
+            if update_url.startswith('http') or 'github.com/' in update_url:
+                # TODO: web update
+                pass
+            else:
+                if not os.path.exists(update_url):
+                    self._error(MSG_UPDATE_URL_INVALID)
+                    return
+
+                pack_basename = self.version + '.zip'
+                remote_path = os.path.join(update_url, pack_basename)
+                temp_packpath = os.path.join(a2_temp, self.mod_source.name, pack_basename)
+                shutil.copy2(remote_path, temp_packpath)
+
+            try:
+                import zipfile
+                with zipfile.ZipFile(temp_packpath) as tmp_zip:
+                    for filename in tmp_zip.namelist():
+                        tmp_zip.extract(filename, temp_new_version)
+                os.remove(temp_packpath)
+
+            except Exception as error:
+                self._error(str(error))
+                return
+
+        self.status.emit(MSG_INSTALL % self.version)
+        shutil.copytree(temp_new_version, self.mod_source.path)
+
+        self.finished.emit()
 
 
 class Mod(object):
@@ -284,7 +387,7 @@ class Mod(object):
         else:
             backup_index = 1
         if self.has_config_file:
-            copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
+            shutil.copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
 
         # overwrite config_file
         a2util.json_write(self.config_file, self._config)
