@@ -33,11 +33,19 @@ class A2Obj(object):
 
     @classmethod
     def inst(cls):
+        """
+        Returns the singleton instance of A2Obj.
+
+        :rtype: A2Obj
+        """
         if A2Obj._instance is None:
             A2Obj._instance = A2Obj()
         return A2Obj._instance
 
     def __init__(self):
+        if A2Obj._instance is not None:
+            raise RuntimeError('Singleton A2Obj has already been initialized!\n'
+                               '  Use A2Obj.inst() to get the instance!')
         # lazy import so importing a2core does not depend on other a2 module
         global a2ahk, a2db, a2mod
         import a2ahk
@@ -161,6 +169,7 @@ class Paths(object):
         self._defaults = os.path.join(self.lib, '_defaults')
         self.urls_ahk = os.path.join(self._defaults, 'a2_urls.ahk')
         self.a2_script = os.path.join(self.lib, 'a2.ahk')
+        self.a2_temp = os.path.join(os.getenv('TEMP'), 'a2_temp')
 
         path_vars = self._fetch_a2_setting_paths()
         self.settings = path_vars['settings']
