@@ -1,4 +1,4 @@
-from _functools import partial
+from functools import partial
 
 from PySide import QtCore, QtGui
 
@@ -26,20 +26,17 @@ class A2TagField(QtGui.QWidget):
         self._available_tags = None
 
     def build_plus_menu(self):
-        pos = self.cursor().pos()
-        label_icon = a2ctrl.Icons().label
         self.plus_menu.clear()
-        action = QtGui.QAction(a2ctrl.Icons().label_plus, 'New Tag', self, triggered=self.create_tag)
-        self.plus_menu.addAction(action)
+        label_icon = a2ctrl.Icons().label
+        self.plus_menu.addAction(a2ctrl.Icons().label_plus, 'New Tag', self.create_tag)
         if self._available_tags:
             self.plus_menu.addSeparator()
             for tag in self._available_tags:
                 if tag in self._tags:
                     continue
-                action = QtGui.QAction(label_icon, tag, self, triggered=partial(self.add, tag))
-                self.plus_menu.addAction(action)
+                self.plus_menu.addAction(label_icon, tag, partial(self.add, tag))
 
-        self.plus_menu.popup(pos)
+        self.plus_menu.popup(self.cursor().pos())
 
     def create_tag(self):
         A2InputDialog(self, 'Create New Tag', ok_func=self.add)
@@ -146,20 +143,14 @@ class A2Tag(QtGui.QPushButton):
         self.clicked.connect(self.build_menu)
 
     def build_menu(self):
-        pos = self.cursor().pos()
         if self.button_menu is None:
             self.button_menu = QtGui.QMenu()
-            action = QtGui.QAction(a2ctrl.Icons().delete, 'Delete "%s"' % self.name, self.button_menu,
-                                   triggered=self.delete)
-            self.button_menu.addAction(action)
-        self.button_menu.popup(pos)
+            self.button_menu.addAction(
+                a2ctrl.Icons().delete, 'Delete "%s"' % self.name, self.delete)
+        self.button_menu.popup(self.cursor().pos())
 
     def delete(self):
         self.delete_requested.emit(self.name)
-
-
-class CreateTagDialog():
-    pass
 
 
 if __name__ == '__main__':
