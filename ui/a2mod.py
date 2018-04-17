@@ -63,6 +63,7 @@ class ModSource(object):
         self.name = name
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
+        self.backup_path = os.path.join(a2.paths.a2_temp, name)
         self.mods = {}
         self.mod_count = 0
 
@@ -168,20 +169,19 @@ class ModSource(object):
         :return: List of strings of stored versions.
         :rtype: list
         """
-        pass
+        return get_folders(self.backup_path)
 
     def __repr__(self):
         return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
 
     def _move_to_temp_backup(self):
         this_version = self.config.get('version')
-        this_temp_path = os.path.join(self.a2.paths.a2_temp, self.name)
-        version_tmpath = os.path.join(this_temp_path, this_version)
+        version_tmpath = os.path.join(self.backup_path, this_version)
 
         # not yet backed up: move current version to temp
-        if not os.path.isdir(this_temp_path):
+        if not os.path.isdir(self.backup_path):
             log.info('backing up %s %s' % (self.name, this_version))
-            os.makedirs(this_temp_path, exist_ok=True)
+            os.makedirs(self.backup_path, exist_ok=True)
             os.rename(self.path, version_tmpath)
             return not os.path.isdir(self.path)
 
@@ -287,11 +287,6 @@ class _ModSourceUpdateThread(QtCore.QThread):
             self._error(MSG_NO_UPDATE_URL)
             return
 
-        a2_temp = a2core.A2Obj.inst().paths.a2_temp
-        temp_modsource = os.path.join(a2_temp, self.mod_source.name)
-        temp_new_version = os.path.join(temp_modsource, self.version)
-        # temp_old_version = os.path.join(temp_modsource, old_version)
-
         self.status.emit(MSG_BACKUP % old_version)
         try:
             self.mod_source._move_to_temp_backup()
@@ -301,6 +296,7 @@ class _ModSourceUpdateThread(QtCore.QThread):
             self._error(MSG_BACKUP_ERROR % old_version)
             return
 
+        temp_new_version = os.path.join(self.mod_source.backup_path, self.version)
         if not os.path.isdir(temp_new_version):
             self.status.emit(MSG_DOWNLOAD % self.version)
             if update_url.startswith('http') or 'github.com/' in update_url:
@@ -313,7 +309,7 @@ class _ModSourceUpdateThread(QtCore.QThread):
 
                 pack_basename = self.version + '.zip'
                 remote_path = os.path.join(update_url, pack_basename)
-                temp_packpath = os.path.join(a2_temp, self.mod_source.name, pack_basename)
+                temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
                 shutil.copy2(remote_path, temp_packpath)
 
             try:
@@ -514,7 +510,12 @@ def get_files(path):
 def get_folders(path, exclude=None):
     if exclude is None:
         exclude = EXCLUDE_FOLDERS
-    return [f for f in os.listdir(path) if os.path.isdir(os.path.join(path, f)) and f not in exclude]
+
+    if not os.path.isdir(path):
+        return []
+
+    return [f for f in os.listdir(path)
+            if os.path.isdir(os.path.join(path, f)) and f not in exclude]
 
 
 def get_icon(current_icon, folder, fallback):

@@ -58,6 +58,8 @@ class ModSourceWidget(QtGui.QWidget):
         self._reset_timer = QtCore.QTimer()
         self._reset_timer.setSingleShot(True)
         self._reset_timer.timeout.connect(self._update_msg)
+        self.ui.version_tool_button.clicked.connect(self.build_version_menu)
+        self.version_menu = QtGui.QMenu(self)
 
     def _set_homepage_label(self):
         url = self.mod_source.config.get('url', '')
@@ -105,7 +107,6 @@ class ModSourceWidget(QtGui.QWidget):
         self.changed.emit()
 
     def _show_update_available(self, version):
-        # TODO: Turn into 'update to version x'-button
         self._update_to_version = version
         self.ui.update_button.setText(MSG_UPDATE_AVAILABLE % version)
         self.ui.busy_icon.set_idle()
@@ -127,6 +128,27 @@ class ModSourceWidget(QtGui.QWidget):
             self._reset_timer.start(1000)
             self.ui.update_button.setText(msg)
             self.ui.update_button.setEnabled(False)
+
+    def build_version_menu(self):
+        menu = self.version_menu
+
+        menu.clear()
+        backup_versions = self.mod_source.get_backup_versions()
+        if backup_versions:
+            backup_menu = menu.addMenu('Backed up versions')
+            for version in backup_versions:
+                if version != self.mod_source.config.get('version'):
+                    backup_menu.addAction(version)
+#            print('backup_versions: %s' % backup_versions)
+#            backup_menu
+            backup_menu.addSeparator()
+            backup_menu.addAction('Remove backups')
+        else:
+            action = menu.addAction('No backed up verions!')
+            action.setEnabled(False)
+        menu.addSeparator()
+        menu.addAction('Uninstall "%s"' % self.mod_source.name)
+        menu.popup(self.cursor().pos())
 
 
 class BusyIcon(QtGui.QLabel):
