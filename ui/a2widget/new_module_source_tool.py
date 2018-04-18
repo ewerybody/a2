@@ -19,8 +19,9 @@ class NewModuleSourceTool(A2InputDialog):
         self.main = main
         self.source_names = [m.lower() for m in self.a2.module_sources]
         super(NewModuleSourceTool, self).__init__(
-            self.main, 'New Module Source', self.create_source, self.check_name,
+            self.main, 'New Module Source', self.check_name,
             msg='Name the new module source:', text='my_module_source')
+        self.okayed.connect(self.create_source)
 
     def check_name(self, name):
         """

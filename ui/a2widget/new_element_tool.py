@@ -30,10 +30,10 @@ class NewElementDialog(A2InputDialog):
         self._current_elements = [os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)]
         super(NewElementDialog, self).__init__(
             self.main, 'New Element Dialog', msg='Name the new element:', text='name',
-            ok_func=self.create_element,
             check_func=self.check_element_name)
         self.element_cfg = {'target': 'global', 'enlist': True}
         self.setup_ui()
+        self.okayed.connect(self.create_element)
 
     def setup_ui(self):
         self.ui.radio_global = QtGui.QRadioButton(LABEL_GLOBAL % self.text, self)
@@ -115,7 +115,3 @@ class NewElementDialog(A2InputDialog):
             fobj.write(new_element_code)
 
         subprocess.Popen(['explorer.exe', '/select,', os.path.normpath(new_path)])
-
-
-if __name__ == '__main__':
-    pass

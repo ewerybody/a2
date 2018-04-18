@@ -39,7 +39,14 @@ class A2TagField(QtGui.QWidget):
         self.plus_menu.popup(self.cursor().pos())
 
     def create_tag(self):
-        A2InputDialog(self, 'Create New Tag', ok_func=self.add)
+        dialog = A2InputDialog(self, 'Create New Tag', self.create_check)
+        dialog.okayed.connect(self.add)
+        dialog.show()
+
+    def create_check(self, tag_name):
+        if self.in_tags_already(tag_name):
+            return 'In tags already!'
+        return True
 
     def set_tags(self, these):
         """
@@ -79,8 +86,11 @@ class A2TagField(QtGui.QWidget):
         self._tags.remove(tag_name)
         self._check_changed()
 
+    def in_tags_already(self, tag_name):
+        return tag_name in self._tags
+
     def add(self, tag_name, _emit_change=True):
-        if tag_name in self._tags:
+        if self.in_tags_already(tag_name):
             return
 
         if isinstance(tag_name, (tuple, list, set)):

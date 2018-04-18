@@ -252,10 +252,15 @@ class BrowseScriptsMenu(QtGui.QMenu):
     def set_script(self, name='', create=False):
         if not name:
             from a2widget.a2input_dialog import A2InputDialog
-            A2InputDialog(self.main, 'New Script', partial(self.set_script, create=True),
-                          self.main.mod.check_create_script, text='awesomeScript',
-                          msg='Give a name for the new script file:')
+            dialog = A2InputDialog(
+                self.main, 'New Script',
+                self.main.mod.check_create_script,
+                text='awesomeScript',
+                msg='Give a name for the new script file:')
+            dialog.okayed.connect(partial(self.set_script, create=True))
+            dialog.show()
             return
+
         if create:
             name = self.main.mod.create_script(name, self.main.devset.author_name)
         self.func('include', name)

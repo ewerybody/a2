@@ -275,15 +275,15 @@ class A2Window(QtGui.QMainWindow):
 
     def create_new_element(self):
         from a2widget import new_element_tool
-        new_element_tool.NewElementDialog(self)
+        new_element_tool.NewElementDialog(self).show()
 
     def create_new_module(self):
         from a2widget import new_module_tool
-        new_module_tool.NewModulueTool(self)
+        new_module_tool.NewModulueTool(self).show()
 
     def create_local_source(self):
         from a2widget import new_module_source_tool
-        new_module_source_tool.NewModuleSourceTool(self)
+        new_module_source_tool.NewModuleSourceTool(self).show()
 
     def rebuild_css(self, user_scale=None):
         if user_scale is None:

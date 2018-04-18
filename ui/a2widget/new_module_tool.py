@@ -42,9 +42,9 @@ class NewModulueTool(A2InputDialog):
         self.source_dict['source_index'] = self.source_dict['sources'].index(module_source)
 
         super(NewModulueTool, self).__init__(
-            self.main, 'New Module', self.create_module, self.check_name,
+            self.main, 'New Module', check_func=self.check_name,
             msg='Name the new module:', text='my_module')
-
+        self.okayed.connect(self.create_module)
         self.ui.main_layout.insertWidget(0, QtGui.QLabel('Module Source:'))
 
         self.source_index = QtGui.QComboBox(self)
