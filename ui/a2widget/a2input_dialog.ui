@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>368</width>
-    <height>88</height>
+    <height>68</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,9 +20,6 @@
       <string>TextLabel</string>
      </property>
     </widget>
-   </item>
-   <item>
-    <widget class="QLineEdit" name="textField"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
