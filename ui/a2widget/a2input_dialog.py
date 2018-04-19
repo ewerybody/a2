@@ -22,6 +22,7 @@ class A2ConfirmDialog(QtGui.QDialog):
         self.ui.setupUi(self)
         self.setModal(True)
         self.setWindowTitle(title)
+        self._result = False
 
         if ok_func is not None:
             self.okayed.connect(ok_func)
@@ -36,8 +37,13 @@ class A2ConfirmDialog(QtGui.QDialog):
         self.close()
 
     def okay(self):
+        self._result = True
         self.okayed.emit()
         self.accept()
+
+    @property
+    def result(self):
+        return self._result
 
 
 class A2InputDialog(A2ConfirmDialog):
@@ -75,10 +81,8 @@ class A2InputDialog(A2ConfirmDialog):
         if text is None:
             text = self.ui.textField.text()
 
-        if text == self._text:
-            return
-
-        self.field_changed.emit(text)
+        if text != self._text:
+            self.field_changed.emit(text)
         self._text = text
 
         if self.check_func is not None:
@@ -86,9 +90,11 @@ class A2InputDialog(A2ConfirmDialog):
             if answer is True:
                 self.ui.a2ok_button.setEnabled(True)
                 self.ui.a2ok_button.setText('OK')
+                return True
             else:
                 self.ui.a2ok_button.setEnabled(False)
                 self.ui.a2ok_button.setText(answer)
+                return False
 
     @property
     def output(self):
@@ -96,9 +102,11 @@ class A2InputDialog(A2ConfirmDialog):
 
     def okay(self):
         txt = self.ui.text_field.text()
-        self._output = txt
-        self.okayed.emit(txt)
-        self.accept()
+        result = self.check(txt)
+        if result is None or result is True:
+            self._output = txt
+            self.okayed.emit(txt)
+            self.accept()
 
 
 if __name__ == '__main__':

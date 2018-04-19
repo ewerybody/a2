@@ -283,7 +283,15 @@ class A2Window(QtGui.QMainWindow):
 
     def create_local_source(self):
         from a2widget import new_module_source_tool
-        new_module_source_tool.NewModuleSourceTool(self).show()
+        dialog = new_module_source_tool.NewModuleSourceTool(self)
+        dialog.okayed.connect(self._create_local_source)
+        dialog.show()
+
+    def _create_local_source(self, name):
+        import a2mod
+        a2mod.create_module_source(name)
+        self.a2.fetch_modules()
+        self.module_view.draw_mod()
 
     def rebuild_css(self, user_scale=None):
         if user_scale is None:

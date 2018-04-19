@@ -21,25 +21,11 @@ class NewModuleSourceTool(A2InputDialog):
         super(NewModuleSourceTool, self).__init__(
             self.main, 'New Module Source', self.check_name,
             msg='Name the new module source:', text='my_module_source')
-        self.okayed.connect(self.create_source)
 
     def check_name(self, name):
         """
         Runs on keystroke when creating new module source
         to give way to okaying creation.
         """
-        return a2util.standard_name_check(name, self.source_names, 'Module source name "%s" is in use!')
-
-    def create_source(self, name):
-        if not self.check_name(name):
-            return
-        if not os.access(self.a2.paths.modules, os.W_OK):
-            log.error('A2 module directory not writable! %s' % self.a2.paths.modules)
-            return
-
-        source_path = os.path.join(self.a2.paths.modules, name)
-        source_cfg = os.path.join(source_path, MOD_SOURCE_NAME)
-        os.mkdir(source_path)
-        a2util.json_write(source_cfg, {})
-        self.a2.fetch_modules()
-        self.main.ui.module_view.draw_mod()
+        return a2util.standard_name_check(
+            name, self.source_names, 'The name "%s" is already in use!')

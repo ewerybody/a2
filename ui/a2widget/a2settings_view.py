@@ -39,7 +39,8 @@ class A2Settings(QtGui.QWidget):
             modsourcewidget = a2module_source.ModSourceWidget(
                 self.main, module_source,
                 show_enabled=module_source.name in enabled_list)
-            modsourcewidget.changed.connect(self.main.settings_changed)
+            modsourcewidget.toggled.connect(self.main.settings_changed)
+            modsourcewidget.changed.connect(self.on_mod_source_change)
             self.ui.mod_source_layout.addWidget(modsourcewidget)
 
     def _setup_ui(self):
@@ -148,11 +149,25 @@ class A2Settings(QtGui.QWidget):
         self.main.settings_changed('hotkeys')
 
     def build_add_source_menu(self):
+        icons = a2ctrl.Icons.inst()
         self.add_source_menu.clear()
-        self.add_source_menu.addAction(
-            QtGui.QAction('Create Local', self, triggered=self.main.create_local_source))
-        self.add_source_menu.addAction(QtGui.QAction('Add From URL', self))
+        self.add_source_menu.addAction(icons.folder_add, 'Create Local',
+                                       self.main.create_local_source)
+        self.add_source_menu.addAction(icons.cloud_download, 'Add From URL',
+                                       self.add_source_url)
 
     def get_db_digest(self):
         self.ui.db_printout.clear()
         self.ui.db_printout.setText(self.a2.db._get_digest())
+
+    def on_mod_source_change(self):
+        self.a2.fetch_modules()
+        self.main.settings_changed(refresh_ui=True)
+
+    def add_source_url(self):
+        dialog = a2module_source.AddSourceDialog(self.main)
+        dialog.okayed.connect(self.on_add_source)
+        dialog.show()
+
+    def on_add_source(self, url):
+        print('url: %s' % url)

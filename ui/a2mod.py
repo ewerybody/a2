@@ -1,11 +1,10 @@
 """
 All about a2 modules.
-Modules in a2 always come in packages aka module sources.
+Modules in a2 always come in packages aka "module sources".
 These are collections of 1 or more modules.
-A module always comes with a module source.
 
-The module sources can come from arbitrary locations. Basically just locally or
-from an FTP, github project, another URL, network location ...
+A module always comes with a package. These can come from arbitrary locations.
+Basically just locally or from an FTP, github, another URL, network location ...
 They can be enabled/disabled individually affecting all their child modules.
 
 @created Jul 9, 2015
@@ -55,6 +54,14 @@ def get_module_sources(main, path, modsource_dict):
         if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
         modsource_dict.setdefault(name, ModSource(main, name)).fetch_modules()
+
+
+def create_module_source(name):
+    a2 = a2core.A2Obj.inst()
+    source_path = os.path.join(a2.paths.modules, name)
+    source_cfg = os.path.join(source_path, MOD_SOURCE_NAME)
+    os.mkdir(source_path)
+    a2util.json_write(source_cfg, {})
 
 
 class ModSource(object):
@@ -129,6 +136,7 @@ class ModSource(object):
     @property
     def enabled_mods(self):
         _state, enabled_mods = self.a2.enabled.get(self.name, (False, []))
+        enabled_mods = [m for m in enabled_mods if m in self.mods]
         return enabled_mods
 
     @property
@@ -185,14 +193,20 @@ class ModSource(object):
             os.rename(self.path, version_tmpath)
             return not os.path.isdir(self.path)
 
-        # if backed up: move current to temp then delete
+        # if backed up: remove the current package
         else:
             log.info('backed up already!\n'
                      '    removing: %s %s' % (self.name, this_version))
-            trash_path = os.path.join(os.getenv('TEMP'), str(uuid.uuid4()))
-            os.rename(self.path, trash_path)
-            shutil.rmtree(trash_path)
-            return not os.path.isdir(self.path) and not os.path.isdir(trash_path)
+            return self.remove()
+
+    def remove(self):
+        """
+        Deletes the package from the modules storage
+        """
+        remove_folder(self.path)
+
+    def remove_backups(self):
+        remove_folder(self.backup_path)
 
 
 class _ModSourceUpdateCheckThread(QtCore.QThread):
@@ -516,6 +530,18 @@ def get_folders(path, exclude=None):
 
     return [f for f in os.listdir(path)
             if os.path.isdir(os.path.join(path, f)) and f not in exclude]
+
+
+def remove_folder(path):
+    """
+    Moves the path to temp with random name then deletes it.
+    Instead of deleting the single items directly this will already
+    correctly fail moving to temp if ANY of the containing items is locked.
+    So there is no other safeguard needed.
+    """
+    trash_path = os.path.join(os.getenv('TEMP'), str(uuid.uuid4()))
+    os.rename(path, trash_path)
+    shutil.rmtree(trash_path)
 
 
 def get_icon(current_icon, folder, fallback):
