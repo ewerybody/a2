@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Thu Apr 19 14:27:18 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Wed Feb 14 01:17:19 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -211,7 +211,7 @@ class Ui_a2settings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 786, 781))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 708, 912))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setSpacing(0)
@@ -221,7 +221,6 @@ class Ui_a2settings(object):
         self.a2license_text.setAutoFillBackground(False)
         self.a2license_text.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.a2license_text.setWordWrap(True)
-        self.a2license_text.setOpenExternalLinks(True)
         self.a2license_text.setObjectName("a2license_text")
         self.verticalLayout_4.addWidget(self.a2license_text)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
@@ -264,6 +263,6 @@ class Ui_a2settings(object):
         self.a2license_text.setText(QtGui.QApplication.translate("a2settings", "<html><head/><body><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_ahk.png\"/><br/><span style=\" font-weight:600;\">AutoHotkey</span> - a scripting language for desktop automation</p><p align=\"center\"><a href=\"https://autohotkey.com\"><span style=\" text-decoration: underline; color:#0000ff;\">https://autohotkey.com</span></a> - GNU GPLv2</p><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_python.png\"/></p><p align=\"center\"><span style=\" font-weight:600;\">Python</span> - high-level programming language</p><p align=\"center\"><a href=\"https://www.python.org/\"><span style=\" text-decoration: underline; color:#0000ff;\">https://www.python.org</span></a> - Python Software Foundation License - GPL compatible</p><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_pyside.png\"/></p><p align=\"center\"><span style=\" font-weight:600;\">PySide</span> - Python binding of the cross-platform GUI toolkit Qt</p><p align=\"center\"><a href=\"https://wiki.qt.io/Pyside\"><span style=\" text-decoration: underline; color:#0000ff;\">https://wiki.qt.io/Pyside</span></a> - LGPL</p><p align=\"center\"><br/></p><p align=\"center\"><img src=\"res/logo_material.png\"/></p><p align=\"center\"><span style=\" font-weight:600;\">Material Icons</span> - Material Design icons by Google</p><p align=\"center\"><a href=\"https://material.io/icons\"><span style=\" text-decoration: underline; color:#0000ff;\">https://material.io/icons</span></a> - Apache License Version 2.0</p><p align=\"center\"><br/></p><p align=\"center\">Thanks!</p><p align=\"center\">...</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), QtGui.QApplication.translate("a2settings", "Licenses", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2slider import A2Slider
+from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
