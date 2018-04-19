@@ -48,9 +48,7 @@ class A2Obj(object):
                                '  Use A2Obj.inst() to get the instance!')
         # lazy import so importing a2core does not depend on other a2 module
         global a2ahk, a2db, a2mod
-        import a2ahk
-        import a2db
-        import a2mod
+        import a2ahk, a2db, a2mod
         self.app = None
         self.win = None
         self.module_sources = {}

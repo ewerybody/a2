@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from PySide import QtGui, QtCore
 
 import a2ahk
@@ -84,6 +82,7 @@ class HotKeyBoard(KeyboardDialogBase, _HotkeyBase):
         if self.okay_state:
             self.hotkey_set.emit(self.key)
             self.close()
+
 
 class HotkeyDialog1(QtGui.QWidget, _HotkeyBase):
     label = 'Simple Dialog'
