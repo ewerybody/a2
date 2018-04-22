@@ -66,7 +66,7 @@ class A2Settings(QtGui.QWidget):
 
         self.ui.code_editor.file_types = "Executables (*.exe)"
         self.ui.code_editor.writable = False
-        self.ui.loglevel_debug.clicked[bool].connect(self.toggle_log_level)
+        self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
 
         self.dev_set_dict = self.main.devset.get()
         a2ctrl.connect.control_list([self.ui.author_name, self.ui.author_url,
@@ -123,11 +123,6 @@ class A2Settings(QtGui.QWidget):
 
     def on_dev_setting_changed(self, *args):
         self.main.devset.set(self.dev_set_dict)
-
-    def toggle_log_level(self, state):
-        a2core.set_loglevel(state)
-        log.debug('Log level DEBUG: active')
-        log.info('Log level INFO: active')
 
     def _check_win_startup(self):
         win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
