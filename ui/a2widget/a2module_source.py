@@ -1,3 +1,5 @@
+import pprint
+
 import a2core
 import a2ctrl
 from PySide import QtGui, QtCore
@@ -226,3 +228,13 @@ class AddSourceDialog(A2InputDialog):
         if not name:
             return 'Give me a URL!'
         return True
+
+    def okay(self):
+        url = self.ui.text_field.text()
+
+        self.ui.label.setText('fetching data ...')
+
+        # TODO: do this via threads
+        import a2mod
+        remote_data = a2mod._get_remote_data(url)
+        self.ui.label.setText(pprint.pformat(remote_data))
