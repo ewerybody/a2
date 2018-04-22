@@ -11,6 +11,7 @@ They can be enabled/disabled individually affecting all their child modules.
 @author: eRiC
 """
 import os
+import json
 import time
 import uuid
 
@@ -236,26 +237,52 @@ class _ModSourceUpdateCheckThread(QtCore.QThread):
         update_url = self.mod_source.config.get('update_url', '')
         if not update_url:
             self._error(MSG_NO_UPDATE_URL)
+            return
 
-        if update_url.startswith('http') or 'github.com/' in update_url:
-            # TODO: web update check
-            pass
+        try:
+            remote_data = _get_remote_data(update_url)
+        except FileNotFoundError:
+            self._error(MSG_UPDATE_URL_INVALID)
+            return
+        except Exception as error:
+            self._error(str(error))
+
+        remote_version = remote_data.get('version')
+        if remote_data['version'] == self.mod_source.config.get('version'):
+            self.is_uptodate.emit()
         else:
-            if os.path.exists(update_url):
-                try:
-                    _, base = os.path.split(update_url)
-                    if base.lower() != MOD_SOURCE_NAME:
-                        update_url = os.path.join(update_url, MOD_SOURCE_NAME)
-                    remote_data = a2util.json_read(update_url)
-                    remote_version = remote_data.get('version')
-                    if remote_data['version'] == self.mod_source.config.get('version'):
-                        self.is_uptodate.emit()
-                    else:
-                        self.update_available.emit(remote_version)
-                except Exception as error:
-                    self._error(str(error))
-            else:
-                self._error(MSG_UPDATE_URL_INVALID)
+            self.update_available.emit(remote_version)
+
+
+def _get_remote_data(url):
+    url = url.lower().strip()
+    if url.startswith('http') or 'github.com/' in url:
+        if 'github.com/' in url:
+            parts = url.split('/')
+            i = parts.index('github.com')
+            owner, repo = parts[i + 1: i + 3]
+            download_url = '/'.join(['https://raw.githubusercontent.com', owner, repo, 'master'])
+        else:
+            download_url = url
+
+        if not download_url.endswith(MOD_SOURCE_NAME):
+            if not download_url.endswith('/'):
+                download_url += '/'
+            download_url += MOD_SOURCE_NAME
+
+        from urllib import request
+        data = request.urlopen(download_url).read()
+        data = data.decode(encoding='utf-8-sig')
+        remote_data = json.loads(data)
+    else:
+        if os.path.exists(url):
+            _, base = os.path.split(url)
+            if base.lower() != MOD_SOURCE_NAME:
+                url = os.path.join(url, MOD_SOURCE_NAME)
+            remote_data = a2util.json_read(url)
+        else:
+            raise FileNotFoundError()
+    return remote_data
 
 
 class _ModSourceUpdateThread(QtCore.QThread):
