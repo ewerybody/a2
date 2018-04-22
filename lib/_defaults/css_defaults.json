@@ -18,6 +18,6 @@
     "color_pressed": "#AAA",
     "color_darkgrey": "#777",
     "border_radius": 2,
-    "help_button_size": 20,
+    "icon_size": 20,
     "search_x_button_size": 18
 }

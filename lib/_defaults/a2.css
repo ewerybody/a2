@@ -115,10 +115,10 @@ QPushButton[flat="true"]:hover {
 
 QPushButton#a2help_button {
 	padding: 0px;
-	max-height: %(help_button_size)ipx;
-	max-width: %(help_button_size)ipx;
-    min-height: %(help_button_size)ipx;
-    min-width: %(help_button_size)ipx;
+	max-height: %(icon_size)ipx;
+	max-width: %(icon_size)ipx;
+    min-height: %(icon_size)ipx;
+    min-width: %(icon_size)ipx;
     margin: %(border_radius)ipx;
     color: "%(color_pressed)s";
 }

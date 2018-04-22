@@ -16,9 +16,9 @@ class ModSourceWidget(QtGui.QWidget):
     toggled = QtCore.Signal()
     changed = QtCore.Signal()
 
-    def __init__(self, parent, mod_source, show_enabled=False):
+    def __init__(self, main, mod_source, show_enabled=False):
         super(ModSourceWidget, self).__init__()
-        self.parent = parent
+        self.main = main
         self.mod_source = mod_source
 
         self._setup_ui(show_enabled)
@@ -55,7 +55,7 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.update_button.clicked.connect(self._check_update)
         self._update_to_version = None
 
-        self.ui.busy_icon = BusyIcon(self)
+        self.ui.busy_icon = BusyIcon(self, self.main.css_values['icon_size'])
         self.ui.update_layout.insertWidget(1, self.ui.busy_icon)
 
         self._reset_timer = QtCore.QTimer()
@@ -84,7 +84,7 @@ class ModSourceWidget(QtGui.QWidget):
     def _check_update(self):
         self.ui.busy_icon.set_busy()
         if self._update_to_version is None:
-            update_check_thread = self.mod_source.get_update_checker(self.parent)
+            update_check_thread = self.mod_source.get_update_checker(self.main)
             update_check_thread.is_uptodate.connect(self._show_uptodate)
             update_check_thread.update_available.connect(self._show_update_available)
             update_check_thread.update_error.connect(self._show_update_error)
@@ -154,7 +154,7 @@ class ModSourceWidget(QtGui.QWidget):
 
     def uninstall(self):
         dialog = A2ConfirmDialog(
-            self.parent, 'Uninstall "%s"' % self.mod_source.name,
+            self.main, 'Uninstall "%s"' % self.mod_source.name,
             'This will delete the package "%s" from the module\n'
             'storage. There is NO UNDO! Beware with your own creations!')
         dialog.exec_()
@@ -164,7 +164,7 @@ class ModSourceWidget(QtGui.QWidget):
 
     def _change_version(self, version):
         self.ui.busy_icon.set_busy()
-        update_thread = self.mod_source.get_updater(version, self.parent)
+        update_thread = self.mod_source.get_updater(version, self.main)
         update_thread.finished.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
         update_thread.status.connect(self._show_update_status)
@@ -176,13 +176,13 @@ class ModSourceWidget(QtGui.QWidget):
 
 
 class BusyIcon(QtGui.QLabel):
-    def __init__(self, parent):
+    def __init__(self, parent, size):
         super(BusyIcon, self).__init__(parent)
         self.anim_timer = QtCore.QTimer()
         self.anim_timer.setInterval(25)
         self.anim_timer.timeout.connect(self.update_rotation)
         self.icon = a2ctrl.Icons.inst().a2reload
-        self.icon_size = 24
+        self.icon_size = size
         self.rotation_speed = 22
         self.setMaximumHeight(self.icon_size)
         self.setMinimumHeight(self.icon_size)
