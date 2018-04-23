@@ -9,6 +9,7 @@ log = a2core.get_logger(__name__)
 MOD_COUNT_TEXT = '%i modules, %i enabled'
 UPDATE_LABEL = 'Check for Updates'
 MSG_UPTODATE = 'You are Up-To-Date!'
+MSG_FETCHING = 'Fetching data ...'
 MSG_UPDATE_AVAILABLE = 'Update to version %s'
 
 
@@ -81,8 +82,18 @@ class ModSourceWidget(QtGui.QWidget):
         a = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
         self.ui.tool_button.setArrowType(a[state])
 
-    def _check_update(self):
+    def set_busy(self, text=None):
         self.ui.busy_icon.set_busy()
+        self.ui.update_button.setEnabled(False)
+        if text:
+            self.ui.update_button.setText(text)
+
+    def set_idle(self):
+        self.ui.busy_icon.set_idle()
+        self.ui.update_button.setEnabled(True)
+
+    def _check_update(self):
+        self.set_busy(MSG_FETCHING)
         if self._update_to_version is None:
             update_check_thread = self.mod_source.get_update_checker(self.main)
             update_check_thread.is_uptodate.connect(self._show_uptodate)
@@ -93,38 +104,41 @@ class ModSourceWidget(QtGui.QWidget):
             self._change_version(self._update_to_version)
 
     def _show_uptodate(self):
-        self._update_msg(MSG_UPTODATE)
-        self.ui.busy_icon.set_idle()
+        self.set_idle()
+        self._update_msg(MSG_UPTODATE, a2ctrl.Icons.inst().check_circle)
 
     def _show_update_finished(self):
+        self.set_idle()
         self._update_msg(MSG_UPTODATE)
         self._update_to_version = None
-        self.ui.busy_icon.set_idle()
         self.mod_source.fetch_modules()
         self.set_labels()
         self.changed.emit()
 
     def _show_update_available(self, version):
+        self.set_idle()
         self._update_to_version = version
         self.ui.update_button.setText(MSG_UPDATE_AVAILABLE % version)
-        self.ui.busy_icon.set_idle()
 
     def _show_update_error(self, msg):
+        self.set_idle()
         self._update_msg(msg)
-        self.ui.busy_icon.set_idle()
 
     def _show_update_status(self, msg):
         self.ui.update_button.setText(msg)
 
-    def _update_msg(self, msg=None):
+    def _update_msg(self, msg=None, icon=None):
         if msg is None:
             self._reset_timer.stop()
             self.ui.update_button.setText(UPDATE_LABEL)
             self.ui.update_button.setEnabled(True)
+            self.ui.update_button.setIcon(QtGui.QIcon())
         else:
             self._reset_timer.start(1000)
             self.ui.update_button.setText(msg)
             self.ui.update_button.setEnabled(False)
+            if icon is not None:
+                self.ui.update_button.setIcon(icon)
 
     def build_version_menu(self):
         menu = self.version_menu
@@ -136,7 +150,7 @@ class ModSourceWidget(QtGui.QWidget):
             backup_menu = menu.addMenu('Backed up versions')
             for version in backup_versions:
                 if version != self.mod_source.config.get('version'):
-                    action = backup_menu.addAction(icons.file_download,
+                    action = backup_menu.addAction(icons.rollback,
                                                    version, self.rollback)
                     action.setData(version)
 
@@ -163,7 +177,7 @@ class ModSourceWidget(QtGui.QWidget):
             self.changed.emit()
 
     def _change_version(self, version):
-        self.ui.busy_icon.set_busy()
+        self.set_busy()
         update_thread = self.mod_source.get_updater(version, self.main)
         update_thread.finished.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
@@ -181,7 +195,7 @@ class BusyIcon(QtGui.QLabel):
         self.anim_timer = QtCore.QTimer()
         self.anim_timer.setInterval(25)
         self.anim_timer.timeout.connect(self.update_rotation)
-        self.icon = a2ctrl.Icons.inst().a2reload
+        self.icon = a2ctrl.Icons.inst().reload
         self.icon_size = size
         self.rotation_speed = 22
         self.setMaximumHeight(self.icon_size)
