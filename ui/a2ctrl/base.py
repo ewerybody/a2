@@ -134,6 +134,8 @@ class Icons(object):
         self.number = Ico('number')
         self.paste = Ico('paste')
         self.text = Ico('text')
+        self.reload = Ico('reload')
+        self.rollback = Ico('rollback')
         self.string = Ico('string')
         self.up = Ico('up')
         self.up_align = Ico('up_align')
