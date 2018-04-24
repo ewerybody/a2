@@ -96,16 +96,11 @@ class ModSourceWidget(QtGui.QWidget):
         self.set_busy(MSG_FETCHING)
         if self._update_to_version is None:
             update_check_thread = self.mod_source.get_update_checker(self.main)
-            update_check_thread.is_uptodate.connect(self._show_uptodate)
-            update_check_thread.update_available.connect(self._show_update_available)
+            update_check_thread.data_fetched.connect(self._show_check_result)
             update_check_thread.update_error.connect(self._show_update_error)
             update_check_thread.start()
         else:
             self._change_version(self._update_to_version)
-
-    def _show_uptodate(self):
-        self.set_idle()
-        self._update_msg(MSG_UPTODATE, a2ctrl.Icons.inst().check_circle)
 
     def _show_update_finished(self):
         self.set_idle()
@@ -115,10 +110,15 @@ class ModSourceWidget(QtGui.QWidget):
         self.set_labels()
         self.changed.emit()
 
-    def _show_update_available(self, version):
+    def _show_check_result(self, remote_data):
         self.set_idle()
-        self._update_to_version = version
-        self.ui.update_button.setText(MSG_UPDATE_AVAILABLE % version)
+        remote_version = remote_data.get('version')
+
+        if remote_version == self.mod_source.config.get('version'):
+            self._update_msg(MSG_UPTODATE, a2ctrl.Icons.inst().check_circle)
+        else:
+            self._update_to_version = remote_version
+            self.ui.update_button.setText(MSG_UPDATE_AVAILABLE % remote_version)
 
     def _show_update_error(self, msg):
         self.set_idle()
@@ -178,7 +178,7 @@ class ModSourceWidget(QtGui.QWidget):
 
     def _change_version(self, version):
         self.set_busy()
-        update_thread = self.mod_source.get_updater(version, self.main)
+        update_thread = self.mod_source.get_updater(self.main, version)
         update_thread.finished.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
         update_thread.status.connect(self._show_update_status)

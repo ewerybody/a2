@@ -158,17 +158,17 @@ class ModSource(object):
         """
         Provides a thread object for the according Module Source instance.
 
-        :rtype: _ModSourceUpdateCheckThread
+        :rtype: _ModSourceCheckThread
         """
-        return _ModSourceUpdateCheckThread(self, parent)
+        return _ModSourceCheckThread(self, parent)
 
-    def get_updater(self, version, parent):
+    def get_updater(self, parent, version):
         """
         Provides a thread object for the according Module Source instance.
 
-        :rtype: _ModSourceUpdateThread
+        :rtype: _ModSourceFetchThread
         """
-        return _ModSourceUpdateThread(self, version, parent)
+        return _ModSourceFetchThread(self, parent, version)
 
     def get_backup_versions(self):
         """
@@ -210,23 +210,21 @@ class ModSource(object):
         remove_folder(self.backup_path)
 
 
-class _ModSourceUpdateCheckThread(QtCore.QThread):
+class _ModSourceCheckThread(QtCore.QThread):
     """
-    To check for newer versions via its configs update_url.
+    To check for a remote module source dictionary.
     Connect to its Signals:
 
+     - data_fetched(dict) - Remote data as dictionary.
      - update_error(str) - Error message as string.
-     - is_uptodate() - no args
-     - update_available(str) - Remote version as string.
 
     and kick it off by .start()-ing it.
     """
-    is_uptodate = QtCore.Signal()
-    update_available = QtCore.Signal(str)
+    data_fetched = QtCore.Signal(dict)
     update_error = QtCore.Signal(str)
 
     def __init__(self, mod_source, parent):
-        super(_ModSourceUpdateCheckThread, self).__init__(parent)
+        super(_ModSourceCheckThread, self).__init__(parent)
         self.mod_source = mod_source
 
     def _error(self, msg):
@@ -247,33 +245,29 @@ class _ModSourceUpdateCheckThread(QtCore.QThread):
         except Exception as error:
             self._error(str(error))
 
-        remote_version = remote_data.get('version')
-        if remote_data['version'] == self.mod_source.config.get('version'):
-            self.is_uptodate.emit()
-        else:
-            self.update_available.emit(remote_version)
+        self.data_fetched.emit(remote_data)
 
 
 def _get_remote_data(url):
     url = url.lower().strip()
     if url.startswith('http') or 'github.com/' in url:
         if 'github.com/' in url:
-            parts = url.split('/')
-            i = parts.index('github.com')
-            owner, repo = parts[i + 1: i + 3]
+            owner, repo = _get_github_owner_repo(url)
             download_url = '/'.join(['https://raw.githubusercontent.com', owner, repo, 'master'])
         else:
             download_url = url
 
         if not download_url.endswith(MOD_SOURCE_NAME):
-            if not download_url.endswith('/'):
-                download_url += '/'
+            download_url = _add_slash(download_url)
             download_url += MOD_SOURCE_NAME
 
         from urllib import request
-        data = request.urlopen(download_url).read()
-        data = data.decode(encoding='utf-8-sig')
-        remote_data = json.loads(data)
+        try:
+            data = request.urlopen(download_url).read()
+            data = data.decode(encoding='utf-8-sig')
+            remote_data = json.loads(data)
+        except request.HTTPError:
+            raise RuntimeError('Could not find a2 package data at given address!')
     else:
         if os.path.exists(url):
             _, base = os.path.split(url)
@@ -285,10 +279,10 @@ def _get_remote_data(url):
     return remote_data
 
 
-class _ModSourceUpdateThread(QtCore.QThread):
+class _ModSourceFetchThread(QtCore.QThread):
     """
-    To change the version of the package.
-    Aka updating from a remote location OR rolling back to a backed up version.
+    To get or change the version of a package (aka updating from remote
+    location OR rolling back to a backed up version).
 
     First it will back up the installed version if not done already.
     The passed version will then be checked against the backed up versions.
@@ -308,14 +302,19 @@ class _ModSourceUpdateThread(QtCore.QThread):
     failed = QtCore.Signal(str)
     status = QtCore.Signal(str)
 
-    def __init__(self, mod_source, version, parent):
-        super(_ModSourceUpdateThread, self).__init__(parent)
+    def __init__(self, mod_source, parent, version=None):
+        super(_ModSourceFetchThread, self).__init__(parent)
         self.version = version
         self.mod_source = mod_source
 
     def _error(self, msg):
         self.failed.emit(str(msg))
         self.quit()
+
+    def _download_status(self, blocknum, bs, size):
+        print('blocknum: %s' % blocknum)
+        print('bs: %s' % bs)
+        print('size: %s' % size)
 
     def run(self):
         old_version = self.mod_source.config.get('version')
@@ -337,34 +336,48 @@ class _ModSourceUpdateThread(QtCore.QThread):
             self._error(MSG_BACKUP_ERROR % old_version)
             return
 
+        pack_basename = self.version + '.zip'
+        temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
         temp_new_version = os.path.join(self.mod_source.backup_path, self.version)
+
         if not os.path.isdir(temp_new_version):
             self.status.emit(MSG_DOWNLOAD % self.version)
+
             if update_url.startswith('http') or 'github.com/' in update_url:
-                # TODO: web update
-                pass
+                if 'github.com/' in update_url:
+                    owner, repo = _get_github_owner_repo(update_url)
+                    update_url = '/'.join(['https://github.com', owner, repo, 'archive'])
+                update_url = _add_slash(update_url)
+                update_url += pack_basename
+
+                from urllib import request
+                try:
+                    request.FancyURLopener().retrieve(
+                        update_url, temp_packpath, self._download_status)
+                except Exception as error:
+                    self._error(str(error))
+                    return
+
             else:
                 if not os.path.exists(update_url):
                     self._error(MSG_UPDATE_URL_INVALID)
                     return
 
-                pack_basename = self.version + '.zip'
                 remote_path = os.path.join(update_url, pack_basename)
-                temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
                 shutil.copy2(remote_path, temp_packpath)
 
-            try:
-                import zipfile
-                with zipfile.ZipFile(temp_packpath) as tmp_zip:
-                    for filename in tmp_zip.namelist():
-                        tmp_zip.extract(filename, temp_new_version)
-                os.remove(temp_packpath)
-
-            except Exception as error:
-                self._error(str(error))
-                return
-
         self.status.emit(MSG_INSTALL % self.version)
+        try:
+            import zipfile
+            with zipfile.ZipFile(temp_packpath) as tmp_zip:
+                for filename in tmp_zip.namelist():
+                    tmp_zip.extract(filename, temp_new_version)
+            os.remove(temp_packpath)
+
+        except Exception as error:
+            self._error(str(error))
+            return
+
         shutil.copytree(temp_new_version, self.mod_source.path)
 
         self.finished.emit()
@@ -585,6 +598,19 @@ def get_icon(current_icon, folder, fallback):
             current_icon = fallback
 
     return current_icon
+
+
+def _get_github_owner_repo(url):
+    parts = url.split('/')
+    i = parts.index('github.com')
+    owner, repo = parts[i + 1: i + 3]
+    return owner, repo
+
+
+def _add_slash(url):
+    if not url.endswith('/'):
+        url += '/'
+    return url
 
 
 if __name__ == '__main__':
