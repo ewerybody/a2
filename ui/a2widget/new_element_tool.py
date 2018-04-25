@@ -80,6 +80,7 @@ class NewElementDialog(A2InputDialog):
         return a2util.standard_name_check(name, self._current_elements)
 
     def create_element(self, NAME):
+        # TODO: This needs to goto the a2element module
         name = NAME.lower()
         template = os.path.join(self.a2.paths._defaults, 'element.template.py')
         self.a2.db.set('new_element_cfg', self.element_cfg)

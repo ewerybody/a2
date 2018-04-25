@@ -2,11 +2,8 @@
 @created: 20.09.2016
 @author: eric
 """
-import os
-
 import a2core
 import a2util
-from a2mod import MOD_SOURCE_NAME
 from a2widget.a2input_dialog import A2InputDialog
 
 

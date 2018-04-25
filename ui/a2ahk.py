@@ -10,6 +10,9 @@ import codecs
 import subprocess
 
 
+EXECUTABLE_NAME = 'autohotkey.exe'
+
+
 def translate_hotkey(displayString):
     """
     Creates AHK readable string out of a human readable like:

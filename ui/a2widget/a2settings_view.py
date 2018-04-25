@@ -16,7 +16,6 @@ import a2ctrl.connect
 from a2widget import a2settings_view_ui, a2module_source
 
 
-autohotkey_exe = 'autohotkey.exe'
 log = a2core.get_logger(__name__)
 
 
@@ -82,7 +81,7 @@ class A2Settings(QtGui.QWidget):
 
         self.ui.autohotkey.writable = False
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
-        self.ui.autohotkey.file_types = "Autohotkey Executable (%s)" % autohotkey_exe
+        self.ui.autohotkey.file_types = "Autohotkey Executable (%s)" % a2ahk.EXECUTABLE_NAME
         self.ui.autohotkey.changed.connect(self.set_autohotkey)
 
         self.ui.show_console.setChecked(basename(self.a2.paths.python).lower() == 'python.exe')
@@ -107,7 +106,7 @@ class A2Settings(QtGui.QWidget):
         a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
     def set_autohotkey(self, path):
-        if basename(path).lower() != autohotkey_exe:
+        if basename(path).lower() != a2ahk.EXECUTABLE_NAME:
             self.ui.autohotkey.changed.disconnect(self.set_autohotkey)
             self.ui.autohotkey.value = self.a2.paths.autohotkey
             self.ui.autohotkey.changed.connect(self.set_autohotkey)
