@@ -115,4 +115,4 @@ class NewElementDialog(A2InputDialog):
         with open(new_path, 'w') as fobj:
             fobj.write(new_element_code)
 
-        subprocess.Popen(['explorer.exe', '/select,', os.path.normpath(new_path)])
+        a2util.explore(new_path)

@@ -238,10 +238,10 @@ class A2Window(QtGui.QMainWindow):
 
     def explore_mod(self):
         if self.mod is not None:
-            subprocess.Popen(['explorer.exe', self.mod.path])
+            a2util.explore(self.mod.path)
 
     def explore_a2(self):
-        subprocess.Popen(['explorer.exe', self.a2.paths.a2])
+        a2util.explore(self.a2.paths.a2)
 
     def closeEvent(self, event):
         binprefs = str(self.saveGeometry().toPercentEncoding())

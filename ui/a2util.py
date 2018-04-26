@@ -3,6 +3,7 @@
 Misc functions - gathered from the a2core module.
 This is all too random to be core.
 """
+import os
 import json
 import time
 import string
@@ -118,4 +119,9 @@ def write_utf8(path, content):
 
 
 def explore(path):
-    subprocess.Popen(['explorer.exe', path])
+    if os.path.isdir(path):
+        subprocess.Popen(['explorer.exe', path])
+    elif os.path.isfile(path):
+        subprocess.Popen(['explorer.exe', '/select,', os.path.normpath(path)])
+    else:
+        raise RuntimeError('Cannot explore to path "%s"' % path)

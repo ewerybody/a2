@@ -77,7 +77,7 @@ class Hotkey_Function_Handler(object):
     def explore(self):
         """TODO: verify"""
         text = self.ui.functionText.text()
-        subprocess.Popen(['explorer.exe', text])
+        a2util.explore(text)
 
     def changed(self, text=None, *args):
         if text is None:
