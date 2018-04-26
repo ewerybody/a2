@@ -79,7 +79,7 @@ class A2InputDialog(A2ConfirmDialog):
 
     def check(self, text=None):
         if text is None:
-            text = self.ui.textField.text()
+            text = self.ui.text_field.text()
 
         if text != self._text:
             self.field_changed.emit(text)
