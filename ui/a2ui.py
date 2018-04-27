@@ -216,8 +216,6 @@ class A2Window(QtGui.QMainWindow):
         #   if there is only one: keep it like it is,
         # threading.Thread(target=a2core.killA2process).start()
         log.info('Runtime refresh called!')
-        log.info('  Refreshing Ui ...')
-        self.module_list.draw_modules()
 
         log.info('  Writing includes ...')
         a2runtime.write_includes(specific)
@@ -227,6 +225,9 @@ class A2Window(QtGui.QMainWindow):
         self._restart_thread.start()
 
         if refresh_ui:
+            log.info('  Refreshing Ui ...')
+            self.a2.fetch_modules()
+            self.module_list.draw_modules()
             self.module_view.draw_mod()
         log.info('  Done!')
 
@@ -294,7 +295,10 @@ class A2Window(QtGui.QMainWindow):
 
     def _create_local_source(self, name):
         import a2mod
-        a2mod.create_module_source(name)
+        path = a2mod.create_module_source_dir(name)
+        # write empty cfg json so its found by the package lister
+        a2util.json_write(path, {})
+        # update the ui without runtime reload
         self.a2.fetch_modules()
         self.module_view.draw_mod()
 
