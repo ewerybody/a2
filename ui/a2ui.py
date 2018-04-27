@@ -240,6 +240,8 @@ class A2Window(QtGui.QMainWindow):
     def explore_mod(self):
         if self.mod is not None:
             a2util.explore(self.mod.path)
+        else:
+            self.explore_a2()
 
     def explore_a2(self):
         a2util.explore(self.a2.paths.a2)
