@@ -32,10 +32,11 @@ EXCLUDE_FOLDERS = ['.git']
 STALE_CONFIG_TIMEOUT = 0.5
 
 MSG_NO_UPDATE_URL = 'No update-URL given!'
-MSG_DOWNLOAD = 'Downloading %s'
+MSG_DOWNLOAD = 'Downloading %s - %s (%i%s)'
 MSG_UNPACK = 'Unpacking %s'
 MSG_BACKUP = 'Backing up %s'
 MSG_BACKUP_ERROR = 'Error Backing up %s'
+MSG_NOT_EMPTY_ERROR = 'Error preparing folder: Not empty but no previous version found!'
 MSG_INSTALL = 'Installing %s'
 MSG_UPDATE_URL_INVALID = 'Update URL Invalid'
 
@@ -49,20 +50,20 @@ def get_module_sources(main, path, modsource_dict):
     """
     modsources = get_folders(path)
     # get rid of inexistent module sources
+    # getting list avoids "dictionary changed size during iteration"-error
     [modsource_dict.pop(m) for m in list(modsource_dict) if m not in modsources]
 
     for name in modsources:
         if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
-        modsource_dict.setdefault(name, ModSource(main, name)).fetch_modules()
+        modsource_dict.setdefault(name.lower(), ModSource(main, name)).fetch_modules()
 
 
-def create_module_source(name):
+def create_module_source_dir(name):
     a2 = a2core.A2Obj.inst()
     source_path = os.path.join(a2.paths.modules, name)
-    source_cfg = os.path.join(source_path, MOD_SOURCE_NAME)
-    os.mkdir(source_path)
-    a2util.json_write(source_cfg, {})
+    os.makedirs(source_path, exist_ok=True)
+    return source_path
 
 
 class ModSource(object):
@@ -82,9 +83,9 @@ class ModSource(object):
     def fetch_modules(self, state=None):
         self._cfg_fetched = None
         mods_in_path = get_folders(self.path)
-        if not mods_in_path:
-            log.debug('No modules in module source: %s' % self.path)
         self.mod_count = len(mods_in_path)
+        if self.mod_count == 0:
+            log.debug('No modules in module source: %s' % self.path)
 
         if state is None:
             state = self.enabled
@@ -93,7 +94,7 @@ class ModSource(object):
             return
 
         # pop inexistent modules
-        [self.mods.pop(m) for m in list(self.mods) if m not in mods_in_path]
+        [self.mods.pop(m) for m in self.mods if m not in mods_in_path]
 
         # add new ones
         for modname in mods_in_path:
@@ -108,6 +109,8 @@ class ModSource(object):
                 self._cfg_fetched = now
                 self._last_config = a2util.json_read(self.config_file)
             return self._last_config
+        except FileExistsError:
+            return {}
         except Exception as error:
             log.error('Error loading config file for "%s" (%s)\n'
                       '  %s' % (self.name, self.config_file, error))
@@ -158,17 +161,17 @@ class ModSource(object):
         """
         Provides a thread object for the according Module Source instance.
 
-        :rtype: _ModSourceCheckThread
+        :rtype: ModSourceCheckThread
         """
-        return _ModSourceCheckThread(self, parent)
+        return ModSourceCheckThread(parent, self)
 
     def get_updater(self, parent, version):
         """
         Provides a thread object for the according Module Source instance.
 
-        :rtype: _ModSourceFetchThread
+        :rtype: ModSourceFetchThread
         """
-        return _ModSourceFetchThread(self, parent, version)
+        return ModSourceFetchThread(self, parent, version)
 
     def get_backup_versions(self):
         """
@@ -185,6 +188,9 @@ class ModSource(object):
 
     def _move_to_temp_backup(self):
         this_version = self.config.get('version')
+        if this_version is None:
+            return
+
         version_tmpath = os.path.join(self.backup_path, this_version)
 
         # not yet backed up: move current version to temp
@@ -210,7 +216,7 @@ class ModSource(object):
         remove_folder(self.backup_path)
 
 
-class _ModSourceCheckThread(QtCore.QThread):
+class ModSourceCheckThread(QtCore.QThread):
     """
     To check for a remote module source dictionary.
     Connect to its Signals:
@@ -223,16 +229,21 @@ class _ModSourceCheckThread(QtCore.QThread):
     data_fetched = QtCore.Signal(dict)
     update_error = QtCore.Signal(str)
 
-    def __init__(self, mod_source, parent):
-        super(_ModSourceCheckThread, self).__init__(parent)
+    def __init__(self, parent, mod_source=None, check_url=None):
+        super(ModSourceCheckThread, self).__init__(parent)
         self.mod_source = mod_source
+        self.check_url = check_url
 
     def _error(self, msg):
         self.update_error.emit(str(msg))
         self.quit()
 
     def run(self):
-        update_url = self.mod_source.config.get('update_url', '')
+        if self.mod_source is not None:
+            update_url = self.mod_source.config.get('update_url', '')
+        elif self.check_url is not None:
+            update_url = self.check_url
+
         if not update_url:
             self._error(MSG_NO_UPDATE_URL)
             return
@@ -244,6 +255,7 @@ class _ModSourceCheckThread(QtCore.QThread):
             return
         except Exception as error:
             self._error(str(error))
+            return
 
         self.data_fetched.emit(remote_data)
 
@@ -264,10 +276,21 @@ def _get_remote_data(url):
         from urllib import request
         try:
             data = request.urlopen(download_url).read()
+        except request.HTTPError as error:
+            raise RuntimeError('Could not find a2 package data at given address!\n%s' % error)
+
+        try:
             data = data.decode(encoding='utf-8-sig')
+        except Exception as error:
+            log.error(error)
+            raise RuntimeError('Error decoding data from given address!:\n%s' % error)
+
+        try:
             remote_data = json.loads(data)
-        except request.HTTPError:
-            raise RuntimeError('Could not find a2 package data at given address!')
+        except Exception as error:
+            log.error(error)
+            raise RuntimeError('Error loading JSON from given address!:\n%s' % error)
+
     else:
         if os.path.exists(url):
             _, base = os.path.split(url)
@@ -279,7 +302,7 @@ def _get_remote_data(url):
     return remote_data
 
 
-class _ModSourceFetchThread(QtCore.QThread):
+class ModSourceFetchThread(QtCore.QThread):
     """
     To get or change the version of a package (aka updating from remote
     location OR rolling back to a backed up version).
@@ -302,46 +325,63 @@ class _ModSourceFetchThread(QtCore.QThread):
     failed = QtCore.Signal(str)
     status = QtCore.Signal(str)
 
-    def __init__(self, mod_source, parent, version=None):
-        super(_ModSourceFetchThread, self).__init__(parent)
-        self.version = version
+    def __init__(self, mod_source, parent, version, url=None):
+        super(ModSourceFetchThread, self).__init__(parent)
         self.mod_source = mod_source
+        self.version = version
+        self.url = url
+        self._downloaded_blocks = 0
 
     def _error(self, msg):
         self.failed.emit(str(msg))
         self.quit()
 
-    def _download_status(self, blocknum, bs, size):
-        print('blocknum: %s' % blocknum)
-        print('bs: %s' % bs)
-        print('size: %s' % size)
+    def _download_status(self, blocknum, blocksize, fullsize):
+        if not blocknum:
+            return
+        self._downloaded_blocks += blocksize
+        percentage = min(100, (100 * float(self._downloaded_blocks) / fullsize))
+        self.status.emit(MSG_DOWNLOAD % (self.mod_source.name,
+                                         self.version, percentage, '%'))
 
     def run(self):
         old_version = self.mod_source.config.get('version')
-        if old_version == self.version:
+        if old_version is not None and old_version == self.version:
             self.finished.emit()
             return
 
-        update_url = self.mod_source.config.get('update_url', '')
+        update_url = self.url or self.mod_source.config.get('update_url')
         if not update_url:
             self._error(MSG_NO_UPDATE_URL)
             return
 
-        self.status.emit(MSG_BACKUP % old_version)
-        try:
-            self.mod_source._move_to_temp_backup()
-        except Exception as error:
-            log.error('Could not backup %s (%s)!' % (old_version, self.mod_source.path))
-            log.error(error)
-            self._error(MSG_BACKUP_ERROR % old_version)
-            return
+        if old_version is None:
+            files = os.listdir(self.mod_source.path)
+            if files:
+                self._error(MSG_NOT_EMPTY_ERROR)
+                return
+            try:
+                self.mod_source.remove()
+            except Exception as error:
+                self._error(MSG_NOT_EMPTY_ERROR)
+                return
+        else:
+            self.status.emit(MSG_BACKUP % old_version)
+            try:
+                self.mod_source._move_to_temp_backup()
+            except Exception as error:
+                log.error(MSG_BACKUP_ERROR % old_version + '(%s)' % self.mod_source.path)
+                log.error(error)
+                self._error(MSG_BACKUP_ERROR % old_version)
+                return
 
         pack_basename = self.version + '.zip'
         temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
         temp_new_version = os.path.join(self.mod_source.backup_path, self.version)
+        new_version_dir = temp_new_version
 
         if not os.path.isdir(temp_new_version):
-            self.status.emit(MSG_DOWNLOAD % self.version)
+            self.status.emit(MSG_DOWNLOAD % (self.mod_source.name, self.version, 0, '%'))
 
             if update_url.startswith('http') or 'github.com/' in update_url:
                 if 'github.com/' in update_url:
@@ -350,12 +390,14 @@ class _ModSourceFetchThread(QtCore.QThread):
                 update_url = _add_slash(update_url)
                 update_url += pack_basename
 
+                os.makedirs(self.mod_source.backup_path, exist_ok=True)
+
                 from urllib import request
                 try:
                     request.FancyURLopener().retrieve(
                         update_url, temp_packpath, self._download_status)
                 except Exception as error:
-                    self._error(str(error))
+                    self._error('error retrieving...\n' + str(error))
                     return
 
             else:
@@ -366,19 +408,27 @@ class _ModSourceFetchThread(QtCore.QThread):
                 remote_path = os.path.join(update_url, pack_basename)
                 shutil.copy2(remote_path, temp_packpath)
 
-        self.status.emit(MSG_INSTALL % self.version)
-        try:
             import zipfile
             with zipfile.ZipFile(temp_packpath) as tmp_zip:
                 for filename in tmp_zip.namelist():
                     tmp_zip.extract(filename, temp_new_version)
             os.remove(temp_packpath)
 
-        except Exception as error:
-            self._error(str(error))
-            return
+            # if mod_source_config not directly under path search for it
+            if MOD_SOURCE_NAME not in get_files(temp_new_version):
+                new_version_dir = None
+                for _this_path, _dirs, _this_files in os.walk(temp_new_version):
+                    if MOD_SOURCE_NAME in _this_files:
+                        new_version_dir = _this_path
+                        break
+                if new_version_dir is None:
+                    self._error('Could not find %s in new package!' % MOD_SOURCE_NAME)
+                    return
 
-        shutil.copytree(temp_new_version, self.mod_source.path)
+        self.status.emit(MSG_INSTALL % self.version)
+        os.rename(new_version_dir, self.mod_source.path)
+        if os.path.isdir(temp_new_version):
+            shutil.rmtree(temp_new_version)
 
         self.finished.emit()
 

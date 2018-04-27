@@ -1,5 +1,4 @@
-import pprint
-
+import a2mod
 import a2core
 import a2ctrl
 from PySide import QtGui, QtCore
@@ -11,6 +10,12 @@ UPDATE_LABEL = 'Check for Updates'
 MSG_UPTODATE = 'You are Up-To-Date!'
 MSG_FETCHING = 'Fetching data ...'
 MSG_UPDATE_AVAILABLE = 'Update to version %s'
+MSG_INSTALL_DISCLAIMER = (
+    'Know about the risks of downloading and executing stuff! '
+    'Install only from trusted sources! <a href="%s">read more</a>')
+MSG_INSTALL_CHECK = 'I understand!'
+MSG_ADD_DIALOG = ('Please provide a URL to a network location\n'
+                  'or internet address to get an a2 package from:')
 
 
 class ModSourceWidget(QtGui.QWidget):
@@ -225,30 +230,138 @@ class BusyIcon(QtGui.QLabel):
 
 
 class AddSourceDialog(A2InputDialog):
-    def __init__(self, main):
+    def __init__(self, main, url):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
-        self.source_names = [m.lower() for m in self.a2.module_sources]
         super(AddSourceDialog, self).__init__(
-            self.main, 'Add Source from URL', self.check_name,
-            msg=('Please provide a URL to a network location\n'
-                 'or internet address to get an a2 package from:'))
+            self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG)
 
-    def check_name(self, name):
+        self.ui.main_layout.setSpacing(self.main.css_values['spacing'] * 3)
+        self.h_layout = QtGui.QHBoxLayout()
+        self.busy_icon = BusyIcon(self, self.main.css_values['icon_size'])
+        self.h_layout.addWidget(self.ui.label)
+        self.h_layout.addWidget(self.busy_icon)
+        self.ui.main_layout.insertLayout(0, self.h_layout)
+
+        self.checkbox = QtGui.QCheckBox(MSG_INSTALL_CHECK)
+        self.checkbox.setVisible(False)
+        self.checkbox.setChecked(True)
+        self.checkbox.clicked.connect(self.check)
+        self._check_understood = True
+        self.ui.main_layout.insertWidget(1, self.checkbox)
+
+        self._dialog_state = 0
+        self.remote_data = None
+        self.repo_url = None
+
+        # skip input if url passed
+        if url:
+            self._get_remote_data(url)
+
+    def check_name(self, name=''):
         """
         Runs on keystroke when creating new module source
         to give way to okaying creation.
         """
+        if not self.checkbox.isChecked():
+            return 'Tick the checkbox!'
         if not name:
             return 'Give me a URL!'
         return True
 
     def okay(self):
-        url = self.ui.text_field.text()
+        if self._dialog_state == 0:
+            self._get_remote_data()
+        elif self._dialog_state == 1:
+            self._install_package()
+        elif self._dialog_state == 2:
+            self.okayed.emit('')
+            self.accept()
 
+    def show_error(self, msg):
+        log.error(msg)
+        self.ui.label.setText(msg)
+        self.busy_icon.set_idle()
+        self.ui.a2ok_button.setText('Error')
+        self.ui.a2ok_button.setEnabled(False)
+
+    def _get_remote_data(self, url=None):
+        if url is None:
+            url = self.ui.text_field.text()
+        else:
+            self.ui.text_field.setText(url)
+
+        result = self.check(url)
+        if result is False:
+            return
+
+        self.ui.text_field.setEnabled(False)
+        self.busy_icon.set_busy()
         self.ui.label.setText('fetching data ...')
 
-        # TODO: do this via threads
-        import a2mod
-        remote_data = a2mod._get_remote_data(url)
-        self.ui.label.setText(pprint.pformat(remote_data))
+        thread = a2mod.ModSourceCheckThread(self.main, check_url=url)
+        thread.data_fetched.connect(self.on_data_fetched)
+        thread.update_error.connect(self.show_error)
+        thread.start()
+
+    def on_data_fetched(self, data):
+        self.remote_data = data
+        self.busy_icon.set_idle()
+        try:
+            if data['name'].lower() in self.a2.module_sources:
+                self.show_error('"%s" is already installed!' % data['name'])
+                return
+
+            repo_url = data.get('repo_url') or data.get('update_url') or data.get('url')
+            if not repo_url:
+                self.show_error('Error: No repository url found in fetched data!')
+                return
+            else:
+                self.repo_url = repo_url
+
+            text = 'Found: <b>{name}</b> - {version}<br><br>'.format(**data)
+            desc = data.get('desc') or data.get('description')
+            if desc:
+                text += '"%s"\n\n' % desc
+            self.ui.label.setText(text)
+
+        except Exception as error:
+            self.show_error('Error reading the fetched data!:\n%s' % error)
+            return
+
+        self.clickable_label = QtGui.QLabel(MSG_INSTALL_DISCLAIMER
+                                            % self.a2.urls.security)
+        self.clickable_label.setWordWrap(True)
+        self.clickable_label.setOpenExternalLinks(True)
+        self.ui.main_layout.insertWidget(1, self.clickable_label)
+
+        self.checkbox.setChecked(False)
+        self.checkbox.setVisible(True)
+        self.check()
+        self._dialog_state = 1
+        self.resize_delayed()
+
+    def _install_package(self):
+        self.clickable_label.setVisible(False)
+        self.checkbox.setVisible(False)
+        self.resize_delayed()
+        self.busy_icon.set_busy()
+
+        name = self.remote_data['name']
+        a2mod.create_module_source_dir(name)
+        mod_source = a2mod.ModSource(self.a2, name)
+        thread = a2mod.ModSourceFetchThread(
+            mod_source, self.main, self.remote_data['version'], self.repo_url)
+
+        thread.finished.connect(self.on_install_finished)
+        thread.failed.connect(self.show_error)
+        thread.status.connect(self.show_status)
+        thread.start()
+
+    def show_status(self, msg):
+        self.ui.label.setText(msg)
+
+    def on_install_finished(self):
+        self.busy_icon.set_idle()
+        self._dialog_state = 2
+        self.okay()
