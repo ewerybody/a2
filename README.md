@@ -4,6 +4,7 @@ Script managing and developing framework for [Autohotkey](http://ahkscript.org/)
 See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially the page about [setting you up](https://github.com/ewerybody/a2/wiki/setting-you-up).
 
 ## news:
+* Package **download** and **update** checker threads are implemented!! 🎊 yay 🥂 This is quite a big deal for this project.
 * Quite some stuff: **New Element Dialog** can now add to local module or globally and enlist in the display list.
  **Unicode HotStrings** start to work a bit. Keep crossing fingers! **New Label element**. I added some stuff to the [gallery](http://imgur.com/a/fkD8u)
 * **animated gifs ftw!** I created a [gallery on imgur](http://imgur.com/a/fkD8u) to make latest changes a little more visual. Something between a video and just writing a proper commit msg. I know I need to make videos! Please be patient! :]
