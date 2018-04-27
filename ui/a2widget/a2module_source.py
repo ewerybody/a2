@@ -124,10 +124,11 @@ class ModSourceWidget(QtGui.QWidget):
         else:
             self._update_to_version = remote_version
             self.ui.update_button.setText(MSG_UPDATE_AVAILABLE % remote_version)
+            self.ui.update_button.setIcon(a2ctrl.Icons.inst().cloud_download)
 
     def _show_update_error(self, msg):
         self.set_idle()
-        self._update_msg(msg)
+        self._update_msg(msg, a2ctrl.Icons.inst().error)
 
     def _show_update_status(self, msg):
         self.ui.update_button.setText(msg)
