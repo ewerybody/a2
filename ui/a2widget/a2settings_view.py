@@ -28,6 +28,7 @@ class A2Settings(QtGui.QWidget):
         self.main = main
         self._setup_ui()
         self._check_win_startup()
+        self._source_widgets = {}
         self._draw_module_sources()
         self.is_expandable_widget = True
 
@@ -41,6 +42,7 @@ class A2Settings(QtGui.QWidget):
             modsourcewidget.toggled.connect(self.main.settings_changed)
             modsourcewidget.changed.connect(self.on_mod_source_change)
             self.ui.mod_source_layout.addWidget(modsourcewidget)
+            self._source_widgets[module_source] = modsourcewidget
 
     def _setup_ui(self):
         a2ctrl.check_ui_module(a2settings_view_ui)
@@ -144,11 +146,19 @@ class A2Settings(QtGui.QWidget):
 
     def build_add_source_menu(self):
         icons = a2ctrl.Icons.inst()
-        self.add_source_menu.clear()
-        self.add_source_menu.addAction(icons.folder_add, 'Create Local',
-                                       self.main.create_local_source)
-        self.add_source_menu.addAction(icons.cloud_download, 'Add From URL',
-                                       self.add_source_url)
+        menu = self.add_source_menu
+        menu.clear()
+        menu.addAction(icons.folder_add, 'Create Local', self.main.create_local_source)
+        menu.addAction(icons.cloud_download, 'Add From URL', self.add_source_url)
+
+        featured_path = os.path.join(self.a2.paths._defaults, 'featured_packages.json')
+        featured_packages = a2util.json_read(featured_path)
+        available = set(featured_packages).difference(self.a2.module_sources)
+        if available:
+            submenu = menu.addMenu('Featured:')
+            for pack_name in available:
+                action = submenu.addAction(icons.file_download, pack_name, self.on_add_featured)
+                action.setData(featured_packages[pack_name])
 
     def get_db_digest(self):
         self.ui.db_printout.clear()
@@ -158,10 +168,13 @@ class A2Settings(QtGui.QWidget):
         self.a2.fetch_modules()
         self.main.settings_changed(refresh_ui=True)
 
-    def add_source_url(self):
-        dialog = a2module_source.AddSourceDialog(self.main)
+    def on_add_featured(self):
+        self.add_source_url(self.sender().data())
+
+    def add_source_url(self, url=None):
+        dialog = a2module_source.AddSourceDialog(self.main, url)
         dialog.okayed.connect(self.on_add_source)
         dialog.show()
 
     def on_add_source(self, url):
-        print('url: %s' % url)
+        self.main.load_runtime_and_ui()
