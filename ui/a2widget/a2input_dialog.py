@@ -16,7 +16,8 @@ class A2ConfirmDialog(QtGui.QDialog):
 
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
-
+        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.WindowTitleHint |
+                            QtCore.Qt.MSWindowsFixedSizeDialogHint)
         a2ctrl.check_ui_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
@@ -44,6 +45,12 @@ class A2ConfirmDialog(QtGui.QDialog):
     @property
     def result(self):
         return self._result
+
+    def resize_delayed(self, timout=50):
+        QtCore.QTimer(self).singleShot(timout, self._resize_height)
+
+    def _resize_height(self):
+        self.resize(self.width(), self.minimumSizeHint().height())
 
 
 class A2InputDialog(A2ConfirmDialog):
