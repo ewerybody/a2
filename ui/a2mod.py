@@ -382,6 +382,7 @@ class ModSourceFetchThread(QtCore.QThread):
 
         if not os.path.isdir(temp_new_version):
             self.status.emit(MSG_DOWNLOAD % (self.mod_source.name, self.version, 0, '%'))
+            os.makedirs(self.mod_source.backup_path, exist_ok=True)
 
             if update_url.startswith('http') or 'github.com/' in update_url:
                 if 'github.com/' in update_url:
@@ -390,14 +391,12 @@ class ModSourceFetchThread(QtCore.QThread):
                 update_url = _add_slash(update_url)
                 update_url += pack_basename
 
-                os.makedirs(self.mod_source.backup_path, exist_ok=True)
-
                 from urllib import request
                 try:
                     request.FancyURLopener().retrieve(
                         update_url, temp_packpath, self._download_status)
                 except Exception as error:
-                    self._error('error retrieving...\n' + str(error))
+                    self._error('Error retrieving...\n' + str(error))
                     return
 
             else:
@@ -405,8 +404,12 @@ class ModSourceFetchThread(QtCore.QThread):
                     self._error(MSG_UPDATE_URL_INVALID)
                     return
 
-                remote_path = os.path.join(update_url, pack_basename)
-                shutil.copy2(remote_path, temp_packpath)
+                try:
+                    remote_path = os.path.join(update_url, pack_basename)
+                    shutil.copy2(remote_path, temp_packpath)
+                except Exception as error:
+                    self._error('Error copying from path...\n' + str(error))
+                    return
 
             import zipfile
             with zipfile.ZipFile(temp_packpath) as tmp_zip:
