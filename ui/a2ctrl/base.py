@@ -121,6 +121,7 @@ class Icons(object):
         self.down = Ico('down')
         self.down_align = Ico('down_align')
         self.edit = Ico('edit')
+        self.error = Ico('error')
         self.file_download = Ico('file_download')
         self.folder = Ico('folder')
         self.folder2 = Ico('folder2')

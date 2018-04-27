@@ -31,6 +31,7 @@ class ModSourceWidget(QtGui.QWidget):
         self.set_labels()
 
     def set_labels(self):
+        self.ui.update_button.setText(UPDATE_LABEL)
         self.ui.mod_count.setText(MOD_COUNT_TEXT % (self.mod_source.mod_count,
                                                     self.mod_source.enabled_count))
         self.ui.version_label.setText(self.mod_source.config.get('version', 'x.x.x'))
@@ -185,7 +186,7 @@ class ModSourceWidget(QtGui.QWidget):
     def _change_version(self, version):
         self.set_busy()
         update_thread = self.mod_source.get_updater(self.main, version)
-        update_thread.finished.connect(self._show_update_finished)
+        update_thread.fetched.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
         update_thread.status.connect(self._show_update_status)
         update_thread.start()
@@ -354,7 +355,7 @@ class AddSourceDialog(A2InputDialog):
         thread = a2mod.ModSourceFetchThread(
             mod_source, self.main, self.remote_data['version'], self.repo_url)
 
-        thread.finished.connect(self.on_install_finished)
+        thread.fetched.connect(self.on_install_finished)
         thread.failed.connect(self.show_error)
         thread.status.connect(self.show_status)
         thread.start()

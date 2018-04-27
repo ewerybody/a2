@@ -20,6 +20,7 @@ import a2ctrl
 import a2util
 import shutil
 from PySide import QtCore
+import traceback
 
 
 log = a2core.get_logger(__name__)
@@ -52,7 +53,7 @@ def get_module_sources(main, path, modsource_dict):
     # get rid of inexistent module sources
     # getting list avoids "dictionary changed size during iteration"-error
     [modsource_dict.pop(m) for m in list(modsource_dict) if m not in modsources]
-
+    # add new ones
     for name in modsources:
         if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
@@ -94,9 +95,9 @@ class ModSource(object):
             return
 
         # pop inexistent modules
-        [self.mods.pop(m) for m in self.mods if m not in mods_in_path]
-
-        # add new ones
+        # getting list avoids "dictionary changed size during iteration"-error
+        [self.mods.pop(m) for m in list(self.mods) if m not in mods_in_path]
+        # add new one
         for modname in mods_in_path:
             if modname not in self.mods:
                 self.mods[modname] = Mod(self, modname)
@@ -109,7 +110,7 @@ class ModSource(object):
                 self._cfg_fetched = now
                 self._last_config = a2util.json_read(self.config_file)
             return self._last_config
-        except FileExistsError:
+        except FileNotFoundError:
             return {}
         except Exception as error:
             log.error('Error loading config file for "%s" (%s)\n'
@@ -194,7 +195,7 @@ class ModSource(object):
         version_tmpath = os.path.join(self.backup_path, this_version)
 
         # not yet backed up: move current version to temp
-        if not os.path.isdir(self.backup_path):
+        if not os.path.isdir(version_tmpath):
             log.info('backing up %s %s' % (self.name, this_version))
             os.makedirs(self.backup_path, exist_ok=True)
             os.rename(self.path, version_tmpath)
@@ -316,12 +317,13 @@ class ModSourceFetchThread(QtCore.QThread):
 
     Connect to its Signals:
 
-     - finished() - no args
+     - fetched() - no args
      - failed(str) - Error message as string.
+     - status(str) - current status like download percentage
 
     and kick it off by .start()-ing it.
     """
-    finished = QtCore.Signal()
+    fetched = QtCore.Signal()
     failed = QtCore.Signal(str)
     status = QtCore.Signal(str)
 
@@ -347,7 +349,7 @@ class ModSourceFetchThread(QtCore.QThread):
     def run(self):
         old_version = self.mod_source.config.get('version')
         if old_version is not None and old_version == self.version:
-            self.finished.emit()
+            self.fetched.emit()
             return
 
         update_url = self.url or self.mod_source.config.get('update_url')
@@ -367,6 +369,7 @@ class ModSourceFetchThread(QtCore.QThread):
                 return
         else:
             self.status.emit(MSG_BACKUP % old_version)
+            log.debug(MSG_BACKUP % old_version)
             try:
                 self.mod_source._move_to_temp_backup()
             except Exception as error:
@@ -396,7 +399,8 @@ class ModSourceFetchThread(QtCore.QThread):
                     request.FancyURLopener().retrieve(
                         update_url, temp_packpath, self._download_status)
                 except Exception as error:
-                    self._error('Error retrieving...\n' + str(error))
+                    log.error(traceback.format_exc().strip())
+                    self._error('Error retrieving package...\n' + str(error))
                     return
 
             else:
@@ -433,7 +437,7 @@ class ModSourceFetchThread(QtCore.QThread):
         if os.path.isdir(temp_new_version):
             shutil.rmtree(temp_new_version)
 
-        self.finished.emit()
+        self.fetched.emit()
 
 
 class Mod(object):
