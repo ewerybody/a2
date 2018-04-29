@@ -299,7 +299,11 @@ class A2Window(QtGui.QMainWindow):
         import a2mod
         path = a2mod.create_module_source_dir(name)
         # write empty cfg json so its found by the package lister
-        a2util.json_write(os.path.join(path, a2mod.MOD_SOURCE_NAME), {})
+        cfg = a2mod.get_default_package_cfg()
+        cfg['name'] = name
+        cfg['maintainer'] = self.devset.author_name
+        cfg['url'] = self.devset.author_url
+        a2util.json_write(os.path.join(path, a2mod.MOD_SOURCE_NAME), cfg)
         # update the ui without runtime reload
         self.a2.fetch_modules()
         self.module_view.draw_mod()
