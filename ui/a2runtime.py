@@ -207,13 +207,19 @@ class HotkeysCollection(_Collection):
             for hotkey_data in hotkey_list:
                 # type 0 is global, gather hotkeys (0) and commands (1) in tuples
                 if scope_type == '0':
-                    self.hotkeys_global.append((hotkey_data[0], hotkey_data[1]))
+                    key, command = hotkey_data
+                    if not key:
+                        continue
+                    self.hotkeys_global.append((key, command))
                 # '1' & '2' are include/exclude scopes
                 # gather per type (0) hotkeys (1) and commands (2)
                 else:
-                    for scope_string in hotkey_data[0]:
-                        self._scope_types[scope_type].setdefault(scope_string, []).append(
-                            (hotkey_data[1], hotkey_data[2]))
+                    scopes, key, command = hotkey_data
+                    if not key:
+                        continue
+                    for scope_string in scopes:
+                        self._scope_types[scope_type].setdefault(
+                            scope_string, []).append((key, command))
 
     def get_content(self):
         scope_modes = {'1': '#IfWinActive', '2': '#IfWinNotActive'}
