@@ -20,15 +20,15 @@ class Hotkey_Scope_Handler(object):
         self.main = main
         self.ui = main.ui
 
-        self.ui.cfg_scopeMode.currentIndexChanged.connect(self.scopeModeChanged)
-        self.scopeModeChanged()
+        self.ui.cfg_scopeMode.currentIndexChanged.connect(self.scope_mode_changed)
+        self.scope_mode_changed()
 
-        self.ui.scopePlus.mousePressEvent = self.scopePopup
-        self.ui.scopeMinus.clicked.connect(self.scopeDelete)
-        self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scopePopup, change=True)
-        self.scopeUpdate()
+        self.ui.scopePlus.mousePressEvent = self.scope_popup
+        self.ui.scopeMinus.clicked.connect(self.scope_delete)
+        self.ui.cfg_scope.mouseDoubleClickEvent = partial(self.scope_popup, change=True)
+        self.scope_update()
 
-    def scopeModeChanged(self, index=None):
+    def scope_mode_changed(self, index=None):
         if index is None:
             index = self.ui.cfg_scopeMode.currentIndex()
         state = index != 0
@@ -36,7 +36,7 @@ class Hotkey_Scope_Handler(object):
         self.ui.scopePlus.setVisible(state)
         self.ui.scopeMinus.setVisible(state)
 
-    def scopePopup(self, event, change=False):
+    def scope_popup(self, event, change=False):
         # to create new and change scope items from the list
         selItem = None
         text = ''
@@ -47,10 +47,10 @@ class Hotkey_Scope_Handler(object):
             text = selItem[0].text()
 
         self.scopePop = ScopeDialog(text, event.globalX(), event.globalY(),
-                                    self.main, self.scopePopOK)
+                                    self.main, self.scope_pop_ok)
         self.scopePop.show()
 
-    def scopePopOK(self):
+    def scope_pop_ok(self):
         text = self.scopePop.ui.scopeText.text()
         if self.scopePop.edit:
             selItem = self.ui.cfg_scope.selectedItems()[0]
@@ -60,16 +60,16 @@ class Hotkey_Scope_Handler(object):
             self.ui.cfg_scope.addItem(item)
             item.setSelected(True)
         self.scopePop.close()
-        self.scopeUpdate()
+        self.scope_update()
 
-    def scopeDelete(self):
+    def scope_delete(self):
         selectedIndexes = self.ui.cfg_scope.selectedIndexes()
         if selectedIndexes:
             selIndex = [mi.row() for mi in selectedIndexes][0]
             self.ui.cfg_scope.takeItem(selIndex)
-            self.scopeUpdate()
+            self.scope_update()
 
-    def scopeUpdate(self):
+    def scope_update(self):
         allItems = a2ctrl.qlist.get_items_as_text(self.ui.cfg_scope)
         # p = a2ctrl.fontL.pointSize()
         # h = ((max(1, len(allItems)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale

@@ -103,8 +103,15 @@ class Draw(DrawCtrl):
     def build_hotkey_options_menu(self):
         menu = self.hotkey_option_menu
         menu.clear()
-        menu.addAction('Add another Hotkey')
-        menu.addAction('Revert to Default')
+        action = menu.addAction('Add another Hotkey')
+        action.setEnabled(False)
+        action = menu.addAction('Revert to Default')
+        action.setEnabled(False)
+
+        if not self.hotkey_button.is_clear():
+            menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',
+                           self.hotkey_button.clear)
+
         menu.addSeparator()
 
         submenu = QtGui.QMenu('Hotkey Dialog Style', menu)

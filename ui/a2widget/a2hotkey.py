@@ -54,6 +54,19 @@ class A2Hotkey(QtGui.QPushButton):
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 
+    def clear(self):
+        """
+        Sets the hotkey button to '', None aka "nothing".
+        """
+        self.set_key('')
+
+    def is_clear(self):
+        """
+        :return: False if a key is set. True if no key is set.
+        :rtype: bool
+        """
+        return self.key == ''
+
 
 class _HotkeyBase(QtCore.QObject):
     hotkey_set = QtCore.Signal(str)

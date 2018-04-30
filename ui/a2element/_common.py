@@ -199,15 +199,15 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrlLayout.addLayout(self._ctrlButtonLayout)
         self._ctrlLayout.setStretch(0, 1)
 
-        self._ctrlMenu = QtGui.QMenu(self)
-        self._ctrlMenu.aboutToShow.connect(self._build_menu)
-        self._ctrlButton.setMenu(self._ctrlMenu)
+        self._ctrl_menu = QtGui.QMenu(self)
+        self._ctrl_menu.aboutToShow.connect(self._build_menu)
+        self._ctrlButton.setMenu(self._ctrl_menu)
 
     def _build_menu(self):
         """
         TODO: don't show top/to top, bottom/to bottom when already at top/bottom
         """
-        self._ctrlMenu.clear()
+        self._ctrl_menu.clear()
         icons = Icons.inst()
         menu_items = [('Up', partial(self.move, -1), icons.up),
                       ('Down', partial(self.move, 1), icons.down),
@@ -226,12 +226,9 @@ class EditCtrl(QtGui.QGroupBox):
         else:
             menu_items.insert(-1, ('Cut' + clipboard_count, self.cut, icons.cut))
 
-        for item in menu_items:
-            if icons and len(item) == 3:
-                action = QtGui.QAction(item[2], item[0], self._ctrlMenu, triggered=item[1])
-            else:
-                action = QtGui.QAction(item[0], self._ctrlMenu, triggered=item[1])
-            self._ctrlMenu.addAction(action)
+        for label, func, icon in menu_items:
+            action = self._ctrl_menu.addAction(icon, label, func)
+        self._ctrl_menu.insertSeparator(action)
 
     def check_new_name(self):
         """
