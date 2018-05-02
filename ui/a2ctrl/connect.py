@@ -186,12 +186,8 @@ def _connect_checkbox_to_db(widget, db, key, default_value):
         default_value = False
 
     def _db_setter(value, db_object=db, setting_key=key, *args):
-        print('get value: %s' % value)
-        print('args: %s' % str(args))
         db_object.set(setting_key, value)
-
         value = db_object.get(setting_key)
-        print('set value now: %s' % value)
 
     widget.setChecked(db.get(key) or default_value)
     widget.clicked[bool].connect(_db_setter)
