@@ -1,30 +1,26 @@
-"""
-Created on Apr 30, 2016
-
-@author: eRiC
-"""
 import a2core
 import subprocess
 from PySide import QtGui
 from functools import partial
-from os.path import normpath
 
 
-class Hotkey_Function_Handler(object):
+FUNCTIONS = ['functionCode', 'functionURL', 'functionSend']
+SEND_MODES = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
+
+
+class FuncWidget(QtGui.QWidget):
     def __init__(self, main):
+        super(FuncWidget, self).__init__()
         self.main = main
-        self.ui = main.ui
-
-        self._functions = ['functionCode', 'functionURL', 'functionSend']
-        self._send_modes = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
-
-        self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_text)
-        self.menu = QtGui.QMenu(self.ui.functionButton)
-        self.menu.aboutToShow.connect(self.menu_build)
-        self.ui.functionButton.setMenu(self.menu)
-        self.set_text()
-        self.ui.functionText.textChanged.connect(self.changed)
-        self.ui.function_send_mode.currentIndexChanged.connect(partial(self.changed, None))
+        # self.ui = main.ui
+        #
+        # self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_text)
+        # self.menu = QtGui.QMenu(self.ui.functionButton)
+        # self.menu.aboutToShow.connect(self.menu_build)
+        # self.ui.functionButton.setMenu(self.menu)
+        # self.set_text()
+        # self.ui.functionText.textChanged.connect(self.changed)
+        # self.ui.function_send_mode.currentIndexChanged.connect(partial(self.changed, None))
 
     def menu_build(self):
         self.menu.clear()
