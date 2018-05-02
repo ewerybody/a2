@@ -2,12 +2,11 @@ from PySide import QtCore, QtGui
 
 import a2ctrl
 import a2core
-from a2element import hotkey_func, hotkey_scope, DrawCtrl, EditCtrl
+from a2element import DrawCtrl, EditCtrl
 from a2widget.a2hotkey import A2Hotkey
 from functools import partial
 
 
-hotkey_edit_ui = None
 log = a2core.get_logger(__name__)
 DEFAULT_HOTKEY = 'Win+F'
 
@@ -65,7 +64,6 @@ class Draw(DrawCtrl):
         self.label.setWordWrap(True)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
-        # self.labelBoxLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrl_layout.addLayout(self.labelBoxLayout)
 
         self.hotkey_list_layout = QtGui.QVBoxLayout()
@@ -83,7 +81,6 @@ class Draw(DrawCtrl):
         self.hotkey_layout.addWidget(self.a2option_button)
 
         self.hotkey_list_layout.addLayout(self.hotkey_layout)
-        # self.hotkeyListLayout.addItem(QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding))
         self.ctrl_layout.addLayout(self.hotkey_list_layout)
         self.ctrl_layout.setStretch(2, 1)
         self.setLayout(self.ctrl_layout)
@@ -147,19 +144,13 @@ class Edit(EditCtrl):
     """
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        defaults = [('key', 'Win+F'), ('mode', 'ahk')]
-        for key, value in defaults:
-            if key not in self.cfg:
-                self.cfg[key] = value
 
-        self.helpUrl = self.a2.urls.helpHotkey
+        # deferred because pretty huge & not needed by non dev users
+        from a2widget.a2hotkey import edit_widget_ui, edit_scope_widget_ui, edit_func_widget_ui
+        for module in [edit_scope_widget_ui, edit_func_widget_ui, edit_widget_ui]:
+            a2ctrl.check_ui_module(module)
 
-        global hotkey_edit_ui
-        if hotkey_edit_ui is None:
-            from a2element import hotkey_edit_ui
-        a2ctrl.check_ui_module(hotkey_edit_ui)
-
-        self.ui = hotkey_edit_ui.Ui_edit()
+        self.ui = edit_widget_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         for key, value in [('key', DEFAULT_HOTKEY), ('mode', 'ahk')]:
@@ -173,8 +164,8 @@ class Edit(EditCtrl):
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
-        self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
-        self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
+        # self.func_handler = hotkey_func.Hotkey_Function_Handler(self)
+        # self.scope_handler = hotkey_scope.Hotkey_Scope_Handler(self)
 
         self.disablable_check()
         self.ui.cfg_disablable.clicked[bool].connect(self.disablable_check)
@@ -191,8 +182,8 @@ class Edit(EditCtrl):
             self.ui.cfg_enabled.setEnabled(state)
             self.ui.cfg_enabled.setChecked(True)
 
-    def hotkey_change(self, newKey):
-        self.cfg['key'] = newKey
+    def hotkey_change(self, new_key):
+        self.cfg['key'] = new_key
 
     @staticmethod
     def element_name():
