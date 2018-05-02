@@ -50,7 +50,7 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self._fill_key_dict()
         self._setup_ui()
-        self.rejected.connect(self._print_size)
+        self.rejected.connect(self._log_size)
 
     def set_key(self):
         """
@@ -237,7 +237,7 @@ class KeyboardDialogBase(QtGui.QDialog):
                 button.clicked.connect(self.on_key_press)
                 self.key_dict[key_name] = button
 
-                if key_name not in a2ahk.keys:
+                if not key_name.startswith('_') and key_name not in a2ahk.keys:
                     log.warn('What kind of key is this?!? %s' % key_name)
 
         self._look_for_unlisted_keys()
@@ -260,7 +260,6 @@ class KeyboardDialogBase(QtGui.QDialog):
 
     def refresh_style(self):
         scale = self.a2.win.css_values['scale']
-        log.info('scale: %s' % scale)
         values = a2util.json_read(os.path.join(_HERE, 'style_values.json'))
         # scale values for current screen, skipping the ones with "_*"
         for key, value in values.items():
@@ -285,28 +284,30 @@ class KeyboardDialogBase(QtGui.QDialog):
         cursorblock_css = load_css('cursorblock') % values
         self.cursor_block_widget.setStyleSheet(cursorblock_css)
         self.numpad_block_widget.setStyleSheet(cursorblock_css)
-        log.info('style refreshed ...')
-        # pprint.pprint(values)
 
-    def _print_size(self):
+    def _log_size(self):
         """
         Eventually I want to put the dialog under the cursor. But for that we need to
         find out how big the dialog is on different DPI and scale values. I'm gathering
         some values here from my own testings to later be able to estimate the size and
         center point. I don't wanna shift around the dialog after it popped up of course...
 
-        110 dpi, height 313, scale 1.1458333333333333
+        110 dpi, height 313, scale 1.14583
             597 alone
             753 numpad 156
             794 mouse 197
             950 both 353
+        216 dpi, h 587 scale 2.1375
+            1130 alone
+            1432 numpad 302
+            1476 mouse 346
+            1778 both 648
         """
-
-        thisdpi = QtGui.qApp.desktop().physicalDpiX()
+        dpi = QtGui.qApp.desktop().physicalDpiX()
         scale = self.a2.win.css_values['scale']
-        print('thisdpi: %s' % thisdpi)
-        print('scale: %s' % scale)
-        print('  width: %s\n  height: %s' % (self.width(), self.height()))
+        msg = ('hotkey dialog stats:\n   dpi: %i\n scale: %f\n   w/h: %i/%i'
+               % (dpi, scale, self.width(), self.height()))
+        log.info(msg)
 
 
 class CursorBlockWidget(QtGui.QWidget):
