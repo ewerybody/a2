@@ -6,135 +6,68 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>167</height>
+    <width>841</width>
+    <height>289</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QPushButton" name="helpButton">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">* {text-align: right}</string>
-       </property>
-       <property name="text">
-        <string>scope description</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="scopeText">
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <property name="labelAlignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>scope description</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
-     <item>
-      <widget class="QPushButton" name="titleButton">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">* {text-align: right}</string>
-       </property>
-       <property name="text">
-        <string>title</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="scopeTitle"/>
-     </item>
-    </layout>
+   <item row="0" column="1">
+    <widget class="A2ButtonField" name="scope_text">
+     <property name="toolTip">
+      <string notr="true"/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
-     <item>
-      <widget class="QPushButton" name="classButton">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">* {text-align: right}</string>
-       </property>
-       <property name="text">
-        <string>window class</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="scopeClass"/>
-     </item>
-    </layout>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>title</string>
+     </property>
+    </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0">
-     <item>
-      <widget class="QPushButton" name="exeButton">
-       <property name="minimumSize">
-        <size>
-         <width>200</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>200</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">* {text-align: right}</string>
-       </property>
-       <property name="text">
-        <string>executable</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="scopeExe"/>
-     </item>
-    </layout>
+   <item row="1" column="1">
+    <widget class="A2ButtonField" name="scope_title"/>
    </item>
-   <item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>window class</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="A2ButtonField" name="scope_class"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>executable</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="A2ButtonField" name="scope_exe"/>
+   </item>
+   <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
       <widget class="QPushButton" name="a2ok_button">
@@ -157,17 +90,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2ButtonField</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2button_field</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
-  <tabstop>scopeText</tabstop>
-  <tabstop>scopeTitle</tabstop>
-  <tabstop>scopeClass</tabstop>
-  <tabstop>scopeExe</tabstop>
   <tabstop>a2ok_button</tabstop>
   <tabstop>a2cancel_button</tabstop>
-  <tabstop>helpButton</tabstop>
-  <tabstop>titleButton</tabstop>
-  <tabstop>classButton</tabstop>
-  <tabstop>exeButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
