@@ -4,16 +4,15 @@ Created on 11.09.2017
 @author: eric
 """
 import os
+import inspect
 
 import a2ahk
 import a2core
 import a2util
 import a2ctrl.connect
-from a2widget.keyboard import base_ui, mouse_ui, numpad_ui, cursor_block_ui
+from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
 from PySide import QtGui, QtCore
-import pprint
-import inspect
 
 
 log = a2core.get_logger('keyboard_base')
@@ -255,8 +254,8 @@ class KeyboardDialogBase(QtGui.QDialog):
 
     def build_keyboard(self, keyboard_id):
         if keyboard_id == 'en_us':
-            import a2widget.keyboard.en_us
-            a2widget.keyboard.en_us.main(self)
+            from . import en_us
+            en_us.main(self)
 
     def refresh_style(self):
         scale = self.a2.win.css_values['scale']

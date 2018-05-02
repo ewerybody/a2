@@ -1,6 +1,6 @@
 import a2core
 from PySide import QtCore
-from a2widget.keyboard.base import KeyboardDialogBase
+from .keyboard_dialog.base import KeyboardDialogBase
 
 
 class _HotkeyDialogBase(QtCore.QObject):
