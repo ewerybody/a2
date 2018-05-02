@@ -27,6 +27,9 @@ _element_map = {}
 
 
 def check_ui_module(module):
+    if not a2core.is_dev_mode():
+        return
+
     if getattr(sys, 'frozen', False):
         log.info('frozen! no need to compile %s' % module)
         return
@@ -52,7 +55,8 @@ def check_ui_module(module):
 
     uifile = os.path.join(folder, uibase)
     if not uibase or not os.path.isfile(uifile):
-        log.error('Ui-file not found: %s' % pybase)
+        # Nothing to test against. Thats alright!
+        # log.debug('Ui-file not found: %s' % pybase)
         return
 
     pyTime = os.path.getmtime(pyfile)

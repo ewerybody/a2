@@ -26,6 +26,7 @@ A2TAGS = {'file': 'File system',
           'lookup': 'Searching things',
           'web': 'Internet related',
           'wip': 'Experimental'}
+_IS_DEV = None
 
 
 class A2Obj(object):
@@ -125,6 +126,18 @@ class A2Obj(object):
     def enabled(self, these):
         self._enabled = these
         self.db.set('enabled', these)
+
+    @property
+    def dev_mode(self):
+        global _IS_DEV
+        if _IS_DEV is None:
+            _IS_DEV = self.db.get('dev_mode') or False
+        return _IS_DEV
+
+    def set_dev_mode(self, state):
+        global _IS_DEV
+        _IS_DEV = state
+        self.db.set('dev_mode', state)
 
 
 class URLs(object):
@@ -278,6 +291,27 @@ def set_loglevel(debug=False):
                 if not isinstance(logger, logging.PlaceHolder):
                     log.info('Could not set log level on logger object "%s": %s' % (name, str(logger)))
                     log.error(error)
+
+
+def is_dev_mode():
+    """
+    Checks for developer mode flag without the ui or a2 obj.
+    :rtype: bool
+    """
+    global _IS_DEV
+    if _IS_DEV is None:
+        a2 = A2Obj.inst()
+        return a2.dev_mode
+    return _IS_DEV
+
+
+def set_dev_mode(state):
+    """
+    Sets developer mode flag without the ui or a2 obj.
+    :param bool state: True/False developer mode flag on/off.
+    """
+    a2 = A2Obj.inst()
+    a2.set_dev_mode(state)
 
 
 if __name__ == '__main__':

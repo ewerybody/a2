@@ -53,13 +53,13 @@ class A2Settings(QtGui.QWidget):
         self.ui.a2hotkey.set_key(a2_hotkey)
         self.ui.a2hotkey.ok_func = self.set_a2_hotkey
 
-        self.ui.dev_box.setChecked(self.main.dev_mode)
+        self.ui.dev_box.setChecked(self.a2.dev_mode)
         self.ui.dev_box.clicked[bool].connect(self.dev_mode_toggle)
 
         self.ui.remember_selection.setChecked(self.a2.db.get('remember_last') or False)
         self.ui.remember_selection.clicked[bool].connect(self.remember_last_toggle)
 
-        self.ui.dev_widget.setVisible(self.main.dev_mode)
+        self.ui.dev_widget.setVisible(self.a2.dev_mode)
 
         self.add_source_menu = QtGui.QMenu(self)
         self.ui.a2add_button.setMenu(self.add_source_menu)
@@ -131,11 +131,10 @@ class A2Settings(QtGui.QWidget):
         self.ui.load_on_win_start.setChecked(exists(win_startup_lnk))
         self.ui.load_on_win_start.clicked[bool].connect(a2util.set_windows_startup)
 
-    def dev_mode_toggle(self, dev_mode):
-        self.a2.db.set('dev_mode', dev_mode)
-        self.main.dev_mode = dev_mode
-        self.ui.dev_widget.setVisible(dev_mode)
-        self.main.toggle_dev_menu(dev_mode)
+    def dev_mode_toggle(self, state):
+        self.a2.set_dev_mode(state)
+        self.ui.dev_widget.setVisible(state)
+        self.main.toggle_dev_menu(state)
 
     def remember_last_toggle(self, state):
         self.a2.db.set('remember_last', state)

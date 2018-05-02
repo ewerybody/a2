@@ -41,7 +41,6 @@ class A2Window(QtGui.QMainWindow):
         self.css_values = {}
         self.rebuild_css()
 
-        self.dev_mode = self.a2.db.get('dev_mode') or False
         self.devset = DevSettings(self.a2)
         if self.devset.loglevel_debug:
             a2core.set_loglevel(debug=True)
@@ -81,9 +80,7 @@ class A2Window(QtGui.QMainWindow):
         self.module_view.draw_mod()
 
     def _setup_ui(self):
-        if self.dev_mode:
-            a2ctrl.check_ui_module(a2design_ui)
-
+        a2ctrl.check_ui_module(a2design_ui)
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
         # shortcuts
@@ -159,7 +156,7 @@ class A2Window(QtGui.QMainWindow):
     def toggle_dev_menu(self, state=None):
         if state is None:
             # state=None happens only on startup
-            state = self.a2.db.get('dev_mode') or False
+            state = self.a2.dev_mode
             # if True we dont have to re-add
             if state is True:
                 return

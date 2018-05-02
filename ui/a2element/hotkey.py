@@ -160,8 +160,7 @@ class Edit(EditCtrl):
         global hotkey_edit_ui
         if hotkey_edit_ui is None:
             from a2element import hotkey_edit_ui
-        if main.dev_mode:
-            a2ctrl.check_ui_module(hotkey_edit_ui)
+        a2ctrl.check_ui_module(hotkey_edit_ui)
 
         self.ui = hotkey_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
