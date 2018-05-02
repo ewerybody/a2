@@ -1,8 +1,3 @@
-'''
-Created on Dec 28, 2015
-
-@author: eRiC
-'''
 from PySide import QtCore, QtGui
 
 import a2ctrl
@@ -14,6 +9,7 @@ from functools import partial
 
 hotkey_edit_ui = None
 log = a2core.get_logger(__name__)
+DEFAULT_HOTKEY = 'Win+F'
 
 
 class Draw(DrawCtrl):
@@ -56,9 +52,10 @@ class Draw(DrawCtrl):
         if self.cfg['disablable']:
             state = self.get_user_value(bool, 'enabled', True)
             self.check = QtGui.QCheckBox(self)
-            cbSize = 27
-            self.check.setMinimumSize(QtCore.QSize(cbSize, cbSize))
-            self.check.setMaximumSize(QtCore.QSize(cbSize, cbSize))
+
+            size = self.main.css_values['icon_size']
+            self.check.setMinimumSize(QtCore.QSize(size, size))
+            self.check.setMaximumSize(QtCore.QSize(size, size))
 
             self.check.setChecked(state)
             self.check.clicked.connect(self.hotkey_check)
@@ -164,6 +161,12 @@ class Edit(EditCtrl):
 
         self.ui = hotkey_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
+
+        for key, value in [('key', DEFAULT_HOTKEY), ('mode', 'ahk')]:
+            if key not in self.cfg:
+                self.cfg[key] = value
+
+        self.helpUrl = self.a2.urls.helpHotkey
 
         self.ui.hotkey_button.set_key(cfg.get('key') or '')
         self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)

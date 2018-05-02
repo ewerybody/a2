@@ -5,7 +5,6 @@ a2ctrl.a2settings
 @author: eric
 """
 import os
-from os.path import exists, dirname, basename, relpath
 
 from PySide import QtGui, QtCore
 
@@ -36,13 +35,13 @@ class A2Settings(QtGui.QWidget):
         enabled_list = [name for name, data in self.a2.enabled.items() if data[0]]
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for module_source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
-            modsourcewidget = a2module_source.ModSourceWidget(
+            widget = a2module_source.ModSourceWidget(
                 self.main, module_source,
                 show_enabled=module_source.name in enabled_list)
-            modsourcewidget.toggled.connect(self.main.settings_changed)
-            modsourcewidget.changed.connect(self.on_mod_source_change)
-            self.ui.mod_source_layout.addWidget(modsourcewidget)
-            self._source_widgets[module_source] = modsourcewidget
+            widget.toggled.connect(self.main.settings_changed)
+            widget.changed.connect(self.on_mod_source_change)
+            self.ui.mod_source_layout.addWidget(widget)
+            self._source_widgets[module_source] = widget
 
     def _setup_ui(self):
         a2ctrl.check_ui_module(a2settings_view_ui)
@@ -86,7 +85,7 @@ class A2Settings(QtGui.QWidget):
         self.ui.autohotkey.file_types = "Autohotkey Executable (%s)" % a2ahk.EXECUTABLE_NAME
         self.ui.autohotkey.changed.connect(self.set_autohotkey)
 
-        self.ui.show_console.setChecked(basename(self.a2.paths.python).lower() == 'python.exe')
+        self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
         self.ui.show_console.clicked[bool].connect(self.toggle_console)
 
         ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
@@ -99,22 +98,22 @@ class A2Settings(QtGui.QWidget):
 
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
-        newpath = os.path.join(dirname(self.a2.paths.python), base_name)
-        a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', newpath)
-        self.a2.paths.python = newpath
-        self.ui.python_executable.setText(newpath)
+        new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
+        a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', new_path)
+        self.a2.paths.python = new_path
+        self.ui.python_executable.setText(new_path)
 
     def toggle_startup_tooltips(self, state):
         a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
     def set_autohotkey(self, path):
-        if basename(path).lower() != a2ahk.EXECUTABLE_NAME:
+        if os.path.basename(path).lower() != a2ahk.EXECUTABLE_NAME:
             self.ui.autohotkey.changed.disconnect(self.set_autohotkey)
             self.ui.autohotkey.value = self.a2.paths.autohotkey
             self.ui.autohotkey.changed.connect(self.set_autohotkey)
             return
 
-        rel = relpath(path, self.a2.paths.a2)
+        rel = os.path.relpath(path, self.a2.paths.a2)
         if rel.startswith('..'):
             a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', path)
         else:
@@ -128,7 +127,7 @@ class A2Settings(QtGui.QWidget):
     def _check_win_startup(self):
         win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
         win_startup_lnk = os.path.join(win_startup_path, 'a2.lnk')
-        self.ui.load_on_win_start.setChecked(exists(win_startup_lnk))
+        self.ui.load_on_win_start.setChecked(os.path.exists(win_startup_lnk))
         self.ui.load_on_win_start.clicked[bool].connect(a2util.set_windows_startup)
 
     def dev_mode_toggle(self, state):
