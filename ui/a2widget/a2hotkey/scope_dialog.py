@@ -1,15 +1,16 @@
-from collections import OrderedDict
-
 import a2ahk
 import a2core
 import a2ctrl
 import a2util
+from collections import OrderedDict
 from PySide import QtGui, QtCore
 
 from . import scope_dialog_ui
+from functools import partial
 
 
 log = a2core.get_logger(__name__)
+SCOPE_ITEMS = ['titles', 'classes', 'processes']
 
 
 class ScopeDialog(QtGui.QDialog):
@@ -22,17 +23,17 @@ class ScopeDialog(QtGui.QDialog):
         self.ui = scope_dialog_ui.Ui_ScopeDialog()
 
         self.ui.setupUi(self)
-        self.setWindowTitle('Setup Scope')
         self.setModal(True)
+        self.setWindowTitle('Setup Scope')
 
-        #self.ok_func = ok_func
+        self.system_scope_data = {}
+        self.get_scope_data()
+
         self.a2 = a2core.A2Obj.inst()
-        self.titles, self.classes, self.processes = set(), set(), set()
-        self.get_scope_nfo()
-
-        self.help_map = OrderedDict({'Help on Scope Setup': self.a2.urls.helpScopes,
-                                     'Help on AHK WinActive': self.a2.urls.ahkWinActive,
-                                     'Help on AHK WinTitle': self.a2.urls.ahkWinTitle})
+        self.help_map = OrderedDict()
+        self.help_map['Help on Scope Setup'] = self.a2.urls.helpScopes
+        self.help_map['Help on AHK WinActive'] = self.a2.urls.ahkWinActive
+        self.help_map['Help on AHK WinTitle'] = self.a2.urls.ahkWinTitle
 
         self.setup_ui()
         self.set_scope_string(scope_string)
@@ -44,39 +45,52 @@ class ScopeDialog(QtGui.QDialog):
         pos.setY(cursor_pos.y() - (self.height() / 2))
         self.move(pos)
         self.ui.a2ok_button.clicked.connect(self.ok)
-        self.ui.a2cancel_button.clicked.connect(self.close)
+        self.ui.a2cancel_button.clicked.connect(self.reject)
         self.ui.scope_title.setFocus()
 
-        for ctrl in [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]:
-            ctrl.textChanged.connect(self.textChange)
-        # put menus to the different buttons
-        # for i, lst, ctrl in [(1, self.titles, self.ui.titleButton),
-        #                      (2, self.classes, self.ui.classButton),
-        #                      (3, self.processes, self.ui.exeButton),
-        #                      (None, None, self.ui.helpButton)]:
-        #     if lst:
-        #         menu = QtGui.QMenu(self)
-        #         usedmenu = QtGui.QMenu(menu)
-        #         usedmenu.setTitle('all in use...')
-        #         submenu = QtGui.QMenu(menu)
-        #         submenu.setTitle('all available...')
-        #         menu.addMenu(submenu)
-        #         for item in sorted(lst, key=lambda s: s.lower()):
-        #             action = QtGui.QAction(item, submenu, triggered=partial(self.setScope, i, item))
-        #             submenu.addAction(action)
-        #         ctrl.setMenu(menu)
+        self.scope_ctrls = OrderedDict()
+        for name, ctrl in zip(SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class,
+                                            self.ui.scope_exe]):
+            self.scope_ctrls[name] = ctrl
 
-        menu = QtGui.QMenu(self)
-        submenu = QtGui.QMenu(menu)
-        submenu.setTitle('all in use...')
+        for i, ctrl in enumerate(self.scope_ctrls.values()):
+            ctrl.textChanged.connect(self.text_change)
+            ctrl.menu_about_to_show.connect(partial(self.build_button_menu, i))
+
+#        menu = QtGui.QMenu(self)
+#        submenu = QtGui.QMenu(menu)
+#        submenu.setTitle('all in use...')
+#        for scope in sorted(self.a2.get_used_scopes(), key=lambda s: s.lower()):
+#            action = QtGui.QAction(scope, submenu, triggered=partial(self.set_scope_string, scope))
+#            submenu.addAction(action)
+#        menu.addMenu(submenu)
+
+        self.scopes_submenu = self.ui.scope_string.menu.addMenu('All Scopes in use')
+        self.scopes_submenu.aboutToShow.connect(self.build_all_scopes_menu)
+        self.ui.scope_string.menu.addSeparator()
+        for title in self.help_map:
+            self.ui.scope_string.add_action(title, self.surf_to_help)
+
+    def build_all_scopes_menu(self):
+        self.scopes_submenu.clear()
         for scope in sorted(self.a2.get_used_scopes(), key=lambda s: s.lower()):
-            action = QtGui.QAction(scope, submenu, triggered=partial(self.set_scope_string, scope))
-            submenu.addAction(action)
-        menu.addMenu(submenu)
-        for title, url in self.help_map.items():
-            #action = QtGui.QAction(, menu, triggered=partial(a2util.surf_to, url))
-            menu.addAction(title, self.surf_to_help)
-        #self.ui.helpButton.setMenu(menu)
+            print('scope: %s' % scope)
+#            action = QtGui.QAction(scope, submenu, triggered=partial(self.set_scope_string, scope))
+            self.scopes_submenu.addAction(scope, self.set_scope_string)
+
+    def build_button_menu(self, index, menu):
+        menu.clear()
+        name = SCOPE_ITEMS[index]
+        # usedmenu = menu.addMenu('%s in use' % name.title())
+        submenu = menu.addMenu('Available %s' % name.title())
+        for item in sorted(self.system_scope_data[name], key=lambda s: s.lower()):
+            # action = QtGui.QAction(item, submenu, triggered=partial(self.set_scope, i, item))
+            action = submenu.addAction(item, self.set_menu_item)
+            action.setData(name)
+
+    def set_menu_item(self):
+        sender = self.sender()
+        self.scope_ctrls[sender.data()].setText(sender.text())
 
     def surf_to_help(self):
         url = self.help_map[self.sender().text()]
@@ -85,32 +99,34 @@ class ScopeDialog(QtGui.QDialog):
     def set_scope_string(self, scope_string=None):
         if scope_string is None:
             scope_string = self.sender().text()
-
         self.ui.scope_string.setText(scope_string)
-        # from given text fill the line edits already
+
+        # from given text fill the line edits
         if scope_string:
-            for typ, ctrl in [('ahk_exe', self.ui.scope_exe), ('ahk_class', self.ui.scope_class)]:
-                found = text.find(typ)
+            for typ, ctrl in [('ahk_exe', self.ui.scope_exe),
+                              ('ahk_class', self.ui.scope_class)]:
+                found = scope_string.find(typ)
                 if found != -1:
-                    ctrl.setText(text[found + len(typ):].strip())
-                    text = text[:found]
+                    ctrl.setText(scope_string[found + len(typ):].strip())
+                    scope_string = scope_string[:found]
             self.ui.scope_title.setText(scope_string.strip())
 
-    def textChange(self):
-        texts = [self.ui.scopeTitle.text()]
-        winclass = self.ui.scopeClass.text()
+    def text_change(self):
+        texts = [self.ui.scope_title.text()]
+        winclass = self.ui.scope_class.text()
         if winclass:
             texts.append('ahk_class ' + winclass)
-        winexe = self.ui.scopeExe.text()
+        winexe = self.ui.scope_exe.text()
         if winexe:
             texts.append('ahk_exe ' + winexe)
-        self.ui.scopeText.setText(' '.join(texts).strip())
+        self.scope_string = ' '.join(texts).strip()
+        self.ui.scope_string.setText(self.scope_string)
 
-    def setScope(self, index, text):
+    def set_scope(self, index, text):
         ctrls = [self.ui.scope_string, self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]
         ctrls[index].setText(text)
 
-    def get_scope_nfo(self):
+    def get_scope_data(self):
         # call AHK script to get all window classes, titles and executables
         scope_nfo = a2ahk.call_lib_cmd('get_scope_nfo')
         scope_nfo = scope_nfo.split('\\n')
@@ -118,16 +134,15 @@ class ScopeDialog(QtGui.QDialog):
             log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)
             return
 
-        self.titles, self.classes, self.processes = set(), set(), set()
+        self.system_scope_data = dict([(n, set()) for n in SCOPE_ITEMS])
         num_items = len(scope_nfo)
-        num_items = num_items - (num_items % 3)
+        num_items -= num_items % 3
         for i in range(0, num_items, 3):
-            if scope_nfo[i]:
-                self.titles.add(scope_nfo[i])
-            if scope_nfo[i + 1]:
-                self.classes.add(scope_nfo[i + 1])
-            if scope_nfo[i + 2]:
-                self.processes.add(scope_nfo[i + 2])
+            for j in range(3):
+                this_value = scope_nfo[i + j]
+                if this_value:
+                    self.system_scope_data[SCOPE_ITEMS[j]].add(this_value)
 
     def ok(self):
         self.okayed.emit(self.scope_string)
+        self.accept()

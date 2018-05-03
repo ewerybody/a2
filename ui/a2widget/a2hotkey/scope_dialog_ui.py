@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_dialog.ui'
 #
-# Created: Wed May  2 23:43:11 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Thu May  3 17:53:49 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,19 +12,11 @@ from PySide import QtCore, QtGui
 class Ui_ScopeDialog(object):
     def setupUi(self, ScopeDialog):
         ScopeDialog.setObjectName("ScopeDialog")
-        ScopeDialog.resize(841, 289)
+        ScopeDialog.resize(413, 152)
         self.formLayout = QtGui.QFormLayout(ScopeDialog)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout.setObjectName("formLayout")
-        self.label = QtGui.QLabel(ScopeDialog)
-        self.label.setObjectName("label")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label)
-        self.scope_string = A2ButtonField(ScopeDialog)
-        self.scope_string.setToolTip("")
-        self.scope_string.setReadOnly(True)
-        self.scope_string.setObjectName("scope_string")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.scope_string)
         self.label_2 = QtGui.QLabel(ScopeDialog)
         self.label_2.setObjectName("label_2")
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.label_2)
@@ -54,6 +46,11 @@ class Ui_ScopeDialog(object):
         self.horizontalLayout.addWidget(self.a2cancel_button)
         self.horizontalLayout.setStretch(0, 1)
         self.formLayout.setLayout(4, QtGui.QFormLayout.SpanningRole, self.horizontalLayout)
+        self.scope_string = A2ButtonField(ScopeDialog)
+        self.scope_string.setToolTip("")
+        self.scope_string.setReadOnly(True)
+        self.scope_string.setObjectName("scope_string")
+        self.formLayout.setWidget(0, QtGui.QFormLayout.SpanningRole, self.scope_string)
 
         self.retranslateUi(ScopeDialog)
         QtCore.QMetaObject.connectSlotsByName(ScopeDialog)
@@ -61,7 +58,6 @@ class Ui_ScopeDialog(object):
 
     def retranslateUi(self, ScopeDialog):
         ScopeDialog.setWindowTitle(QtGui.QApplication.translate("ScopeDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("ScopeDialog", "scope description", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("ScopeDialog", "title", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("ScopeDialog", "window class", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("ScopeDialog", "executable", None, QtGui.QApplication.UnicodeUTF8))
