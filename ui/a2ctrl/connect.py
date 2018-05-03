@@ -21,7 +21,7 @@ def cfg_controls(cfg, ui_object, prefix='cfg_'):
     for objname, ctrl in inspect.getmembers(ui_object):
         if not objname.startswith(prefix):
             continue
-        name = objname[4:]
+        name = objname[len(prefix):]
         control(ctrl, name, cfg)
 
 
