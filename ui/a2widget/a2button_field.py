@@ -8,6 +8,7 @@ from PySide import QtGui, QtCore
 
 class A2ButtonField(QtGui.QWidget):
     textChanged = QtCore.Signal(str)
+    menu_about_to_show = QtCore.Signal(QtGui.QMenu)
 
     def __init__(self, parent=None):
         super(A2ButtonField, self).__init__(parent)
@@ -15,6 +16,7 @@ class A2ButtonField(QtGui.QWidget):
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
         self.menu = QtGui.QMenu()
+        self.menu.aboutToShow.connect(self._on_menu_about_to_show)
         self.field = QtGui.QLineEdit(self)
         self.field.textChanged.connect(self.textChanged.emit)
         self.main_layout.addWidget(self.field)
@@ -25,17 +27,22 @@ class A2ButtonField(QtGui.QWidget):
         self.button.clicked.connect(self.show_menu)
         self.main_layout.addWidget(self.button)
 
+    def _on_menu_about_to_show(self):
+        self.menu_about_to_show.emit(self.menu)
+
     def show_menu(self):
         self.menu.popup(QtGui.QCursor.pos())
 
-    def add_action(self, action, index=None):
+    def insert_action(self, index, *args):
+        action_obj = self.menu.insertAction(index, *args)
+        return action_obj
+
+    def add_action(self, *args):
         """
         Adds a QAction to the menu
         """
-        if index is not None:
-            self.menu.insertAction(index, action)
-        else:
-            self.menu.addAction(action)
+        action_obj = self.menu.addAction(*args)
+        return action_obj
 
     def setEnabled(self, *args, **kwargs):
         self.field.setEnabled(*args, **kwargs)
