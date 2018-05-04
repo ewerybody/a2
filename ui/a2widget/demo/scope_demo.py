@@ -9,7 +9,8 @@ class Demo(QtGui.QMainWindow):
         super(Demo, self).__init__()
         w = QtGui.QWidget(self)
         self.setCentralWidget(w)
-        lyt = QtGui.QVBoxLayout(w)
+        #lyt = QtGui.QVBoxLayout(w)
+        lyt = QtGui.QFormLayout(w)
         w.setLayout(lyt)
 
         self.cfg = {"name": "_my_module_Hotkey2",
@@ -18,15 +19,14 @@ class Demo(QtGui.QMainWindow):
                     "scopeMode": 1}
 
         self.scope_widget = ScopeWidget(self)
-        lyt.addWidget(self.scope_widget)
-
-        self.scope_widget.changed.connect(self.bla)
+        lyt.addRow('scope', self.scope_widget)
 
         a2ctrl.connect.cfg_controls(self.cfg, self.scope_widget.ui)
+        self.scope_widget.changed.connect(self.bla)
 
         button = QtGui.QPushButton('set_config')
         button.clicked.connect(self.bla)
-        lyt.addWidget(button)
+        lyt.addRow(button)
 
         self.scope_widget.ui.cfg_scopeChange.clicked.connect(self.bla)
         self.scope_widget.ui.cfg_scopeMode.currentIndexChanged.connect(self.bla)
