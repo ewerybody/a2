@@ -13,7 +13,7 @@ class ScopeWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(ScopeWidget, self).__init__(parent)
         # self.main = main
-
+        self._config_dict = None
         a2ctrl.check_ui_module(edit_scope_widget_ui)
         self.ui = edit_scope_widget_ui.Ui_ScopeWidget()
         self.ui.setupUi(self)
@@ -27,7 +27,7 @@ class ScopeWidget(QtGui.QWidget):
         self.ui.cfg_scope.itemDoubleClicked.connect(self.show_edit_dialog)
 
     def set_config(self, config_dict):
-        self.config_dict = config_dict
+        self._config_dict = config_dict
 
     def _init_scope_mode(self):
         index = self.ui.cfg_scopeMode.currentIndex()
@@ -77,14 +77,8 @@ class ScopeWidget(QtGui.QWidget):
 
     def scope_update(self):
         all_items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_scope)
-        self.config_dict['scope'] = all_items
-        try:
-            p = self.main.css_values
-            #h = ((max(1, len(all_items)) * p * a2ctrl.uiScale) + 20) * a2ctrl.uiScale
-            #self.ui.cfg_scope.setMinimumHeight(h)
-        except Exception as error:
-            print('error: %s' % error)
-
+        if self._config_dict is not None:
+            self._config_dict['scope'] = all_items
         self.changed.emit()
 
 
