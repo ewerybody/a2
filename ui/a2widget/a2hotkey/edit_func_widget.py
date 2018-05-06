@@ -2,6 +2,7 @@ import a2core
 import subprocess
 from PySide import QtGui
 from functools import partial
+from a2widget.a2hotkey import edit_func_widget_ui
 
 
 FUNCTIONS = ['functionCode', 'functionURL', 'functionSend']
@@ -9,18 +10,27 @@ SEND_MODES = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
 
 
 class FuncWidget(QtGui.QWidget):
-    def __init__(self, main):
-        super(FuncWidget, self).__init__()
-        self.main = main
+    def __init__(self, parent):
+        super(FuncWidget, self).__init__(parent)
+        self._config_dict = None
+
+        # update check done in parent widget for proper order
+        self.ui = edit_func_widget_ui.Ui_FuncWidget()
+        self.ui.setupUi(self)
+
+        # self.main = parent
         # self.ui = main.ui
         #
-        # self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_text)
+        self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_text)
         # self.menu = QtGui.QMenu(self.ui.functionButton)
         # self.menu.aboutToShow.connect(self.menu_build)
         # self.ui.functionButton.setMenu(self.menu)
-        # self.set_text()
+        self.set_text()
         # self.ui.functionText.textChanged.connect(self.changed)
         # self.ui.function_send_mode.currentIndexChanged.connect(partial(self.changed, None))
+
+    def set_config(self, config_dict):
+        self._config_dict = config_dict
 
     def menu_build(self):
         self.menu.clear()
@@ -86,7 +96,7 @@ class FuncWidget(QtGui.QWidget):
             text = '%s, %s' % (send_mode, text)
         self.main.cfg[self._functions[index]] = text
 
-    def set_text(self, index=None):
+    def set_function_text(self, index=None):
         if index is None:
             index = self.ui.cfg_functionMode.currentIndex()
         self.ui.run_label.setVisible(index == 1)
@@ -94,7 +104,7 @@ class FuncWidget(QtGui.QWidget):
 
         text = self.main.cfg.get(self._functions[index]) or ''
         text = self._strip_mode(text, index)
-        self.ui.functionText.setText(text)
+        self.ui.function_text.setText(text)
 
     def _strip_mode(self, text, index):
         """removes Run, or Send* to put it into the input field"""
@@ -114,3 +124,12 @@ class FuncWidget(QtGui.QWidget):
                         self.ui.function_send_mode.setCurrentIndex(i)
                         break
         return text
+
+    def showEvent(self, *args, **kwargs):
+        self.set_function_text()
+        return QtGui.QWidget.showEvent(self, *args, **kwargs)
+
+
+if __name__ == '__main__':
+    import a2widget.demo.hotkey_func_demo
+    a2widget.demo.hotkey_func_demo.show()

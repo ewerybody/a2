@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>519</width>
-    <height>56</height>
+    <width>880</width>
+    <height>95</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,53 +18,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QComboBox" name="function_send_mode">
-       <item>
-        <property name="text">
-         <string>Send</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>SendRaw</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>SendInput</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>SendPlay</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>SendEvent</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="run_label">
-       <property name="text">
-        <string>Run, </string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="functionText"/>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="functionRowLayout" stretch="0,0,0,0">
+    <layout class="QHBoxLayout" name="function_row_layout" stretch="0,0,0,0">
      <property name="topMargin">
       <number>0</number>
      </property>
@@ -125,6 +79,52 @@
         </size>
        </property>
       </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QComboBox" name="function_send_mode">
+       <item>
+        <property name="text">
+         <string>Send</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SendRaw</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SendInput</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SendPlay</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SendEvent</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="run_label">
+       <property name="text">
+        <string>Run, </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="function_text"/>
      </item>
     </layout>
    </item>
