@@ -1,5 +1,5 @@
 from PySide import QtGui
-from a2widget.a2hotkey.edit_scope_widget import ScopeWidget
+from a2widget.a2hotkey import edit_scope_widget, edit_scope_widget_ui
 import a2ctrl
 from pprint import pprint
 
@@ -7,9 +7,11 @@ from pprint import pprint
 class Demo(QtGui.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
+
+        a2ctrl.check_ui_module(edit_scope_widget_ui)
+
         w = QtGui.QWidget(self)
         self.setCentralWidget(w)
-        #lyt = QtGui.QVBoxLayout(w)
         lyt = QtGui.QFormLayout(w)
         w.setLayout(lyt)
 
@@ -18,7 +20,7 @@ class Demo(QtGui.QMainWindow):
                     "scopeChange": False,
                     "scopeMode": 1}
 
-        self.scope_widget = ScopeWidget(self)
+        self.scope_widget = edit_scope_widget.ScopeWidget(self)
         lyt.addRow('scope', self.scope_widget)
 
         a2ctrl.connect.cfg_controls(self.cfg, self.scope_widget.ui)
