@@ -16,7 +16,7 @@ class ScopeWidget(QtGui.QWidget):
         super(ScopeWidget, self).__init__(parent)
         # self.main = main
         self._config_dict = None
-        a2ctrl.check_ui_module(edit_scope_widget_ui)
+        # a2ctrl.check_ui_module(edit_scope_widget_ui)
         self.ui = edit_scope_widget_ui.Ui_ScopeWidget()
         self.ui.setupUi(self)
 
