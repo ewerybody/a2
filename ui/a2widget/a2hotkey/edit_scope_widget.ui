@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>717</width>
+    <width>776</width>
     <height>112</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
+  </property>
+  <property name="toolTip">
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
@@ -26,17 +29,17 @@
       <widget class="QComboBox" name="cfg_scopeMode">
        <item>
         <property name="text">
-         <string>global</string>
+         <string notr="true">global</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>only in:</string>
+         <string notr="true">only in:</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>not in:</string>
+         <string notr="true">not in:</string>
         </property>
        </item>
       </widget>
@@ -55,8 +58,11 @@
          <height>35</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string notr="true"/>
+       </property>
        <property name="text">
-        <string>+</string>
+        <string notr="true">+</string>
        </property>
       </widget>
      </item>
@@ -74,15 +80,21 @@
          <height>35</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string notr="true"/>
+       </property>
        <property name="text">
-        <string>-</string>
+        <string notr="true">-</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="cfg_scopeChange">
+       <property name="toolTip">
+        <string notr="true"/>
+       </property>
        <property name="text">
-        <string>can be changed</string>
+        <string notr="true">can be changed</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -110,6 +122,9 @@
        <width>16777215</width>
        <height>16777215</height>
       </size>
+     </property>
+     <property name="toolTip">
+      <string notr="true"/>
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
