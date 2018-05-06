@@ -18,10 +18,9 @@ def cfg_controls(cfg, ui_object, prefix='cfg_'):
     browses all members of the given ui object to connect ones named with prefix
     ('cfg_' by default) with a config dict and fill it with current value.
     """
-    for objname, ctrl in inspect.getmembers(ui_object):
-        if not objname.startswith(prefix):
-            continue
-        name = objname[len(prefix):]
+    for name, ctrl in [(objname[len(prefix):], ctrl)for objname, ctrl
+                       in inspect.getmembers(ui_object)
+                       if objname.startswith(prefix)]:
         control(ctrl, name, cfg)
 
 

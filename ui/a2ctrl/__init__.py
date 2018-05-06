@@ -35,9 +35,8 @@ def check_ui_module(module):
         return
 
     pyfile = module.__file__
-    pybase = os.path.basename(pyfile)
+    folder, pybase = os.path.split(pyfile)
     uiname = os.path.splitext(pybase)[0]
-    folder = os.path.dirname(pyfile)
     uibase = None
 
     if uiname.endswith(UI_FILE_SUFFIX):
@@ -55,13 +54,13 @@ def check_ui_module(module):
 
     uifile = os.path.join(folder, uibase)
     if not uibase or not os.path.isfile(uifile):
-        # Nothing to test against. Thats alright!
+        # Nothing to test against. That's alright!
         # log.debug('Ui-file not found: %s' % pybase)
         return
 
-    pyTime = os.path.getmtime(pyfile)
-    uiTime = os.path.getmtime(uifile)
-    diff = pyTime - uiTime
+    py_time = os.path.getmtime(pyfile)
+    ui_time = os.path.getmtime(uifile)
+    diff = py_time - ui_time
     if diff < 0:
         log.debug('%s needs compile! (age: %is)' % (pybase, diff))
         with open(pyfile, 'w') as pyfobj:
