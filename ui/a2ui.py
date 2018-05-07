@@ -213,6 +213,7 @@ class A2Window(QtGui.QMainWindow):
         #   if there is only one: keep it like it is,
         # threading.Thread(target=a2core.killA2process).start()
         log.info('Runtime refresh called!')
+        self.a2.fetch_modules()
 
         log.info('  Writing includes ...')
         a2runtime.write_includes(specific)
@@ -223,7 +224,6 @@ class A2Window(QtGui.QMainWindow):
 
         if refresh_ui:
             log.info('  Refreshing Ui ...')
-            self.a2.fetch_modules()
             self.module_list.draw_modules()
             self.module_view.draw_mod()
         log.info('  Done!')

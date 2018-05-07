@@ -38,8 +38,8 @@ class A2Settings(QtGui.QWidget):
             widget = a2module_source.ModSourceWidget(
                 self.main, module_source,
                 show_enabled=module_source.name in enabled_list)
-            widget.toggled.connect(self.main.settings_changed)
-            widget.changed.connect(self.on_mod_source_change)
+            widget.toggled.connect(self.main.load_runtime_and_ui)
+            widget.changed.connect(self.main.load_runtime_and_ui)
             self.ui.mod_source_layout.addWidget(widget)
             self._source_widgets[module_source] = widget
 
@@ -162,17 +162,10 @@ class A2Settings(QtGui.QWidget):
         self.ui.db_printout.clear()
         self.ui.db_printout.setText(self.a2.db._get_digest())
 
-    def on_mod_source_change(self):
-        self.a2.fetch_modules()
-        self.main.settings_changed(refresh_ui=True)
-
     def on_add_featured(self):
         self.add_source_url(self.sender().data())
 
     def add_source_url(self, url=None):
         dialog = a2module_source.AddSourceDialog(self.main, url)
-        dialog.okayed.connect(self.on_add_source)
+        dialog.okayed.connect(self.main.load_runtime_and_ui)
         dialog.show()
-
-    def on_add_source(self, url):
-        self.main.load_runtime_and_ui()
