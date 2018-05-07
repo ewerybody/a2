@@ -111,11 +111,11 @@ class ModSource(object):
                 self._last_config = a2util.json_read(self.config_file)
             return self._last_config
         except FileNotFoundError:
-            return {}
+            pass
         except Exception as error:
             log.error('Error loading config file for "%s" (%s)\n'
                       '  %s' % (self.name, self.config_file, error))
-            return {}
+        return {}
 
     @config.setter
     def config(self, data):
