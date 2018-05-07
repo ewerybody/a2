@@ -1,15 +1,25 @@
+import os
 import a2core
-import subprocess
-from PySide import QtGui
-from functools import partial
+import a2util
+from PySide import QtGui, QtCore
 from a2widget.a2hotkey import edit_func_widget_ui
 
 
 FUNCTIONS = ['functionCode', 'functionURL', 'functionSend']
 SEND_MODES = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
+MOD_KEYS = ['! - Alt', '^ - Control', '+ - Shift', '# - Win']
+
+
+class HelpLabels(object):
+    cmds = 'Help on Autohotkey commands'
+    run = 'Help on Autohotkey "Run"'
+    send = 'Help on Autohotkey "Send"'
+    vars = 'Help on Autohotkey Built-in Variables'
 
 
 class FuncWidget(QtGui.QWidget):
+    changed = QtCore.Signal()
+
     def __init__(self, parent):
         super(FuncWidget, self).__init__(parent)
         self._config_dict = None
@@ -18,83 +28,93 @@ class FuncWidget(QtGui.QWidget):
         self.ui = edit_func_widget_ui.Ui_FuncWidget()
         self.ui.setupUi(self)
 
-        # self.main = parent
-        # self.ui = main.ui
-        #
-        self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_text)
-        # self.menu = QtGui.QMenu(self.ui.functionButton)
-        # self.menu.aboutToShow.connect(self.menu_build)
-        # self.ui.functionButton.setMenu(self.menu)
-        self.set_text()
-        # self.ui.functionText.textChanged.connect(self.changed)
-        # self.ui.function_send_mode.currentIndexChanged.connect(partial(self.changed, None))
+        self.ui.function_text.textChanged.connect(self.on_input)
+        self.ui.function_send_mode.currentIndexChanged.connect(self.on_input)
+
+        self.ui.function_button.clicked.connect(self.build_menu)
+        self.func_menu = QtGui.QMenu(self)
+
+        self.a2 = None
+        self.help_map = None
 
     def set_config(self, config_dict):
         self._config_dict = config_dict
 
-    def menu_build(self):
-        self.menu.clear()
+    def build_menu(self):
+        self.func_menu.clear()
+        self._build_help_map()
+
         index = self.ui.cfg_functionMode.currentIndex()
         if index == 0:
             # fsubmenu1 = self.menu.addMenu('local functions')
             # fsubmenu2 = self.menu.addMenu('built-in functions')
-            action = QtGui.QAction('Help on Autohotkey commands', self.menu,
-                                   triggered=partial(a2util.surf_to, self.main.a2.urls.ahk_commands))
-            self.menu.addAction(action)
+            self.func_menu.addAction(HelpLabels.cmds, self.surf_to_help)
 
         elif index == 1:
-            for label, func in [('browse directory...', self.browse_dir),
-                                ('browse file...', self.browse_file),
-                                ('explore to...', self.explore),
-                                ('Help on Autohotkey "Run"',
-                                 partial(a2util.surf_to, self.main.a2.urls.ahk_run))]:
-                action = QtGui.QAction(label, self.menu, triggered=func)
-                self.menu.addAction(action)
+            for label, func in [('Insert directory...', self.insert_dir),
+                                ('Insert file...', self.insert_file),
+                                (HelpLabels.run, self.surf_to_help)]:
+                self.func_menu.addAction(label, func)
 
         else:
-            fsubmenu1 = self.menu.addMenu('Insert modifier key')
-            for label, key in [('! - Alt', '!'), ('^ - Control', '^'),
-                               ('+ - Shift', '+'), ('# - Win', '#')]:
-                action = QtGui.QAction(label, fsubmenu1, triggered=partial(self.ui.functionText.insert, key))
-                fsubmenu1.addAction(action)
-#             fsubmenu2 = self.menu.addMenu('built-in variables')
-#             for var in []:
-#                 action = QtGui.QAction(var, fsubmenu2, triggered=partial(self.set_sendmode, var))
-#                 fsubmenu2.addAction(action)
-            for label, func in [('Help on Autohotkey "Send"',
-                                 partial(a2util.surf_to, self.main.a2.urls.ahksend)),
-                                ('Help on Autohotkey Built-in Variables',
-                                 partial(a2util.surf_to, self.main.a2.urls.ahk_builtin_vars))]:
-                action = QtGui.QAction(label, self.menu, triggered=func)
-                self.menu.addAction(action)
+            fsubmenu1 = self.func_menu.addMenu('Insert modifier key')
+            for label in MOD_KEYS:
+                # action = QtGui.QAction(label, fsubmenu1, triggered=partial(self.ui.function_text.insert, key))
+                fsubmenu1.addAction(label, self.insert_mod_key)
 
-    def browse_file(self):
-        options = QtGui.QFileDialog.Options() | QtGui.QFileDialog.DontConfirmOverwrite
-        fileName, _filter = QtGui.QFileDialog.getSaveFileName(
-            self.main, "Browsing for a file ...", options=options)
-        if fileName:
-            self.ui.functionText.insert(normpath(fileName))
+                # fsubmenu2 = self.menu.addMenu('built-in variables')
+                # for var in []:
+                #    action = QtGui.QAction(var, fsubmenu2, triggered=partial(self.set_sendmode, var))
+                #    fsubmenu2.addAction(action)
+            for label, func in [(HelpLabels.send, self.surf_to_help),
+                                (HelpLabels.vars, self.surf_to_help)]:
+                self.func_menu.addAction(label, func)
 
-    def browse_dir(self):
-        directory = QtGui.QFileDialog.getExistingDirectory(self.main, "Browsing for a directory ...")
+        self.func_menu.popup(QtGui.QCursor.pos())
+
+    def insert_mod_key(self):
+        key = self.sender().text()[0]
+        self.ui.function_text.insert(key)
+
+    def _build_help_map(self):
+        if self.help_map is None:
+            self.a2 = a2core.A2Obj.inst()
+            urls = self.a2.urls
+            self.help_map = {HelpLabels.cmds: urls.ahk_commands,
+                             HelpLabels.run: urls.ahk_run,
+                             HelpLabels.send: urls.ahk_send,
+                             HelpLabels.vars: urls.ahk_builtin_vars}
+
+    def surf_to_help(self):
+        label = self.sender().text()
+        url = self.help_map[label]
+        a2util.surf_to(url)
+
+    def insert_dir(self):
+        directory = QtGui.QFileDialog.getExistingDirectory(self, "Browsing for a directory ...")
         if directory:
-            self.ui.functionText.insert(directory)
+            self.ui.function_text.insert(directory)
 
-    def explore(self):
-        """TODO: verify"""
-        text = self.ui.functionText.text()
-        a2util.explore(text)
+    def insert_file(self):
+        # options = QtGui.QFileDialog.Options() | QtGui.QFileDialog.DontConfirmOverwrite
+        file_name, _ = QtGui.QFileDialog.getOpenFileName(self, "Browsing for a file ...")
+        if file_name:
+            self.ui.function_text.insert(os.path.normpath(file_name))
 
-    def changed(self, text=None, *args):
-        if text is None:
-            text = self.ui.functionText.text()
+    def on_input(self, code=None):
+        if code is None:
+            code = self.ui.function_text.text()
+
         index = self.ui.cfg_functionMode.currentIndex()
         if index == 1:
-            text = 'Run, ' + text
+            code = 'Run, ' + code
+
         elif index == 2:
             send_mode = self.ui.function_send_mode.currentText()
-            text = '%s, %s' % (send_mode, text)
-        self.main.cfg[self._functions[index]] = text
+            code = '%s, %s' % (send_mode, code)
+
+        self._config_dict[FUNCTIONS[index]] = code
+        self.changed.emit()
 
     def set_function_text(self, index=None):
         if index is None:
@@ -102,13 +122,15 @@ class FuncWidget(QtGui.QWidget):
         self.ui.run_label.setVisible(index == 1)
         self.ui.function_send_mode.setVisible(index == 2)
 
-        text = self.main.cfg.get(self._functions[index]) or ''
+        text = self._config_dict.get(FUNCTIONS[index]) or ''
         text = self._strip_mode(text, index)
         self.ui.function_text.setText(text)
 
     def _strip_mode(self, text, index):
-        """removes Run, or Send* to put it into the input field"""
-        modes = [None, ['run'], self._send_modes]
+        """
+        removes Run, or Send* to put it into the input field
+        """
+        modes = [None, ['run'], SEND_MODES]
         if index in [1, 2]:
             for mode in modes[index]:
                 if text.lower().startswith(mode):
@@ -126,7 +148,10 @@ class FuncWidget(QtGui.QWidget):
         return text
 
     def showEvent(self, *args, **kwargs):
+
         self.set_function_text()
+        self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_function_text)
+
         return QtGui.QWidget.showEvent(self, *args, **kwargs)
 
 

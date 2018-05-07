@@ -165,7 +165,9 @@ class Edit(EditCtrl):
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui.scope_widget.ui)
+        a2ctrl.connect.cfg_controls(self.cfg, self.ui.func_widget.ui)
         self.ui.scope_widget.set_config(self.cfg)
+        self.ui.func_widget.set_config(self.cfg)
 
         self.disablable_check()
         self.ui.cfg_disablable.clicked[bool].connect(self.disablable_check)

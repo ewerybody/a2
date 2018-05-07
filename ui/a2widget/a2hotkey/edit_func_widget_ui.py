@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui'
 #
-# Created: Sun May  6 15:01:38 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Mon May  7 20:06:01 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_FuncWidget(object):
     def setupUi(self, FuncWidget):
         FuncWidget.setObjectName("FuncWidget")
-        FuncWidget.resize(880, 171)
+        FuncWidget.resize(553, 83)
         self.verticalLayout = QtGui.QVBoxLayout(FuncWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -28,13 +28,9 @@ class Ui_FuncWidget(object):
         self.function_button = QtGui.QToolButton(FuncWidget)
         self.function_button.setText("...")
         self.function_button.setAutoRaise(True)
-        self.function_button.setArrowType(QtCore.Qt.DownArrow)
+        self.function_button.setArrowType(QtCore.Qt.NoArrow)
         self.function_button.setObjectName("function_button")
         self.function_row_layout.addWidget(self.function_button)
-        self.functionButton = QtGui.QPushButton(FuncWidget)
-        self.functionButton.setMaximumSize(QtCore.QSize(50, 35))
-        self.functionButton.setObjectName("functionButton")
-        self.function_row_layout.addWidget(self.functionButton)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.function_row_layout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.function_row_layout)
@@ -52,9 +48,9 @@ class Ui_FuncWidget(object):
         self.run_label = QtGui.QLabel(FuncWidget)
         self.run_label.setObjectName("run_label")
         self.horizontalLayout.addWidget(self.run_label)
-        self.functionText = QtGui.QLineEdit(FuncWidget)
-        self.functionText.setObjectName("functionText")
-        self.horizontalLayout.addWidget(self.functionText)
+        self.function_text = QtGui.QLineEdit(FuncWidget)
+        self.function_text.setObjectName("function_text")
+        self.horizontalLayout.addWidget(self.function_text)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
         self.retranslateUi(FuncWidget)
@@ -65,7 +61,6 @@ class Ui_FuncWidget(object):
         self.cfg_functionMode.setItemText(0, QtGui.QApplication.translate("FuncWidget", "Run code", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_functionMode.setItemText(1, QtGui.QApplication.translate("FuncWidget", "Open file/url", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_functionMode.setItemText(2, QtGui.QApplication.translate("FuncWidget", "Send keystroke", None, QtGui.QApplication.UnicodeUTF8))
-        self.functionButton.setText(QtGui.QApplication.translate("FuncWidget", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.function_send_mode.setItemText(0, QtGui.QApplication.translate("FuncWidget", "Send", None, QtGui.QApplication.UnicodeUTF8))
         self.function_send_mode.setItemText(1, QtGui.QApplication.translate("FuncWidget", "SendRaw", None, QtGui.QApplication.UnicodeUTF8))
         self.function_send_mode.setItemText(2, QtGui.QApplication.translate("FuncWidget", "SendInput", None, QtGui.QApplication.UnicodeUTF8))
