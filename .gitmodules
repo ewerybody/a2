@@ -1,4 +1,0 @@
-[submodule "modules/a2.modules"]
-	path = modules/a2.modules
-	url = https://github.com/ewerybody/a2.modules.git
-	branch = master
