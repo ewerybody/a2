@@ -18,14 +18,16 @@ class Demo(QtGui.QMainWindow):
 
         self.cfg = {"name": "_my_module_Hotkey2",
                     "functionCode": "calculAid_open()",
-                    "functionMode": 0,
+                    "functionMode": 2,
                     "functionSend": "",
                     "functionURL": ""}
 
         self.func_widget = edit_func_widget.FuncWidget(self)
+        a2ctrl.connect.cfg_controls(self.cfg, self.func_widget.ui)
+        self.func_widget.set_config(self.cfg)
+        self.func_widget.changed.connect(self.bla)
         lyt.addRow('function', self.func_widget)
 
-        # a2ctrl.connect.cfg_controls(self.cfg, self.scope_widget.ui)
         #self.scope_widget.changed.connect(self.bla)
 
         button = QtGui.QPushButton('set_config')
@@ -36,6 +38,7 @@ class Demo(QtGui.QMainWindow):
         #self.scope_widget.ui.cfg_scopeMode.currentIndexChanged.connect(self.bla)
 
     def bla(self):
+        print('id(self.cfg): %s' % id(self.cfg))
         pprint(self.cfg)
 
 
