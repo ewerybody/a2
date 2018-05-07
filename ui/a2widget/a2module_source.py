@@ -43,6 +43,12 @@ class ModSourceWidget(QtGui.QWidget):
         self.ui.description_label.setText(desc)
         self.ui.local_path.value = self.mod_source.path
 
+        if self.mod_source.has_problem:
+            self.ui.error_icon.setVisible(True)
+            self.ui.error_icon.setToolTip(self.mod_source.get_problem_msg())
+        else:
+            self.ui.error_icon.setVisible(False)
+
     def _setup_ui(self, show_enabled):
         a2ctrl.check_ui_module(a2module_source_ui)
         self.ui = a2module_source_ui.Ui_Form()
@@ -70,6 +76,7 @@ class ModSourceWidget(QtGui.QWidget):
         self._reset_timer.timeout.connect(self._update_msg)
         self.ui.version_tool_button.clicked.connect(self.build_version_menu)
         self.version_menu = QtGui.QMenu(self)
+        self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
 
     def _set_homepage_label(self):
         url = self.mod_source.config.get('url', '')

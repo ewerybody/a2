@@ -39,6 +39,7 @@ MSG_BACKUP_ERROR = 'Error Backing up %s'
 MSG_NOT_EMPTY_ERROR = 'Error preparing folder: Not empty but no previous version found!'
 MSG_INSTALL = 'Installing %s'
 MSG_UPDATE_URL_INVALID = 'Update URL Invalid'
+MSG_NO_CFG_FILE = 'The Package has no config file!'
 
 
 def get_module_sources(main, path, modsource_dict):
@@ -79,6 +80,7 @@ class ModSource(object):
         self._icon = None
         self._cfg_fetched = None
         self._last_config = {}
+        self._config_load_error = None
 
     def fetch_modules(self, state=None):
         self._cfg_fetched = None
@@ -104,16 +106,22 @@ class ModSource(object):
     @property
     def config(self):
         try:
+            # to serve from memory most of the times, only from disk after timeout
             now = time.time()
             if self._cfg_fetched is None or now - self._cfg_fetched > STALE_CONFIG_TIMEOUT:
                 self._cfg_fetched = now
                 self._last_config = a2util.json_read(self.config_file)
+                self._config_load_error = None
             return self._last_config
+
         except FileNotFoundError:
+            self._config_load_error = MSG_NO_CFG_FILE
             pass
         except Exception as error:
-            log.error('Error loading config file for "%s" (%s)\n'
-                      '  %s' % (self.name, self.config_file, error))
+            msg = ('Error loading config file for "%s" (%s)\n'
+                   '  %s' % (self.name, self.config_file, error))
+            self._config_load_error = msg
+            log.error(msg)
         return {}
 
     @config.setter
@@ -214,6 +222,15 @@ class ModSource(object):
 
     def remove_backups(self):
         remove_folder(self.backup_path)
+
+    @property
+    def has_problem(self):
+        if self._config_load_error:
+            return True
+        return False
+
+    def get_problem_msg(self):
+        return str(self._config_load_error)
 
 
 class ModSourceCheckThread(QtCore.QThread):
