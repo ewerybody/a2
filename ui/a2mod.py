@@ -79,7 +79,7 @@ class ModSource(object):
 
         self._icon = None
         self._cfg_fetched = None
-        self._last_config = None
+        self._last_config = {}
 
     def fetch_modules(self, state=None):
         self._cfg_fetched = None
@@ -106,7 +106,7 @@ class ModSource(object):
     def config(self):
         try:
             now = time.time()
-            if not self._cfg_fetched or now - self._cfg_fetched > STALE_CONFIG_TIMEOUT:
+            if self._cfg_fetched is None or now - self._cfg_fetched > STALE_CONFIG_TIMEOUT:
                 self._cfg_fetched = now
                 self._last_config = a2util.json_read(self.config_file)
             return self._last_config
