@@ -27,6 +27,8 @@ def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already
         return 'Name cannot be empty!'
     if name == 'a2':
         return 'You just cannot name it "a2"! Ok?'
+    if name.startswith('.'):
+        return 'Names starting with a dot would be ignored!'
     if black_list is not None and name in black_list:
         return black_list_msg % name
     if any([(l in string.whitespace) for l in name]):

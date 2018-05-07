@@ -29,7 +29,6 @@ MOD_SOURCE_NAME = 'a2modsource.json'
 ICON_FILENAME = 'a2icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
-EXCLUDE_FOLDERS = ['.git']
 STALE_CONFIG_TIMEOUT = 0.5
 
 MSG_NO_UPDATE_URL = 'No update-URL given!'
@@ -618,15 +617,16 @@ def get_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 
-def get_folders(path, exclude=None):
-    if exclude is None:
-        exclude = EXCLUDE_FOLDERS
-
+def get_folders(path):
+    """
+    From a given path fetches all the folders.
+    Excluding ones starting with a dot! like ".git" ect.
+    """
     if not os.path.isdir(path):
         return []
 
-    return [f for f in os.listdir(path)
-            if os.path.isdir(os.path.join(path, f)) and f not in exclude]
+    return [f for f in os.listdir(path) if not f.startswith('.') and
+            os.path.isdir(os.path.join(path, f))]
 
 
 def remove_folder(path):
