@@ -273,6 +273,9 @@ class InitCollection(_Collection):
 
 
 def collect_includes(specific=None):
+    """
+    :rtype: IncludeDataCollector
+    """
     collector = IncludeDataCollector()
 
     if isinstance(specific, str):
@@ -302,6 +305,9 @@ def write_includes(specific=None):
 
 
 def collect_hotkeys():
+    """
+    :rtype: list
+    """
     collector = collect_includes(IncludeType.hotkeys)
     data = [collector.hotkeys.hotkeys_global,
             collector.hotkeys.hotkeys_scope_incl,

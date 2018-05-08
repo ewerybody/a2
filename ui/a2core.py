@@ -62,8 +62,6 @@ class A2Obj(object):
 
     def start_up(self):
         self.fetch_modules()
-        self.get_used_scopes()
-        self.get_used_hotkeys()
 
     def fetch_modules(self):
         """
@@ -79,42 +77,6 @@ class A2Obj(object):
                               'module2': a2Mod.Mod, ...}
         """
         a2mod.get_module_sources(self, self.paths.modules, self.module_sources)
-
-    def get_used_scopes(self):
-        """
-        browses the hotkey setups of enabled modules for scope strings
-        TODO: this type of lookup can also be used to get hold of used hotkeys...
-        """
-        self.scopes = {}
-        for modname in self.enabled:
-            hotkeys = self.db.get('hotkeys', modname)
-            if not hotkeys:
-                continue
-            for i in ['1', '2']:
-                for hksetup in hotkeys.get(i) or []:
-                    for scope in hksetup[0]:
-                        if scope not in self.scopes:
-                            self.scopes[scope] = set([modname])
-                        else:
-                            self.scopes[scope].add(modname)
-        return self.scopes
-
-    def get_used_hotkeys(self):
-        """
-        wip - for a proper hotkey list we might need more than a list. You'd also wanna
-        know what the hotkey does... shouldn't our data structure care for this right away?
-        """
-        self.hotkeys = set()
-        for modname in self.enabled:
-            hotkeys = self.db.get('hotkeys', modname)
-            if not hotkeys:
-                continue
-            for i in ['1', '2']:
-                for hksetup in hotkeys.get(i) or []:
-                    self.hotkeys.add(hksetup[1])
-            for hksetup in hotkeys.get('0') or []:
-                self.hotkeys.add(hksetup[0])
-        return self.hotkeys
 
     @property
     def enabled(self):

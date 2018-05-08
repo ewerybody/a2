@@ -73,7 +73,13 @@ class ScopeDialog(QtGui.QDialog):
 
     def build_all_scopes_menu(self):
         self.scopes_submenu.clear()
-        for scope in sorted(self.a2.get_used_scopes(), key=lambda s: s.lower()):
+
+        import a2runtime
+        collector = a2runtime.collect_includes(a2runtime.IncludeType.hotkeys)
+        scopes = list(collector.hotkeys.hotkeys_scope_incl.keys())
+        scopes.extend(collector.hotkeys.hotkeys_scope_excl.keys())
+
+        for scope in sorted(scopes, key=lambda s: s.lower()):
             print('scope: %s' % scope)
 #            action = QtGui.QAction(scope, submenu, triggered=partial(self.set_scope_string, scope))
             self.scopes_submenu.addAction(scope, self.set_scope_string)
