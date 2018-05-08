@@ -68,7 +68,7 @@ class A2ModuleView(QtGui.QWidget):
         else:
             config = self.main.mod.config
 
-            self.main.tempConfig = None
+            self.main.temp_config = None
 
         if len(config):
             if config[0].get('typ') != 'nfo':
@@ -131,10 +131,10 @@ class A2ModuleView(QtGui.QWidget):
             return
 
         self.controls = []
-        if self.main.tempConfig is None:
-            self.main.tempConfig = deepcopy(self.main.mod.config)
+        if self.main.temp_config is None:
+            self.main.temp_config = deepcopy(self.main.mod.config)
 
-        if not len(self.main.tempConfig):
+        if not len(self.main.temp_config):
             newNfo = {'typ': 'nfo',
                       'description': 'Because none existed before this temporary description was '
                                      'created for "%s". Change it to describe what it does with a '
@@ -142,13 +142,13 @@ class A2ModuleView(QtGui.QWidget):
                       'author': self.main.devset.author_name,
                       'version': '0.1',
                       'date': a2util.get_date()}
-            self.main.tempConfig.insert(0, newNfo)
+            self.main.temp_config.insert(0, newNfo)
 
-        for cfg in self.main.tempConfig:
-            self.controls.append(a2ctrl.edit(cfg, self.main, self.main.tempConfig))
+        for cfg in self.main.temp_config:
+            self.controls.append(a2ctrl.edit(cfg, self.main, self.main.temp_config))
 
-        editSelect = a2ctrl.EditAddElem(self.main, self.main.tempConfig)
-        self.controls.append(editSelect)
+        edit_select = a2ctrl.EditAddElem(self.main, self.main.temp_config)
+        self.controls.append(edit_select)
 
         self.drawUI(keep_scroll)
         self.toggle_edit(True)

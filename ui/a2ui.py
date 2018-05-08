@@ -34,7 +34,7 @@ class A2Window(QtGui.QMainWindow):
         self._shutdown_thread = None
 
         self.edit_clipboard = []
-        self.tempConfig = None
+        self.temp_config = None
         self.selected = []
         self.mod = None
         self.scopes = {}
@@ -168,14 +168,14 @@ class A2Window(QtGui.QMainWindow):
 
     def edit_submit(self):
         """
-        Calls the mod to write the tempConfig to disc.
+        Calls the mod to write the temp_config to disc.
         If it's enabled only trigger settingsChanged when
 
         """
         if not self.module_view.editing:
             return
 
-        self.mod.config = deepcopy(self.tempConfig)
+        self.mod.config = deepcopy(self.temp_config)
         if self.mod.enabled:
             self.mod.change()
             self.settings_changed()

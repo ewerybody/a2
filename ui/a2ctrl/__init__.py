@@ -191,7 +191,7 @@ class EditAddElem(QtGui.QWidget):
         self._check_for_local_element_mods()
 
     def _add_element(self, typ, name=''):
-        """Just adds a new dict with the accodting typ value to the tempConfig.
+        """Just adds a new dict with the accodting typ value to the temp_config.
         Only if it's an include we already enter the file selected.
         Every other default value will be handled by the very control element.
         """
@@ -236,13 +236,13 @@ class BrowseScriptsMenu(QtGui.QMenu):
 
     def build_menu(self):
         self.clear()
-        scriptsInUse = set()
-        for cfg in self.main.tempConfig:
+        scripts_in_use = set()
+        for cfg in self.main.temp_config:
             if cfg['typ'] == 'include':
-                scriptsInUse.add(cfg['file'])
+                scripts_in_use.add(cfg['file'])
 
         icons = Icons.inst()
-        scriptsUnused = set(self.main.mod.scripts) - scriptsInUse
+        scriptsUnused = set(self.main.mod.scripts) - scripts_in_use
 
         for scriptName in scriptsUnused:
             self.addAction(QtGui.QAction(icons.code, scriptName, self,

@@ -240,7 +240,7 @@ class EditCtrl(QtGui.QGroupBox):
             new_name = '%s_%s' % (self.main.mod.name, self.element_name())
             # find biggest number
             this_type = self.cfg['typ']
-            controls = [cfg.get('name', '') for cfg in self.main.tempConfig
+            controls = [cfg.get('name', '') for cfg in self.main.temp_config
                         if cfg.get('typ') == this_type]
 
             new_name = a2util.get_next_free_number(new_name, controls)
