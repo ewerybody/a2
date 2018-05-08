@@ -124,6 +124,7 @@ class Icons(object):
         self.delete = Ico('delete')
         self.down = Ico('down')
         self.down_align = Ico('down_align')
+        self.down_circle = Ico('down_circle')
         self.edit = Ico('edit')
         self.error = Ico('error')
         self.file_download = Ico('file_download')

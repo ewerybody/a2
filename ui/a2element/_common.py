@@ -169,39 +169,41 @@ class EditCtrl(QtGui.QGroupBox):
 
     def _setup_ui(self, add_layout):
         self.setTitle(self.cfg['typ'])
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
+                                       QtGui.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
-        self._ctrlLayout = QtGui.QHBoxLayout(self)
-        self._ctrlLayout.setSpacing(0)
-        self._ctrlLayout.setContentsMargins(0, 0, 0, 0)
+
+        self._ctrl_layout = QtGui.QGridLayout(self)
         self.mainWidget = QtGui.QWidget(self)
+
         if add_layout:
             self.mainLayout = QtGui.QVBoxLayout()
             self.mainLayout.setContentsMargins(5, 5, 5, 5)
             self.mainWidget.setLayout(self.mainLayout)
-        self._ctrlLayout.addWidget(self.mainWidget)
+        self._ctrl_layout.addWidget(self.mainWidget, 0, 0, 1, 1)
 
-        self._ctrlButtonLayout = QtGui.QVBoxLayout()
-        self._ctrlButtonLayout.setSpacing(0)
-        self._ctrlButtonLayout.setContentsMargins(5, 0, 5, 5)
-        self._ctrlButtonLayout.setObjectName("ctrlButtonLayout")
+        self._ctrl_button_layout = QtGui.QVBoxLayout()
+        self._ctrl_button_layout.setSpacing(0)
+        self._ctrl_button_layout.setContentsMargins(0, 0, 0, 0)
 
-        self._ctrlButton = QtGui.QPushButton(self)
-        self._ctrlButton.setMinimumSize(QtCore.QSize(40, 40))
-        self._ctrlButton.setMaximumSize(QtCore.QSize(40, 40))
-        self._ctrlButton.setText("...")
-        self._ctrlButton.setFlat(True)
-        self._ctrlButton.setObjectName("ctrlButton")
-        self._ctrlButtonLayout.addWidget(self._ctrlButton)
-        spacerItem = QtGui.QSpacerItem(20, 0, QtGui.QSizePolicy.Minimum,
-                                       QtGui.QSizePolicy.Expanding)
-        self._ctrlButtonLayout.addItem(spacerItem)
-        self._ctrlLayout.addLayout(self._ctrlButtonLayout)
-        self._ctrlLayout.setStretch(0, 1)
+        self._ctrl_button = QtGui.QToolButton(self)
+        self._ctrl_button.setIcon(Icons.inst().down_circle)
+        button_size = 45
+        self._ctrl_button.setMinimumSize(QtCore.QSize(button_size, button_size))
+        self._ctrl_button.setMaximumSize(QtCore.QSize(button_size, button_size))
+        self._ctrl_button.setIconSize(QtCore.QSize(button_size, button_size))
+        self._ctrl_button.setAutoRaise(True)
+        self._ctrl_button_layout.addWidget(self._ctrl_button)
+
+        self._ctrl_button_layout.setAlignment(self._ctrl_button, QtCore.Qt.AlignTop | QtCore.Qt.AlignRight)
+
+        self._ctrl_layout.addLayout(self._ctrl_button_layout, 0, 0, 1, 1)
 
         self._ctrl_menu = QtGui.QMenu(self)
-        self._ctrl_menu.aboutToShow.connect(self._build_menu)
-        self._ctrlButton.setMenu(self._ctrl_menu)
+        # self._ctrl_menu.aboutToShow.connect(self._build_menu)
+        # self._ctrl_button.setMenu(self._ctrl_menu)
+        self._ctrl_button.clicked.connect(self._build_menu)
+        self._ctrl_button.setVisible(False)
 
     def _build_menu(self):
         """
@@ -229,6 +231,7 @@ class EditCtrl(QtGui.QGroupBox):
         for label, func, icon in menu_items:
             action = self._ctrl_menu.addAction(icon, label, func)
         self._ctrl_menu.insertSeparator(action)
+        self._ctrl_menu.popup(QtGui.QCursor.pos())
 
     def check_new_name(self):
         """
@@ -275,3 +278,11 @@ class EditCtrl(QtGui.QGroupBox):
             v = curve.valueForProgress(t)
             scrollval = self._scrollValB4 + (v * r)
             self.main.ui.scrollBar.setValue(scrollval)
+
+    def enterEvent(self, event):
+        self._ctrl_button.setVisible(True)
+        return QtGui.QGroupBox.enterEvent(self, event)
+
+    def leaveEvent(self, event):
+        self._ctrl_button.setVisible(False)
+        return QtGui.QGroupBox.leaveEvent(self, event)
