@@ -30,7 +30,7 @@ class A2ModuleList(QtGui.QWidget):
         self.update_filter()
         self._draw_phase = False
 
-        self.icon_label = a2ctrl.Icons().label
+        self.icon_label = a2ctrl.Icons.inst().label
 
     def selection_change(self):
         if not self._draw_phase:
@@ -123,7 +123,7 @@ class A2ModuleList(QtGui.QWidget):
         self.ui = a2module_list_ui.Ui_ModuleList()
         self.ui.setupUi(self)
 
-        self.ui.a2search_x_button.setIcon(a2ctrl.Icons().clear)
+        self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
         self.ui.filter_menu_button.clicked.connect(self.build_filter_menu)
@@ -152,7 +152,7 @@ class A2ModuleList(QtGui.QWidget):
         self.filter_menu.addSeparator()
 
         if self._filter_tags:
-            action = QtGui.QAction(a2ctrl.Icons().clear, 'Clear Tags', self)
+            action = QtGui.QAction(a2ctrl.Icons.inst().clear, 'Clear Tags', self)
             action.triggered.connect(self.clear_filter_tags)
             self.filter_menu.addAction(action)
 

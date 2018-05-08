@@ -31,8 +31,10 @@ class ScopeWidget(QtGui.QWidget):
         self.ui.cfg_scope.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.ui.cfg_scope.customContextMenuRequested.connect(self.build_context_menu)
         self.context_menu = QtGui.QMenu(self)
-        self.context_menu.addAction(a2ctrl.Icons().edit, 'Edit scope item', self.show_edit_dialog)
-        self.context_menu.addAction(a2ctrl.Icons().delete, 'Delete scope item', self.delete_scope)
+
+        icons = a2ctrl.Icons.inst()
+        self.context_menu.addAction(icons.edit, 'Edit scope item', self.show_edit_dialog)
+        self.context_menu.addAction(icons.delete, 'Delete scope item', self.delete_scope)
         self._line_height_set = False
 
         shortcut = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete),

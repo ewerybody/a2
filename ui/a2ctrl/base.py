@@ -102,6 +102,10 @@ class Icons(object):
         return Icons._instance
 
     def __init__(self):
+        if self._instance:
+            raise RuntimeError('Icons() has already been instanciated!\n'
+                               'get it with .inst()')
+
         self.a2 = Ico('a2')
         self.a2close = Ico('a2x')
         self.a2reload = Ico('a2reload')

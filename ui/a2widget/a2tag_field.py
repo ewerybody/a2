@@ -16,7 +16,7 @@ class A2TagField(QtGui.QWidget):
 
         self.plus_button = QtGui.QToolButton()
         self.plus_menu = QtGui.QMenu(self)
-        self.plus_button.setIcon(a2ctrl.Icons().label_plus)
+        self.plus_button.setIcon(a2ctrl.Icons.inst().label_plus)
         self.plus_button.clicked.connect(self.build_plus_menu)
         self.main_layout.addWidget(self.plus_button)
 
@@ -27,8 +27,8 @@ class A2TagField(QtGui.QWidget):
 
     def build_plus_menu(self):
         self.plus_menu.clear()
-        label_icon = a2ctrl.Icons().label
-        self.plus_menu.addAction(a2ctrl.Icons().label_plus, 'New Tag', self.create_tag)
+        label_icon = a2ctrl.Icons.inst().label
+        self.plus_menu.addAction(a2ctrl.Icons.inst().label_plus, 'New Tag', self.create_tag)
         if self._available_tags:
             self.plus_menu.addSeparator()
             for tag in self._available_tags:
@@ -147,7 +147,7 @@ class A2Tag(QtGui.QPushButton):
     def __init__(self, parent, name):
         super(A2Tag, self).__init__(parent)
         self.name = name
-        self.setIcon(a2ctrl.Icons().label)
+        self.setIcon(a2ctrl.Icons.inst().label)
         self.setText(self.name)
         self.button_menu = None
         self.clicked.connect(self.build_menu)
@@ -156,7 +156,7 @@ class A2Tag(QtGui.QPushButton):
         if self.button_menu is None:
             self.button_menu = QtGui.QMenu()
             self.button_menu.addAction(
-                a2ctrl.Icons().delete, 'Delete "%s"' % self.name, self.delete)
+                a2ctrl.Icons.inst().delete, 'Delete "%s"' % self.name, self.delete)
         self.button_menu.popup(self.cursor().pos())
 
     def delete(self):

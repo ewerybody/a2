@@ -59,7 +59,7 @@ class A2ItemEditor(QtGui.QWidget):
 
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
-        self.ui.a2search_x_button.setIcon(a2ctrl.Icons().clear)
+        self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
         self.update_filter()
 
     def add_data_widget(self, value_name, widget, set_function, change_signal=None,
