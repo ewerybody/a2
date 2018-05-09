@@ -174,21 +174,26 @@ class EditCtrl(QtGui.QGroupBox):
         self.setSizePolicy(sizePolicy)
 
         self._ctrl_layout = QtGui.QGridLayout(self)
+        self._ctrl_layout.setContentsMargins(0, 0, 0, 0)
+        self._sub_layout = QtGui.QHBoxLayout()
+        margin = self.main.css_values['margin']
+        self._sub_layout.setContentsMargins(margin, margin, margin, margin)
         self.mainWidget = QtGui.QWidget(self)
+        self._sub_layout.addWidget(self.mainWidget)
+        self._ctrl_layout.addLayout(self._sub_layout, 0, 0, 1, 1)
 
         if add_layout:
             self.mainLayout = QtGui.QVBoxLayout()
             self.mainLayout.setContentsMargins(5, 5, 5, 5)
             self.mainWidget.setLayout(self.mainLayout)
-        self._ctrl_layout.addWidget(self.mainWidget, 0, 0, 1, 1)
 
         self._ctrl_button_layout = QtGui.QVBoxLayout()
         self._ctrl_button_layout.setSpacing(0)
         self._ctrl_button_layout.setContentsMargins(0, 0, 0, 0)
 
         self._ctrl_button = QtGui.QToolButton(self)
-        self._ctrl_button.setIcon(Icons.inst().down_circle)
-        button_size = 45
+        self._ctrl_button.setIcon(Icons.inst().more)
+        button_size = 32
         self._ctrl_button.setMinimumSize(QtCore.QSize(button_size, button_size))
         self._ctrl_button.setMaximumSize(QtCore.QSize(button_size, button_size))
         self._ctrl_button.setIconSize(QtCore.QSize(button_size, button_size))

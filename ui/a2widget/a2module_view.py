@@ -48,6 +48,9 @@ class A2ModuleView(QtGui.QWidget):
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
         self.toggle_edit(False)
 
+        margin = self.main.css_values['margin']
+        self.ui.a2edit_okcancel_layout.setContentsMargins(margin, margin, margin, margin)
+
     def draw_mod(self):
         """
         from the modules config creates the usual display controls and
@@ -213,10 +216,9 @@ class A2ModuleView(QtGui.QWidget):
 
     def toggle_edit(self, state):
         self.editing = state
+        self.ui.a2edit_okcancel_widget.setVisible(state)
         for button in [self.ui.a2cancel_button, self.ui.a2ok_button]:
             button.setEnabled(state)
-            button.setMaximumSize(QtCore.QSize(16777215, 150 if state else 0))
-            self.ui.a2edit_okcancel_widget.setMaximumSize(QtCore.QSize(16777215, 150 if state else 0))
 
     def mod_info(self):
         """

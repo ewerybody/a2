@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_view.ui'
 #
-# Created: Mon Sep 26 19:58:22 2016
+# Created: Wed May  9 18:06:17 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,11 +12,11 @@ from PySide import QtCore, QtGui
 class Ui_A2ModuleView(object):
     def setupUi(self, A2ModuleView):
         A2ModuleView.setObjectName("A2ModuleView")
-        A2ModuleView.resize(592, 495)
-        self.verticalLayout = QtGui.QVBoxLayout(A2ModuleView)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
+        A2ModuleView.resize(616, 578)
+        self.A2ModuleViewLayout = QtGui.QVBoxLayout(A2ModuleView)
+        self.A2ModuleViewLayout.setSpacing(0)
+        self.A2ModuleViewLayout.setContentsMargins(0, 0, 0, 0)
+        self.A2ModuleViewLayout.setObjectName("A2ModuleViewLayout")
         self.head_layout = QtGui.QHBoxLayout()
         self.head_layout.setSpacing(5)
         self.head_layout.setObjectName("head_layout")
@@ -72,26 +72,20 @@ class Ui_A2ModuleView(object):
         self.a2help_button.setObjectName("a2help_button")
         self.head_layout.addWidget(self.a2help_button)
         self.head_layout.setStretch(4, 1)
-        self.verticalLayout.addLayout(self.head_layout)
+        self.A2ModuleViewLayout.addLayout(self.head_layout)
         self.a2scroll_area = QtGui.QScrollArea(A2ModuleView)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.a2scroll_area.setFont(font)
         self.a2scroll_area.setWidgetResizable(True)
         self.a2scroll_area.setObjectName("a2scroll_area")
         self.scroll_area_contents = QtGui.QWidget()
-        self.scroll_area_contents.setGeometry(QtCore.QRect(0, 0, 590, 430))
+        self.scroll_area_contents.setGeometry(QtCore.QRect(0, 0, 614, 499))
         self.scroll_area_contents.setObjectName("scroll_area_contents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scroll_area_contents)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.a2scroll_area.setWidget(self.scroll_area_contents)
-        self.verticalLayout.addWidget(self.a2scroll_area)
+        self.A2ModuleViewLayout.addWidget(self.a2scroll_area)
         self.a2edit_okcancel_widget = QtGui.QWidget(A2ModuleView)
-        self.a2edit_okcancel_widget.setMaximumSize(QtCore.QSize(16777215, 50))
         self.a2edit_okcancel_widget.setObjectName("a2edit_okcancel_widget")
         self.a2edit_okcancel_layout = QtGui.QHBoxLayout(self.a2edit_okcancel_widget)
-        self.a2edit_okcancel_layout.setSpacing(5)
-        self.a2edit_okcancel_layout.setContentsMargins(6, 6, 6, 6)
         self.a2edit_okcancel_layout.setContentsMargins(0, 0, 0, 0)
         self.a2edit_okcancel_layout.setObjectName("a2edit_okcancel_layout")
         self.a2ok_button = QtGui.QPushButton(self.a2edit_okcancel_widget)
@@ -114,7 +108,7 @@ class Ui_A2ModuleView(object):
         self.a2edit_okcancel_layout.addWidget(self.a2cancel_button)
         self.a2edit_okcancel_layout.setStretch(0, 3)
         self.a2edit_okcancel_layout.setStretch(1, 1)
-        self.verticalLayout.addWidget(self.a2edit_okcancel_widget)
+        self.A2ModuleViewLayout.addWidget(self.a2edit_okcancel_widget)
 
         self.retranslateUi(A2ModuleView)
         QtCore.QMetaObject.connectSlotsByName(A2ModuleView)

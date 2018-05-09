@@ -69,11 +69,6 @@ QListWidget#a2module_list_widget {
     border-style: none;
 }
 
-QLayout#a2edit_okcancel_layout {
-    padding: %(margin)ipx;
-    margin: %(margin)ipx;
-}
-
 QPushButton#a2cancel_button,
 QPushButton#a2ok_button,
 QPushButton#a2add_button,
