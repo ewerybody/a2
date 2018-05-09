@@ -29,7 +29,7 @@ class FuncWidget(QtGui.QWidget):
         self.ui.setupUi(self)
 
         self.ui.function_text.textChanged.connect(self.on_input)
-        self.ui.function_send_mode.currentIndexChanged.connect(self.on_input)
+        self.ui.function_send_mode.currentIndexChanged.connect(self.on_send_mode_change)
 
         self.ui.function_button.clicked.connect(self.build_menu)
         self.func_menu = QtGui.QMenu(self)
@@ -101,10 +101,11 @@ class FuncWidget(QtGui.QWidget):
         if file_name:
             self.ui.function_text.insert(os.path.normpath(file_name))
 
-    def on_input(self, code=None):
-        if code is None:
-            code = self.ui.function_text.text()
+    def on_send_mode_change(self):
+        code = self.ui.function_text.text()
+        self.on_input(code)
 
+    def on_input(self, code):
         index = self.ui.cfg_functionMode.currentIndex()
         if index == 1:
             code = 'Run, ' + code
