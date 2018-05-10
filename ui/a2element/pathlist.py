@@ -121,11 +121,12 @@ class PathEntry(QtGui.QWidget):
         layout.addWidget(self._field)
 
         button = QtGui.QToolButton(self)
+        button.setAutoRaise(True)
         if index:
             button.setIcon(a2ctrl.Icons.inst().clear)
             button.clicked.connect(self.delete)
         else:
-            button.setIcon(a2ctrl.Icons.inst().label_plus)
+            button.setIcon(a2ctrl.Icons.inst().folder_add)
             button.clicked.connect(self.add_path.emit)
         layout.addWidget(button)
 
