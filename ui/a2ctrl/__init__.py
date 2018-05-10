@@ -12,11 +12,11 @@ from functools import partial
 from pysideuic import compileUi
 from importlib import reload, import_module
 
-from PySide import QtGui
+from PySide import QtGui, QtCore
 
 import a2core
 import a2util
-from a2ctrl.base import Ico, Icons
+from a2ctrl.icons import Ico, Icons
 
 
 log = a2core.get_logger(__name__)
@@ -139,134 +139,6 @@ def get_a2element(element_type):
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error('Could not import element type "%s"!' % element_type)
-
-
-class EditAddElem(QtGui.QWidget):
-    """
-    to add a control to a module setup. This will probably go into some popup
-    later. This way its a little too clunky I think.
-
-    TODO: the popup will show all available scripts to include in a sub menu
-        * include > script1.ahk
-                    script2.ahk
-                    create new script
-        * hotkey
-        * checkBox
-        * ...
-
-    til: if you don't make this a widget and just a object Qt will forget about
-    any connections you make!
-    """
-    def __init__(self, main, config):
-        super(EditAddElem, self).__init__()
-        self.main = main
-        self.config = config
-        self.baselayout = QtGui.QHBoxLayout(self)
-        self.baselayout.setSpacing(5)
-
-        self.a2add_button = QtGui.QPushButton('Add ...')
-        self.a2add_button.setObjectName('a2add_button')
-        self.baselayout.addWidget(self.a2add_button)
-
-        self.menu = QtGui.QMenu(self)
-        self.menu.aboutToShow.connect(self.populate_menu)
-        self.a2add_button.setMenu(self.menu)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.baselayout.addItem(spacerItem)
-
-    def populate_menu(self):
-        self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.main, self._add_element)
-        self.menu.addMenu(self.menu_include)
-
-        import a2element
-        for name, display_name, icon in a2element.get_list():
-            action = QtGui.QAction(display_name, self.menu, triggered=partial(self._add_element, name))
-            if icon:
-                action.setIcon(icon)
-            self.menu.addAction(action)
-
-        self.menu.addSeparator()
-        self.menu.addAction(self.main.ui.actionCreate_New_Element)
-        self._check_for_local_element_mods()
-
-    def _add_element(self, typ, name=''):
-        """Just adds a new dict with the accodting typ value to the temp_config.
-        Only if it's an include we already enter the file selected.
-        Every other default value will be handled by the very control element.
-        """
-        cfg = {'typ': typ}
-        if typ == 'include':
-            cfg['file'] = name
-
-        self.config.append(cfg)
-        self.main.edit_mod()
-
-    def _check_for_local_element_mods(self):
-        if self.main.mod is None:
-            return
-
-        for item in os.listdir(self.main.mod.path):
-            itempath = os.path.join(self.main.mod.path, item)
-            if not os.path.isfile(itempath):
-                continue
-            base, ext = os.path.splitext(item)
-            if ext.lower() != '.py':
-                continue
-
-            element_objects = get_local_element(itempath)
-            if element_objects is not None and 'Edit' in element_objects:
-                name = element_objects['Edit'].element_name()
-                icon = element_objects['Edit'].element_icon()
-
-                action = QtGui.QAction(name, self.menu, triggered=partial(self._add_element, base))
-                if icon:
-                    action.setIcon(icon)
-                self.menu.addAction(action)
-
-
-class BrowseScriptsMenu(QtGui.QMenu):
-    def __init__(self, main, func):
-        super(BrowseScriptsMenu, self).__init__()
-        self.func = func
-        self.main = main
-        self.setIcon(Icons.inst().code)
-        self.setTitle('Include Script')
-        self.aboutToShow.connect(self.build_menu)
-
-    def build_menu(self):
-        self.clear()
-        scripts_in_use = set()
-        for cfg in self.main.temp_config:
-            if cfg['typ'] == 'include':
-                scripts_in_use.add(cfg['file'])
-
-        icons = Icons.inst()
-        scriptsUnused = set(self.main.mod.scripts) - scripts_in_use
-
-        for scriptName in scriptsUnused:
-            self.addAction(QtGui.QAction(icons.code, scriptName, self,
-                                         triggered=partial(self.set_script, scriptName)))
-        if scriptsUnused:
-            self.addSeparator()
-        newIncludeAction = QtGui.QAction(icons.code, 'Create New Script', self, triggered=self.set_script)
-        self.addAction(newIncludeAction)
-
-    def set_script(self, name='', create=False):
-        if not name:
-            from a2widget.a2input_dialog import A2InputDialog
-            dialog = A2InputDialog(
-                self.main, 'New Script',
-                self.main.mod.check_create_script,
-                text='awesomeScript',
-                msg='Give a name for the new script file:')
-            dialog.okayed.connect(partial(self.set_script, create=True))
-            dialog.show()
-            return
-
-        if create:
-            name = self.main.mod.create_script(name, self.main.devset.author_name)
-        self.func('include', name)
 
 
 def get_local_element(itempath):

@@ -1,13 +1,7 @@
-"""
-a2ctrl.base
-
-@created: Aug 3, 2016
-@author: eRiC
-"""
-import os.path
-from PySide import QtGui, QtCore, QtSvg
-
+import os
 import a2core
+
+from PySide import QtGui, QtCore, QtSvg
 
 
 log = a2core.get_logger(__name__)
@@ -21,7 +15,7 @@ class Ico(QtGui.QIcon):
         """
         :param str ico_name: Name of the icon. If present in icon library the path is
             build there. Otherwise ico_name has to be a path to the image file.
-        :param int px: Prerender size of the icon image. Lower values than 512 might
+        :param int px: Pre-render size of the icon image. Lower values than 512 might
             cause artifacts but might be more memory and loading speed friendly.
         :param float alpha: 0.0 to 1.0 transparency value for the icon image.
         """
@@ -150,12 +144,17 @@ class Icons(object):
         self.hotkey = LibIco('keyboard')
         self.label = LibIco('label')
         self.label_plus = LibIco('label_plus')
+        self.list_add = LibIco('list_add')
+        self.locate = LibIco('locate')
         self.more = LibIco('more')
         self.number = LibIco('number')
         self.paste = LibIco('paste')
         self.text = LibIco('text')
         self.reload = LibIco('reload')
         self.rollback = LibIco('rollback')
+        self.scope_global = LibIco('global')
+        self.scope = LibIco('scope')
+        self.scope_exclude = LibIco('scope_exclude')
         self.string = LibIco('string')
         self.up = LibIco('up')
         self.up_align = LibIco('up_align')

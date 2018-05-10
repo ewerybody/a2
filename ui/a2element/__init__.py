@@ -1,5 +1,5 @@
 import a2core
-from a2element._common import DrawCtrl, EditCtrl
+from a2element.common import DrawCtrl, EditCtrl
 
 
 # amend with new elements to show in edit mode on Add Element-buttons:

@@ -1,5 +1,6 @@
 * {
     font-size: %(font_size)ipx;
+    color: "%(color_dark)s";
 }
 
 QPushButton {
@@ -8,7 +9,7 @@ QPushButton {
     padding-left: %(margin_h)ipx;
     padding-right: %(margin_h)ipx;
     background-color: "%(color_button)s";
-    icon-size: %(font_size)ipx;
+    icon-size: %(icon_size_small)ipx;
 }
 
 QPushButton:hover,
@@ -23,25 +24,29 @@ QCheckBox::indicator:pressed {
     background-color: "%(color_pressed)s";
 }
 
-QGroupBox::indicator,
-QCheckBox::indicator {
-    background-color: "%(color_bright)s";
-	height: %(line)ipx;
-	width: %(line)ipx;
-    image: url(res/uncheck.png);
-}
-
 QGroupBox::indicator {
     margin: %(margin)ipx;
 }
 
+QGroupBox::indicator,
+QCheckBox::indicator {
+	height: %(icon_size)ipx;
+	width: %(icon_size)ipx;
+    image: url(res/css_check_off.svg);
+}
+
 QGroupBox::indicator:checked,
 QCheckBox::indicator:checked {
-    image: url(res/check.png);
+    image: url(res/css_check_on.svg);
 }
 
 QCheckBox::indicator:indeterminate {
-    image: url(res/check_med.png);
+    image: url(res/css_check_int.svg);
+}
+
+QCheckBox::indicator:indeterminate:hover {
+    background-color: "%(color_hover)s";
+    image: url(res/css_check_off.svg);
 }
 
 QLabel#a2mod_view_source_label {
@@ -99,6 +104,7 @@ QPushButton#a2ok_button:pressed {
 
 QPushButton#a2add_button {
     background-color: "%(color_green)s";
+    icon-size: %(icon_size)ipx;
 }
 
 QPushButton[flat="true"] {
@@ -128,8 +134,31 @@ QPushButton#a2search_x_button {
     color: "%(color_pressed)s";
 }
 
-A2Hotkey {
+QPushButton#A2HotkeyButton,
+QPushButton#A2HotkeyScope {
     background-color: "%(color_yellow)s";
+    font-size: %(font_size_large)ipx;
+    min-height: %(hotkey_button_size)ipx;
+    icon-size: %(icon_size)ipx;
+}
+QPushButton#A2HotkeyButton:hover,
+QPushButton#A2HotkeyScope:hover {
+	background-color: "%(color_hover)s";
+}
+QPushButton#A2HotkeyButton:pressed,
+QPushButton#A2HotkeyScope:pressed {
+	background-color: "%(color_pressed)s";
+}
+
+QPushButton#A2HotkeyButton {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+QPushButton#A2HotkeyScope {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    max-width: %(hotkey_button_size)ipx;
+    margin: 0px;
 }
 
 QScrollBar:vertical,

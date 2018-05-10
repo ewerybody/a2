@@ -7,6 +7,7 @@
     "font_size_large": 15,
     "margin": 5,
     "margin_h": 15,
+    "color_background": "#eee",
     "color_blue": "#43B6FF",
     "color_darkblue": "#2396DF",
     "color_liteblue": "#53C6FF",
@@ -17,7 +18,10 @@
     "color_hover": "#DDD",
     "color_pressed": "#AAA",
     "color_darkgrey": "#777",
-    "border_radius": 2,
+    "color_dark": "#444",
+    "border_radius": 3,
     "icon_size": 20,
-    "search_x_button_size": 18
+    "icon_size_small": 15,
+    "search_x_button_size": 18,
+    "hotkey_button_size": 20
 }
