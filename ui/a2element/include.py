@@ -11,6 +11,7 @@ from PySide import QtGui, QtCore
 import a2ctrl
 import a2core
 from a2element import EditCtrl
+from a2element.common import BrowseScriptsMenu
 
 
 log = a2core.get_logger(__name__)
@@ -24,23 +25,23 @@ class Edit(EditCtrl):
     """
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        self.layout = QtGui.QHBoxLayout(self.mainWidget)
-        self.layout.setSpacing(5)
+        self.base_layout = QtGui.QHBoxLayout(self.mainWidget)
+        self.base_layout.setSpacing(5)
         self.labelCtrl = QtGui.QLabel('script file:')
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
-        self.layout.addWidget(self.labelCtrl)
+        self.base_layout.addWidget(self.labelCtrl)
         self.button = QtGui.QPushButton(self.cfg['file'])
-        self.buttonMenu = a2ctrl.BrowseScriptsMenu(self.main, self.set_script)
-        self.button.setMenu(self.buttonMenu)
-        self.layout.addWidget(self.button)
+        self.button_menu = BrowseScriptsMenu(self.main, self.set_script)
+        self.button.setMenu(self.button_menu)
+        self.base_layout.addWidget(self.button)
 
-        self.editButton = QtGui.QPushButton('edit script')
-        self.editButton.pressed.connect(self.edit_script)
-        self.layout.addWidget(self.editButton)
+        self.edit_button = QtGui.QPushButton('edit script')
+        self.edit_button.clicked.connect(self.edit_script)
+        self.edit_button.setIcon(a2ctrl.Icons.inst().edit)
+        self.base_layout.addWidget(self.edit_button)
 
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.layout.addItem(spacerItem)
-        self.mainWidget.setLayout(self.layout)
+        self.base_layout.addItem(QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
+        self.mainWidget.setLayout(self.base_layout)
 
     def set_script(self, typ, name):
         self.cfg['file'] = name

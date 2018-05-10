@@ -1,7 +1,8 @@
-from PySide import QtGui
-from a2widget.a2hotkey import edit_scope_widget, edit_scope_widget_ui
-import a2ctrl
 from pprint import pprint
+from PySide import QtGui
+
+import a2ctrl
+from a2widget.a2hotkey import edit_scope_widget, edit_scope_widget_ui
 
 
 class Demo(QtGui.QMainWindow):

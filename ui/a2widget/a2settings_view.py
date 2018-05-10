@@ -61,8 +61,8 @@ class A2Settings(QtGui.QWidget):
         self.ui.dev_widget.setVisible(self.a2.dev_mode)
 
         self.add_source_menu = QtGui.QMenu(self)
-        self.ui.a2add_button.setMenu(self.add_source_menu)
-        self.add_source_menu.aboutToShow.connect(self.build_add_source_menu)
+        self.ui.a2add_button.clicked.connect(self.build_add_source_menu)
+        self.ui.a2add_button.setIcon(a2ctrl.Icons.inst().list_add)
 
         self.ui.code_editor.file_types = "Executables (*.exe)"
         self.ui.code_editor.writable = False
@@ -145,6 +145,7 @@ class A2Settings(QtGui.QWidget):
     def build_add_source_menu(self):
         icons = a2ctrl.Icons.inst()
         menu = self.add_source_menu
+
         menu.clear()
         menu.addAction(icons.folder_add, 'Create Local', self.main.create_local_source)
         menu.addAction(icons.cloud_download, 'Add From URL', self.add_source_url)
@@ -157,6 +158,7 @@ class A2Settings(QtGui.QWidget):
             for pack_name in available:
                 action = submenu.addAction(icons.file_download, pack_name, self.on_add_featured)
                 action.setData(featured_packages[pack_name])
+        menu.popup(QtGui.QCursor.pos())
 
     def get_db_digest(self):
         self.ui.db_printout.clear()

@@ -11,11 +11,16 @@ from PySide import QtGui, QtCore
 import a2core
 import a2ctrl
 import a2util
+from a2element.common import EditAddElem
 from a2widget import a2settings_view
 from a2widget import a2module_view_ui
 
 
 log = a2core.get_logger(__name__)
+NEW_MODULE_DESC = ('Because none existed before this temporary description was created '
+                   'for "%s". Change it to describe what it does with a couple of words.')
+NEW_MODULE_CFG = {'typ': 'nfo',
+                  'version': '0.1'}
 
 
 class A2ModuleView(QtGui.QWidget):
@@ -88,7 +93,7 @@ class A2ModuleView(QtGui.QWidget):
             self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod))
 
         self.toggle_edit(False)
-        self.drawUI()
+        self.draw_ui()
 
     def update_header(self):
         """
@@ -106,10 +111,10 @@ class A2ModuleView(QtGui.QWidget):
             else:
                 self.ui.modCheck.setVisible(True)
                 self.ui.modName.setText('%i modules' % self.main.num_selected)
-                numenabled = sum([mod.enabled for mod in self.main.selected])
-                if numenabled == 0:
+                num_enabled = sum([mod.enabled for mod in self.main.selected])
+                if num_enabled == 0:
                     self.ui.modCheck.setChecked(False)
-                elif numenabled == self.main.num_selected:
+                elif num_enabled == self.main.num_selected:
                     self.ui.modCheck.setChecked(True)
                 else:
                     self.ui.modCheck.setTristate(True)
@@ -138,26 +143,23 @@ class A2ModuleView(QtGui.QWidget):
             self.main.temp_config = deepcopy(self.main.mod.config)
 
         if not len(self.main.temp_config):
-            newNfo = {'typ': 'nfo',
-                      'description': 'Because none existed before this temporary description was '
-                                     'created for "%s". Change it to describe what it does with a '
-                                     'couple of words.' % self.main.mod.name,
-                      'author': self.main.devset.author_name,
-                      'version': '0.1',
-                      'date': a2util.get_date()}
-            self.main.temp_config.insert(0, newNfo)
+            new_cfg = deepcopy(NEW_MODULE_CFG).update({
+                'description': NEW_MODULE_DESC % self.main.mod.name,
+                'date': a2util.get_date(),
+                'author': self.main.devset.author_name})
+            self.main.temp_config.insert(0, new_cfg)
 
         for cfg in self.main.temp_config:
             self.controls.append(a2ctrl.edit(cfg, self.main, self.main.temp_config))
 
-        edit_select = a2ctrl.EditAddElem(self.main, self.main.temp_config)
+        edit_select = EditAddElem(self.main, self.main.temp_config)
         self.controls.append(edit_select)
 
-        self.drawUI(keep_scroll)
+        self.draw_ui(keep_scroll)
         self.toggle_edit(True)
         self.settings_widget.setFocus()
 
-    def drawUI(self, keep_scroll=False):
+    def draw_ui(self, keep_scroll=False):
         """
         takes list of controls and arranges them in the scroll layout
 

@@ -6,6 +6,7 @@ Created on Dec 28, 2015
 import a2ctrl
 from PySide import QtGui
 from a2element import group_edit_ui, DrawCtrl, EditCtrl
+from a2element.common import EditAddElem
 
 
 class Draw(QtGui.QGroupBox, DrawCtrl):
@@ -69,7 +70,7 @@ class Edit(EditCtrl):
         for child in self.cfg['children']:
             controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
 
-        controls.append(a2ctrl.EditAddElem(self.main, self.cfg['children']))
+        controls.append(EditAddElem(self.main, self.cfg['children']))
         for ctrl in controls:
             self.ui.edit_layout.addWidget(ctrl)
 
