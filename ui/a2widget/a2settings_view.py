@@ -150,7 +150,7 @@ class A2Settings(QtGui.QWidget):
         menu.addAction(icons.folder_add, 'Create Local', self.main.create_local_source)
         menu.addAction(icons.cloud_download, 'Add From URL', self.add_source_url)
 
-        featured_path = os.path.join(self.a2.paths._defaults, 'featured_packages.json')
+        featured_path = os.path.join(self.a2.paths.defaults, 'featured_packages.json')
         featured_packages = a2util.json_read(featured_path)
         available = set(featured_packages).difference(self.a2.module_sources)
         if available:

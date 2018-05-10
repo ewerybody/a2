@@ -315,9 +315,9 @@ class A2Window(QtGui.QMainWindow):
         scale = self.css_values['local_scale'] * user_scale
         self.css_values['scale'] = scale
 
-        css_template_path = os.path.join(self.a2.paths._defaults, 'css_defaults.json')
+        css_template_path = os.path.join(self.a2.paths.defaults, 'css_defaults.json')
         css_defaults = a2util.json_read(css_template_path)
-        with open(os.path.join(self.a2.paths._defaults, 'a2.css')) as fobj:
+        with open(os.path.join(self.a2.paths.defaults, 'a2.css')) as fobj:
             css_template = fobj.read()
 
         for name, value in css_defaults.items():

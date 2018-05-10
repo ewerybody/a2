@@ -82,7 +82,7 @@ class NewElementDialog(A2InputDialog):
     def create_element(self, NAME):
         # TODO: This needs to goto the a2element module
         name = NAME.lower()
-        template = os.path.join(self.a2.paths._defaults, 'element.template.py')
+        template = os.path.join(self.a2.paths.defaults, 'element.template.py')
         self.a2.db.set('new_element_cfg', self.element_cfg)
         with open(template) as fobj:
             new_element_code = fobj.read().format(

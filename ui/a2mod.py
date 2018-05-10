@@ -689,7 +689,7 @@ def _add_slash(url):
 
 def get_default_package_cfg():
     a2 = a2core.A2Obj.inst()
-    cfg = a2util.json_read(os.path.join(a2.paths._defaults, 'default_package.json'))
+    cfg = a2util.json_read(os.path.join(a2.paths.defaults, 'default_package.json'))
     return cfg
 
 

@@ -141,8 +141,8 @@ class Paths(object):
         self.a2 = os.path.dirname(self.ui)
         self.lib = os.path.join(self.a2, 'lib')
         self.settings_ahk = os.path.join(self.a2, 'settings', 'a2_settings.ahk')
-        self._defaults = os.path.join(self.lib, '_defaults')
-        self.urls_ahk = os.path.join(self._defaults, 'a2_urls.ahk')
+        self.defaults = os.path.join(self.lib, '_defaults')
+        self.urls_ahk = os.path.join(self.defaults, 'a2_urls.ahk')
         self.a2_script = os.path.join(self.lib, 'a2.ahk')
         self.a2_temp = os.path.join(os.getenv('TEMP'), 'a2_temp')
 
@@ -166,7 +166,7 @@ class Paths(object):
 
     def _get_settings_ahk(self):
         if not os.path.isfile(self.settings_ahk):
-            return os.path.join(self._defaults, 'a2_settings.ahk')
+            return os.path.join(self.defaults, 'a2_settings.ahk')
         return self.settings_ahk
 
     def _fetch_a2_setting_paths(self):
