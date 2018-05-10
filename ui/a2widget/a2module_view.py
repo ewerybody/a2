@@ -143,7 +143,8 @@ class A2ModuleView(QtGui.QWidget):
             self.main.temp_config = deepcopy(self.main.mod.config)
 
         if not len(self.main.temp_config):
-            new_cfg = deepcopy(NEW_MODULE_CFG).update({
+            new_cfg = deepcopy(NEW_MODULE_CFG)
+            new_cfg.update({
                 'description': NEW_MODULE_DESC % self.main.mod.name,
                 'date': a2util.get_date(),
                 'author': self.main.devset.author_name})
