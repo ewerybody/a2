@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 a2ctrl - basic functionality for all the a2element building blocks
-
-@created: Mar 6, 2015
-@author: eRiC
 """
 import os
 import sys
 import traceback
-from functools import partial
 from pysideuic import compileUi
 from importlib import reload, import_module
-
-from PySide import QtGui, QtCore
 
 import a2core
 import a2util
@@ -102,6 +96,12 @@ def edit(cfg, main, parent_cfg):
 
 
 def get_a2element_object(obj_name, element_type, module_path=None):
+    """
+    :param str obj_name:
+    :param element_type:
+    :param module_path:
+    :rtype: class
+    """
     element_mod = get_a2element(element_type)
     if element_mod is not None:
         return getattr(element_mod, obj_name)

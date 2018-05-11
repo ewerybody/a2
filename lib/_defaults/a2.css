@@ -3,6 +3,11 @@
     color: "%(color_dark)s";
 }
 
+*:disabled {
+    color: "%(color_darkgrey)s";
+}
+
+
 QPushButton {
     border-radius: %(border_radius)ipx;
     padding: %(margin)ipx;
@@ -139,7 +144,6 @@ QPushButton#A2HotkeyScope {
     background-color: "%(color_yellow)s";
     font-size: %(font_size_large)ipx;
     min-height: %(hotkey_button_size)ipx;
-    icon-size: %(icon_size)ipx;
 }
 QPushButton#A2HotkeyButton:hover,
 QPushButton#A2HotkeyScope:hover {
@@ -155,10 +159,13 @@ QPushButton#A2HotkeyButton {
     border-bottom-right-radius: 0px;
 }
 QPushButton#A2HotkeyScope {
+    icon-size: %(icon_size)ipx;
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
+    padding-left: %(margin)ipx;
+    padding-right: %(margin)ipx;
     max-width: %(hotkey_button_size)ipx;
-    margin: 0px;
+    min-width: %(hotkey_button_size)ipx;
 }
 
 QScrollBar:vertical,

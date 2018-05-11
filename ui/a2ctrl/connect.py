@@ -1,13 +1,10 @@
-"""
-a2ctrl.connect
-"""
 import inspect
 from functools import partial
 
 from PySide import QtGui
 
 import a2core
-a2widget = None
+import a2widget
 
 
 log = a2core.get_logger(__name__)
@@ -46,10 +43,6 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     :param QtCore.Signal change_signal: Optional. A signal to emit on change.
     :param QtCore.Signal trigger_signal: Optional. The signal get the change event from.
     """
-    global a2widget
-    if a2widget is None:
-        import a2widget
-
     if isinstance(ctrl, QtGui.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
