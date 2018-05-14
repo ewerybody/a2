@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
 #
-# Created: Thu Apr 19 21:06:58 2018
+# Created: Mon May 14 13:06:34 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -16,7 +16,7 @@ class Ui_a2settings(object):
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtGui.QVBoxLayout(a2settings)
-        self.a2settings_view_layout.setContentsMargins(-1, -1, -1, 0)
+        self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
         self.a2settings_view_layout.setObjectName("a2settings_view_layout")
         self.tabWidget = QtGui.QTabWidget(a2settings)
         self.tabWidget.setObjectName("tabWidget")
@@ -211,7 +211,7 @@ class Ui_a2settings(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtGui.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 708, 912))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 806, 741))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setSpacing(0)

@@ -17,7 +17,7 @@
    <string notr="true">b</string>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -413,8 +413,8 @@ Go ahead and add or create one:</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>708</width>
-            <height>912</height>
+            <width>806</width>
+            <height>741</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
