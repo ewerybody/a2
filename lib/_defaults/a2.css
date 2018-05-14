@@ -101,15 +101,21 @@ QPushButton#a2ok_button {
 	background-color: "%(color_blue)s";
 }
 QPushButton#a2ok_button:hover {
-	background-color: "%(color_liteblue)s";
+	background-color: "%(color_blue_hover)s";
 }
 QPushButton#a2ok_button:pressed {
-	background-color: "%(color_darkblue)s";
+	background-color: "%(color_dark_pressed)s";
 }
 
 QPushButton#a2add_button {
     background-color: "%(color_green)s";
     icon-size: %(icon_size)ipx;
+}
+QPushButton#a2add_button:hover {
+    background-color: "%(color_green_hover)s";
+}
+QPushButton#a2add_button:pressed {
+    background-color: "%(color_green_pressed)s";
 }
 
 QPushButton[flat="true"] {
@@ -147,11 +153,11 @@ QPushButton#A2HotkeyScope {
 }
 QPushButton#A2HotkeyButton:hover,
 QPushButton#A2HotkeyScope:hover {
-	background-color: "%(color_hover)s";
+	background-color: "%(color_yellow_hover)s";
 }
 QPushButton#A2HotkeyButton:pressed,
 QPushButton#A2HotkeyScope:pressed {
-	background-color: "%(color_pressed)s";
+	background-color: "%(color_yellow_pressed)s";
 }
 
 QPushButton#A2HotkeyButton {
