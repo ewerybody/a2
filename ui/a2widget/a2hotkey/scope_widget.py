@@ -1,7 +1,8 @@
 import a2core
 import a2ctrl.qlist
+import a2ctrl.connect
 from PySide import QtGui, QtCore
-from a2widget.a2hotkey import edit_scope_widget_ui, scope_dialog
+from a2widget.a2hotkey import scope_widget_ui, scope_dialog
 
 
 log = a2core.get_logger(__name__)
@@ -11,20 +12,23 @@ LIST_LINE_HEIGHT = None
 
 class ScopeWidget(QtGui.QWidget):
     changed = QtCore.Signal()
+    _scope_mode_changed = QtCore.Signal(bool)
 
-    def __init__(self, parent):
+    def __init__(self, parent, config=None):
         super(ScopeWidget, self).__init__(parent)
         # self.main = main
-        self._config_dict = None
+        self._cfg = config
+        self._line_height_set = False
 
         # update check done in parent widget for proper order
-        self.ui = edit_scope_widget_ui.Ui_ScopeWidget()
+        self.ui = scope_widget_ui.Ui_ScopeWidget()
         self.ui.setupUi(self)
 
-        self.ui.cfg_scopeMode.currentIndexChanged.connect(self.set_scope_mode)
-
+        icons = a2ctrl.Icons.inst()
         self.ui.scope_add.clicked.connect(self.show_add_dialog)
+        self.ui.scope_add.setIcon(icons.list_add)
         self.ui.scope_delete.clicked.connect(self.delete_scope)
+        self.ui.scope_delete.setIcon(icons.delete)
 
         self.ui.cfg_scope.itemDoubleClicked.connect(self.show_edit_dialog)
 
@@ -32,26 +36,32 @@ class ScopeWidget(QtGui.QWidget):
         self.ui.cfg_scope.customContextMenuRequested.connect(self.build_context_menu)
         self.context_menu = QtGui.QMenu(self)
 
-        icons = a2ctrl.Icons.inst()
         self.context_menu.addAction(icons.edit, 'Edit scope item', self.show_edit_dialog)
         self.context_menu.addAction(icons.delete, 'Delete scope item', self.delete_scope)
-        self._line_height_set = False
 
         shortcut = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete),
                                    self.ui.cfg_scope, self.delete_scope)
         shortcut.setContext(QtCore.Qt.WidgetShortcut)
 
-    def set_config(self, config_dict):
-        self._config_dict = config_dict
+        self.set_config()
+        self._scope_mode_changed.connect(self.on_scope_mode_change)
 
-    def set_scope_mode(self, index):
-        self._set_scope_mode(index)
+    def set_config(self, config_dict=None):
+        if config_dict is not None:
+            self._cfg = config_dict
+
+        if self._cfg is None:
+            return
+
+        a2ctrl.connect.control_list([self.ui.scopeMode_1, self.ui.scopeMode_2],
+                                    self._cfg, self._scope_mode_changed)
+
+    def on_scope_mode_change(self, something):
+        print('something: %s' % something)
+
+    def set_scope_mode(self):
+        self._set_scope_mode()
         self.changed.emit()
-
-    def _init_scope_mode(self):
-        index = self.ui.cfg_scopeMode.currentIndex()
-        show_ctrls = self._set_scope_mode(index)
-        return show_ctrls
 
     def _set_scope_mode(self, index):
         show_ctrls = index != 0
@@ -95,8 +105,10 @@ class ScopeWidget(QtGui.QWidget):
             self.scope_update()
 
     def showEvent(self, *args, **kwargs):
-        if self._init_scope_mode():
-            self._set_list_line_height()
+        if self._cfg is None:
+            log.error('Showing ScopeWidget whild config is not set yet!')
+        self._set_list_line_height()
+
         return QtGui.QWidget.showEvent(self, *args, **kwargs)
 
     def _init_line_height(self):

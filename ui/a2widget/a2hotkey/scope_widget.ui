@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ScopeDialog</class>
- <widget class="QDialog" name="ScopeDialog">
+ <class>ScopeWidget</class>
+ <widget class="QWidget" name="ScopeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>217</height>
+    <width>535</width>
+    <height>146</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string notr="true">Form</string>
+  </property>
+  <property name="toolTip">
+   <string notr="true"/>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
    </property>
-   <property name="labelAlignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   <property name="margin">
+    <number>0</number>
    </property>
    <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QRadioButton" name="radioButton">
+      <widget class="QRadioButton" name="scopeMode_1">
        <property name="text">
         <string>only in:</string>
        </property>
@@ -33,7 +36,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButton_2">
+      <widget class="QRadioButton" name="scopeMode_2">
        <property name="text">
         <string>not in:</string>
        </property>
@@ -165,27 +168,6 @@
    <item row="4" column="1">
     <widget class="A2ButtonField" name="scope_exe"/>
    </item>
-   <item row="5" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
-     <item>
-      <widget class="QPushButton" name="a2ok_button">
-       <property name="text">
-        <string>OK</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="a2cancel_button">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -195,43 +177,6 @@
    <header>a2widget.a2button_field</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>a2ok_button</tabstop>
-  <tabstop>a2cancel_button</tabstop>
- </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>a2cancel_button</sender>
-   <signal>clicked()</signal>
-   <receiver>ScopeDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>738</x>
-     <y>303</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>843</x>
-     <y>369</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>a2ok_button</sender>
-   <signal>clicked()</signal>
-   <receiver>ScopeDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>425</x>
-     <y>294</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>416</x>
-     <y>357</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -16,9 +16,9 @@ SCOPE_ITEMS = ['titles', 'classes', 'processes']
 class ScopeDialog(QtGui.QDialog):
     okayed = QtCore.Signal(str)
 
-    def __init__(self, parent, scope_string=''):
+    def __init__(self, parent, config=None):
         super(ScopeDialog, self).__init__(parent)
-        self.scope_string = scope_string
+        self._cfg = config
         a2ctrl.check_ui_module(scope_dialog_ui)
         self.ui = scope_dialog_ui.Ui_ScopeDialog()
 
@@ -36,7 +36,7 @@ class ScopeDialog(QtGui.QDialog):
         self.help_map['Help on AHK WinTitle'] = self.a2.urls.ahkWinTitle
 
         self.setup_ui()
-        self.set_scope_string(scope_string)
+        self.set_scope_string()
 
     def setup_ui(self):
         pos = self.pos()
@@ -65,11 +65,11 @@ class ScopeDialog(QtGui.QDialog):
 #            submenu.addAction(action)
 #        menu.addMenu(submenu)
 
-        self.scopes_submenu = self.ui.scope_string.menu.addMenu('All Scopes in use')
-        self.scopes_submenu.aboutToShow.connect(self.build_all_scopes_menu)
-        self.ui.scope_string.menu.addSeparator()
-        for title in self.help_map:
-            self.ui.scope_string.add_action(title, self.surf_to_help)
+#        self.scopes_submenu = self.ui.scope_string.menu.addMenu('All Scopes in use')
+#        self.scopes_submenu.aboutToShow.connect(self.build_all_scopes_menu)
+        # self.ui.scope_string.menu.addSeparator()
+#        for title in self.help_map:
+#            self.ui.scope_string.add_action(title, self.surf_to_help)
 
     def build_all_scopes_menu(self):
         self.scopes_submenu.clear()
@@ -102,8 +102,8 @@ class ScopeDialog(QtGui.QDialog):
         url = self.help_map[self.sender().text()]
         a2util.surf_to(url)
 
-    def set_scope_string(self, scope_string=None):
-        if scope_string is None:
+    def set_scope_config(self, config=None):
+        if config is None:
             scope_string = self.sender().text()
         self.ui.scope_string.setText(scope_string)
 

@@ -27,8 +27,8 @@ class Draw(DrawCtrl):
     cfg['multiple'] = True
     cfg['scope'] = ''
     cfg['scopeChange'] = True
-    # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
-    cfg['mode'] = 'ahk'
+    # functionMode can be: ahk, file, key: to execute code, open up sth, send keystroke
+    cfg['functionMode'] = 'ahk'
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
@@ -37,8 +37,7 @@ class Draw(DrawCtrl):
 
     def _setup_hotkey(self):
         self.hotkey_button.set_key(self.get_user_value(str, 'key'))
-        self.hotkey_button.setEnabled(self.cfg['keyChange'])
-        self.hotkey_button.scope_data = self.cfg
+        self.hotkey_button.set_config(self.cfg)
 
     def _setup_ui(self):
         self.ctrl_layout = QtGui.QHBoxLayout(self)
@@ -136,9 +135,9 @@ class Edit(EditCtrl):
         cfg['multiple'] = True
         cfg['scope'] = ''
         cfg['scopeChange'] = True
-        # mode can be: ahk, file, key
+        # functionMode can be: ahk, file, key
         # to execute code, open up sth, send keystroke
-        cfg['mode'] = 'ahk',
+        cfg['functionMode'] = 'ahk',
         cfg['name'] = 'someModule_hotkey1',
         cfg['label'] = 'do awesome stuff on:'
     """
@@ -153,7 +152,7 @@ class Edit(EditCtrl):
         self.ui = edit_widget_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        for key, value in [('key', DEFAULT_HOTKEY), ('mode', 'ahk')]:
+        for key, value in [('key', DEFAULT_HOTKEY), ('functionMode', 'ahk')]:
             if key not in self.cfg:
                 self.cfg[key] = value
 
@@ -164,10 +163,11 @@ class Edit(EditCtrl):
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
-        a2ctrl.connect.cfg_controls(self.cfg, self.ui.scope_widget.ui)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui.func_widget.ui)
-        self.ui.scope_widget.set_config(self.cfg)
         self.ui.func_widget.set_config(self.cfg)
+
+        # a2ctrl.connect.cfg_controls(self.cfg, self.ui.scope_widget.ui)
+        # self.ui.scope_widget.set_config(self.cfg)
 
         self.disablable_check()
         self.ui.cfg_disablable.clicked[bool].connect(self.disablable_check)
@@ -200,7 +200,10 @@ def get_settings(module_key, cfg, db_dict, user_cfg):
     key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key', str)
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, 'scope', list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, 'scopeMode', int)
-    function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
+    function = cfg.get(
+        ['functionCode', 'functionURL', 'functionSend'][
+            cfg['functionMode']],
+        '')
 
     db_dict.setdefault('hotkeys', {})
     db_dict['hotkeys'].setdefault(scope_mode, [])
