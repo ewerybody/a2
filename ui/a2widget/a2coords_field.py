@@ -104,8 +104,7 @@ class A2CoordsField(QtGui.QWidget):
         self.set_string_value(text)
 
     def pick(self):
-        a2 = a2core.A2Obj.inst()
-        text = a2ahk.call_lib_cmd('get_coordinates', cwd=a2.paths.a2)
+        text = a2ahk.call_lib_cmd('get_coordinates')
         self.set_string_value(text)
 
     def set_string_value(self, text):

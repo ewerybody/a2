@@ -40,7 +40,7 @@ def call_lib_cmd(cmd_name, *args, **kwargs):
     a2 = a2core.A2Obj.inst()
     cmd_name = ensure_ahk_ext(cmd_name)
     cmd_path = os.path.join(a2.paths.lib, 'cmds', cmd_name)
-    return call_cmd(cmd_path, *args, **kwargs)
+    return call_cmd(cmd_path, cwd=a2.paths.a2, *args, **kwargs)
 
 
 def call_cmd(cmd_path, *args, **kwargs):
