@@ -80,8 +80,6 @@ class ScopeDialog(QtGui.QDialog):
         scopes.extend(collector.hotkeys.hotkeys_scope_excl.keys())
 
         for scope in sorted(scopes, key=lambda s: s.lower()):
-            print('scope: %s' % scope)
-#            action = QtGui.QAction(scope, submenu, triggered=partial(self.set_scope_string, scope))
             self.scopes_submenu.addAction(scope, self.set_scope_string)
 
     def build_button_menu(self, index, menu):
