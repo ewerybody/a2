@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui'
 #
-# Created: Mon May 14 16:15:20 2018
+# Created: Tue May 15 14:20:25 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,6 +31,18 @@ class Ui_ScopeWidget(object):
         self.horizontalLayout_2.addWidget(self.scopeMode_2)
         spacerItem = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
+        self.scope_pick = QtGui.QToolButton(ScopeWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.scope_pick.sizePolicy().hasHeightForWidth())
+        self.scope_pick.setSizePolicy(sizePolicy)
+        self.scope_pick.setMaximumSize(QtCore.QSize(50, 35))
+        self.scope_pick.setToolTip("")
+        self.scope_pick.setText("")
+        self.scope_pick.setAutoRaise(True)
+        self.scope_pick.setObjectName("scope_pick")
+        self.horizontalLayout_2.addWidget(self.scope_pick)
         self.scope_delete = QtGui.QToolButton(ScopeWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
