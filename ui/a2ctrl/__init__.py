@@ -10,6 +10,7 @@ from importlib import reload, import_module
 
 import a2core
 import a2util
+from a2ctrl import connect
 from a2ctrl.icons import Ico, Icons
 
 

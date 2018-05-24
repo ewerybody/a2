@@ -23,10 +23,8 @@ RUNTIME_WATCH_INTERVAL = 1000
 
 
 class A2Window(QtGui.QMainWindow):
-    # to be triggered whenever a module or module source is dis/enabled
-    module_enabled = QtCore.Signal()
 
-    def __init__(self, app=None, *args):
+    def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
@@ -94,7 +92,7 @@ class A2Window(QtGui.QMainWindow):
 
         self.toggle_dev_menu()
         self.setWindowIcon(a2ctrl.Icons.inst().a2)
-        self.restoreA2ui()
+        self.restore_ui()
 
     def _setup_actions(self):
         icons = a2ctrl.Icons.inst()
@@ -254,20 +252,20 @@ class A2Window(QtGui.QMainWindow):
 
         QtGui.QMainWindow.closeEvent(self, event)
 
-    def restoreA2ui(self):
+    def restore_ui(self):
         """
         gets window settings from prefs and makes sure the window will be visible
         I let Qt handle that via restoreGeometry. Downside is: It does not put back windows
-        that are partiall outside of the left,right and bottom desktop border
+        that are partially outside of the left,right and bottom desktop border
         """
-        winprefs = self.a2.db.get('windowprefs') or {}
-        geometry = winprefs.get('geometry')
+        win_prefs = self.a2.db.get('windowprefs') or {}
+        geometry = win_prefs.get('geometry')
         if geometry is not None:
             geometry = QtCore.QByteArray().fromPercentEncoding(geometry)
             self.restoreGeometry(geometry)
-        splitterSize = winprefs.get('splitter')
-        if splitterSize is not None:
-            self.ui.splitter.setSizes(winprefs['splitter'])
+        splitter_size = win_prefs.get('splitter')
+        if splitter_size is not None:
+            self.ui.splitter.setSizes(splitter_size)
 
     def showRaise(self):
         self.show()
@@ -308,6 +306,9 @@ class A2Window(QtGui.QMainWindow):
     def rebuild_css(self, user_scale=None):
         if user_scale is None:
             user_scale = self.a2.db.get('ui_scale') or 1.0
+        else:
+            self.a2.db.set('ui_scale', user_scale)
+
         self.css_values['user_scale'] = user_scale
 
         local_scale = self.app.desktop().physicalDpiX() / BASE_DPI
@@ -327,7 +328,6 @@ class A2Window(QtGui.QMainWindow):
 
         css_template = css_template % self.css_values
         self.app.setStyleSheet(css_template)
-        self.a2.db.set('ui_scale', user_scale)
 
     def build_package(self):
         batch_path = os.path.join(self.a2.paths.lib, 'batches')
