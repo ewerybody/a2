@@ -2,7 +2,8 @@ from pprint import pprint
 from PySide import QtGui
 
 import a2ctrl
-from a2widget.a2hotkey import scope_widget, scope_widget_ui
+from a2widget import A2CodeField
+from a2widget.a2hotkey import scope_widget, scope_widget_ui, hotkey_widget
 
 
 config = {"typ": "hotkey",
@@ -34,11 +35,18 @@ class Demo(QtGui.QMainWindow):
         lyt = QtGui.QFormLayout(w)
         w.setLayout(lyt)
 
+        self.hotkey = hotkey_widget.A2Hotkey(self, scope_data=config)
+        lyt.addRow('hotkey', self.hotkey)
+
         self.scope_widget = scope_widget.ScopeWidget(self)
         self.scope_widget.set_config(config)
         lyt.addRow('scope widget', self.scope_widget)
 
         a2ctrl.connect.cfg_controls(config, self.scope_widget.ui)
+
+        self.code = A2CodeField(self)
+        self.code.setText(config)
+        lyt.addRow('code', self.code)
         self.scope_widget.changed.connect(self.bla)
 
         button = QtGui.QPushButton('set_config')
