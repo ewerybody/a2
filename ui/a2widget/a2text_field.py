@@ -74,7 +74,7 @@ class A2TextField(QtGui.QPlainTextEdit):
         else:
             cursor_height = self._cursor_height
 
-        magic_height = (cursor_height / 3) + 5
+        magic_height = (cursor_height / 3) + 8
         height = (cursor_height * block_count) + magic_height
 
         self.setMinimumHeight(height)

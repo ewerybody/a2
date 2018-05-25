@@ -33,25 +33,28 @@ class Demo(QtGui.QMainWindow):
         w = QtGui.QWidget(self)
         self.setCentralWidget(w)
         lyt = QtGui.QFormLayout(w)
+        lyt.setSpacing(20)
         w.setLayout(lyt)
 
         self.hotkey = hotkey_widget.A2Hotkey(self, scope_data=config)
-        lyt.addRow('hotkey', self.hotkey)
+        lyt.addRow('edit hotkey', self.hotkey)
 
-        self.scope_widget = scope_widget.ScopeWidget(self)
-        self.scope_widget.set_config(config)
-        lyt.addRow('scope widget', self.scope_widget)
-
-        a2ctrl.connect.cfg_controls(config, self.scope_widget.ui)
+#        self.scope_widget = scope_widget.ScopeWidget(self)
+#        self.scope_widget.set_config(config)
+#        lyt.addRow('scope widget', self.scope_widget)
+#        a2ctrl.connect.cfg_controls(config, self.scope_widget.ui)
+#        self.scope_widget.changed.connect(self.bla)
 
         self.code = A2CodeField(self)
         self.code.setText(config)
         lyt.addRow('code', self.code)
-        self.scope_widget.changed.connect(self.bla)
 
-        button = QtGui.QPushButton('set_config')
-        button.clicked.connect(self.bla)
-        lyt.addRow(button)
+#        button = QtGui.QPushButton('set_config')
+#        button.clicked.connect(self.bla)
+#        lyt.addRow(button)
+
+        self.user_hotkey = hotkey_widget.A2Hotkey(self, scope_data=config)
+        lyt.addRow('user hotkey', self.user_hotkey)
 
         # self.scope_widget.ui.cfg_scopeChange.clicked.connect(self.bla)
         # self.scope_widget.ui.cfg_scopeMode.currentIndexChanged.connect(self.bla)
