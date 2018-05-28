@@ -51,7 +51,11 @@ class Draw(DrawCtrl):
             state = self.get_user_value(bool, 'enabled', True)
             self.check = QtGui.QCheckBox(self)
 
-            size = self.main.css_values['icon_size']
+            try:
+                size = self.main.css_values['icon_size']
+            except AttributeError:
+                size = 35
+
             self.check.setMinimumSize(QtCore.QSize(size, size))
             self.check.setMaximumSize(QtCore.QSize(size, size))
 
@@ -145,8 +149,8 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
 
         # deferred because pretty huge & not needed by non dev users
-        from a2widget.a2hotkey import edit_widget_ui, edit_scope_widget_ui, edit_func_widget_ui
-        for module in [edit_scope_widget_ui, edit_func_widget_ui, edit_widget_ui]:
+        from a2widget.a2hotkey import edit_widget_ui, edit_func_widget_ui
+        for module in [edit_func_widget_ui, edit_widget_ui]:
             a2ctrl.check_ui_module(module)
 
         self.ui = edit_widget_ui.Ui_edit()

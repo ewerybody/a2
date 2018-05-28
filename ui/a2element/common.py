@@ -35,12 +35,16 @@ class DrawCtrl(QtGui.QWidget):
         self.check_delay = 250
         self._check_scheduled = False
         cfg_name = a2util.get_cfg_default_name(self.cfg)
-        self.user_cfg = self.a2.db.get(cfg_name, self.mod.key)
         self.is_expandable_widget = False
         self._check_timer = QtCore.QTimer()
         self._check_timer.setInterval(self.check_delay)
         self._check_timer.timeout.connect(self._check)
         self._check_args = None
+
+        try:
+            self.user_cfg = self.a2.db.get(cfg_name, self.mod.key)
+        except AttributeError:
+            self.user_cfg = {}
 
     def get_user_value(self, typ, name=None, default=None):
         """
@@ -177,8 +181,13 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrl_layout = QtGui.QGridLayout(self)
         self._ctrl_layout.setContentsMargins(0, 0, 0, 0)
         self._sub_layout = QtGui.QHBoxLayout()
-        margin = self.main.css_values['margin']
-        self._sub_layout.setContentsMargins(margin, margin, margin, margin)
+
+        try:
+            margin = self.main.css_values['margin']
+            self._sub_layout.setContentsMargins(margin, margin, margin, margin)
+        except AttributeError:
+            pass
+
         self.mainWidget = QtGui.QWidget(self)
         self._sub_layout.addWidget(self.mainWidget)
         self._ctrl_layout.addLayout(self._sub_layout, 0, 0, 1, 1)

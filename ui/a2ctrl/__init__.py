@@ -47,6 +47,10 @@ def check_ui_module(module):
                     log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
 
+    if uibase is None:
+        raise RuntimeError('Could not get source ui file from module:\n %s\n  '
+                           'Not a ui file module??!' % module)
+
     uifile = os.path.join(folder, uibase)
     if not uibase or not os.path.isfile(uifile):
         # Nothing to test against. That's alright!

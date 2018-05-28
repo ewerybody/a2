@@ -1,9 +1,11 @@
 from pprint import pprint
-from PySide import QtGui
+from PySide import QtGui, QtCore
 
 import a2ctrl
+import a2element.hotkey
 from a2widget import A2CodeField
-from a2widget.a2hotkey import scope_widget, scope_widget_ui, hotkey_widget
+from a2widget.a2hotkey import hotkey_widget, edit_widget_ui
+from copy import deepcopy
 
 
 config = {"typ": "hotkey",
@@ -14,7 +16,7 @@ config = {"typ": "hotkey",
           "scope": ["WhatsApp - Mozilla Firefox ahk_exe firefox.exe"],
           "scopeMode": 1,
           "scopeChange": False,
-          "functionCode": "calculAid_open()",
+          "functionCode": "MsgBox Hello World!",
           "functionMode": 0,
           "functionSend": "",
           "functionURL": "",
@@ -28,39 +30,40 @@ class Demo(QtGui.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
-        a2ctrl.check_ui_module(scope_widget_ui)
+        a2ctrl.check_ui_module(edit_widget_ui)
 
         w = QtGui.QWidget(self)
         self.setCentralWidget(w)
         lyt = QtGui.QFormLayout(w)
+        self.lyt = lyt
         lyt.setSpacing(20)
         w.setLayout(lyt)
 
-        self.hotkey = hotkey_widget.A2Hotkey(self, scope_data=config)
-        lyt.addRow('edit hotkey', self.hotkey)
-
-#        self.scope_widget = scope_widget.ScopeWidget(self)
-#        self.scope_widget.set_config(config)
-#        lyt.addRow('scope widget', self.scope_widget)
-#        a2ctrl.connect.cfg_controls(config, self.scope_widget.ui)
-#        self.scope_widget.changed.connect(self.bla)
+        self.hotkey = a2element.hotkey.Edit(config, self, {})
+        lyt.addRow(self.hotkey)
 
         self.code = A2CodeField(self)
-        self.code.setText(config)
         lyt.addRow('code', self.code)
 
-#        button = QtGui.QPushButton('set_config')
-#        button.clicked.connect(self.bla)
-#        lyt.addRow(button)
+        self.anim_timer = QtCore.QTimer()
+        self.anim_timer.setInterval(250)
+        self.anim_timer.timeout.connect(self.check_changes)
+        self.anim_timer.start()
+        self._config_backup = None
 
-        self.user_hotkey = hotkey_widget.A2Hotkey(self, scope_data=config)
-        lyt.addRow('user hotkey', self.user_hotkey)
+        self.user_hotkey = a2element.hotkey.Draw(self, config, None)
+        lyt.addRow(QtGui.QLabel('user hotkey:'))
+        lyt.addRow(self.user_hotkey)
 
-        # self.scope_widget.ui.cfg_scopeChange.clicked.connect(self.bla)
-        # self.scope_widget.ui.cfg_scopeMode.currentIndexChanged.connect(self.bla)
+    def check_changes(self):
+        if self._config_backup != config:
+            self.code.setText(config)
+            self._config_backup = deepcopy(config)
 
-    def bla(self):
-        pprint(config)
+            self.user_hotkey.deleteLater()
+            new_user_hotkey = a2element.hotkey.Draw(self, config, None)
+            self.user_hotkey = new_user_hotkey
+            self.lyt.addRow(self.user_hotkey)
 
 
 def show():
