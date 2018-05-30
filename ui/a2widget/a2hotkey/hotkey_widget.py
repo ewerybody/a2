@@ -14,8 +14,8 @@ SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 
 class Vars(object):
     scope = 'scope'
-    scopeMode = 'scopeMode'
-    scopeChange = 'scopeChange'
+    scope_mode = 'scopeMode'
+    scope_change = 'scopeChange'
 
 
 class A2Hotkey(QtGui.QWidget):
@@ -60,13 +60,15 @@ class A2Hotkey(QtGui.QWidget):
             (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
             (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
             (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
-                self._cfg.get(Vars.scopeMode, 0)]
+                self._cfg.get(Vars.scope_mode, 0)]
 
-        if self._cfg.get(Vars.scopeChange, True):
+        if self._cfg.get(Vars.scope_change, True):
             tooltip += SCOPE_CANNOT_CHANGE
 
         self._scope_button.setIcon(icon)
         self._scope_button.setToolTip(tooltip)
+        self.key = self._cfg.get('key', '')
+        self.setText(self.key)
 
     def setText(self, text):
         self._hotkey_button.setText(text)
@@ -93,7 +95,7 @@ class A2Hotkey(QtGui.QWidget):
 
     def build_scope_menu(self):
         menu = QtGui.QMenu(self)
-        mode = self._cfg.get(Vars.scopeMode, 0)
+        mode = self._cfg.get(Vars.scope_mode, 0)
         if mode == 0:
             menu.addAction('global!')
         elif mode == 1:
