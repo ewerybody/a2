@@ -170,7 +170,6 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
     unified call to get a value no matter if its set by user already
     or still default from the module config.
     """
-    value = None
     if user_cfg is not None and attr_name is None:
         value = user_cfg
     elif isinstance(user_cfg, dict) and attr_name in user_cfg:

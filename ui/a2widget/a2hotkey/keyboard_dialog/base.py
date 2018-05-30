@@ -285,9 +285,9 @@ class KeyboardDialogBase(QtGui.QDialog):
         main_css = load_css('main') % values
         self.ui.keys_widget.setStyleSheet(main_css)
 
-        cursorblock_css = load_css('cursorblock') % values
-        self.cursor_block_widget.setStyleSheet(cursorblock_css)
-        self.numpad_block_widget.setStyleSheet(cursorblock_css)
+        cursor_block_css = load_css('cursorblock') % values
+        self.cursor_block_widget.setStyleSheet(cursor_block_css)
+        self.numpad_block_widget.setStyleSheet(cursor_block_css)
 
     def _log_size(self):
         """
