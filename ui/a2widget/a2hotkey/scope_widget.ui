@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>146</height>
+    <width>1052</width>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,9 +26,9 @@
    <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QRadioButton" name="scopeMode_1">
+      <widget class="QRadioButton" name="scopeMode_0">
        <property name="text">
-        <string>only in:</string>
+        <string>golbal</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -36,9 +36,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QRadioButton" name="scopeMode_1">
+       <property name="text">
+        <string>include:</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QRadioButton" name="scopeMode_2">
        <property name="text">
-        <string>not in:</string>
+        <string>exclude:</string>
        </property>
        <property name="checked">
         <bool>false</bool>

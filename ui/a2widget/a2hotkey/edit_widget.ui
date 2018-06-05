@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>607</width>
-    <height>241</height>
+    <width>830</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -125,6 +125,26 @@
        <property name="verticalSpacing">
         <number>5</number>
        </property>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="cfg_disablable">
+         <property name="text">
+          <string>can be disabled</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="cfg_scopeChange">
+         <property name="text">
+          <string>allow scope change</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="cfg_enabled">
          <property name="text">
@@ -135,27 +155,17 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="cfg_disablable">
-         <property name="text">
-          <string>can be disabled</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QCheckBox" name="cfg_keyChange">
          <property name="text">
-          <string>can be changed</string>
+          <string>allow key change</string>
          </property>
          <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="2" column="0">
         <widget class="QCheckBox" name="cfg_multiple">
          <property name="text">
           <string>allow multiple hotkeys</string>

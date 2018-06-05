@@ -7,7 +7,7 @@ from pprint import pprint
 import a2ahk
 from collections import OrderedDict
 from functools import partial
-
+from .hotkey_widget import Vars
 
 log = a2core.get_logger(__name__)
 MAX_NON_SCROLL_ITEMS = 5
@@ -26,6 +26,7 @@ class ScopeWidget(QtGui.QWidget):
         self._line_height_set = False
 
         self._setup_ui()
+        self.system_scope_data = {}
         self.get_scope_data()
         self.set_config()
 
@@ -33,6 +34,7 @@ class ScopeWidget(QtGui.QWidget):
         scope_string = self.get_scope_string(
             self.ui.scope_title.text(), self.ui.scope_class.text(), self.ui.scope_exe.text())
         self.set_scope_string(scope_string)
+        self.scope_update()
 
     def set_scope_string(self, scope_string):
         selected_idxs = self.ui.cfg_scope.selectedIndexes()
@@ -58,19 +60,27 @@ class ScopeWidget(QtGui.QWidget):
 
         a2ctrl.connect.control_list([self.ui.scopeMode_1, self.ui.scopeMode_2],
                                     self._cfg, self._scope_mode_changed)
+        self.ui.cfg_scope.addItems(self._cfg.get(Vars.scope, []))
+        item0 = self.ui.cfg_scope.item(0)
+        if item0 is not None:
+            item0.setSelected(True)
+
+    def get_config(self):
+        return self._cfg
 
     def on_selection_change(self):
         items = a2ctrl.qlist.get_selected_as_text(self.ui.cfg_scope)
-        print('items: %s' % items)
+        texts = ['', '', '']
         if len(items) == 1:
             scope_string = items[0]
-            for typ, ctrl in [('ahk_exe', self.ui.scope_exe),
-                              ('ahk_class', self.ui.scope_class)]:
+            for i, typ in enumerate(['ahk_exe', 'ahk_class']):
                 found = scope_string.find(typ)
                 if found != -1:
-                    ctrl.setText(scope_string[found + len(typ):].strip())
+                    texts[i] = (scope_string[found + len(typ):].strip())
                     scope_string = scope_string[:found]
-            self.ui.scope_title.setText(scope_string.strip())
+            texts[2] = scope_string.strip()
+        for i, ctrl in enumerate([self.ui.scope_exe, self.ui.scope_class, self.ui.scope_title]):
+            ctrl.setText(texts[i])
 
     def on_scope_mode_change(self):
         scope_mode = self._cfg.get('scopeMode')
@@ -104,7 +114,7 @@ class ScopeWidget(QtGui.QWidget):
 
     def showEvent(self, *args, **kwargs):
         if self._cfg is None:
-            log.error('Showing ScopeWidget whild config is not set yet!')
+            log.error('Showing ScopeWidget while config is not set yet!')
         self._set_list_line_height()
 
         return QtGui.QWidget.showEvent(self, *args, **kwargs)

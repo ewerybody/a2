@@ -2,7 +2,6 @@ import a2core
 from PySide import QtGui, QtCore
 
 import a2ctrl
-from a2widget.a2hotkey import scope_dialog
 from .simple_dialog import HotkeyDialog1
 from .dialogs import HotKeyBoard
 
@@ -10,6 +9,7 @@ SCOPE_TOOLTIP_GLOBAL = 'Hotkey scope is set "global" so it works anywhere.'
 SCOPE_TOOLTIP_INCLUDE = 'Hotkey scope is set to work only in specific windows.'
 SCOPE_TOOLTIP_EXCLUDE = 'Hotkey scope is set to exclude specific windows.'
 SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
+SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
 
 
 class Vars(object):
@@ -20,6 +20,7 @@ class Vars(object):
 
 class A2Hotkey(QtGui.QWidget):
     hotkey_changed = QtCore.Signal(str)
+    scope_changed = QtCore.Signal(dict)
 
     def __init__(self, parent=None, key=None, scope_data=None):
         """
@@ -32,6 +33,7 @@ class A2Hotkey(QtGui.QWidget):
         self.a2 = a2core.A2Obj.inst()
         self.key = key or ''
         self._cfg = None
+        self._edit_mode = False
         self.scope_data = scope_data
 
         self._layout = QtGui.QHBoxLayout(self)
@@ -43,7 +45,7 @@ class A2Hotkey(QtGui.QWidget):
         self._scope_button.setObjectName('A2HotkeyScope')
         self._layout.addWidget(self._hotkey_button)
         self._layout.addWidget(self._scope_button)
-        self._scope_button.clicked.connect(self.build_scope_menu)
+        self._scope_button.clicked.connect(self.popup_scope_dialog)
         self._hotkey_button.clicked.connect(self.popup_dialog)
         self.setText(key)
 
@@ -60,7 +62,7 @@ class A2Hotkey(QtGui.QWidget):
             (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
             (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
             (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
-                self._cfg.get(Vars.scope_mode, 0)]
+            self._cfg.get(Vars.scope_mode, 0)]
 
         if self._cfg.get(Vars.scope_change, True):
             tooltip += SCOPE_CANNOT_CHANGE
@@ -94,8 +96,11 @@ class A2Hotkey(QtGui.QWidget):
         dialog.show()
 
     def build_scope_menu(self):
+        # TODO: we might not need this
         menu = QtGui.QMenu(self)
         mode = self._cfg.get(Vars.scope_mode, 0)
+        if not self.is_edit_mode and not self._cfg.get(Vars.scope_change, True):
+            pass
         if mode == 0:
             menu.addAction('global!')
         elif mode == 1:
@@ -105,9 +110,15 @@ class A2Hotkey(QtGui.QWidget):
         menu.popup(QtGui.QCursor.pos())
 
     def popup_scope_dialog(self):
-        self._dialog = scope_dialog.ScopeDialog(self)
-        self._dialog.okayed.connect(self.on_scope_edit)
-        self._dialog.show()
+        if not self.is_edit_mode and not self._cfg.get(Vars.scope_change, True) and self._cfg.get(Vars.scope_mode, 0) == 0:
+            from a2widget import A2ConfirmDialog
+            A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
+        else:
+            from a2widget.a2hotkey import scope_dialog
+            dialog = scope_dialog.ScopeDialog(self)
+            dialog.set_config(self.get_scope_cfg_copy())
+            dialog.okayed.connect(self.on_scope_edit)
+            dialog.show()
 
     def clear(self):
         """
@@ -115,9 +126,33 @@ class A2Hotkey(QtGui.QWidget):
         """
         self.set_key('')
 
+    @property
     def is_clear(self):
         """
         :return: False if a key is set. True if no key is set.
         :rtype: bool
         """
         return self.key == ''
+
+    @property
+    def is_edit_mode(self):
+        return  self._edit_mode
+
+    def set_edit_mode(self, state):
+        self._edit_mode = state
+
+    def get_scope_cfg_copy(self):
+        current_cfg = {Vars.scope: self._cfg.get(Vars.scope),
+                       Vars.scope_mode: self._cfg.get(Vars.scope_mode)}
+        if self.is_edit_mode:
+            current_cfg[Vars.scope_change] = True
+        else:
+            current_cfg[Vars.scope_change] = self._cfg.get(Vars.scope_change)
+        return current_cfg
+
+    def on_scope_edit(self, scope_cfg):
+        current_cfg = self.get_scope_cfg_copy()
+        if scope_cfg != current_cfg:
+            self._cfg[Vars.scope] = current_cfg[Vars.scope]
+            self._cfg[Vars.scope_mode] = current_cfg[Vars.scope_mode]
+            self.scope_changed.emit(scope_cfg)

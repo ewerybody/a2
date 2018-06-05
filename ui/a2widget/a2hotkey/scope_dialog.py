@@ -14,48 +14,50 @@ SCOPE_ITEMS = ['titles', 'classes', 'processes']
 
 
 class ScopeDialog(QtGui.QDialog):
-    okayed = QtCore.Signal(str)
+    okayed = QtCore.Signal(dict)
 
     def __init__(self, parent, config=None):
         super(ScopeDialog, self).__init__(parent)
         self._cfg = config
         a2ctrl.check_ui_module(scope_dialog_ui)
         self.ui = scope_dialog_ui.Ui_ScopeDialog()
-
         self.ui.setupUi(self)
         self.setModal(True)
         self.setWindowTitle('Setup Scope')
 
-        self.system_scope_data = {}
-        self.get_scope_data()
-
-        self.a2 = a2core.A2Obj.inst()
-        self.help_map = OrderedDict()
-        self.help_map['Help on Scope Setup'] = self.a2.urls.helpScopes
-        self.help_map['Help on AHK WinActive'] = self.a2.urls.ahkWinActive
-        self.help_map['Help on AHK WinTitle'] = self.a2.urls.ahkWinTitle
+        # self.system_scope_data = {}
+        # self.get_scope_data()
+        #
+        # self.a2 = a2core.A2Obj.inst()
+        # self.help_map = OrderedDict()
+        # self.help_map['Help on Scope Setup'] = self.a2.urls.helpScopes
+        # self.help_map['Help on AHK WinActive'] = self.a2.urls.ahkWinActive
+        # self.help_map['Help on AHK WinTitle'] = self.a2.urls.ahkWinTitle
 
         self.setup_ui()
-        self.set_scope_string()
+        # self.set_scope_string()
 
     def setup_ui(self):
-        pos = self.pos()
-        cursor_pos = QtGui.QCursor.pos()
-        pos.setX(cursor_pos.x() - (self.width() / 2))
-        pos.setY(cursor_pos.y() - (self.height() / 2))
-        self.move(pos)
+        # pos = self.pos()
+        # cursor_pos = QtGui.QCursor.pos()
+        # pos.setX(cursor_pos.x() - (self.width() / 2))
+        # pos.setY(cursor_pos.y() - (self.height() / 2))
+        # self.move(pos)
         self.ui.a2ok_button.clicked.connect(self.ok)
         self.ui.a2cancel_button.clicked.connect(self.reject)
-        self.ui.scope_title.setFocus()
+        # self.ui.scope_title.setFocus()
+        #
+        # self.scope_ctrls = OrderedDict()
+        # for name, ctrl in zip(SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class,
+        #                                     self.ui.scope_exe]):
+        #     self.scope_ctrls[name] = ctrl
+        #
+        # for i, ctrl in enumerate(self.scope_ctrls.values()):
+        #     ctrl.textChanged.connect(self.text_change)
+        #     ctrl.menu_about_to_show.connect(partial(self.build_button_menu, i))
 
-        self.scope_ctrls = OrderedDict()
-        for name, ctrl in zip(SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class,
-                                            self.ui.scope_exe]):
-            self.scope_ctrls[name] = ctrl
-
-        for i, ctrl in enumerate(self.scope_ctrls.values()):
-            ctrl.textChanged.connect(self.text_change)
-            ctrl.menu_about_to_show.connect(partial(self.build_button_menu, i))
+    def set_config(self, cfg):
+        self.ui.scope_widget.set_config(cfg)
 
 #        menu = QtGui.QMenu(self)
 #        submenu = QtGui.QMenu(menu)
@@ -148,5 +150,6 @@ class ScopeDialog(QtGui.QDialog):
                     self.system_scope_data[SCOPE_ITEMS[j]].add(this_value)
 
     def ok(self):
-        self.okayed.emit(self.scope_string)
+        cfg = self.ui.scope_widget.get_config()
+        self.okayed.emit(cfg)
         self.accept()

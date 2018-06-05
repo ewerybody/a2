@@ -35,7 +35,10 @@ class DrawCtrl(QtGui.QWidget):
         self._check_args = None
 
         cfg_name = a2util.get_cfg_default_name(self.cfg)
-        self.user_cfg = self.a2.db.get(cfg_name, self.mod.key) or {}
+        try:
+            self.user_cfg = self.a2.db.get(cfg_name, self.mod.key) or {}
+        except AttributeError:
+            self.user_cfg = {}
 
     def get_user_value(self, typ, name=None, default=None):
         """

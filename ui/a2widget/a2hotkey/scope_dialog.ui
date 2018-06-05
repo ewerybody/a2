@@ -6,166 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>722</width>
-    <height>217</height>
+    <width>1063</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
-   <property name="labelAlignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-   <item row="0" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QRadioButton" name="radioButton">
-       <property name="text">
-        <string>only in:</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="radioButton_2">
-       <property name="text">
-        <string>not in:</string>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QToolButton" name="scope_delete">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string notr="true">-</string>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="scope_add">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>50</width>
-         <height>35</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string notr="true">+</string>
-       </property>
-       <property name="autoRaise">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QListWidget" name="cfg_scope">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>40</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string notr="true"/>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="display_only_label">
      <property name="text">
-      <string>title</string>
+      <string>This is for display only! The scope cannot be changed.</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="A2ButtonField" name="scope_title"/>
+   <item>
+    <widget class="ScopeWidget" name="scope_widget" native="true"/>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>window class</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="A2ButtonField" name="scope_class"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>executable</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="A2ButtonField" name="scope_exe"/>
-   </item>
-   <item row="5" column="0" colspan="2">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
       <widget class="QPushButton" name="a2ok_button">
@@ -190,9 +49,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>A2ButtonField</class>
-   <extends>QLineEdit</extends>
-   <header>a2widget.a2button_field</header>
+   <class>ScopeWidget</class>
+   <extends>QWidget</extends>
+   <header>a2widget.a2hotkey.scope_widget</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -201,22 +61,6 @@
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>a2cancel_button</sender>
-   <signal>clicked()</signal>
-   <receiver>ScopeDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>738</x>
-     <y>303</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>843</x>
-     <y>369</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>a2ok_button</sender>
    <signal>clicked()</signal>
@@ -230,6 +74,22 @@
     <hint type="destinationlabel">
      <x>416</x>
      <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>a2cancel_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ScopeDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>738</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>843</x>
+     <y>369</y>
     </hint>
    </hints>
   </connection>

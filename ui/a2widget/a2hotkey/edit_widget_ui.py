@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui'
 #
-# Created: Mon May 28 14:14:42 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Fri Jun  1 15:51:22 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_edit(object):
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(607, 241)
+        edit.resize(830, 363)
         self.edit_layout = QtGui.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
@@ -58,14 +58,18 @@ class Ui_edit(object):
         self.gridLayout.setHorizontalSpacing(15)
         self.gridLayout.setVerticalSpacing(5)
         self.gridLayout.setObjectName("gridLayout")
+        self.cfg_disablable = QtGui.QCheckBox(edit)
+        self.cfg_disablable.setChecked(True)
+        self.cfg_disablable.setObjectName("cfg_disablable")
+        self.gridLayout.addWidget(self.cfg_disablable, 1, 0, 1, 1)
+        self.cfg_scopeChange = QtGui.QCheckBox(edit)
+        self.cfg_scopeChange.setChecked(True)
+        self.cfg_scopeChange.setObjectName("cfg_scopeChange")
+        self.gridLayout.addWidget(self.cfg_scopeChange, 1, 1, 1, 1)
         self.cfg_enabled = QtGui.QCheckBox(edit)
         self.cfg_enabled.setChecked(True)
         self.cfg_enabled.setObjectName("cfg_enabled")
         self.gridLayout.addWidget(self.cfg_enabled, 0, 0, 1, 1)
-        self.cfg_disablable = QtGui.QCheckBox(edit)
-        self.cfg_disablable.setChecked(True)
-        self.cfg_disablable.setObjectName("cfg_disablable")
-        self.gridLayout.addWidget(self.cfg_disablable, 3, 0, 1, 1)
         self.cfg_keyChange = QtGui.QCheckBox(edit)
         self.cfg_keyChange.setChecked(True)
         self.cfg_keyChange.setObjectName("cfg_keyChange")
@@ -73,7 +77,7 @@ class Ui_edit(object):
         self.cfg_multiple = QtGui.QCheckBox(edit)
         self.cfg_multiple.setChecked(True)
         self.cfg_multiple.setObjectName("cfg_multiple")
-        self.gridLayout.addWidget(self.cfg_multiple, 3, 1, 1, 1)
+        self.gridLayout.addWidget(self.cfg_multiple, 2, 0, 1, 1)
         self.gridLayout.setColumnStretch(1, 1)
         self.hotkey_layout.addLayout(self.gridLayout)
         self.edit_layout.setLayout(2, QtGui.QFormLayout.FieldRole, self.hotkey_layout)
@@ -98,11 +102,12 @@ class Ui_edit(object):
         self.cfg_label.setText(QtGui.QApplication.translate("edit", "make some awesome stuff", None, QtGui.QApplication.UnicodeUTF8))
         self.hotkeyLabel.setText(QtGui.QApplication.translate("edit", "hotkey:", None, QtGui.QApplication.UnicodeUTF8))
         self.hotkey_button.setText(QtGui.QApplication.translate("edit", "Win+Shift+A", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_enabled.setText(QtGui.QApplication.translate("edit", "enabled by default", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_disablable.setText(QtGui.QApplication.translate("edit", "can be disabled", None, QtGui.QApplication.UnicodeUTF8))
-        self.cfg_keyChange.setText(QtGui.QApplication.translate("edit", "can be changed", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_scopeChange.setText(QtGui.QApplication.translate("edit", "allow scope change", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_enabled.setText(QtGui.QApplication.translate("edit", "enabled by default", None, QtGui.QApplication.UnicodeUTF8))
+        self.cfg_keyChange.setText(QtGui.QApplication.translate("edit", "allow key change", None, QtGui.QApplication.UnicodeUTF8))
         self.cfg_multiple.setText(QtGui.QApplication.translate("edit", "allow multiple hotkeys", None, QtGui.QApplication.UnicodeUTF8))
         self.functionLabel.setText(QtGui.QApplication.translate("edit", "function:", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2hotkey.edit_func_widget import FuncWidget
+from a2widget.a2hotkey import A2Hotkey

@@ -80,6 +80,7 @@ class Draw(DrawCtrl):
         self.hotkey_button = A2Hotkey(self)
         self._setup_hotkey()
         self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
+        self.hotkey_button.scope_changed.connect(self.scope_change)
         self.hotkey_layout.addWidget(self.hotkey_button)
 
         self.a2option_button = QtGui.QToolButton(self)
@@ -116,7 +117,7 @@ class Draw(DrawCtrl):
         action = menu.addAction('Revert to Default')
         action.setEnabled(False)
 
-        if not self.hotkey_button.is_clear():
+        if not self.hotkey_button.is_clear:
             menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',
                            self.hotkey_button.clear)
 
@@ -162,6 +163,7 @@ class Edit(EditCtrl):
 
         self.ui.hotkey_button.set_config(self.cfg)
         self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)
+        self.ui.hotkey_button.set_edit_mode(True)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
