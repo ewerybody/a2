@@ -22,6 +22,14 @@ files_in_clipboard() {
         return files
 }
 
+is_dir(byref path) {
+    if (InStr(FileExist(path), "D"))
+        return true
+    else
+        return false
+}
+
+
 /**
  * Helper Function
  *     Expand path placeholders
