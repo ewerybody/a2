@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui'
 #
-# Created: Tue May 15 14:20:25 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Wed Jun  6 22:45:45 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_ScopeWidget(object):
     def setupUi(self, ScopeWidget):
         ScopeWidget.setObjectName("ScopeWidget")
-        ScopeWidget.resize(535, 146)
+        ScopeWidget.resize(1052, 275)
         ScopeWidget.setWindowTitle("Form")
         ScopeWidget.setToolTip("")
         self.formLayout = QtGui.QFormLayout(ScopeWidget)
@@ -21,8 +21,12 @@ class Ui_ScopeWidget(object):
         self.formLayout.setObjectName("formLayout")
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.scopeMode_0 = QtGui.QRadioButton(ScopeWidget)
+        self.scopeMode_0.setChecked(True)
+        self.scopeMode_0.setObjectName("scopeMode_0")
+        self.horizontalLayout_2.addWidget(self.scopeMode_0)
         self.scopeMode_1 = QtGui.QRadioButton(ScopeWidget)
-        self.scopeMode_1.setChecked(True)
+        self.scopeMode_1.setChecked(False)
         self.scopeMode_1.setObjectName("scopeMode_1")
         self.horizontalLayout_2.addWidget(self.scopeMode_1)
         self.scopeMode_2 = QtGui.QRadioButton(ScopeWidget)
@@ -103,8 +107,9 @@ class Ui_ScopeWidget(object):
         QtCore.QMetaObject.connectSlotsByName(ScopeWidget)
 
     def retranslateUi(self, ScopeWidget):
-        self.scopeMode_1.setText(QtGui.QApplication.translate("ScopeWidget", "only in:", None, QtGui.QApplication.UnicodeUTF8))
-        self.scopeMode_2.setText(QtGui.QApplication.translate("ScopeWidget", "not in:", None, QtGui.QApplication.UnicodeUTF8))
+        self.scopeMode_0.setText(QtGui.QApplication.translate("ScopeWidget", "golbal", None, QtGui.QApplication.UnicodeUTF8))
+        self.scopeMode_1.setText(QtGui.QApplication.translate("ScopeWidget", "include:", None, QtGui.QApplication.UnicodeUTF8))
+        self.scopeMode_2.setText(QtGui.QApplication.translate("ScopeWidget", "exclude:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("ScopeWidget", "title", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("ScopeWidget", "window class", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("ScopeWidget", "executable", None, QtGui.QApplication.UnicodeUTF8))

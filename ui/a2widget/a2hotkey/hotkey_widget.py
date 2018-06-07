@@ -45,7 +45,7 @@ class A2Hotkey(QtGui.QWidget):
         self._scope_button.setObjectName('A2HotkeyScope')
         self._layout.addWidget(self._hotkey_button)
         self._layout.addWidget(self._scope_button)
-        self._scope_button.clicked.connect(self.popup_scope_dialog)
+        self._scope_button.clicked.connect(self.scope_clicked)
         self._hotkey_button.clicked.connect(self.popup_dialog)
         self.setText(key)
 
@@ -109,14 +109,15 @@ class A2Hotkey(QtGui.QWidget):
             menu.addAction('scope not in ...')
         menu.popup(QtGui.QCursor.pos())
 
-    def popup_scope_dialog(self):
-        if not self.is_edit_mode and not self._cfg.get(Vars.scope_change, True) and self._cfg.get(Vars.scope_mode, 0) == 0:
+    def scope_clicked(self):
+        is_global = self._cfg.get(Vars.scope_mode, 0) == 0
+        scope_change =  self._cfg.get(Vars.scope_change, True)
+        if not self.is_edit_mode and not scope_change and is_global:
             from a2widget import A2ConfirmDialog
             A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
         else:
             from a2widget.a2hotkey import scope_dialog
-            dialog = scope_dialog.ScopeDialog(self)
-            dialog.set_config(self.get_scope_cfg_copy())
+            dialog = scope_dialog.ScopeDialog(self, self.get_scope_cfg_copy())
             dialog.okayed.connect(self.on_scope_edit)
             dialog.show()
 

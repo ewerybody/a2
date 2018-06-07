@@ -4,7 +4,7 @@ from PySide import QtGui, QtCore
 import a2ctrl
 import a2element.hotkey
 from a2widget import A2CodeField
-from a2widget.a2hotkey import hotkey_widget, edit_widget_ui
+from a2widget.a2hotkey import scope_widget_ui, edit_widget_ui
 from copy import deepcopy
 
 
@@ -31,6 +31,7 @@ class Demo(QtGui.QMainWindow):
         super(Demo, self).__init__()
 
         a2ctrl.check_ui_module(edit_widget_ui)
+        a2ctrl.check_ui_module(scope_widget_ui)
 
         w = QtGui.QWidget(self)
         self.setCentralWidget(w)

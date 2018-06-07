@@ -15,6 +15,16 @@ LIST_LINE_HEIGHT = None
 SCOPE_ITEMS = ['titles', 'classes', 'processes']
 
 
+def get_scope_string(title, class_name, process):
+    items = [title]
+    if class_name:
+        items.append('ahk_class ' + class_name)
+    if process:
+        items.append('ahk_exe ' + process)
+    scope_string = ' '.join(items).strip()
+    return scope_string
+
+
 class ScopeWidget(QtGui.QWidget):
     changed = QtCore.Signal()
     _scope_mode_changed = QtCore.Signal(bool)
@@ -31,7 +41,7 @@ class ScopeWidget(QtGui.QWidget):
         self.set_config()
 
     def on_text_change(self):
-        scope_string = self.get_scope_string(
+        scope_string = get_scope_string(
             self.ui.scope_title.text(), self.ui.scope_class.text(), self.ui.scope_exe.text())
         self.set_scope_string(scope_string)
         self.scope_update()
@@ -42,15 +52,6 @@ class ScopeWidget(QtGui.QWidget):
             item = self.ui.cfg_scope.itemFromIndex(selected_idxs[0])
             item.setText(scope_string)
 
-    def get_scope_string(self, title, class_name, process):
-        items = [title]
-        if class_name:
-            items.append('ahk_class ' + class_name)
-        if process:
-            items.append('ahk_exe ' + process)
-        scope_string = ' '.join(items).strip()
-        return scope_string
-
     def set_config(self, config_dict=None):
         if config_dict is not None:
             self._cfg = config_dict
@@ -58,7 +59,7 @@ class ScopeWidget(QtGui.QWidget):
         if self._cfg is None:
             return
 
-        a2ctrl.connect.control_list([self.ui.scopeMode_1, self.ui.scopeMode_2],
+        a2ctrl.connect.control_list([self.ui.scopeMode_0, self.ui.scopeMode_1, self.ui.scopeMode_2],
                                     self._cfg, self._scope_mode_changed)
         self.ui.cfg_scope.addItems(self._cfg.get(Vars.scope, []))
         item0 = self.ui.cfg_scope.item(0)

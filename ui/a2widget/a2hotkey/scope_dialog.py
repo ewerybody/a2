@@ -6,6 +6,7 @@ from collections import OrderedDict
 from PySide import QtGui, QtCore
 
 from . import scope_dialog_ui
+from .hotkey_widget import Vars
 from functools import partial
 
 
@@ -16,15 +17,16 @@ SCOPE_ITEMS = ['titles', 'classes', 'processes']
 class ScopeDialog(QtGui.QDialog):
     okayed = QtCore.Signal(dict)
 
-    def __init__(self, parent, config=None):
+    def __init__(self, parent, config):
         super(ScopeDialog, self).__init__(parent)
-        self._cfg = config
         a2ctrl.check_ui_module(scope_dialog_ui)
         self.ui = scope_dialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
         self.setModal(True)
         self.setWindowTitle('Setup Scope')
+        self.ui.scope_widget.set_config(config)
 
+        self.ui.display_only_label.setVisible(not config.get(Vars.scope_change, False))
         # self.system_scope_data = {}
         # self.get_scope_data()
         #
@@ -38,13 +40,14 @@ class ScopeDialog(QtGui.QDialog):
         # self.set_scope_string()
 
     def setup_ui(self):
+        self.ui.a2ok_button.clicked.connect(self.ok)
+        self.ui.a2cancel_button.clicked.connect(self.reject)
+
         # pos = self.pos()
         # cursor_pos = QtGui.QCursor.pos()
         # pos.setX(cursor_pos.x() - (self.width() / 2))
         # pos.setY(cursor_pos.y() - (self.height() / 2))
         # self.move(pos)
-        self.ui.a2ok_button.clicked.connect(self.ok)
-        self.ui.a2cancel_button.clicked.connect(self.reject)
         # self.ui.scope_title.setFocus()
         #
         # self.scope_ctrls = OrderedDict()
@@ -55,10 +58,6 @@ class ScopeDialog(QtGui.QDialog):
         # for i, ctrl in enumerate(self.scope_ctrls.values()):
         #     ctrl.textChanged.connect(self.text_change)
         #     ctrl.menu_about_to_show.connect(partial(self.build_button_menu, i))
-
-    def set_config(self, cfg):
-        self.ui.scope_widget.set_config(cfg)
-
 #        menu = QtGui.QMenu(self)
 #        submenu = QtGui.QMenu(menu)
 #        submenu.setTitle('all in use...')
