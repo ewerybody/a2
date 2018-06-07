@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_dialog.ui'
 #
-# Created: Fri Jun  1 15:32:50 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Thu Jun  7 20:33:59 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,8 +12,10 @@ from PySide import QtCore, QtGui
 class Ui_ScopeDialog(object):
     def setupUi(self, ScopeDialog):
         ScopeDialog.setObjectName("ScopeDialog")
-        ScopeDialog.resize(1063, 300)
+        ScopeDialog.resize(472, 131)
+        ScopeDialog.setModal(True)
         self.verticalLayout = QtGui.QVBoxLayout(ScopeDialog)
+        self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
         self.verticalLayout.setObjectName("verticalLayout")
         self.display_only_label = QtGui.QLabel(ScopeDialog)
         self.display_only_label.setObjectName("display_only_label")
@@ -41,7 +43,7 @@ class Ui_ScopeDialog(object):
 
     def retranslateUi(self, ScopeDialog):
         ScopeDialog.setWindowTitle(QtGui.QApplication.translate("ScopeDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.display_only_label.setText(QtGui.QApplication.translate("ScopeDialog", "This is for display only! The scope cannot be changed.", None, QtGui.QApplication.UnicodeUTF8))
+        self.display_only_label.setText(QtGui.QApplication.translate("ScopeDialog", "<html><head/><body><p>This is for <span style=\" font-weight:600;\">display only</span>! The scope <span style=\" font-weight:600;\">cannot</span> be changed.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.a2ok_button.setText(QtGui.QApplication.translate("ScopeDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
         self.a2cancel_button.setText(QtGui.QApplication.translate("ScopeDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
 

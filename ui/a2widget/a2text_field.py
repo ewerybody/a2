@@ -10,9 +10,9 @@ from PySide import QtGui, QtCore
 
 class A2TextField(QtGui.QPlainTextEdit):
     """
-    Can be set in QDesigner from PlainTextEdit.
-    Has an editing_finished-signal similar to the one on the Line edit. The difference is:
-    The trigger here is timed and on focus loss. Enter adds a new line as expected.
+    Can be set in QDesigner from PlainTextEdit. Has an editing_finished-signal
+    similar to the one on the Line edit. The difference is: The trigger here
+    is timed and on focus loss. Enter adds a new line as expected.
     """
     editing_finished = QtCore.Signal()
 

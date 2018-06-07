@@ -22,7 +22,6 @@ class ScopeDialog(QtGui.QDialog):
         a2ctrl.check_ui_module(scope_dialog_ui)
         self.ui = scope_dialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
-        self.setModal(True)
         self.setWindowTitle('Setup Scope')
         self.ui.scope_widget.set_config(config)
 
