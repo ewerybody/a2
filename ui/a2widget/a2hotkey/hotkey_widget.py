@@ -2,8 +2,8 @@ import a2core
 from PySide import QtGui, QtCore
 
 import a2ctrl
-from .simple_dialog import HotkeyDialog1
-from .dialogs import HotKeyBoard
+from a2widget.a2hotkey.simple_dialog import HotkeyDialog1
+from a2widget.a2hotkey.dialogs import HotKeyBoard
 
 SCOPE_TOOLTIP_GLOBAL = 'Hotkey scope is set "global" so it works anywhere.'
 SCOPE_TOOLTIP_INCLUDE = 'Hotkey scope is set to work only in specific windows.'
@@ -111,10 +111,11 @@ class A2Hotkey(QtGui.QWidget):
 
     def scope_clicked(self):
         is_global = self._cfg.get(Vars.scope_mode, 0) == 0
-        scope_change =  self._cfg.get(Vars.scope_change, True)
+        scope_change = self._cfg.get(Vars.scope_change, True)
         if not self.is_edit_mode and not scope_change and is_global:
             from a2widget import A2ConfirmDialog
-            A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
+            dialog = A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
+            dialog.show()
         else:
             from a2widget.a2hotkey import scope_dialog
             dialog = scope_dialog.ScopeDialog(self, self.get_scope_cfg_copy())
@@ -137,7 +138,7 @@ class A2Hotkey(QtGui.QWidget):
 
     @property
     def is_edit_mode(self):
-        return  self._edit_mode
+        return self._edit_mode
 
     def set_edit_mode(self, state):
         self._edit_mode = state
@@ -154,6 +155,11 @@ class A2Hotkey(QtGui.QWidget):
     def on_scope_edit(self, scope_cfg):
         current_cfg = self.get_scope_cfg_copy()
         if scope_cfg != current_cfg:
-            self._cfg[Vars.scope] = current_cfg[Vars.scope]
-            self._cfg[Vars.scope_mode] = current_cfg[Vars.scope_mode]
+            self._cfg[Vars.scope] = scope_cfg[Vars.scope]
+            self._cfg[Vars.scope_mode] = scope_cfg[Vars.scope_mode]
             self.scope_changed.emit(scope_cfg)
+
+
+if __name__ == '__main__':
+    import a2widget.demo.scope_demo
+    a2widget.demo.scope_demo.show()
