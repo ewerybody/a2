@@ -57,18 +57,8 @@ class A2Hotkey(QtGui.QWidget):
     def set_config(self, config_dict):
         self._cfg = config_dict or {}
 
-        # selecting the right items for this configuration
-        tooltip, icon = [
-            (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
-            (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
-            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
-            self._cfg.get(Vars.scope_mode, 0)]
+        self.setup_scope_button()
 
-        if self._cfg.get(Vars.scope_change, True):
-            tooltip += SCOPE_CANNOT_CHANGE
-
-        self._scope_button.setIcon(icon)
-        self._scope_button.setToolTip(tooltip)
         self.key = self._cfg.get('key', '')
         self.setText(self.key)
 
@@ -159,6 +149,23 @@ class A2Hotkey(QtGui.QWidget):
             self._cfg[Vars.scope] = scope_list
             self._cfg[Vars.scope_mode] = scope_mode
             self.scope_changed.emit(scope_list, scope_mode)
+            self.setup_scope_button()
+
+    def setup_scope_button(self):
+        """
+        selecting the right items for this configuration
+        """
+        tooltip, icon = [
+            (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
+            (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
+            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
+            self._cfg.get(Vars.scope_mode, 0)]
+
+        if self._cfg.get(Vars.scope_change, True):
+            tooltip += SCOPE_CANNOT_CHANGE
+
+        self._scope_button.setIcon(icon)
+        self._scope_button.setToolTip(tooltip)
 
 
 if __name__ == '__main__':
