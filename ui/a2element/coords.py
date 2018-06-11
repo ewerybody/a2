@@ -26,7 +26,7 @@ class Draw(DrawCtrl):
         self.label = QtGui.QLabel(self.cfg.get('label', ''), self)
         self.main_layout.addWidget(self.label)
 
-        self.value_ctrl = A2CoordsField()
+        self.value_ctrl = A2CoordsField(self)
         self.value_ctrl.value = self.value
         self.main_layout.addWidget(self.value_ctrl)
         self.value_ctrl.changed.connect(self.delayed_check)
@@ -96,5 +96,5 @@ def get_settings(module_key, cfg, db_dict, user_cfg):
 
     * "includes" - a simple list with ahk script paths
     """
-    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=list, default=[0, 0])
     db_dict.setdefault('variables', {})[cfg['name']] = value
