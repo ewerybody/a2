@@ -53,5 +53,5 @@ class Edit(EditCtrl):
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
-    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=bool, default=False)
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=bool, default=cfg.get('value', False))
     db_dict.setdefault('variables', {})[cfg['name']] = value
