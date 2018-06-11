@@ -20,7 +20,7 @@ class Vars(object):
 
 class A2Hotkey(QtGui.QWidget):
     hotkey_changed = QtCore.Signal(str)
-    scope_changed = QtCore.Signal(dict)
+    scope_changed = QtCore.Signal(list, str)
 
     def __init__(self, parent=None, key=None, scope_data=None):
         """
@@ -155,9 +155,10 @@ class A2Hotkey(QtGui.QWidget):
     def on_scope_edit(self, scope_cfg):
         current_cfg = self.get_scope_cfg_copy()
         if scope_cfg != current_cfg:
-            self._cfg[Vars.scope] = scope_cfg[Vars.scope]
-            self._cfg[Vars.scope_mode] = scope_cfg[Vars.scope_mode]
-            self.scope_changed.emit(scope_cfg)
+            scope_list, scope_mode = scope_cfg[Vars.scope], scope_cfg[Vars.scope_mode]
+            self._cfg[Vars.scope] = scope_list
+            self._cfg[Vars.scope_mode] = scope_mode
+            self.scope_changed.emit(scope_list, scope_mode)
 
 
 if __name__ == '__main__':
