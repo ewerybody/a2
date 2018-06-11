@@ -161,7 +161,7 @@ class A2Hotkey(QtGui.QWidget):
             (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
             self._cfg.get(Vars.scope_mode, 0)]
 
-        if self._cfg.get(Vars.scope_change, True):
+        if not self._cfg.get(Vars.scope_change, True):
             tooltip += SCOPE_CANNOT_CHANGE
 
         self._scope_button.setIcon(icon)
