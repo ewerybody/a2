@@ -50,8 +50,8 @@ class A2db(object):
         available. So return [0] fails! And not fetch. But ok thats good :]
         :param key: keyName in the "key" column
         :param table: tableName
-        :param: check: will look for the key in table before even trying to fetch
-        :param: asjson: Only for fixing legacy stuff with the db. Just gets the string from a field
+        :param check: will look for the key in table before even trying to fetch
+        :param asjson: Only for fixing legacy stuff with the db. Just gets the string from a field
         :return: string of the data or empty string
         """
         if check and table not in self.tables():
@@ -182,7 +182,7 @@ class A2db(object):
         """
         Writes differences from defaults_dict to the db.
 
-        To keep the data in db at a minumum. The key is deleted
+        To keep the data in db at a minimum the key is deleted
         when there are no changes from the default_dict.
         """
         current = self.get(key, table) or {}

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
-    <height>410</height>
+    <width>830</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,22 @@
    <property name="labelAlignment">
     <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
    </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="internalNameLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>internal name:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="1">
     <widget class="QLineEdit" name="cfg_name">
      <property name="text">
@@ -27,10 +43,48 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="displayLabelLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>display label:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="cfg_label">
      <property name="text">
       <string>make some awesome stuff</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="hotkeyLabel">
+     <property name="minimumSize">
+      <size>
+       <width>100</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>hotkey:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -71,6 +125,26 @@
        <property name="verticalSpacing">
         <number>5</number>
        </property>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="cfg_disablable">
+         <property name="text">
+          <string>can be disabled</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="cfg_scopeChange">
+         <property name="text">
+          <string>allow scope change</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="cfg_enabled">
          <property name="text">
@@ -81,27 +155,17 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="cfg_disablable">
-         <property name="text">
-          <string>can be disabled</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1">
         <widget class="QCheckBox" name="cfg_keyChange">
          <property name="text">
-          <string>can be changed</string>
+          <string>allow key change</string>
          </property>
          <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="2" column="0">
         <widget class="QCheckBox" name="cfg_multiple">
          <property name="text">
           <string>allow multiple hotkeys</string>
@@ -137,87 +201,8 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="internalNameLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>internal name:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="displayLabelLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>display label:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="hotkeyLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>hotkey:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="1">
     <widget class="FuncWidget" name="func_widget" native="true"/>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="scopeLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>scope:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="ScopeWidget" name="scope_widget" native="true"/>
    </item>
   </layout>
  </widget>
@@ -231,12 +216,6 @@
    <class>FuncWidget</class>
    <extends>QWidget</extends>
    <header>a2widget.a2hotkey.edit_func_widget</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ScopeWidget</class>
-   <extends>QWidget</extends>
-   <header>a2widget.a2hotkey.edit_scope_widget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -2,7 +2,6 @@
 Functionality all around managing the Autohotkey runtime of a2.
 """
 import os
-import time
 import enum
 import subprocess
 

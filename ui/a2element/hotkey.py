@@ -1,3 +1,22 @@
+"""
+A hotkey configuration can have a lot of stuff to it:
+
+ cfg['typ'] == 'hotkey':
+ cfg['enabled'] = True
+ cfg['disablable'] = True
+ cfg['key'] = 'Win+G'
+ cfg['keyChange'] = True
+ cfg['multiple'] = True
+ cfg['scope'] = ''
+ cfg['scopeChange'] = True
+ # functionMode can be: ahk, file, key
+ # to execute 0: code, 1: run/open up sth, 2: send keystroke
+ cfg['functionMode'] = 0,
+ cfg['name'] = 'someModule_hotkey1',
+ cfg['label'] = 'do awesome stuff on:'
+
+"""
+
 from PySide import QtCore, QtGui
 
 import a2ctrl
@@ -16,19 +35,6 @@ class Draw(DrawCtrl):
     User ui for a Hotkey control.
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
         additional shortcuts, controls to change scope if that's enabled...
-
-    cfg['label'] == 'Hotkeytest with a MsgBox'
-    cfg['typ'] == 'hotkey':
-    cfg['name'] == 'modnameHotkey1'
-    cfg['enabled'] = True
-    cfg['disablable'] = True
-    cfg['key'] = 'Win+G'
-    cfg['keyChange'] = True
-    cfg['multiple'] = True
-    cfg['scope'] = ''
-    cfg['scopeChange'] = True
-    # mode can be: ahk, file, key: to execute code, open up sth, send keystroke
-    cfg['mode'] = 'ahk'
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
@@ -36,9 +42,8 @@ class Draw(DrawCtrl):
         self._setup_ui()
 
     def _setup_hotkey(self):
-        self.hotkey_button.set_key(self.get_user_value(str, 'key'))
-        self.hotkey_button.setEnabled(self.cfg['keyChange'])
-        self.hotkey_button.scope_data = self.cfg
+        user_dict = self.get_user_dict()
+        self.hotkey_button.set_config(user_dict)
 
     def _setup_ui(self):
         self.ctrl_layout = QtGui.QHBoxLayout(self)
@@ -52,7 +57,11 @@ class Draw(DrawCtrl):
             state = self.get_user_value(bool, 'enabled', True)
             self.check = QtGui.QCheckBox(self)
 
-            size = self.main.css_values['icon_size']
+            try:
+                size = self.main.css_values['icon_size']
+            except AttributeError:
+                size = 35
+
             self.check.setMinimumSize(QtCore.QSize(size, size))
             self.check.setMaximumSize(QtCore.QSize(size, size))
 
@@ -71,6 +80,7 @@ class Draw(DrawCtrl):
         self.hotkey_button = A2Hotkey(self)
         self._setup_hotkey()
         self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
+        self.hotkey_button.scope_changed.connect(self.scope_change)
         self.hotkey_layout.addWidget(self.hotkey_button)
 
         self.a2option_button = QtGui.QToolButton(self)
@@ -90,8 +100,13 @@ class Draw(DrawCtrl):
         self.set_user_value(state, 'enabled')
         self.change('hotkeys')
 
-    def hotkey_change(self, newKey):
-        self.set_user_value(newKey, 'key')
+    def hotkey_change(self, new_key):
+        self.set_user_value(new_key, 'key')
+        self.change('hotkeys')
+
+    def scope_change(self, scope, scope_mode):
+        self.set_user_value(scope, 'scope')
+        self.set_user_value(scope_mode, 'scopeMode')
         self.change('hotkeys')
 
     def build_hotkey_options_menu(self):
@@ -102,7 +117,7 @@ class Draw(DrawCtrl):
         action = menu.addAction('Revert to Default')
         action.setEnabled(False)
 
-        if not self.hotkey_button.is_clear():
+        if not self.hotkey_button.is_clear:
             menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',
                            self.hotkey_button.clear)
 
@@ -125,49 +140,38 @@ class Edit(EditCtrl):
     """
     Oh boy... this has so many implications but it has to be done. Let's do it!
     First: Have the edit ctrl, then the display one, Then we need checks when a mod
-    config change is about to be comitted. The change will not be able to be OKed as long
+    config change is about to be committed. The change will not be able to be OKed as long
     as there are conflicts with hotkeys, or missing includes or ...
-
-    elif cfg['typ'] == 'hotkey':
-        cfg['enabled'] = True
-        cfg['disablable'] = True
-        cfg['key'] = 'Win+G'
-        cfg['keyChange'] = True
-        cfg['multiple'] = True
-        cfg['scope'] = ''
-        cfg['scopeChange'] = True
-        # mode can be: ahk, file, key
-        # to execute code, open up sth, send keystroke
-        cfg['mode'] = 'ahk',
-        cfg['name'] = 'someModule_hotkey1',
-        cfg['label'] = 'do awesome stuff on:'
     """
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
 
         # deferred because pretty huge & not needed by non dev users
-        from a2widget.a2hotkey import edit_widget_ui, edit_scope_widget_ui, edit_func_widget_ui
-        for module in [edit_scope_widget_ui, edit_func_widget_ui, edit_widget_ui]:
+        from a2widget.a2hotkey import edit_widget_ui, edit_func_widget_ui
+        for module in [edit_func_widget_ui, edit_widget_ui]:
             a2ctrl.check_ui_module(module)
 
         self.ui = edit_widget_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        for key, value in [('key', DEFAULT_HOTKEY), ('mode', 'ahk')]:
+        for key, value in [('key', DEFAULT_HOTKEY),
+                           ('functionMode', 0)]:
             if key not in self.cfg:
                 self.cfg[key] = value
 
         self.helpUrl = self.a2.urls.helpHotkey
 
-        self.ui.hotkey_button.set_key(cfg.get('key') or '')
+        self.ui.hotkey_button.set_config(self.cfg)
         self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)
+        self.ui.hotkey_button.set_edit_mode(True)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
-        a2ctrl.connect.cfg_controls(self.cfg, self.ui.scope_widget.ui)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui.func_widget.ui)
-        self.ui.scope_widget.set_config(self.cfg)
         self.ui.func_widget.set_config(self.cfg)
+
+        # a2ctrl.connect.cfg_controls(self.cfg, self.ui.scope_widget.ui)
+        # self.ui.scope_widget.set_config(self.cfg)
 
         self.disablable_check()
         self.ui.cfg_disablable.clicked[bool].connect(self.disablable_check)
@@ -196,11 +200,13 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().hotkey
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key', str)
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, 'scope', list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, 'scopeMode', int)
-    function = cfg.get(['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']], '')
+    function = cfg.get(
+        ['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']],
+        '')
 
     db_dict.setdefault('hotkeys', {})
     db_dict['hotkeys'].setdefault(scope_mode, [])

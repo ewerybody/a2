@@ -258,17 +258,22 @@ class KeyboardDialogBase(QtGui.QDialog):
             en_us.main(self)
 
     def refresh_style(self):
-        scale = self.a2.win.css_values['scale']
+        try:
+            css_values = self.a2.win.css_values
+        except AttributeError:
+            return
+
+        scale = css_values['scale']
         values = a2util.json_read(os.path.join(_HERE, 'style_values.json'))
         # scale values for current screen, skipping the ones with "_*"
         for key, value in values.items():
             if not key.startswith('_'):
                 values[key] = value * scale
         # calculating some more values
-        values['color'] = self.a2.win.css_values['color_yellow']
-        values['color_button'] = self.a2.win.css_values['color_button']
-        values['font_size'] = self.a2.win.css_values['font_size'] * values['_font_size_factor']
-        values['font_size_small'] = self.a2.win.css_values['font_size'] * values['_small_font_factor']
+        values['color'] = css_values['color_yellow']
+        values['color_button'] = css_values['color_button']
+        values['font_size'] = css_values['font_size'] * values['_font_size_factor']
+        values['font_size_small'] = css_values['font_size'] * values['_small_font_factor']
         values['long_key'] = values['key_height'] * 2 + values['small_spacing']
         values['wide_key'] = values['key_width'] * 2 + values['small_spacing']
 
@@ -280,9 +285,9 @@ class KeyboardDialogBase(QtGui.QDialog):
         main_css = load_css('main') % values
         self.ui.keys_widget.setStyleSheet(main_css)
 
-        cursorblock_css = load_css('cursorblock') % values
-        self.cursor_block_widget.setStyleSheet(cursorblock_css)
-        self.numpad_block_widget.setStyleSheet(cursorblock_css)
+        cursor_block_css = load_css('cursorblock') % values
+        self.cursor_block_widget.setStyleSheet(cursor_block_css)
+        self.numpad_block_widget.setStyleSheet(cursor_block_css)
 
     def _log_size(self):
         """
@@ -302,11 +307,14 @@ class KeyboardDialogBase(QtGui.QDialog):
             1476 mouse 346
             1778 both 648
         """
-        dpi = QtGui.qApp.desktop().physicalDpiX()
-        scale = self.a2.win.css_values['scale']
-        msg = ('hotkey dialog stats:\n   dpi: %i\n scale: %f\n   w/h: %i/%i'
-               % (dpi, scale, self.width(), self.height()))
-        log.info(msg)
+        try:
+            dpi = QtGui.qApp.desktop().physicalDpiX()
+            scale = self.a2.win.css_values['scale']
+            msg = ('hotkey dialog stats:\n   dpi: %i\n scale: %f\n   w/h: %i/%i'
+                   % (dpi, scale, self.width(), self.height()))
+            log.info(msg)
+        except AttributeError:
+            pass
 
 
 class CursorBlockWidget(QtGui.QWidget):

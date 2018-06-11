@@ -67,6 +67,9 @@ class A2ButtonField(QtGui.QWidget):
     def insert(self, text):
         self.field.insert(text)
 
+    def setFocus(self):
+        self.field.setFocus()
+
 
 if __name__ == '__main__':
     import a2widget.demo.a2button_field

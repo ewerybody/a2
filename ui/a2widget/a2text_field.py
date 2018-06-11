@@ -4,14 +4,15 @@ Text field that automatically gets bigger the more lines you add.
 @created: 01.11.2016
 @author: eric
 """
+import pprint
 from PySide import QtGui, QtCore
 
 
 class A2TextField(QtGui.QPlainTextEdit):
     """
-    Can be set in QDesigner from PlainTextEdit.
-    Has an editing_finished-signal similar to the one on the Line edit. The difference is:
-    The trigger here is timed and on focus loss. Enter adds a new line as expected.
+    Can be set in QDesigner from PlainTextEdit. Has an editing_finished-signal
+    similar to the one on the Line edit. The difference is: The trigger here
+    is timed and on focus loss. Enter adds a new line as expected.
     """
     editing_finished = QtCore.Signal()
 
@@ -53,7 +54,11 @@ class A2TextField(QtGui.QPlainTextEdit):
 
     def setText(self, this):
         self._internal_change = True
-        self.setPlainText(this)
+        try:
+            self.setPlainText(this)
+        except TypeError:
+            self.setPlainText(pprint.pformat(this))
+
         self._set_height_to_block_count()
         self._internal_change = False
 
@@ -69,7 +74,7 @@ class A2TextField(QtGui.QPlainTextEdit):
         else:
             cursor_height = self._cursor_height
 
-        magic_height = (cursor_height / 3) + 5
+        magic_height = (cursor_height / 3) + 8
         height = (cursor_height * block_count) + magic_height
 
         self.setMinimumHeight(height)
@@ -89,7 +94,7 @@ class A2TextField(QtGui.QPlainTextEdit):
 
 class A2CodeField(A2TextField):
     """
-    Just subclassed to be identifyable via CSS to apply a monospace font.
+    Just subclassed to be identifiable via CSS to apply a monospaced font.
     """
     def __init__(self, parent=None, *args, **kwargs):
         A2TextField.__init__(self, parent, *args, **kwargs)

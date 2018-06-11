@@ -1,12 +1,5 @@
-"""
-a2element._common
-
-@created: Sep 3, 2016
-@author: eRiC
-"""
 import os
 import time
-import threading
 from copy import deepcopy
 from functools import partial
 
@@ -14,18 +7,19 @@ from PySide import QtGui, QtCore
 
 import a2core
 import a2util
-from a2ctrl.icons import Icons
-from a2ctrl import get_cfg_value, get_local_element
+import a2ctrl
+from a2ctrl import Icons
 
 
 class DrawCtrl(QtGui.QWidget):
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
-
-    :param bool _init_ctrl: Set False when using multiple inheritance to keep it from calling super() again.
     """
     def __init__(self, main, cfg, mod, _init_ctrl=True):
+        """"
+        :param bool _init_ctrl: Set False when using multiple inheritance to keep it from calling super() again.
+        """
         if _init_ctrl:
             super(DrawCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
@@ -34,20 +28,33 @@ class DrawCtrl(QtGui.QWidget):
         self.mod = mod
         self.check_delay = 250
         self._check_scheduled = False
-        cfg_name = a2util.get_cfg_default_name(self.cfg)
-        self.user_cfg = self.a2.db.get(cfg_name, self.mod.key)
         self.is_expandable_widget = False
         self._check_timer = QtCore.QTimer()
         self._check_timer.setInterval(self.check_delay)
         self._check_timer.timeout.connect(self._check)
         self._check_args = None
 
+        cfg_name = a2util.get_cfg_default_name(self.cfg)
+        try:
+            self.user_cfg = self.a2.db.get(cfg_name, self.mod.key) or {}
+        except AttributeError:
+            self.user_cfg = {}
+
     def get_user_value(self, typ, name=None, default=None):
         """
         Get a user value. 'value'
         Name is 'value' by default so you can just get the default value by stating the type. Voila!
         """
-        return get_cfg_value(self.cfg, self.user_cfg, name, typ, default)
+        return a2ctrl.get_cfg_value(self.cfg, self.user_cfg, name, typ, default)
+
+    def get_user_dict(self):
+        user_dict = {}
+        for key, value in self.cfg.items():
+            try:
+                user_dict[key] = self.user_cfg[key]
+            except (TypeError, KeyError):
+                user_dict[key] = value
+        return user_dict
 
     def set_user_value(self, this, name=None):
         """
@@ -177,8 +184,13 @@ class EditCtrl(QtGui.QGroupBox):
         self._ctrl_layout = QtGui.QGridLayout(self)
         self._ctrl_layout.setContentsMargins(0, 0, 0, 0)
         self._sub_layout = QtGui.QHBoxLayout()
-        margin = self.main.css_values['margin']
-        self._sub_layout.setContentsMargins(margin, margin, margin, margin)
+
+        try:
+            margin = self.main.css_values['margin']
+            self._sub_layout.setContentsMargins(margin, margin, margin, margin)
+        except AttributeError:
+            pass
+
         self.mainWidget = QtGui.QWidget(self)
         self._sub_layout.addWidget(self.mainWidget)
         self._ctrl_layout.addLayout(self._sub_layout, 0, 0, 1, 1)
@@ -260,7 +272,6 @@ class EditCtrl(QtGui.QGroupBox):
         # self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
         # print('scroll_to_bottom...')
         # QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
-        # threading.Thread(target=self._scroll_to_bottom).start()
         pass
 
     def _scroll_to_bottom(self, *args):
@@ -373,7 +384,7 @@ class EditAddElem(QtGui.QWidget):
             if ext.lower() != '.py':
                 continue
 
-            element_objects = get_local_element(itempath)
+            element_objects = get_local_element.get_local_element(itempath)
             if element_objects is not None and 'Edit' in element_objects:
                 name = element_objects['Edit'].element_name()
                 icon = element_objects['Edit'].element_icon()

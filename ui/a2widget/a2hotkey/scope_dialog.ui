@@ -6,51 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>413</width>
-    <height>152</height>
+    <width>472</width>
+    <height>131</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
    </property>
-   <property name="labelAlignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-   </property>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
+   <item>
+    <widget class="QLabel" name="display_only_label">
      <property name="text">
-      <string>title</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is for &lt;span style=&quot; font-weight:600;&quot;&gt;display only&lt;/span&gt;! The scope &lt;span style=&quot; font-weight:600;&quot;&gt;cannot&lt;/span&gt; be changed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="A2ButtonField" name="scope_title"/>
+   <item>
+    <widget class="ScopeWidget" name="scope_widget" native="true"/>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>window class</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="A2ButtonField" name="scope_class"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>executable</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="A2ButtonField" name="scope_exe"/>
-   </item>
-   <item row="4" column="0" colspan="2">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,0">
      <item>
       <widget class="QPushButton" name="a2ok_button">
@@ -71,23 +51,14 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="A2ButtonField" name="scope_string">
-     <property name="toolTip">
-      <string notr="true"/>
-     </property>
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>A2ButtonField</class>
-   <extends>QLineEdit</extends>
-   <header>a2widget.a2button_field</header>
+   <class>ScopeWidget</class>
+   <extends>QWidget</extends>
+   <header>a2widget.a2hotkey.scope_widget</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -95,5 +66,38 @@
   <tabstop>a2cancel_button</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>a2ok_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ScopeDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>425</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>357</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>a2cancel_button</sender>
+   <signal>clicked()</signal>
+   <receiver>ScopeDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>738</x>
+     <y>303</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>843</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

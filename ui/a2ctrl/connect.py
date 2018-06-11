@@ -104,6 +104,12 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
 
     elif isinstance(ctrl, QtGui.QRadioButton):
         name, value = name.rsplit('_', 1)
+        # try to cast the value to int like its commonly used in the configs
+        try:
+            value = int(value)
+        except ValueError:
+            pass
+
         ctrl.toggled.connect(partial(_radio_update, cfg, name, value))
         if change_signal is not None:
             ctrl.clicked[bool].connect(change_signal.emit)

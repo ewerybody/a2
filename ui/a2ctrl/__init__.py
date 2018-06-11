@@ -10,6 +10,7 @@ from importlib import reload, import_module
 
 import a2core
 import a2util
+from a2ctrl import connect
 from a2ctrl.icons import Ico, Icons
 
 
@@ -45,6 +46,10 @@ def check_ui_module(module):
                     uibase = os.path.basename(uibase.strip())
                     log.debug('checkUiModule from read: %s' % uibase)
                 line = fobj.readline()
+
+    if uibase is None:
+        raise RuntimeError('Could not get source ui file from module:\n %s\n  '
+                           'Not a ui file module??!' % module)
 
     uifile = os.path.join(folder, uibase)
     if not uibase or not os.path.isfile(uifile):
@@ -165,7 +170,6 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
     unified call to get a value no matter if its set by user already
     or still default from the module config.
     """
-    value = None
     if user_cfg is not None and attr_name is None:
         value = user_cfg
     elif isinstance(user_cfg, dict) and attr_name in user_cfg:
