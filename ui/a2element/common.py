@@ -49,11 +49,11 @@ class DrawCtrl(QtGui.QWidget):
 
     def get_user_dict(self):
         user_dict = {}
-        for key, value in self.cfg.items():
+        for key in set(list(self.user_cfg) + list(self.cfg)):
             try:
                 user_dict[key] = self.user_cfg[key]
             except (TypeError, KeyError):
-                user_dict[key] = value
+                user_dict[key] = self.cfg[key]
         return user_dict
 
     def set_user_value(self, this, name=None):
