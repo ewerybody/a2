@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
-    <height>194</height>
+    <width>500</width>
+    <height>146</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,10 +22,7 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <property name="spacing">
-      <number>100</number>
-     </property>
-     <item>
+     <item alignment="Qt::AlignLeft">
       <widget class="QWidget" name="type_radio_widget" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="margin">
@@ -33,6 +30,9 @@
         </property>
         <item>
          <widget class="QRadioButton" name="scopeMode_0">
+          <property name="toolTip">
+           <string>global - Makes it work anywhere in the system.</string>
+          </property>
           <property name="text">
            <string>golbal</string>
           </property>
@@ -43,6 +43,9 @@
         </item>
         <item>
          <widget class="QRadioButton" name="scopeMode_1">
+          <property name="toolTip">
+           <string>include - To make it work ONLY in certain windows.</string>
+          </property>
           <property name="text">
            <string>include:</string>
           </property>
@@ -53,6 +56,9 @@
         </item>
         <item>
          <widget class="QRadioButton" name="scopeMode_2">
+          <property name="toolTip">
+           <string>exclude - To make it work anywhere BUT not in given windows.</string>
+          </property>
           <property name="text">
            <string>exclude:</string>
           </property>
@@ -71,18 +77,43 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>0</width>
-         <height>0</height>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item>
+     <item alignment="Qt::AlignRight">
       <widget class="QWidget" name="tool_buttons_widget" native="true">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <property name="margin">
          <number>0</number>
         </property>
+        <item>
+         <widget class="QToolButton" name="scope_help">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string notr="true">Help on Scopes</string>
+          </property>
+          <property name="text">
+           <string notr="true">h</string>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QToolButton" name="scope_pick">
           <property name="sizePolicy">
@@ -101,7 +132,7 @@
            <string notr="true">Pick from a Window</string>
           </property>
           <property name="text">
-           <string notr="true"/>
+           <string notr="true">p</string>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -123,7 +154,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string notr="true"/>
+           <string notr="true">Delete Selected Scope</string>
           </property>
           <property name="text">
            <string notr="true">-</string>
@@ -148,7 +179,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string notr="true"/>
+           <string notr="true">Add a Scope</string>
           </property>
           <property name="text">
            <string notr="true">+</string>
@@ -173,7 +204,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>0</width>
+       <width>500</width>
        <height>40</height>
       </size>
      </property>

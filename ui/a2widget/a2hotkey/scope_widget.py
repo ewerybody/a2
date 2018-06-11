@@ -4,6 +4,7 @@ from collections import OrderedDict
 from PySide import QtGui, QtCore
 
 import a2ahk
+import a2util
 import a2core
 import a2ctrl.connect
 from a2widget.a2hotkey import scope_widget_ui
@@ -12,6 +13,7 @@ from a2widget.a2hotkey.hotkey_widget import Vars
 log = a2core.get_logger(__name__)
 SCOPE_ITEMS = ['titles', 'classes', 'processes']
 AHK_TYPES = ['ahk_class', 'ahk_exe']
+MAX_LABEL_LEN = 80
 
 
 class ScopeWidget(QtGui.QWidget):
@@ -22,9 +24,8 @@ class ScopeWidget(QtGui.QWidget):
     def __init__(self, parent):
         super(ScopeWidget, self).__init__(parent)
         self._cfg = None
-        self._line_height_set = False
-        self._shown = False
-
+        self.help_map = None
+        self.help_menu = None
         self._setup_ui()
         self.system_scope_data = {}
         self.get_scope_data()
@@ -76,6 +77,7 @@ class ScopeWidget(QtGui.QWidget):
                        self.ui.tool_buttons_widget,
                        self.ui.cfg_scope]:
             widget.setEnabled(scope_mode != 0)
+        self.changed.emit()
 
     def add_scope(self, scope_string=''):
         self.ui.cfg_scope.add(scope_string)
@@ -104,29 +106,63 @@ class ScopeWidget(QtGui.QWidget):
         sender = self.sender()
         self.input_fields[sender.data()].setText(sender.text())
 
-    def build_all_scopes_menu(self):
-        self.scopes_submenu.clear()
+    def build_add_scope_menu(self):
+        if self.add_menu is None:
+            self.add_menu = QtGui.QMenu(self)
 
+            icons = a2ctrl.Icons.inst()
+            self.add_menu.addAction(icons.list_add, 'Add New Empty', self.add_scope)
+            self.add_menu.addAction(icons.locate, 'Pick from Window', self.pick_scope_info)
+
+            submenu = QtGui.QMenu(self.add_menu)
+            submenu.setTitle('All in use...')
+            submenu.aboutToShow.connect(self._build_in_use_menu)
+            self.add_menu.addMenu(submenu)
+
+            submenu = QtGui.QMenu(self.add_menu)
+            submenu.setTitle('All available ...')
+            submenu.aboutToShow.connect(self._build_available_menu)
+            self.add_menu.addMenu(submenu)
+
+            self.add_menu.addSeparator()
+
+            help_menu = self.build_help_menu()
+            help_menu.setTitle('Help ...')
+            help_menu.setIcon(icons.help)
+            self.add_menu.addMenu(help_menu)
+
+        self.add_menu.popup(QtGui.QCursor.pos())
+
+    def _build_available_menu(self):
+        menu = self.sender()
+        menu.clear()
+        for title, class_name, process in self.system_scope_data['__all']:
+            scope_string = get_scope_string(title, class_name, process)
+            action = menu.addAction(scope_string[:MAX_LABEL_LEN], self._add_scope_from_action)
+            action.setData(scope_string)
+
+    def _build_in_use_menu(self):
+        menu = self.sender()
+        menu.clear()
         import a2runtime
         collector = a2runtime.collect_includes(a2runtime.IncludeType.hotkeys)
         scopes = list(collector.hotkeys.hotkeys_scope_incl.keys())
         scopes.extend(collector.hotkeys.hotkeys_scope_excl.keys())
 
         for scope in sorted(scopes, key=lambda s: s.lower()):
-            self.scopes_submenu.addAction(scope, self._add_scope_from_action)
+            action = menu.addAction(scope[:MAX_LABEL_LEN], self._add_scope_from_action)
+            action.setData(scope)
 
     def _add_scope_from_action(self):
-        scope_string = self.sender().text()
+        scope_string = self.sender().data()
         self.add_scope(scope_string)
 
     def pick_scope_info(self):
-        # a2 = a2core.A2Obj.inst()
-        # text = a2ahk.call_lib_cmd('pick_scope_nfo', cwd=a2.paths.a2)
         scope_nfo_string = a2ahk.call_lib_cmd('pick_scope_nfo')
         try:
             title, class_name, process = scope_nfo_string.split('\\n')
-            for name, value in zip(SCOPE_ITEMS, [title, class_name, process]):
-                self.input_fields[name].setText(value)
+            scope_string = get_scope_string(title, class_name, process)
+            self.add_scope(scope_string)
 
         except ValueError:
             pass
@@ -140,9 +176,11 @@ class ScopeWidget(QtGui.QWidget):
             return
 
         self.system_scope_data = dict([(n, set()) for n in SCOPE_ITEMS])
+        self.system_scope_data['__all'] = set()
         num_items = len(scope_nfo)
         num_items -= num_items % 3
         for i in range(0, num_items, 3):
+            self.system_scope_data['__all'].add((scope_nfo[i], scope_nfo[i + 1], scope_nfo[i + 2]))
             for j in range(3):
                 this_value = scope_nfo[i + j]
                 if this_value:
@@ -162,7 +200,6 @@ class ScopeWidget(QtGui.QWidget):
             i += 1
 
         icons = a2ctrl.Icons.inst()
-        self.ui.scope_add.clicked.connect(self.add_scope)
         self.ui.scope_add.setIcon(icons.list_add)
         self.ui.scope_delete.clicked.connect(self.ui.cfg_scope.remove_selected)
         self.ui.scope_delete.setIcon(icons.delete)
@@ -182,19 +219,31 @@ class ScopeWidget(QtGui.QWidget):
         self._scope_mode_changed.connect(self.on_scope_mode_change)
         self._scope_text_changed.connect(self.on_text_change)
 
-        self.add_menu = QtGui.QMenu(self)
-#        submenu = QtGui.QMenu(self.add_menu)
-#        submenu.setTitle('all in use...')
-#        for scope in sorted(self.a2.get_used_scopes(), key=lambda s: s.lower()):
-#            action = QtGui.QAction(scope, submenu, triggered=partial(self.set_scope_string, scope))
-#            submenu.addAction(action)
-#        menu.addMenu(submenu)
+        self.add_menu = None
+        self.ui.scope_add.clicked.connect(self.build_add_scope_menu)
 
-        self.scopes_submenu = self.add_menu.addMenu('All Scopes in use')
-        self.scopes_submenu.aboutToShow.connect(self.build_all_scopes_menu)
-#        self.ui.scope_string.menu.addSeparator()
-#        for title in self.help_map:
-#            self.ui.scope_string.add_action(title, self.surf_to_help)
+        self.ui.scope_help.setIcon(icons.help)
+        self.ui.scope_help.clicked.connect(self.popup_help_menu)
+
+    def build_help_menu(self):
+        if not self.help_map:
+            self.help_menu = QtGui.QMenu(self)
+            a2 = a2core.A2Obj.inst()
+            icons = a2ctrl.Icons.inst()
+            self.help_map = {'Help on Scope Setup': a2.urls.help_scopes,
+                             'Help on AHK WinActive': a2.urls.ahkWinActive,
+                             'Help on AHK WinTitle': a2.urls.ahkWinTitle}
+            for title in self.help_map:
+                self.help_menu.addAction(icons.help, title, self.goto_help)
+
+        return self.help_menu
+
+    def popup_help_menu(self):
+        menu = self.build_help_menu()
+        menu.popup(QtGui.QCursor.pos())
+
+    def goto_help(self):
+        a2util.surf_to(self.help_map[self.sender().text()])
 
     def on_selection_clear(self):
         self.blockSignals(True)
