@@ -170,7 +170,7 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
     unified call to get a value no matter if its set by user already
     or still default from the module config.
     """
-    if user_cfg is not None and attr_name is None:
+    if user_cfg is not None and user_cfg != {} and attr_name is None:
         value = user_cfg
     elif isinstance(user_cfg, dict) and attr_name in user_cfg:
         value = user_cfg[attr_name]
@@ -193,10 +193,9 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
 
 
 def assemble_settings(module_key, cfg_dict, db_dict, module_path=None):
-
+    a2obj = a2core.A2Obj.inst()
     for cfg in cfg_dict:
         # get configs named db entry of module or None
-        a2obj = a2core.A2Obj.inst()
         cfg_name = a2util.get_cfg_default_name(cfg)
         user_cfg = a2obj.db.get(cfg_name, module_key)
         # pass if there is an 'enabled' entry and it's False
