@@ -213,5 +213,5 @@ def get_scope_string(title, class_name, process):
 
 
 if __name__ == '__main__':
-    import a2widget.demo.scope_demo
-    a2widget.demo.scope_demo.show()
+    import a2widget.demo.hotkey_demo
+    a2widget.demo.hotkey_demo.show()

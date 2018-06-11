@@ -1,4 +1,3 @@
-from pprint import pprint
 from PySide import QtGui, QtCore
 
 import a2ctrl
@@ -46,10 +45,10 @@ class Demo(QtGui.QMainWindow):
         self.code = A2CodeField(self)
         lyt.addRow('code', self.code)
 
-        self.anim_timer = QtCore.QTimer()
-        self.anim_timer.setInterval(250)
-        self.anim_timer.timeout.connect(self.check_changes)
-        self.anim_timer.start()
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(250)
+        self.timer.timeout.connect(self.check_changes)
+        self.timer.start()
         self._config_backup = None
 
         self.user_hotkey = a2element.hotkey.Draw(self, config, None)
