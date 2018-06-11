@@ -114,7 +114,7 @@ class URLs(object):
         self.helpEditCtrl = self.wiki + '/EditCtrls'
         self.helpHotkey = self.wiki + '/Edit-Hotkey-Control'
         self.helpCheckbox = self.wiki + '/Edit-Checkbox-Control'
-        self.helpScopes = self.wiki + '/Edit-Scopes'
+        self.help_scopes = self.wiki + '/Edit-Scopes'
         self.help_string = self.wiki + '/Edit-String'
         self.help_number = self.wiki + '/Edit-Number'
         self.help_path = self.wiki + '/Edit-Path'

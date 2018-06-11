@@ -217,6 +217,9 @@ class A2ListCompact(A2List):
 
 
 def ensure_list(strings):
+    if strings is None:
+        return []
+
     if not isinstance(strings, (str, list, tuple, set)):
         raise TypeError('Please provide a string, list, tuple or set')
 
