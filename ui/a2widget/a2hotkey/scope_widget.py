@@ -53,7 +53,8 @@ class ScopeWidget(QtGui.QWidget):
             for widget in [self.ui.type_radio_widget, self.ui.fields_widget,
                            self.ui.tool_buttons_widget, self.ui.cfg_scope]:
                 widget.setEnabled(False)
-        self.on_scope_mode_change()
+        else:
+            self.on_scope_mode_change()
 
     def get_config(self):
         return self._cfg
