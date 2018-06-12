@@ -74,7 +74,8 @@ class ModSourceWidget(QtGui.QWidget):
         self._reset_timer = QtCore.QTimer()
         self._reset_timer.setSingleShot(True)
         self._reset_timer.timeout.connect(self._update_msg)
-        self.ui.version_tool_button.clicked.connect(self.build_version_menu)
+        self.ui.a2option_button.clicked.connect(self.build_version_menu)
+        self.ui.a2option_button.setIcon(a2ctrl.Icons.inst().more)
         self.version_menu = QtGui.QMenu(self)
         self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
 

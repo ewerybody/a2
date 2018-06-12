@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui'
 #
-# Created: Mon Jun 11 15:51:56 2018
+# Created: Tue Jun 12 13:27:24 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,13 +41,7 @@ class Ui_ScopeWidget(object):
         self.horizontalLayout_2.addWidget(self.type_radio_widget)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
-        self.tool_buttons_widget = QtGui.QWidget(ScopeWidget)
-        self.tool_buttons_widget.setObjectName("tool_buttons_widget")
-        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.tool_buttons_widget)
-        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.scope_help = QtGui.QToolButton(self.tool_buttons_widget)
+        self.scope_help = QtGui.QToolButton(ScopeWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -58,7 +52,13 @@ class Ui_ScopeWidget(object):
         self.scope_help.setText("h")
         self.scope_help.setAutoRaise(True)
         self.scope_help.setObjectName("scope_help")
-        self.horizontalLayout_3.addWidget(self.scope_help)
+        self.horizontalLayout_2.addWidget(self.scope_help)
+        self.tool_buttons_widget = QtGui.QWidget(ScopeWidget)
+        self.tool_buttons_widget.setObjectName("tool_buttons_widget")
+        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.tool_buttons_widget)
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.scope_pick = QtGui.QToolButton(self.tool_buttons_widget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)

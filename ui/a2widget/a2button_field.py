@@ -3,6 +3,7 @@ Created on 09.03.2017
 
 @author: eric
 """
+import a2ctrl
 from PySide import QtGui, QtCore
 
 
@@ -23,7 +24,8 @@ class A2ButtonField(QtGui.QWidget):
         self.button = QtGui.QToolButton(self)
         self.button.setObjectName('a2option_button')
         self.button.setAutoRaise(True)
-        self.button.setArrowType(QtCore.Qt.DownArrow)
+        # self.button.setArrowType(QtCore.Qt.DownArrow)
+        self.button.setIcon(a2ctrl.Icons.inst().more)
         self.button.clicked.connect(self.show_menu)
         self.main_layout.addWidget(self.button)
 

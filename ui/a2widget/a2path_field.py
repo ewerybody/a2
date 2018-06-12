@@ -7,7 +7,7 @@ At files it can be set to save-mode where inexistent paths can be selected
 and filtered file types can be set. See:
 http://pyside.github.io/docs/pyside/PySide/QtGui/QFileDialog.html?highlight=qfiledialog#detailed-description
 
-TODO: add recent paths, copy path, explore to path on the button
+TODO: add recent paths?
 
 @created: Jun 19, 2016
 @author: eRiC
@@ -27,7 +27,8 @@ class BrowseType(object):
 class A2PathField(QtGui.QWidget):
     changed = QtCore.Signal(str)
 
-    def __init__(self, parent, value='', file_types='', writable=True, label_text=None, save_mode=False, changable=True):
+    def __init__(self, parent, value='', file_types='', writable=True,
+                 label_text=None, save_mode=False, changable=True):
         super(A2PathField, self).__init__(parent)
         self.main_layout = QtGui.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -40,12 +41,13 @@ class A2PathField(QtGui.QWidget):
         self.main_layout.addWidget(self.browse_button)
 
         self.options_menu = QtGui.QMenu()
-        self.options_button = QtGui.QToolButton(self)
-        self.options_button.setObjectName('a2option_button')
-        self.options_button.setAutoRaise(True)
-        self.options_button.setArrowType(QtCore.Qt.DownArrow)
-        self.options_button.clicked.connect(self.show_options_menu)
-        self.main_layout.addWidget(self.options_button)
+        self.a2option_button = QtGui.QToolButton(self)
+        self.a2option_button.setObjectName('a2option_button')
+        self.a2option_button.setAutoRaise(True)
+        self.a2option_button.setIcon(a2ctrl.Icons.inst().more)
+        # self.a2option_button.setArrowType(QtCore.Qt.DownArrow)
+        self.a2option_button.clicked.connect(self.show_options_menu)
+        self.main_layout.addWidget(self.a2option_button)
 
         self._set_delay = 150
         self._field_set = False

@@ -135,15 +135,12 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="version_tool_button">
+         <widget class="QToolButton" name="a2option_button">
           <property name="text">
-           <string notr="true">...</string>
+           <string notr="true"/>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
-          </property>
-          <property name="arrowType">
-           <enum>Qt::DownArrow</enum>
           </property>
          </widget>
         </item>

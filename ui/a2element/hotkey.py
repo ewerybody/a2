@@ -22,6 +22,7 @@ from PySide import QtCore, QtGui
 import a2ctrl
 import a2core
 from a2element import DrawCtrl, EditCtrl
+from a2widget import A2MoreButton
 from a2widget.a2hotkey import A2Hotkey
 from functools import partial
 
@@ -84,11 +85,14 @@ class Draw(DrawCtrl):
         self.hotkey_layout.addWidget(self.hotkey_button)
 
         self.a2option_button = QtGui.QToolButton(self)
-        self.a2option_button.setArrowType(QtCore.Qt.DownArrow)
-        self.a2option_button.setAutoRaise(True)
         self.a2option_button.setObjectName('a2option_button')
+        self.a2option_button.setIcon(a2ctrl.Icons.inst().more)
+        self.a2option_button.setAutoRaise(True)
         self.a2option_button.clicked.connect(self.build_hotkey_options_menu)
         self.hotkey_layout.addWidget(self.a2option_button)
+
+        self.more_button = A2MoreButton(self)
+        self.hotkey_layout.addWidget(self.more_button)
 
         self.hotkey_list_layout.addLayout(self.hotkey_layout)
         self.ctrl_layout.addLayout(self.hotkey_list_layout)
@@ -169,9 +173,6 @@ class Edit(EditCtrl):
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui.func_widget.ui)
         self.ui.func_widget.set_config(self.cfg)
-
-        # a2ctrl.connect.cfg_controls(self.cfg, self.ui.scope_widget.ui)
-        # self.ui.scope_widget.set_config(self.cfg)
 
         self.disablable_check()
         self.ui.cfg_disablable.clicked[bool].connect(self.disablable_check)

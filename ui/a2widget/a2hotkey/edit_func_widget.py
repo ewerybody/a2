@@ -31,7 +31,7 @@ class FuncWidget(QtGui.QWidget):
         self.ui.function_text.textChanged.connect(self.on_input)
         self.ui.function_send_mode.currentIndexChanged.connect(self.on_send_mode_change)
 
-        self.ui.function_button.clicked.connect(self.build_menu)
+        self.ui.a2option_button.clicked.connect(self.build_menu)
         self.func_menu = QtGui.QMenu(self)
 
         self.a2 = None

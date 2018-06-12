@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source.ui'
 #
-# Created: Mon May  7 17:24:02 2018
+# Created: Tue Jun 12 13:31:53 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -83,12 +83,11 @@ class Ui_Form(object):
         self.update_button.setText("check for updates ...")
         self.update_button.setObjectName("update_button")
         self.update_layout.addWidget(self.update_button)
-        self.version_tool_button = QtGui.QToolButton(self.frame)
-        self.version_tool_button.setText("...")
-        self.version_tool_button.setAutoRaise(True)
-        self.version_tool_button.setArrowType(QtCore.Qt.DownArrow)
-        self.version_tool_button.setObjectName("version_tool_button")
-        self.update_layout.addWidget(self.version_tool_button)
+        self.a2option_button = QtGui.QToolButton(self.frame)
+        self.a2option_button.setText("")
+        self.a2option_button.setAutoRaise(True)
+        self.a2option_button.setObjectName("a2option_button")
+        self.update_layout.addWidget(self.a2option_button)
         self.update_layout.setStretch(0, 1)
         self.formLayout.setLayout(1, QtGui.QFormLayout.FieldRole, self.update_layout)
         self.label_5 = QtGui.QLabel(self.frame)

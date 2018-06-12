@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui'
 #
-# Created: Fri Jun  1 15:51:22 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created: Tue Jun 12 13:24:01 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -47,12 +47,10 @@ class Ui_edit(object):
         self.hotkey_button.setEnabled(True)
         self.hotkey_button.setObjectName("hotkey_button")
         self.horizontalLayout_2.addWidget(self.hotkey_button)
-        self.tool_button = QtGui.QToolButton(edit)
-        self.tool_button.setText("...")
-        self.tool_button.setAutoRaise(True)
-        self.tool_button.setArrowType(QtCore.Qt.DownArrow)
-        self.tool_button.setObjectName("tool_button")
-        self.horizontalLayout_2.addWidget(self.tool_button)
+        self.a2option_button = QtGui.QToolButton(edit)
+        self.a2option_button.setAutoRaise(True)
+        self.a2option_button.setObjectName("a2option_button")
+        self.horizontalLayout_2.addWidget(self.a2option_button)
         self.hotkey_layout.addLayout(self.horizontalLayout_2)
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.setHorizontalSpacing(15)

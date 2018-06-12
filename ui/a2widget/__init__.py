@@ -8,3 +8,4 @@ from a2widget.a2coords_field import A2CoordsField
 from a2widget.a2button_field import A2ButtonField
 from a2widget.a2tag_field import A2TagField
 from a2widget.a2list import A2List, A2ListCompact
+from a2widget.a2more_button import A2MoreButton

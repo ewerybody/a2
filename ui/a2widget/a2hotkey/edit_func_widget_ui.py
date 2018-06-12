@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui'
 #
-# Created: Mon May  7 20:06:01 2018
+# Created: Tue Jun 12 13:24:01 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,12 +25,10 @@ class Ui_FuncWidget(object):
         self.cfg_functionMode.addItem("")
         self.cfg_functionMode.addItem("")
         self.function_row_layout.addWidget(self.cfg_functionMode)
-        self.function_button = QtGui.QToolButton(FuncWidget)
-        self.function_button.setText("...")
-        self.function_button.setAutoRaise(True)
-        self.function_button.setArrowType(QtCore.Qt.NoArrow)
-        self.function_button.setObjectName("function_button")
-        self.function_row_layout.addWidget(self.function_button)
+        self.a2option_button = QtGui.QToolButton(FuncWidget)
+        self.a2option_button.setAutoRaise(True)
+        self.a2option_button.setObjectName("a2option_button")
+        self.function_row_layout.addWidget(self.a2option_button)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.function_row_layout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.function_row_layout)
