@@ -228,5 +228,11 @@ QLabel#a2license_text {
 }
 
 QToolButton#a2option_button {
+    image: url(res/more.svg);
+    color: "%(color_darkgrey)s";
+}
+
+A2MoreButton {
+    image: url(res/more.svg);
     color: "%(color_darkgrey)s";
 }
