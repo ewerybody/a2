@@ -1,6 +1,7 @@
 from PySide import QtGui, QtCore
 
-from a2widget import A2MoreButton
+import a2ctrl
+from a2widget import A2MoreButton, A2PathField
 
 
 class Demo(QtGui.QMainWindow):
@@ -14,7 +15,18 @@ class Demo(QtGui.QMainWindow):
         w.setLayout(lyt)
 
         self.button = A2MoreButton(self)
-        lyt.addRow('a "more" button', self.button)
+        lyt.addRow('a "more" button:', self.button)
+        self.button.menu_called.connect(self.build_a_menu)
+
+        path_field = A2PathField(self)
+        lyt.addRow(QtGui.QLabel('Path field with A2MoreButton implemented:'))
+        lyt.addRow(path_field)
+
+    def build_a_menu(self, menu):
+        menu.addAction(a2ctrl.Icons.inst().a2, 'Some Menu action ...', self.some_function)
+
+    def some_function(self):
+        print('Action triggered: %s' % self.sender().text())
 
 
 def show():
