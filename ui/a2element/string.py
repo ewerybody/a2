@@ -1,8 +1,3 @@
-'''
-Created on Feb 28, 2016
-
-@author: eRiC
-'''
 import a2ctrl
 from PySide import QtGui
 from a2element import string_edit_ui, DrawCtrl, EditCtrl

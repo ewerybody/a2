@@ -50,7 +50,7 @@ class A2Settings(QtGui.QWidget):
 
         a2_hotkey = self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY
         self.ui.a2hotkey.set_key(a2_hotkey)
-        self.ui.a2hotkey.ok_func = self.set_a2_hotkey
+        self.ui.a2hotkey.hotkey_changed.connect(self.set_a2_hotkey)
 
         self.ui.dev_box.setChecked(self.a2.dev_mode)
         self.ui.dev_box.clicked[bool].connect(self.dev_mode_toggle)
