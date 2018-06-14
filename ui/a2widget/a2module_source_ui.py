@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source.ui'
 #
-# Created: Tue Jun 12 13:31:53 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Wed Jun 13 21:22:59 2018
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(560, 188)
+        Form.resize(727, 370)
         self.modsource_layout = QtGui.QVBoxLayout(Form)
         self.modsource_layout.setObjectName("modsource_layout")
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -83,7 +83,7 @@ class Ui_Form(object):
         self.update_button.setText("check for updates ...")
         self.update_button.setObjectName("update_button")
         self.update_layout.addWidget(self.update_button)
-        self.a2option_button = QtGui.QToolButton(self.frame)
+        self.a2option_button = A2MoreButton(self.frame)
         self.a2option_button.setText("")
         self.a2option_button.setAutoRaise(True)
         self.a2option_button.setObjectName("a2option_button")
@@ -105,4 +105,4 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
 
-from a2widget.a2path_field import A2PathField
+from a2widget import A2PathField, A2MoreButton

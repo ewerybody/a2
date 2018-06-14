@@ -17,6 +17,7 @@ from PySide import QtGui, QtCore
 
 import a2ctrl
 import a2util
+from a2widget import A2MoreButton
 
 
 class BrowseType(object):
@@ -41,12 +42,8 @@ class A2PathField(QtGui.QWidget):
         self.main_layout.addWidget(self.browse_button)
 
         self.options_menu = QtGui.QMenu()
-        self.a2option_button = QtGui.QToolButton(self)
-        self.a2option_button.setObjectName('a2option_button')
-        self.a2option_button.setAutoRaise(True)
-        self.a2option_button.setIcon(a2ctrl.Icons.inst().more)
-        # self.a2option_button.setArrowType(QtCore.Qt.DownArrow)
-        self.a2option_button.clicked.connect(self.show_options_menu)
+        self.a2option_button = A2MoreButton(self)
+        self.a2option_button.menu_called.connect(self.show_options_menu)
         self.main_layout.addWidget(self.a2option_button)
 
         self._set_delay = 150
@@ -137,12 +134,10 @@ class A2PathField(QtGui.QWidget):
         self.changed.emit(self._value)
         self._field_set = False
 
-    def show_options_menu(self):
+    def show_options_menu(self, menu):
         icons = a2ctrl.Icons.inst()
-        self.options_menu.clear()
-        self.options_menu.addAction(icons.copy, 'Copy Path', self.copy_path)
-        self.options_menu.addAction(icons.folder, 'Explore Path', self.explore_path)
-        self.options_menu.popup(QtGui.QCursor.pos())
+        menu.addAction(icons.copy, 'Copy Path', self.copy_path)
+        menu.addAction(icons.folder, 'Explore Path', self.explore_path)
 
     def explore_path(self):
         a2util.explore(self.value)

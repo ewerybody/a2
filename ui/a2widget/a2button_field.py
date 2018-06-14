@@ -1,50 +1,23 @@
-"""
-Created on 09.03.2017
-
-@author: eric
-"""
-import a2ctrl
 from PySide import QtGui, QtCore
+
+from a2widget import A2MoreButton
 
 
 class A2ButtonField(QtGui.QWidget):
     textChanged = QtCore.Signal(str)
-    menu_about_to_show = QtCore.Signal(QtGui.QMenu)
+    menu_called = QtCore.Signal(QtGui.QMenu)
 
     def __init__(self, parent=None):
         super(A2ButtonField, self).__init__(parent)
         self.main_layout = QtGui.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.menu = QtGui.QMenu()
-        self.menu.aboutToShow.connect(self._on_menu_about_to_show)
         self.field = QtGui.QLineEdit(self)
         self.field.textChanged.connect(self.textChanged.emit)
         self.main_layout.addWidget(self.field)
-        self.button = QtGui.QToolButton(self)
-        self.button.setObjectName('a2option_button')
-        self.button.setAutoRaise(True)
-        # self.button.setArrowType(QtCore.Qt.DownArrow)
-        self.button.setIcon(a2ctrl.Icons.inst().more)
-        self.button.clicked.connect(self.show_menu)
-        self.main_layout.addWidget(self.button)
-
-    def _on_menu_about_to_show(self):
-        self.menu_about_to_show.emit(self.menu)
-
-    def show_menu(self):
-        self.menu.popup(QtGui.QCursor.pos())
-
-    def insert_action(self, index, *args):
-        action_obj = self.menu.insertAction(index, *args)
-        return action_obj
-
-    def add_action(self, *args):
-        """
-        Adds a QAction to the menu
-        """
-        action_obj = self.menu.addAction(*args)
-        return action_obj
+        self.a2option_button = A2MoreButton(self)
+        self.a2option_button.menu_called.connect(self.menu_called.emit)
+        self.main_layout.addWidget(self.a2option_button)
 
     def setEnabled(self, *args, **kwargs):
         self.field.setEnabled(*args, **kwargs)
@@ -71,6 +44,39 @@ class A2ButtonField(QtGui.QWidget):
 
     def setFocus(self):
         self.field.setFocus()
+
+    def setPlaceholderText(self, text):
+        self.field.setPlaceholderText(text)
+
+    def insert_action(self, index, *args):
+        """
+        Inserts an QAction at the given index to the internal QMenu.
+        Adding or inserting makes the menu_called to be skipped.
+
+        :param index: The position for the action.
+        :return: The inserted QAction.
+        :rtype QAction:
+        """
+        return self.a2option_button.insert_action(index, *args)
+
+    def add_action(self, *args):
+        """
+        Adds a QAction to the internal QMenu.
+        Adding or inserting makes the menu_called to be skipped.
+
+        :rtype QAction:
+        """
+        return self.a2option_button.add_action(*args)
+
+    @property
+    def menu(self):
+        return self.a2option_button._menu
+
+    def add_menu(self, *args):
+        """
+        :rtype QtGui.QMenu:
+        """
+        return self.a2option_button.add_menu(*args)
 
 
 if __name__ == '__main__':

@@ -26,14 +26,13 @@ class ButtonFieldDemo(QtGui.QMainWindow):
         lyt.addWidget(QtGui.QLabel('with actions build dynamically:'))
         self.bf2 = A2ButtonField()
         lyt.addWidget(self.bf2)
-        self.bf2.menu_about_to_show.connect(self.about_signal)
+        self.bf2.menu_called.connect(self.about_signal)
 
     def bla(self):
         self.bf1.value = 'Blaab blaa!'
         print(self.bf1.value)
 
     def about_signal(self, menu):
-        menu.clear()
         menu.addAction(str(uuid.uuid4()), self.action_handler)
 
     def action_handler(self):

@@ -74,8 +74,7 @@ class ModSourceWidget(QtGui.QWidget):
         self._reset_timer = QtCore.QTimer()
         self._reset_timer.setSingleShot(True)
         self._reset_timer.timeout.connect(self._update_msg)
-        self.ui.a2option_button.clicked.connect(self.build_version_menu)
-        self.ui.a2option_button.setIcon(a2ctrl.Icons.inst().more)
+        self.ui.a2option_button.menu_called.connect(self.build_version_menu)
         self.version_menu = QtGui.QMenu(self)
         self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
 
@@ -155,11 +154,9 @@ class ModSourceWidget(QtGui.QWidget):
             if icon is not None:
                 self.ui.update_button.setIcon(icon)
 
-    def build_version_menu(self):
-        menu = self.version_menu
+    def build_version_menu(self, menu):
         icons = a2ctrl.Icons.inst()
 
-        menu.clear()
         backup_versions = self.mod_source.get_backup_versions()
         if backup_versions:
             backup_menu = menu.addMenu('Backed up versions')
@@ -178,8 +175,6 @@ class ModSourceWidget(QtGui.QWidget):
         menu.addSeparator()
         menu.addAction(icons.delete, 'Uninstall "%s"' % self.mod_source.name,
                        self.uninstall)
-
-        menu.popup(self.cursor().pos())
 
     def uninstall(self):
         dialog = A2ConfirmDialog(
