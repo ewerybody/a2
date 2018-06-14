@@ -85,23 +85,9 @@ class A2Hotkey(QtGui.QWidget):
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 
-    def build_scope_menu(self):
-        # TODO: we might not need this
-        menu = QtGui.QMenu(self)
-        mode = self._cfg.get(Vars.scope_mode, 0)
-        if not self.is_edit_mode and not self._cfg.get(Vars.scope_change, True):
-            pass
-        if mode == 0:
-            menu.addAction('global!')
-        elif mode == 1:
-            menu.addAction('scope only in ...')
-        else:
-            menu.addAction('scope not in ...')
-        menu.popup(QtGui.QCursor.pos())
-
     def scope_clicked(self):
         is_global = self._cfg.get(Vars.scope_mode, 0) == 0
-        scope_change = self._cfg.get(Vars.scope_change, True)
+        scope_change = self._cfg.get(Vars.scope_change, False)
         if not self.is_edit_mode and not scope_change and is_global:
             from a2widget import A2ConfirmDialog
             dialog = A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
@@ -161,7 +147,7 @@ class A2Hotkey(QtGui.QWidget):
             (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
             self._cfg.get(Vars.scope_mode, 0)]
 
-        if not self._cfg.get(Vars.scope_change, True):
+        if not self._cfg.get(Vars.scope_change, False):
             tooltip += SCOPE_CANNOT_CHANGE
 
         self._scope_button.setIcon(icon)
