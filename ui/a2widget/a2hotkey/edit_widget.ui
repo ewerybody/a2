@@ -103,7 +103,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="a2option_button">
+        <widget class="A2MoreButton" name="a2option_button">
          <property name="autoRaise">
           <bool>true</bool>
          </property>
@@ -211,6 +211,11 @@
    <extends>QWidget</extends>
    <header>a2widget.a2hotkey.edit_func_widget</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>A2MoreButton</class>
+   <extends>QToolButton</extends>
+   <header>a2widget</header>
   </customwidget>
  </customwidgets>
  <resources/>

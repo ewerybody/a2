@@ -94,7 +94,6 @@ class ScopeWidget(QtGui.QWidget):
             self.context_menu.popup(self.ui.cfg_scope.mapToGlobal(pos))
 
     def build_button_field_menu(self, index, menu):
-        menu.clear()
         name = SCOPE_ITEMS[index]
         # usedmenu = menu.addMenu('%s in use' % name.title())
         submenu = menu.addMenu('Available %s' % name.title())
@@ -197,7 +196,7 @@ class ScopeWidget(QtGui.QWidget):
         for name, ctrl in zip(SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]):
             self.input_fields[name] = ctrl
             ctrl.textChanged.connect(self._scope_text_changed.emit)
-            ctrl.menu_about_to_show.connect(partial(self.build_button_field_menu, i))
+            ctrl.menu_called.connect(partial(self.build_button_field_menu, i))
             i += 1
 
         icons = a2ctrl.Icons.inst()

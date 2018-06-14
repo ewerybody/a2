@@ -39,7 +39,6 @@ class Draw(DrawCtrl):
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        self.hotkey_option_menu = QtGui.QMenu(self)
         self._setup_ui()
 
     def _setup_hotkey(self):
@@ -84,15 +83,9 @@ class Draw(DrawCtrl):
         self.hotkey_button.scope_changed.connect(self.scope_change)
         self.hotkey_layout.addWidget(self.hotkey_button)
 
-        self.a2option_button = QtGui.QToolButton(self)
-        self.a2option_button.setObjectName('a2option_button')
-        self.a2option_button.setIcon(a2ctrl.Icons.inst().more)
-        self.a2option_button.setAutoRaise(True)
-        self.a2option_button.clicked.connect(self.build_hotkey_options_menu)
+        self.a2option_button = A2MoreButton(self)
+        self.a2option_button.menu_called.connect(self.build_hotkey_options_menu)
         self.hotkey_layout.addWidget(self.a2option_button)
-
-        self.more_button = A2MoreButton(self)
-        self.hotkey_layout.addWidget(self.more_button)
 
         self.hotkey_list_layout.addLayout(self.hotkey_layout)
         self.ctrl_layout.addLayout(self.hotkey_list_layout)
@@ -113,9 +106,7 @@ class Draw(DrawCtrl):
         self.set_user_value(scope_mode, 'scopeMode')
         self.change('hotkeys')
 
-    def build_hotkey_options_menu(self):
-        menu = self.hotkey_option_menu
-        menu.clear()
+    def build_hotkey_options_menu(self, menu):
         action = menu.addAction('Add another Hotkey')
         action.setEnabled(False)
         action = menu.addAction('Revert to Default')
@@ -137,7 +128,6 @@ class Draw(DrawCtrl):
             action.triggered.connect(partial(self.a2.db.set, 'hotkey_dialog_style', this_name))
 
         menu.addMenu(submenu)
-        menu.popup(QtGui.QCursor.pos())
 
 
 class Edit(EditCtrl):

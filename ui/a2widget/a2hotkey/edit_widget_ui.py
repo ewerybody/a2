@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui'
 #
-# Created: Tue Jun 12 13:24:01 2018
+# Created: Thu Jun 14 14:07:35 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,7 +47,7 @@ class Ui_edit(object):
         self.hotkey_button.setEnabled(True)
         self.hotkey_button.setObjectName("hotkey_button")
         self.horizontalLayout_2.addWidget(self.hotkey_button)
-        self.a2option_button = QtGui.QToolButton(edit)
+        self.a2option_button = A2MoreButton(edit)
         self.a2option_button.setAutoRaise(True)
         self.a2option_button.setObjectName("a2option_button")
         self.horizontalLayout_2.addWidget(self.a2option_button)
@@ -107,5 +107,6 @@ class Ui_edit(object):
         self.cfg_multiple.setText(QtGui.QApplication.translate("edit", "allow multiple hotkeys", None, QtGui.QApplication.UnicodeUTF8))
         self.functionLabel.setText(QtGui.QApplication.translate("edit", "function:", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2widget import A2MoreButton
 from a2widget.a2hotkey.edit_func_widget import FuncWidget
 from a2widget.a2hotkey import A2Hotkey

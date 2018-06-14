@@ -31,8 +31,7 @@ class FuncWidget(QtGui.QWidget):
         self.ui.function_text.textChanged.connect(self.on_input)
         self.ui.function_send_mode.currentIndexChanged.connect(self.on_send_mode_change)
 
-        self.ui.a2option_button.clicked.connect(self.build_menu)
-        self.func_menu = QtGui.QMenu(self)
+        self.ui.a2option_button.menu_called.connect(self.build_menu)
 
         self.a2 = None
         self.help_map = None
@@ -40,24 +39,23 @@ class FuncWidget(QtGui.QWidget):
     def set_config(self, config_dict):
         self._config_dict = config_dict
 
-    def build_menu(self):
-        self.func_menu.clear()
+    def build_menu(self, menu):
         self._build_help_map()
 
         index = self.ui.cfg_functionMode.currentIndex()
         if index == 0:
             # fsubmenu1 = self.menu.addMenu('local functions')
             # fsubmenu2 = self.menu.addMenu('built-in functions')
-            self.func_menu.addAction(HelpLabels.cmds, self.surf_to_help)
+            menu.addAction(HelpLabels.cmds, self.surf_to_help)
 
         elif index == 1:
             for label, func in [('Insert directory...', self.insert_dir),
                                 ('Insert file...', self.insert_file),
                                 (HelpLabels.run, self.surf_to_help)]:
-                self.func_menu.addAction(label, func)
+                menu.addAction(label, func)
 
         else:
-            fsubmenu1 = self.func_menu.addMenu('Insert modifier key')
+            fsubmenu1 = menu.addMenu('Insert modifier key')
             for label in MOD_KEYS:
                 # action = QtGui.QAction(label, fsubmenu1, triggered=partial(self.ui.function_text.insert, key))
                 fsubmenu1.addAction(label, self.insert_mod_key)
@@ -68,9 +66,9 @@ class FuncWidget(QtGui.QWidget):
                 #    fsubmenu2.addAction(action)
             for label, func in [(HelpLabels.send, self.surf_to_help),
                                 (HelpLabels.vars, self.surf_to_help)]:
-                self.func_menu.addAction(label, func)
+                menu.addAction(label, func)
 
-        self.func_menu.popup(QtGui.QCursor.pos())
+        menu.popup(QtGui.QCursor.pos())
 
     def insert_mod_key(self):
         key = self.sender().text()[0]

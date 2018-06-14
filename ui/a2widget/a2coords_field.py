@@ -8,6 +8,7 @@ from PySide import QtGui, QtCore
 import a2ahk
 import a2ctrl
 import a2core
+from a2widget import A2MoreButton
 
 
 log = a2core.get_logger(__name__)
@@ -35,14 +36,9 @@ class A2CoordsField(QtGui.QWidget):
         self.y_field.valueChanged.connect(self.change_triggered)
         self.main_layout.addWidget(self.y_field)
 
-        self.tool_button = QtGui.QToolButton(self)
-        self.tool_button.setAutoRaise(True)
-        self.tool_button.setObjectName('a2option_button')
-        self.tool_button.clicked.connect(self.show_menu)
-        self.tool_button.setArrowType(QtCore.Qt.DownArrow)
-        self.main_layout.addWidget(self.tool_button)
-
-        self.menu = QtGui.QMenu()
+        self.a2option_button = A2MoreButton(self)
+        self.a2option_button.menu_called.connect(self.show_menu)
+        self.main_layout.addWidget(self.a2option_button)
 
     @property
     def x(self):
@@ -83,13 +79,12 @@ class A2CoordsField(QtGui.QWidget):
         self.y_field.setValue(values[1])
         # self.changed.emit((self.x, self.y))
 
-    def show_menu(self):
-        self.menu.clear()
-        for func, icon in [(self.copy, a2ctrl.Icons.inst().copy),
-                           (self.paste, a2ctrl.Icons.inst().paste),
-                           (self.pick, a2ctrl.Icons.inst().number)]:
-            self.menu.addAction(icon, '%s Coordinates' % func.__name__.title(), func)
-        self.menu.popup(QtGui.QCursor.pos())
+    def show_menu(self, menu):
+        icons = a2ctrl.Icons.inst()
+        for func, icon in [(self.copy, icons.copy),
+                           (self.paste, icons.paste),
+                           (self.pick, icons.number)]:
+            menu.addAction(icon, '%s Coordinates' % func.__name__.title(), func)
 
     def change_triggered(self):
         if self._internal_change:

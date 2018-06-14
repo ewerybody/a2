@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui'
 #
-# Created: Tue Jun 12 13:24:01 2018
+# Created: Thu Jun 14 14:02:53 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,7 +25,7 @@ class Ui_FuncWidget(object):
         self.cfg_functionMode.addItem("")
         self.cfg_functionMode.addItem("")
         self.function_row_layout.addWidget(self.cfg_functionMode)
-        self.a2option_button = QtGui.QToolButton(FuncWidget)
+        self.a2option_button = A2MoreButton(FuncWidget)
         self.a2option_button.setAutoRaise(True)
         self.a2option_button.setObjectName("a2option_button")
         self.function_row_layout.addWidget(self.a2option_button)
@@ -66,3 +66,4 @@ class Ui_FuncWidget(object):
         self.function_send_mode.setItemText(4, QtGui.QApplication.translate("FuncWidget", "SendEvent", None, QtGui.QApplication.UnicodeUTF8))
         self.run_label.setText(QtGui.QApplication.translate("FuncWidget", "Run, ", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2widget import A2MoreButton
