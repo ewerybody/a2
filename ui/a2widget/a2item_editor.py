@@ -68,7 +68,7 @@ class A2ItemEditor(QtGui.QWidget):
         Fills the config_layout with a control and connects it to the data.
 
         :param str value_name: Name of the data item to control.
-        :param QtGui.QtWidget widget: The QtWidget object to put into the layout.
+        :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
         :param function set_function: Function object of the widget to use to display the current data.
         :param QtCore.Signal change_signal: Optional signal to use for data change notification.
         :param * default_value: Fallback and reference value to check against.
