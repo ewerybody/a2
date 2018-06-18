@@ -62,7 +62,11 @@ class DrawCtrl(QtGui.QWidget):
         Name is None by by default so you can just set the default value by ... well:
         passing the value. Voila!
         """
-        self.mod.set_user_cfg(self.cfg, this, name)
+        try:
+            self.mod.set_user_cfg(self.cfg, this, name)
+        except AttributeError:
+            # cannot set config if no module given
+            pass
 
     def change(self, specific=None):
         """

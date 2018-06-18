@@ -23,12 +23,11 @@ import a2ctrl
 import a2core
 from a2element import DrawCtrl, EditCtrl
 from a2widget import A2MoreButton
-from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2hotkey import A2Hotkey, Vars
 from functools import partial
 
 
 log = a2core.get_logger(__name__)
-DEFAULT_HOTKEY = 'Win+F'
 
 
 class Draw(DrawCtrl):
@@ -148,11 +147,6 @@ class Edit(EditCtrl):
         self.ui = edit_widget_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        for key, value in [('key', DEFAULT_HOTKEY),
-                           ('functionMode', 0)]:
-            if key not in self.cfg:
-                self.cfg[key] = value
-
         self.helpUrl = self.a2.urls.helpHotkey
 
         self.ui.hotkey_button.set_config(self.cfg)
@@ -193,10 +187,11 @@ class Edit(EditCtrl):
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
     key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key', str)
-    scope = a2ctrl.get_cfg_value(cfg, user_cfg, 'scope', list)
-    scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, 'scopeMode', int)
+    scope = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope, list)
+    scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope_mode, int)
     function = cfg.get(
-        ['functionCode', 'functionURL', 'functionSend'][cfg['functionMode']],
+        [Vars.function_code, Vars.function_url, Vars.function_send]
+        [cfg.get(Vars.function_mode, 0)],
         '')
 
     db_dict.setdefault('hotkeys', {})

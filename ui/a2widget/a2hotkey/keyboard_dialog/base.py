@@ -293,6 +293,8 @@ class KeyboardDialogBase(QtGui.QDialog):
 
     def build_option_menu(self, menu):
         icons = a2ctrl.Icons.inst()
+        if self.key:
+            menu.addAction(icons.clear, 'Clear Hotkey', self.clear_hotkey)
         menu.addAction(icons.help, 'Help on Hotket Setup', self.goto_help)
 
     def _log_size(self):
@@ -321,6 +323,18 @@ class KeyboardDialogBase(QtGui.QDialog):
             log.info(msg)
         except AttributeError:
             pass
+
+    def clear_hotkey(self):
+        self.key = ''
+
+        for modifier in self.checked_modifier:
+            self.modifier[modifier].setChecked(False)
+        self.checked_modifier = []
+
+        if self.checked_key:
+            self.key_dict[self.checked_key].setChecked(False)
+        self.checked_key = ''
+        self.update_hotkey_label()
 
     def goto_help(self):
         a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
