@@ -26,7 +26,21 @@
       <number>10</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="key_field"/>
+      <widget class="QLineEdit" name="key_field">
+       <property name="text">
+        <string notr="true"/>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="A2MoreButton" name="option_button">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -279,6 +293,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2MoreButton</class>
+   <extends>QToolButton</extends>
+   <header>a2widget</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

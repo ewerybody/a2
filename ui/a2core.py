@@ -110,14 +110,14 @@ class URLs(object):
         variables_dict = a2ahk.get_variables(a2_urls_ahk)
         self.a2 = variables_dict.get('a2_url', 'https://github.com/ewerybody/a2')
         self.help = variables_dict.get('a2_help', (self.a2 + '#a2-'))
-        self.wiki = self.a2 + '/wiki'
-        self.helpEditCtrl = self.wiki + '/EditCtrls'
-        self.helpHotkey = self.wiki + '/Edit-Hotkey-Control'
-        self.helpCheckbox = self.wiki + '/Edit-Checkbox-Control'
-        self.help_scopes = self.wiki + '/Edit-Scopes'
-        self.help_string = self.wiki + '/Edit-String'
-        self.help_number = self.wiki + '/Edit-Number'
-        self.help_path = self.wiki + '/Edit-Path'
+        self.wiki = self.a2 + '/wiki/'
+        self.helpEditCtrl = self.wiki + 'EditCtrls'
+        self.helpHotkey = self.wiki + 'Edit-Hotkey-Control'
+        self.helpCheckbox = self.wiki + 'Edit-Checkbox-Control'
+        self.help_scopes = self.wiki + 'Edit-Scopes'
+        self.help_string = self.wiki + 'Edit-String'
+        self.help_number = self.wiki + 'Edit-Number'
+        self.help_path = self.wiki + 'Edit-Path'
         self.help_report_issue = self.a2 + '/issues/new'
         self.security = variables_dict.get('a2_security', '')
 

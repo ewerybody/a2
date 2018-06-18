@@ -22,6 +22,7 @@ DB_KEY_MOUSE = 'hotkey_dialog_show_mouse'
 DB_KEY_NUMPAD = 'hotkey_dialog_show_numpad'
 _HERE = os.path.dirname(__file__)
 _IGNORE_BUTTONS = ['a2cancel_button', 'a2ok_button']
+HOTKEY_HELP_PAGE = 'Hotkey-Setup'
 
 
 class KeyboardDialogBase(QtGui.QDialog):
@@ -110,6 +111,7 @@ class KeyboardDialogBase(QtGui.QDialog):
 
         self.ui.a2ok_button.clicked.connect(self.ok)
         self.ui.a2cancel_button.clicked.connect(self.close)
+        self.ui.option_button.menu_called.connect(self.build_option_menu)
 
         self.refresh_style()
 
@@ -289,6 +291,10 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.cursor_block_widget.setStyleSheet(cursor_block_css)
         self.numpad_block_widget.setStyleSheet(cursor_block_css)
 
+    def build_option_menu(self, menu):
+        icons = a2ctrl.Icons.inst()
+        menu.addAction(icons.help, 'Help on Hotket Setup', self.goto_help)
+
     def _log_size(self):
         """
         Eventually I want to put the dialog under the cursor. But for that we need to
@@ -315,6 +321,9 @@ class KeyboardDialogBase(QtGui.QDialog):
             log.info(msg)
         except AttributeError:
             pass
+
+    def goto_help(self):
+        a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
 
 
 class CursorBlockWidget(QtGui.QWidget):

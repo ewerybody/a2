@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui'
 #
-# Created: Thu Jun  7 20:06:23 2018
+# Created: Mon Jun 18 14:12:20 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,8 +20,13 @@ class Ui_Keyboard(object):
         self.top_layout.setContentsMargins(-1, 10, -1, 10)
         self.top_layout.setObjectName("top_layout")
         self.key_field = QtGui.QLineEdit(Keyboard)
+        self.key_field.setText("")
+        self.key_field.setReadOnly(True)
         self.key_field.setObjectName("key_field")
         self.top_layout.addWidget(self.key_field)
+        self.option_button = A2MoreButton(Keyboard)
+        self.option_button.setObjectName("option_button")
+        self.top_layout.addWidget(self.option_button)
         self.label_2 = QtGui.QLabel(Keyboard)
         self.label_2.setObjectName("label_2")
         self.top_layout.addWidget(self.label_2)
@@ -186,5 +191,7 @@ class Ui_Keyboard(object):
 
     def retranslateUi(self, Keyboard):
         Keyboard.setWindowTitle(QtGui.QApplication.translate("Keyboard", "Hotkey Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        self.option_button.setText(QtGui.QApplication.translate("Keyboard", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Keyboard", "Show:", None, QtGui.QApplication.UnicodeUTF8))
 
+from a2widget import A2MoreButton
