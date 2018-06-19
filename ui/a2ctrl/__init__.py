@@ -151,16 +151,15 @@ def get_local_element(itempath):
         with open(itempath) as fobj:
             element_content = fobj.read()
 
+        element_objects = {}
         try:
-            element_objects = {}
             exec(element_content, element_objects)
-
             # element_objects.pop('__builtins__')
-            return element_objects
 
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error('Could not exec code from "%s"' % itempath)
+        return element_objects
     else:
         raise RuntimeError('Cannot load local element! File does not exist! (%s)' % itempath)
 
