@@ -176,7 +176,7 @@ class AddonManager(object):
         info_file      The information filename pattern to search for. See below for more information.
         search_paths   A list of paths to search for available add-ons of this type.
         text           The text to display for the add-on type in the user interface. If this isn't set, the name will have underscores converted to spaces and undergo capitalization for this string.
-        icon           The icon, if any, to display for the add-on type. See :meth:`PySide.QtGui.QAction.icon() <PySide.QtGui.PySide.QtGui.QAction.icon>`
+        icon           The icon, if any, to display for the add-on type. See :meth:`PySide2.QtWidgets.QAction.icon() <PySide2.QtWidgets.QAction.icon>`
         =============  ============
 
         ``info_file`` is a somewhat special variable and entirely responsible
@@ -347,7 +347,7 @@ class AddonManager(object):
                     addon.on_inheritance_issue()
                     return self.check_inheritance(addon, _chain)
                 raise DependencyError('Inheritance loop: %r' % new_chain)
-            
+
             try:
                 new_one = self.get(type, name)
             except KeyError:
@@ -356,7 +356,7 @@ class AddonManager(object):
                     return self.check_inheritance(addon, _chain)
                 raise DependencyError('Inheriting non-existent %s %r.' %
                                         (type, name))
-            
+
             self.check_inheritance(new_one, new_chain)
 
 # Now, instance the manager.

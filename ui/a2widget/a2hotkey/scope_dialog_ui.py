@@ -1,34 +1,35 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_dialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_dialog.ui',
+# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_dialog.ui' applies.
 #
-# Created: Thu Jun  7 20:33:59 2018
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Sun Jun 17 23:09:57 2018
+#      by: pyside2-uic  running on PySide2 5.11.0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_ScopeDialog(object):
     def setupUi(self, ScopeDialog):
         ScopeDialog.setObjectName("ScopeDialog")
         ScopeDialog.resize(472, 131)
         ScopeDialog.setModal(True)
-        self.verticalLayout = QtGui.QVBoxLayout(ScopeDialog)
-        self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        self.verticalLayout = QtWidgets.QVBoxLayout(ScopeDialog)
+        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.display_only_label = QtGui.QLabel(ScopeDialog)
+        self.display_only_label = QtWidgets.QLabel(ScopeDialog)
         self.display_only_label.setObjectName("display_only_label")
         self.verticalLayout.addWidget(self.display_only_label)
         self.scope_widget = ScopeWidget(ScopeDialog)
         self.scope_widget.setObjectName("scope_widget")
         self.verticalLayout.addWidget(self.scope_widget)
-        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.a2ok_button = QtGui.QPushButton(ScopeDialog)
+        self.a2ok_button = QtWidgets.QPushButton(ScopeDialog)
         self.a2ok_button.setObjectName("a2ok_button")
         self.horizontalLayout.addWidget(self.a2ok_button)
-        self.a2cancel_button = QtGui.QPushButton(ScopeDialog)
+        self.a2cancel_button = QtWidgets.QPushButton(ScopeDialog)
         self.a2cancel_button.setFlat(True)
         self.a2cancel_button.setObjectName("a2cancel_button")
         self.horizontalLayout.addWidget(self.a2cancel_button)
@@ -42,9 +43,9 @@ class Ui_ScopeDialog(object):
         ScopeDialog.setTabOrder(self.a2ok_button, self.a2cancel_button)
 
     def retranslateUi(self, ScopeDialog):
-        ScopeDialog.setWindowTitle(QtGui.QApplication.translate("ScopeDialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
-        self.display_only_label.setText(QtGui.QApplication.translate("ScopeDialog", "<html><head/><body><p>This is for <span style=\" font-weight:600;\">display only</span>! The scope <span style=\" font-weight:600;\">cannot</span> be changed.</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
-        self.a2ok_button.setText(QtGui.QApplication.translate("ScopeDialog", "OK", None, QtGui.QApplication.UnicodeUTF8))
-        self.a2cancel_button.setText(QtGui.QApplication.translate("ScopeDialog", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        ScopeDialog.setWindowTitle(QtWidgets.QApplication.translate("ScopeDialog", "Dialog", None, -1))
+        self.display_only_label.setText(QtWidgets.QApplication.translate("ScopeDialog", "<html><head/><body><p>This is for <span style=\" font-weight:600;\">display only</span>! The scope <span style=\" font-weight:600;\">cannot</span> be changed.</p></body></html>", None, -1))
+        self.a2ok_button.setText(QtWidgets.QApplication.translate("ScopeDialog", "OK", None, -1))
+        self.a2cancel_button.setText(QtWidgets.QApplication.translate("ScopeDialog", "Cancel", None, -1))
 
 from a2widget.a2hotkey.scope_widget import ScopeWidget
