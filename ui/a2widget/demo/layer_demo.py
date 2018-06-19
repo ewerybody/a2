@@ -1,21 +1,21 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2widget.demo import layer_demo_ui
 import a2ctrl
 from pprint import pprint
 
 
-class Demo(QtGui.QMainWindow):
+class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
         a2ctrl.check_ui_module(layer_demo_ui)
 
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        lyt = QtGui.QFormLayout(w)
+        lyt = QtWidgets.QFormLayout(w)
         w.setLayout(lyt)
 
-        self.lw = QtGui.QWidget(self)
+        self.lw = QtWidgets.QWidget(self)
         self.ui = layer_demo_ui.Ui_Form()
         self.ui.setupUi(self.lw)
 
@@ -26,7 +26,7 @@ class Demo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
     app.exec_()

@@ -49,8 +49,8 @@ except ImportError:
         """ Don't use this. """
         pass
 
-from PySide.QtCore import QCoreApplication
-from PySide.QtGui import QDesktopServices
+from PySide2.QtCore import QCoreApplication
+from PySide2.QtGui import QDesktopServices
 
 ###############################################################################
 # Settings

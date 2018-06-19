@@ -5,10 +5,10 @@ This was a super early layoyt draft for the a2 UI!
 @author: eric
 """
 import draft_ui
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 
 
-class Draft(QtGui.QMainWindow):
+class Draft(QtWidgets.QMainWindow):
     def __init__(self):
         super(Draft, self).__init__()
         self.ui = draft_ui.Ui_MainWindow()
@@ -17,7 +17,7 @@ class Draft(QtGui.QMainWindow):
 
 
 if __name__ == '__main__':
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = Draft()
     win.show()
     app.exec_()

@@ -4,20 +4,20 @@ Created on 08.03.2017
 @author: eric
 '''
 from pprint import pprint
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl.connect
 from a2widget import A2CoordsField
 
 
-class CoordsFieldDemo(QtGui.QMainWindow):
+class CoordsFieldDemo(QtWidgets.QMainWindow):
     dict_changed = QtCore.Signal(tuple)
 
     def __init__(self):
         super(CoordsFieldDemo, self).__init__()
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        vlay = QtGui.QVBoxLayout(w)
+        vlay = QtWidgets.QVBoxLayout(w)
 
         self.c = A2CoordsField()
         self.c.changed.connect(self.change_received)
@@ -36,7 +36,7 @@ class CoordsFieldDemo(QtGui.QMainWindow):
 
         for l, w in [('Simple field:', self.c), ('Constantly updated:', self.c2),
                      ('Dictionary connected:', self.c3)]:
-            vlay.addWidget(QtGui.QLabel(l))
+            vlay.addWidget(QtWidgets.QLabel(l))
             vlay.addWidget(w)
 
     def show_current_pos(self):
@@ -50,7 +50,7 @@ class CoordsFieldDemo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = CoordsFieldDemo()
     win.show()
     app.exec_()

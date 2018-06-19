@@ -1,5 +1,5 @@
 import a2core
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 from a2widget.a2hotkey.simple_dialog import HotkeyDialog1
@@ -14,7 +14,7 @@ SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
 
 
-class A2Hotkey(QtGui.QWidget):
+class A2Hotkey(QtWidgets.QWidget):
     hotkey_changed = QtCore.Signal(str)
     scope_changed = QtCore.Signal(list, int)
 
@@ -32,12 +32,12 @@ class A2Hotkey(QtGui.QWidget):
         self._edit_mode = False
         self.scope_data = scope_data
 
-        self._layout = QtGui.QHBoxLayout(self)
+        self._layout = QtWidgets.QHBoxLayout(self)
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
-        self._hotkey_button = QtGui.QPushButton(self)
+        self._hotkey_button = QtWidgets.QPushButton(self)
         self._hotkey_button.setObjectName('A2HotkeyButton')
-        self._scope_button = QtGui.QPushButton(self)
+        self._scope_button = QtWidgets.QPushButton(self)
         self._scope_button.setObjectName('A2HotkeyScope')
         self._layout.addWidget(self._hotkey_button)
         self._layout.addWidget(self._scope_button)

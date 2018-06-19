@@ -5,10 +5,10 @@ Text field that automatically gets bigger the more lines you add.
 @author: eric
 """
 import pprint
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
-class A2TextField(QtGui.QPlainTextEdit):
+class A2TextField(QtWidgets.QPlainTextEdit):
     """
     Can be set in QDesigner from PlainTextEdit. Has an editing_finished-signal
     similar to the one on the Line edit. The difference is: The trigger here
@@ -25,7 +25,7 @@ class A2TextField(QtGui.QPlainTextEdit):
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        size_policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
         size_policy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         size_policy.setVerticalStretch(0)
         size_policy.setHorizontalStretch(0)
@@ -46,11 +46,11 @@ class A2TextField(QtGui.QPlainTextEdit):
         The field always gets wrong cursor heights before this event it triggered.
         """
         self._set_height_to_block_count()
-        return QtGui.QPlainTextEdit.showEvent(self, *args, **kwargs)
+        return QtWidgets.QPlainTextEdit.showEvent(self, *args, **kwargs)
 
     def focusOutEvent(self, *args, **kwargs):
         self.finish_editing()
-        return QtGui.QPlainTextEdit.focusOutEvent(self, *args, **kwargs)
+        return QtWidgets.QPlainTextEdit.focusOutEvent(self, *args, **kwargs)
 
     def setText(self, this):
         self._internal_change = True

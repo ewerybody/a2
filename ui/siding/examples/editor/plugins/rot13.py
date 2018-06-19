@@ -1,5 +1,5 @@
-from PySide.QtGui import QAction
-from PySide.QtCore import Signal, Slot, QObject
+from PySide2.QtWidgets import QAction
+from PySide2.QtCore import Signal, Slot, QObject
 
 import siding
 import functools

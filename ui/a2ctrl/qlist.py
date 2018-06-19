@@ -4,7 +4,7 @@ a2ctrl.qlist
 @created: Apr 30, 2016
 @author: eRiC
 """
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 
 import a2core
 
@@ -30,7 +30,7 @@ def select_items(list_ctrl, items):
 
     if all([isinstance(i, str) for i in items]):
         text_check = True
-    elif all([isinstance(i, QtGui.QListWidgetItem) for i in items]):
+    elif all([isinstance(i, QtWidgets.QListWidgetItem) for i in items]):
         text_check = False
         item_ids = [id(i) for i in items]
     else:

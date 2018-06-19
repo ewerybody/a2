@@ -6,7 +6,7 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl.connect
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2element import DrawCtrl, EditCtrl
 from a2widget import A2TextField
 
@@ -19,7 +19,7 @@ class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
 
-        self.main_layout = QtGui.QVBoxLayout(self)
+        self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         text = self.cfg.get('text', 'Nothing yet').replace('\n', '<br>')
 
@@ -27,7 +27,7 @@ class Draw(DrawCtrl):
         if '%module_path%' in text:
             text = text.replace('%module_path%', self.mod.path)
 
-        self.label = QtGui.QLabel(text, self)
+        self.label = QtWidgets.QLabel(text, self)
         self.label.setWordWrap(True)
         self.label.setOpenExternalLinks(True)
         self.main_layout.addWidget(self.label)
@@ -42,7 +42,7 @@ class Edit(EditCtrl):
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg)
 
-        self.mainLayout.addWidget(QtGui.QLabel('Some text to show in the module frontend:'))
+        self.mainLayout.addWidget(QtWidgets.QLabel('Some text to show in the module frontend:'))
         self.text_field = A2TextField()
         self.mainLayout.addWidget(self.text_field)
         a2ctrl.connect.control(self.text_field, 'text', self.cfg)

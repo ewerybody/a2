@@ -1,7 +1,7 @@
 import os
 import a2core
 import a2util
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2widget.a2hotkey import edit_func_widget_ui
 from a2widget.a2hotkey.hotkey_common import Vars
 
@@ -18,7 +18,7 @@ class HelpLabels(object):
     vars = 'Help on Autohotkey Built-in Variables'
 
 
-class FuncWidget(QtGui.QWidget):
+class FuncWidget(QtWidgets.QWidget):
     changed = QtCore.Signal()
 
     def __init__(self, parent):
@@ -90,13 +90,13 @@ class FuncWidget(QtGui.QWidget):
         a2util.surf_to(url)
 
     def insert_dir(self):
-        directory = QtGui.QFileDialog.getExistingDirectory(self, "Browsing for a directory ...")
+        directory = QtWidgets.QFileDialog.getExistingDirectory(self, "Browsing for a directory ...")
         if directory:
             self.ui.function_text.insert(directory)
 
     def insert_file(self):
         # options = QtGui.QFileDialog.Options() | QtGui.QFileDialog.DontConfirmOverwrite
-        file_name, _ = QtGui.QFileDialog.getOpenFileName(self, "Browsing for a file ...")
+        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Browsing for a file ...")
         if file_name:
             self.ui.function_text.insert(os.path.normpath(file_name))
 
@@ -152,7 +152,7 @@ class FuncWidget(QtGui.QWidget):
         self.set_function_text()
         self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_function_text)
 
-        return QtGui.QWidget.showEvent(self, *args, **kwargs)
+        return QtWidgets.QWidget.showEvent(self, *args, **kwargs)
 
 
 if __name__ == '__main__':

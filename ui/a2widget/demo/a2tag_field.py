@@ -1,14 +1,14 @@
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2widget import A2TagField
 
 
-class TagFieldDemo(QtGui.QMainWindow):
+class TagFieldDemo(QtWidgets.QMainWindow):
     def __init__(self):
         super(TagFieldDemo, self).__init__()
         self.setWindowTitle(self.__class__.__name__)
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        l = QtGui.QFormLayout(w)
+        l = QtWidgets.QFormLayout(w)
         w.setLayout(l)
 
         self.c = A2TagField()
@@ -17,8 +17,8 @@ class TagFieldDemo(QtGui.QMainWindow):
         self.c.value = ['bla', 'lala']
         self.c.changed.connect(self.bla)
 
-        l.setWidget(0, QtGui.QFormLayout.LabelRole, QtGui.QLabel('Tags:'))
-        l.setWidget(0, QtGui.QFormLayout.FieldRole, self.c)
+        l.setWidget(0, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel('Tags:'))
+        l.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.c)
 
     def bla(self):
         print(self.c.value)
@@ -26,7 +26,7 @@ class TagFieldDemo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = TagFieldDemo()
     win.show()
     app.exec_()

@@ -4,7 +4,7 @@
 """
 import os
 
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 
 import a2core
 import a2util
@@ -22,9 +22,9 @@ class NewModulueTool(A2InputDialog):
             title = 'No Module Source!'
             msg = ('There is no <b>module source</b> to create a module in!\n'
                    'Would you like to create a local one?')
-            reply = QtGui.QMessageBox.question(None, title, msg, QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            reply = QtWidgets.QMessageBox.question(None, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
-            if reply is QtGui.QMessageBox.Yes:
+            if reply is QtWidgets.QMessageBox.Yes:
                 self.main.create_local_source()
                 return
             else:
@@ -45,9 +45,9 @@ class NewModulueTool(A2InputDialog):
             self.main, 'New Module', check_func=self.check_name,
             msg='Name the new module:', text='my_module')
         self.okayed.connect(self.create_module)
-        self.ui.main_layout.insertWidget(0, QtGui.QLabel('Module Source:'))
+        self.ui.main_layout.insertWidget(0, QtWidgets.QLabel('Module Source:'))
 
-        self.source_index = QtGui.QComboBox(self)
+        self.source_index = QtWidgets.QComboBox(self)
         self.source_index.addItems(self.source_dict['sources'])
         a2ctrl.connect.control(self.source_index, 'source_index', self.source_dict)
         self.source_index.currentIndexChanged.connect(self.check_on_source_change)

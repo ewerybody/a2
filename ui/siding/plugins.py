@@ -33,8 +33,8 @@ import inspect
 import os
 import sys
 
-import PySide
-from PySide.QtCore import QCoreApplication, QObject, Signal
+import PySide2
+from PySide2.QtCore import QCoreApplication, QObject, Signal
 
 from siding import profile
 from siding.version import Version, VersionMatch
@@ -74,7 +74,7 @@ class DependencyError(VersionError):
     """
     pass
 
-if Version(PySide.__version__) < '1.0.6':
+if Version(PySide2.__version__) < '1.0.6':
     # This is an annoying bug.
     def issignal(signal):
         """ Return True if signal is an instance of QtCore.Signal. """
@@ -96,7 +96,7 @@ def app_version():
     following locations are searched, in this order, for a version string:
 
         1. ``siding.plugins.version``
-        2. :func:`PySide.QtCore.QCoreApplication.applicationVersion`
+        2. :func:`PySide2.QtCore.QCoreApplication.applicationVersion`
         3. ``__main__.version``
         4. ``__main__.__version__``
 
@@ -129,14 +129,14 @@ def isblacklisted(name):
 class IPlugin(QObject):
     """
     The most basic plugin interface to be inherited. This class is a subclass
-    of :class:`PySide.QtCore.QObject`, and interacts with the rest of the
+    of :class:`PySide2.QtCore.QObject`, and interacts with the rest of the
     application via Slots and Signals.
 
     Simply define slots and signals in subclasses of IPlugin, and they will
     be automatically connected and disconnected when the plugin is enabled or
     disabled. As a simple example::
 
-        from PySide.QtCore import Signal, Slot
+        from PySide2.QtCore import Signal, Slot
         from siding.plugins import IPlugin
 
         class Communicate(IPlugin):

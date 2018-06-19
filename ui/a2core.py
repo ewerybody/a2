@@ -247,8 +247,8 @@ def set_loglevel(debug=False):
         if name.startswith('a2'):
             try:
                 logger.setLevel(level)
-                log.debug('Log level DEBUG: active')
-                log.info('Log level INFO: active')
+                log.debug(f'"{name}" Log level DEBUG: active')
+                log.info(f'"{name}" Log level INFO: active')
             except AttributeError as error:
                 if not isinstance(logger, logging.PlaceHolder):
                     log.info('Could not set log level on logger object "%s": %s' % (name, str(logger)))

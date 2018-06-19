@@ -6,12 +6,12 @@ a2widget.a2item_editor
 """
 import a2ctrl.qlist
 import a2ctrl.connect
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2widget import a2item_editor_ui
 from collections import OrderedDict
 
 
-class A2ItemEditor(QtGui.QWidget):
+class A2ItemEditor(QtWidgets.QWidget):
     selected_name_changed = QtCore.Signal(str)
     selection_changed = QtCore.Signal(list)
     item_changed = QtCore.Signal(tuple)
@@ -30,9 +30,9 @@ class A2ItemEditor(QtGui.QWidget):
         self.ui.setupUi(self)
 
         if self.draw_labels:
-            self.ui.config_layout = QtGui.QFormLayout(self.ui.config_widget)
+            self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
         else:
-            self.ui.config_layout = QtGui.QVBoxLayout(self.ui.config_widget)
+            self.ui.config_layout = QtWidgets.QVBoxLayout(self.ui.config_widget)
 
         contents_margins = self.ui.config_layout.contentsMargins()
         contents_margins.setTop(0)
@@ -78,8 +78,8 @@ class A2ItemEditor(QtGui.QWidget):
         if self.draw_labels:
             this_label = label if label is not None else value_name.title()
             row_index = self.ui.config_layout.rowCount()
-            self.ui.config_layout.setWidget(row_index, QtGui.QFormLayout.LabelRole, QtGui.QLabel(this_label))
-            self.ui.config_layout.setWidget(row_index, QtGui.QFormLayout.FieldRole, widget)
+            self.ui.config_layout.setWidget(row_index, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel(this_label))
+            self.ui.config_layout.setWidget(row_index, QtWidgets.QFormLayout.FieldRole, widget)
         else:
             self.ui.config_layout.addWidget(widget)
 
@@ -163,10 +163,10 @@ class A2ItemEditor(QtGui.QWidget):
         """
         if event.key() == QtCore.Qt.Key_Delete:
             self.delete_item()
-        return QtGui.QListWidget.keyPressEvent(self.ui.item_list, event)
+        return QtWidgets.QListWidget.keyPressEvent(self.ui.item_list, event)
 
     def _add_and_setup_item(self, name):
-        item = QtGui.QListWidgetItem(name)
+        item = QtWidgets.QListWidgetItem(name)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
                       QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
         self.ui.item_list.addItem(item)

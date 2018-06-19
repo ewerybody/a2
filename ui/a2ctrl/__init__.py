@@ -5,7 +5,7 @@ a2ctrl - basic functionality for all the a2element building blocks
 import os
 import sys
 import traceback
-from pysideuic import compileUi
+from pyside2uic import compileUi
 from importlib import reload, import_module
 
 import a2core
@@ -151,16 +151,15 @@ def get_local_element(itempath):
         with open(itempath) as fobj:
             element_content = fobj.read()
 
+        element_objects = {}
         try:
-            element_objects = {}
             exec(element_content, element_objects)
-
             # element_objects.pop('__builtins__')
-            return element_objects
 
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error('Could not exec code from "%s"' % itempath)
+        return element_objects
     else:
         raise RuntimeError('Cannot load local element! File does not exist! (%s)' % itempath)
 

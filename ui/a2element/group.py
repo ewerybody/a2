@@ -4,12 +4,12 @@ Created on Dec 28, 2015
 @author: eRiC
 '''
 import a2ctrl
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2element import group_edit_ui, DrawCtrl, EditCtrl
 from a2element.common import EditAddElem
 
 
-class Draw(QtGui.QGroupBox, DrawCtrl):
+class Draw(QtWidgets.QGroupBox, DrawCtrl):
     """
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.
@@ -23,12 +23,12 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.setChecked(self.get_user_value(bool, 'enabled'))
         self.clicked[bool].connect(self.check)
 
-        self.a2_group_layout = QtGui.QVBoxLayout(self)
+        self.a2_group_layout = QtWidgets.QVBoxLayout(self)
 
         # FIXME: for some reason items in this GroupBox are 0px close to the
         # group box title. It works in settings view tho. I'm unable so far to fix this
         # via CSS. Enlighten me!
-        self.a2_group_marging_top = QtGui.QWidget()
+        self.a2_group_marging_top = QtWidgets.QWidget()
         self.a2_group_marging_top.setMaximumHeight(self.main.css_values['margin_h'])
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
 

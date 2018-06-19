@@ -6,7 +6,7 @@ a2ctrl.a2module_view
 """
 from copy import deepcopy
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2core
 import a2ctrl
@@ -23,7 +23,7 @@ NEW_MODULE_CFG = {'typ': 'nfo',
                   'version': '0.1'}
 
 
-class A2ModuleView(QtGui.QWidget):
+class A2ModuleView(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
@@ -41,8 +41,8 @@ class A2ModuleView(QtGui.QWidget):
         self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()
 
         self.mainlayout = self.ui.scroll_area_contents.layout()
-        self.ui.spacer = QtGui.QSpacerItem(0, 0, QtGui.QSizePolicy.Minimum,
-                                           QtGui.QSizePolicy.Minimum)
+        self.ui.spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Minimum)
         self.mainlayout.addItem(self.ui.spacer)
         self.settings_widget = self.ui.scroll_area_contents
 
@@ -180,15 +180,15 @@ class A2ModuleView(QtGui.QWidget):
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
         current_height = self.settings_widget.height()
-        new_widget = QtGui.QWidget(self)
+        new_widget = QtWidgets.QWidget(self)
         if keep_scroll:
             current_scroll_value = self.ui.scrollBar.value()
-            new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                                       QtGui.QSizePolicy.Fixed))
+            new_widget.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                                       QtWidgets.QSizePolicy.Fixed))
             new_widget.setMinimumHeight(current_height)
 
         # create new column layout for the module controls
-        new_layout = QtGui.QVBoxLayout(new_widget)
+        new_layout = QtWidgets.QVBoxLayout(new_widget)
 
         # turn scroll layout content to new host widget
         self.ui.a2scroll_area.setWidget(new_widget)
@@ -208,8 +208,8 @@ class A2ModuleView(QtGui.QWidget):
         # amend the spacer
         new_layout.addItem(self.ui.spacer)
 
-        vertical_policy = QtGui.QSizePolicy.Minimum if has_expandable_widget else QtGui.QSizePolicy.Maximum
-        new_widget.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, vertical_policy))
+        vertical_policy = QtWidgets.QSizePolicy.Minimum if has_expandable_widget else QtWidgets.QSizePolicy.Maximum
+        new_widget.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, vertical_policy))
 
         if keep_scroll:
             self.ui.scrollBar.setValue(current_scroll_value)

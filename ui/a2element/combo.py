@@ -4,7 +4,7 @@ Created on Apr 1, 2016
 @author: eRiC
 '''
 import a2ctrl.qlist
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 
@@ -16,12 +16,12 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.layout = QtGui.QHBoxLayout(self)
+        self.layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
-        self.label = QtGui.QLabel(self.label_text, self)
+        self.label = QtWidgets.QLabel(self.label_text, self)
         self.layout.addWidget(self.label)
 
-        self.value_ctrl = QtGui.QComboBox()
+        self.value_ctrl = QtWidgets.QComboBox()
         if self.user_edit:
             items = self.get_user_value(list, 'items')
             self.value_ctrl.setEditable(True)
@@ -86,7 +86,7 @@ class Edit(EditCtrl):
     def add_item(self):
         current_items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)
         new_item_name = 'new_item'
-        item = QtGui.QListWidgetItem(new_item_name)
+        item = QtWidgets.QListWidgetItem(new_item_name)
         current_items.append(new_item_name)
         self.update_items(items=current_items)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |

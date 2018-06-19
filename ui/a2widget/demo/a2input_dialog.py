@@ -1,15 +1,15 @@
 from a2widget import A2InputDialog, A2ConfirmDialog
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 
 
-class InputDialogDemo(QtGui.QMainWindow):
+class InputDialogDemo(QtWidgets.QMainWindow):
     def __init__(self):
         super(InputDialogDemo, self).__init__()
         self.setWindowTitle(self.__class__.__name__)
-        widget = QtGui.QWidget(self)
+        widget = QtWidgets.QWidget(self)
         self.setCentralWidget(widget)
-        layout = QtGui.QVBoxLayout(widget)
-        button = QtGui.QPushButton('Call a A2InputDialog')
+        layout = QtWidgets.QVBoxLayout(widget)
+        button = QtWidgets.QPushButton('Call a A2InputDialog')
         layout.addWidget(button)
 
         self.c = A2InputDialog(self, 'a title', text='predefined text',
@@ -21,7 +21,7 @@ class InputDialogDemo(QtGui.QMainWindow):
 
         button.clicked.connect(self.c.show)
 
-        button2 = QtGui.QPushButton('Call a A2ConfirmDialog')
+        button2 = QtWidgets.QPushButton('Call a A2ConfirmDialog')
         button2.clicked.connect(self.call_confirm_dialog)
         layout.addWidget(button2)
 
@@ -53,7 +53,7 @@ class InputDialogDemo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = InputDialogDemo()
     win.show()
     app.exec_()

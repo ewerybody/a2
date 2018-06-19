@@ -12,7 +12,7 @@ import a2util
 import a2runtime
 from a2widget import a2design_ui
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
 BASE_DPI = 96.0
@@ -22,7 +22,7 @@ RESTART_DELAY = 300
 RUNTIME_WATCH_INTERVAL = 1000
 
 
-class A2Window(QtGui.QMainWindow):
+class A2Window(QtWidgets.QMainWindow):
 
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
@@ -133,19 +133,19 @@ class A2Window(QtGui.QMainWindow):
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
     def _setup_shortcuts(self):
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
-                        self, self.escape)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
-                        self, self.edit_submit)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
-                        self, self.edit_submit)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
-                        self, self.edit_submit)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
+                            self, self.escape)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
+                            self, self.edit_submit)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
+                            self, self.edit_submit)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
+                            self, self.edit_submit)
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.module_view.ui.a2scroll_area,
-                        partial(self.scroll_to, True))
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.module_view.ui.a2scroll_area,
-                        partial(self.scroll_to, False))
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.module_view.ui.a2scroll_area,
+                            partial(self.scroll_to, True))
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.module_view.ui.a2scroll_area,
+                            partial(self.scroll_to, False))
 
     def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:
@@ -228,8 +228,10 @@ class A2Window(QtGui.QMainWindow):
 
     def escape(self):
         if self.module_view.editing:
+            log.debug('Exiting Module edit mode!')
             self.module_view.draw_mod()
         else:
+            log.debug('Exiting a2 Ui! okithxbye')
             self.close()
 
     def explore_mod(self):
@@ -242,15 +244,16 @@ class A2Window(QtGui.QMainWindow):
         a2util.explore(self.a2.paths.a2)
 
     def closeEvent(self, event):
-        binprefs = str(self.saveGeometry().toPercentEncoding())
-        self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(), 'geometry': binprefs})
+        win_geom_str = self.saveGeometry().toBase64().data().decode()
+        self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(),
+                                       'geometry': win_geom_str})
         self.a2.db.set('last_selected', [m.key for m in self.selected])
 
         for thread in [self._restart_thread, self.runtime_watcher, self._shutdown_thread]:
             if thread is not None:
                 thread.quit()
 
-        QtGui.QMainWindow.closeEvent(self, event)
+        QtWidgets.QMainWindow.closeEvent(self, event)
 
     def restore_ui(self):
         """
@@ -261,8 +264,12 @@ class A2Window(QtGui.QMainWindow):
         win_prefs = self.a2.db.get('windowprefs') or {}
         geometry = win_prefs.get('geometry')
         if geometry is not None:
-            geometry = QtCore.QByteArray().fromPercentEncoding(geometry)
-            self.restoreGeometry(geometry)
+            try:
+                geometry = QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8'))
+                self.restoreGeometry(geometry)
+            except Exception:
+                pass
+
         splitter_size = win_prefs.get('splitter')
         if splitter_size is not None:
             self.ui.splitter.setSizes(splitter_size)
@@ -354,12 +361,12 @@ class A2Window(QtGui.QMainWindow):
             _TASK_MSG = 'browse for a code editor executable'
             _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
 
-            reply = QtGui.QMessageBox.question(
+            reply = QtWidgets.QMessageBox.question(
                 self, 'No Valid Code Editor Set!', _QUEST_MSG,
-                QtGui.QMessageBox.Yes | QtGui.QMessageBox.Cancel)
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
 
-            if reply == QtGui.QMessageBox.Yes:
-                exepath, _ = QtGui.QFileDialog.getOpenFileName(
+            if reply == QtWidgets.QMessageBox.Yes:
+                exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
                     self, _TASK_MSG.title(), self.devset.code_editor, 'Executable (*.exe)')
                 if exepath:
                     self.devset.set_var('code_editor', exepath)

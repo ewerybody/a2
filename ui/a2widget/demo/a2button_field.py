@@ -4,26 +4,26 @@ Created on 08.03.2017
 @author: eric
 """
 import uuid
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2widget import A2ButtonField
 
 
-class ButtonFieldDemo(QtGui.QMainWindow):
+class ButtonFieldDemo(QtWidgets.QMainWindow):
     def __init__(self):
         super(ButtonFieldDemo, self).__init__()
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        lyt = QtGui.QVBoxLayout(w)
+        lyt = QtWidgets.QVBoxLayout(w)
         w.setLayout(lyt)
 
-        lyt.addWidget(QtGui.QLabel('with some static actions:'))
+        lyt.addWidget(QtWidgets.QLabel('with some static actions:'))
         self.bf1 = A2ButtonField()
         lyt.addWidget(self.bf1)
-        self.bf1.add_action(QtGui.QAction('Hello', self, triggered=self.bla))
+        self.bf1.add_action(QtWidgets.QAction('Hello', self, triggered=self.bla))
         self.bf1.add_action('Hallo', self.bla)
         self.bf1.add_action('nix')
 
-        lyt.addWidget(QtGui.QLabel('with actions build dynamically:'))
+        lyt.addWidget(QtWidgets.QLabel('with actions build dynamically:'))
         self.bf2 = A2ButtonField()
         lyt.addWidget(self.bf2)
         self.bf2.menu_called.connect(self.about_signal)
@@ -41,7 +41,7 @@ class ButtonFieldDemo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = ButtonFieldDemo()
     win.show()
     app.exec_()

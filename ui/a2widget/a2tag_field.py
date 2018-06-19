@@ -1,21 +1,21 @@
 from functools import partial
 
-from PySide import QtCore, QtGui
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 from a2widget.flowlayout import FlowLayout
 from a2widget import A2InputDialog
 
 
-class A2TagField(QtGui.QWidget):
+class A2TagField(QtWidgets.QWidget):
     changed = QtCore.Signal(list)
 
     def __init__(self, parent=None):
         super(A2TagField, self).__init__(parent=parent)
         self.main_layout = FlowLayout(self)
 
-        self.plus_button = QtGui.QToolButton()
-        self.plus_menu = QtGui.QMenu(self)
+        self.plus_button = QtWidgets.QToolButton()
+        self.plus_menu = QtWidgets.QMenu(self)
         self.plus_button.setIcon(a2ctrl.Icons.inst().label_plus)
         self.plus_button.clicked.connect(self.build_plus_menu)
         self.main_layout.addWidget(self.plus_button)
@@ -141,7 +141,7 @@ class A2TagField(QtGui.QWidget):
             self._available_tags[tag_name] += (tag_name,)
 
 
-class A2Tag(QtGui.QPushButton):
+class A2Tag(QtWidgets.QPushButton):
     delete_requested = QtCore.Signal(str)
 
     def __init__(self, parent, name):
@@ -154,7 +154,7 @@ class A2Tag(QtGui.QPushButton):
 
     def build_menu(self):
         if self.button_menu is None:
-            self.button_menu = QtGui.QMenu()
+            self.button_menu = QtWidgets.QMenu()
             self.button_menu.addAction(
                 a2ctrl.Icons.inst().delete, 'Delete "%s"' % self.name, self.delete)
         self.button_menu.popup(self.cursor().pos())

@@ -3,7 +3,7 @@ Created on 08.03.2017
 
 @author: eric
 """
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2ctrl
@@ -14,23 +14,23 @@ from a2widget import A2MoreButton
 log = a2core.get_logger(__name__)
 
 
-class A2CoordsField(QtGui.QWidget):
+class A2CoordsField(QtWidgets.QWidget):
     changed = QtCore.Signal(tuple)
 
     def __init__(self, parent=None):
         super(A2CoordsField, self).__init__(parent)
 
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self._internal_change = False
 
-        self.x_field = QtGui.QSpinBox(self)
+        self.x_field = QtWidgets.QSpinBox(self)
         self.x_field.setMinimum(-16777214)
         self.x_field.setMaximum(16777215)
         self.x_field.valueChanged.connect(self.change_triggered)
         self.main_layout.addWidget(self.x_field)
 
-        self.y_field = QtGui.QSpinBox(self)
+        self.y_field = QtWidgets.QSpinBox(self)
         self.y_field.setMinimum(-16777214)
         self.y_field.setMaximum(16777215)
         self.y_field.valueChanged.connect(self.change_triggered)
@@ -92,10 +92,10 @@ class A2CoordsField(QtGui.QWidget):
         self.changed.emit((self.x, self.y))
 
     def copy(self):
-        QtGui.QApplication.clipboard().setText('%i, %i' % (self.x, self.y))
+        QtWidgets.QApplication.clipboard().setText('%i, %i' % (self.x, self.y))
 
     def paste(self):
-        text = QtGui.QApplication.clipboard().text().strip(' ()\n\t')
+        text = QtWidgets.QApplication.clipboard().text().strip(' ()\n\t')
         self.set_string_value(text)
 
     def pick(self):

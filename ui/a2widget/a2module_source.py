@@ -1,7 +1,7 @@
 import a2mod
 import a2core
 import a2ctrl
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2widget import a2module_source_ui, A2ConfirmDialog, A2InputDialog
 
 log = a2core.get_logger(__name__)
@@ -18,7 +18,7 @@ MSG_ADD_DIALOG = ('Please provide a URL to a network location\n'
                   'or internet address to get an a2 package from:')
 
 
-class ModSourceWidget(QtGui.QWidget):
+class ModSourceWidget(QtWidgets.QWidget):
     toggled = QtCore.Signal()
     changed = QtCore.Signal()
 
@@ -75,7 +75,7 @@ class ModSourceWidget(QtGui.QWidget):
         self._reset_timer.setSingleShot(True)
         self._reset_timer.timeout.connect(self._update_msg)
         self.ui.a2option_button.menu_called.connect(self.build_version_menu)
-        self.version_menu = QtGui.QMenu(self)
+        self.version_menu = QtWidgets.QMenu(self)
         self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
 
     def _set_homepage_label(self):
@@ -199,7 +199,7 @@ class ModSourceWidget(QtGui.QWidget):
         self._change_version(to_version)
 
 
-class BusyIcon(QtGui.QLabel):
+class BusyIcon(QtWidgets.QLabel):
     def __init__(self, parent, size):
         super(BusyIcon, self).__init__(parent)
         self.anim_timer = QtCore.QTimer()
@@ -242,13 +242,13 @@ class AddSourceDialog(A2InputDialog):
             self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG)
 
         self.ui.main_layout.setSpacing(self.main.css_values['spacing'] * 3)
-        self.h_layout = QtGui.QHBoxLayout()
+        self.h_layout = QtWidgets.QHBoxLayout()
         self.busy_icon = BusyIcon(self, self.main.css_values['icon_size'])
         self.h_layout.addWidget(self.ui.label)
         self.h_layout.addWidget(self.busy_icon)
         self.ui.main_layout.insertLayout(0, self.h_layout)
 
-        self.checkbox = QtGui.QCheckBox(MSG_INSTALL_CHECK)
+        self.checkbox = QtWidgets.QCheckBox(MSG_INSTALL_CHECK)
         self.checkbox.setVisible(False)
         self.checkbox.setChecked(True)
         self.checkbox.clicked.connect(self.check)
@@ -334,7 +334,7 @@ class AddSourceDialog(A2InputDialog):
             self.show_error('Error reading the fetched data!:\n%s' % error)
             return
 
-        self.clickable_label = QtGui.QLabel(MSG_INSTALL_DISCLAIMER
+        self.clickable_label = QtWidgets.QLabel(MSG_INSTALL_DISCLAIMER
                                             % self.a2.urls.security)
         self.clickable_label.setWordWrap(True)
         self.clickable_label.setOpenExternalLinks(True)

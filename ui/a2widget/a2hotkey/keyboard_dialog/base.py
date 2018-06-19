@@ -1,4 +1,4 @@
-"""
+﻿"""
 Created on 11.09.2017
 
 @author: eric
@@ -12,7 +12,7 @@ import a2util
 import a2ctrl.connect
 from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger('keyboard_base')
@@ -25,7 +25,7 @@ _IGNORE_BUTTONS = ['a2cancel_button', 'a2ok_button']
 HOTKEY_HELP_PAGE = 'Hotkey-Setup'
 
 
-class KeyboardDialogBase(QtGui.QDialog):
+class KeyboardDialogBase(QtWidgets.QDialog):
 
     def __init__(self, parent):
         super(KeyboardDialogBase, self).__init__(parent)
@@ -34,7 +34,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         self.a2 = a2core.A2Obj.inst()
         self.key_dict = {}
         self.modifier = {}
-        self.checked_key = None
+        self.checked_key = ''
         self.checked_modifier = []
 
         a2ctrl.check_ui_module(base_ui)
@@ -58,7 +58,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         updates key field, dictionaries and toggles the according buttons.
         """
         if not self.key:
-            self.checked_key = None
+            self.checked_key = ''
             self.checked_modifier = []
             return
 
@@ -90,7 +90,7 @@ class KeyboardDialogBase(QtGui.QDialog):
 
     def _setup_ui(self):
         # css debug shortcut
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
 
         self.ui.keys_layout.addWidget(self.cursor_block_widget)
         self.ui.keys_layout.addWidget(self.numpad_block_widget)
@@ -132,7 +132,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         * showing as a tooltip
         """
         # name = key + '_key'
-        button = QtGui.QPushButton(self.ui.keys_widget)
+        button = QtWidgets.QPushButton(self.ui.keys_widget)
         button.setCheckable(True)
         # button.setObjectName(name)
         # setattr(self.ui, name, button)
@@ -163,7 +163,7 @@ class KeyboardDialogBase(QtGui.QDialog):
     def _check_modifier(self, button):
         # modifiers can be toggled however you like
         checked = button.isChecked()
-        ctrl_modifier = QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+        ctrl_modifier = QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
 
         if checked:
             if button.a2key not in self.checked_modifier:
@@ -184,7 +184,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         if button.a2key == self.checked_key:
             self.key_dict[button.a2key].setChecked(True)
         else:
-            if self.checked_key is not None:
+            if self.checked_key:
                 self.key_dict[self.checked_key].setChecked(False)
             self.checked_key = button.a2key
 
@@ -249,7 +249,7 @@ class KeyboardDialogBase(QtGui.QDialog):
                 continue
 
             obj = getattr(self.ui, objname)
-            if not isinstance(obj, QtGui.QPushButton):
+            if not isinstance(obj, QtWidgets.QPushButton):
                 continue
             if objname not in self.key_dict:
                 log.error('NOT IN!: %s' % objname)
@@ -340,7 +340,7 @@ class KeyboardDialogBase(QtGui.QDialog):
         a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
 
 
-class CursorBlockWidget(QtGui.QWidget):
+class CursorBlockWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(CursorBlockWidget, self).__init__(parent)
         self.ui = cursor_block_ui.Ui_CursorBlock()
@@ -355,7 +355,7 @@ class CursorBlockWidget(QtGui.QWidget):
         pass
 
 
-class NumpadWidget(QtGui.QWidget):
+class NumpadWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(NumpadWidget, self).__init__(parent)
         self.a2 = parent.a2
@@ -364,7 +364,7 @@ class NumpadWidget(QtGui.QWidget):
         self.setVisible(self.a2.db.get(DB_KEY_NUMPAD) or False)
 
 
-class MouseWidget(QtGui.QWidget):
+class MouseWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(MouseWidget, self).__init__(parent)
         self.a2 = parent.a2
@@ -378,7 +378,7 @@ class MouseWidget(QtGui.QWidget):
 
 
 def _is_pushbutton(obj):
-    return isinstance(obj, QtGui.QPushButton)
+    return isinstance(obj, QtWidgets.QPushButton)
 
 
 def load_css(name):

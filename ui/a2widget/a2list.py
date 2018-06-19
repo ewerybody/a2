@@ -1,18 +1,18 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
-class A2List(QtGui.QListWidget):
+class A2List(QtWidgets.QListWidget):
     """
     A simple list widget.
     """
     names_selected = QtCore.Signal(list)
     items_selected = QtCore.Signal(list)
     single_name_selected = QtCore.Signal(str)
-    single_item_selected = QtCore.Signal(QtGui.QListWidgetItem)
+    single_item_selected = QtCore.Signal(QtWidgets.QListWidgetItem)
     selection_cleared = QtCore.Signal()
 
     name_double_clicked = QtCore.Signal(str)
-    item_double_clicked = QtCore.Signal(QtGui.QListWidgetItem)
+    item_double_clicked = QtCore.Signal(QtWidgets.QListWidgetItem)
     changed = QtCore.Signal()
     item_removed = QtCore.Signal()
     context_menu_requested = QtCore.Signal(QtCore.QPoint)
@@ -31,7 +31,7 @@ class A2List(QtGui.QListWidget):
 
         self.itemSelectionChanged.connect(self._on_selection_change)
 
-        shortcut = QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete),
+        shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete),
                                    self, self.remove_selected)
         shortcut.setContext(QtCore.Qt.WidgetShortcut)
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -48,7 +48,7 @@ class A2List(QtGui.QListWidget):
                     continue
                 current.append(name)
 
-            item = QtGui.QListWidgetItem(NAME)
+            item = QtWidgets.QListWidgetItem(NAME)
             self.addItem(item)
 
             addded_something = True
@@ -188,7 +188,7 @@ class A2ListCompact(A2List):
     def showEvent(self, *args, **kwargs):
         self._shown = True
         self._set_list_line_height()
-        return QtGui.QListWidget.showEvent(self, *args, **kwargs)
+        return QtWidgets.QListWidget.showEvent(self, *args, **kwargs)
 
     def _init_line_height(self):
         # figure out list_widget row height
@@ -196,7 +196,7 @@ class A2ListCompact(A2List):
             item = self.item(0)
             dummy_create = item is None
             if dummy_create:
-                item = QtGui.QListWidgetItem('')
+                item = QtWidgets.QListWidgetItem('')
                 self.addItem(item)
             self._list_line_height = self.visualItemRect(item).height()
             if dummy_create:

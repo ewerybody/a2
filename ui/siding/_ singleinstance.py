@@ -16,7 +16,7 @@
 #
 ###############################################################################
 """
-A cross-platform implementation of a :class:`PySide.QtGui.QApplication`
+A cross-platform implementation of a :class:`PySide2.QtWidgets.QApplication`
 subclass with the ability to determine if it's the only running instance of an
 application, and if not, send a message to the previous instance before
 closing.
@@ -33,9 +33,9 @@ import struct
 import sys
 import uuid
 
-from PySide.QtCore import Signal, QDir
-from PySide.QtGui import QApplication
-from PySide.QtNetwork import QLocalServer, QLocalSocket
+from PySide2.QtCore import Signal, QDir
+from PySide2.QtWidgets import QApplication
+from PySide2.QtNetwork import QLocalServer, QLocalSocket
 
 from siding import profile
 
@@ -79,7 +79,7 @@ else:
 
 class QSingleApplication(QApplication):
     """
-    This subclass of :class:`~PySide.QtGui.QApplication` ensures that only a
+    This subclass of :class:`~PySide2.QtWidgets.QApplication` ensures that only a
     single instance of an application will be run simultaneously, and provides
     a mechanism for new instances to send commands to the previously existing
     instance before the new instance closes.

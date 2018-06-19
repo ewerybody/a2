@@ -251,7 +251,7 @@ intersphinx_mapping = {
 
 # Mockup PySide
 try:
-    import PySide
+    import PySide2
 except ImportError:
     class Mock(object):
         def __init__(self, *args, **kwargs):
@@ -269,6 +269,6 @@ except ImportError:
             else:
                 return Mock()
 
-    MOCK_MODULES = ['PySide', 'PySide.QtCore', 'PySide.QtGui', 'PySide.QtNetwork']
+    MOCK_MODULES = ['PySide2', 'PySide2.QtCore', 'PySide2.QtGui', 'PySide2.QtNetwork']
     for mod_name in MOCK_MODULES:
         sys.modules[mod_name] = Mock()

@@ -24,7 +24,7 @@ entirely within the application.
 # Imports
 ###############################################################################
 
-from PySide.QtCore import QObject, Signal
+from PySide2.QtCore import QObject, Signal
 
 from siding.addons.base import AddonInfo
 

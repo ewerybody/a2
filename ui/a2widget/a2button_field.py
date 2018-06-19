@@ -1,18 +1,18 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 from a2widget import A2MoreButton
 
 
-class A2ButtonField(QtGui.QWidget):
+class A2ButtonField(QtWidgets.QWidget):
     textChanged = QtCore.Signal(str)
-    menu_called = QtCore.Signal(QtGui.QMenu)
+    menu_called = QtCore.Signal(QtWidgets.QMenu)
 
     def __init__(self, parent=None):
         super(A2ButtonField, self).__init__(parent)
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.field = QtGui.QLineEdit(self)
+        self.field = QtWidgets.QLineEdit(self)
         self.field.textChanged.connect(self.textChanged.emit)
         self.main_layout.addWidget(self.field)
         self.a2option_button = A2MoreButton(self)
@@ -74,7 +74,7 @@ class A2ButtonField(QtGui.QWidget):
 
     def add_menu(self, *args):
         """
-        :rtype QtGui.QMenu:
+        :rtype QtWidgets.QMenu:
         """
         return self.a2option_button.add_menu(*args)
 

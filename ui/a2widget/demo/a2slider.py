@@ -5,15 +5,15 @@ a2widget.demo.a2slider
 @author: eric
 """
 from a2widget import a2slider
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
-class SliderDemo(QtGui.QMainWindow):
+class SliderDemo(QtWidgets.QMainWindow):
     def __init__(self):
         super(SliderDemo, self).__init__()
-        widget = QtGui.QWidget()
+        widget = QtWidgets.QWidget()
         self.setCentralWidget(widget)
-        vlayout = QtGui.QVBoxLayout(widget)
+        vlayout = QtWidgets.QVBoxLayout(widget)
         slider = a2slider.A2Slider(widget)
         slider.setMinimumWidth(500)
 
@@ -24,12 +24,12 @@ class SliderDemo(QtGui.QMainWindow):
 
         slider.editing_finished.connect(self.finished)
         slider.value_changed.connect(self.changed)
-        vlayout.addWidget(QtGui.QLabel('Slider with all connections and a field:'))
+        vlayout.addWidget(QtWidgets.QLabel('Slider with all connections and a field:'))
         vlayout.addWidget(slider)
 
-        vlayout.addWidget(QtGui.QLabel('Slider without field and only finished connected but a custom label:'))
-        hlayout = QtGui.QHBoxLayout()
-        self.label = QtGui.QLabel('1.0')
+        vlayout.addWidget(QtWidgets.QLabel('Slider without field and only finished connected but a custom label:'))
+        hlayout = QtWidgets.QHBoxLayout()
+        self.label = QtWidgets.QLabel('1.0')
         slider2 = a2slider.A2Slider(widget, has_field=False)
         hlayout.addWidget(self.label)
         hlayout.addWidget(slider2)
@@ -37,8 +37,8 @@ class SliderDemo(QtGui.QMainWindow):
         slider2.value_changed.connect(self.label_update)
         vlayout.addLayout(hlayout)
 
-        vlayout.addWidget(QtGui.QLabel('old slider'))
-        old_slider = QtGui.QSlider(self)
+        vlayout.addWidget(QtWidgets.QLabel('old slider'))
+        old_slider = QtWidgets.QSlider(self)
         old_slider.setOrientation(QtCore.Qt.Horizontal)
         vlayout.addWidget(old_slider)
         old_slider.valueChanged.connect(self.changed)
@@ -58,7 +58,7 @@ class SliderDemo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = SliderDemo()
     win.show()
     app.exec_()

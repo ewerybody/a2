@@ -1,5 +1,5 @@
 import a2ctrl
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2element import string_edit_ui, DrawCtrl, EditCtrl
 
 
@@ -10,17 +10,17 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.layout = QtGui.QHBoxLayout(self)
+        self.layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
-        self.label = QtGui.QLabel(self.label_text, self)
-        self.value_ctrl = QtGui.QLineEdit(self.value)
+        self.label = QtWidgets.QLabel(self.label_text, self)
+        self.value_ctrl = QtWidgets.QLineEdit(self.value)
         self.value_ctrl.editingFinished.connect(self.delayed_check)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.value_ctrl)
         self.setLayout(self.layout)
 
         if self.cfg.get('password_mode', False):
-            self.value_ctrl.setEchoMode(QtGui.QLineEdit.Password)
+            self.value_ctrl.setEchoMode(QtWidgets.QLineEdit.Password)
 
     def check(self, value=None):
         if value is None:

@@ -6,7 +6,7 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2element import coords_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2CoordsField
 
@@ -19,11 +19,11 @@ class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
         self.value = self.get_user_value((list, tuple), default=(0, 0))
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.main_layout)
 
-        self.label = QtGui.QLabel(self.cfg.get('label', ''), self)
+        self.label = QtWidgets.QLabel(self.cfg.get('label', ''), self)
         self.main_layout.addWidget(self.label)
 
         self.value_ctrl = A2CoordsField(self)

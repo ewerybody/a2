@@ -2,7 +2,7 @@ a2_python := _init_get_var("a2_python")
 a2_ui_call := _init_get_var("a2_ui_call")
 a2_startup_tool_tips := _init_get_var("a2_startup_tool_tips")
 
-PY_VERSION_SHORT := "3.4"
+PY_VERSION_SHORT := "3.6"
 
 StringLower, a2_startup_tool_tips, a2_startup_tool_tips
 if (a2_startup_tool_tips == "true")
@@ -34,7 +34,7 @@ else
 		check_pypath := found_list[1]
 	}
 
-	; check if a2_python is version 3.4.x ==============================================
+	; check if a2_python is correct version ============================================
 	check_version(check_pypath)
 	
 	; check if a2_call contains more than the a2app-string =============================
@@ -91,7 +91,7 @@ check_version(check_pypath) {
 	FileGetVersion, py_version, %check_pypath%
 	if (py_version == "")
 	{
-		; no version string received. might be 3.4!
+		; no version string received. check the readme file for a hint
 		SplitPath, check_pypath,, py_dir
 		readme_path := py_dir "\README.txt"
 		IfExist, %readme_path%
@@ -110,9 +110,9 @@ check_version(check_pypath) {
 	}
 	else
 	{
-		if vshort != PY_VERSION_SHORT
+		if (SubStr(py_version, 1, 3) != PY_VERSION_SHORT)
 		{
-			MsgBox, 16, Wrong Python Version?, The found Python executable (%check_pypath%)(%py_version%) does not match version "%PY_VERSION_SHORT%"`n`nPlease make sure that a fitting version is found for a2 ui to run on!`nThanks!
+			MsgBox, 16, Wrong Python Version?, The found Python executable (%check_pypath%) (%py_version%) does not match version "%PY_VERSION_SHORT%"`n`nPlease make sure that a fitting version is found for a2 ui to run on!`nThanks!
 			ExitApp
 		}
 	}

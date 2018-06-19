@@ -16,7 +16,7 @@
 #
 ###############################################################################
 """
-A profile system that provides both a :class:`PySide.QtCore.QSettings` instance
+A profile system that provides both a :class:`PySide2.QtCore.QSettings` instance
 for storing and retrieving settings values, as well as functions for
 determining file locations between the profile directory and the application
 root.
@@ -30,8 +30,8 @@ import os
 import argparse
 import sys
 
-from PySide.QtCore import QCoreApplication, QSettings
-from PySide.QtGui import QDesktopServices
+from PySide2.QtCore import QCoreApplication, QSettings
+from PySide2.QtGui import QDesktopServices
 
 try:
     import pkg_resources as pr
