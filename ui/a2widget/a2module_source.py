@@ -68,7 +68,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui.update_button.clicked.connect(self._check_update)
         self._update_to_version = None
 
-        self.ui.busy_icon = BusyIcon(self, self.main.css_values['icon_size'])
+        self.ui.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
         self.ui.update_layout.insertWidget(1, self.ui.busy_icon)
 
         self._reset_timer = QtCore.QTimer()
@@ -241,9 +241,9 @@ class AddSourceDialog(A2InputDialog):
         super(AddSourceDialog, self).__init__(
             self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG)
 
-        self.ui.main_layout.setSpacing(self.main.css_values['spacing'] * 3)
+        self.ui.main_layout.setSpacing(self.main.style.get('spacing') * 3)
         self.h_layout = QtWidgets.QHBoxLayout()
-        self.busy_icon = BusyIcon(self, self.main.css_values['icon_size'])
+        self.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
         self.h_layout.addWidget(self.ui.label)
         self.h_layout.addWidget(self.busy_icon)
         self.ui.main_layout.insertLayout(0, self.h_layout)

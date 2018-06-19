@@ -261,7 +261,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def refresh_style(self):
         try:
-            css_values = self.a2.win.css_values
+            css_values = self.a2.win.style.get_value_dict()
         except AttributeError:
             return
 

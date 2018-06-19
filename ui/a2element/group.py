@@ -29,7 +29,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
         # group box title. It works in settings view tho. I'm unable so far to fix this
         # via CSS. Enlighten me!
         self.a2_group_marging_top = QtWidgets.QWidget()
-        self.a2_group_marging_top.setMaximumHeight(self.main.css_values['margin_h'])
+        self.a2_group_marging_top.setMaximumHeight(self.main.style.get('margin_h'))
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
 
         expandable = False

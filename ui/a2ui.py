@@ -15,7 +15,6 @@ from a2widget import a2design_ui
 from PySide2 import QtGui, QtCore, QtWidgets
 
 
-BASE_DPI = 96.0
 log = a2core.get_logger(__name__)
 ui_defaults = None
 RESTART_DELAY = 300
@@ -36,7 +35,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.selected = []
         self.mod = None
         self.scopes = {}
-        self.css_values = {}
+
+        self.style = None
         self.rebuild_css()
 
         self.devset = DevSettings(self.a2)
@@ -316,24 +316,11 @@ class A2Window(QtWidgets.QMainWindow):
         else:
             self.a2.db.set('ui_scale', user_scale)
 
-        self.css_values['user_scale'] = user_scale
+        if self.style is None:
+            import a2style
+            self.style = a2style.A2StyleBuilder(self.a2.db.get('ui_theme'))
 
-        local_scale = self.app.desktop().physicalDpiX() / BASE_DPI
-        self.css_values['local_scale'] = local_scale
-        scale = self.css_values['local_scale'] * user_scale
-        self.css_values['scale'] = scale
-
-        css_template_path = os.path.join(self.a2.paths.defaults, 'css_defaults.json')
-        css_defaults = a2util.json_read(css_template_path)
-        with open(os.path.join(self.a2.paths.defaults, 'a2.css')) as fobj:
-            css_template = fobj.read()
-
-        for name, value in css_defaults.items():
-            if isinstance(value, int):
-                value = int(scale * float(value))
-            self.css_values[name] = value
-
-        css_template = css_template % self.css_values
+        css_template = self.style.get_style(user_scale)
         self.app.setStyleSheet(css_template)
 
     def build_package(self):

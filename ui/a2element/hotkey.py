@@ -57,7 +57,7 @@ class Draw(DrawCtrl):
             self.check = QtWidgets.QCheckBox(self)
 
             try:
-                size = self.main.css_values['icon_size']
+                size = self.main.style.get('icon_size')
             except AttributeError:
                 size = 35
 

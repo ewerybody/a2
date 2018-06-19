@@ -190,7 +190,7 @@ class EditCtrl(QtWidgets.QGroupBox):
         self._sub_layout = QtWidgets.QHBoxLayout()
 
         try:
-            margin = self.main.css_values['margin']
+            margin = self.main.style.get('margin')
             self._sub_layout.setContentsMargins(margin, margin, margin, margin)
         except AttributeError:
             pass
