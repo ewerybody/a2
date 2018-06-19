@@ -4,6 +4,7 @@ Script managing and developing framework for [Autohotkey](http://ahkscript.org/)
 See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially the page about [setting you up](https://github.com/ewerybody/a2/wiki/setting-you-up).
 
 ## news:
+* **PySide2 ✔**!! And **Python 3.6.5 ✔**!! Whow! The [first release project](https://github.com/ewerybody/a2/projects/1) is coming closer! We also reached > **1000 commits** already and on [4. of July](https://github.com/ewerybody/a2/commit/71031e49299a2e1189a30405380581b02c28c5c9) **a2 will turn 5** on github! 
 * **Hotkey widgets** now show the scope right away and users can edit if they desire. Some shots in the [gallery](http://imgur.com/a/fkD8u)
 * Package **download** and **update** checker threads are implemented!! 🎊 yay 🥂 This is quite a big deal for this project.
 * Quite some stuff: **New Element Dialog** can now add to local module or globally and enlist in the display list.
