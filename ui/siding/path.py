@@ -133,7 +133,7 @@ def add_source(source, add_to_start=False):
         else:
             file = None
             try:
-                file, path, desc = imp.find_module(source)
+                file, _path, _desc = imp.find_module(source)
 
                 assert_pkg_resources()
                 source = 'py:%s' % source
@@ -686,7 +686,7 @@ class PathContext(object):
             return os.path.islink(name)
         return islink(join(self.path, name), self._source)
 
-    def walk(self,top, topdown=True, onerror=None, followlinks=False):
+    def walk(self, top, topdown=True, onerror=None, followlinks=False):
         if not os.path.isabs(top):
             top = join(self.path, top)
         return walk(top, topdown, onerror, followlinks, source=self._source)

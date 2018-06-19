@@ -174,18 +174,18 @@ class Style(object):
         # Is it a data uri?
         if url.scheme() == 'data':
             # Extract the useful information from the path.
-            format, sep, data = url.path().partition(',')
+            format_, sep, data = url.path().partition(',')
             if not sep and not data:
                 data = format
-                format = ''
+                format_ = ''
 
-            mimetype, _, format = format.partition(';')
+            mimetype, _, format_ = format.partition(';')
             if not mimetype:
                 ext = 'txt'
             else:
                 _, _, ext = mimetype.rpartition('/')
             if not format:
-                format = 'charset=US-ASCII'
+                format_ = 'charset=US-ASCII'
 
             # Build the filename.
             fn = os.path.join(profile.cache_path, u'data-uris',
@@ -196,12 +196,12 @@ class Style(object):
                 if not os.path.exists(os.path.dirname(fn)):
                     os.makedirs(os.path.dirname(fn))
                 with open(fn, 'wb') as f:
-                    if format == 'base64':
+                    if format_ == 'base64':
                         f.write(base64.b64decode(data))
-                    elif format.startswith('charset='):
+                    elif format_.startswith('charset='):
                         data = urllib.unquote(data).encode('latin1')
-                        cs = format[8:]
-                        if cs and cs.lower() not in ('utf-8','utf8'):
+                        cs = format_[8:]
+                        if cs and cs.lower() not in ('utf-8', 'utf8'):
                             data = data.decode(cs).encode('utf-8')
                         f.write(data)
                     else:
@@ -240,10 +240,11 @@ class Style(object):
         if not url:
             return match.group(0)
         if os.name == 'nt':
-            url = url.replace('\\','/')
+            url = url.replace('\\', '/')
         return 'url("%s")' % url.encode('unicode_escape')
 
-    def _qss_aero(self, match):
+    @staticmethod
+    def _qss_aero(match):
         """ Process a block of #IFAERO ... #ELSE ... #END in QSS. """
         if _aeroglass and _aeroglass.manager.status:
             return match.group(1)
@@ -285,7 +286,7 @@ class Style(object):
         # Build the relative path for relative URLs.
         start_path = os.path.dirname(path)
         if start_path.startswith(self.path):
-            start_path = start_path[len(self.path)+1:]
+            start_path = start_path[len(self.path) + 1:]
 
         start_path = profile.join(start_path, 'test')
 
@@ -299,7 +300,7 @@ class Style(object):
         log.debug('Begin Loading QSS: %s' % path)
         log.debug('---- Before ----')
         log.debug(qss)
-        
+
         # Process #IFAERO .. #ELSE .. #END
         qss = QSS_AERO.sub(self._qss_aero, qss)
 
@@ -482,7 +483,7 @@ class Style(object):
         :class:`~PySide2.QtGui.QIcon` of that icon. If ``use_inheritance`` is
         True and this style doesn't have an icon with the given name, the
         icon will be searched for in the style this style inherits.
-        
+
         If ``allow_theme`` is True and the icon can't be located in a style, it
         will be retrieved with :func:`PySide2.QtGui.QIcon.fromTheme` as a last
         resort as long as the style allows the use of system icons.
@@ -570,10 +571,10 @@ class Style(object):
         Return a path to the given ``file`` relative to this style. If
         ``secure`` is True, the path will be checked to ensure it resides
         within the root of this style.
-        
+
         If ``use_inheritance`` is True and the file doesn't exist within this
         style, it will be searched for in the style this style inherits.
-        
+
         If the file cannot be found at all, returns ``None``.
         """
         path = profile.normpath(profile.join(self.path, file))
@@ -593,6 +594,7 @@ class Style(object):
 ###############################################################################
 # The Null Style
 ###############################################################################
+
 
 class NullStyle(Style):
     """
@@ -628,6 +630,7 @@ class NullStyle(Style):
                  _suppress=False):
         """ Return None, as the NullStyle has no files. """
         return None
+
 
 loaded_styles[None] = NullStyle()
 
@@ -771,7 +774,7 @@ class Helper(QObject):
     This class's sole purpose in life is providing a QObject to host the
     style_reloaded signal that's exposed as siding.style.style_reloaded
     """
-    
+
     style_reloaded = Signal()
 
 _helper = Helper()
@@ -849,7 +852,7 @@ def initialize(args=None, **kwargs):
     """
     Initialize the style system. You may use the following arguments to
     configure the style system:
-    
+
     ==============  ============  ============
     Argument        Default       Description
     ==============  ============  ============
@@ -864,7 +867,7 @@ def initialize(args=None, **kwargs):
         siding.style.initialize(sys.argv[1:])
 
     The following command line arguments are supported:
-    
+
     ================  ============
     Argument          Description
     ================  ============

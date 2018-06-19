@@ -198,7 +198,7 @@ def get_file(path, mode='rb', source=SOURCE_ANY):
     to locate the file, otherwise it will search the root directory.
 
     If a file cannot be found, return ``None``.
-    
+
     **Note:** ``mode`` is not used when getting a file from ``pkg_resources``.
     """
     if os.path.isabs(path):
@@ -228,18 +228,18 @@ def get_file(path, mode='rb', source=SOURCE_ANY):
 def get_source(path, only_files=False, source=SOURCE_ANY):
     """ Return the source that ``path`` is found in. """
     ensure_paths()
-    
+
     if source & SOURCE_PROFILE:
         p_path = os.path.join(profile_path, path)
         if os.path.exists(p_path) and (not only_files or
                                        os.path.isfile(p_path)):
             return SOURCE_PROFILE
-    
+
     if source & SOURCE_PKG_RESOURCES:
         if (package and pr and pr.resource_exists(package, path) and
                 (not only_files or not pr.resource_isdir(package, path))):
             return SOURCE_PKG_RESOURCES
-    
+
     if source & SOURCE_ROOT:
         r_path = os.path.join(root_path, path)
         if os.path.exists(r_path) and (not only_files or
@@ -396,7 +396,7 @@ def isdir(path, source=SOURCE_ANY):
 
     if source & SOURCE_ROOT:
         return os.path.isdir(os.path.join(root_path, path))
-    
+
     return False
 
 

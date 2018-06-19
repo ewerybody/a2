@@ -88,7 +88,7 @@ class QSingleApplication(QApplication):
     ``WM_DWMCOMPOSITIONCHANGED`` message to allow styles utilizing Aero Glass
     to properly enable or disable Aero Glass on widgets when composition is
     enabled or disabled on a system-wide level.
-    
+
     The application ID used to verify that the application is not already
     running can be customized by setting the ``app_id`` and ``session``
     variables of the QSingleApplication instance to the desired strings before
@@ -210,7 +210,7 @@ class QSingleApplication(QApplication):
 
             # Build the first part of the app_id.
             self.app_id = 'qsingleapp-%s-%s' % (binary, path)
-            
+
 #             if isinstance(self.app_id, unicode):
 #                 self.app_id = self.app_id.encode('utf8')
 
@@ -280,12 +280,12 @@ class QSingleApplication(QApplication):
             fd = os.open(lockfile, os.O_TRUNC | os.O_CREAT | os.O_RDWR)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             os.write(fd, "%d\n" % os.getpid())
-        
+
         except (OSError, IOError) as e:
             if e.errno in (errno.EACCES, errno.EAGAIN):
                 return False
             raise
-        
+
         # We've got it.
         self._lockfd = fd
         self._lockfile = lockfile
@@ -345,7 +345,7 @@ class QSingleApplication(QApplication):
     def _read_message(self, sock, length):
         if sock.bytesAvailable() < length:
             return
-		#TODO: enter switch
+        # TODO: enter switch
         message = sock.readAll().data().decode()
         message = json.loads(message)
         sock.close()
@@ -358,7 +358,7 @@ class QSingleApplication(QApplication):
         sock = self._server.nextPendingConnection()
         if not sock:
             return
-        
+
         sock.readyRead.connect(partial(self._read_length, sock))
 
     def send_message(self, message, callback=None):
@@ -388,7 +388,7 @@ class QSingleApplication(QApplication):
             """ Send our message. """
             sock.writeData(message, len(message))
 
-        def bytesWritten(bytes):
+        def bytesWritten(bytes_):
             """ If we've written everything, close and return True. """
             if not sock.bytesToWrite():
                 sock.close()

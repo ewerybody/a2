@@ -88,13 +88,13 @@ class QSingleApplication(QApplication):
     ``WM_DWMCOMPOSITIONCHANGED`` message to allow styles utilizing Aero Glass
     to properly enable or disable Aero Glass on widgets when composition is
     enabled or disabled on a system-wide level.
-    
+
     The application ID used to verify that the application is not already
     running can be customized by setting the ``app_id`` and ``session``
     variables of the QSingleApplication instance to the desired strings before
     using :attr:`already_running` or calling :func:`ensure_single` or
     :func:`send_message`.
-    
+
     **Note**: ``app_id`` and ``session`` will undergo additional processing and
     be converted to a UUID before being used. If you *really* wish to use your
     own string, set it to ``_app_id``.
@@ -105,12 +105,12 @@ class QSingleApplication(QApplication):
     This signal is emitted whenever the application receives a message from
     another instance. The message is encoded as JSON as it's sent, so this can
     potentially be any basic type. Example::
-    
+
         @app.messageReceived.connect
         def handle_message(args):
             print 'We just got:', args
     """
-    
+
     compositionChanged = Signal()
     """
     This signal is emitted on Windows when we receive the
@@ -203,7 +203,7 @@ class QSingleApplication(QApplication):
             result = self._create_mutex()
         else:
             result = self._create_lockfile()
-            
+
         if result:
             self._create_server()
         self._already = not result
@@ -217,7 +217,7 @@ class QSingleApplication(QApplication):
 
             # Build the first part of the app_id.
             self.app_id = 'qsingleapp-%s-%s' % (binary, path)
-            
+
             if isinstance(self.app_id, unicode):
                 self.app_id = self.app_id.encode('utf8')
 
@@ -232,7 +232,7 @@ class QSingleApplication(QApplication):
                 sid = os.getenv('USER')
 
             if profile.profile_path:
-                sid = '%s-%s' % (profile.profile_path, sid )
+                sid = '%s-%s' % (profile.profile_path, sid)
 
             if isinstance(sid, unicode):
                 sid = sid.encode('utf8')
@@ -287,12 +287,12 @@ class QSingleApplication(QApplication):
             fd = os.open(lockfile, os.O_TRUNC | os.O_CREAT | os.O_RDWR)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             os.write(fd, "%d\n" % os.getpid())
-        
-        except (OSError, IOError), e:
+
+        except (OSError, IOError) as e:
             if e.errno in (errno.EACCES, errno.EAGAIN):
                 return False
             raise
-        
+
         # We've got it.
         self._lockfd = fd
         self._lockfile = lockfile
@@ -365,7 +365,7 @@ class QSingleApplication(QApplication):
         sock = self._server.nextPendingConnection()
         if not sock:
             return
-        
+
         sock.readyRead.connect(functools.partial(self._read_length, sock))
 
     def send_message(self, message, callback=None):

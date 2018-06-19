@@ -173,7 +173,7 @@ class IPlugin(QObject):
         This property performs the brunt of the work involved in activating or
         deactivating a plugin by connecting and disconnecting all signals and
         slots when the plugin is activated or deactivated.
-        
+
         However, manually setting this property outside of :func:`activate` or
         :func:`deactivate` is ill advised, as the plugin manager will not be
         made aware of the change in activation, and no checking will be
@@ -278,7 +278,7 @@ class PluginInfo(object):
         self.load()
 
     def __repr__(self):
-        return '<PluginInfo("%s", version=%s)>' % (self.nice_name,self.version)
+        return '<PluginInfo("%s", version=%s)>' % (self.nice_name, self.version)
 
     def load(self):
         """ Load the plugin information from file. """
@@ -355,7 +355,7 @@ class PluginManager(QObject):
     manages the connection of signals and slots between different plugins and
     the rest of the application, and it provides simple functions to enumerate
     and perform tasks on plugins.
-    
+
     **Note:** An instance of this class is created automatically as
     ``siding.plugins.manager``, and should be sufficient for almost all uses
     of the PluginManager.
@@ -488,7 +488,7 @@ class PluginManager(QObject):
         """
         ext = '.%s' % self.info_extension
 
-        for root, dirs, files in profile.walk(path):
+        for root, _dirs, files in profile.walk(path):
             log.debug('Searching in: %s' % root)
             for file in files:
                 if not file.endswith(ext):
@@ -673,7 +673,7 @@ class PluginManager(QObject):
     def _activate_plugin(self, name, _chain=tuple()):
         """ Activate the plugin with the given name. """
         info = self._infos[name]
-        module, plugins = self._plugins[name]
+        _, plugins = self._plugins[name]
 
         # Count how many things we're activating.
         count, classes = 0, 0
@@ -727,7 +727,7 @@ class PluginManager(QObject):
     def _deactivate_plugin(self, name, _chain=tuple()):
         """ Deactivate the plugin with the given name. """
         info = self._infos[name]
-        module, plugins = self._plugins[name]
+        _, plugins = self._plugins[name]
 
         # Count how many things we're deactivating.
         count, classes = 0, 0
@@ -783,7 +783,7 @@ class PluginManager(QObject):
 
         # Now, iterate through our plugins and connect the signal to every
         # plugin that's currently active.
-        for module, plugins in self._plugins.itervalues():
+        for _, plugins in self._plugins.itervalues():
             for plug in plugins:
                 slot = getattr(plug, name, None)
                 if not plug.is_active or not hasattr(slot, '_slots'):
@@ -798,7 +798,7 @@ class PluginManager(QObject):
         matching the given name. Any provided arguments will be sent along
         to those slots.
         """
-        for module, plugins in self._plugins.items():
+        for _, plugins in self._plugins.items():
             for plug in plugins:
                 slot = getattr(plug, name, None)
                 if not plug.is_active or not hasattr(slot, '_slots'):
@@ -830,7 +830,7 @@ class PluginManager(QObject):
 
         for signal in signals:
             self._signals[name].remove(signal)
-            for module, plugins in self._plugins.itervalues():
+            for _, plugins in self._plugins.itervalues():
                 for plug in plugins:
                     slot = getattr(plug, name, None)
                     if not plug.is_active or not hasattr(slot, '_slots'):
@@ -860,7 +860,7 @@ class PluginManager(QObject):
 
         # Now, iterate through our plugins and connect the slot to every
         # plugin that's currently active.
-        for module, plugins in self._plugins.itervalues():
+        for _, plugins in self._plugins.itervalues():
             for plug in plugins:
                 signal = getattr(plug, name, None)
                 if not plug.is_active or not issignal(signal):
@@ -890,7 +890,7 @@ class PluginManager(QObject):
 
         for slot in slots:
             self._slots[name].remove(slot)
-            for module, plugins in self._plugins.itervalues():
+            for _, plugins in self._plugins.itervalues():
                 for plug in plugins:
                     signal = getattr(plug, name, None)
                     if not plug.is_active or not issignal(signal):
