@@ -19,7 +19,6 @@ config = {"typ": "hotkey",
           "functionMode": 0,
           "functionSend": "",
           "functionURL": "",
-          "key": "Ctrl+Alt+R",
           "keyChange": True,
           "multiple": True
           }

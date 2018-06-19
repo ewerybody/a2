@@ -3,9 +3,10 @@ import a2core
 import a2util
 from PySide import QtGui, QtCore
 from a2widget.a2hotkey import edit_func_widget_ui
+from a2widget.a2hotkey.hotkey_common import Vars
 
 
-FUNCTIONS = ['functionCode', 'functionURL', 'functionSend']
+FUNCTIONS = [Vars.function_code, Vars.function_url, Vars.function_send]
 SEND_MODES = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
 MOD_KEYS = ['! - Alt', '^ - Control', '+ - Shift', '# - Win']
 

@@ -21,8 +21,13 @@ class Ui_Keyboard(object):
         self.top_layout.setContentsMargins(-1, 10, -1, 10)
         self.top_layout.setObjectName("top_layout")
         self.key_field = QtWidgets.QLineEdit(Keyboard)
+        self.key_field.setText("")
+        self.key_field.setReadOnly(True)
         self.key_field.setObjectName("key_field")
         self.top_layout.addWidget(self.key_field)
+        self.option_button = A2MoreButton(Keyboard)
+        self.option_button.setObjectName("option_button")
+        self.top_layout.addWidget(self.option_button)
         self.label_2 = QtWidgets.QLabel(Keyboard)
         self.label_2.setObjectName("label_2")
         self.top_layout.addWidget(self.label_2)
@@ -187,3 +192,4 @@ class Ui_Keyboard(object):
         Keyboard.setWindowTitle(QtWidgets.QApplication.translate("Keyboard", "Hotkey Dialog", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("Keyboard", "Show:", None, -1))
 
+from a2widget import A2MoreButton

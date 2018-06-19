@@ -4,18 +4,14 @@ from PySide import QtGui, QtCore
 import a2ctrl
 from a2widget.a2hotkey.simple_dialog import HotkeyDialog1
 from a2widget.a2hotkey.dialogs import HotKeyBoard
+from a2widget.a2hotkey.hotkey_common import Vars
+
 
 SCOPE_TOOLTIP_GLOBAL = 'Hotkey scope is set "global" so it works anywhere.'
 SCOPE_TOOLTIP_INCLUDE = 'Hotkey scope is set to work only in specific windows.'
 SCOPE_TOOLTIP_EXCLUDE = 'Hotkey scope is set to exclude specific windows.'
 SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
-
-
-class Vars(object):
-    scope = 'scope'
-    scope_mode = 'scopeMode'
-    scope_change = 'scopeChange'
 
 
 class A2Hotkey(QtGui.QWidget):
