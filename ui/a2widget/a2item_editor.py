@@ -6,7 +6,7 @@ a2widget.a2item_editor
 """
 import a2ctrl.qlist
 import a2ctrl.connect
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 from a2widget import a2item_editor_ui
 from collections import OrderedDict
 

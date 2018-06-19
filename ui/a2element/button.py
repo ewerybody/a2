@@ -7,7 +7,7 @@ Some element description ...
 """
 import a2ahk
 import a2ctrl
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
 import traceback

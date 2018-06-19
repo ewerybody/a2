@@ -4,7 +4,7 @@ Created on Dec 28, 2015
 @author: eRiC
 '''
 import a2ctrl
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 from a2element import group_edit_ui, DrawCtrl, EditCtrl
 from a2element.common import EditAddElem
 

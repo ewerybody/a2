@@ -6,7 +6,7 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 from a2element import pathlist_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2PathField
 

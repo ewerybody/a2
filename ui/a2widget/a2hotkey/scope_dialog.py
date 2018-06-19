@@ -1,6 +1,6 @@
 import a2core
 import a2ctrl
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 from . import scope_dialog_ui
 from .hotkey_widget import Vars

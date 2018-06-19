@@ -6,7 +6,7 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 from a2element import coords_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2CoordsField
 

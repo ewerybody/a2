@@ -1,4 +1,4 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 from a2widget import A2MoreButton
 

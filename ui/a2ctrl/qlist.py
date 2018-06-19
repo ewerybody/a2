@@ -1,10 +1,4 @@
-"""
-a2ctrl.qlist
-
-@created: Apr 30, 2016
-@author: eRiC
-"""
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 
 import a2core
 
@@ -61,4 +55,5 @@ def get_selected_as_text(list_ctrl):
 
 
 def deselect_all(list_ctrl):
-    [i.setSelected(False) for i in list_ctrl.selectedItems()]
+    for item in list_ctrl.selectedItems():
+        item.setSelected(False)

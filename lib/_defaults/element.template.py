@@ -6,7 +6,6 @@
 @author: {author_name}
 """
 import a2ctrl
-from PySide import QtGui
 from a2element import DrawCtrl, EditCtrl
 
 

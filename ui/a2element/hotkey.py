@@ -17,7 +17,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 """
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
 import a2core

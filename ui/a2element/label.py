@@ -6,7 +6,7 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl.connect
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 from a2element import DrawCtrl, EditCtrl
 from a2widget import A2TextField
 

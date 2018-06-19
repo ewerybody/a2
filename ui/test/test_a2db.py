@@ -7,7 +7,6 @@ Created on 18.08.2016
 import os
 import logging
 import unittest
-from os.path import abspath, join, exists
 
 import a2db
 import uuid
@@ -17,7 +16,7 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-temp_db_path = join(os.environ.get('TEMP'), str(uuid.uuid4()))
+temp_db_path = os.path.join(os.environ.get('TEMP'), str(uuid.uuid4()))
 log.debug('temp_db: %s' % temp_db_path)
 db = a2db.A2db(temp_db_path)
 
@@ -76,7 +75,7 @@ class Test(unittest.TestCase):
         db.all()
         db._con.close()
         os.remove(temp_db_path)
-        self.assertFalse(exists(temp_db_path))
+        self.assertFalse(os.path.exists(temp_db_path))
 
 
 if __name__ == "__main__":

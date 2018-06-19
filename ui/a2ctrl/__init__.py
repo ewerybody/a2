@@ -75,8 +75,6 @@ def draw(main, cfg, mod):
     if cfg.get('typ') in NO_DRAW_TYPES:
         return
 
-    import a2element
-
     mod_path = None if mod is None else mod.path
     ElementDrawClass = get_a2element_object('Draw', cfg.get('typ'), mod_path)
 

@@ -1,7 +1,6 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 from a2widget.demo import layer_demo_ui
 import a2ctrl
-from pprint import pprint
 
 
 class Demo(QtWidgets.QMainWindow):

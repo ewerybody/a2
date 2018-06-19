@@ -5,7 +5,7 @@ Created on Mar 22, 2016
 '''
 import a2ctrl
 from functools import partial
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtWidgets
 from a2element import number_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2Slider
 

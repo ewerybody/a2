@@ -1,7 +1,7 @@
 """
 a2 path control
 """
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 
 import a2ctrl
 from a2element import path_edit_ui, DrawCtrl, EditCtrl
