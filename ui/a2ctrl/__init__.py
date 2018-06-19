@@ -5,7 +5,7 @@ a2ctrl - basic functionality for all the a2element building blocks
 import os
 import sys
 import traceback
-from pysideuic import compileUi
+from pyside2uic import compileUi
 from importlib import reload, import_module
 
 import a2core
