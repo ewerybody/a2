@@ -1,7 +1,7 @@
 from functools import partial
 from collections import OrderedDict
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2util
@@ -16,7 +16,7 @@ AHK_TYPES = ['ahk_class', 'ahk_exe']
 MAX_LABEL_LEN = 80
 
 
-class ScopeWidget(QtGui.QWidget):
+class ScopeWidget(QtWidgets.QWidget):
     changed = QtCore.Signal()
     _scope_mode_changed = QtCore.Signal(str)
     _scope_text_changed = QtCore.Signal(str)
@@ -108,18 +108,18 @@ class ScopeWidget(QtGui.QWidget):
 
     def build_add_scope_menu(self):
         if self.add_menu is None:
-            self.add_menu = QtGui.QMenu(self)
+            self.add_menu = QtWidgets.QMenu(self)
 
             icons = a2ctrl.Icons.inst()
             self.add_menu.addAction(icons.list_add, 'Add New Empty', self.add_scope)
             self.add_menu.addAction(icons.locate, 'Pick from Window', self.pick_scope_info)
 
-            submenu = QtGui.QMenu(self.add_menu)
+            submenu = QtWidgets.QMenu(self.add_menu)
             submenu.setTitle('All in use...')
             submenu.aboutToShow.connect(self._build_in_use_menu)
             self.add_menu.addMenu(submenu)
 
-            submenu = QtGui.QMenu(self.add_menu)
+            submenu = QtWidgets.QMenu(self.add_menu)
             submenu.setTitle('All available ...')
             submenu.aboutToShow.connect(self._build_available_menu)
             self.add_menu.addMenu(submenu)
@@ -212,7 +212,7 @@ class ScopeWidget(QtGui.QWidget):
         self.ui.cfg_scope.changed.connect(self.scope_update)
         self.ui.cfg_scope.context_menu_requested.connect(self.build_list_context_menu)
 
-        self.context_menu = QtGui.QMenu(self)
+        self.context_menu = QtWidgets.QMenu(self)
         self.context_menu.addAction(icons.delete, 'Delete scope item',
                                     self.ui.cfg_scope.remove_selected)
 
@@ -227,7 +227,7 @@ class ScopeWidget(QtGui.QWidget):
 
     def build_help_menu(self):
         if not self.help_map:
-            self.help_menu = QtGui.QMenu(self)
+            self.help_menu = QtWidgets.QMenu(self)
             a2 = a2core.A2Obj.inst()
             icons = a2ctrl.Icons.inst()
             self.help_map = {'Help on Scope Setup': a2.urls.help_scopes,

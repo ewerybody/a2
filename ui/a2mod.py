@@ -19,7 +19,7 @@ import a2core
 import a2ctrl
 import a2util
 import shutil
-from PySide import QtCore
+from PySide2 import QtCore
 import traceback
 
 

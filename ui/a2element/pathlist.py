@@ -6,12 +6,12 @@ Some element description ...
 @author: Eric Werner
 """
 import a2ctrl
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2element import pathlist_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2PathField
 
 
-class Draw(QtGui.QGroupBox, DrawCtrl):
+class Draw(QtWidgets.QGroupBox, DrawCtrl):
     """
     The frontend widget visible to the user with options
     to change the default behavior of the element.
@@ -22,7 +22,7 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(False)
 
-        self.a2_group_layout = QtGui.QVBoxLayout(self)
+        self.a2_group_layout = QtWidgets.QVBoxLayout(self)
 
         self.path_widgets = []
         for path in self.get_user_value(list, default=['']):
@@ -48,16 +48,16 @@ class Draw(QtGui.QGroupBox, DrawCtrl):
             self.check()
 
     def _make_path_widget(self, i, path=''):
-        widget = QtGui.QWidget(self)
-        layout = QtGui.QHBoxLayout(widget)
+        widget = QtWidgets.QWidget(self)
+        layout = QtWidgets.QHBoxLayout(widget)
         layout.setContentsMargins(0, 0, 0, 0)
-        widget.label = QtGui.QLabel(str(i + 1))
+        widget.label = QtWidgets.QLabel(str(i + 1))
         layout.addWidget(widget.label)
         field = A2PathField(widget, path, writable=False)
         field.browse_type = self.cfg.get('browse_type', 0)
         field.changed.connect(self.check)
         layout.addWidget(field)
-        button = QtGui.QToolButton(self)
+        button = QtWidgets.QToolButton(self)
         if i:
             button.path_index = i
             button.setIcon(a2ctrl.Icons.inst().clear)
@@ -102,17 +102,17 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().check
 
 
-class PathEntry(QtGui.QWidget):
+class PathEntry(QtWidgets.QWidget):
     changed = QtCore.Signal(str)
     delete_me = QtCore.Signal(int)
     add_path = QtCore.Signal()
 
     def __init__(self, parent, index, browse_type, path=''):
         super(PathEntry, self).__init__(parent)
-        layout = QtGui.QHBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self._index = 0
-        self._label = QtGui.QLabel()
+        self._label = QtWidgets.QLabel()
         self.index = index
         layout.addWidget(self._label)
         self._field = A2PathField(self, path, writable=False)
@@ -120,7 +120,7 @@ class PathEntry(QtGui.QWidget):
         self._field.changed.connect(self.changed.emit)
         layout.addWidget(self._field)
 
-        button = QtGui.QToolButton(self)
+        button = QtWidgets.QToolButton(self)
         button.setAutoRaise(True)
         if index:
             button.setIcon(a2ctrl.Icons.inst().clear)

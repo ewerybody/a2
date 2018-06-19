@@ -1,15 +1,15 @@
 """
-A Qt/PySide slider widget that:
+A Qt/PySide2 slider widget that:
 * emits proper signals when the slider range is clicked,
 * solves the field<>slider juggling and
 * allows for float values right away
 """
 from functools import partial
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
-class A2Slider(QtGui.QWidget):
+class A2Slider(QtWidgets.QWidget):
     #: Immediately emitted on any value change, best for ui updates. Rapid fires on slide!
     value_changed = QtCore.Signal(float)
     #: Emitted when sliding ended OR slider bar was clicked or field change is finished.
@@ -17,7 +17,7 @@ class A2Slider(QtGui.QWidget):
 
     def __init__(self, parent=None, has_field=True, value=1.0, mini=0, maxi=100, decimals=2, step_len=1):
         super(A2Slider, self).__init__(parent)
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.main_layout)
 
@@ -49,7 +49,7 @@ class A2Slider(QtGui.QWidget):
         self.setSingleStep()
 
     def _build_slider(self):
-        slider = QtGui.QSlider(self)
+        slider = QtWidgets.QSlider(self)
         slider.setOrientation(QtCore.Qt.Horizontal)
         slider.valueChanged.connect(self._slider_change)
         slider.sliderPressed.connect(partial(self._set_slider_pressed, True))
@@ -111,7 +111,7 @@ class A2Slider(QtGui.QWidget):
         :param bool state: To set if the widget shall hava a number input child widget.
         """
         if state and self.value_ctrl is None:
-            self.value_ctrl = QtGui.QDoubleSpinBox()
+            self.value_ctrl = QtWidgets.QDoubleSpinBox()
             self.main_layout.addWidget(self.value_ctrl)
             self.value_ctrl.valueChanged.connect(self._field_change)
             self.value_ctrl.editingFinished.connect(self._emit_finished)

@@ -1,19 +1,19 @@
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2widget.a2hotkey import edit_func_widget, edit_func_widget_ui
 import a2ctrl
 from pprint import pprint
 
 
-class Demo(QtGui.QMainWindow):
+class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
         a2ctrl.check_ui_module(edit_func_widget_ui)
 
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
         #lyt = QtGui.QVBoxLayout(w)
-        lyt = QtGui.QFormLayout(w)
+        lyt = QtWidgets.QFormLayout(w)
         w.setLayout(lyt)
 
         self.cfg = {"name": "_my_module_Hotkey2",
@@ -30,7 +30,7 @@ class Demo(QtGui.QMainWindow):
 
         #self.scope_widget.changed.connect(self.bla)
 
-        button = QtGui.QPushButton('set_config')
+        button = QtWidgets.QPushButton('set_config')
         button.clicked.connect(self.bla)
         lyt.addRow(button)
 
@@ -43,7 +43,7 @@ class Demo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
     app.exec_()

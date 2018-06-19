@@ -3,7 +3,7 @@
 @author: eRiC
 """
 import a2ctrl
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
 
 
@@ -13,9 +13,9 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.main_layout = QtGui.QVBoxLayout(self)
+        self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.checkbox = QtGui.QCheckBox(self.cfg.get('label', ''), self)
+        self.checkbox = QtWidgets.QCheckBox(self.cfg.get('label', ''), self)
         self.checkbox.setChecked(self.get_user_value(bool))
         self.checkbox.clicked[bool].connect(self.delayed_check)
         self.main_layout.addWidget(self.checkbox)

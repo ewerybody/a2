@@ -5,7 +5,7 @@ Created on Mar 22, 2016
 '''
 import a2ctrl
 from functools import partial
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2element import number_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2Slider
 
@@ -20,13 +20,13 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
-        self.label = QtGui.QLabel(self.label_text, self)
+        self.label = QtWidgets.QLabel(self.label_text, self)
         self.main_layout.addWidget(self.label)
 
         if self.cfg.get('suffix'):
-            self.suffix_label = QtGui.QLabel(self.cfg.get('suffix'))
+            self.suffix_label = QtWidgets.QLabel(self.cfg.get('suffix'))
 
         if self.cfg.get('slider'):
             self.slider = A2Slider(self)
@@ -38,7 +38,7 @@ class Draw(DrawCtrl):
             if self.cfg.get('suffix'):
                 self.slider.main_layout.insertWidget(1, self.suffix_label)
         else:
-            self.value_ctrl = QtGui.QDoubleSpinBox()
+            self.value_ctrl = QtWidgets.QDoubleSpinBox()
             self.value_ctrl.setMinimum(self.cfg.get('min', 0))
             self.value_ctrl.setMaximum(self.cfg.get('max', 100))
             self.value_ctrl.setDecimals(self.cfg.get('decimals', 1))

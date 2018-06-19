@@ -3,7 +3,7 @@ import time
 from copy import deepcopy
 from functools import partial
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2core
 import a2util
@@ -11,7 +11,7 @@ import a2ctrl
 from a2ctrl import Icons
 
 
-class DrawCtrl(QtGui.QWidget):
+class DrawCtrl(QtWidgets.QWidget):
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
@@ -97,7 +97,7 @@ class DrawCtrl(QtGui.QWidget):
         pass
 
 
-class EditCtrl(QtGui.QGroupBox):
+class EditCtrl(QtWidgets.QGroupBox):
     """
     frame widget for an edit control which enables basic arrangement of the
     control up & down as well as deleting the control.
@@ -181,13 +181,13 @@ class EditCtrl(QtGui.QGroupBox):
 
     def _setup_ui(self, add_layout):
         self.setTitle(self.cfg['typ'])
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
-                                       QtGui.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                       QtWidgets.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
 
-        self._ctrl_layout = QtGui.QGridLayout(self)
+        self._ctrl_layout = QtWidgets.QGridLayout(self)
         self._ctrl_layout.setContentsMargins(0, 0, 0, 0)
-        self._sub_layout = QtGui.QHBoxLayout()
+        self._sub_layout = QtWidgets.QHBoxLayout()
 
         try:
             margin = self.main.css_values['margin']
@@ -195,20 +195,20 @@ class EditCtrl(QtGui.QGroupBox):
         except AttributeError:
             pass
 
-        self.mainWidget = QtGui.QWidget(self)
+        self.mainWidget = QtWidgets.QWidget(self)
         self._sub_layout.addWidget(self.mainWidget)
         self._ctrl_layout.addLayout(self._sub_layout, 0, 0, 1, 1)
 
         if add_layout:
-            self.mainLayout = QtGui.QVBoxLayout()
+            self.mainLayout = QtWidgets.QVBoxLayout()
             self.mainLayout.setContentsMargins(5, 5, 5, 5)
             self.mainWidget.setLayout(self.mainLayout)
 
-        self._ctrl_button_layout = QtGui.QVBoxLayout()
+        self._ctrl_button_layout = QtWidgets.QVBoxLayout()
         self._ctrl_button_layout.setSpacing(0)
         self._ctrl_button_layout.setContentsMargins(0, 0, 0, 0)
 
-        self._ctrl_button = QtGui.QToolButton(self)
+        self._ctrl_button = QtWidgets.QToolButton(self)
         self._ctrl_button.setIcon(Icons.inst().more)
         button_size = 32
         self._ctrl_button.setMinimumSize(QtCore.QSize(button_size, button_size))
@@ -221,7 +221,7 @@ class EditCtrl(QtGui.QGroupBox):
 
         self._ctrl_layout.addLayout(self._ctrl_button_layout, 0, 0, 1, 1)
 
-        self._ctrl_menu = QtGui.QMenu(self)
+        self._ctrl_menu = QtWidgets.QMenu(self)
         # self._ctrl_menu.aboutToShow.connect(self._build_menu)
         # self._ctrl_button.setMenu(self._ctrl_menu)
         self._ctrl_button.clicked.connect(self._build_menu)
@@ -303,14 +303,14 @@ class EditCtrl(QtGui.QGroupBox):
 
     def enterEvent(self, event):
         self._ctrl_button.setVisible(True)
-        return QtGui.QGroupBox.enterEvent(self, event)
+        return QtWidgets.QGroupBox.enterEvent(self, event)
 
     def leaveEvent(self, event):
         self._ctrl_button.setVisible(False)
-        return QtGui.QGroupBox.leaveEvent(self, event)
+        return QtWidgets.QGroupBox.leaveEvent(self, event)
 
 
-class EditAddElem(QtGui.QWidget):
+class EditAddElem(QtWidgets.QWidget):
     """
     to add a control to a module setup. This will probably go into some popup
     later. This way its a little too clunky I think.
@@ -330,16 +330,16 @@ class EditAddElem(QtGui.QWidget):
         self.main = main
         self.config = config
 
-        self.base_layout = QtGui.QHBoxLayout(self)
+        self.base_layout = QtWidgets.QHBoxLayout(self)
         self.base_layout.setSpacing(5)
 
-        self.a2add_button = QtGui.QPushButton('Add Element')
+        self.a2add_button = QtWidgets.QPushButton('Add Element')
         self.a2add_button.setObjectName('a2add_button')
         self.a2add_button.clicked.connect(self.build_menu)
         self.a2add_button.setIcon(Icons.inst().list_add)
         self.base_layout.addWidget(self.a2add_button)
 
-        self.menu = QtGui.QMenu(self)
+        self.menu = QtWidgets.QMenu(self)
         # self.menu.aboutToShow.connect(self.build_menu)
         self.menu_include = None
         # self.a2add_button.setMenu(self.menu)
@@ -354,7 +354,7 @@ class EditAddElem(QtGui.QWidget):
 
         import a2element
         for name, display_name, icon in a2element.get_list():
-            action = QtGui.QAction(display_name, self.menu, triggered=partial(self._add_element, name))
+            action = QtWidgets.QAction(display_name, self.menu, triggered=partial(self._add_element, name))
             if icon:
                 action.setIcon(icon)
             self.menu.addAction(action)
@@ -394,13 +394,13 @@ class EditAddElem(QtGui.QWidget):
                 name = element_objects['Edit'].element_name()
                 icon = element_objects['Edit'].element_icon()
 
-                action = QtGui.QAction(name, self.menu, triggered=partial(self._add_element, base))
+                action = QtWidgets.QAction(name, self.menu, triggered=partial(self._add_element, base))
                 if icon:
                     action.setIcon(icon)
                 self.menu.addAction(action)
 
 
-class BrowseScriptsMenu(QtGui.QMenu):
+class BrowseScriptsMenu(QtWidgets.QMenu):
     def __init__(self, main, func):
         super(BrowseScriptsMenu, self).__init__()
         self.func = func
@@ -420,7 +420,7 @@ class BrowseScriptsMenu(QtGui.QMenu):
         scriptsUnused = set(self.main.mod.scripts) - scripts_in_use
 
         for scriptName in scriptsUnused:
-            self.addAction(QtGui.QAction(icons.code, scriptName, self,
+            self.addAction(QtWidgets.QAction(icons.code, scriptName, self,
                                          triggered=partial(self.set_script, scriptName)))
         if scriptsUnused:
             self.addSeparator()

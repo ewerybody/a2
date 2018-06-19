@@ -1,7 +1,7 @@
 """
 a2 path control
 """
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 
 import a2ctrl
 from a2element import path_edit_ui, DrawCtrl, EditCtrl
@@ -15,10 +15,10 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.label_text = self.cfg.get('label', '')
-        self.label = QtGui.QLabel(self.label_text, self)
+        self.label = QtWidgets.QLabel(self.label_text, self)
         self.value_ctrl = a2path_field.A2PathField(self, value=self.value)
         self.value_ctrl.changed.connect(self.check)
         self.value_ctrl.writable = self.cfg.get('writable', False)

@@ -7,7 +7,7 @@ Some element description ...
 """
 import a2ahk
 import a2ctrl
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
 import traceback
@@ -25,13 +25,13 @@ class Draw(DrawCtrl):
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
 
-        self.button_layout = QtGui.QHBoxLayout(self)
+        self.button_layout = QtWidgets.QHBoxLayout(self)
         labeltext = self.cfg.get('labeltext', '')
         if labeltext:
-            label = QtGui.QLabel(labeltext)
+            label = QtWidgets.QLabel(labeltext)
             self.button_layout.addWidget(label)
 
-        self.button = QtGui.QPushButton(self.cfg.get('buttontext', ''))
+        self.button = QtWidgets.QPushButton(self.cfg.get('buttontext', ''))
         self.button.clicked.connect(self.call_code)
         self.button_layout.addWidget(self.button)
         # self.setLayout(self.main_layout)

@@ -1,6 +1,6 @@
 import a2core
 import a2ctrl
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 from . import scope_dialog_ui
 from .hotkey_widget import Vars
@@ -10,7 +10,7 @@ log = a2core.get_logger(__name__)
 SCOPE_ITEMS = ['titles', 'classes', 'processes']
 
 
-class ScopeDialog(QtGui.QDialog):
+class ScopeDialog(QtWidgets.QDialog):
     okayed = QtCore.Signal(dict)
 
     def __init__(self, parent, config):
@@ -28,7 +28,7 @@ class ScopeDialog(QtGui.QDialog):
 
     def showEvent(self, *args, **kwargs):
         self.ui.scope_widget.setMinimumWidth(self.minimumSizeHint().height() * 3)
-        return QtGui.QDialog.showEvent(self, *args, **kwargs)
+        return QtWidgets.QDialog.showEvent(self, *args, **kwargs)
 
     def check(self):
         cfg = self.ui.scope_widget.get_config()

@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 
-from PySide import QtGui
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2core
 import a2widget
@@ -43,7 +43,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     :param QtCore.Signal change_signal: Optional. A signal to emit on change.
     :param QtCore.Signal trigger_signal: Optional. The signal get the change event from.
     """
-    if isinstance(ctrl, QtGui.QCheckBox):
+    if isinstance(ctrl, QtWidgets.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
         # solution: ctrl.clicked[bool] sends the state already!
@@ -56,7 +56,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.isChecked()
 
-    elif isinstance(ctrl, (QtGui.QLineEdit, a2widget.A2ButtonField)):
+    elif isinstance(ctrl, (QtWidgets.QLineEdit, a2widget.A2ButtonField)):
         ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.textChanged[str].connect(change_signal.emit)
@@ -74,7 +74,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.value
 
-    elif isinstance(ctrl, QtGui.QComboBox):
+    elif isinstance(ctrl, QtWidgets.QComboBox):
         ctrl.currentIndexChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.currentIndexChanged.connect(change_signal.emit)
@@ -83,7 +83,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.currentIndex()
 
-    elif isinstance(ctrl, QtGui.QListWidget):
+    elif isinstance(ctrl, QtWidgets.QListWidget):
         # so far only to fill the control
         # since it's not a widget that changes data by default
         # ctrl.itemChanged.connect(partial(_list_widget_test, name))
@@ -93,7 +93,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             items = [ctrl.item(i).text() for i in range(ctrl.count())]
             cfg[name] = items
 
-    elif isinstance(ctrl, (QtGui.QSpinBox, QtGui.QDoubleSpinBox)):
+    elif isinstance(ctrl, (QtWidgets.QSpinBox, QtWidgets.QDoubleSpinBox)):
         ctrl.valueChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.valueChanged.connect(change_signal.emit)
@@ -102,7 +102,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.value()
 
-    elif isinstance(ctrl, QtGui.QRadioButton):
+    elif isinstance(ctrl, QtWidgets.QRadioButton):
         name, value = name.rsplit('_', 1)
         # try to cast the value to int like its commonly used in the configs
         try:
@@ -118,7 +118,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         elif ctrl.isChecked():
             cfg[name] = value
 
-    elif isinstance(ctrl, (QtGui.QTextEdit, a2widget.A2TextField, a2widget.A2CodeField)):
+    elif isinstance(ctrl, (QtWidgets.QTextEdit, a2widget.A2TextField, a2widget.A2CodeField)):
         # For if a not immediate change signal is wanted
         # TODO: Do this for the other ctrl types
         if trigger_signal is None:
@@ -173,9 +173,9 @@ def control_to_db(widget, db, key, default_value=None):
     """
     Only for direct connections to the default db table.
 
-    :param QtGui.QWidget widget: Some Qt Widget to connect to.
+    :param QtWidgets.QWidget widget: Some Qt Widget to connect to.
     """
-    if isinstance(widget, QtGui.QCheckBox):
+    if isinstance(widget, QtWidgets.QCheckBox):
         _connect_checkbox_to_db(widget, db, key, default_value)
 
 

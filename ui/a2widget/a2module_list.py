@@ -1,7 +1,7 @@
 """
 a2ctrl.module_list
 """
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2mod
 import a2ctrl.qlist
@@ -15,7 +15,7 @@ _DISABLED_BRUSH = QtGui.QBrush(QtGui.QColor(DISABLED_GREY, DISABLED_GREY, DISABL
 log = a2core.get_logger(__name__)
 
 
-class A2ModuleList(QtGui.QWidget):
+class A2ModuleList(QtWidgets.QWidget):
     selection_changed = QtCore.Signal(list)
 
     def __init__(self, parent):
@@ -87,7 +87,7 @@ class A2ModuleList(QtGui.QWidget):
                 if self._show_enabled_only and not mod.enabled:
                     continue
 
-                item = QtGui.QListWidgetItem(mod.name)
+                item = QtWidgets.QListWidgetItem(mod.name)
                 if mod.enabled:
                     item.setIcon(mod.icon)
                 else:
@@ -129,7 +129,7 @@ class A2ModuleList(QtGui.QWidget):
         self.ui.filter_menu_button.clicked.connect(self.build_filter_menu)
         self.setLayout(self.ui.module_list_layout)
 
-        self.filter_menu = QtGui.QMenu()
+        self.filter_menu = QtWidgets.QMenu()
 
     def update_filter(self, phrase=''):
         self._filter_phrase = phrase
@@ -143,7 +143,7 @@ class A2ModuleList(QtGui.QWidget):
     def build_filter_menu(self):
         self.filter_menu.clear()
 
-        action = QtGui.QAction('Only Enabled', self)
+        action = QtWidgets.QAction('Only Enabled', self)
         action.setCheckable(True)
         action.setChecked(self._show_enabled_only)
         action.triggered[bool].connect(self.toggle_show_enabled)
@@ -152,12 +152,12 @@ class A2ModuleList(QtGui.QWidget):
         self.filter_menu.addSeparator()
 
         if self._filter_tags:
-            action = QtGui.QAction(a2ctrl.Icons.inst().clear, 'Clear Tags', self)
+            action = QtWidgets.QAction(a2ctrl.Icons.inst().clear, 'Clear Tags', self)
             action.triggered.connect(self.clear_filter_tags)
             self.filter_menu.addAction(action)
 
         for tag in a2core.A2TAGS:
-            action = QtGui.QAction(self.icon_label, tag, self)
+            action = QtWidgets.QAction(self.icon_label, tag, self)
             action.setCheckable(True)
             action.setChecked(tag in self._filter_tags)
             action.triggered.connect(partial(self.do_filter_tags, tag))

@@ -6,8 +6,9 @@ import os
 #from siding import addons, profile, style, plugins
 from siding import addons, profile
 
-from PySide.QtGui import QAction, QKeySequence, QMainWindow, QTextEdit
-from PySide.QtGui import QApplication, QFileDialog, QMessageBox
+from PySide2.QtWidgets import QAction, QMainWindow, QTextEdit
+from PySide2.QtGui import QKeySequence
+from PySide2.QtWidgets import QApplication, QFileDialog, QMessageBox
 
 
 class MainWindow(QMainWindow):

@@ -6,7 +6,7 @@ a2ctrl.a2settings
 """
 import os
 
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2core
@@ -18,7 +18,7 @@ from a2widget import a2settings_view_ui, a2module_source
 log = a2core.get_logger(__name__)
 
 
-class A2Settings(QtGui.QWidget):
+class A2Settings(QtWidgets.QWidget):
     dev_setting_changed = QtCore.Signal(str)
 
     def __init__(self, main):
@@ -60,7 +60,7 @@ class A2Settings(QtGui.QWidget):
 
         self.ui.dev_widget.setVisible(self.a2.dev_mode)
 
-        self.add_source_menu = QtGui.QMenu(self)
+        self.add_source_menu = QtWidgets.QMenu(self)
         self.ui.a2add_button.clicked.connect(self.build_add_source_menu)
         self.ui.a2add_button.setIcon(a2ctrl.Icons.inst().list_add)
 

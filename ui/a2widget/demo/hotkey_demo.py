@@ -1,4 +1,4 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 import a2element.hotkey
@@ -24,16 +24,16 @@ config = {"typ": "hotkey",
           }
 
 
-class Demo(QtGui.QMainWindow):
+class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
         a2ctrl.check_ui_module(edit_widget_ui)
         a2ctrl.check_ui_module(scope_widget_ui)
 
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        lyt = QtGui.QFormLayout(w)
+        lyt = QtWidgets.QFormLayout(w)
         self.lyt = lyt
         lyt.setSpacing(20)
         w.setLayout(lyt)
@@ -51,7 +51,7 @@ class Demo(QtGui.QMainWindow):
         self._config_backup = None
 
         self.user_hotkey = a2element.hotkey.Draw(self, config, None)
-        lyt.addRow(QtGui.QLabel('user hotkey:'))
+        lyt.addRow(QtWidgets.QLabel('user hotkey:'))
         lyt.addRow(self.user_hotkey)
 
     def check_changes(self):
@@ -66,7 +66,7 @@ class Demo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
     app.exec_()

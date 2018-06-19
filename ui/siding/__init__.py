@@ -16,7 +16,7 @@
 #
 ###############################################################################
 """
-siding is a lightweight framework to assist in the creation of PySide
+siding is a lightweight framework to assist in the creation of PySide2
 applications with support for multiple-instance detection, multiple profiles,
 easy to use styles, and a flexible plugins system.
 """

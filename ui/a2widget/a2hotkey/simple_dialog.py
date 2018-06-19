@@ -1,5 +1,5 @@
 import a2ahk
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from .dialogs import _HotkeyDialogBase
 import a2core
 
@@ -10,18 +10,18 @@ STYLE_GOOD = '* {color:#0F0}'
 _dialog_size = None
 
 
-class HotkeyDialog1(QtGui.QWidget, _HotkeyDialogBase):
+class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
     label = 'Simple Dialog'
 
     def __init__(self, parent, key, scope_data=None):
         # super(HotkeyDialog1, self).__init__(parent)
-        QtGui.QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
         _HotkeyDialogBase.__init__(self, parent, key, scope_data)
 
         self.setup_ui()
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
 
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
 
@@ -37,21 +37,21 @@ class HotkeyDialog1(QtGui.QWidget, _HotkeyDialogBase):
         self._init_dialog_size()
 
     def setup_ui(self):
-        self.text_edit = QtGui.QLineEdit(self)
+        self.text_edit = QtWidgets.QLineEdit(self)
         self.text_edit.setText(self.key)
         self.text_edit.textChanged.connect(self.validate_hotkey)
         self.text_edit.returnPressed.connect(self.ok)
 
-        self.button_layout = QtGui.QHBoxLayout()
-        self.ok_button = QtGui.QPushButton("OK")
+        self.button_layout = QtWidgets.QHBoxLayout()
+        self.ok_button = QtWidgets.QPushButton("OK")
         self.ok_button.clicked.connect(self.ok)
         self.button_layout.addWidget(self.ok_button)
 
-        self.close_button = QtGui.QPushButton("&Cancel")
+        self.close_button = QtWidgets.QPushButton("&Cancel")
         self.close_button.clicked.connect(self.close)
         self.button_layout.addWidget(self.close_button)
 
-        self.main_layout = QtGui.QVBoxLayout(self)
+        self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.addWidget(self.text_edit)
         self.main_layout.addLayout(self.button_layout)
 
@@ -110,12 +110,12 @@ class HotkeyDialog1(QtGui.QWidget, _HotkeyDialogBase):
 
     def leaveEvent(self, event):
         self._close_timer.start()
-        return QtGui.QWidget.leaveEvent(self, event)
+        return QtWidgets.QWidget.leaveEvent(self, event)
 
     def enterEvent(self, event):
         if self._close_timer.isActive():
             self._close_timer.stop()
-        return QtGui.QWidget.enterEvent(self, event)
+        return QtWidgets.QWidget.enterEvent(self, event)
 
     def leave_timeout_reached(self):
         self._close_timer.stop()
@@ -123,7 +123,7 @@ class HotkeyDialog1(QtGui.QWidget, _HotkeyDialogBase):
 
     def closeEvent(self, event):
         self._close_timer.stop()
-        return QtGui.QWidget.closeEvent(self, event)
+        return QtWidgets.QWidget.closeEvent(self, event)
 
     def _init_dialog_size(self):
         global _dialog_size

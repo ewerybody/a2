@@ -1,15 +1,15 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 from a2widget import A2MoreButton, A2PathField, A2ButtonField
 
 
-class Demo(QtGui.QMainWindow):
+class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        lyt = QtGui.QFormLayout(w)
+        lyt = QtWidgets.QFormLayout(w)
         self.lyt = lyt
         lyt.setSpacing(20)
         w.setLayout(lyt)
@@ -32,7 +32,7 @@ class Demo(QtGui.QMainWindow):
 
 
         path_field = A2PathField(self)
-        lyt.addRow(QtGui.QLabel('Path field with A2MoreButton implemented:'))
+        lyt.addRow(QtWidgets.QLabel('Path field with A2MoreButton implemented:'))
         lyt.addRow(path_field)
 
         bfield = A2ButtonField(self)
@@ -57,7 +57,7 @@ class Demo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
     app.exec_()

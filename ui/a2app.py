@@ -16,7 +16,7 @@ import traceback
 from ctypes import windll
 
 from siding import QSingleApplication
-from PySide import QtGui
+from PySide2 import QtWidgets
 
 # first basicConfic. No need for more.
 logging.basicConfig()
@@ -38,8 +38,8 @@ def main():
         app.ensure_single()
 
     # adding PySide plugin paths. e.g. to make all the imageformats available
-    pyside_plugin_path = os.path.join(sys.modules['PySide'].__path__[0], 'plugins')
-    QtGui.QApplication.addLibraryPath(pyside_plugin_path)
+    pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
+    QtWidgets.QApplication.addLibraryPath(pyside_plugin_path)
 
     winfo = platform.uname()
     log.info('initialised!\n  python: %s\n  windows: %s' % (sys.version, str(winfo)[31:-1]))
@@ -73,7 +73,7 @@ def init_a2_win(app):
         msg = ('Could not call A2Window! Error:\n%s\n'
                'Traceback:%s\n\nPress Ctrl+C to copy this message.'
                % (error, traceback.format_exc().strip()))
-        QtGui.QMessageBox.critical(None, title, msg)
+        QtWidgets.QMessageBox.critical(None, title, msg)
         raise RuntimeError(msg)
     return a2win
 

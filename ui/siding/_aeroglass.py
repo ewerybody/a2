@@ -17,7 +17,7 @@
 ###############################################################################
 """
 Functions for enabling and disabling Aero Glass on
-:class:`~PySide.QtGui.QWidget` instances.
+:class:`~PySide2.QtWidgets.QWidget` instances.
 """
 
 ###############################################################################
@@ -26,8 +26,8 @@ Functions for enabling and disabling Aero Glass on
 
 import weakref
 
-from PySide.QtCore import Qt
-from PySide.QtGui import QColor
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QColor
 
 from ctypes.wintypes import DWORD, HRGN
 from ctypes import windll, c_bool, c_int, POINTER, Structure

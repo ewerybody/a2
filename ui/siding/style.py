@@ -34,8 +34,9 @@ import re
 import sys
 import weakref
 
-from PySide.QtCore import Signal, QUrl, QObject
-from PySide.QtGui import QApplication, QIcon, QWidget, QPixmap
+from PySide2.QtCore import Signal, QUrl, QObject
+from PySide2.QtWidgets import QApplication, QWidget
+from PySide2.QtGui import QIcon, QPixmap
 
 from siding import profile
 
@@ -422,7 +423,7 @@ class Style(object):
 
     def style_widget(self, widget, _ref=None):
         """
-        Reapply the styles associated with the :class:`~PySide.QtGui.QWidget`
+        Reapply the styles associated with the :class:`~PySide2.QtWidgets.QWidget`
         ``widget``. In almost all cases, you'll want to use
         :func:`siding.style.apply_stylesheet` and
         :func:`siding.style.remove_stylesheet` rather than calling this
@@ -478,12 +479,12 @@ class Style(object):
              allow_theme=True):
         """
         Find an icon with the given ``name`` and return a
-        :class:`~PySide.QtGui.QIcon` of that icon. If ``use_inheritance`` is
+        :class:`~PySide2.QtGui.QIcon` of that icon. If ``use_inheritance`` is
         True and this style doesn't have an icon with the given name, the
         icon will be searched for in the style this style inherits.
         
         If ``allow_theme`` is True and the icon can't be located in a style, it
-        will be retrieved with :func:`PySide.QtGui.QIcon.fromTheme` as a last
+        will be retrieved with :func:`PySide2.QtGui.QIcon.fromTheme` as a last
         resort as long as the style allows the use of system icons.
         """
         icon = None
@@ -679,7 +680,7 @@ def icon(name, extension='png', style=None):
 def apply_stylesheet(widget, *paths):
     """
     Apply the stylesheet at the provided path(s) to the
-    :class:`~PySide.QtGui.QWidget` ``widget``. More than one path can be
+    :class:`~PySide2.QtWidgets.QWidget` ``widget``. More than one path can be
     supplied to apply more than one stylesheet to a widget.
 
     The stylesheet will be processed with the :func:`~Style.load_qss` function

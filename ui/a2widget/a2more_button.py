@@ -1,13 +1,13 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 
 
 class MenuMixin(object):
-    menu_called = QtCore.Signal(QtGui.QMenu)
+    menu_called = QtCore.Signal(QtWidgets.QMenu)
 
     def __init__(self):
-        self._menu = QtGui.QMenu(self)
+        self._menu = QtWidgets.QMenu(self)
         self._actions_added = False
         self.clicked.connect(self._on_menu_call)
 
@@ -49,13 +49,13 @@ class MenuMixin(object):
 
     def add_menu(self, *args):
         """
-        :rtype QtGui.QMenu:
+        :rtype QtWidgets.QMenu:
         """
         self._actions_added = True
         return self._menu.addMenu(*args)
 
 
-class A2MoreButton(QtGui.QToolButton, MenuMixin):
+class A2MoreButton(QtWidgets.QToolButton, MenuMixin):
     def __init__(self, parent=None):
         super(A2MoreButton, self).__init__(parent)
         MenuMixin.__init__(self)

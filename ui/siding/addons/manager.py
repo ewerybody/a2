@@ -27,7 +27,7 @@ get :class:`AddonInfo` instances.
 
 import re
 
-from PySide.QtCore import QCoreApplication
+from PySide2.QtCore import QCoreApplication
 
 from siding.addons.base import AddonInfo
 from siding import path
@@ -63,7 +63,7 @@ def app_version():
     following locations are searched, in this order, for a version string:
 
         1. ``siding.plugins.version``
-        2. :func:`PySide.QtCore.QCoreApplication.applicationVersion`
+        2. :func:`PySide2.QtCore.QCoreApplication.applicationVersion`
         3. ``__main__.version``
         4. ``__main__.__version__``
 

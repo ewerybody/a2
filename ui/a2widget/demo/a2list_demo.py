@@ -1,17 +1,17 @@
 import uuid
-from PySide import QtGui
+from PySide2 import QtGui, QtWidgets
 from a2widget import A2List, A2ListCompact
 
 
-class Demo(QtGui.QMainWindow):
+class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
-        w = QtGui.QWidget(self)
+        w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        lyt = QtGui.QVBoxLayout(w)
+        lyt = QtWidgets.QVBoxLayout(w)
         w.setLayout(lyt)
 
-        lyt.addWidget(QtGui.QLabel('a simple list:'))
+        lyt.addWidget(QtWidgets.QLabel('a simple list:'))
         list_items = 'mango banana apple kiwi apple strawberry'.split()
         self.widget1 = A2List(self, list_items)
         lyt.addWidget(self.widget1)
@@ -22,7 +22,7 @@ class Demo(QtGui.QMainWindow):
         self.widget1.single_name_selected.connect(self.on_thing_selection)
         self.widget1.changed.connect(self.changed1)
 
-        lyt.addWidget(QtGui.QLabel('a height adjusted list:'))
+        lyt.addWidget(QtWidgets.QLabel('a height adjusted list:'))
         self.widget2 = A2ListCompact(self)
         lyt.addWidget(self.widget2)
 
@@ -32,7 +32,7 @@ class Demo(QtGui.QMainWindow):
         self.widget2.single_name_selected.connect(self.on_thing_selection)
         self.widget2.changed.connect(self.changed2)
 
-        button = QtGui.QPushButton('add random')
+        button = QtWidgets.QPushButton('add random')
         button.clicked.connect(self.bla)
         lyt.addWidget(button)
 
@@ -53,7 +53,7 @@ class Demo(QtGui.QMainWindow):
 
 
 def show():
-    app = QtGui.QApplication([])
+    app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
     app.exec_()

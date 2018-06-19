@@ -1,7 +1,7 @@
 import os
 import a2core
 
-from PySide import QtGui, QtCore, QtSvg
+from PySide2 import QtGui, QtCore, QtSvg
 
 
 log = a2core.get_logger(__name__)

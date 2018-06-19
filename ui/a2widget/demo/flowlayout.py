@@ -1,39 +1,39 @@
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 from a2widget.flowlayout import FlowLayout
 from a2widget import A2Slider
 
 
-class Window(QtGui.QWidget):
+class Window(QtWidgets.QWidget):
     def __init__(self):
         super(Window, self).__init__()
         self.setWindowTitle("Flow Layout")
 
-        main_layout = QtGui.QFormLayout(self)
+        main_layout = QtWidgets.QFormLayout(self)
         self.setLayout(main_layout)
 
         spacing = 5
         margin = 5
 
         flowLayout = FlowLayout(margin=margin, spacing=spacing)
-        flowLayout.addWidget(QtGui.QPushButton("Short"))
-        flowLayout.addWidget(QtGui.QPushButton("Longer"))
-        flowLayout.addWidget(QtGui.QPushButton("Different text"))
-        flowLayout.addWidget(QtGui.QPushButton("More text"))
-        flowLayout.addWidget(QtGui.QPushButton("Even longer button text"))
+        flowLayout.addWidget(QtWidgets.QPushButton("Short"))
+        flowLayout.addWidget(QtWidgets.QPushButton("Longer"))
+        flowLayout.addWidget(QtWidgets.QPushButton("Different text"))
+        flowLayout.addWidget(QtWidgets.QPushButton("More text"))
+        flowLayout.addWidget(QtWidgets.QPushButton("Even longer button text"))
 
         margin_slider = A2Slider(self, value=margin, mini=0, maxi=50, decimals=0)
         margin_slider.value_changed.connect(flowLayout.set_marging)
         margin_slider.value_changed.connect(self._refresh_window)
-        main_layout.setWidget(0, QtGui.QFormLayout.LabelRole, QtGui.QLabel('margin:'))
-        main_layout.setWidget(0, QtGui.QFormLayout.FieldRole, margin_slider)
+        main_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel('margin:'))
+        main_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, margin_slider)
 
         spacing_slider = A2Slider(self, value=spacing, mini=0, maxi=50, decimals=0)
         spacing_slider.value_changed.connect(flowLayout.set_spacing)
         spacing_slider.value_changed.connect(self._refresh_window)
-        main_layout.setWidget(1, QtGui.QFormLayout.LabelRole, QtGui.QLabel('spacing:'))
-        main_layout.setWidget(1, QtGui.QFormLayout.FieldRole, spacing_slider)
+        main_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel('spacing:'))
+        main_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, spacing_slider)
 
-        main_layout.setLayout(2, QtGui.QFormLayout.SpanningRole, flowLayout)
+        main_layout.setLayout(2, QtWidgets.QFormLayout.SpanningRole, flowLayout)
 
     def _refresh_window(self, *args):
         self.width()
@@ -55,7 +55,7 @@ class Window(QtGui.QWidget):
 
 def show():
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     mainWin = Window()
     mainWin.show()
     sys.exit(app.exec_())

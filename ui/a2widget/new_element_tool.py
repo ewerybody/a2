@@ -4,7 +4,7 @@
 """
 import os
 import subprocess
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2core
 import a2util
@@ -36,21 +36,21 @@ class NewElementDialog(A2InputDialog):
         self.okayed.connect(self.create_element)
 
     def setup_ui(self):
-        self.ui.radio_global = QtGui.QRadioButton(LABEL_GLOBAL % self.text, self)
+        self.ui.radio_global = QtWidgets.QRadioButton(LABEL_GLOBAL % self.text, self)
         self.ui.radio_global.setObjectName('target_global')
         self.ui.main_layout.insertWidget(0, self.ui.radio_global)
 
-        self.ui.check_display_list = QtGui.QCheckBox(LABEL_LIST_CHECK, self)
+        self.ui.check_display_list = QtWidgets.QCheckBox(LABEL_LIST_CHECK, self)
         self.ui.check_display_list.setObjectName('enlist')
-        hlayout = QtGui.QHBoxLayout()
-        indent = QtGui.QLabel()
+        hlayout = QtWidgets.QHBoxLayout()
+        indent = QtWidgets.QLabel()
         indent.setMaximumWidth(self.main.css_values['margin_h'])
         indent.setMinimumWidth(self.main.css_values['margin_h'])
         hlayout.addWidget(indent)
         hlayout.addWidget(self.ui.check_display_list)
         self.ui.main_layout.insertLayout(1, hlayout)
 
-        self.ui.radio_local = QtGui.QRadioButton(self)
+        self.ui.radio_local = QtWidgets.QRadioButton(self)
         self.ui.radio_local.setObjectName('target_local')
         self.ui.main_layout.insertWidget(2, self.ui.radio_local)
 

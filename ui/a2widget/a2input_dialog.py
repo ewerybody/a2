@@ -4,13 +4,13 @@ a2widget.a2input_dialog
 @created: Sep 3, 2016
 @author: eRiC
 """
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 from a2widget import a2input_dialog_ui
 
 
-class A2ConfirmDialog(QtGui.QDialog):
+class A2ConfirmDialog(QtWidgets.QDialog):
     okayed = QtCore.Signal()
     canceled = QtCore.Signal()
 
@@ -74,7 +74,7 @@ class A2InputDialog(A2ConfirmDialog):
         self._output = None
         self._text = text
 
-        self.ui.text_field = QtGui.QLineEdit(self)
+        self.ui.text_field = QtWidgets.QLineEdit(self)
         self.ui.main_layout.insertWidget(1, self.ui.text_field)
         self.ui.text_field.textChanged.connect(self.check)
         self.ui.text_field.setText(self._text)

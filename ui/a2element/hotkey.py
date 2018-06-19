@@ -17,7 +17,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 """
 
-from PySide import QtCore, QtGui
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 import a2core
@@ -45,16 +45,16 @@ class Draw(DrawCtrl):
         self.hotkey_button.set_config(user_dict)
 
     def _setup_ui(self):
-        self.ctrl_layout = QtGui.QHBoxLayout(self)
+        self.ctrl_layout = QtWidgets.QHBoxLayout(self)
         # left, top, right, bottom
         self.ctrl_layout.setContentsMargins(0, 0, 0, 0)
-        self.labelBoxLayout = QtGui.QVBoxLayout()
+        self.labelBoxLayout = QtWidgets.QVBoxLayout()
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
-        self.labelLayout = QtGui.QHBoxLayout()
+        self.labelLayout = QtWidgets.QHBoxLayout()
 
         if self.cfg['disablable']:
             state = self.get_user_value(bool, 'enabled', True)
-            self.check = QtGui.QCheckBox(self)
+            self.check = QtWidgets.QCheckBox(self)
 
             try:
                 size = self.main.css_values['icon_size']
@@ -68,14 +68,14 @@ class Draw(DrawCtrl):
             self.check.clicked.connect(self.hotkey_check)
             self.labelLayout.addWidget(self.check)
 
-        self.label = QtGui.QLabel(self.cfg.get('label') or '', self)
+        self.label = QtWidgets.QLabel(self.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
         self.ctrl_layout.addLayout(self.labelBoxLayout)
 
-        self.hotkey_list_layout = QtGui.QVBoxLayout()
-        self.hotkey_layout = QtGui.QHBoxLayout()
+        self.hotkey_list_layout = QtWidgets.QVBoxLayout()
+        self.hotkey_layout = QtWidgets.QHBoxLayout()
         self.hotkey_button = A2Hotkey(self)
         self._setup_hotkey()
         self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
@@ -117,7 +117,7 @@ class Draw(DrawCtrl):
 
         menu.addSeparator()
 
-        submenu = QtGui.QMenu('Hotkey Dialog Style', menu)
+        submenu = QtWidgets.QMenu('Hotkey Dialog Style', menu)
         current_style = self.a2.db.get('hotkey_dialog_style') or ''
         for hotkey_dialog_style in self.hotkey_button.dialog_styles:
             this_name = hotkey_dialog_style.__name__

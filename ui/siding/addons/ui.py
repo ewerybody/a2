@@ -23,7 +23,7 @@ The user interface code for the add-ons system.
 # Imports
 ###############################################################################
 
-from PySide.QtGui import QMainWindow, QTabWidget, QWidget
+from PySide2.QtWidgets import QMainWindow, QTabWidget, QWidget
 
 from siding import addons, style, plugins
 

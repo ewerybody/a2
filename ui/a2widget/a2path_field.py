@@ -5,7 +5,7 @@ it can be made browsing for folders or files
 
 At files it can be set to save-mode where inexistent paths can be selected
 and filtered file types can be set. See:
-http://pyside.github.io/docs/pyside/PySide/QtGui/QFileDialog.html?highlight=qfiledialog#detailed-description
+http://pyside.github.io/docs/pyside/PySide2/QtGui/QFileDialog.html?highlight=qfiledialog#detailed-description
 
 TODO: add recent paths?
 
@@ -13,7 +13,7 @@ TODO: add recent paths?
 @author: eRiC
 """
 import os
-from PySide import QtGui, QtCore
+from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 import a2util
@@ -25,23 +25,23 @@ class BrowseType(object):
     file = '1'
 
 
-class A2PathField(QtGui.QWidget):
+class A2PathField(QtWidgets.QWidget):
     changed = QtCore.Signal(str)
 
     def __init__(self, parent, value='', file_types='', writable=True,
                  label_text=None, save_mode=False, changable=True):
         super(A2PathField, self).__init__(parent)
-        self.main_layout = QtGui.QHBoxLayout(self)
+        self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.line_field = QtGui.QLineEdit(self)
+        self.line_field = QtWidgets.QLineEdit(self)
         self.line_field.setText(value)
         self.main_layout.addWidget(self.line_field)
-        self.browse_button = QtGui.QPushButton('Browse...', self)
+        self.browse_button = QtWidgets.QPushButton('Browse...', self)
         self.browse_button.setIcon(a2ctrl.Icons.inst().folder2)
         self.browse_button.clicked.connect(self.browse)
         self.main_layout.addWidget(self.browse_button)
 
-        self.options_menu = QtGui.QMenu()
+        self.options_menu = QtWidgets.QMenu()
         self.a2option_button = A2MoreButton(self)
         self.a2option_button.menu_called.connect(self.show_options_menu)
         self.main_layout.addWidget(self.a2option_button)
@@ -100,11 +100,11 @@ class A2PathField(QtGui.QWidget):
         if self.browse_type == BrowseType.file:
             file_types = 'All Files (*)' if not self.file_types else self.file_types
             if self.save_mode:
-                file_path, _ = QtGui.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
+                file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
             else:
-                file_path, _ = QtGui.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
+                file_path, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
         else:
-            file_path = QtGui.QFileDialog.getExistingDirectory(self, caption=self.label_text, dir=self._value)
+            file_path = QtWidgets.QFileDialog.getExistingDirectory(self, caption=self.label_text, dir=self._value)
 
         if file_path:
             self.value = file_path
@@ -143,4 +143,4 @@ class A2PathField(QtGui.QWidget):
         a2util.explore(self.value)
 
     def copy_path(self):
-        QtGui.QApplication.clipboard().setText(self.value)
+        QtWidgets.QApplication.clipboard().setText(self.value)
