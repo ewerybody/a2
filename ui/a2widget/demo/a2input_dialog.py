@@ -33,10 +33,12 @@ class InputDialogDemo(QtWidgets.QMainWindow):
     def field_changed(self, text):
         print('text: %s' % text)
 
-    def ok_func(self, value):
+    @staticmethod
+    def ok_func(value):
         print('dialog okayed! value: "%s"' % value)
 
-    def cancel_func(self):
+    @staticmethod
+    def cancel_func():
         print('dialog canceled!')
 
     def call_confirm_dialog(self):
@@ -45,10 +47,12 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         dialog.canceled.connect(self.confirm_dialog_canceled)
         dialog.show()
 
-    def confirm_dialog_okayed(self):
+    @staticmethod
+    def confirm_dialog_okayed():
         print('confirm_dialog_okayed')
 
-    def confirm_dialog_canceled(self):
+    @staticmethod
+    def confirm_dialog_canceled():
         print('confirm_dialog_canceled')
 
 

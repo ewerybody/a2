@@ -5,7 +5,7 @@ a2widget.demo.a2slider
 @author: eric
 """
 from a2widget import a2slider
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 
 class SliderDemo(QtWidgets.QMainWindow):
@@ -47,13 +47,15 @@ class SliderDemo(QtWidgets.QMainWindow):
     def label_update(self, value):
         self.label.setText(str(value))
 
-    def finished(self, x=None):
+    @staticmethod
+    def finished(x=None):
         if x is None:
             print('    finished but nothing passed :(')
         else:
             print('    finished: %s' % x)
 
-    def changed(self, x):
+    @staticmethod
+    def changed(x):
         print('    changed: %s' % x)
 
 

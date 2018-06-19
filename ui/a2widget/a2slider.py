@@ -6,7 +6,7 @@ A Qt/PySide2 slider widget that:
 """
 from functools import partial
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 
 class A2Slider(QtWidgets.QWidget):

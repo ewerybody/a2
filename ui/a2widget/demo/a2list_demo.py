@@ -45,10 +45,12 @@ class Demo(QtWidgets.QMainWindow):
     def on_thing_selection(self, thing):
         print('single thing: %s' % thing)
 
-    def changed1(self):
+    @staticmethod
+    def changed1():
         print('list 1 changed!')
 
-    def changed2(self):
+    @staticmethod
+    def changed2():
         print('list 2 changed!')
 
 
