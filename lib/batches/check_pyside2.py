@@ -7,105 +7,112 @@ import PySide2 as pyside_package
 
 IMPORT_STR = ' import '
 FROM_IMPORT = 'from PySide2 import '
+PYPAKS = pyside_package.__all__
+PAK_MEMBERS = {}
+MEMBER_PAKS = {}
 
 
 def main():
-    pypaks = pyside_package.__all__
-    print('pypaks:', pypaks)
-    pak_members = {}
-    member_paks = {}
-    for pakname in pypaks:
+    print('pypaks:', PYPAKS)
+    global PAK_MEMBERS, MEMBER_PAKS
+    for pakname in PYPAKS:
         qmod = importlib.import_module(f'{pyside_package.__name__}.{pakname}')
         members = [m for m in dir(qmod) if not m.startswith('_')]
-        pak_members[pakname] = members
+        PAK_MEMBERS[pakname] = members
         for m in members:
-            member_paks[m] = pakname
+            MEMBER_PAKS[m] = pakname
 
-    uipath = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'ui'))
-    numpys, pydirs, qlines, numqfiles, changed_files, change_count = 0, 0, 0, 0, 0, 0
-    for dirpath, folders, files in os.walk(uipath):
-        pyfiles = [f for f in files if os.path.splitext(f)[1] == '.py']
-        if pyfiles:
-            pydirs += 1
-            numpys += len(pyfiles)
-            for pyfile in pyfiles:
-                this_q_lines = []
-                import_lines = []
-                qpacks = []
+    stats = {
+        'py_dirs': 0,
+        'num_py_files': 0,
+        'changed_files': 0,
+        'change_count': 0}
+
+    ui_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'ui'))
+    check_files(ui_path, stats)
+
+    pprint(stats)
+
+
+def check_files(path, stats):
+    pyfiles = []
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path) and not item.startswith('_'):
+            check_files(item_path, stats)
+        elif os.path.isfile(item_path) and os.path.splitext(item)[1] == '.py':
+            pyfiles.append(item_path)
+
+    if not pyfiles:
+        return
+    stats['py_dirs'] += 1
+    stats['num_py_files'] += len(pyfiles)
+
+    for this_path in pyfiles:
+        import_lines = []
+        qpacks = []
+        try:
+            needs_unicode = False
+            try:
+                with open(this_path) as fob:
+                    lines = fob.read().split('\n')
+            except UnicodeDecodeError:
+                needs_unicode = True
+                with codecs.open(this_path, encoding='utf-8-sig') as fob:
+                    lines = fob.read().split('\n')
+
+            print(f'checking {len(lines)} lines in file {this_path} ...')
+
+            change_file = False
+            for i, line in enumerate(lines):
+                line = line.rstrip()
+                # skip empty lines
+                if not line:
+                    continue
+                # skip comments
+                if line.lstrip().startswith('#'):
+                    continue
+
                 try:
-                    this_path = os.path.join(dirpath, pyfile)
-                    needs_unicode = False
-                    try:
-                        with open(this_path) as fob:
-                            lines = fob.read().split('\n')
-                    except UnicodeDecodeError:
-                        needs_unicode = True
-                        with codecs.open(this_path, encoding='utf-8-sig') as fob:
-                            lines = fob.read().split('\n')
-
-                    print(f'checking {len(lines)} lines in file {this_path} ...')
-
-                    change_file = False
-                    for i, line in enumerate(lines):
-                        line = line.rstrip()
-                        # skip empty lines
-                        if not line:
-                            continue
-                        # skip comments
-                        if line.lstrip().startswith('#'):
-                            continue
-
-                        try:
-                            changed, newline, this_qpacks = check_line(line, pypaks, pak_members, member_paks)
-                            if changed:
-                                change_file = True
-                                lines[i] = newline
-                                change_count += 1
-                            qpacks.extend(this_qpacks)
-                        except Exception as error:
-                            print(f'problems with File: "{this_path}", line {i}')
-                            raise error
-
-                        if line.strip().startswith(FROM_IMPORT):
-                            import_lines.append(i)
-
-                    if import_lines:
-                        if len(import_lines) > 1:
-                            raise RuntimeError('Multiple import lines?!?!', import_lines, this_path)
-                        current_paks = [p.strip() for p in lines[import_lines[0]][len(FROM_IMPORT):].split(',')]
-                        new_paks = set(qpacks)
-                        if new_paks != set(current_paks):
-                            lines[import_lines[0]] = FROM_IMPORT + ', '.join(new_paks)
-                            change_file = True
-                            change_count += 1
-
-                    if change_file:
-                        if needs_unicode:
-                            with codecs.open(this_path, 'w', encoding='utf-8-sig') as fob:
-                                fob.write('\n'.join(lines))
-                        else:
-                            with open(this_path, 'w') as fob:
-                                fob.write('\n'.join(lines))
-                        print(f'changed file: {this_path}')
-                        changed_files += 1
-
+                    changed, newline, this_qpacks = check_line(line)
+                    if changed:
+                        change_file = True
+                        lines[i] = newline
+                        stats['change_count'] += 1
+                    qpacks.extend(this_qpacks)
                 except Exception as error:
-                    print(f'problems with file: {this_path}')
+                    print(f'problems with File: "{this_path}", line {i}')
                     raise error
 
-                if this_q_lines:
-                    numqfiles += 1
-                    print('Qt lines in file: %s\n  %s' % (pyfile, '  \n'.join(this_q_lines)))
+                if line.strip().startswith(FROM_IMPORT):
+                    import_lines.append(i)
 
-    print('numpys:', numpys)
-    print('pydirs:', pydirs)
-    print('numqfiles:', numqfiles)
-    print('qlines:', qlines)
-    print('changed_files', changed_files)
-    print('change_count', change_count)
+            if import_lines:
+                if len(import_lines) > 1:
+                    raise RuntimeError('Multiple import lines?!?!', import_lines, this_path)
+                current_paks = [p.strip() for p in lines[import_lines[0]][len(FROM_IMPORT):].split(',')]
+                new_paks = set(qpacks)
+                if new_paks != set(current_paks):
+                    lines[import_lines[0]] = FROM_IMPORT + ', '.join(new_paks)
+                    change_file = True
+                    stats['change_count'] += 1
+
+            if change_file:
+                if needs_unicode:
+                    with codecs.open(this_path, 'w', encoding='utf-8-sig') as fob:
+                        fob.write('\n'.join(lines))
+                else:
+                    with open(this_path, 'w') as fob:
+                        fob.write('\n'.join(lines))
+                print(f'changed file: {this_path}')
+                stats['changed_files'] += 1
+
+        except Exception as error:
+            print(f'problems with File: {this_path}')
+            raise error
 
 
-def check_line(line, pypaks, pak_members, member_paks):
+def check_line(line):
     any_changed = False
 
     if 'PySide' in line:
@@ -117,7 +124,7 @@ def check_line(line, pypaks, pak_members, member_paks):
                 any_changed = True
 
     qpacks = []
-    for pak in pypaks:
+    for pak in PYPAKS:
         if pak not in line:
             continue
         if '\n' in line:
@@ -131,7 +138,7 @@ def check_line(line, pypaks, pak_members, member_paks):
         while changed:
             if num_tries > 23:
                 break
-            changed, line, pos0, changed_packs = fix_moved_members(pak, line, pos0, pak_members, member_paks)
+            changed, line, pos0, changed_packs = fix_moved_members(pak, line, pos0)
             if changed:
                 qpacks.extend(changed_packs)
                 num_tries += 1
@@ -157,7 +164,7 @@ def fix_pyside1(line, pos0):
     return changed, line, pos0
 
 
-def fix_moved_members(pak, line, pos0, pak_members, member_paks):
+def fix_moved_members(pak, line, pos0):
     pos1 = line.find(pak, pos0)
     changed = False
     if pos1 == -1:
@@ -172,9 +179,9 @@ def fix_moved_members(pak, line, pos0, pak_members, member_paks):
     if line[pos2] == '.':
         rest_of_line = line[pos2 + 1:]
         member_name = get_member(rest_of_line)
-        if member_name not in pak_members[pak]:
+        if member_name not in PAK_MEMBERS[pak]:
             try:
-                new_pak = member_paks[member_name]
+                new_pak = MEMBER_PAKS[member_name]
             except KeyError:
                 raise RuntimeError(f'Name "{member_name}" not under any of the paks!')
 
@@ -189,11 +196,11 @@ def fix_moved_members(pak, line, pos0, pak_members, member_paks):
         pos3 = pos2 + len(IMPORT_STR)
         if line[pos2:pos3] == IMPORT_STR:
             import_members = [m.strip() for m in line[pos3:].split(',')]
-            not_in_pak = [m not in pak_members[pak] for m in import_members]
+            not_in_pak = [m not in PAK_MEMBERS[pak] for m in import_members]
             if any(not_in_pak):
                 lines = {}
                 for m in import_members:
-                    lines.setdefault(member_paks[m], []).append(m)
+                    lines.setdefault(MEMBER_PAKS[m], []).append(m)
                 new_lines = []
                 for new_pak, members in lines.items():
                     new_lines.append(line[:pos1] + new_pak + IMPORT_STR + ', '.join(members))
