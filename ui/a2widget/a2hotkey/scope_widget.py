@@ -247,7 +247,8 @@ class ScopeWidget(QtWidgets.QWidget):
 
     def on_selection_clear(self):
         self.blockSignals(True)
-        [f.setText('') for f in self.input_fields.values()]
+        for f in self.input_fields.values():
+            f.setText('')
         self.blockSignals(False)
 
 

@@ -141,7 +141,8 @@ class A2List(QtWidgets.QListWidget):
             self.setCurrentItem(last_item)
 
     def clear_selection(self):
-        [i.setSelected(False) for i in self.selectedItems()]
+        for item in self.selectedItems():
+            item.setSelected(False)
 
     def _on_selection_change(self):
         items = self.get_selected_items()

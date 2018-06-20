@@ -1,4 +1,4 @@
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 from a2widget import A2TagField
 
 

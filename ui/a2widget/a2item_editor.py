@@ -195,7 +195,8 @@ class A2ItemEditor(QtWidgets.QWidget):
         all_items = a2ctrl.qlist.get_all_items(self.ui.item_list)
         if not text:
             self.ui.a2search_x_button.setVisible(False)
-            [i.setHidden(False) for i in all_items]
+            for item in all_items:
+                item.setHidden(False)
         else:
             self.ui.a2search_x_button.setVisible(True)
             items = self.ui.item_list.findItems(text, QtCore.Qt.MatchContains)

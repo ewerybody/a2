@@ -1,5 +1,5 @@
 from a2widget import A2InputDialog, A2ConfirmDialog
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 
 
 class InputDialogDemo(QtWidgets.QMainWindow):

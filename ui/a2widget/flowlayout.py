@@ -36,10 +36,12 @@ class FlowLayout(QtWidgets.QLayout):
 
         return None
 
-    def expandingDirections(self):
+    @staticmethod
+    def expandingDirections():
         return QtCore.Qt.Orientations(QtCore.Qt.Orientation(0))
 
-    def hasHeightForWidth(self):
+    @staticmethod
+    def hasHeightForWidth():
         return True
 
     def heightForWidth(self, width):

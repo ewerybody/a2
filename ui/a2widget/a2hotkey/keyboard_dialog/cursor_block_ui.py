@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\cursor_block.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\cursor_block.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
+# Created: Wed Jun 20 19:33:42 2018
 #      by: pyside2-uic  running on PySide2 5.11.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -110,5 +110,5 @@ class Ui_CursorBlock(object):
         QtCore.QMetaObject.connectSlotsByName(CursorBlock)
 
     def retranslateUi(self, CursorBlock):
-        CursorBlock.setWindowTitle(QtWidgets.QApplication.translate("CursorBlock", "Form", None, -1))
+        pass
 

@@ -49,10 +49,12 @@ class Demo(QtWidgets.QMainWindow):
     def some_function(self):
         print('Action triggered: %s' % self.sender().text())
 
-    def print_something(self):
+    @staticmethod
+    def print_something():
         print('Passing the actions obviously works')
 
-    def never_called_function(self, menu):
+    @staticmethod
+    def never_called_function(menu):
         print('this never gets printed!')
 
 

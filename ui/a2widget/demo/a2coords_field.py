@@ -42,7 +42,8 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
     def show_current_pos(self):
         self.c2.set_value(QtGui.QCursor.pos())
 
-    def change_received(self, coords):
+    @staticmethod
+    def change_received(coords):
         print('coords change_received: %s' % str(coords))
 
     def show_dict_change(self):

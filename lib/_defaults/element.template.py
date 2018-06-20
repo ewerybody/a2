@@ -16,7 +16,6 @@ class Draw(DrawCtrl):
     """
     def __init__(self, main, cfg, mod):
         super(Draw, self).__init__(main, cfg, mod)
-        pass
 
 
 class Edit(EditCtrl):
