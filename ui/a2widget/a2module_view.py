@@ -1,12 +1,6 @@
-"""
-a2ctrl.a2module_view
-
-@created: Aug 14, 2016
-@author: eRiC
-"""
 from copy import deepcopy
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 import a2core
 import a2ctrl
@@ -42,7 +36,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.mainlayout = self.ui.scroll_area_contents.layout()
         self.ui.spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Minimum)
+                                               QtWidgets.QSizePolicy.Minimum)
         self.mainlayout.addItem(self.ui.spacer)
         self.settings_widget = self.ui.scroll_area_contents
 
@@ -165,26 +159,26 @@ class A2ModuleView(QtWidgets.QWidget):
         takes list of controls and arranges them in the scroll layout
 
         1. I tried to just create layouts for each module unhook them from the
-        scroll layout on demand and hook up another one but Qt is spart so it
+        scroll layout on demand and hook up another one but Qt is smart so it
         deletes the invisible layout which cannot be hooked up again.
         2. I tried to brute force delete everything and building it over again each
-        time something else is seleceted in the left list but Qt refuses to
+        time something else is selected in the left list but Qt refuses to
         delete anything visually with destroy() or removeWidget()
         3. We probably need an actual tab layout to do this but I can't find how to
         make the tabs invisible...
         4. I'll try to create an all new layout,
             fill it and switch away from the old one:
         """
-        # to refill the scoll layout:
+        # to refill the scroll layout:
         # take away the spacer from 'mainLayout'
         self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
         current_height = self.settings_widget.height()
         new_widget = QtWidgets.QWidget(self)
+        policy = QtWidgets.QSizePolicy
         if keep_scroll:
             current_scroll_value = self.ui.scrollBar.value()
-            new_widget.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                                       QtWidgets.QSizePolicy.Fixed))
+            new_widget.setSizePolicy(policy(policy.Preferred, policy.Fixed))
             new_widget.setMinimumHeight(current_height)
 
         # create new column layout for the module controls
@@ -208,8 +202,8 @@ class A2ModuleView(QtWidgets.QWidget):
         # amend the spacer
         new_layout.addItem(self.ui.spacer)
 
-        vertical_policy = QtWidgets.QSizePolicy.Minimum if has_expandable_widget else QtWidgets.QSizePolicy.Maximum
-        new_widget.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, vertical_policy))
+        vertical_policy = policy.Minimum if has_expandable_widget else policy.Maximum
+        new_widget.setSizePolicy(policy(policy.Preferred, vertical_policy))
 
         if keep_scroll:
             self.ui.scrollBar.setValue(current_scroll_value)

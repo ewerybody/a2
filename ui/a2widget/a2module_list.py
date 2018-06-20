@@ -93,6 +93,7 @@ class A2ModuleList(QtWidgets.QWidget):
                 else:
                     item.setIcon(mod.icon.tinted)
                     item.setForeground(_DISABLED_BRUSH)
+
                 item._module = mod
                 mod._item = item
                 self.ui.a2module_list_widget.addItem(item)
