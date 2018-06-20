@@ -49,9 +49,9 @@ def call_cmd(cmd_path, *args, **kwargs):
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     if 'cwd' in kwargs:
-        proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE, cwd=kwargs['cwd'])
+        proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs['cwd'])
     else:
-        proc = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(args, stdout=subprocess.PIPE)
 
     cmd_result = str(proc.communicate()[0])
     proc.kill()

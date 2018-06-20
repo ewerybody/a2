@@ -330,7 +330,8 @@ def kill_a2_process():
         startup_nfo.wShowWindow = subprocess.SW_HIDE
         startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-        taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid, shell=True, startupinfo=startup_nfo)
+        taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid,
+                                         startupinfo=startup_nfo)
         taskkill_proc.wait()
         taskkill_proc.kill()
         return pid
