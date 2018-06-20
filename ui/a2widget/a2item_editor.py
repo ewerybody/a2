@@ -184,9 +184,12 @@ class A2ItemEditor(QtWidgets.QWidget):
             item_row = self.ui.item_list.row(item)
             self.ui.item_list.takeItem(item_row)
         item_name = item_objs[0].text()
-        self.data.pop(item_name)
-        self.data_changed.emit()
-        self.item_deleted.emit(item_name)
+        try:
+            self.data.pop(item_name)
+            self.data_changed.emit()
+            self.item_deleted.emit(item_name)
+        except KeyError:
+            pass
 
     def update_filter(self, text=None):
         all_items = a2ctrl.qlist.get_all_items(self.ui.item_list)
