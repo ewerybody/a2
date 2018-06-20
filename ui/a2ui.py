@@ -50,17 +50,16 @@ class A2Window(QtWidgets.QMainWindow):
         init_selection = []
         if self.a2.db.get('remember_last') or False:
             init_selection = self.a2.db.get('last_selected') or []
-        init_settings_view = init_selection == []
         self.module_list.selection_changed.connect(self._module_selected)
         self.module_list.draw_modules(init_selection)
-        if init_settings_view:
+        if init_selection == []:
             self.module_view.draw_mod()
 
         self.runtime_watcher = RuntimeWatcher(self)
         self.runtime_watcher.message.connect(self.runtime_watcher_message)
         self.runtime_watcher.start()
 
-        log.info('initialised!')
+        log.info('A2Window initialised!')
 
     def runtime_watcher_message(self, message):
         if not message:
@@ -142,9 +141,11 @@ class A2Window(QtWidgets.QMainWindow):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
                             self, self.edit_submit)
 
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home), self.module_view.ui.a2scroll_area,
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home),
+                            self.module_view.ui.a2scroll_area,
                             partial(self.scroll_to, True))
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End), self.module_view.ui.a2scroll_area,
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End),
+                            self.module_view.ui.a2scroll_area,
                             partial(self.scroll_to, False))
 
     def edit_mod(self, keep_scroll=False):
@@ -433,8 +434,8 @@ class DevSettings(object):
             'loglevel_debug': False}
         self.get()
 
-        log.info('self.loglevel_debug: %s' % self.loglevel_debug)
-        log.debug('self.loglevel_debug: %s' % self.loglevel_debug)
+        log.info('loglevel_debug: %s' % self.loglevel_debug)
+        log.debug('loglevel_debug: %s' % self.loglevel_debug)
 
     def _get_from_db(self):
         return self._a2.db.get_changes('dev_settings', self._defaults)

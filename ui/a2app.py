@@ -36,14 +36,16 @@ def main():
         app.ensure_single(['--show'])
     else:
         app.ensure_single()
+    app.messageReceived.connect(app_msg_get)
 
     # adding PySide plugin paths. e.g. to make all the imageformats available
     pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
     QtWidgets.QApplication.addLibraryPath(pyside_plugin_path)
 
     winfo = platform.uname()
-    log.info('initialised!\n  python: %s\n  windows: %s' % (sys.version, str(winfo)[31:-1]))
-    app.messageReceived.connect(app_msg_get)
+    log.info('initialised!\n  python: %s\n  windows: %s'
+             % (sys.version, str(winfo)[31:-1]))
+
     # this is to set the actual taskbar icon
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
 
@@ -53,19 +55,18 @@ def main():
 
 
 def init_a2_win(app):
-    global a2win
     try:
         import a2core
         a2 = a2core.A2Obj.inst()
         # TODO: remove this:
-        a2core._dbCleanup()
+        # a2core._dbCleanup()
         a2.start_up()
 
         import a2ui
-        a2win = a2ui.A2Window(app=app)
-        a2.win = a2win
+        a2.win = a2ui.A2Window(app)
         a2.app = app
-        a2win.showRaise()
+        a2.win.showRaise()
+
     except Exception as error:
         # TODO: provide more detailed startup error report
         # error_class, error_msg, trace_back = sys.exc_info()
@@ -75,7 +76,7 @@ def init_a2_win(app):
                % (error, traceback.format_exc().strip()))
         QtWidgets.QMessageBox.critical(None, title, msg)
         raise RuntimeError(msg)
-    return a2win
+    return a2.win
 
 
 def app_msg_get(msg):

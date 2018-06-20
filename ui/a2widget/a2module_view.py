@@ -8,6 +8,7 @@ import a2util
 from a2element.common import EditAddElem
 from a2widget import a2settings_view
 from a2widget import a2module_view_ui
+import traceback
 
 
 log = a2core.get_logger(__name__)
@@ -33,11 +34,6 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.setupUi(self)
 
         self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()
-
-        self.mainlayout = self.ui.scroll_area_contents.layout()
-        self.ui.spacer = QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum,
-                                               QtWidgets.QSizePolicy.Minimum)
-        self.mainlayout.addItem(self.ui.spacer)
         self.settings_widget = self.ui.scroll_area_contents
 
         self.ui.modCheck.clicked[bool].connect(self.main.mod_enable)
@@ -57,19 +53,22 @@ class A2ModuleView(QtWidgets.QWidget):
         On change they trigger writing to the db, collect all include info
         and restart a2.
         """
-        self.controls = []
+        self.toggle_edit(False)
 
         if self.main.mod is None:
             if not self.main.num_selected:
-                self.controls.append(a2settings_view.A2Settings(self.main))
-                config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
+                self.controls = [a2settings_view.A2Settings(self.main)]
+                #config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
+                self.update_header()
+                self.draw_ui()
+                return
+
             else:
                 config = [{'typ': 'nfo', 'author': '', 'version': '',
                            'description': 'Multiple modules selected. Here goes some '
                                           'useful info in the future...'}]
         else:
             config = self.main.mod.config
-
             self.main.temp_config = None
 
         if len(config):
@@ -79,22 +78,24 @@ class A2ModuleView(QtWidgets.QWidget):
             config = [{'typ': 'nfo', 'author': '', 'version': '',
                        'description': 'Module Config is currently empty! imagine awesome layout here ...'}]
 
-        self.ui.modAuthor.setText(config[0].get('author', ''))
-        self.ui.modVersion.setText(config[0].get('version', ''))
-        self.update_header()
+        nfo = config[0]
+        self.update_header(nfo.get('author', ''), nfo.get('version', ''))
 
+        self.controls = []
         for cfg in config:
             self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod))
 
         self.toggle_edit(False)
         self.draw_ui()
 
-    def update_header(self):
+    def update_header(self, author='', version=''):
         """
         Updates the module settings view to the right of the UI
         when something different is elected in the module list
         """
         self.ui.modCheck.setTristate(False)
+        self.ui.modAuthor.setText(author)
+        self.ui.modVersion.setText(version)
 
         if self.main.mod is None:
             self.ui.a2mod_view_source_label.setText('')
@@ -170,13 +171,12 @@ class A2ModuleView(QtWidgets.QWidget):
             fill it and switch away from the old one:
         """
         # to refill the scroll layout:
-        # take away the spacer from 'mainLayout'
-        self.mainlayout.removeItem(self.ui.spacer)
         # create widget to host the module's new layout
-        current_height = self.settings_widget.height()
         new_widget = QtWidgets.QWidget(self)
         policy = QtWidgets.QSizePolicy
+
         if keep_scroll:
+            current_height = self.settings_widget.height()
             current_scroll_value = self.ui.scrollBar.value()
             new_widget.setSizePolicy(policy(policy.Preferred, policy.Fixed))
             new_widget.setMinimumHeight(current_height)
@@ -192,15 +192,19 @@ class A2ModuleView(QtWidgets.QWidget):
         has_expandable_widget = False
         for ctrl in self.controls:
             if ctrl:
-                new_layout.addWidget(ctrl)
                 try:
+                    new_layout.addWidget(ctrl)
                     if ctrl.is_expandable_widget:
                         has_expandable_widget = True
+                except RuntimeError as error:
+                    log.error(traceback.format_exc().strip())
+                    raise error
                 except Exception:
                     pass
 
-        # amend the spacer
-        new_layout.addItem(self.ui.spacer)
+        # amend a spacer
+        spacer = QtWidgets.QSpacerItem(0, 0, policy.Minimum, policy.Minimum)
+        new_layout.addItem(spacer)
 
         vertical_policy = policy.Minimum if has_expandable_widget else policy.Maximum
         new_widget.setSizePolicy(policy(policy.Preferred, vertical_policy))
@@ -208,7 +212,6 @@ class A2ModuleView(QtWidgets.QWidget):
         if keep_scroll:
             self.ui.scrollBar.setValue(current_scroll_value)
 
-        self.mainlayout = new_layout
         self.settings_widget = new_widget
 
     def toggle_edit(self, state):
