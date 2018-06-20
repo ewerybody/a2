@@ -59,6 +59,7 @@ class A2Obj(object):
 
         self.db = a2db.A2db(self.paths.db)
         self._enabled = None
+        log.info('A2Obj initialised!')
 
     def start_up(self):
         self.fetch_modules()
@@ -77,6 +78,15 @@ class A2Obj(object):
                               'module2': a2Mod.Mod, ...}
         """
         a2mod.get_module_sources(self, self.paths.modules, self.module_sources)
+
+    def get_module_obj(self, source_name, module_name):
+        source = self.module_sources.get(source_name)
+        if source is None:
+            raise RuntimeError(f'No module source named "{source_name}"!')
+        module = source.mods.get(module_name)
+        if module is None:
+            raise RuntimeError(f'Module source "{source_name}" has no module "{module_name}"!')
+        return module
 
     @property
     def enabled(self):

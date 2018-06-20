@@ -519,11 +519,12 @@ class Mod(object):
         if self.has_config_file:
             try:
                 self._config = a2util.json_read(self.config_file)
-                return
+                return self._config
             except Exception as error:
                 log.error('config exists but could not be loaded!: '
                           '%s\nerror: %s' % (self.config_file, error))
         self._config = []
+        return self._config
 
     def change(self):
         """
@@ -628,6 +629,16 @@ class Mod(object):
     def icon(self):
         self._icon = get_icon(self._icon, self.path, self.source.icon)
         return self._icon
+
+    def has_tag(self, tagname):
+        """
+        Checks if the given tag is among the modules tags
+        :param str tagname: Tag name to look for
+        :rtype: bool
+        """
+        if self.config and tagname in self.config[0].get('tags', []):
+            return True
+        return False
 
 
 def get_files(path):

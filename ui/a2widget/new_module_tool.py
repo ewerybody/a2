@@ -4,12 +4,12 @@
 """
 import os
 
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 
+import a2mod
 import a2core
 import a2util
 import a2ctrl.connect
-from a2mod import get_folders
 from a2widget import A2InputDialog
 
 
@@ -69,7 +69,8 @@ class NewModulueTool(A2InputDialog):
         module_path = os.path.join(source.path, name)
         os.mkdir(module_path)
         self.a2.fetch_modules()
-        self.main.module_list.draw_modules('%s|%s' % (source.name, name))
+        module = self.a2.get_module_obj(source_name, name)
+        self.main.module_list.draw_modules([module])
 
     def check_name(self, name):
         """
@@ -79,7 +80,7 @@ class NewModulueTool(A2InputDialog):
         source = self.source_dict['sources'][self.source_dict['source_index']]
         # fetch folders in module source as deactivated sources were not listed before
         if source not in self.source_dict['names']:
-            names = get_folders(self.a2.module_sources[source].path)
+            names = a2mod.get_folders(self.a2.module_sources[source].path)
             self.source_dict['names'][source] = list(map(str.lower, names))
 
         self._module_list = self.source_dict['names'][source]
