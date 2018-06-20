@@ -193,9 +193,7 @@ def py_dict_to_ahk_string(dict_obj):
     return result + '}'
 
 
-"""
-http://www.autohotkey.com/docs/KeyList.htm
-"""
+#: http://www.autohotkey.com/docs/KeyList.htm
 modifiers = {'altgr': '<^>'}
 for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
     modifiers[_key] = _code

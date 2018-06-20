@@ -3,15 +3,14 @@
 @author: eric
 """
 import os
-import subprocess
-from PySide2 import QtGui, QtCore, QtWidgets
+import json
+import importlib
+from PySide2 import QtCore, QtWidgets
 
 import a2core
 import a2util
 import a2ctrl.connect
 from a2widget.a2input_dialog import A2InputDialog
-import json
-import importlib
 
 
 LABEL_GLOBAL = 'Add globally as "a2element.%s"'

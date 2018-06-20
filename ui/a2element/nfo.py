@@ -4,7 +4,7 @@ a2element.nfo
 @created: Sep 3, 2016
 @author: eRiC
 """
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 
 import a2core
 import a2ctrl.connect

@@ -8,7 +8,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 class Ui_edit(object):
     def setupUi(self, edit):
@@ -16,11 +16,11 @@ class Ui_edit(object):
         edit.resize(830, 363)
         self.edit_layout = QtWidgets.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
+        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTop | QtCore.Qt.AlignTrailing)
         self.edit_layout.setObjectName("edit_layout")
         self.internalNameLabel = QtWidgets.QLabel(edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
         self.cfg_name = QtWidgets.QLineEdit(edit)
@@ -28,7 +28,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QtWidgets.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_label = QtWidgets.QLineEdit(edit)
@@ -37,7 +37,7 @@ class Ui_edit(object):
         self.hotkeyLabel = QtWidgets.QLabel(edit)
         self.hotkeyLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.hotkeyLabel.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.hotkeyLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.hotkeyLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.hotkeyLabel.setObjectName("hotkeyLabel")
         self.edit_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.hotkeyLabel)
         self.hotkey_layout = QtWidgets.QVBoxLayout()
@@ -83,7 +83,7 @@ class Ui_edit(object):
         self.functionLabel = QtWidgets.QLabel(edit)
         self.functionLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.functionLabel.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.functionLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.functionLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.functionLabel.setObjectName("functionLabel")
         self.edit_layout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.functionLabel)
         self.func_widget = FuncWidget(edit)

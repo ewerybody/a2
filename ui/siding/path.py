@@ -611,7 +611,7 @@ class PathContext(object):
             else:
                 file = None
                 try:
-                    file, path, desc = imp.find_module(source)
+                    file, _, _ = imp.find_module(source)
 
                     assert_pkg_resources()
                     source = 'py:%s' % source

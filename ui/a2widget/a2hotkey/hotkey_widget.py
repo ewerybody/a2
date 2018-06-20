@@ -1,5 +1,5 @@
 import a2core
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
 from a2widget.a2hotkey.simple_dialog import HotkeyDialog1

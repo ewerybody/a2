@@ -8,7 +8,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 class Ui_edit(object):
     def setupUi(self, edit):
@@ -16,11 +16,11 @@ class Ui_edit(object):
         edit.resize(607, 296)
         self.edit_layout = QtWidgets.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.edit_layout.setObjectName("edit_layout")
         self.displayLabelLabel = QtWidgets.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_labeltext = QtWidgets.QLineEdit(edit)
@@ -30,7 +30,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_labeltext)
         self.displayLabelLabel_2 = QtWidgets.QLabel(edit)
         self.displayLabelLabel_2.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel_2.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel_2.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.displayLabelLabel_2.setObjectName("displayLabelLabel_2")
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel_2)
         self.cfg_buttontext = QtWidgets.QLineEdit(edit)
@@ -39,7 +39,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_buttontext)
         self.displayLabelLabel_3 = QtWidgets.QLabel(edit)
         self.displayLabelLabel_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel_3.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
         self.displayLabelLabel_3.setObjectName("displayLabelLabel_3")
         self.edit_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel_3)
         self.cfg_code = A2CodeField(edit)

@@ -1,16 +1,11 @@
-"""
-Created on 08.03.2017
-
-@author: eric
-"""
 import uuid
-from PySide2 import QtGui, QtWidgets
+from PySide2 import QtWidgets
 from a2widget import A2ButtonField
 
 
-class ButtonFieldDemo(QtWidgets.QMainWindow):
+class Demo(QtWidgets.QMainWindow):
     def __init__(self):
-        super(ButtonFieldDemo, self).__init__()
+        super(Demo, self).__init__()
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
         lyt = QtWidgets.QVBoxLayout(w)
@@ -42,7 +37,7 @@ class ButtonFieldDemo(QtWidgets.QMainWindow):
 
 def show():
     app = QtWidgets.QApplication([])
-    win = ButtonFieldDemo()
+    win = Demo()
     win.show()
     app.exec_()
 

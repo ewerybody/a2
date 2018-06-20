@@ -1,7 +1,9 @@
-from PySide2 import QtGui, QtWidgets
-from a2widget.a2hotkey import edit_func_widget, edit_func_widget_ui
-import a2ctrl
 from pprint import pprint
+
+from PySide2 import QtWidgets
+
+import a2ctrl
+from a2widget.a2hotkey import edit_func_widget, edit_func_widget_ui
 
 
 class Demo(QtWidgets.QMainWindow):

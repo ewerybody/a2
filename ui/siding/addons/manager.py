@@ -242,7 +242,7 @@ class AddonManager(object):
             info_class, info_regex, search_paths = self._types[type][:3]
             for spath in search_paths:
                 log.debug('Searching path: %s' % spath)
-                for root, dirs, files in path.walk(spath, source=source):
+                for root, _, files in path.walk(spath, source=source):
                     for file in files:
                         filepath = path.join(root, file)
                         match = info_regex.search(filepath)

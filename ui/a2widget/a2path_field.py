@@ -13,7 +13,7 @@ TODO: add recent paths?
 @author: eRiC
 """
 import os
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
 import a2util

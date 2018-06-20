@@ -4,7 +4,7 @@ Created on Apr 1, 2016
 @author: eRiC
 '''
 import a2ctrl.qlist
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 

@@ -3,7 +3,7 @@ Created on 08.03.2017
 
 @author: eric
 """
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 import a2ahk
 import a2ctrl

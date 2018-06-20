@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QAction
-from PySide2.QtCore import Signal, Slot, QObject
+from PySide2.QtCore import Slot, QObject
 
 import siding
 import functools
@@ -25,7 +25,7 @@ class Test(siding.plugins.IPlugin):
         tb = win._rot13tb = win.addToolBar('rot-13')
         tb.setObjectName('_rot13tb')
         tb.addAction(act)
-    
+
     @Slot(QObject)
     def closed_window(self, win):
         if win in self.windows:

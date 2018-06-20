@@ -4,14 +4,14 @@ This was a super early layoyt draft for the a2 UI!
 
 @author: eric
 """
-import draft_ui
-from PySide2 import QtGui, QtWidgets
+import test.draft_ui
+from PySide2 import QtWidgets
 
 
 class Draft(QtWidgets.QMainWindow):
     def __init__(self):
         super(Draft, self).__init__()
-        self.ui = draft_ui.Ui_MainWindow()
+        self.ui = test.draft_ui.Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.statusbar.showMessage('asdfas')
 
