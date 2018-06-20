@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_list.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_list.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
+# Created: Wed Jun 20 16:46:02 2018
 #      by: pyside2-uic  running on PySide2 5.11.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,9 +21,6 @@ class Ui_ModuleList(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(5)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.filter_menu_button = QtWidgets.QToolButton(ModuleList)
-        self.filter_menu_button.setObjectName("filter_menu_button")
-        self.horizontalLayout.addWidget(self.filter_menu_button)
         self.search_field = QtWidgets.QLineEdit(ModuleList)
         self.search_field.setObjectName("search_field")
         self.horizontalLayout.addWidget(self.search_field)
@@ -32,6 +29,9 @@ class Ui_ModuleList(object):
         self.a2search_x_button.setFlat(True)
         self.a2search_x_button.setObjectName("a2search_x_button")
         self.horizontalLayout.addWidget(self.a2search_x_button)
+        self.filter_menu_button = A2MoreButton(ModuleList)
+        self.filter_menu_button.setObjectName("filter_menu_button")
+        self.horizontalLayout.addWidget(self.filter_menu_button)
         self.module_list_layout.addLayout(self.horizontalLayout)
         self.a2module_list_widget = QtWidgets.QListWidget(ModuleList)
         self.a2module_list_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -48,3 +48,4 @@ class Ui_ModuleList(object):
         self.filter_menu_button.setText(QtWidgets.QApplication.translate("ModuleList", "...", None, -1))
         self.a2module_list_widget.setSortingEnabled(True)
 
+from a2widget import A2MoreButton
