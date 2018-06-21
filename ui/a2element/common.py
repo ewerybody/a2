@@ -345,6 +345,7 @@ class EditAddElem(QtWidgets.QWidget):
         # spacer = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         # self.baselayout.addItem(spacer)
         self.base_layout.setAlignment(self.a2add_button, QtCore.Qt.AlignLeft)
+        self.is_expandable_widget = False
 
     def build_menu(self):
         self.menu.clear()

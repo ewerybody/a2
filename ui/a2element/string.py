@@ -22,8 +22,10 @@ class Draw(DrawCtrl):
         if self.cfg.get('password_mode', False):
             self.value_ctrl.setEchoMode(QtWidgets.QLineEdit.Password)
 
-    def check(self, value=None):
-        if value is None:
+    def check(self, *args):
+        if args:
+            value = args[0]
+        else:
             value = self.value_ctrl.text()
 
         # prevent being called double
@@ -33,7 +35,6 @@ class Draw(DrawCtrl):
         self.value = value
         self.set_user_value(value)
         self.change('variables')
-        super(Draw, self).check()
 
 
 class Edit(EditCtrl):
