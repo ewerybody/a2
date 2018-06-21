@@ -3,17 +3,18 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
+# Created: Thu Jun 21 19:35:54 2018
 #      by: pyside2-uic  running on PySide2 5.11.0
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtWidgets
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(727, 370)
+        Form.resize(727, 193)
         self.modsource_layout = QtWidgets.QVBoxLayout(Form)
         self.modsource_layout.setObjectName("modsource_layout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -103,7 +104,9 @@ class Ui_Form(object):
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def retranslateUi(self, Form):
-        Form.setWindowTitle(QtWidgets.QApplication.translate("Form", "Form", None, -1))
+    @staticmethod
+    def retranslateUi(Form):
+        pass
+
 
 from a2widget import A2MoreButton, A2PathField

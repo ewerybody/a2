@@ -58,7 +58,6 @@ class A2ModuleView(QtWidgets.QWidget):
         if self.main.mod is None:
             if not self.main.num_selected:
                 self.controls = [a2settings_view.A2Settings(self.main)]
-                #config = [{'typ': 'nfo', 'author': '', 'version': 'v0.1'}]
                 self.update_header()
                 self.draw_ui()
                 return
@@ -85,6 +84,7 @@ class A2ModuleView(QtWidgets.QWidget):
         for cfg in config:
             self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod))
 
+        self.ui.head_widget.setVisible(True)
         self.toggle_edit(False)
         self.draw_ui()
 
@@ -101,10 +101,10 @@ class A2ModuleView(QtWidgets.QWidget):
             self.ui.a2mod_view_source_label.setText('')
 
             if not self.main.num_selected:
-                self.ui.modCheck.setVisible(False)
-                self.ui.modName.setText('a2')
+                self.ui.head_widget.setVisible(False)
+
             else:
-                self.ui.modCheck.setVisible(True)
+                self.ui.head_widget.setVisible(True)
                 self.ui.modName.setText('%i modules' % self.main.num_selected)
                 num_enabled = sum([mod.enabled for mod in self.main.selected])
                 if num_enabled == 0:
@@ -115,8 +115,8 @@ class A2ModuleView(QtWidgets.QWidget):
                     self.ui.modCheck.setTristate(True)
                     self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
         else:
+            self.ui.head_widget.setVisible(True)
             self.ui.a2mod_view_source_label.setText(self.main.mod.source.name)
-            self.ui.modCheck.setVisible(True)
             self.ui.modName.setText(self.main.mod.name)
             # weird.. need to set false first to fix tristate effect
             self.ui.modCheck.setChecked(False)
@@ -191,16 +191,20 @@ class A2ModuleView(QtWidgets.QWidget):
         # add the controls to it
         has_expandable_widget = False
         for ctrl in self.controls:
-            if ctrl:
-                try:
-                    new_layout.addWidget(ctrl)
-                    if ctrl.is_expandable_widget:
-                        has_expandable_widget = True
-                except RuntimeError as error:
-                    log.error(traceback.format_exc().strip())
-                    raise error
-                except Exception:
-                    pass
+            if ctrl is None:
+                continue
+
+            try:
+                new_layout.addWidget(ctrl)
+                if ctrl.is_expandable_widget:
+                    has_expandable_widget = True
+            except RuntimeError as error:
+                log.error(traceback.format_exc().strip())
+                raise error
+            except AttributeError as error:
+                log.debug('Error drawing widget: %s' % ctrl)
+                log.error(traceback.format_exc().strip())
+                raise error
 
         # amend a spacer
         spacer = QtWidgets.QSpacerItem(0, 0, policy.Minimum, policy.Minimum)
