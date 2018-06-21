@@ -39,10 +39,12 @@ class Demo(QtWidgets.QMainWindow):
     def bla(self):
         self.widget2.add(str(uuid.uuid4()))
 
-    def on_things_selection(self, things):
+    @staticmethod
+    def on_things_selection(things):
         print('things: %s' % things)
 
-    def on_thing_selection(self, thing):
+    @staticmethod
+    def on_thing_selection(thing):
         print('single thing: %s' % thing)
 
     @staticmethod

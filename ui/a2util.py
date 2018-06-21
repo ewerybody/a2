@@ -19,6 +19,7 @@ JSON_INDENT = 2
 ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 '
                  'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
+EXPLORER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 
 
 def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already in use!'):
@@ -121,9 +122,20 @@ def write_utf8(path, content):
 
 
 def explore(path):
+    """
+    Opens the Windows Explorer for the given path.
+    Selects the file if a file path was passed.
+
+    :param str path: Path to a folder or file.
+    """
+    # explorer would choke on forward slashes
+    path = os.path.normpath(path)
+
     if os.path.isdir(path):
-        subprocess.Popen(['explorer.exe', path])
+        args = [EXPLORER_PATH, path]
     elif os.path.isfile(path):
-        subprocess.Popen(['explorer.exe', '/select,', os.path.normpath(path)])
+        args = [EXPLORER_PATH, '/select,', path]
     else:
-        raise RuntimeError('Cannot explore to path "%s"' % path)
+        raise FileNotFoundError('Cannot explore to path "%s"' % path)
+
+    subprocess.run(args)

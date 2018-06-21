@@ -50,9 +50,13 @@ def get_module_sources(main, path, modsource_dict):
     Calls all module sources to update their modules.
     """
     modsources = get_folders(path)
+
     # get rid of inexistent module sources
     # getting list avoids "dictionary changed size during iteration"-error
-    [modsource_dict.pop(m) for m in list(modsource_dict) if m not in modsources]
+    for source_name in list(modsource_dict):
+        if source_name not in modsources:
+            modsource_dict.pop(source_name)
+
     # add new ones
     for name in modsources:
         if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
@@ -97,11 +101,14 @@ class ModSource(object):
 
         # pop inexistent modules
         # getting list avoids "dictionary changed size during iteration"-error
-        [self.mods.pop(m) for m in list(self.mods) if m not in mods_in_path]
+        for mod_name in list(self.mods):
+            if mod_name not in mods_in_path:
+                self.mods.pop(mod_name)
+
         # add new one
-        for modname in mods_in_path:
-            if modname not in self.mods:
-                self.mods[modname] = Mod(self, modname)
+        for mod_name in mods_in_path:
+            if mod_name not in self.mods:
+                self.mods[mod_name] = Mod(self, mod_name)
 
     @property
     def config(self):
@@ -116,7 +123,7 @@ class ModSource(object):
 
         except FileNotFoundError:
             self._config_load_error = MSG_NO_CFG_FILE
-            pass
+
         except Exception as error:
             msg = ('Error loading config file for "%s" (%s)\n'
                    '  %s' % (self.name, self.config_file, error))

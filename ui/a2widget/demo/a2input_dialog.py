@@ -25,12 +25,14 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         button2.clicked.connect(self.call_confirm_dialog)
         layout.addWidget(button2)
 
-    def check_func(self, text):
+    @staticmethod
+    def check_func(text):
         if text == '':
             return 'Empty text is NOT OK!'
         return True
 
-    def field_changed(self, text):
+    @staticmethod
+    def field_changed(text):
         print('text: %s' % text)
 
     @staticmethod
