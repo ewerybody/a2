@@ -40,7 +40,7 @@ def main():
 
     # adding PySide plugin paths. e.g. to make all the imageformats available
     pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
-    QtWidgets.QApplication.addLibraryPath(pyside_plugin_path)
+    app.addLibraryPath(pyside_plugin_path)
 
     winfo = platform.uname()
     log.info('initialised!\n  python: %s\n  windows: %s'

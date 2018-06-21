@@ -182,7 +182,7 @@ class EditCtrl(QtWidgets.QGroupBox):
     def _setup_ui(self, add_layout):
         self.setTitle(self.cfg['typ'])
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                       QtWidgets.QSizePolicy.Maximum)
+                                           QtWidgets.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
 
         self._ctrl_layout = QtWidgets.QGridLayout(self)
@@ -217,13 +217,12 @@ class EditCtrl(QtWidgets.QGroupBox):
         self._ctrl_button.setAutoRaise(True)
         self._ctrl_button_layout.addWidget(self._ctrl_button)
 
-        self._ctrl_button_layout.setAlignment(self._ctrl_button, QtCore.Qt.AlignTop | QtCore.Qt.AlignRight)
+        self._ctrl_button_layout.setAlignment(
+            self._ctrl_button, QtCore.Qt.AlignTop | QtCore.Qt.AlignRight)
 
         self._ctrl_layout.addLayout(self._ctrl_button_layout, 0, 0, 1, 1)
 
         self._ctrl_menu = QtWidgets.QMenu(self)
-        # self._ctrl_menu.aboutToShow.connect(self._build_menu)
-        # self._ctrl_button.setMenu(self._ctrl_menu)
         self._ctrl_button.clicked.connect(self._build_menu)
         self._ctrl_button.setVisible(False)
 

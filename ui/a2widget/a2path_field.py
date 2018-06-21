@@ -79,7 +79,7 @@ class A2PathField(QtWidgets.QWidget):
         else:
             try:
                 self.line_field.editingFinished.disconnect(self._delayed_set)
-            except Exception:
+            except RuntimeError:
                 pass
 
     @property

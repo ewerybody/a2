@@ -268,8 +268,9 @@ class A2Window(QtWidgets.QMainWindow):
             try:
                 geometry = QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8'))
                 self.restoreGeometry(geometry)
-            except Exception:
-                pass
+            except Exception as error:
+                log.debug('Could not restore the ui geometry with stored data!')
+                log.debug(error)
 
         splitter_size = win_prefs.get('splitter')
         if splitter_size is not None:
@@ -327,7 +328,8 @@ class A2Window(QtWidgets.QMainWindow):
     def build_package(self):
         batch_path = os.path.join(self.a2.paths.lib, 'batches')
         batch_name = 'build_py_package.bat'
-        subprocess.Popen(['cmd.exe', '/c', 'start %s' % batch_name], cwd=batch_path)
+        subprocess.Popen([os.getenv('COMSPEC'), '/c', 'start %s' % batch_name],
+                         cwd=batch_path)
 
     def _set_runtime_actions_vis(self):
         live = self.runtime_watcher.is_live
