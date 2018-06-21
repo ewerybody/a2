@@ -1,83 +1,42 @@
-###############################################################################
-#
-# Copyright 2012 Siding Developers (see AUTHORS.txt)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-###############################################################################
 """
-A cross-platform implementation of a :class:`PySide2.QtWidgets.QApplication`
-subclass with the ability to determine if it's the only running instance of an
-application, and if not, send a message to the previous instance before
+A cross-platform implementation of a :class:`PySide.QtGui.QApplication`
+subclass with the ability to determine if it's the only running instance of
+an application, and if not, send a message to the previous instance before
 closing.
 """
-
-###############################################################################
-# Imports
-###############################################################################
-
-import functools
-import json
 import os
-import struct
 import sys
+import json
 import uuid
+import struct
+from functools import partial
 
-from PySide2.QtCore import Signal, QDir
-from PySide2.QtWidgets import QApplication
-from PySide2.QtNetwork import QLocalServer, QLocalSocket
-
-from siding import profile
+from PySide2 import QtCore, QtWidgets, QtNetwork
 
 if os.name == 'nt':
-    from ctypes.wintypes import DWORD, MAX_PATH
-    from ctypes import byref, c_bool, c_wchar_p, GetLastError, windll
-
-    from siding import _aeroglass
-
+    import ctypes.wintypes
 else:
     import errno
     import fcntl
 
-    _aeroglass = None
-
-###############################################################################
-# Constants
-###############################################################################
-
 ERROR_ALREADY_EXISTS = 0xB7
 WM_DWMCOMPOSITIONCHANGED = 0x31E
 
-###############################################################################
 # Session ID for Windows
-###############################################################################
-
 if os.name == 'nt':
     def getsid(pid):
         """ Returns the session ID for the process with the given ID. """
-        sid = DWORD()
-        result = windll.kernel32.ProcessIdToSessionId(DWORD(pid), byref(sid))
+        sid = ctypes.wintypes.DWORD()
+        result = ctypes.windll.kernel32.ProcessIdToSessionId(
+            ctypes.wintypes.DWORD(pid), ctypes.byref(sid))
         if not result:
             raise OSError(3, 'No such process')
         return sid.value
 else:
     getsid = os.getsid
 
-###############################################################################
-# QSingleApplication Class
-###############################################################################
 
-class QSingleApplication(QApplication):
+class QSingleApplication(QtWidgets.QApplication):
     """
     This subclass of :class:`~PySide2.QtWidgets.QApplication` ensures that only a
     single instance of an application will be run simultaneously, and provides
@@ -95,27 +54,15 @@ class QSingleApplication(QApplication):
     using :attr:`already_running` or calling :func:`ensure_single` or
     :func:`send_message`.
 
-    **Note**: ``app_id`` and ``session`` will undergo additional processing and
-    be converted to a UUID before being used. If you *really* wish to use your
-    own string, set it to ``_app_id``.
+    .. note::
+
+        ``app_id`` and ``session`` will undergo additional processing and be
+        converted into a :func:`UUID <uuid.uuid5>` before being utilized. If
+        you *really* wish to use your own string, set ``_app_id``.
     """
 
-    messageReceived = Signal([dict], [list], [bool], [int], [long], [unicode], [float])
-    """
-    This signal is emitted whenever the application receives a message from
-    another instance. The message is encoded as JSON as it's sent, so this can
-    potentially be any basic type. Example::
-
-        @app.messageReceived.connect
-        def handle_message(args):
-            print 'We just got:', args
-    """
-
-    compositionChanged = Signal()
-    """
-    This signal is emitted on Windows when we receive the
-    ``WM_DWMCOMPOSITIONCHANGED`` message.
-    """
+    message_received = QtCore.Signal([dict], [list], [bool], [int], [float])
+    composition_changed = QtCore.Signal()
 
     # Public Variables
     session = None
@@ -129,26 +76,25 @@ class QSingleApplication(QApplication):
     _already = None
 
     def __init__(self, *args, **kwargs):
-        QApplication.__init__(self, *args, **kwargs)
+        if not args:
+            args = (sys.argv,)
 
-        # If this is Windows, then _aeroglass is imported already, so hook up
-        # to that.
-        if _aeroglass:
-            _aeroglass.manager.attach(self)
+        QtWidgets.QApplication.__init__(self, *args, **kwargs)
+
+        # During shutdown, we can't rely on globals like os being still available.
+        if os.name == "nt":
+            self._close_lock = self._close_mutex
+        else:
+            self._close_lock = self._close_lockfile
 
     def __del__(self):
         """
         Close the handle of our mutex if we have one, destroy any existing lock
         file, any gracefully close the QLocalServer.
         """
-        if os.name == 'nt':
-            self._close_mutex()
-        else:
-            self._close_lockfile()
 
+        self._close_lock()
         self._close_server()
-
-    ##### Event Filtering #####################################################
 
     def winEventFilter(self, message):
         """
@@ -156,10 +102,8 @@ class QSingleApplication(QApplication):
         WM_DWMCOMPOSITIONCHANGED message on Windows.
         """
         if getattr(message, 'message', None) == WM_DWMCOMPOSITIONCHANGED:
-            self.compositionChanged.emit()
-        return QApplication.winEventFilter(self, message)
-
-    ##### Lock Code ###########################################################
+            self.composition_changed.emit()
+        return QtWidgets.QApplication.winEventFilter(self, message)
 
     @property
     def already_running(self):
@@ -189,8 +133,6 @@ class QSingleApplication(QApplication):
 
         # Still here? Keep being awesome.
 
-    ##### Private Lock Code ###################################################
-
     def _acquire_lock(self):
         """
         Depending on the OS, either create a lockfile or use Mutex to obtain
@@ -218,9 +160,6 @@ class QSingleApplication(QApplication):
             # Build the first part of the app_id.
             self.app_id = 'qsingleapp-%s-%s' % (binary, path)
 
-            if isinstance(self.app_id, unicode):
-                self.app_id = self.app_id.encode('utf8')
-
         # Now, get the session ID.
         if not self.session:
             if os.name == 'nt':
@@ -231,25 +170,16 @@ class QSingleApplication(QApplication):
             else:
                 sid = os.getenv('USER')
 
-            if profile.profile_path:
-                sid = '%s-%s' % (profile.profile_path, sid)
-
-            if isinstance(sid, unicode):
-                sid = sid.encode('utf8')
-
             self.session = sid
 
-        self._app_id = str(uuid.uuid5(uuid.NAMESPACE_OID,
-                                        self.app_id + self.session))
+        self._app_id = str(uuid.uuid5(uuid.NAMESPACE_OID, self.app_id + self.session))
 
-    ##### Mutex Code ##########################################################
-
-    def _close_mutex(self):
+    def _close_mutex(self, CloseHandle=ctypes.windll.kernel32.CloseHandle):
         """
         If we have a mutex, try to close it.
         """
         if self._mutex:
-            windll.kernel32.CloseHandle(self._mutex)
+            CloseHandle(self._mutex)
             self._mutex = None
 
     def _create_mutex(self):
@@ -257,21 +187,20 @@ class QSingleApplication(QApplication):
         Attempt to create a new mutex. Returns True if the mutex was acquired
         successfully, or False if the mutex is already in use.
         """
-        mutex_name = c_wchar_p(self._app_id[:MAX_PATH])
-        handle = windll.kernel32.CreateMutexW(None, c_bool(False), mutex_name)
+        mutex_name = ctypes.c_wchar_p(self._app_id[:ctypes.wintypes.MAX_PATH])
+        handle = ctypes.windll.kernel32.CreateMutexW(
+            None, ctypes.c_bool(False), mutex_name)
         self._mutex = handle
 
-        return not (not handle or GetLastError() == ERROR_ALREADY_EXISTS)
+        return not (not handle or ctypes.GetLastError() == ERROR_ALREADY_EXISTS)
 
-    ##### Lockfile Code #######################################################
-
-    def _close_lockfile(self):
+    def _close_lockfile(self, unlink=os.unlink, close=os.close):
         """
         If a lockfile exists, delete it.
         """
         if self._lockfile:
-            os.unlink(self._lockfile)
-            os.close(self._lockfd)
+            unlink(self._lockfile)
+            close(self._lockfd)
             self._lockfile = None
             self._lockfd = None
 
@@ -281,15 +210,15 @@ class QSingleApplication(QApplication):
         one of the few things that doesn't obey the path functions of profile.
         """
         lockfile = os.path.abspath(os.path.join(
-                        QDir.tempPath(), u'%s.lock' % self._app_id))
+            QtCore.QDir.tempPath(), u'%s.lock' % self._app_id))
 
         try:
             fd = os.open(lockfile, os.O_TRUNC | os.O_CREAT | os.O_RDWR)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             os.write(fd, "%d\n" % os.getpid())
 
-        except (OSError, IOError) as e:
-            if e.errno in (errno.EACCES, errno.EAGAIN):
+        except (OSError, IOError) as error:
+            if error.errno in (errno.EACCES, errno.EAGAIN):
                 return False
             raise
 
@@ -298,14 +227,12 @@ class QSingleApplication(QApplication):
         self._lockfile = lockfile
         return True
 
-    ##### The LocalServer #####################################################
-
     def _create_server(self, try_remove=True):
         """
         Attempt to create a new local server and start listening.
         """
         if not self._server:
-            self._server = QLocalServer(self)
+            self._server = QtNetwork.QLocalServer(self)
             self._server.newConnection.connect(self._new_connection)
 
         if self._server.isListening():
@@ -313,7 +240,7 @@ class QSingleApplication(QApplication):
 
         # If desired, remove the old server file.
         if try_remove:
-            QLocalServer.removeServer(self._app_id)
+            QtNetwork.QLocalServer.removeServer(self._app_id)
 
         # Now, attempt to listen and return the success of that.
         return self._server.listen(self._app_id)
@@ -347,8 +274,7 @@ class QSingleApplication(QApplication):
             self._read_message(sock, length)
         else:
             sock.readyRead.disconnect()
-            sock.readyRead.connect(functools.partial(self._read_message, sock,
-                                                length))
+            sock.readyRead.connect(partial(self._read_message, sock, length))
 
     def _read_message(self, sock, length):
         if sock.bytesAvailable() < length:
@@ -356,7 +282,7 @@ class QSingleApplication(QApplication):
 
         message = json.loads(sock.readAll().data())
         sock.close()
-        self.messageReceived.emit(message)
+        self.message_received.emit(message)
 
     def _new_connection(self):
         """
@@ -366,7 +292,7 @@ class QSingleApplication(QApplication):
         if not sock:
             return
 
-        sock.readyRead.connect(functools.partial(self._read_length, sock))
+        sock.readyRead.connect(partial(self._read_length, sock))
 
     def send_message(self, message, callback=None):
         """
@@ -378,13 +304,13 @@ class QSingleApplication(QApplication):
         immediately and the boolean will be sent to the callback instead.
         """
         message = json.dumps(message)
-        message = struct.pack("!I", len(message)) + message
+        message = struct.pack("!I", len(message)).decode() + message
 
         # Create a socket.
-        sock = QLocalSocket(self)
+        sock = QtNetwork.QLocalSocket(self)
 
         # Build our helper functions.
-        def error(err):
+        def error(*_args):
             """ Return False to the callback. """
             callback(False)
 
@@ -392,7 +318,7 @@ class QSingleApplication(QApplication):
             """ Send our message. """
             sock.writeData(message, len(message))
 
-        def bytesWritten(bytes):
+        def bytesWritten(*_args):
             """ If we've written everything, close and return True. """
             if not sock.bytesToWrite():
                 sock.close()
