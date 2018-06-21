@@ -15,7 +15,7 @@ import platform
 import traceback
 from ctypes import windll
 
-from siding import QSingleApplication
+from singlesiding import QSingleApplication
 from PySide2 import QtWidgets
 
 # first basicConfic. No need for more.
@@ -36,7 +36,7 @@ def main():
         app.ensure_single(['--show'])
     else:
         app.ensure_single()
-    app.messageReceived.connect(app_msg_get)
+    app.message_received.connect(app_msg_get)
 
     # adding PySide plugin paths. e.g. to make all the imageformats available
     pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
