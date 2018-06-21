@@ -23,7 +23,6 @@ from copy import deepcopy
 
 import a2core
 
-
 log = a2core.get_logger(__name__)
 _DEFAULTTABLE = 'a2'
 
@@ -61,10 +60,15 @@ class A2db(object):
             return None
 
         try:
-            data = self._fetch('select value from "%s" where key="%s"' % (table, key))[0][0]
+            statement = f'select value from "{table}" where key=?'
+            data = self._fetch(statement, (key,))[0][0]
             if not asjson:
                 return data
-            return json.loads(data)
+            try:
+                result = json.loads(data)
+            except json.JSONDecodeError:
+                result = json.loads(data.replace('""', '"'))
+            return result
 
         except Exception as error:
             if table not in self.tables():
@@ -85,13 +89,14 @@ class A2db(object):
         jvalue = jvalue.replace('"', '""')
         try:
             if key not in self.keys(table):
-                statement = ('insert into "%s" ("key","value") values ("%s", "%s")'
-                             % (table, key, jvalue))
+                statement = f'insert into "{table}" (key, value) values (?, ?)'
+                values = (key, jvalue)
                 log.debug('adding value!\n  %s' % statement)
             else:
-                statement = 'update "%s" set value="%s" WHERE key="%s"' % (table, jvalue, key)
+                statement = f'update "{table}" set value=? WHERE key=?'
+                values = (jvalue, key)
                 log.debug('updating value!\n  %s' % statement)
-            self._commit(statement)
+            self._commit(statement, values)
 
         except Exception as error:
             log.debug('setting db failed...')
@@ -112,8 +117,8 @@ class A2db(object):
         """
         if key not in self.keys(table):
             return
-        statement = ('delete from "%s" where key="%s"' % (table, key))
-        self._commit(statement)
+        statement = f'delete from "{table}" where key=?'
+        self._commit(statement, (key,))
 
     def tables(self):
         tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
@@ -122,33 +127,45 @@ class A2db(object):
     def drop_table(self, table):
         if table not in self.tables():
             return
-        self._commit('drop table "%s"' % table)
+        self._commit(f'drop table "{table}"')
 
     def keys(self, table=_DEFAULTTABLE):
-        data = self._fetch('select key from "%s"' % table)
+        statement = f'select key from "{table}"'
+        data = self._fetch(statement)
         return [k[0] for k in data]
 
-    def _fetch(self, statement):
+    def _fetch(self, statement, values=None):
         try:
             self.connect()
-            self._cur.execute(statement)
+
+            if values is None:
+                self._cur.execute(statement)
+            else:
+                self._cur.execute(statement, values)
+
             results = self._cur.fetchall()
             self.disconnect()
+
         except Exception as err:
             raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
+
         return results
 
     def create_table(self, table):
         if table in self.tables():
             return
-        statement = 'create table "%s" (id integer primary key, key TEXT, value TEXT)' % table
+        statement = (f'create table "{table}" '
+                     '(id integer primary key, key TEXT, value TEXT)')
         log.debug('create_table statement:\n\t%s' % statement)
         self._execute(statement)
 
-    def _commit(self, statement):
+    def _commit(self, statement, values=None):
         try:
             self.connect()
-            self._cur.execute(statement)
+            if values is None:
+                self._cur.execute(statement)
+            else:
+                self._cur.execute(statement, values)
             self._con.commit()
             self.disconnect()
         except Exception as err:
@@ -173,7 +190,8 @@ class A2db(object):
         text = 'database dump from %s\n' % self._file
         text += '%i tables: %s' % (len(tables), ', '.join(tables))
         for t in tables:
-            data = self._fetch('select * from "%s"' % t)
+            statement = f'select * from "{t}"'
+            data = self._fetch(statement)
             text += header % t
             text += '\n  '.join([str(i)[1:-1] for i in data])
         return text

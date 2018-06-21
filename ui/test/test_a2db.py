@@ -1,9 +1,3 @@
-'''
-ui.test.test_a2db
-Created on 18.08.2016
-
-@author: eric
-'''
 import os
 import logging
 import unittest
@@ -79,5 +73,4 @@ class Test(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
