@@ -51,8 +51,10 @@ class Draw(DrawCtrl):
 
         self.setLayout(self.main_layout)
 
-    def check(self, value=None):
-        if value is None:
+    def check(self, *args):
+        if args:
+            value = args[0]
+        else:
             value = self.value_ctrl.value()
 
         # prevent being called double

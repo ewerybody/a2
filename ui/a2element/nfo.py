@@ -23,6 +23,7 @@ class Draw(QtWidgets.QWidget):
             self.main_layout.addWidget(self.label)
         else:
             self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.is_expandable_widget = False
 
 
 class Edit(QtWidgets.QGroupBox):
@@ -31,8 +32,8 @@ class Edit(QtWidgets.QGroupBox):
         self.cfg = cfg
         self.typ = cfg['typ']
         self.setTitle('module information:')
-        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                             QtWidgets.QSizePolicy.Maximum))
+        self.setSizePolicy(QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum))
         self.boxlayout = QtWidgets.QVBoxLayout(self)
         self.boxlayout.setSpacing(5)
         self.boxlayout.setContentsMargins(5, 5, 5, 10)
@@ -45,6 +46,7 @@ class Edit(QtWidgets.QGroupBox):
         self.ui.setupUi(self.main_widget)
         self.ui.cfg_tags.set_available_tags(a2core.A2TAGS)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
+        self.is_expandable_widget = False
 
 
 def get_settings(*args):

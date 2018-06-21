@@ -28,10 +28,10 @@ class NewElementDialog(A2InputDialog):
         self.a2 = a2core.A2Obj.inst()
         self._current_elements = [os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)]
         super(NewElementDialog, self).__init__(
-            self.main, 'New Element Dialog', msg='Name the new element:', text='name',
-            check_func=self.check_element_name)
+            self.main, 'New Element Dialog', msg='Name the new element:', text='name')
         self.element_cfg = {'target': 'global', 'enlist': True}
         self.setup_ui()
+        self.check_func = self.check_element_name
         self.okayed.connect(self.create_element)
 
     def setup_ui(self):
@@ -71,11 +71,7 @@ class NewElementDialog(A2InputDialog):
 
     def check_element_name(self, name):
         # change radio button label to match the entered name when ctrl is available
-        try:
-            self.ui.radio_global.setText(LABEL_GLOBAL % name.lower())
-        except Exception:
-            pass
-
+        self.ui.radio_global.setText(LABEL_GLOBAL % name.lower())
         return a2util.standard_name_check(name, self._current_elements)
 
     def create_element(self, NAME):

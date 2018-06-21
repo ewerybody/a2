@@ -29,8 +29,10 @@ class Draw(DrawCtrl):
         self.main_layout.addWidget(self.label)
         self.main_layout.addWidget(self.value_ctrl)
 
-    def check(self, value=None):
-        if value is None:
+    def check(self, *args):
+        if args:
+            value = args[0]
+        else:
             value = self.value_ctrl.text()
 
         # prevent being called double

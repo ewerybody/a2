@@ -17,7 +17,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
     to change the default behavior of the element.
     """
     def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__()
+        super(Draw, self).__init__(main)
         DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(False)
@@ -73,7 +73,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
         for i, widget in enumerate(self.path_widgets):
             print('widget.label.text() %i: %s' % (i, widget.label.text()))
 
-    def check(self):
+    def check(self, *_args):
         path_list = [w.path for w in self.path_widgets if w.path]
         self.set_user_value(path_list)
         self.change('variables')
