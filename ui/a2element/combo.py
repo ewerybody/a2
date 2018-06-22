@@ -36,10 +36,8 @@ class Draw(DrawCtrl):
             index = items.index(self.value)
             self.value_ctrl.setCurrentIndex(index)
 
-    def check(self, value=None):
-        super(Draw, self).check()
-        if value is None:
-            value = self.value_ctrl.currentText()
+    def check(self, *args):
+        value = args[0]
 
         # prevent being called double
         if self.value == value:
@@ -52,18 +50,12 @@ class Draw(DrawCtrl):
         self.value = value
         self.set_user_value(value)
         self.change('variables')
-        super(Draw, self).check()
 
     def check_user_items(self, *args):
         raise NotImplementedError('Ohoh! I thought this was done already! :(')
 
 
 class Edit(EditCtrl):
-    """
-    Checkbox to control boolean values for the a2 runtime.
-    We might put them to the db and get and fetch from there or first: just write them into
-    code directly and start with the variables include.
-    """
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number

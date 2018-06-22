@@ -21,8 +21,8 @@ class Draw(DrawCtrl):
         self.main_layout.addWidget(self.checkbox)
         self.setLayout(self.main_layout)
 
-    def check(self, state):
-        self.set_user_value(state)
+    def check(self, *args):
+        self.set_user_value(args[0])
         self.change('variables')
         super(Draw, self).check()
 

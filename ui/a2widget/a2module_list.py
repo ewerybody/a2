@@ -45,7 +45,7 @@ class A2ModuleList(QtWidgets.QWidget):
                     try:
                         item._item.setSelected(True)
                         lastitem = item._item
-                    except Exception:
+                    except AttributeError:
                         pass
 
                 elif isinstance(item, str):
@@ -55,7 +55,7 @@ class A2ModuleList(QtWidgets.QWidget):
                         mod._item.setSelected(True)
                         lastitem = mod._item
                         selection.append(mod)
-                    except Exception:
+                    except AttributeError:
                         pass
 
         if lastitem is not None:

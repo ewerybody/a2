@@ -31,10 +31,8 @@ class Draw(DrawCtrl):
         self.main_layout.addWidget(self.value_ctrl)
         self.value_ctrl.changed.connect(self.delayed_check)
 
-    def check(self, value=None):
-        super(Draw, self).check()
-        if value is None:
-            value = self.value_ctrl.value
+    def check(self, *args):
+        value = args[0]
 
         # prevent being called double
         if self.value == value:

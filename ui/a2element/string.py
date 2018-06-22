@@ -13,11 +13,12 @@ class Draw(DrawCtrl):
         self.layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
+
         self.value_ctrl = QtWidgets.QLineEdit(self.value)
         self.value_ctrl.editingFinished.connect(self.delayed_check)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.value_ctrl)
-        self.setLayout(self.layout)
+        # self.setLayout(self.layout)
 
         if self.cfg.get('password_mode', False):
             self.value_ctrl.setEchoMode(QtWidgets.QLineEdit.Password)

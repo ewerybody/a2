@@ -16,7 +16,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
     """
     def __init__(self, main, cfg, mod):
         self.is_expandable_widget = False
-        super(Draw, self).__init__()
+        super(Draw, self).__init__(parent=main)
         DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
@@ -25,9 +25,9 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
 
         self.a2_group_layout = QtWidgets.QVBoxLayout(self)
 
-        # FIXME: for some reason items in this GroupBox are 0px close to the
-        # group box title. It works in settings view tho. I'm unable so far to fix this
-        # via CSS. Enlighten me!
+        # for some reason items in this GroupBox are 0px close to the
+        # group box title. It works in settings view tho. So far I'm unable
+        # to fix this via CSS. Enlighten me!
         self.a2_group_marging_top = QtWidgets.QWidget()
         self.a2_group_marging_top.setMaximumHeight(self.main.style.get('margin_h'))
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
@@ -42,8 +42,8 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
         if expandable:
             self.is_expandable_widget = True
 
-    def check(self, state):
-        self.set_user_value(state, 'enabled')
+    def check(self, *args):
+        self.set_user_value(args[0], 'enabled')
         self.change()
 
 
