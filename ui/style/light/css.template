@@ -1,6 +1,6 @@
 * {
     font-size: %(font_size)ipx;
-    color: "%(color_dark)s";
+    color: "%(font_color)s";
 }
 
 *:disabled {

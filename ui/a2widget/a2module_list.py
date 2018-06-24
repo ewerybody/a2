@@ -6,8 +6,6 @@ import a2core
 from a2widget import a2module_list_ui
 
 
-DISABLED_GREY = 160
-_DISABLED_BRUSH = QtGui.QBrush(QtGui.QColor(DISABLED_GREY, DISABLED_GREY, DISABLED_GREY))
 log = a2core.get_logger(__name__)
 
 
@@ -23,8 +21,11 @@ class A2ModuleList(QtWidgets.QWidget):
         self._filtered = False
         self._filter_tags = []
         self._show_enabled_only = self.a2.db.get('modlist_show_enabled_only') or False
-        self.update_filter()
         self.icon_label = a2ctrl.Icons.inst().label
+        self._font_color = None
+        self._font_color_tinted = None
+        self.brush_default = None
+        self.brush_tinted = None
 
     def selection_change(self):
         self.selection = [item._module for item in self.ui.a2module_list_widget.selectedItems()]
@@ -88,14 +89,9 @@ class A2ModuleList(QtWidgets.QWidget):
                         continue
 
                 item = QtWidgets.QListWidgetItem(mod.name)
-                if mod.enabled:
-                    item.setIcon(mod.icon)
-                else:
-                    item.setIcon(mod.icon.tinted)
-                    item.setForeground(_DISABLED_BRUSH)
-
                 item._module = mod
                 mod._item = item
+                self.set_item_state(mod)
                 self.ui.a2module_list_widget.addItem(item)
 
         self.select(select_mods)
@@ -120,6 +116,7 @@ class A2ModuleList(QtWidgets.QWidget):
         self.ui.setupUi(self)
 
         self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
+        self.ui.a2search_x_button.setVisible(False)
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
         self.ui.filter_menu_button.menu_called.connect(self.build_filter_menu)
@@ -167,3 +164,21 @@ class A2ModuleList(QtWidgets.QWidget):
         self._show_enabled_only = state
         self.a2.db.set('modlist_show_enabled_only', state)
         self.draw_modules()
+
+    def set_item_state(self, module):
+        if module.enabled:
+            module._item.setIcon(module.icon)
+            module._item.setForeground(self.brush_default)
+        else:
+            module._item.setIcon(module.icon.tinted)
+            module._item.setForeground(self.brush_tinted)
+
+    def set_item_states(self, modules):
+        for mod in modules:
+            self.set_item_state(mod)
+
+    def set_item_colors(self, default, tinted):
+        self._font_color = default
+        self._font_color_tinted = tinted
+        self.brush_default = QtGui.QBrush(QtGui.QColor(self._font_color))
+        self.brush_tinted = QtGui.QBrush(QtGui.QColor(self._font_color_tinted))

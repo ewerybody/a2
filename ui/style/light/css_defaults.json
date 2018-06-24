@@ -1,4 +1,6 @@
 {
+    "font_color": "#444",
+    "font_color_tinted": "#AAA",
     "spacing": 5,
     "line": 15,
     "group_label_space": 10,

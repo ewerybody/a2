@@ -52,7 +52,7 @@ class A2Window(QtWidgets.QMainWindow):
             init_selection = self.a2.db.get('last_selected') or []
         self.module_list.selection_changed.connect(self._module_selected)
         self.module_list.draw_modules(init_selection)
-        if init_selection == []:
+        if not init_selection:
             self.module_view.draw_mod()
 
         self.runtime_watcher = RuntimeWatcher(self)
@@ -82,6 +82,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         # shortcuts
         self.module_list = self.ui.module_list
+        self.module_list.set_item_colors(
+            default=self.style.get('font_color'),
+            tinted=self.style.get('font_color_tinted'))
         self.module_view = self.ui.module_view
 
         self.module_view.setup_ui(self)
@@ -180,22 +183,19 @@ class A2Window(QtWidgets.QMainWindow):
             self.settings_changed()
         self.module_view.draw_mod()
 
-    def mod_enable(self, checked=None):
+    def mod_enable(self, check):
         """
-        Handles the module checkbox to enable/disable one or multiple modules
+        Handles the module checkbox to enable/disable one or multiple modules.
+
+        :param bool check: Checkbox state incoming from the module view header.
         """
         check_box = self.module_view.ui.modCheck
-        if check_box.isTristate() or not checked:
-            for mod in self.selected:
-                mod.enabled = False
-            checked = False
-        else:
-            for mod in self.selected:
-                mod.enabled = True
-            checked = True
-
+        check = not check_box.isTristate() and check
+        for mod in self.selected:
+            mod.enabled = check
+        self.module_list.set_item_states(self.selected)
         check_box.setTristate(False)
-        check_box.setChecked(checked)
+        check_box.setChecked(check)
         self.settings_changed()
 
     def mod_disable_all(self):
