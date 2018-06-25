@@ -47,6 +47,7 @@ class A2Obj(object):
         if A2Obj._instance is not None:
             raise RuntimeError('Singleton A2Obj has already been initialized!\n'
                                '  Use A2Obj.inst() to get the instance!')
+            
         # lazy import so importing a2core does not depend on other a2 module
         global a2ahk, a2db, a2mod
         import a2ahk, a2db, a2mod
@@ -146,17 +147,21 @@ class Paths(object):
     """
     def __init__(self):
         self.ui = os.path.dirname(os.path.abspath(__file__))
-        self.elements = os.path.join(self.ui, 'a2element')
-        self.widgets = os.path.join(self.ui, 'a2widget')
         self.a2 = os.path.dirname(self.ui)
+        self.widgets = os.path.join(self.ui, 'a2widget')
+        self.elements = os.path.join(self.ui, 'a2element')
+        
         self.lib = os.path.join(self.a2, 'lib')
-        self.settings_ahk = os.path.join(self.a2, 'settings', 'a2_settings.ahk')
+        self.data = os.path.join(self.a2, 'data')
+        
         self.defaults = os.path.join(self.lib, '_defaults')
-        self.urls_ahk = os.path.join(self.defaults, 'a2_urls.ahk')
         self.a2_script = os.path.join(self.lib, 'a2.ahk')
+        self.urls_ahk = os.path.join(self.defaults, 'a2_urls.ahk')
         self.a2_temp = os.path.join(os.getenv('TEMP'), 'a2_temp')
 
-        path_vars = self._fetch_a2_setting_paths()
+        path_vars = self._fetch_a2_data_paths()
+        self.settings_ahk = os.path.join(self.data, 'a2_settings.ahk')
+        self.data = path_vars['data']
         self.settings = path_vars['settings']
         self.modules = path_vars['modules']
         self.autohotkey = path_vars['ahk']
@@ -179,7 +184,7 @@ class Paths(object):
             return os.path.join(self.defaults, 'a2_settings.ahk')
         return self.settings_ahk
 
-    def _fetch_a2_setting_paths(self):
+    def _fetch_a2_data_paths(self):
         keys = ['settings', 'modules']
         prefix = 'a2_'
         result = {}
