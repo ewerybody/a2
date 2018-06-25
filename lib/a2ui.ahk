@@ -1,4 +1,3 @@
-a2_python := _init_get_var("a2_python")
 a2_ui_call := _init_get_var("a2_ui_call")
 a2_startup_tool_tips := _init_get_var("a2_startup_tool_tips")
 
@@ -13,6 +12,9 @@ if (SubStr(a2_ui_call, -3) == ".exe")
 	this_call := a2_ui_call
 else
 {
+    py_key = HKEY_CURRENT_USER\Software\Python\PythonCore\%PY_VERSION_SHORT%\InstallPath
+    RegRead, a2_python, %py_key%, ExecutablePath
+    
 	; check if a2_python exists =======================================================
 	if is_absolute_path(a2_python)
 	{
