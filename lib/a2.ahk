@@ -5,9 +5,17 @@
 #NoTrayIcon
 SetWorkingDir %A_ScriptDir%\..
 a2Dir := A_ScriptDir "\.."
-#include settings\a2_settings.ahk
+
+msgbox, A_AhkPath: %A_AhkPath%
+
+#include <ahk_functions>
+;#include lib\Autohotkey\lib\a2functions.ahk
+#include <a2functions>
+#include lib\a2_config.ahk
 #include lib\Globals.ahk
 #include lib\_defaults\a2_urls.ahk
+
+a2_data := ""
 
 Menu, Tray, Icon, %UIresources%\a2.ico, , 1
 Menu, Tray, Icon
@@ -30,7 +38,7 @@ Menu, Tray, icon, quit a2, %UIresources%\a2x.ico
 if a2_startup_tool_tips
     tt(a2_title, 1)
 
-#include %A_ScriptDir%\..\settings\a2_init.ahk
+#include *i %A_ScriptDir%\..\data\includes\a2_init.ahk
 Return ; -----------------------------------------------------------------------------
 
 a2UI:
