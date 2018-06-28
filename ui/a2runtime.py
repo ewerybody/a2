@@ -349,11 +349,11 @@ def get_a2_runtime_pid():
     startup_nfo.wShowWindow = subprocess.SW_HIDE
     startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-    wmicall = 'wmic process where name="Autohotkey.exe" get ProcessID,CommandLine'
+    wmicall = 'wmic process where name="%s" get ProcessID,CommandLine' % a2ahk.EXECUTABLE_NAME
     wmicout = subprocess.check_output(wmicall, startupinfo=startup_nfo)
     wmicout = str(wmicout).split('\\r\\r\\n')
     for line in wmicout[1:-1]:
-        if 'autohotkey.exe' in line.lower():
+        if a2ahk.EXECUTABLE_NAME in line.lower():
             cmd, pid = line.rsplit(maxsplit=1)
             if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):
                 return pid
@@ -365,11 +365,11 @@ def is_runtime_live():
 
 
 if __name__ == '__main__':
-#    pid = get_a2_runtime_pid()
-#    print('pid: %s' % pid)
-#    print('is_runtime_live(): %s' % is_runtime_live())
+    # pid = get_a2_runtime_pid()
+    # print('pid: %s' % pid)
+    # print('is_runtime_live(): %s' % is_runtime_live())
     idc = IncludeDataCollector()
     idc.get_hotkeys()
     idc.collect()
     print('idc.hotkeys: %s' % idc.hotkeys)
-    #idc.write()
+    # idc.write()
