@@ -1,34 +1,44 @@
-a2_PY_VERSION_SHORT := "3.6"
+a2dev_get_py()
+{
+    global a2_PY_VERSION_SHORT := "3.7"
 
-a2dev_find_py () {
     py_key = HKEY_CURRENT_USER\Software\Python\PythonCore\%a2_PY_VERSION_SHORT%\InstallPath
-    RegRead, a2_python, %py_key%, ExecutablePath
-    
-	; check if a2_python exists =======================================================
-	if is_absolute_path(a2_python)
+    RegRead, pypath, %py_key%, ExecutablePath
+    MsgBox py_key: %py_key%`npypath: "%pypath%"
+    if !pypath
+    {
+        py_key = HKEY_LOCAL_MACHINE\Software\Python\PythonCore\%a2_PY_VERSION_SHORT%\InstallPath
+        RegRead, pypath, %py_key%, ExecutablePath
+        MsgBox py_key: %py_key%`npypath: %pypath%
+    }
+
+	; check if pypath exists =======================================================
+	if is_absolute_path(pypath)
 	{
-		IfNotExist, %a2_python%
+        MsgBox pypath %a2_PY_VERSION_SHORT%: %pypath% 
+        
+		IfNotExist, %pypath%
 		{
-			MsgBox, 16, a2_python path inexistent!, The given absolute path for a2_python cannot be found!`n%a2_python%
+			MsgBox, 16, pypath path inexistent!, The given absolute path for the Python executable cannot be found!`n%pypath%
 			ExitApp
 		}
 		check_pypath := a2_python
 	}
 	else
 	{
-		found_list := find_in_env_path(a2_python)
+		found_list := find_in_env_path(pypath)
 		if found_list.maxIndex() <>
 		{
-			MsgBox, 16, a2_python path inexistent!, The given relative path for a2_python cannot be found!`n%a2_python%
+			MsgBox, 16, pypath path inexistent!, The given relative path for Python cannot be found!`n%pypath%
 			ExitApp
 		}
-		check_pypath := found_list[1]
+		pypath := found_list[1]
 	}
 
-	; check if a2_python is correct version ============================================
-	check_version(check_pypath)
+	; check if pypath is correct version ============================================
+	check_version(pypath)
     
-    return check_pypath
+    Return, pypath
 }
 
 

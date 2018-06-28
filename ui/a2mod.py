@@ -77,7 +77,7 @@ class ModSource(object):
         self.name = name
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
-        self.backup_path = os.path.join(a2.paths.a2_temp, name)
+        self.backup_path = os.path.join(a2.paths.temp, name)
         self.mods = {}
         self.mod_count = 0
 

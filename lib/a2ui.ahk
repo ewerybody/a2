@@ -9,8 +9,10 @@ StringLower, a2_ui_call, a2_ui_call
 if (SubStr(a2_ui_call, -3) == ".exe")
 	this_call := a2_ui_call
 else
-	this_call := a2dev_find_py() " " a2_ui_call
+	this_call := a2dev_get_py() " " a2_ui_call
 
+MsgBox this_call: %this_call%
+    
 ui_path = %A_ScriptDir%\..\ui\
 Run, %this_call%, %ui_path%
 
@@ -19,5 +21,4 @@ sleep 500
 
 Return ; -----------------------------------------------------------------------------
 #include a2init_check.ahk
-#include ahklib\tt.ahk
-#include a2dev_find_py.ahk
+#include *i a2dev_find_py.ahk
