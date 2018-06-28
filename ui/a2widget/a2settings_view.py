@@ -22,7 +22,7 @@ class A2Settings(QtWidgets.QWidget):
     dev_setting_changed = QtCore.Signal(str)
 
     def __init__(self, main):
-        super(A2Settings, self).__init__()
+        super(A2Settings, self).__init__(parent=main)
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self._setup_ui()
@@ -76,7 +76,7 @@ class A2Settings(QtWidgets.QWidget):
                                     self.dev_setting_changed)
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
-        self.ui.settings_folder.setText(self.a2.paths.settings)
+        self.ui.settings_folder.setText(self.a2.paths.data)
         self.ui.module_folder.setText(self.a2.paths.modules)
         self.ui.python_executable.setText(self.a2.paths.python)
 
@@ -88,8 +88,8 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
         self.ui.show_console.clicked[bool].connect(self.toggle_console)
 
-        ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
-        self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
+#        ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
+#        self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)

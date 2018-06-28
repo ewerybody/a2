@@ -37,6 +37,7 @@ def main():
     else:
         app.ensure_single()
     app.message_received.connect(app_msg_get)
+    app.lastWindowClosed.connect(last_window_closed)
 
     # adding PySide plugin paths. e.g. to make all the imageformats available
     pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
@@ -50,8 +51,11 @@ def main():
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
 
     a2win = init_a2_win(app)
-
     app.exec_()
+
+
+def last_window_closed():
+    print('a2 lastWindowClosed!')
 
 
 def init_a2_win(app):
