@@ -48,6 +48,10 @@ class DrawCtrl(QtWidgets.QWidget):
         return a2ctrl.get_cfg_value(self.cfg, self.user_cfg, name, typ, default)
 
     def get_user_dict(self):
+        """
+        Gets an element configuration PLUS anything set from the user.
+        :return: Dictionary with user values inserted.
+        """
         user_dict = {}
         for key in set(list(self.user_cfg) + list(self.cfg)):
             try:

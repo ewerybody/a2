@@ -12,6 +12,7 @@ SCOPE_TOOLTIP_INCLUDE = 'Hotkey scope is set to work only in specific windows.'
 SCOPE_TOOLTIP_EXCLUDE = 'Hotkey scope is set to exclude specific windows.'
 SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
+HOTKEY_CANNOT_CHANGE = 'The hotkey cannot be changed!'
 
 
 class A2Hotkey(QtWidgets.QWidget):
@@ -48,11 +49,13 @@ class A2Hotkey(QtWidgets.QWidget):
         self.dialog_styles = [HotKeyBoard]
         self.dialog_default = HotkeyDialog1
         self.dialog_styles.append(self.dialog_default)
-        self.set_config(None)
+        # self.set_config(None)
 
     def set_config(self, config_dict):
         self._cfg = config_dict or {}
-
+        if not self.is_edit_mode and not self._cfg.get(Vars.key_change, True):
+            self._hotkey_button.setEnabled(False)
+            self._hotkey_button.setToolTip(HOTKEY_CANNOT_CHANGE)
         self.setup_scope_button()
 
         self.key = self._cfg.get('key', '')
