@@ -41,10 +41,8 @@ class A2db(object):
 
     @property
     def db_file_exists(self):
-        print('self._db_file_exists: %s' % self._db_file_exists)
         if self._db_file_exists:
             return True
-        print('self._file: %s' % self._file)
         self._db_file_exists = os.path.isfile(self._file or '')
         return self._db_file_exists
 
@@ -78,7 +76,6 @@ class A2db(object):
         :return: string of the data or empty string
         """
         if not self.db_file_exists:
-            print('db_file_exists -> None')
             return None
 
         if check and table not in self.tables():

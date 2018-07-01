@@ -10,8 +10,6 @@ if (SubStr(a2_ui_call, -3) == ".exe")
 	this_call := a2_ui_call
 else
 	this_call := a2dev_get_py() " " a2_ui_call
-
-MsgBox this_call: %this_call%
     
 ui_path = %A_ScriptDir%\..\ui\
 Run, %this_call%, %ui_path%

@@ -1,22 +1,19 @@
 a2dev_get_py()
 {
-    global a2_PY_VERSION_SHORT := "3.7"
+    global a2_PY_VERSION_SHORT := "3.6"
 
     py_key = HKEY_CURRENT_USER\Software\Python\PythonCore\%a2_PY_VERSION_SHORT%\InstallPath
     RegRead, pypath, %py_key%, ExecutablePath
-    MsgBox py_key: %py_key%`npypath: "%pypath%"
+
     if !pypath
     {
         py_key = HKEY_LOCAL_MACHINE\Software\Python\PythonCore\%a2_PY_VERSION_SHORT%\InstallPath
         RegRead, pypath, %py_key%, ExecutablePath
-        MsgBox py_key: %py_key%`npypath: %pypath%
     }
 
 	; check if pypath exists =======================================================
 	if is_absolute_path(pypath)
-	{
-        MsgBox pypath %a2_PY_VERSION_SHORT%: %pypath% 
-        
+	{   
 		IfNotExist, %pypath%
 		{
 			MsgBox, 16, pypath path inexistent!, The given absolute path for the Python executable cannot be found!`n%pypath%
