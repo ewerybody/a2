@@ -76,14 +76,14 @@ class Ca2
          * Get the value of key from the DB
          * Entry in DB is a key/value pair
          *
-         * @param  string   modulePack  Name of the Module Pack that called the method
+         * @param  string   moduleSource  Name of the Module Source that called the method
          * @param  string   moduleName  Name of the Module that called the method
          * @param  string   key         Name of the key in the Table
          * @return string
          */
-        get(modulePack, moduleName, key)
+        get(moduleSource, moduleName, key)
         {
-            moduleTable := this.__moduleTable(modulePack, moduleName)
+            moduleTable := this.__moduleTable(moduleSource, moduleName)
 
             this.__validateTable(moduleTable) ; will throw an error if invalid
 
@@ -94,18 +94,18 @@ class Ca2
          * Set a new value to a key from the DB
          * Entry in DB is a key/value pair
          *
-         * @param  string   modulePack  Name of the Module Pack that called the method
+         * @param  string   moduleSource  Name of the Module Source that called the method
          * @param  string   moduleName  Name of the Module that called the method
          * @param  string   key         Name of the key in the Table
          * @param  string   value       Value to be set in the Table
          */
-        set(modulePack, moduleName, key, value)
+        set(moduleSource, moduleName, key, value)
         {
-            moduleTable := this.__moduleTable(modulePack, moduleName)
+            moduleTable := this.__moduleTable(moduleSource, moduleName)
 
             this.__validateTable(moduleTable) ; will throw an error if invalid
 
-            if (this.get(modulePack, moduleName, key))
+            if (this.get(moduleSource, moduleName, key))
                 this.__update(moduleTable, key, value)
             else
                 this.__insert(moduleTable, key, value)
@@ -115,13 +115,13 @@ class Ca2
          * Delete a row from the table in the DB
          * based on the key name
          *
-         * @param   string  modulePack  Name of the Module Pack that called the method
+         * @param   string  moduleSource  Name of the Module Source that called the method
          * @param   string  moduleName  Name of the Module that called the method
          * @param   string  key         Name of the key in the Table
          */
-        delete(modulePack, moduleName, key)
+        delete(moduleSource, moduleName, key)
         {
-            moduleTable := this.__moduleTable(modulePack, moduleName)
+            moduleTable := this.__moduleTable(moduleSource, moduleName)
 
             this.__validateTable(moduleTable) ; will throw an error if invalid
 
@@ -134,18 +134,18 @@ class Ca2
          * - Amount can be negative
          * - If the key was non-existing, it will be creted with value = amount
          *
-         * @param   string  modulePack  Name of the Module Pack that called the method
+         * @param   string  moduleSource  Name of the Module Source that called the method
          * @param   string  moduleName  Name of the Module that called the method
          * @param   string  key         Name of the key in the Table
          * @param   integer step        Amount to increase the value by
          * @return  integer             Value after adding the amount
          */
-        increment(modulePack, moduleName, key, step = 1)
+        increment(moduleSource, moduleName, key, step = 1)
         {
             if (!IsNumeric(step))
                 return -1
 
-            moduleTable := this.__moduleTable(modulePack, moduleName)
+            moduleTable := this.__moduleTable(moduleSource, moduleName)
 
             this.__validateTable(moduleTable) ; will throw an error if invalid
 
@@ -156,7 +156,7 @@ class Ca2
 
             value := ((currentValue) ? currentValue : 0) + step
 
-            this.set(modulePack, moduleName, key, value)
+            this.set(moduleSource, moduleName, key, value)
 
             return value
         }
@@ -262,13 +262,13 @@ class Ca2
          *     Generate the Table name based on the module
          *     that called the method
          *
-         * @param   string  modulePack  Name of the Module Pack that called the method
+         * @param   string  moduleSource  Name of the Module Source that called the method
          * @param   string  moduleName  Name of the Module that called the method
          * @return  string
          */
-        __moduleTable(modulePack, moduleName)
+        __moduleTable(moduleSource, moduleName)
         {
-            return modulePack "|" moduleName
+            return moduleSource "|" moduleName
         }
 
         /**
