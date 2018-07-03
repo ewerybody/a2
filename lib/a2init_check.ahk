@@ -44,6 +44,8 @@ _init_check_settings() {
 _init_get_var(var_name, relative="\..") {
     ; reads a2_settings.ahk and returns the value of a given variable name.
     ; without including the file
+    default_config = %A_ScriptDir%%relative%\lib\a2_config.ahk
+    user_config = 
     settings_dir = %A_ScriptDir%%relative%\settings
     Loop, read, %settings_dir%\a2_settings.ahk
     {
@@ -58,11 +60,7 @@ _init_get_var(var_name, relative="\..") {
 }
 
 _init_get_autohotkey_exe() {
-    ; reads the a2_settings.ahk
-    ; returns given Autohotkey.exe if found
-    ; returns default Autohotkey.exe in lib if not
-    ahk_exe := _init_get_var("a2_ahk", "")
-    ifNotExist, %ahk_exe%
-        ahk_exe = %A_ScriptDir%\lib\Autohotkey\Autohotkey.exe
+    ; returns default Autohotkey.exe in lib
+    ahk_exe = %A_ScriptDir%\lib\Autohotkey\Autohotkey.exe
     Return ahk_exe
 }
