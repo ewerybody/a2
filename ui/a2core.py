@@ -155,7 +155,7 @@ class Paths(object):
         self.lib = os.path.join(self.a2, 'lib')
         self.a2_script = os.path.join(self.lib, 'a2.ahk')
         self.defaults = os.path.join(self.lib, '_defaults')
-        self.urls_ahk = os.path.join(self.defaults, 'a2_urls.ahk')
+        self.urls_ahk = os.path.join(self.lib, 'a2_urls.ahk')
         self.autohotkey = os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
         self.python = sys.executable
 
