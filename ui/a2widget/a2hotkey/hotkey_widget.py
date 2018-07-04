@@ -72,17 +72,23 @@ class A2Hotkey(QtWidgets.QWidget):
         if key != self.key:
             self.key = key
             keys = [key] if isinstance(key, str) else key
-            if len(keys) > len(self._hotkey_buttons):
-                for i in range(len(self._hotkey_buttons), len(keys)):
+            num_keys, num_buttons = len(keys), len(self._hotkey_buttons)
+            if num_keys > num_buttons:
+                for i in range(num_buttons, num_keys):
                     button = QtWidgets.QPushButton(self)
                     self._vlayout.addWidget(button)
                     self._hotkey_buttons.append(button)
                     print('adding index: %i' % i)
+            elif num_keys < num_buttons:
+                for i in range(num_buttons, num_keys):
+                    self._hotkey_buttons[i].deleteLater()
+                    print('removing index: %i' % i)
+                self._hotkey_buttons = self._hotkey_buttons[:num_keys]
 
-            for i in range(len(keys)):
-                self._hotkey_buttons[i].setText(keys[i])
+            for i, key in enumerate(keys):
+                self._hotkey_buttons[i].setText(key)
 
-            # self.hotkey_changed.emit(self.key)
+            self.hotkey_changed.emit(self.key)
 
     def popup_dialog(self):
         class_name = self.a2.db.get('hotkey_dialog_style')
