@@ -8,6 +8,7 @@ from copy import deepcopy
 
 
 config = {"typ": "hotkey",
+          'key': ["Alt+H", 'Alt+D', ''],
           "name": "_my_module_Hotkey2",
           "label": "Standard Hotkey",
           "enabled": True,
@@ -50,7 +51,7 @@ class Demo(QtWidgets.QMainWindow):
         self.timer.start()
         self._config_backup = None
 
-        self.user_hotkey = a2element.hotkey.Draw(self, config, None)
+        self.user_hotkey = None
         lyt.addRow(QtWidgets.QLabel('user hotkey:'))
         lyt.addRow(self.user_hotkey)
 
@@ -59,7 +60,8 @@ class Demo(QtWidgets.QMainWindow):
             self.code.setText(config)
             self._config_backup = deepcopy(config)
 
-            self.user_hotkey.deleteLater()
+            if self.user_hotkey is not None:
+                self.user_hotkey.deleteLater()
             new_user_hotkey = a2element.hotkey.Draw(self, config, None)
             self.user_hotkey = new_user_hotkey
             self.lyt.addRow(self.user_hotkey)

@@ -1,4 +1,6 @@
 class Vars(object):
+    key_change = 'keyChange'
+
     scope = 'scope'
     scope_mode = 'scopeMode'
     scope_change = 'scopeChange'

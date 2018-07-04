@@ -1,0 +1,22 @@
+﻿# a2 - what is it all about
+# bare a2 does nothing. Its a tool to manage and develop small to big helpers
+that aim to make your day to day work at a windows pc more easy and fun.
+
+# Its all Autohotkey. Itself its an incredible powerful scripting language that
+enables you to set up hotkeys and shortcuts, manage loads of files, handle
+program windows or modify text with a couple of lines code.
+But if you work with it a little longer you have lots of single scripts flying
+around and getting hold of it all gets cumbersome.
+That calls for an Autohotkey-framework!
+
+ac'tivAid was such a framework! It had lots of powerful tools in a simple
+interface. Could be expanded arbitrarily and also provided the posibility
+to setup almost anything yourself with a user hotkey.
+Sadly ac'tivAids developer retired from it and then never evolved much further.
+As it opened lots of doors on the one hand it had quite some shortcomings on the other.
+
+a2 now aims to gather all the ideas and demands that arose into a nice and tiny
+package to please everyones scripting needs.
+It will give you a better overview of whats running, whats posible, whats
+available and also open doors to create scripts yourself with the power and
+performance of a grown framework.

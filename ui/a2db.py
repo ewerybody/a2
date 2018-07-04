@@ -17,7 +17,6 @@ incls = a2db.get('includes', 'a2')
 a2db.set('includes', 'a2', incls)
 a2db.rem('tempstuff', 'a2')
 """
-import os
 import json
 import sqlite3
 from copy import deepcopy
@@ -29,32 +28,11 @@ _DEFAULTTABLE = 'a2'
 
 
 class A2db(object):
-    def __init__(self, db_file_path=None):
-        if not db_file_path:
-            raise RuntimeError('Cannot create db without file path!')
-
-        self._file = db_file_path
+    def __init__(self, a2dbFile):
+        self._file = a2dbFile
         self._con = None
         self._cur = None
-        self._db_file_exists = False
         log.info('initialised! (%s)' % self._file)
-
-    @property
-    def db_file_exists(self):
-        if self._db_file_exists:
-            return True
-        self._db_file_exists = os.path.isfile(self._file or '')
-        return self._db_file_exists
-
-    def _ensure_db_file_exists(self):
-        if self.db_file_exists:
-            return
-
-        directory = os.path.dirname(self._file)
-        os.makedirs(directory, exist_ok=True)
-        with open(self._file, 'wb') as fobj:
-            fobj.write(bytes())
-        print('db file created: %s' % self._file)
 
     def connect(self):
         self._con = sqlite3.connect(self._file)
@@ -75,9 +53,6 @@ class A2db(object):
         :param asjson: Only for fixing legacy stuff with the db. Just gets the string from a field
         :return: string of the data or empty string
         """
-        if not self.db_file_exists:
-            return None
-
         if check and table not in self.tables():
             return None
 
@@ -110,8 +85,6 @@ class A2db(object):
         """
         update TableName SET valueName=value WHERE key=keyName
         """
-        self._ensure_db_file_exists()
-
         jvalue = json.dumps(value, separators=(',', ':'))
         jvalue = jvalue.replace('"', '""')
         try:
@@ -132,7 +105,7 @@ class A2db(object):
                     raise RuntimeError('a2db table creation was already attempted, failed again!')
                 else:
                     log.debug('creating table and retry...')
-                    self._create_table(table)
+                    self.create_table(table)
                     self.set(key, value, table, _table_create_flag=True)
             else:
                 log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s'
@@ -152,7 +125,6 @@ class A2db(object):
         return [t[0] for t in tablelist]
 
     def drop_table(self, table):
-        self._ensure_db_file_exists()
         if table not in self.tables():
             return
         self._commit(f'drop table "{table}"')
@@ -180,19 +152,12 @@ class A2db(object):
         return results
 
     def create_table(self, table):
-        self._ensure_db_file_exists()
         if table in self.tables():
             return
-        self._create_table(table)
-        self._con.commit()
-        self.disconnect()
-
-    def _create_table(self, table):
-        self.connect()
         statement = (f'create table "{table}" '
                      '(id integer primary key, key TEXT, value TEXT)')
         log.debug('create_table statement:\n\t%s' % statement)
-        self._cur.execute(statement)
+        self._execute(statement)
 
     def _commit(self, statement, values=None):
         try:

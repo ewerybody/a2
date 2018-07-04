@@ -94,8 +94,7 @@ class A2ModuleList(QtWidgets.QWidget):
                 self.set_item_state(mod)
                 self.ui.a2module_list_widget.addItem(item)
 
-        if select_mods:
-            self.select(select_mods)
+        self.select(select_mods)
         self.ui.a2module_list_widget.blockSignals(False)
 
     def is_filtered(self, mod):
