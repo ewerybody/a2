@@ -172,7 +172,7 @@ class A2ModuleView(QtWidgets.QWidget):
         """
         # to refill the scroll layout:
         # create widget to host the module's new layout
-        new_widget = QtWidgets.QWidget(self.main)
+        new_widget = QtWidgets.QWidget(self)
         policy = QtWidgets.QSizePolicy
 
         if keep_scroll:

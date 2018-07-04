@@ -12,6 +12,7 @@ SCOPE_TOOLTIP_INCLUDE = 'Hotkey scope is set to work only in specific windows.'
 SCOPE_TOOLTIP_EXCLUDE = 'Hotkey scope is set to exclude specific windows.'
 SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
+HOTKEY_CANNOT_CHANGE = 'The hotkey cannot be changed!'
 
 
 class A2Hotkey(QtWidgets.QWidget):
@@ -32,40 +33,62 @@ class A2Hotkey(QtWidgets.QWidget):
         self._edit_mode = False
         self.scope_data = scope_data
 
+        self._vlayout = QtWidgets.QVBoxLayout(self)
+        self._vlayout.setSpacing(0)
+        self._vlayout.setContentsMargins(0, 0, 0, 0)
         self._layout = QtWidgets.QHBoxLayout(self)
+        self._vlayout.addLayout(self._layout)
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
-        self._hotkey_button = QtWidgets.QPushButton(self)
-        self._hotkey_button.setObjectName('A2HotkeyButton')
+        self._hotkey_buttons = [QtWidgets.QPushButton(self)]
+        self._hotkey_buttons[0].setObjectName('A2HotkeyButton')
         self._scope_button = QtWidgets.QPushButton(self)
         self._scope_button.setObjectName('A2HotkeyScope')
-        self._layout.addWidget(self._hotkey_button)
+        self._layout.addWidget(self._hotkey_buttons[0])
         self._layout.addWidget(self._scope_button)
         self._scope_button.clicked.connect(self.scope_clicked)
-        self._hotkey_button.clicked.connect(self.popup_dialog)
-        self.setText(key)
+        self._hotkey_buttons[0].clicked.connect(self.popup_dialog)
 
         self.dialog_styles = [HotKeyBoard]
         self.dialog_default = HotkeyDialog1
         self.dialog_styles.append(self.dialog_default)
-        self.set_config(None)
 
     def set_config(self, config_dict):
+        print('set_config on: %s' % self.parent())
         self._cfg = config_dict or {}
-
+        if not self.is_edit_mode and not self._cfg.get(Vars.key_change, True):
+            for button in self._hotkey_buttons:
+                button.setEnabled(False)
+                button.setToolTip(HOTKEY_CANNOT_CHANGE)
         self.setup_scope_button()
+        self.set_key(self._cfg.get('key', ''))
 
-        self.key = self._cfg.get('key', '')
-        self.setText(self.key)
-
-    def setText(self, text):
-        self._hotkey_button.setText(text)
+    def setText(self, key):
+        if isinstance(key, list):
+            key = key[0]
+        self._hotkey_buttons[0].setText(key)
 
     def set_key(self, key):
         if key != self.key:
             self.key = key
-            self.setText(key)
-            self.hotkey_changed.emit(key)
+            keys = [key] if isinstance(key, str) else key
+            num_keys, num_buttons = len(keys), len(self._hotkey_buttons)
+            if num_keys > num_buttons:
+                for i in range(num_buttons, num_keys):
+                    button = QtWidgets.QPushButton(self)
+                    self._vlayout.addWidget(button)
+                    self._hotkey_buttons.append(button)
+                    print('adding index: %i' % i)
+            elif num_keys < num_buttons:
+                for i in range(num_buttons, num_keys):
+                    self._hotkey_buttons[i].deleteLater()
+                    print('removing index: %i' % i)
+                self._hotkey_buttons = self._hotkey_buttons[:num_keys]
+
+            for i, key in enumerate(keys):
+                self._hotkey_buttons[i].setText(key)
+
+            self.hotkey_changed.emit(self.key)
 
     def popup_dialog(self):
         class_name = self.a2.db.get('hotkey_dialog_style')
@@ -77,7 +100,13 @@ class A2Hotkey(QtWidgets.QWidget):
         if hotkey_dialog_class is None:
             hotkey_dialog_class = self.dialog_default
 
-        dialog = hotkey_dialog_class(self, self.key, self.scope_data)
+        if isinstance(self.key, str):
+            key = self.key
+        elif isinstance(self.key, list):
+            hotkey_index = self._hotkey_buttons.index(self.sender())
+            key = self.key[hotkey_index]
+
+        dialog = hotkey_dialog_class(self, key, self.scope_data)
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 

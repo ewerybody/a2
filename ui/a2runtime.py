@@ -17,6 +17,12 @@ TODO_DEFAULT_LIBS = ['a2', 'tt', 'func_file', 'func_string', 'functions', 'Explo
                      'HTTPRequest', 'base64']
 
 
+class Scope:
+    glob = '0'
+    incl = '1'
+    excl = '2'
+
+
 class IncludeType(enum.Enum):
     variables = 0
     libs = 1
@@ -190,14 +196,16 @@ class HotkeysCollection(_Collection):
         super(HotkeysCollection, self).__init__(a2obj_instance)
         self.name = 'hotkeys'
 
-        self.hotkeys_global = []
+        self.hotkeys_global = {}
         self.hotkeys_scope_incl = {}
         self.hotkeys_scope_excl = {}
-        self._scope_types = {'1': self.hotkeys_scope_incl, '2': self.hotkeys_scope_excl}
+        self._scope_types = {Scope.incl: self.hotkeys_scope_incl,
+                             Scope.excl: self.hotkeys_scope_excl}
 
-        # add a2 standard hotkeys
-        self.hotkeys_global.append(
-            (self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY, 'a2UI()'))
+        # add a2 standard hotkey
+        a2_standard_hotkey = self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY
+        for key in iter_str_or_list(a2_standard_hotkey):
+            self.hotkeys_global.setdefault(key, []).append('a2UI()')
 
     def gather(self, mod):
         mod_hotkey_data = self.a2.db.get('hotkeys', mod.key) or {}
@@ -205,42 +213,51 @@ class HotkeysCollection(_Collection):
         for scope_type, hotkey_list in mod_hotkey_data.items():
             for hotkey_data in hotkey_list:
                 # type 0 is global, gather hotkeys (0) and commands (1) in tuples
-                if scope_type == '0':
-                    key, command = hotkey_data
-                    if not key:
+                if scope_type is Scope.glob:
+                    hotkeys, command = hotkey_data
+                    if not hotkeys or not command:
                         continue
-                    self.hotkeys_global.append((key, command))
+                    for key in iter_str_or_list(hotkeys):
+                        self.hotkeys_global.setdefault(key, []).append(command)
+
                 # '1' & '2' are include/exclude scopes
                 # gather per type (0) hotkeys (1) and commands (2)
                 else:
-                    scopes, key, command = hotkey_data
-                    if not key:
+                    scopes, hotkeys, command = hotkey_data
+                    if not hotkeys or not command:
                         continue
                     for scope_string in scopes:
-                        self._scope_types[scope_type].setdefault(
-                            scope_string, []).append((key, command))
+                        # make sure there is a hotkey dict for this scope
+                        self._scope_types[scope_type].setdefault(scope_string, {})
+                        # now append the command under hotkeys
+                        for key in iter_str_or_list(hotkeys):
+                            self._scope_types[scope_type][scope_string].setdefault(
+                                key, []).append(command)
 
     def get_content(self):
-        scope_modes = {'1': '#IfWinActive', '2': '#IfWinNotActive'}
+        scope_modes = {Scope.incl: '#IfWinActive',
+                       Scope.excl: '#IfWinNotActive'}
 
-        def create_hotkey_text(hotkey_data):
-            text = ''
-            for hotkeys, command in hotkey_data:
-                # ensure list: we can have multiple hotkeys for same command
-                if isinstance(hotkeys, str):
-                    hotkeys = [hotkeys]
-                for key in hotkeys:
-                    text += '%s::%s\n' % (a2ahk.translate_hotkey(key), command)
-            return text
+        def create_hotkey_code(hotkey_data):
+            code = ''
+            for hotkey, commands in hotkey_data.items():
+                code += a2ahk.translate_hotkey(hotkey) + '::'
+
+                command_code = '\n\t'.join(commands)
+                if '\n' in command_code:
+                    code += '\n\t' + command_code + '\nreturn\n'
+                else:
+                    code += command_code + '\n'
+            return code
 
         # write global hotkey text
-        content = scope_modes['1'] + ',\n'
-        content += create_hotkey_text(self.hotkeys_global)
+        content = scope_modes[Scope.incl] + ',\n'
+        content += create_hotkey_code(self.hotkeys_global)
         # write the scoped stuff
         for mode, scope_dict in self._scope_types.items():
             for scope, hotkey_data in scope_dict.items():
                 content += '\n%s, %s\n' % (scope_modes[mode], scope)
-                content += create_hotkey_text(hotkey_data)
+                content += create_hotkey_code(hotkey_data)
 
         return content
 
@@ -349,7 +366,7 @@ def get_a2_runtime_pid():
     startup_nfo.wShowWindow = subprocess.SW_HIDE
     startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 
-    wmicall = 'wmic process where name="%s" get ProcessID,CommandLine' % a2ahk.EXECUTABLE_NAME
+    wmicall = f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" get ProcessID,CommandLine'
     wmicout = subprocess.check_output(wmicall, startupinfo=startup_nfo)
     wmicout = str(wmicout).split('\\r\\r\\n')
     for line in wmicout[1:-1]:
@@ -360,8 +377,27 @@ def get_a2_runtime_pid():
 
 
 def is_runtime_live():
+    """
+    :return: True/False for if there is an Autohotkey executable running our a2.ahk
+    :rtype: bool
+    """
     pid = get_a2_runtime_pid()
     return pid is not None
+
+
+def iter_str_or_list(str_or_list):
+    """
+    To be used in loop to not care about an obj being list or string.
+    Yields either once or for each element.
+
+    :param (str, list) str_or_list: List or string input object.
+    :rtype: str
+    """
+    if isinstance(str_or_list, str):
+        yield str_or_list
+    elif isinstance(str_or_list, list):
+        for item in str_or_list:
+            yield item
 
 
 if __name__ == '__main__':
