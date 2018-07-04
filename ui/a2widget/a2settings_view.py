@@ -96,6 +96,8 @@ class A2Settings(QtWidgets.QWidget):
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
+        self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
+
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]
         new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
@@ -171,3 +173,14 @@ class A2Settings(QtWidgets.QWidget):
         dialog = a2module_source.AddSourceDialog(self.main, url)
         dialog.okayed.connect(self.main.load_runtime_and_ui)
         dialog.show()
+
+    def on_tab_changed(self, tab_index):
+        if tab_index == self.ui.a2settings_tab.count() - 1:
+            if self.ui.a2settings_tab.widget(tab_index).children():
+                return
+            from a2widget import a2licenses_widget_ui
+            a2ctrl.check_ui_module(a2licenses_widget_ui)
+            ui = a2licenses_widget_ui.Ui_Form()
+            ui.setupUi(self)
+            self.ui.a2settings_tab.widget(tab_index).setLayout(
+                ui.license_layout)

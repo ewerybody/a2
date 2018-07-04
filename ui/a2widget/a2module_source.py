@@ -27,21 +27,14 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.main = main
         self.mod_source = mod_source
 
+        self.ui_body = None
         self._setup_ui(show_enabled)
         self.set_labels()
 
     def set_labels(self):
-        self.ui.update_button.setText(UPDATE_LABEL)
         self.ui.mod_count.setText(MOD_COUNT_TEXT % (self.mod_source.mod_count,
                                                     self.mod_source.enabled_count))
-        self.ui.version_label.setText(self.mod_source.config.get('version', 'x.x.x'))
-        self.ui.maintainer_label.setText(self.mod_source.config.get('maintainer', ''))
-        self._set_homepage_label()
-
-        desc = self.mod_source.config.get('description', '')
-        self.ui.description_label.setVisible(desc != '')
-        self.ui.description_label.setText(desc)
-        self.ui.local_path.value = self.mod_source.path
+        self._set_body_labels()
 
         if self.mod_source.has_problem:
             self.ui.error_icon.setVisible(True)
@@ -54,7 +47,6 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui = a2module_source_ui.Ui_Form()
         self.ui.setupUi(self)
 
-        self.ui.frame.setVisible(False)
         margin = 1
         self.ui.modsource_layout.setContentsMargins(margin, margin, margin, margin)
 
@@ -64,46 +56,63 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui.check.clicked.connect(self.toggled.emit)
 
         self.ui.tool_button.clicked.connect(self._toggle_details)
-        self.ui.local_path.changable = False
-        self.ui.update_button.clicked.connect(self._check_update)
-        self._update_to_version = None
-
-        self.ui.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
-        self.ui.update_layout.insertWidget(1, self.ui.busy_icon)
-
-        self._reset_timer = QtCore.QTimer()
-        self._reset_timer.setSingleShot(True)
-        self._reset_timer.timeout.connect(self._update_msg)
-        self.ui.a2option_button.menu_called.connect(self.build_version_menu)
-        self.version_menu = QtWidgets.QMenu(self)
         self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
 
-    def _set_homepage_label(self):
-        url = self.mod_source.config.get('url', '')
-        url_label = url
-        for url_sceme in ['http://', 'https://']:
-            if url_label.startswith(url_sceme):
-                url_label = url_label[len(url_sceme):]
-                break
-        if url_label.startswith('www.'):
-            url_label = url_label[4:]
-        self.ui.homepage_label.setText('<a href="%s">%s</a>' % (url, url_label))
+    def _set_body_labels(self):
+        if self.ui_body is not None:
+            self.ui_body.version_label.setText(self.mod_source.config.get('version', 'x.x.x'))
+            self.ui_body.update_button.setText(UPDATE_LABEL)
+            self.ui_body.maintainer_label.setText(self.mod_source.config.get('maintainer', ''))
+            desc = self.mod_source.config.get('description', '')
+            self.ui_body.description_label.setVisible(desc != '')
+            self.ui_body.description_label.setText(desc)
+            self.ui_body.local_path.value = self.mod_source.path
+
+            url = self.mod_source.config.get('url', '')
+            url_label = url
+            for url_sceme in ['http://', 'https://']:
+                if url_label.startswith(url_sceme):
+                    url_label = url_label[len(url_sceme):]
+                    break
+            if url_label.startswith('www.'):
+                url_label = url_label[4:]
+            self.ui_body.homepage_label.setText('<a href="%s">%s</a>' % (url, url_label))
 
     def _toggle_details(self):
-        state = self.ui.frame.isVisible()
-        self.ui.frame.setVisible(not state)
+        if self.ui_body is None:
+            from a2widget import a2module_source_body_ui
+            a2ctrl.check_ui_module(a2module_source_body_ui)
+            self.ui_body = a2module_source_body_ui.Ui_Form()
+            self.ui_body.setupUi(self)
+            self.ui_body.local_path.changable = False
+            self.ui_body.update_button.clicked.connect(self._check_update)
+            self._update_to_version = None
+
+            self.ui_body.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
+            self.ui_body.update_layout.insertWidget(1, self.ui_body.busy_icon)
+
+            self._reset_timer = QtCore.QTimer()
+            self._reset_timer.setSingleShot(True)
+            self._reset_timer.timeout.connect(self._update_msg)
+            self.ui_body.a2option_button.menu_called.connect(self.build_version_menu)
+            self.version_menu = QtWidgets.QMenu(self)
+            self.ui.modsource_layout.addWidget(self.ui_body.frame)
+            self._set_body_labels()
+
+        state = self.ui_body.frame.isVisible()
+        self.ui_body.frame.setVisible(not state)
         a = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
         self.ui.tool_button.setArrowType(a[state])
 
     def set_busy(self, text=None):
-        self.ui.busy_icon.set_busy()
-        self.ui.update_button.setEnabled(False)
+        self.ui_body.busy_icon.set_busy()
+        self.ui_body.update_button.setEnabled(False)
         if text:
-            self.ui.update_button.setText(text)
+            self.ui_body.update_button.setText(text)
 
     def set_idle(self):
-        self.ui.busy_icon.set_idle()
-        self.ui.update_button.setEnabled(True)
+        self.ui_body.busy_icon.set_idle()
+        self.ui_body.update_button.setEnabled(True)
 
     def _check_update(self):
         self.set_busy(MSG_FETCHING)
@@ -131,28 +140,28 @@ class ModSourceWidget(QtWidgets.QWidget):
             self._update_msg(MSG_UPTODATE, a2ctrl.Icons.inst().check_circle)
         else:
             self._update_to_version = remote_version
-            self.ui.update_button.setText(MSG_UPDATE_AVAILABLE % remote_version)
-            self.ui.update_button.setIcon(a2ctrl.Icons.inst().cloud_download)
+            self.ui_body.update_button.setText(MSG_UPDATE_AVAILABLE % remote_version)
+            self.ui_body.update_button.setIcon(a2ctrl.Icons.inst().cloud_download)
 
     def _show_update_error(self, msg):
         self.set_idle()
         self._update_msg(msg, a2ctrl.Icons.inst().error)
 
     def _show_update_status(self, msg):
-        self.ui.update_button.setText(msg)
+        self.ui_body.update_button.setText(msg)
 
     def _update_msg(self, msg=None, icon=None):
         if msg is None:
             self._reset_timer.stop()
-            self.ui.update_button.setText(UPDATE_LABEL)
-            self.ui.update_button.setEnabled(True)
-            self.ui.update_button.setIcon(QtGui.QIcon())
+            self.ui_body.update_button.setText(UPDATE_LABEL)
+            self.ui_body.update_button.setEnabled(True)
+            self.ui_body.update_button.setIcon(QtGui.QIcon())
         else:
             self._reset_timer.start(1000)
-            self.ui.update_button.setText(msg)
-            self.ui.update_button.setEnabled(False)
+            self.ui_body.update_button.setText(msg)
+            self.ui_body.update_button.setEnabled(False)
             if icon is not None:
-                self.ui.update_button.setIcon(icon)
+                self.ui_body.update_button.setIcon(icon)
 
     def build_version_menu(self, menu):
         icons = a2ctrl.Icons.inst()

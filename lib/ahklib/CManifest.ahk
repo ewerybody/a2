@@ -30,9 +30,9 @@ class CManifest
         ; find the module infodata
         this.metaData := this.findUIElementByKey("typ", "nfo")
 
-        ; set the module name and package name
+        ; set the module name and source name
         RegExMatch(relativePath, ".*\\(.+?)\\(.+?)\\.+?$", filename)
-        this.metaData.package := filename1
+        this.metaData.source := filename1
         this.metaData.name := filename2
     }
 

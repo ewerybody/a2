@@ -54,19 +54,19 @@ class Draw(DrawCtrl):
 
         if self.cfg['disablable']:
             state = self.get_user_value(bool, 'enabled', True)
-            self.check = QtWidgets.QCheckBox(self)
+            self.checkbox = QtWidgets.QCheckBox(self)
 
             try:
                 size = self.main.style.get('icon_size')
             except AttributeError:
                 size = 35
 
-            self.check.setMinimumSize(QtCore.QSize(size, size))
-            self.check.setMaximumSize(QtCore.QSize(size, size))
+            self.checkbox.setMinimumSize(QtCore.QSize(size, size))
+            self.checkbox.setMaximumSize(QtCore.QSize(size, size))
 
-            self.check.setChecked(state)
-            self.check.clicked.connect(self.hotkey_check)
-            self.labelLayout.addWidget(self.check)
+            self.checkbox.setChecked(state)
+            self.checkbox.clicked.connect(self.hotkey_check)
+            self.labelLayout.addWidget(self.checkbox)
 
         self.label = QtWidgets.QLabel(self.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
@@ -92,7 +92,7 @@ class Draw(DrawCtrl):
         self.setLayout(self.ctrl_layout)
 
     def hotkey_check(self):
-        state = self.check.isChecked()
+        state = self.checkbox.isChecked()
         self.set_user_value(state, 'enabled')
         self.change('hotkeys')
 
@@ -111,7 +111,7 @@ class Draw(DrawCtrl):
         action = menu.addAction('Revert to Default')
         action.setEnabled(False)
 
-        if not self.hotkey_button.is_clear:
+        if self.cfg.get(Vars.key_change, True) and not self.hotkey_button.is_clear:
             menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',
                            self.hotkey_button.clear)
 
@@ -149,9 +149,9 @@ class Edit(EditCtrl):
 
         self.helpUrl = self.a2.urls.helpHotkey
 
+        self.ui.hotkey_button.set_edit_mode(True)
         self.ui.hotkey_button.set_config(self.cfg)
         self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)
-        self.ui.hotkey_button.set_edit_mode(True)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
@@ -189,7 +189,7 @@ def get_settings(_module_key, cfg, db_dict, user_cfg):
     key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key', str)
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope, list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope_mode, int)
-    function = cfg.get(
+    func = cfg.get(
         [Vars.function_code, Vars.function_url, Vars.function_send]
         [cfg.get(Vars.function_mode, 0)],
         '')
@@ -198,6 +198,6 @@ def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict['hotkeys'].setdefault(scope_mode, [])
     # save a global if global scope set or all-but AND scope is empty
     if scope_mode == 0 or scope_mode == 2 and scope == '':
-        db_dict['hotkeys'][0].append([key, function])
+        db_dict['hotkeys'][0].append([key, func])
     else:
-        db_dict['hotkeys'][scope_mode].append([scope, key, function])
+        db_dict['hotkeys'][scope_mode].append([scope, key, func])
