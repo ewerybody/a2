@@ -100,7 +100,13 @@ class A2Hotkey(QtWidgets.QWidget):
         if hotkey_dialog_class is None:
             hotkey_dialog_class = self.dialog_default
 
-        dialog = hotkey_dialog_class(self, self.key, self.scope_data)
+        if isinstance(self.key, str):
+            key = self.key
+        elif isinstance(self.key, list):
+            hotkey_index = self._hotkey_buttons.index(self.sender())
+            key = self.key[hotkey_index]
+
+        dialog = hotkey_dialog_class(self, key, self.scope_data)
         dialog.hotkey_set.connect(self.set_key)
         dialog.show()
 
