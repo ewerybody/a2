@@ -65,9 +65,8 @@ class IncludeDataCollector(object):
                     mod.change()
 
                 for collection in self.collections:
-                    if collection is None:
-                        continue
-                    collection.gather(mod)
+                    if collection is not None:
+                        collection.gather(mod)
 
     def write(self):
         for collection in self.collections:
@@ -215,22 +214,26 @@ class HotkeysCollection(_Collection):
                 # type 0 is global, gather hotkeys (0) and commands (1) in tuples
                 if scope_type is Scope.glob:
                     hotkeys, command = hotkey_data
-                    if not hotkeys or not command:
+                    if not command:
                         continue
                     for key in iter_str_or_list(hotkeys):
+                        if not key:
+                            continue
                         self.hotkeys_global.setdefault(key, []).append(command)
 
                 # '1' & '2' are include/exclude scopes
                 # gather per type (0) hotkeys (1) and commands (2)
                 else:
                     scopes, hotkeys, command = hotkey_data
-                    if not hotkeys or not command:
+                    if not command:
                         continue
                     for scope_string in scopes:
                         # make sure there is a hotkey dict for this scope
                         self._scope_types[scope_type].setdefault(scope_string, {})
                         # now append the command under hotkeys
                         for key in iter_str_or_list(hotkeys):
+                            if not key:
+                                continue
                             self._scope_types[scope_type][scope_string].setdefault(
                                 key, []).append(command)
 
