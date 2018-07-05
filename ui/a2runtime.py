@@ -12,7 +12,7 @@ import a2util
 EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
 log = a2core.get_logger(__name__)
 
-TODO_DEFAULT_LIBS = ['a2', 'tt', 'func_file', 'func_string', 'functions', 'Explorer_Get',
+TODO_DEFAULT_LIBS = ['a2', 'func_file', 'func_string', 'functions', 'Explorer_Get',
                      'ahk_functions', 'ObjectTools', 'RichObject', 'Array', 'uri_encode',
                      'HTTPRequest', 'base64']
 
@@ -109,7 +109,7 @@ class _Collection(object):
         self.name = None
 
     def write(self):
-        path = os.path.join(self.a2.paths.settings, self.name + '.ahk')
+        path = os.path.join(self.a2.paths.includes, self.name + '.ahk')
         a2util.write_utf8(path, self._final_content)
 
     def gather(self, mod):
