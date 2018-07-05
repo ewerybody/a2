@@ -26,6 +26,8 @@ class DrawCtrl(QtWidgets.QWidget):
         self.main = main
         self.cfg = cfg
         self.mod = mod
+        self.paths = _Paths(mod, self.a2)
+
         self.check_delay = 250
         self._check_scheduled = False
         self.is_expandable_widget = False
@@ -124,6 +126,7 @@ class EditCtrl(QtWidgets.QGroupBox):
         self.cfg = cfg
         self.main = main
         self.parent_cfg = parent_cfg
+
         self._setup_ui(add_layout)
         self.helpUrl = self.a2.urls.helpEditCtrl
         self.is_expandable_widget = False
@@ -313,6 +316,24 @@ class EditCtrl(QtWidgets.QGroupBox):
         return QtWidgets.QGroupBox.leaveEvent(self, event)
 
 
+class _Paths(object):
+    def __init__(self, mod, a2):
+        self._mod = mod
+        self._a2 = a2
+
+    @property
+    def mod(self):
+        return self._mod.path
+
+    @property
+    def source(self):
+        return self._mod.source.path
+
+    @property
+    def mod_data(self):
+        return os.path.join(self._a2.paths.module_data, self._mod.source.path)
+
+
 class EditAddElem(QtWidgets.QWidget):
     """
     to add a control to a module setup. This will probably go into some popup
@@ -393,15 +414,13 @@ class EditAddElem(QtWidgets.QWidget):
             if ext.lower() != '.py':
                 continue
 
-            element_objects = get_local_element.get_local_element(itempath)
+            element_objects = a2ctrl.get_local_element(itempath)
             if element_objects is not None and 'Edit' in element_objects:
                 name = element_objects['Edit'].element_name()
                 icon = element_objects['Edit'].element_icon()
-
-                action = QtWidgets.QAction(name, self.menu, triggered=partial(self._add_element, base))
+                action = self.menu.addAction(name, partial(self._add_element, base))
                 if icon:
                     action.setIcon(icon)
-                self.menu.addAction(action)
 
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
@@ -421,14 +440,14 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
                 scripts_in_use.add(cfg['file'])
 
         icons = Icons.inst()
-        scriptsUnused = set(self.main.mod.scripts) - scripts_in_use
+        scripts_unused = set(self.main.mod.scripts) - scripts_in_use
 
-        for scriptName in scriptsUnused:
-            self.addAction(QtWidgets.QAction(icons.code, scriptName, self,
-                                         triggered=partial(self.set_script, scriptName)))
-        if scriptsUnused:
+        for script_name in scripts_unused:
+            self.addAction(icons.code, script_name, partial(self.set_script, script_name))
+
+        if scripts_unused:
             self.addSeparator()
-        # newIncludeAction = QtGui.QAction(icons.code, 'Create New Script', self, triggered=self.set_script)
+
         self.addAction(icons.code, 'Create New Script', self.set_script)
 
     def set_script(self, name='', create=False):
