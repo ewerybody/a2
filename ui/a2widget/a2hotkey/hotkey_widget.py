@@ -19,7 +19,7 @@ class A2Hotkey(QtWidgets.QWidget):
     hotkey_changed = QtCore.Signal(list)
     scope_changed = QtCore.Signal(list, int)
 
-    def __init__(self, parent=None, key=None, scope_data=None):
+    def __init__(self, parent=None):
         """
         :param QWidget parent: Parent Qt object.
         :param str or list key: Key string or list of key stings.
@@ -28,10 +28,10 @@ class A2Hotkey(QtWidgets.QWidget):
         """
         super(A2Hotkey, self).__init__(parent)
         self.a2 = a2core.A2Obj.inst()
-        self.key = key or ['']
-        self._cfg = None
+        self.key = None
+        self._cfg = {}
         self._edit_mode = False
-        self.scope_data = scope_data
+        self.scope_data = None
 
         self.setObjectName('A2HotkeyButton')
         self._vlayout = QtWidgets.QVBoxLayout(self)
@@ -43,6 +43,7 @@ class A2Hotkey(QtWidgets.QWidget):
         self._layout.setSpacing(0)
         self._hotkey_buttons = [QtWidgets.QPushButton(self)]
         self._hotkey_buttons[0].setObjectName('A2HotkeyButton')
+        self._hotkey_index = 0
         self._scope_button = QtWidgets.QPushButton(self)
         self._scope_button.setObjectName('A2HotkeyScope')
         self._layout.addWidget(self._hotkey_buttons[0])
@@ -56,10 +57,6 @@ class A2Hotkey(QtWidgets.QWidget):
 
     def set_config(self, config_dict):
         self._cfg = config_dict or {}
-        if not self.is_edit_mode and not self._cfg.get(Vars.key_change, True):
-            for button in self._hotkey_buttons:
-                button.setEnabled(False)
-                button.setToolTip(HOTKEY_CANNOT_CHANGE)
         self.setup_scope_button()
         self.set_key(self._cfg.get('key', ['']))
 
@@ -87,8 +84,14 @@ class A2Hotkey(QtWidgets.QWidget):
                     print('removing index: %i' % i)
                 self._hotkey_buttons = self._hotkey_buttons[:num_keys]
 
-            for i, key in enumerate(keys):
-                self._hotkey_buttons[i].setText(key)
+            locked = not self.is_edit_mode and not self._cfg.get(Vars.key_change, True)
+            for i, button in enumerate(self._hotkey_buttons):
+                button.setText(keys[i])
+                button.setEnabled(not locked)
+                if locked:
+                    button.setToolTip(HOTKEY_CANNOT_CHANGE)
+                elif keys[i] == '':
+                    button.setToolTip('Empty Hotkeys will be ignored!')
 
             self.hotkey_changed.emit(keys)
 
@@ -107,8 +110,8 @@ class A2Hotkey(QtWidgets.QWidget):
         elif isinstance(self.key, list):
             hotkey_index = self._hotkey_buttons.index(self.sender())
             key = self.key[hotkey_index]
+            self._hotkey_index = hotkey_index
 
-        self._hotkey_index = hotkey_index
         dialog = hotkey_dialog_class(self, key, self.scope_data)
         dialog.hotkey_set.connect(self._dialog_set_key)
         dialog.show()
@@ -143,7 +146,7 @@ class A2Hotkey(QtWidgets.QWidget):
         :return: False if a key is set. True if no key is set.
         :rtype: bool
         """
-        return self.key == ''
+        return self.key == [''] or self.key == ''
 
     @property
     def is_edit_mode(self):
@@ -191,6 +194,9 @@ class A2Hotkey(QtWidgets.QWidget):
         return '' in self.get_keys_list()
 
     def add_hotkey(self):
+        """
+        Adds an Empty string to the hotkey list if there is none already.
+        """
         keys = self.get_keys_list()
         if '' in keys:
             return

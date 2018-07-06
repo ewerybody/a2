@@ -19,8 +19,9 @@ A hotkey configuration can have a lot of stuff to it:
 
 from PySide2 import QtCore, QtWidgets
 
-import a2ctrl
 import a2core
+import a2ctrl
+import a2util
 from a2element import DrawCtrl, EditCtrl
 from a2widget import A2MoreButton
 from a2widget.a2hotkey import A2Hotkey, Vars
@@ -110,11 +111,7 @@ class Draw(DrawCtrl):
         action.setEnabled(False)
 
         if self.cfg.get(Vars.key_change, True):
-            if not self.hotkey_button.has_empty:
-                menu.addAction('Add another Hotkey', self.hotkey_button.add_hotkey)
-            if not self.hotkey_button.is_clear:
-                menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',
-                               self.hotkey_button.clear)
+            build_hotkey_menu(menu, self.hotkey_button, self.help)
 
         menu.addSeparator()
 
@@ -128,6 +125,9 @@ class Draw(DrawCtrl):
             action.triggered.connect(partial(self.a2.db.set, 'hotkey_dialog_style', this_name))
 
         menu.addMenu(submenu)
+
+    def help(self):
+        a2util.surf_to(self.helpUrl)
 
 
 class Edit(EditCtrl):
@@ -180,15 +180,7 @@ class Edit(EditCtrl):
         self.cfg['key'] = new_keys
 
     def build_edit_menu(self, menu):
-        hotkey_btn = self.ui.hotkey_button
-        if not hotkey_btn.has_empty:
-            menu.addAction('Add another Hotkey', hotkey_btn.add_hotkey)
-        if hotkey_btn.has_multiple:
-            del_menu = menu.addMenu('Remove Hotkey')
-            for key in hotkey_btn.get_keys_list():
-                name = key if key != '' else '"" (Empty)'
-                action = del_menu.addAction(name, hotkey_btn.on_remove_key_action)
-                action.setData(key)
+        build_hotkey_menu(menu, self.ui.hotkey_button, self.help)
 
     @staticmethod
     def element_name():
@@ -197,6 +189,23 @@ class Edit(EditCtrl):
     @staticmethod
     def element_icon():
         return a2ctrl.Icons.inst().hotkey
+
+
+def build_hotkey_menu(menu, button, help_func):
+        icons = a2ctrl.Icons.inst()
+        if not button.has_empty:
+            menu.addAction(icons.list_add, 'Add another Hotkey', button.add_hotkey)
+        if button.has_multiple:
+            del_menu = menu.addMenu(icons.delete, 'Remove Hotkey')
+            for key in button.get_keys_list():
+                name = key if key != '' else '"" (Empty)'
+                action = del_menu.addAction(icons.delete, name, button.on_remove_key_action)
+                action.setData(key)
+        else:
+            if not button.is_clear:
+                menu.addAction(icons.clear, 'Clear Hotkey', button.clear)
+
+        menu.addAction(icons.help, 'Help on Hotkey Setup', help_func)
 
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
