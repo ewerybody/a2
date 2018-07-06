@@ -393,7 +393,7 @@ class EditAddElem(QtWidgets.QWidget):
             if ext.lower() != '.py':
                 continue
 
-            element_objects = get_local_element.get_local_element(itempath)
+            element_objects = a2ctrl.get_local_element(itempath)
             if element_objects is not None and 'Edit' in element_objects:
                 name = element_objects['Edit'].element_name()
                 icon = element_objects['Edit'].element_icon()
@@ -421,14 +421,12 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
                 scripts_in_use.add(cfg['file'])
 
         icons = Icons.inst()
-        scriptsUnused = set(self.main.mod.scripts) - scripts_in_use
+        scripts_unused = set(self.main.mod.scripts) - scripts_in_use
 
-        for scriptName in scriptsUnused:
-            self.addAction(QtWidgets.QAction(icons.code, scriptName, self,
-                                         triggered=partial(self.set_script, scriptName)))
-        if scriptsUnused:
+        for script_name in scripts_unused:
+            self.addAction(icons.code, script_name, partial(self.set_script, script_name))
+        if scripts_unused:
             self.addSeparator()
-        # newIncludeAction = QtGui.QAction(icons.code, 'Create New Script', self, triggered=self.set_script)
         self.addAction(icons.code, 'Create New Script', self.set_script)
 
     def set_script(self, name='', create=False):
