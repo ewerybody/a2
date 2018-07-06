@@ -37,7 +37,7 @@ class A2Hotkey(QtWidgets.QWidget):
         self._vlayout = QtWidgets.QVBoxLayout(self)
         self._vlayout.setSpacing(0)
         self._vlayout.setContentsMargins(0, 0, 0, 0)
-        self._layout = QtWidgets.QHBoxLayout(self)
+        self._layout = QtWidgets.QHBoxLayout()
         self._vlayout.addLayout(self._layout)
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
