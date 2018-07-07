@@ -1,10 +1,10 @@
-import a2util
 import os
-from PySide2 import QtWidgets
 from copy import deepcopy
+import a2util
+from PySide2 import QtWidgets
 
 
-BASE_DPI = 96.0
+BASE_DPI = 120.0
 DEFAULT_STYLE = 'light'
 TEMPLATE_NAME = 'css.template'
 DEFAULTS_NAME = 'css_defaults.json'
@@ -19,13 +19,15 @@ class A2StyleBuilder(object):
         self._user_scale = None
         self._last_style = None
         self._css_values = {}
+        self.template = None
+        self.defaults = {}
 
         self.get_local_scale()
         self.load_style(style_name)
 
     def get_local_scale(self):
-        app = QtWidgets.QApplication.instance()
-        local_scale = app.desktop().physicalDpiX() / BASE_DPI
+        physical_dpi = QtWidgets.QApplication.instance().desktop().physicalDpiX()
+        local_scale = physical_dpi / BASE_DPI
         self._css_values['local_scale'] = local_scale
 
     def load_style(self, style_name):
