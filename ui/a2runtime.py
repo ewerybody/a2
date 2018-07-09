@@ -16,6 +16,7 @@ TODO_DEFAULT_LIBS = ['a2', 'func_file', 'func_string', 'functions', 'Explorer_Ge
                      'ahk_functions', 'ObjectTools', 'RichObject', 'Array', 'uri_encode',
                      'HTTPRequest', 'base64']
 A2_DATA = '%a2data%'
+ENTRY_POINT_FILENAME = 'user_data_includes'
 
 
 class Scope:
@@ -42,6 +43,8 @@ class IncludeDataCollector(object):
         self.includes = None
         self.hotkeys = None
         self.init = None
+
+        self._entrypoint_script = None
 
     def collect(self):
         mod_settings = self.a2.db.tables()
@@ -71,9 +74,26 @@ class IncludeDataCollector(object):
                     collection.gather(mod)
 
     def write(self):
+        os.makedirs(self.a2.paths.includes, exist_ok=True)
         for collection in self.collections:
             if collection is not None:
                 collection.write()
+        self._check_entry_point_script()
+
+    def _check_entry_point_script(self):
+        if self._entrypoint_script is None:
+            template_path = os.path.join(
+                self.a2.paths.defaults, ENTRY_POINT_FILENAME + '.template')
+            template = a2util.load_utf8(template_path)
+
+            data_path = os.path.relpath(self.a2.paths.data, self.a2.paths.a2)
+            if data_path.startswith('.'):
+                data_path = self.a2.paths.data
+            self._entrypoint_script = template.format(data_path=data_path)
+
+            script_path = os.path.join(
+                self.a2.paths.lib, '_ ' + ENTRY_POINT_FILENAME + '.ahk')
+            a2util.write_utf8(script_path, self._entrypoint_script)
 
     @property
     def collections(self):
@@ -109,7 +129,6 @@ class _Collection(object):
         self.name = None
 
     def write(self):
-        os.makedirs(self.a2.paths.includes, exist_ok=True)
         path = os.path.join(self.a2.paths.includes, self.name + '.ahk')
         a2util.write_utf8(path, self._get_final_content())
 
@@ -128,7 +147,7 @@ class _Collection(object):
 
     def _get_final_content(self):
         return (EDIT_DISCLAIMER % self.name + '\n'
-                + self.get_content())
+                +self.get_content())
 
 
 class VariablesCollection(_Collection):
@@ -191,9 +210,9 @@ class IncludesCollection(_Collection):
         self.name = 'includes'
         self.include_paths = []
         # self.modules_path = os.path.relpath(self.a2.paths.modules, self.a2.paths.a2)
-        self.modules_path = '%a2modules%'
+        self.modules_path = 'modules'
         # self.moddata_path = os.path.relpath(self.a2.paths.module_data, self.a2.paths.a2)
-        self.moddata_path = '%a2module_data%'
+        self.moddata_path = 'module_data'
 
     def gather(self, mod):
         """
@@ -293,11 +312,6 @@ class HotkeysCollection(_Collection):
     @property
     def has_content(self):
         return any([d != {} for d in [self.hotkeys_global, self.hotkeys_scope_incl, self.hotkeys_scope_excl]])
-
-
-class HotkeyManager(object):
-    def __init__(self):
-        pass
 
 
 class InitCollection(_Collection):
