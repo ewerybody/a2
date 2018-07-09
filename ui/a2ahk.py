@@ -13,20 +13,21 @@ import subprocess
 EXECUTABLE_NAME = 'autohotkey.exe'
 
 
-def translate_hotkey(displayString):
+def translate_hotkey(display_string):
     """
     Creates AHK readable string out of a human readable like:
     Win+Ctrl+M > #^m
     """
+    # Strip and reattach tilde if given.
     tilde = ''
-    if displayString.startswith('~'):
+    if display_string.startswith('~'):
         tilde = '~'
-        displayString = displayString[1:]
-    parts = displayString.split('+')
+        display_string = display_string[1:]
+
+    parts = display_string.split('+')
     parts = [p.strip().lower() for p in parts]
     modifier = parts[:-1]
-    ahkKey = tilde + ''.join([modifiers[m] for m in modifier]) + parts[-1]
-    return ahkKey
+    return tilde + ''.join([modifiers[m] for m in modifier]) + parts[-1]
 
 
 def ensure_ahk_ext(filename):
