@@ -450,6 +450,7 @@ class DevSettings(object):
     def _set_attrs(self, settings):
         for key, value in settings.items():
             setattr(self, key, value)
+        a2util.JSON_INDENT = self.json_indent
 
     def set(self, these):
         self._a2.db.set_changes('dev_settings', these, self._defaults)
