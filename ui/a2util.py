@@ -118,11 +118,22 @@ def surf_to(url):
 
 
 def load_utf8(path):
+    """
+    Opens a file with UTF8 codec to return its content in a string
+    :param str path: Path to a file to load from.
+    :rtype: str
+    """
     with codecs.open(path, encoding=UTF8_CODEC) as fobj:
         content = fobj.read()
     return content
 
+
 def write_utf8(path, content):
+    """
+    Opens a file path with UTF8 codec to write string content into.
+    :param str path: Path to a file to write to.
+    :param str content: String content for the file.
+    """
     with codecs.open(path, 'w', encoding=UTF8_CODEC) as fobj:
         fobj.write(content)
 

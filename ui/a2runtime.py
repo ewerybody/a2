@@ -209,18 +209,14 @@ class IncludesCollection(_Collection):
         super(IncludesCollection, self).__init__(a2obj_instance)
         self.name = 'includes'
         self.include_paths = []
-        # self.modules_path = os.path.relpath(self.a2.paths.modules, self.a2.paths.a2)
-        self.modules_path = 'modules'
-        # self.moddata_path = os.path.relpath(self.a2.paths.module_data, self.a2.paths.a2)
-        self.moddata_path = 'module_data'
 
     def gather(self, mod):
         """
         Creates the module specific paths and assembles the include files.
         :param mod: Current Module object.
         """
-        paths = [('includes', os.path.join(self.modules_path, mod.source.name, mod.name)),
-                 ('data_includes', os.path.join(self.moddata_path, mod.source.name, mod.name))]
+        paths = [('includes', os.path.join('modules', mod.source.name, mod.name)),
+                 ('data_includes', os.path.join('module_data', mod.source.name, mod.name))]
 
         for include_type, include_dir in paths:
             includes = self.a2.db.get(include_type, mod.key) or []
