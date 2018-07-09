@@ -57,7 +57,7 @@ class A2Obj(object):
         self.module_sources = {}
 
         self.paths = Paths()
-        self.urls = URLs(self.paths.urls_ahk)
+        self.urls = URLs(self.paths.a2_urls)
 
         self.db = a2db.A2db(self.paths.db)
         self._enabled = None
@@ -153,23 +153,21 @@ class Paths(object):
         self.elements = os.path.join(self.ui, 'a2element')
 
         self.lib = os.path.join(self.a2, 'lib')
-        self.a2_script = os.path.join(self.lib, 'a2.ahk')
         self.defaults = os.path.join(self.lib, '_defaults')
-        self.urls_ahk = os.path.join(self.lib, 'a2_urls.ahk')
+        self.a2_script = os.path.join(self.lib, 'a2.ahk')
+        self.a2_urls = os.path.join(self.lib, 'a2_urls.ahk')
+        self.a2_config = os.path.join(self.lib, 'a2_config.ahk')
         self.autohotkey = os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
         self.python = sys.executable
 
-        self.data = os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
+        # get data dir from config override or the default appdata dir.
+        self.data = a2ahk.get_variables(self.a2_config).get(
+            'a2data', os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data'))
         self.modules = os.path.join(self.data, 'modules')
         self.module_data = os.path.join(self.data, 'module_data')
         self.includes = os.path.join(self.data, 'includes')
         self.temp = os.path.join(self.data, 'temp')
         self.db = os.path.join(self.data, 'a2.db')
-
-#        path_vars = self._fetch_a2_data_paths()
-#        self.settings_ahk = os.path.join(self.data, 'a2_settings.ahk')
-#        self.data = path_vars['data']
-#        self.settings = path_vars['settings']
 
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.ui]
@@ -180,28 +178,6 @@ class Paths(object):
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
             raise RuntimeError('a2ui start interrupted! %s inaccessable!'
                                % self.data)
-
-#    def _get_settings_ahk(self):
-#        if not os.path.isfile(self.settings_ahk):
-#            return os.path.join(self.defaults, 'a2_settings.ahk')
-#        return self.settings_ahk
-#
-#    def _fetch_a2_data_paths(self):
-#        keys = ['settings', 'modules']
-#        prefix = 'a2_'
-#        result = {}
-#        settings_dict = a2ahk.get_variables(self._get_settings_ahk())
-#        for key, value in settings_dict.items():
-#            key = key[len(prefix):]
-#            if key in keys:
-#                if os.path.isabs(value):
-#                    result[key] = value
-#                else:
-#                    result[key] = os.path.abspath(os.path.join(self.a2, value))
-#        result['ahk'] = settings_dict.get('a2_ahk') or os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
-#        # Python path can be relative! So we take anything here.
-#        result['python'] = settings_dict.get('a2_python')
-#        return result
 
 
 def _dbCleanup():

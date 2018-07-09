@@ -76,14 +76,9 @@ class A2Settings(QtWidgets.QWidget):
                                     self.dev_setting_changed)
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
-        self.ui.settings_folder.setText(self.a2.paths.data)
-        self.ui.module_folder.setText(self.a2.paths.modules)
+        self.ui.data_folder.setText(self.a2.paths.data)
         self.ui.python_executable.setText(self.a2.paths.python)
-
-        self.ui.autohotkey.writable = False
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
-        self.ui.autohotkey.file_types = "Autohotkey Executable (%s)" % a2ahk.EXECUTABLE_NAME
-        self.ui.autohotkey.changed.connect(self.set_autohotkey)
 
         self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
         self.ui.show_console.clicked[bool].connect(self.toggle_console)
@@ -107,21 +102,6 @@ class A2Settings(QtWidgets.QWidget):
 
     def toggle_startup_tooltips(self, state):
         a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
-
-    def set_autohotkey(self, path):
-        if os.path.basename(path).lower() != a2ahk.EXECUTABLE_NAME:
-            self.ui.autohotkey.changed.disconnect(self.set_autohotkey)
-            self.ui.autohotkey.value = self.a2.paths.autohotkey
-            self.ui.autohotkey.changed.connect(self.set_autohotkey)
-            return
-
-        rel = os.path.relpath(path, self.a2.paths.a2)
-        if rel.startswith('..'):
-            a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', path)
-        else:
-            a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_ahk', rel)
-        self.a2.paths.autohotkey = path
-        self.main.settings_changed()
 
     def on_dev_setting_changed(self, *args):
         self.main.devset.set(self.dev_set_dict)
@@ -175,6 +155,7 @@ class A2Settings(QtWidgets.QWidget):
         dialog.show()
 
     def on_tab_changed(self, tab_index):
+        # to build the licenses tab on demand only
         if tab_index == self.ui.a2settings_tab.count() - 1:
             if self.ui.a2settings_tab.widget(tab_index).children():
                 return

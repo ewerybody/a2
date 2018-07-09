@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>718</width>
-    <height>751</height>
+    <width>1356</width>
+    <height>938</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -207,6 +207,9 @@ Go ahead and add or create one:</string>
              <string notr="true"/>
             </property>
             <layout class="QFormLayout" name="formLayout_2">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
              <property name="labelAlignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
@@ -238,76 +241,6 @@ Go ahead and add or create one:</string>
                </property>
               </widget>
              </item>
-             <item row="11" column="0" colspan="2">
-              <widget class="Line" name="line">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string notr="true">Settings Folder:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="1">
-              <widget class="QLineEdit" name="settings_folder">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="0">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string notr="true">Modules Folder:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="13" column="1">
-              <widget class="QLineEdit" name="module_folder">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="14" column="0">
-              <widget class="QLabel" name="label_10">
-               <property name="text">
-                <string notr="true">Python Executable:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="14" column="1">
-              <widget class="QLineEdit" name="python_executable">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QLabel" name="label_5">
                <property name="text">
@@ -331,6 +264,9 @@ Go ahead and add or create one:</string>
              </item>
              <item row="3" column="1">
               <widget class="A2PathField" name="autohotkey">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string notr="true"/>
                </property>
@@ -385,6 +321,59 @@ Go ahead and add or create one:</string>
                  <width>70</width>
                  <height>16777215</height>
                 </size>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0" colspan="2">
+              <widget class="Line" name="line">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string notr="true">User Data:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="1">
+              <widget class="A2PathField" name="data_folder">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string notr="true"/>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string notr="true">Python Executable:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="13" column="1">
+              <widget class="A2PathField" name="python_executable">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string notr="true"/>
                </property>
               </widget>
              </item>
