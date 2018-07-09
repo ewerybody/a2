@@ -122,6 +122,21 @@ class A2PathField(QtWidgets.QWidget):
         """Just to be compatible with QDesigner setting text already"""
         self.value = this
 
+    def setEnabled(self, state):
+        """
+        Used to make the field changable/static.
+        :param bool state: True: Field value can be changed via browsing OR typing if enabled.
+            False: Field is for display only. Copying/exploring to path is still possible
+        """
+        self.changable = state
+
+    def setReadOnly(self, state):
+        """
+        Used to enable writing in the field. Can still be changed via browsing if 'changable'!
+        :param bool state: True: you can type in the field/ False: typing disabled.
+        """
+        self.writable = not state
+
     @property
     def value(self):
         return self._value
