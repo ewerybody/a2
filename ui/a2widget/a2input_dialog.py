@@ -16,7 +16,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
-        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.WindowTitleHint |
+        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint |
                             QtCore.Qt.MSWindowsFixedSizeDialogHint)
         a2ctrl.check_ui_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
