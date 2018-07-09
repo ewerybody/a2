@@ -331,7 +331,7 @@ class _Paths(object):
 
     @property
     def mod_data(self):
-        return os.path.join(self._a2.paths.module_data, self._mod.source.path)
+        return os.path.join(self._a2.paths.module_data, self._mod.source.name, self._mod.name)
 
 
 class EditAddElem(QtWidgets.QWidget):
