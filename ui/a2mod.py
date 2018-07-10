@@ -484,6 +484,8 @@ class Mod(object):
         self.name = modname
         self.a2 = a2core.A2Obj.inst()
         self.path = os.path.join(self.source.path, modname)
+        self._data_path = None
+        self._temp_path = None
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
@@ -506,14 +508,16 @@ class Mod(object):
     @config.setter
     def config(self, cfg_dict):
         self._config = cfg_dict
+
         # backup current config_file
-        backup_path = os.path.join(self.path, '_config_backups')
-        if not os.path.exists(backup_path):
-            os.mkdir(backup_path)
-        _config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
-        if _config_backups:
-            _config_backups.sort()
-            backup_index = int(_config_backups[-1].rsplit('.', 1)[1]) + 1
+        backup_path = os.path.join(self.temp_path, 'config_backups')
+        if not os.path.isdir(backup_path):
+            os.makedirs(backup_path)
+
+        config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
+        if config_backups:
+            config_backups.sort()
+            backup_index = int(config_backups[-1].rsplit('.', 1)[1]) + 1
         else:
             backup_index = 1
         if self.has_config_file:
@@ -646,6 +650,20 @@ class Mod(object):
         if self.config and tagname in self.config[0].get('tags', []):
             return True
         return False
+
+    @property
+    def data_path(self):
+        if self._data_path is None:
+            self._data_path = os.path.join(
+                self.a2.paths.data, self.source.name, self.name)
+        return self._data_path
+
+    @property
+    def temp_path(self):
+        if self._temp_path is None:
+            self._temp_path = os.path.join(
+                self.a2.paths.temp, self.source.name, self.name)
+        return self._temp_path
 
 
 def get_files(path):
