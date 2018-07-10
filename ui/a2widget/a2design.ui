@@ -43,7 +43,7 @@
      <x>0</x>
      <y>0</y>
      <width>766</width>
-     <height>25</height>
+     <height>43</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -58,9 +58,16 @@
     <property name="title">
      <string>&amp;Dev</string>
     </property>
+    <widget class="QMenu" name="menuRollback_Changes">
+     <property name="title">
+      <string>Rollback Changes</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="actionNew_Module_Dialog"/>
     <addaction name="actionEdit_module"/>
     <addaction name="actionExplore_to"/>
+    <addaction name="menuRollback_Changes"/>
     <addaction name="separator"/>
     <addaction name="actionDisable_all_modules"/>
     <addaction name="actionExplore_to_a2_dir"/>
@@ -208,6 +215,11 @@
   <action name="actionLoad_a2_Runtime">
    <property name="text">
     <string>Load a2 Runtime</string>
+   </property>
+  </action>
+  <action name="actionRollback_Changes">
+   <property name="text">
+    <string>Rollback Changes</string>
    </property>
   </action>
  </widget>

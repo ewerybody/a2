@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Tue Jul 10 22:14:06 2018
+#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1530382130
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -33,12 +33,14 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 25))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 43))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
         self.menuDev = QtWidgets.QMenu(self.menubar)
         self.menuDev.setObjectName("menuDev")
+        self.menuRollback_Changes = QtWidgets.QMenu(self.menuDev)
+        self.menuRollback_Changes.setObjectName("menuRollback_Changes")
         self.menuMain = QtWidgets.QMenu(self.menubar)
         self.menuMain.setObjectName("menuMain")
         self.menuModule = QtWidgets.QMenu(self.menubar)
@@ -89,12 +91,16 @@ class Ui_a2MainWindow(object):
         self.actionUnload_a2_Runtime.setObjectName("actionUnload_a2_Runtime")
         self.actionLoad_a2_Runtime = QtWidgets.QAction(a2MainWindow)
         self.actionLoad_a2_Runtime.setObjectName("actionLoad_a2_Runtime")
+        self.actionRollback_Changes = QtWidgets.QAction(a2MainWindow)
+        self.actionRollback_Changes.setObjectName("actionRollback_Changes")
         self.menuHelp.addAction(self.actionReport_Issue)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
+        self.menuRollback_Changes.addSeparator()
         self.menuDev.addAction(self.actionNew_Module_Dialog)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)
+        self.menuDev.addAction(self.menuRollback_Changes.menuAction())
         self.menuDev.addSeparator()
         self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionExplore_to_a2_dir)
@@ -123,6 +129,7 @@ class Ui_a2MainWindow(object):
         a2MainWindow.setWindowTitle(QtWidgets.QApplication.translate("a2MainWindow", "a2", None, -1))
         self.menuHelp.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "&Help", None, -1))
         self.menuDev.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "&Dev", None, -1))
+        self.menuRollback_Changes.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "Rollback Changes", None, -1))
         self.menuMain.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "&Main", None, -1))
         self.menuModule.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "Module", None, -1))
         self.actionAbout_a2.setText(QtWidgets.QApplication.translate("a2MainWindow", "About a2", None, -1))
@@ -147,6 +154,7 @@ class Ui_a2MainWindow(object):
         self.actionReload_a2_Runtime.setText(QtWidgets.QApplication.translate("a2MainWindow", "Reload a2 Runtime", None, -1))
         self.actionUnload_a2_Runtime.setText(QtWidgets.QApplication.translate("a2MainWindow", "Unload a2 Runtime", None, -1))
         self.actionLoad_a2_Runtime.setText(QtWidgets.QApplication.translate("a2MainWindow", "Load a2 Runtime", None, -1))
+        self.actionRollback_Changes.setText(QtWidgets.QApplication.translate("a2MainWindow", "Rollback Changes", None, -1))
 
 from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView

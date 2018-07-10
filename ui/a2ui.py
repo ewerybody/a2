@@ -134,6 +134,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
+        self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
+        self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
+
     def _setup_shortcuts(self):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                             self, self.escape)
@@ -159,7 +162,7 @@ class A2Window(QtWidgets.QMainWindow):
         if state is None:
             # state=None happens only on startup
             state = self.a2.dev_mode
-            # if True we dont have to re-add
+            # if True we don't have to re-add
             if state is True:
                 return
         if state:
@@ -361,6 +364,20 @@ class A2Window(QtWidgets.QMainWindow):
                 if exepath:
                     self.devset.set_var('code_editor', exepath)
                     self.edit_code(file_path)
+
+    def on_dev_menu_build(self):
+        self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
+
+    def build_rollback_menu(self):
+        menu = self.ui.menuRollback_Changes
+        menu.clear()
+        backups = self.mod.get_config_backups()
+        if not backups:
+            action = menu.addAction('Nothing to roll back to!')
+            action.setEnabled(False)
+        else:
+            for backup_name in backups:
+                menu.addAction(backup_name)
 
 
 class RestartThread(QtCore.QThread):

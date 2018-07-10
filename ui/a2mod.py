@@ -665,6 +665,11 @@ class Mod(object):
                 self.a2.paths.temp, self.source.name, self.name)
         return self._temp_path
 
+    def get_config_backups(self):
+        backup_path = os.path.join(self.temp_path, 'config_backups')
+        config_backups = get_files(backup_path)
+        return config_backups
+
 
 def get_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
