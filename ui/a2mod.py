@@ -486,6 +486,7 @@ class Mod(object):
         self.path = os.path.join(self.source.path, modname)
         self._data_path = None
         self._temp_path = None
+        self._backup_path = None
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
@@ -497,7 +498,7 @@ class Mod(object):
 
     @property
     def has_config_file(self):
-        return os.path.exists(self.config_file)
+        return os.path.isfile(self.config_file)
 
     @property
     def config(self):
@@ -508,22 +509,7 @@ class Mod(object):
     @config.setter
     def config(self, cfg_dict):
         self._config = cfg_dict
-
-        # backup current config_file
-        backup_path = os.path.join(self.temp_path, 'config_backups')
-        if not os.path.isdir(backup_path):
-            os.makedirs(backup_path)
-
-        config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
-        if config_backups:
-            config_backups.sort()
-            backup_index = int(config_backups[-1].rsplit('.', 1)[1]) + 1
-        else:
-            backup_index = 1
-        if self.has_config_file:
-            shutil.copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
-
-        # overwrite config_file
+        self.backup_config()
         a2util.json_write(self.config_file, self._config)
 
     def get_config(self):
@@ -537,9 +523,30 @@ class Mod(object):
         self._config = []
         return self._config
 
+    def backup_config(self):
+        """
+        Backups the current config_file.
+        """
+        if not self.has_config_file:
+            return
+
+        if not os.path.isdir(self.backup_path):
+            os.makedirs(self.backup_path)
+
+        config_backups = [f for f in os.listdir(self.backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
+        if config_backups:
+            config_backups.sort()
+            # split and increase appended version index
+            backup_index = int(config_backups[-1].rsplit('.', 1)[1]) + 1
+        else:
+            backup_index = 1
+
+        shutil.copy2(self.config_file, os.path.join(self.backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
+
     def change(self):
         """
-        Sets the mods own db entries
+        Sets the mods own db entries.
+        TODO: remove empty entries!
         """
         db_dict = {'variables': {}, 'hotkeys': {}, 'includes': [], 'init_calls': []}
         a2ctrl.assemble_settings(self.key, self.config[1:], db_dict, self.path)
@@ -598,8 +605,9 @@ class Mod(object):
         """
         Sets an elements user value.
 
-        Helps to keep the user config as small as possible. For instance if there is a value
-        'enabled' True by default only setting it to False will be saved. User setting it to True
+        Helps to keep the user config as small as possible.
+        For instance if there is a value 'enabled' True by default
+        only setting it to False will be saved. User setting it to True
         would delete it from user settings, so it's taking the default again.
 
         user sets True AND default is True:
@@ -665,14 +673,50 @@ class Mod(object):
                 self.a2.paths.temp, self.source.name, self.name)
         return self._temp_path
 
+    @property
+    def backup_path(self):
+        if self._backup_path is None:
+            self._backup_path = os.path.join(
+                self.a2.paths.temp, self.source.name, self.name, 'config_backups')
+        return self._backup_path
+
     def get_config_backups(self):
-        backup_path = os.path.join(self.temp_path, 'config_backups')
-        config_backups = get_files(backup_path)
-        return config_backups
+        times_and_files = []
+        for file_path, file_name in iter_file_paths(self.backup_path):
+            if not file_name[-1].isdigit():
+                continue
+            times_and_files.append((os.path.getmtime(file_path), file_name))
+        times_and_files.sort()
+        return times_and_files
+
+    def clear_backups(self):
+        for file_path, _ in iter_file_paths(self.backup_path):
+            os.remove(file_path)
+        os.rmdir(self.backup_path)
+
+    def rollback(self, backup_file_name):
+        backup_file_path = os.path.join(self.backup_path, backup_file_name)
+        print('backup_file_path: %s' % backup_file_path)
 
 
 def get_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+
+
+def iter_file_paths(path):
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isfile(item_path):
+            yield (item_path, item)
+
+
+def get_file_paths(path):
+    files = []
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isfile(item_path):
+            files.append(item_path)
+    return files
 
 
 def get_folders(path):

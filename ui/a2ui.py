@@ -2,6 +2,7 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
+import time
 import subprocess
 from copy import deepcopy
 from functools import partial
@@ -136,6 +137,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
         self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
+        self.ui.menuRollback_Changes.setIcon(icons.rollback)
 
     def _setup_shortcuts(self):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -365,19 +367,60 @@ class A2Window(QtWidgets.QMainWindow):
                     self.devset.set_var('code_editor', exepath)
                     self.edit_code(file_path)
 
+    def diff_files(self, file1, file2):
+        if os.path.isfile(self.devset.diff_app):
+            subprocess.Popen([self.devset.diff_app, file1, file2])
+        else:
+            _TASK_MSG = 'browse for a Diff executable'
+            _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
+
+            reply = QtWidgets.QMessageBox.question(
+                self, 'No Diff application set!', _QUEST_MSG,
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
+
+            if reply == QtWidgets.QMessageBox.Yes:
+                exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
+                    self, _TASK_MSG.title(), self.devset.diff_app, 'Executable (*.exe)')
+                if exepath:
+                    self.devset.set_var('diff_app', exepath)
+                    self.diff_files(file1, file2)
+
     def on_dev_menu_build(self):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
 
     def build_rollback_menu(self):
+        icons = a2ctrl.Icons.inst()
         menu = self.ui.menuRollback_Changes
         menu.clear()
-        backups = self.mod.get_config_backups()
-        if not backups:
+        backups_sorted = self.mod.get_config_backups()
+        if not backups_sorted:
             action = menu.addAction('Nothing to roll back to!')
             action.setEnabled(False)
         else:
-            for backup_name in backups:
-                menu.addAction(backup_name)
+            now = time.time()
+            for this_time, backup_name in backups_sorted[:15]:
+                try:
+                    label = 'verion %s - %is ago' % (int(backup_name[-1]), now - this_time)
+                except ValueError:
+                    continue
+                action = menu.addAction(icons.rollback, label, self.module_rollback_to)
+                action.setData(backup_name)
+            menu.addSeparator()
+            menu.addAction(icons.delete, 'Clear Backups', self.mod.clear_backups)
+
+    def module_rollback_to(self):
+        file_name = self.sender().data()
+        title = self.sender().text()
+        from a2dev import RollbackDiffDialog
+
+        file_path = os.path.join(self.mod.backup_path, file_name)
+
+        dialog = RollbackDiffDialog(
+            self, 'Rollback to "%s"' % title,
+            'You can roll back directly or diff it if you want:')
+        dialog.diff.connect(partial(self.diff_files, file_path, self.mod.config_file))
+        dialog.okayed.connect(partial(self.mod.rollback, file_name))
+        dialog.show()
 
 
 class RestartThread(QtCore.QThread):
@@ -441,6 +484,7 @@ class DevSettings(object):
         self.author_name = ''
         self.author_url = ''
         self.code_editor = ''
+        self.diff_app = ''
         self.json_indent = 2
         self.loglevel_debug = False
 
@@ -449,6 +493,7 @@ class DevSettings(object):
             'author_name': os.getenv('USERNAME'),
             'author_url': '',
             'code_editor': '',
+            'diff_app': '',
             'json_indent': 2,
             'loglevel_debug': False}
         self.get()
