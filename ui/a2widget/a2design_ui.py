@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui' applies.
 #
-# Created: Tue Jul 10 22:14:06 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1530382130
+# Created: Wed Jul 11 15:16:52 2018
+#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1529944648
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -33,7 +33,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 43))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 766, 25))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setObjectName("menuHelp")
@@ -96,7 +96,6 @@ class Ui_a2MainWindow(object):
         self.menuHelp.addAction(self.actionReport_Issue)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
-        self.menuRollback_Changes.addSeparator()
         self.menuDev.addAction(self.actionNew_Module_Dialog)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)

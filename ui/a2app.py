@@ -53,7 +53,6 @@ def main():
 def last_window_closed():
     print('a2 lastWindowClosed!')
     app.exit()
-    print('still here ...')
 
 
 def init_a2_win(app):

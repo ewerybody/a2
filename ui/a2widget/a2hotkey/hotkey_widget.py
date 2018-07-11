@@ -54,7 +54,6 @@ class A2Hotkey(QtWidgets.QWidget):
         self.dialog_styles.append(self.dialog_default)
 
     def set_config(self, config_dict):
-        print('set_config on: %s' % self.parent())
         self._cfg = config_dict or {}
         if not self.is_edit_mode and not self._cfg.get(Vars.key_change, True):
             for button in self._hotkey_buttons:
