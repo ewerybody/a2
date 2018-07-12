@@ -21,9 +21,13 @@ ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 l
                  'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
 EXPLORER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
+DEFAULT_NAME_MSG = 'Name "%s" already in use!'
 
 
-def standard_name_check(NAME, black_list=None, black_list_msg='Name "%s" already in use!'):
+def standard_name_check(NAME, black_list=None, black_list_msg=None):
+    if black_list_msg is None:
+        black_list_msg = DEFAULT_NAME_MSG
+
     name = NAME.lower()
     if NAME == '':
         return 'Name cannot be empty!'
@@ -156,3 +160,43 @@ def explore(path):
         raise FileNotFoundError('Cannot explore to path "%s"' % path)
 
     subprocess.run(args)
+
+
+def unroll_seconds(value, decimals=2):
+    """
+    Converts a number of seconds to easily readable values like
+    2 minutes
+    5 weeks ...
+
+    :param int value: Number of seconds.
+    :rtype: str
+    """
+    current = float(value)
+    if value > 60:
+        d = [(60, 'minutes'), (60, 'hours'), (24, 'days'),
+             (7, 'weeks'), (4, 'months'), (12, 'years')]
+        last = current
+        for i, (divider, name) in enumerate(d):
+            current = current / divider
+            # print('%ss is %s %s' % (value, current, name))
+            if current == 1.0:
+                break
+            if current < 1:
+                name = d[i - 1][1]
+                current = last
+                break
+            last = current
+    else:
+        name = 'seconds'
+
+    v = round(current, decimals)
+    if decimals == 0:
+        v = int(v)
+        if v == 1:
+            name = name[:-1]
+    return '%s %s' % (v, name)
+
+
+if __name__ == '__main__':
+    x = unroll_seconds(29030400.0, 0)
+    print('x: %s' % x)
