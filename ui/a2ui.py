@@ -7,6 +7,7 @@ import subprocess
 from copy import deepcopy
 from functools import partial
 
+import a2dev
 import a2core
 import a2ctrl
 import a2util
@@ -40,7 +41,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.style = None
         self.rebuild_css()
 
-        self.devset = DevSettings(self.a2)
+        self.devset = a2dev.DevSettings(self.a2)
         if self.devset.loglevel_debug:
             a2core.set_loglevel(debug=True)
             log.debug('Loglevel set to DEBUG!')
@@ -400,7 +401,8 @@ class A2Window(QtWidgets.QMainWindow):
             now = time.time()
             for this_time, backup_name in backups_sorted[:15]:
                 try:
-                    label = 'verion %s - %is ago' % (int(backup_name[-1]), now - this_time)
+                    label = a2util.unroll_seconds(now - this_time, 2)
+                    label = 'version %s - %s ago' % (int(backup_name[-1]), label)
                 except ValueError:
                     continue
                 action = menu.addAction(icons.rollback, label, self.module_rollback_to)
@@ -415,9 +417,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         file_path = os.path.join(self.mod.backup_path, file_name)
 
-        dialog = RollbackDiffDialog(
-            self, 'Rollback to "%s"' % title,
-            'You can roll back directly or diff it if you want:')
+        dialog = RollbackDiffDialog(self, title)
         dialog.diff.connect(partial(self.diff_files, file_path, self.mod.config_file))
         dialog.okayed.connect(partial(self.mod.rollback, file_name))
         dialog.show()
@@ -476,52 +476,6 @@ class RuntimeWatcher(QtCore.QThread):
                 self.message.emit('Runtime is Offline!')
 
         return QtCore.QThread.run(self, *args, **kwargs)
-
-
-class DevSettings(object):
-    def __init__(self, a2):
-        self._enabled = False
-        self.author_name = ''
-        self.author_url = ''
-        self.code_editor = ''
-        self.diff_app = ''
-        self.json_indent = 2
-        self.loglevel_debug = False
-
-        self._a2 = a2
-        self._defaults = {
-            'author_name': os.getenv('USERNAME'),
-            'author_url': '',
-            'code_editor': '',
-            'diff_app': '',
-            'json_indent': 2,
-            'loglevel_debug': False}
-        self.get()
-
-        log.info('loglevel_debug: %s' % self.loglevel_debug)
-        log.debug('loglevel_debug: %s' % self.loglevel_debug)
-
-    def _get_from_db(self):
-        return self._a2.db.get_changes('dev_settings', self._defaults)
-
-    def get(self):
-        settings = self._get_from_db()
-        self._set_attrs(settings)
-        return settings
-
-    def _set_attrs(self, settings):
-        for key, value in settings.items():
-            setattr(self, key, value)
-        a2util.JSON_INDENT = self.json_indent
-
-    def set(self, these):
-        self._a2.db.set_changes('dev_settings', these, self._defaults)
-        self._set_attrs(these)
-
-    def set_var(self, key, value):
-        settings = self._get_from_db()
-        settings[key] = value
-        self.set(settings)
 
 
 if __name__ == '__main__':
