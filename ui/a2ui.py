@@ -411,16 +411,19 @@ class A2Window(QtWidgets.QMainWindow):
             menu.addAction(icons.delete, 'Clear Backups', self.mod.clear_backups)
 
     def module_rollback_to(self):
-        file_name = self.sender().data()
         title = self.sender().text()
-        from a2dev import RollbackDiffDialog
-
+        file_name = self.sender().data()
         file_path = os.path.join(self.mod.backup_path, file_name)
 
+        from a2dev import RollbackDiffDialog
         dialog = RollbackDiffDialog(self, title)
-        dialog.diff.connect(partial(self.diff_files, file_path, self.mod.config_file))
-        dialog.okayed.connect(partial(self.mod.rollback, file_name))
+        dialog.diff.connect(partial(self.diff_files, self.mod.config_file, file_path))
+        dialog.okayed.connect(partial(self.on_rollback, file_name))
         dialog.show()
+
+    def on_rollback(self, file_name):
+        self.mod.rollback(file_name)
+        self.settings_changed()
 
 
 class RestartThread(QtCore.QThread):

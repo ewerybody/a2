@@ -533,7 +533,8 @@ class Mod(object):
         if not os.path.isdir(self.backup_path):
             os.makedirs(self.backup_path)
 
-        config_backups = [f for f in os.listdir(self.backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
+        config_backups = [f for f in os.listdir(self.backup_path)
+                          if f.startswith('%s.' % CONFIG_FILENAME)]
         if config_backups:
             config_backups.sort()
             # split and increase appended version index
@@ -541,7 +542,8 @@ class Mod(object):
         else:
             backup_index = 1
 
-        shutil.copy2(self.config_file, os.path.join(self.backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
+        path = os.path.join(self.backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index))
+        shutil.copy2(self.config_file, path)
 
     def change(self):
         """
@@ -696,7 +698,11 @@ class Mod(object):
 
     def rollback(self, backup_file_name):
         backup_file_path = os.path.join(self.backup_path, backup_file_name)
-        print('backup_file_path: %s' % backup_file_path)
+        self.backup_config()
+        os.remove(self.config_file)
+        shutil.copy(backup_file_path, self.config_file)
+        self.get_config()
+        self.change()
 
 
 def get_files(path):
@@ -704,10 +710,11 @@ def get_files(path):
 
 
 def iter_file_paths(path):
-    for item in os.listdir(path):
-        item_path = os.path.join(path, item)
-        if os.path.isfile(item_path):
-            yield (item_path, item)
+    if os.path.isdir(path):
+        for item in os.listdir(path):
+            item_path = os.path.join(path, item)
+            if os.path.isfile(item_path):
+                yield (item_path, item)
 
 
 def get_file_paths(path):
