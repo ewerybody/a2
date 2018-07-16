@@ -305,8 +305,7 @@ class AddSourceDialog(A2InputDialog):
         else:
             self.ui.text_field.setText(url)
 
-        result = self.check(url)
-        if result is False:
+        if not self.check(url):
             return
 
         self.ui.text_field.setEnabled(False)
@@ -343,8 +342,8 @@ class AddSourceDialog(A2InputDialog):
             self.show_error('Error reading the fetched data!:\n%s' % error)
             return
 
-        self.clickable_label = QtWidgets.QLabel(MSG_INSTALL_DISCLAIMER
-                                            % self.a2.urls.security)
+        self.clickable_label = QtWidgets.QLabel(
+            MSG_INSTALL_DISCLAIMER % self.a2.urls.security)
         self.clickable_label.setWordWrap(True)
         self.clickable_label.setOpenExternalLinks(True)
         self.ui.main_layout.insertWidget(1, self.clickable_label)
@@ -353,7 +352,6 @@ class AddSourceDialog(A2InputDialog):
         self.checkbox.setVisible(True)
         self.check()
         self._dialog_state = 1
-        self.resize_delayed()
 
     def _install_package(self):
         self.clickable_label.setVisible(False)
