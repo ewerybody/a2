@@ -77,7 +77,7 @@ class ModSource(object):
         self.name = name
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
-        self.backup_path = os.path.join(a2.paths.temp, name)
+        self.backup_path = os.path.join(a2.paths.temp, name, 'versions')
         self.mods = {}
         self.mod_count = 0
 
@@ -485,7 +485,6 @@ class Mod(object):
         self.a2 = a2core.A2Obj.inst()
         self.path = os.path.join(self.source.path, modname)
         self._data_path = None
-        self._temp_path = None
         self._backup_path = None
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
@@ -669,17 +668,10 @@ class Mod(object):
         return self._data_path
 
     @property
-    def temp_path(self):
-        if self._temp_path is None:
-            self._temp_path = os.path.join(
-                self.a2.paths.temp, self.source.name, self.name)
-        return self._temp_path
-
-    @property
     def backup_path(self):
         if self._backup_path is None:
             self._backup_path = os.path.join(
-                self.a2.paths.temp, self.source.name, self.name, 'config_backups')
+                self.a2.paths.temp, self.source.name, 'config_backups', self.name)
         return self._backup_path
 
     def get_config_backups(self):
