@@ -552,7 +552,10 @@ class Mod(object):
         db_dict = {'variables': {}, 'hotkeys': {}, 'includes': [], 'init_calls': []}
         a2ctrl.assemble_settings(self.key, self.config[1:], db_dict, self.path)
         for typ, data in db_dict.items():
-            self.a2.db.set(typ, data, self.key)
+            if data:
+                self.a2.db.set(typ, data, self.key)
+            else:
+                self.a2.db.pop(typ, self.key)
 
     @property
     def scripts(self):
@@ -617,7 +620,9 @@ class Mod(object):
             set to user_cfg
         """
         cfg_name = a2util.get_cfg_default_name(sub_cfg)
-        current_cfg = self.a2.db.get(cfg_name, self.key) or {}
+        # current_cfg = self.a2.db.get(cfg_name, self.key) or {}
+        module_user_cfg = self.get_user_cfg()
+        current_cfg = module_user_cfg.get(cfg_name, {})
         if attr_name is None:
             if value == current_cfg:
                 return
@@ -634,7 +639,11 @@ class Mod(object):
             if value != sub_cfg.get(attr_name):
                 current_cfg[attr_name] = value
 
-        self.a2.db.set(cfg_name, current_cfg, self.key)
+        module_user_cfg[cfg_name] = current_cfg
+        self.a2.db.set('user_cfg', module_user_cfg, self.key)
+
+    def get_user_cfg(self):
+        return self.a2.db.get('user_cfg', self.key) or {}
 
     def help(self):
         try:
