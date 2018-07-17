@@ -11,17 +11,16 @@ import a2ctrl
 from a2ctrl import Icons
 
 
-class DrawCtrl(QtWidgets.QWidget):
+class DrawCtrlMixin(object):
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
     """
-    def __init__(self, main, cfg, mod, _init_ctrl=True):
+    def __init__(self, main, cfg, mod, user_cfg=None):
         """"
-        :param bool _init_ctrl: Set False when using multiple inheritance to keep it from calling super() again.
+        :param bool _init_ctrl: Set False when using multiple inheritance
+        to keep it from calling super() again.
         """
-        if _init_ctrl:
-            super(DrawCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.cfg = cfg
@@ -35,12 +34,7 @@ class DrawCtrl(QtWidgets.QWidget):
         self._check_timer.setInterval(self.check_delay)
         self._check_timer.timeout.connect(self._check)
         self._check_args = None
-
-        cfg_name = a2util.get_cfg_default_name(self.cfg)
-        try:
-            self.user_cfg = self.a2.db.get(cfg_name, self.mod.key) or {}
-        except AttributeError:
-            self.user_cfg = {}
+        self.user_cfg = user_cfg or {}
 
     def get_user_value(self, typ, name=None, default=None):
         """
@@ -101,6 +95,16 @@ class DrawCtrl(QtWidgets.QWidget):
         To be re-implemented when subclassing DrawCtrl.
         """
         pass
+
+
+class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
+    """
+    Display widget to host everything that you want to show to the
+    user for him to set up on your module.
+    """
+    def __init__(self, main, cfg, mod, user_cfg=None):
+        super(DrawCtrl, self).__init__(parent=main)
+        DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
 
 
 class EditCtrl(QtWidgets.QGroupBox):
