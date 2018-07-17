@@ -12,10 +12,11 @@ from a2element import nfo_edit_ui
 
 
 class Draw(QtWidgets.QWidget):
-    def __init__(self, main, cfg, mod):
+    def __init__(self, *args):
         super(Draw, self).__init__()
         self.main_layout = QtWidgets.QVBoxLayout(self)
-        text = cfg.get('description', '')
+
+        text = args[1].get('description', '')
         if text:
             self.label = QtWidgets.QLabel(self)
             self.label.setText(text)
@@ -27,7 +28,7 @@ class Draw(QtWidgets.QWidget):
 
 
 class Edit(QtWidgets.QGroupBox):
-    def __init__(self, cfg, main, parent_cfg):
+    def __init__(self, cfg, *args):
         super(Edit, self).__init__()
         self.cfg = cfg
         self.typ = cfg['typ']

@@ -1,25 +1,24 @@
-'''
-Created on Mar 22, 2016
-
-@author: eRiC
-'''
-import a2ctrl
 from functools import partial
+
+import a2ctrl
+
 from PySide2 import QtWidgets
-from a2element import number_edit_ui, DrawCtrl, EditCtrl
+
 from a2widget import A2Slider
+from a2element import number_edit_ui, DrawCtrl, EditCtrl
 
 
 class Draw(DrawCtrl):
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
+
         value = self.get_user_value((float, int), default=0.0)
         self.value = _toggle_type(self.cfg['decimals'], value)
 
         self.suffix_label = None
-        self._setupUi()
+        self._setup_ui()
 
-    def _setupUi(self):
+    def _setup_ui(self):
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
@@ -98,7 +97,7 @@ class Edit(EditCtrl):
             ctrl.valueChanged.connect(set_func)
         self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
 
-    def set_value(self, value=None, *args):
+    def set_value(self, value=None, *_args):
         if value is None:
             value = self.ui.value.value()
 
@@ -121,7 +120,7 @@ def _toggle_type(decimals, value):
     return value
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=(int, float), default=0.0)
     db_dict['variables'][cfg['name']] = value

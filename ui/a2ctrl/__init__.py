@@ -67,7 +67,7 @@ def check_ui_module(module):
         reload(module)
 
 
-def draw(main, cfg, mod):
+def draw(main, cfg, mod, user_cfg):
     """
     mapper that returns display control objects
     according to the 'typ' of a config element
@@ -203,10 +203,11 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
 
 def assemble_settings(module_key, cfg_dict, db_dict, module_path=None):
     a2obj = a2core.A2Obj.inst()
+    module_user_cfg = a2obj.db.get('user_cfg', module_key) or {}
     for cfg in cfg_dict:
         # get configs named db entry of module or None
         cfg_name = a2util.get_cfg_default_name(cfg)
-        user_cfg = a2obj.db.get(cfg_name, module_key)
+        user_cfg = module_user_cfg.get(cfg_name)
         # pass if there is an 'enabled' entry and it's False
         if not get_cfg_value(cfg, user_cfg, 'enabled', default=True):
             continue

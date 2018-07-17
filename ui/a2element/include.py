@@ -1,15 +1,10 @@
-"""
-a2element.include
-
-@created: Sep 3, 2016
-@author: eRiC
-"""
 import os
-
-from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
 import a2core
+
+from PySide2 import QtCore, QtWidgets
+
 from a2element import EditCtrl
 from a2element.common import BrowseScriptsMenu
 
@@ -60,5 +55,5 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().code
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, _user_cfg):
     db_dict.setdefault('includes', []).append(cfg['file'])

@@ -36,8 +36,8 @@ class Draw(DrawCtrl):
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
         additional shortcuts, controls to change scope if that's enabled...
     """
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
         self._setup_ui()
 
     def _setup_hotkey(self):

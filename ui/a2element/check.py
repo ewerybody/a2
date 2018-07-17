@@ -1,18 +1,15 @@
-"""
-@created: Dec 28, 2015
-@author: eRiC
-"""
 import a2ctrl
+
 from PySide2 import QtWidgets
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
 
 
 class Draw(DrawCtrl):
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
-        self._setupUi()
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
+        self._setup_ui()
 
-    def _setupUi(self):
+    def _setup_ui(self):
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.checkbox = QtWidgets.QCheckBox(self.cfg.get('label', ''), self)
@@ -52,6 +49,6 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().check
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=bool, default=cfg.get('value', False))
     db_dict.setdefault('variables', {})[cfg['name']] = value

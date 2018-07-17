@@ -81,8 +81,11 @@ class A2ModuleView(QtWidgets.QWidget):
         self.update_header(nfo.get('author', ''), nfo.get('version', ''))
 
         self.controls = []
+        module_user_cfg = self.main.mod.get_user_cfg()
         for cfg in config:
-            self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod))
+            cfg_name = a2util.get_cfg_default_name(cfg)
+            user_cfg = module_user_cfg.get(cfg_name, {})
+            self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod, user_cfg))
 
         self.ui.head_widget.setVisible(True)
         self.toggle_edit(False)

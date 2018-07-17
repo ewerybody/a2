@@ -1,21 +1,16 @@
-'''
-Created on Apr 1, 2016
-
-@author: eRiC
-'''
 import a2ctrl.qlist
 from PySide2 import QtCore, QtWidgets
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 
 class Draw(DrawCtrl):
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
         self.value = self.get_user_value(str)
         self.user_edit = self.cfg.get('user_edit', False)
-        self._setupUi()
+        self._setup_ui()
 
-    def _setupUi(self):
+    def _setup_ui(self):
         self.layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
@@ -122,7 +117,7 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().combo
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
     db_dict['variables'][cfg['name']] = value

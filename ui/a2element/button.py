@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-Some element description ...
+import os
+import traceback
 
-@created: 2016 11 14
-@author: Eric Werner
-"""
 import a2ahk
 import a2ctrl
 from PySide2 import QtWidgets
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
-import traceback
-import os
 
 
 log = get_logger(__name__)
@@ -22,8 +17,8 @@ class Draw(DrawCtrl):
     The frontend widget visible to the user with options
     to change the default behavior of the element.
     """
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
 
         self.button_layout = QtWidgets.QHBoxLayout(self)
         labeltext = self.cfg.get('labeltext', '')
@@ -34,7 +29,6 @@ class Draw(DrawCtrl):
         self.button = QtWidgets.QPushButton(self.cfg.get('buttontext', ''))
         self.button.clicked.connect(self.call_code)
         self.button_layout.addWidget(self.button)
-        # self.setLayout(self.main_layout)
 
     def call_code(self):
         code = self.cfg.get('code', '')
