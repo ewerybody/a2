@@ -75,27 +75,39 @@ def draw(main, cfg, mod):
     if cfg.get('typ') in NO_DRAW_TYPES:
         return
 
-    mod_path = None if mod is None else mod.path
-    ElementDrawClass = get_a2element_object('Draw', cfg.get('typ'), mod_path)
+    element_module = get_a2element_module(cfg.get('typ'))
+    try:
+        return element_module.Draw(main, cfg, mod, user_cfg)
 
-    if ElementDrawClass is not None:
-        try:
-            return ElementDrawClass(main, cfg, mod)
-        except Exception:
-            log.error(traceback.format_exc().strip())
-    log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod))
+    except Exception:
+        mod_path = None if mod is None else mod.path
+        ElementDrawClass = get_a2element_object('Draw', cfg.get('typ'), mod_path)
+
+        if ElementDrawClass is not None:
+            try:
+                return ElementDrawClass(main, cfg, mod, user_cfg)
+            except Exception:
+                log.error(traceback.format_exc().strip())
+        log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod))
 
 
 def edit(cfg, main, parent_cfg):
-    mod_path = None if main.mod is None else main.mod.path
-    ElementEditClass = get_a2element_object('Edit', cfg.get('typ'), mod_path)
-    if ElementEditClass is not None:
-        try:
-            return ElementEditClass(cfg, main, parent_cfg)
-        except Exception:
-            log.error(traceback.format_exc().strip())
-    log.error('Error getting Edit class for type "%s"!'
-              ' Type not supported (yet)?!' % cfg.get('typ'))
+
+    element_module = get_a2element_module(cfg.get('typ'))
+    try:
+        return element_module.Edit(cfg, main, parent_cfg)
+
+    except Exception:
+        mod_path = None if main.mod is None else main.mod.path
+        ElementEditClass = get_a2element_object('Edit', cfg.get('typ'), mod_path)
+        if ElementEditClass is not None:
+            try:
+                return ElementEditClass(cfg, main, parent_cfg)
+
+            except Exception:
+                log.error(traceback.format_exc().strip())
+                log.error('Error getting Edit class for type "%s"!'
+                          ' Type not supported (yet)?!' % cfg.get('typ'))
 
 
 def get_a2element_object(obj_name, element_type, module_path=None):
@@ -105,7 +117,7 @@ def get_a2element_object(obj_name, element_type, module_path=None):
     :param module_path:
     :rtype: class
     """
-    element_mod = get_a2element(element_type)
+    element_mod = get_a2element_module(element_type)
     if element_mod is not None:
         return getattr(element_mod, obj_name)
 
@@ -116,7 +128,7 @@ def get_a2element_object(obj_name, element_type, module_path=None):
         return element_objects[obj_name]
 
 
-def get_a2element(element_type):
+def get_a2element_module(element_type):
     """
     From the "typ" tries to import the according module from a2element
     """
