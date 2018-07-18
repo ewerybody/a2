@@ -101,15 +101,15 @@ class A2Window(QtWidgets.QMainWindow):
     def _setup_actions(self):
         icons = a2ctrl.Icons.inst()
         self.ui.actionEdit_module.triggered.connect(self.edit_mod)
-        self.ui.actionEdit_module.setShortcut('Ctrl+E')
         self.ui.actionEdit_module.setIcon(icons.edit)
 
         self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionExplore_to.setIcon(icons.folder)
+
         self.ui.actionAbout_a2.triggered.connect(partial(a2util.surf_to, self.a2.urls.help))
-        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2util.surf_to, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(icons.a2help)
+        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2util.surf_to, self.a2.urls.ahk))
         self.ui.actionAbout_Autohotkey.setIcon(icons.autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
@@ -156,6 +156,8 @@ class A2Window(QtWidgets.QMainWindow):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End),
                             self.module_view.ui.a2scroll_area,
                             partial(self.scroll_to, False))
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F1),
+                            self, self.module_view.help)
 
     def edit_mod(self, keep_scroll=False):
         if self.num_selected == 1:
@@ -424,6 +426,12 @@ class A2Window(QtWidgets.QMainWindow):
     def on_rollback(self, file_name):
         self.mod.rollback(file_name)
         self.settings_changed()
+
+    def on_help_action(self):
+        text = self.sender().text()
+        print('text: %s' % text)
+        print('self.a2.urls.help: %s' % self.a2.urls.help)
+        a2util.surf_to(self.a2.urls.help)
 
 
 class RestartThread(QtCore.QThread):

@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui' applies.
 #
-# Created: Wed Jul 11 15:16:52 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1529944648
+# Created: Wed Jul 18 15:58:14 2018
+#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1531258024
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -47,9 +47,11 @@ class Ui_a2MainWindow(object):
         self.menuModule.setObjectName("menuModule")
         a2MainWindow.setMenuBar(self.menubar)
         self.actionAbout_a2 = QtWidgets.QAction(a2MainWindow)
-        self.actionAbout_a2.setShortcut("F1")
+        self.actionAbout_a2.setShortcut("")
         self.actionAbout_a2.setObjectName("actionAbout_a2")
         self.actionEdit_module = QtWidgets.QAction(a2MainWindow)
+        self.actionEdit_module.setText("Edit Module")
+        self.actionEdit_module.setShortcut("Ctrl+E")
         self.actionEdit_module.setObjectName("actionEdit_module")
         self.actionDisable_all_modules = QtWidgets.QAction(a2MainWindow)
         self.actionDisable_all_modules.setObjectName("actionDisable_all_modules")
@@ -132,7 +134,6 @@ class Ui_a2MainWindow(object):
         self.menuMain.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "&Main", None, -1))
         self.menuModule.setTitle(QtWidgets.QApplication.translate("a2MainWindow", "Module", None, -1))
         self.actionAbout_a2.setText(QtWidgets.QApplication.translate("a2MainWindow", "About a2", None, -1))
-        self.actionEdit_module.setText(QtWidgets.QApplication.translate("a2MainWindow", "Edit Module", None, -1))
         self.actionDisable_all_modules.setText(QtWidgets.QApplication.translate("a2MainWindow", "Disable All Modules", None, -1))
         self.actionExplore_to.setText(QtWidgets.QApplication.translate("a2MainWindow", "Explore to Module ...", None, -1))
         self.actionDev_settings.setText(QtWidgets.QApplication.translate("a2MainWindow", "Dev Settings ...", None, -1))
@@ -155,5 +156,5 @@ class Ui_a2MainWindow(object):
         self.actionLoad_a2_Runtime.setText(QtWidgets.QApplication.translate("a2MainWindow", "Load a2 Runtime", None, -1))
         self.actionRollback_Changes.setText(QtWidgets.QApplication.translate("a2MainWindow", "Rollback Changes", None, -1))
 
-from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
+from a2widget.a2module_list import A2ModuleList

@@ -23,16 +23,7 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <item>
@@ -113,12 +104,15 @@
     <string>About a2</string>
    </property>
    <property name="shortcut">
-    <string notr="true">F1</string>
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionEdit_module">
    <property name="text">
-    <string>Edit Module</string>
+    <string notr="true">Edit Module</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+E</string>
    </property>
   </action>
   <action name="actionDisable_all_modules">

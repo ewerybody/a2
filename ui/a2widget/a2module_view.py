@@ -37,7 +37,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.settings_widget = self.ui.scroll_area_contents
 
         self.ui.modCheck.clicked[bool].connect(self.main.mod_enable)
-        self.ui.a2help_button.clicked.connect(self.mod_info)
+        self.ui.a2help_button.clicked.connect(self.help)
 
         self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
@@ -227,7 +227,7 @@ class A2ModuleView(QtWidgets.QWidget):
         for button in [self.ui.a2cancel_button, self.ui.a2ok_button]:
             button.setEnabled(state)
 
-    def mod_info(self):
+    def help(self):
         """
         Open help of the selected module or a2 help
         """
