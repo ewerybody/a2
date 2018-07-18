@@ -142,6 +142,12 @@ class A2db(object):
         """
         removes a whole entry from a table. So the whole row: index, key and value will be gone
         """
+        if not self.db_file_exists:
+            return None
+
+        if table not in self.tables():
+            return None
+
         if key not in self.keys(table):
             return
         statement = f'delete from "{table}" where key=?'
