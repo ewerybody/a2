@@ -186,34 +186,6 @@ strip(byref inputString)
     return inputString
 }
 
-
-; checks for some aspects to assume that the given string is a URL
-; TODO: this can probably be done much much better!!!...
-isURL(byref str)
-{
-    ; look if the start of the string is url like
-    if (SubStr(str,1,7) == "http://" || SubStr(str,1,8) == "https://" || SubStr(str,1,4) == "www.")
-        return true
-    ; now the end of the string
-    if (SubStr(str,-3,4) == ".htm" || SubStr(str,-4,5) == ".html")
-        return true
-    ; now if inbetween are TLDs like .com, .de, .co.uk ...
-    else
-    {
-        dotpos := InStr(str,".")
-        sub := SubStr(str,dotpos,3)
-        if (sub == ".de" || sub == ".at" || sub == ".ch")
-            return true
-        sub := SubStr(str,dotpos,4)
-        if (sub == ".com" || sub == ".org" || sub == ".net")
-            return true
-        if (SubStr(str,dotpos,6) == ".co.uk")
-            return true
-    }
-    return false
-}
-
-
 ; Remove quotes from a string if necessary
 UnQuote(string)
 {
