@@ -14,8 +14,8 @@ class Draw(DrawCtrl):
     The frontend widget visible to the user with options
     to change the default behavior of the element.
     """
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
 
 
 class Edit(EditCtrl):
