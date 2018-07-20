@@ -113,7 +113,6 @@ class A2db(object):
         self._ensure_db_file_exists()
 
         jvalue = json.dumps(value, separators=(',', ':'))
-        jvalue = jvalue.replace('"', '""')
         try:
             if key not in self.keys(table):
                 statement = f'insert into "{table}" (key, value) values (?, ?)'
@@ -150,6 +149,7 @@ class A2db(object):
 
         if key not in self.keys(table):
             return
+
         statement = f'delete from "{table}" where key=?'
         self._commit(statement, (key,))
 
