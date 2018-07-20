@@ -30,6 +30,7 @@ ICON_FILENAME = 'a2icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
 STALE_CONFIG_TIMEOUT = 0.5
+USER_CFG_KEY = 'user_cfg'
 
 MSG_NO_UPDATE_URL = 'No update-URL given!'
 MSG_DOWNLOAD = 'Downloading %s - %s (%i%s)'
@@ -605,7 +606,7 @@ class Mod(object):
             return 'Module has already a script named "%s"!' % name
         return True
 
-    def set_user_cfg(self, sub_cfg, value, attr_name=None):
+    def set_user_cfg(self, element_cfg, value, attr_name=None):
         """
         Sets an elements user value.
 
@@ -618,16 +619,23 @@ class Mod(object):
             delete from user_cfg
         user sets True AND default it False:
             set to user_cfg
+
+        :param dict element_cfg: The modules original config for the element.
+        :param any value: Variable value o
+        :param str attr_name: If given sets the value to the name inside a dict.
+            Otherwise the value is regarded as a whole.
         """
-        cfg_name = a2util.get_cfg_default_name(sub_cfg)
-        # current_cfg = self.a2.db.get(cfg_name, self.key) or {}
+        cfg_name = a2util.get_cfg_default_name(element_cfg)
         module_user_cfg = self.get_user_cfg()
-        current_cfg = module_user_cfg.get(cfg_name, {})
+
         if attr_name is None:
+            current_cfg = module_user_cfg.get(cfg_name)
             if value == current_cfg:
                 return
             current_cfg = value
+
         else:
+            current_cfg = module_user_cfg.get(cfg_name, {})
             if attr_name in current_cfg:
                 # value to set equals CURRENT value: done
                 if value == current_cfg.get(attr_name):
@@ -636,14 +644,42 @@ class Mod(object):
                 current_cfg.pop(attr_name)
 
             # value to set equals CONFIG value: done. otherwise: save it:
-            if value != sub_cfg.get(attr_name):
+            if value != element_cfg.get(attr_name):
                 current_cfg[attr_name] = value
 
-        module_user_cfg[cfg_name] = current_cfg
-        self.a2.db.set('user_cfg', module_user_cfg, self.key)
+        # delete the value from module_user_cfg if needed
+        if not current_cfg:
+            try:
+                del module_user_cfg[cfg_name]
+            except KeyError:
+                pass
+        else:
+            module_user_cfg[cfg_name] = current_cfg
+
+        # delete module_user_cfg alltogether if needed
+        if module_user_cfg:
+            self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
+        else:
+            self.clear_user_cfg()
 
     def get_user_cfg(self):
-        return self.a2.db.get('user_cfg', self.key) or {}
+        return self.a2.db.get(USER_CFG_KEY, self.key) or {}
+
+    def clear_user_cfg(self):
+        self.a2.db.pop(USER_CFG_KEY, self.key)
+
+    def clear_user_cfg_name(self, cfg_name):
+        module_user_cfg = self.get_user_cfg()
+        try:
+            del module_user_cfg[cfg_name]
+        except KeyError:
+            pass
+
+        # delete module_user_cfg alltogether if needed
+        if module_user_cfg:
+            self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
+        else:
+            self.clear_user_cfg()
 
     def help(self):
         try:

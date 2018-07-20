@@ -140,6 +140,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
         self.ui.menuRollback_Changes.setIcon(icons.rollback)
 
+        self.ui.actionRevert_Settings.triggered.connect(self.on_revert_settings)
+
     def _setup_shortcuts(self):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                             self, self.escape)
@@ -432,6 +434,27 @@ class A2Window(QtWidgets.QMainWindow):
         print('text: %s' % text)
         print('self.a2.urls.help: %s' % self.a2.urls.help)
         a2util.surf_to(self.a2.urls.help)
+
+    def on_revert_settings(self):
+        if self.mod is None:
+            return
+        from a2widget import A2ConfirmDialog
+
+        module_user_cfg = self.mod.get_user_cfg()
+        if module_user_cfg:
+            dialog = A2ConfirmDialog(self, 'Revert User Settings',
+                                     msg='This will throw away any user changes!')
+            dialog.okayed.connect(self._on_revert_settings)
+            dialog.show()
+        else:
+            dialog = A2ConfirmDialog(self, 'Nothing to Revert!',
+                                     msg='Appears everything is on "factory settings"!')
+            dialog.show()
+
+    def _on_revert_settings(self):
+        self.mod.clear_user_cfg()
+        self.mod.change()
+        self.load_runtime_and_ui()
 
 
 class RestartThread(QtCore.QThread):
