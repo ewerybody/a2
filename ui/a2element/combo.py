@@ -120,4 +120,6 @@ class Edit(EditCtrl):
 def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
-    db_dict['variables'][cfg['name']] = value
+    # user values might been stuck in the db only save if allowed.
+    if cfg.get('user_edit', False) or value in cfg.get('items', []):
+        db_dict['variables'][cfg['name']] = value
