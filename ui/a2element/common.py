@@ -272,8 +272,9 @@ class EditCtrl(QtWidgets.QGroupBox):
         """
         if 'name' not in self.cfg:
             # build the base control name
-            new_name = '%s_%s' % (self.main.mod.name.replace(' ', '_'),
-                                  self.element_name())
+            new_name = '%s_%s' % (self.main.mod.name, self.element_name())
+            new_name = new_name.replace(' ', '_')
+
             # find biggest number
             this_type = self.cfg['typ']
             controls = [cfg.get('name', '') for cfg in self.main.temp_config
