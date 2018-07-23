@@ -648,7 +648,7 @@ class Mod(object):
                 current_cfg[attr_name] = value
 
         # delete the value from module_user_cfg if needed
-        if not current_cfg:
+        if current_cfg is None:
             try:
                 del module_user_cfg[cfg_name]
             except KeyError:
