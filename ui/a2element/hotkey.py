@@ -108,8 +108,8 @@ class Draw(DrawCtrl):
     def build_hotkey_options_menu(self, menu):
         action = menu.addAction('Add another Hotkey')
         action.setEnabled(False)
-        action = menu.addAction('Revert to Default')
-        action.setEnabled(False)
+        if self.has_user_cfg():
+            menu.addAction('Revert to Default', self.clear_user_cfg)
 
         if self.cfg.get(Vars.key_change, True) and not self.hotkey_button.is_clear:
             menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',

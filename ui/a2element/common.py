@@ -68,6 +68,19 @@ class DrawCtrlMixin(object):
             # cannot set config if no module given
             pass
 
+    def has_user_cfg(self):
+        """
+        Tells you if the element has user data saved.
+        :rtype: bool
+        """
+        name = a2util.get_cfg_default_name(self.cfg)
+        return self.mod.is_in_user_cfg(name)
+
+    def clear_user_cfg(self):
+        name = a2util.get_cfg_default_name(self.cfg)
+        self.mod.clear_user_cfg_name(name)
+        self.main.load_runtime_and_ui()
+
     def change(self, specific=None):
         """
         Triggers the module to save it's settings to the database and

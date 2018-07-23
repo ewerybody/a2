@@ -667,6 +667,7 @@ class Mod(object):
 
     def clear_user_cfg(self):
         self.a2.db.pop(USER_CFG_KEY, self.key)
+        self.change()
 
     def clear_user_cfg_name(self, cfg_name):
         module_user_cfg = self.get_user_cfg()
@@ -680,6 +681,15 @@ class Mod(object):
             self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
         else:
             self.clear_user_cfg()
+        self.change()
+
+    def is_in_user_cfg(self, name):
+        """
+        Tells you if an element has user data saved.
+        :param str name: Name of the element
+        :rtype: bool
+        """
+        return name in self.get_user_cfg()
 
     def help(self):
         try:
