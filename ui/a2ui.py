@@ -34,7 +34,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.temp_config = None
         self.selected = []
         self.mod = None
-        self.scopes = {}
 
         self.style = None
         self.rebuild_css()
@@ -74,6 +73,8 @@ class A2Window(QtWidgets.QMainWindow):
             self.mod = module_list[0]
         else:
             self.mod = None
+
+        self.check_main_menu_bar()
         self.module_view.draw_mod()
 
     def _setup_ui(self):
@@ -92,7 +93,7 @@ class A2Window(QtWidgets.QMainWindow):
         self._setup_actions()
         self._setup_shortcuts()
 
-        self.toggle_dev_menu()
+        self.check_main_menu_bar()
         self.setWindowIcon(a2ctrl.Icons.inst().a2)
         self.restore_ui()
 
@@ -134,6 +135,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
+        self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
+
     def _setup_shortcuts(self):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                             self, self.escape)
@@ -155,18 +158,21 @@ class A2Window(QtWidgets.QMainWindow):
         if self.num_selected == 1:
             self.module_view.edit_mod(keep_scroll)
 
-    def toggle_dev_menu(self, state=None):
-        if state is None:
-            # state=None happens only on startup
-            state = self.a2.dev_mode
-            # if True we dont have to re-add
-            if state is True:
-                return
-        if state:
+    def check_main_menu_bar(self):
+        dev_mode = self.a2.dev_mode
+        if dev_mode:
             self.ui.menubar.insertAction(self.ui.menuHelp.menuAction(),
                                          self.ui.menuDev.menuAction())
+            module_menu_before_action = self.ui.menuDev.menuAction()
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
+            module_menu_before_action = self.ui.menuHelp.menuAction()
+
+        if self.mod is None:
+            self.ui.menubar.removeAction(self.ui.menuModule.menuAction())
+        else:
+            self.ui.menubar.insertAction(module_menu_before_action,
+                                         self.ui.menuModule.menuAction())
 
     def edit_submit(self):
         """
@@ -361,6 +367,16 @@ class A2Window(QtWidgets.QMainWindow):
                 if exepath:
                     self.devset.set_var('code_editor', exepath)
                     self.edit_code(file_path)
+
+    def build_module_menu(self):
+        menu = self.sender()
+        menu.clear()
+        menu.addAction(self.ui.actionHelp_on_Module)
+        menu.addAction(self.ui.actionRevert_Settings)
+        if self.module_view.menu_items:
+            menu.addSeparator()
+            for action in self.module_view.menu_items:
+                menu.addAction(action)
 
 
 class RestartThread(QtCore.QThread):

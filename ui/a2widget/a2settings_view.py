@@ -135,7 +135,7 @@ class A2Settings(QtWidgets.QWidget):
     def dev_mode_toggle(self, state):
         self.a2.set_dev_mode(state)
         self.ui.dev_widget.setVisible(state)
-        self.main.toggle_dev_menu(state)
+        self.main.check_main_menu_bar()
 
     def remember_last_toggle(self, state):
         self.a2.db.set('remember_last', state)
