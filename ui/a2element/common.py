@@ -328,7 +328,7 @@ class EditAddElem(QtWidgets.QWidget):
     TIL: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
-    def __init__(self, main, config):
+    def __init__(self, main, config, name=None):
         super(EditAddElem, self).__init__()
         self.main = main
         self.config = config
@@ -336,18 +336,15 @@ class EditAddElem(QtWidgets.QWidget):
         self.base_layout = QtWidgets.QHBoxLayout(self)
         self.base_layout.setSpacing(5)
 
-        self.a2add_button = QtWidgets.QPushButton('Add Element')
+        name = 'Add Element' if name is None else name
+        self.a2add_button = QtWidgets.QPushButton(name)
         self.a2add_button.setObjectName('a2add_button')
         self.a2add_button.clicked.connect(self.build_menu)
         self.a2add_button.setIcon(Icons.inst().list_add)
         self.base_layout.addWidget(self.a2add_button)
 
         self.menu = QtWidgets.QMenu(self)
-        # self.menu.aboutToShow.connect(self.build_menu)
         self.menu_include = None
-        # self.a2add_button.setMenu(self.menu)
-        # spacer = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        # self.baselayout.addItem(spacer)
         self.base_layout.setAlignment(self.a2add_button, QtCore.Qt.AlignLeft)
         self.is_expandable_widget = False
 

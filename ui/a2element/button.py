@@ -26,6 +26,7 @@ class Draw(DrawCtrl):
         super(Draw, self).__init__(main, cfg, mod)
 
         self.button_layout = QtWidgets.QHBoxLayout(self)
+        self.button_layout.setContentsMargins(0, 0, 0, 0)
         labeltext = self.cfg.get('labeltext', '')
         if labeltext:
             label = QtWidgets.QLabel(labeltext)

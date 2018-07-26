@@ -69,21 +69,22 @@ def check_ui_module(module):
 
 def draw(main, cfg, mod):
     """
-    mapper that returns display control objects
-    according to the 'typ' of a config element
+    Mapper that returns display control objects
+    according to the 'typ' of a config element.
     """
-    if cfg.get('typ') in NO_DRAW_TYPES:
+    typ = cfg.get('typ')
+    if typ in NO_DRAW_TYPES:
         return
 
     mod_path = None if mod is None else mod.path
-    ElementDrawClass = get_a2element_object('Draw', cfg.get('typ'), mod_path)
+    ElementDrawClass = get_a2element_object('Draw', typ, mod_path)
 
     if ElementDrawClass is not None:
         try:
             return ElementDrawClass(main, cfg, mod)
         except Exception:
             log.error(traceback.format_exc().strip())
-    log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod))
+    log.error('Draw type "%s" not supported (yet)! Module: %s' % (typ, mod))
 
 
 def edit(cfg, main, parent_cfg):
