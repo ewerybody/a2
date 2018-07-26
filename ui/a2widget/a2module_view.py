@@ -81,8 +81,16 @@ class A2ModuleView(QtWidgets.QWidget):
         self.update_header(nfo.get('author', ''), nfo.get('version', ''))
 
         self.controls = []
-        for cfg in config:
-            self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod))
+        self.menu_items = []
+        for element_cfg in config:
+            element_widget = a2ctrl.draw(self.main, element_cfg, self.main.mod)
+            if isinstance(element_widget, QtWidgets.QWidget):
+                self.controls.append(element_widget)
+            elif isinstance(element_widget, QtWidgets.QAction):
+                print('element_widget: %s' % element_widget)
+                self.menu_items.append(element_widget)
+            elif element_widget is not None:
+                log.error('What is element "%s"?!' % element_widget)
 
         self.ui.head_widget.setVisible(True)
         self.toggle_edit(False)
@@ -134,6 +142,7 @@ class A2ModuleView(QtWidgets.QWidget):
             return
 
         self.controls = []
+        self.menu_items = []
         if self.main.temp_config is None:
             self.main.temp_config = deepcopy(self.main.mod.config)
 
