@@ -8,7 +8,7 @@ from copy import deepcopy
 
 
 config = {"typ": "hotkey",
-          'key': ["Alt+H", 'Alt+D', ''],
+          'key': ["Alt+H", 'Alt+D'],
           "name": "_my_module_Hotkey2",
           "label": "Standard Hotkey",
           "enabled": True,

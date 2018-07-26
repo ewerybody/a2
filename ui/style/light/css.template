@@ -7,7 +7,6 @@
     color: "%(color_darkgrey)s";
 }
 
-
 QPushButton {
     border-radius: %(border_radius)ipx;
     padding: %(margin)ipx;
@@ -147,6 +146,7 @@ QPushButton#a2search_x_button {
 
 QPushButton#A2HotkeyButton,
 QPushButton#A2HotkeyScope {
+    border-radius: 0px;
     background-color: "%(color_yellow)s";
     font-size: %(font_size_large)ipx;
     min-height: %(hotkey_button_size)ipx;
@@ -159,15 +159,8 @@ QPushButton#A2HotkeyButton:pressed,
 QPushButton#A2HotkeyScope:pressed {
 	background-color: "%(color_yellow_pressed)s";
 }
-
-QPushButton#A2HotkeyButton {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
 QPushButton#A2HotkeyScope {
     icon-size: %(icon_size)ipx;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
     padding-left: %(margin)ipx;
     padding-right: %(margin)ipx;
     max-width: %(hotkey_button_size)ipx;

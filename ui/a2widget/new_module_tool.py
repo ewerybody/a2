@@ -26,24 +26,13 @@ class NewModulueTool(A2InputDialog):
 
             if reply is QtWidgets.QMessageBox.Yes:
                 self.main.create_local_source()
-                return
-            else:
-                return
+            return
+
+        self.source_dict = self._init_source_dict(module_source)
 
         super(NewModulueTool, self).__init__(
             self.main, 'New Module', check_func=self.check_name,
             msg='Name the new module:', text='my_module')
-
-        self.source_dict = {'sources': list(self.a2.module_sources.keys()), 'names': {}}
-        if module_source is None:
-            last_source = self.a2.db.get('last_module_create_source')
-            if last_source and last_source in self.source_dict['sources']:
-                module_source = last_source
-            else:
-                module_source = self.source_dict['sources'][0]
-
-        self.source_dict['seleceted_source'] = module_source
-        self.source_dict['source_index'] = self.source_dict['sources'].index(module_source)
 
         self.okayed.connect(self.create_module)
         self.ui.main_layout.insertWidget(0, QtWidgets.QLabel('Module Source:'))
@@ -86,3 +75,17 @@ class NewModulueTool(A2InputDialog):
 
         self._module_list = self.source_dict['names'][source]
         return a2util.standard_name_check(name, self._module_list, 'Module name "%s" is in use!')
+
+    def _init_source_dict(self, module_source):
+        source_dict = {'sources': list(self.a2.module_sources.keys()),
+                       'names': {}}
+        if module_source is None:
+            last_source = self.a2.db.get('last_module_create_source')
+            if last_source and last_source in source_dict['sources']:
+                module_source = last_source
+            else:
+                module_source = source_dict['sources'][0]
+
+        source_dict['seleceted_source'] = module_source
+        source_dict['source_index'] = source_dict['sources'].index(module_source)
+        return source_dict

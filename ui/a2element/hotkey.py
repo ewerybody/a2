@@ -19,8 +19,9 @@ A hotkey configuration can have a lot of stuff to it:
 
 from PySide2 import QtCore, QtWidgets
 
-import a2ctrl
 import a2core
+import a2ctrl
+import a2util
 from a2element import DrawCtrl, EditCtrl
 from a2widget import A2MoreButton
 from a2widget.a2hotkey import A2Hotkey, Vars
@@ -96,8 +97,8 @@ class Draw(DrawCtrl):
         self.set_user_value(state, 'enabled')
         self.change('hotkeys')
 
-    def hotkey_change(self, new_key):
-        self.set_user_value(new_key, 'key')
+    def hotkey_change(self, new_keys):
+        self.set_user_value(new_keys, 'key')
         self.change('hotkeys')
 
     def scope_change(self, scope, scope_mode):
@@ -106,14 +107,11 @@ class Draw(DrawCtrl):
         self.change('hotkeys')
 
     def build_hotkey_options_menu(self, menu):
-        action = menu.addAction('Add another Hotkey')
-        action.setEnabled(False)
         if self.has_user_cfg():
             menu.addAction('Revert to Default', self.clear_user_cfg)
 
-        if self.cfg.get(Vars.key_change, True) and not self.hotkey_button.is_clear:
-            menu.addAction(a2ctrl.Icons.inst().clear, 'Clear Hotkey',
-                           self.hotkey_button.clear)
+        if self.cfg.get(Vars.key_change, True):
+            build_hotkey_menu(menu, self.hotkey_button, self.help)
 
         menu.addSeparator()
 
@@ -127,6 +125,9 @@ class Draw(DrawCtrl):
             action.triggered.connect(partial(self.a2.db.set, 'hotkey_dialog_style', this_name))
 
         menu.addMenu(submenu)
+
+    def help(self):
+        a2util.surf_to(self.helpUrl)
 
 
 class Edit(EditCtrl):
@@ -153,6 +154,8 @@ class Edit(EditCtrl):
         self.ui.hotkey_button.set_config(self.cfg)
         self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)
 
+        self.ui.a2option_button.menu_called.connect(self.build_edit_menu)
+
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui.func_widget.ui)
@@ -173,8 +176,11 @@ class Edit(EditCtrl):
             self.ui.cfg_enabled.setEnabled(state)
             self.ui.cfg_enabled.setChecked(True)
 
-    def hotkey_change(self, new_key):
-        self.cfg['key'] = new_key
+    def hotkey_change(self, new_keys):
+        self.cfg['key'] = new_keys
+
+    def build_edit_menu(self, menu):
+        build_hotkey_menu(menu, self.ui.hotkey_button, self.help)
 
     @staticmethod
     def element_name():
@@ -185,8 +191,25 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().hotkey
 
 
+def build_hotkey_menu(menu, button, help_func):
+        icons = a2ctrl.Icons.inst()
+        if not button.has_empty:
+            menu.addAction(icons.list_add, 'Add another Hotkey', button.add_hotkey)
+        if button.has_multiple:
+            del_menu = menu.addMenu(icons.delete, 'Remove Hotkey')
+            for key in button.get_keys_list():
+                name = key if key != '' else '"" (Empty)'
+                action = del_menu.addAction(icons.delete, name, button.on_remove_key_action)
+                action.setData(key)
+        else:
+            if not button.is_clear:
+                menu.addAction(icons.clear, 'Clear Hotkey', button.clear)
+
+        menu.addAction(icons.help, 'Help on Hotkey Setup', help_func)
+
+
 def get_settings(_module_key, cfg, db_dict, user_cfg):
-    key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key', str)
+    key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key')
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope, list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope_mode, int)
     func = cfg.get(
