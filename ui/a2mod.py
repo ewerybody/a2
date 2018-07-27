@@ -647,6 +647,19 @@ class Mod(object):
             return True
         return False
 
+    def get_user_data(self):
+        """
+        temp: will be removed when merging with new-structure brach.
+        """
+        data = {}
+        print('self.key: %s' % self.key)
+        value_names = set(self.a2.db.keys(self.key)).difference(
+            ['includes', 'init_calls', 'hotkeys', 'variables'])
+        print('value_names: %s' % value_names)
+        for name in value_names:
+            data[name] = self.a2.db.get(name, self.key)
+        return data
+
 
 def get_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]

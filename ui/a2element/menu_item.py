@@ -18,6 +18,7 @@ log = a2core.get_logger(__name__)
 class Draw(QtWidgets.QAction):
     def __init__(self, main, cfg, mod, *_args):
         super(Draw, self).__init__(main)
+        self.main = main
         self.cfg = cfg
         self.mod = mod
 
@@ -36,7 +37,9 @@ class Draw(QtWidgets.QAction):
             try:
                 # amend the globals dict with some useful info
                 globals_dict = globals()
-                globals_dict.update({'a2path': self.mod.path,
+                globals_dict.update({'a2': self.main.a2,
+                                     'a2path': self.mod.path,
+                                     'module': self.mod,
                                      'call_local_ahk': self.call_local_ahk,
                                      'call_lib_cmd': a2ahk.call_lib_cmd})
                 exec(code, globals_dict)
