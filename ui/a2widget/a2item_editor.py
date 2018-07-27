@@ -77,9 +77,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         self._drawing = True
         if self.draw_labels:
             this_label = label if label is not None else value_name.title()
-            row_index = self.ui.config_layout.rowCount()
-            self.ui.config_layout.setWidget(row_index, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel(this_label))
-            self.ui.config_layout.setWidget(row_index, QtWidgets.QFormLayout.FieldRole, widget)
+            self.ui.config_layout.addRow(this_label, widget)
         else:
             self.ui.config_layout.addWidget(widget)
 

@@ -77,11 +77,9 @@ class A2Hotkey(QtWidgets.QWidget):
                     button.setObjectName('A2HotkeyButton')
                     self._vlayout.addWidget(button)
                     self._hotkey_buttons.append(button)
-                    print('adding index: %i' % i)
             elif num_keys < num_buttons:
                 for i in range(num_keys, num_buttons):
                     self._hotkey_buttons[i].deleteLater()
-                    print('removing index: %i' % i)
                 self._hotkey_buttons = self._hotkey_buttons[:num_keys]
 
             locked = not self.is_edit_mode and not self._cfg.get(Vars.key_change, True)

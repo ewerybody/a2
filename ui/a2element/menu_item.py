@@ -21,7 +21,6 @@ class Draw(QtWidgets.QAction):
         self.cfg = cfg
         self.mod = mod
 
-        print('cfg: %s' % cfg)
         label = cfg.get('label')
         if not label:
             label = 'Menu Item has no label yet!'
