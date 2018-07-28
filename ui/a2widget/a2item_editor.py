@@ -4,11 +4,15 @@ a2widget.a2item_editor
 @created: Sep 26, 2016
 @author: eRiC
 """
+import a2core
 import a2ctrl.qlist
 import a2ctrl.connect
 from PySide2 import QtCore, QtWidgets
 from a2widget import a2item_editor_ui
 from collections import OrderedDict
+
+
+log = a2core.get_logger(__name__)
 
 
 class A2ItemEditor(QtWidgets.QWidget):
@@ -29,10 +33,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
 
-        if self.draw_labels:
-            self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
-        else:
-            self.ui.config_layout = QtWidgets.QVBoxLayout(self.ui.config_widget)
+        self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
 
         contents_margins = self.ui.config_layout.contentsMargins()
         contents_margins.setTop(0)
@@ -62,6 +63,20 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
         self.update_filter()
 
+    def add_data_label_widget(self, value_name, widget, set_function, change_signal=None,
+                              default_value=None, label=None):
+        """
+        :param str value_name: Name of the data item to control.
+        :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
+        :param function set_function: Function object of the widget to use to display the current data.
+        :param QtCore.Signal change_signal: Optional signal to use for data change notification.
+        :param * default_value: Fallback and reference value to check against.
+        :param str label: Optional string to put into the Label Field of a FormLayout.
+        """
+        label = label if label is not None else value_name.title()
+        self.ui.config_layout.addRow(label, widget)
+        self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
+
     def add_data_widget(self, value_name, widget, set_function, change_signal=None,
                         default_value=None, label=None):
         """
@@ -72,15 +87,19 @@ class A2ItemEditor(QtWidgets.QWidget):
         :param function set_function: Function object of the widget to use to display the current data.
         :param QtCore.Signal change_signal: Optional signal to use for data change notification.
         :param * default_value: Fallback and reference value to check against.
-        :param str label: Optional string to put into the Label Field of a FormLayout.
+        :param str label: Deprecated! Use method add_data_label_widget()!
         """
-        self._drawing = True
         if self.draw_labels:
+            log.warning('Deprecated "draw_labels"! Use dedicated methods add_data_label_widget() '
+                        'and add_data_widget() instead!')
             this_label = label if label is not None else value_name.title()
             self.ui.config_layout.addRow(this_label, widget)
         else:
-            self.ui.config_layout.addWidget(widget)
+            self.ui.config_layout.addRow(widget)
+        self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
 
+    def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
+        self._drawing = True
         self._data_widgets[value_name] = {'widget': widget,
                                           'set_function': set_function,
                                           'change_signal': change_signal,
