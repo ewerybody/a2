@@ -150,7 +150,8 @@ def get_local_element(itempath):
         with open(itempath) as fobj:
             element_content = fobj.read()
 
-        element_objects = {}
+
+        element_objects = {'__file__': itempath}
         try:
             exec(element_content, element_objects)
             # element_objects.pop('__builtins__')
