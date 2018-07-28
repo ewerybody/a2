@@ -35,7 +35,7 @@ class ScopeDialog(QtWidgets.QDialog):
         if not cfg[Vars.scope]:
             if cfg[Vars.scope_mode] == 1:
                 self.ui.a2ok_button.setEnabled(False)
-                self.ui.a2ok_button.setText('Include "nothing" Deativates the scope!')
+                self.ui.a2ok_button.setText('Include "nothing" Deactivates the scope!')
                 return
             elif cfg[Vars.scope_mode] == 2:
                 self.ui.a2ok_button.setEnabled(False)
