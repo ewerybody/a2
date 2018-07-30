@@ -4,7 +4,7 @@ from a2element.common import DrawCtrl, EditCtrl, DrawCtrlMixin
 
 # amend with new elements to show in edit mode on Add Element-buttons:
 DISPLAY_ELEMENTS = ['button', 'check', 'combo', 'coords', 'group', 'hotkey', 'init',
-                    'label', 'number', 'path', 'pathlist', 'string']
+                    'label', 'menu_item', 'number', 'path', 'pathlist', 'string']
 
 _UI_DATA = None
 log = a2core.get_logger(__name__)

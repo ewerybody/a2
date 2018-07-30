@@ -70,7 +70,8 @@ class Edit(EditCtrl):
         for child in self.cfg['children']:
             controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
 
-        controls.append(EditAddElem(self.main, self.cfg['children']))
+        controls.append(EditAddElem(self.main, self.cfg['children'],
+                                    'Add Group Element'))
         for ctrl in controls:
             self.ui.edit_layout.addWidget(ctrl)
 

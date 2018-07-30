@@ -69,10 +69,11 @@ def check_ui_module(module):
 
 def draw(main, cfg, mod, user_cfg):
     """
-    mapper that returns display control objects
-    according to the 'typ' of a config element
+    Mapper that returns display control objects
+    according to the 'typ' of a config element.
     """
-    if cfg.get('typ') in NO_DRAW_TYPES:
+    typ = cfg.get('typ')
+    if typ in NO_DRAW_TYPES:
         return
 
     element_module = get_a2element_module(cfg.get('typ'))
@@ -161,7 +162,8 @@ def get_local_element(itempath):
         with open(itempath) as fobj:
             element_content = fobj.read()
 
-        element_objects = {}
+
+        element_objects = {'__file__': itempath}
         try:
             exec(element_content, element_objects)
             # element_objects.pop('__builtins__')
