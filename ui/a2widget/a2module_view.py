@@ -82,18 +82,20 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.controls = []
         self.menu_items = []
+
         module_user_cfg = self.main.mod.get_user_cfg()
         for element_cfg in config:
-            cfg_name = a2util.get_cfg_default_name(cfg)
+            cfg_name = a2util.get_cfg_default_name(element_cfg)
             user_cfg = module_user_cfg.get(cfg_name, {})
-            self.controls.append(a2ctrl.draw(self.main, cfg, self.main.mod, user_cfg))
-            element_widget = a2ctrl.draw(self.main, element_cfg, self.main.mod)
+            element_widget = a2ctrl.draw(self.main, element_cfg,
+                                         self.main.mod, user_cfg)
+
             if isinstance(element_widget, QtWidgets.QWidget):
                 self.controls.append(element_widget)
             elif isinstance(element_widget, QtWidgets.QAction):
                 self.menu_items.append(element_widget)
-                log.error('What is element "%s"?!' % element_widget)
             elif element_widget is not None:
+                log.error('What is element "%s"?!' % element_widget)
 
         self.ui.head_widget.setVisible(True)
         self.toggle_edit(False)
