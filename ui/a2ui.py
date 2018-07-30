@@ -386,6 +386,7 @@ class A2Window(QtWidgets.QMainWindow):
             menu.addSeparator()
             for action in self.module_view.menu_items:
                 menu.addAction(action)
+
     def diff_files(self, file1, file2):
         if os.path.isfile(self.devset.diff_app):
             subprocess.Popen([self.devset.diff_app, file1, file2])
