@@ -37,11 +37,11 @@ class Draw(QtWidgets.QAction):
             try:
                 # amend the globals dict with some useful info
                 globals_dict = globals()
-                globals_dict.update(
-                    {'module': self.mod,
-                     'call_reload': self.main.load_runtime_and_ui,
-                     'call_local_ahk': self.call_local_ahk,
-                     'call_lib_cmd': a2ahk.call_lib_cmd})
+                globals_dict.update({'a2': self.main.a2,
+                                     'a2path': self.mod.path,
+                                     'module': self.mod,
+                                     'call_local_ahk': self.call_local_ahk,
+                                     'call_lib_cmd': a2ahk.call_lib_cmd})
                 exec(code, globals_dict)
             except Exception:
                 log.error(traceback.format_exc().strip())
