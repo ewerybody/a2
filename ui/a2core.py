@@ -161,8 +161,12 @@ class Paths(object):
         self.python = sys.executable
 
         # get data dir from config override or the default appdata dir.
-        self.data = a2ahk.get_variables(self.a2_config).get(
-            'a2data', os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data'))
+        _data = os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
+        try:
+            self.data = a2ahk.get_variables(
+                os.path.join(_data, 'a2_data_path.ahk')).get('a2data')
+        except FileNotFoundError:
+            self.data = _data
         self.modules = os.path.join(self.data, 'modules')
         self.module_data = os.path.join(self.data, 'module_data')
         self.includes = os.path.join(self.data, 'includes')
