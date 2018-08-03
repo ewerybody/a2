@@ -16,7 +16,7 @@ TODO_DEFAULT_LIBS = ['a2', 'func_file', 'func_string', 'functions', 'Explorer_Ge
                      'ahk_functions', 'ObjectTools', 'RichObject', 'Array', 'uri_encode',
                      'HTTPRequest', 'base64']
 A2_DATA = '%a2data%'
-ENTRY_POINT_FILENAME = 'user_data_includes'
+ENTRYPOINT_FILENAME = 'user_data_includes'
 
 
 class Scope:
@@ -77,12 +77,12 @@ class IncludeDataCollector(object):
         for collection in self.collections:
             if collection is not None:
                 collection.write()
-        self._check_entry_point_script()
+        self._check_entrypoint_script()
 
-    def _check_entry_point_script(self):
+    def _check_entrypoint_script(self):
         if self._entrypoint_script is None:
             template_path = os.path.join(
-                self.a2.paths.defaults, ENTRY_POINT_FILENAME + '.template')
+                self.a2.paths.defaults, ENTRYPOINT_FILENAME + '.template')
             template = a2util.load_utf8(template_path)
 
             data_path = os.path.relpath(self.a2.paths.data, self.a2.paths.a2)
@@ -91,7 +91,7 @@ class IncludeDataCollector(object):
             self._entrypoint_script = template.format(data_path=data_path)
 
             script_path = os.path.join(
-                self.a2.paths.lib, '_ ' + ENTRY_POINT_FILENAME + '.ahk')
+                self.a2.paths.lib, '_ ' + ENTRYPOINT_FILENAME + '.ahk')
             a2util.write_utf8(script_path, self._entrypoint_script)
 
     @property
