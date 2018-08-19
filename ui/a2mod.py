@@ -719,7 +719,7 @@ class Mod(object):
     def data_path(self):
         if self._data_path is None:
             self._data_path = os.path.join(
-                self.a2.paths.data, self.source.name, self.name)
+                self.a2.paths.data, 'module_data', self.source.name, self.name)
         return self._data_path
 
     @property

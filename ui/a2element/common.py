@@ -25,7 +25,6 @@ class DrawCtrlMixin(object):
         self.main = main
         self.cfg = cfg
         self.mod = mod
-        self.paths = _Paths(mod, self.a2)
 
         self.check_delay = 250
         self._check_scheduled = False
@@ -332,24 +331,6 @@ class EditCtrl(QtWidgets.QGroupBox):
     def leaveEvent(self, event):
         self._ctrl_button.setVisible(False)
         return QtWidgets.QGroupBox.leaveEvent(self, event)
-
-
-class _Paths(object):
-    def __init__(self, mod, a2):
-        self._mod = mod
-        self._a2 = a2
-
-    @property
-    def mod(self):
-        return self._mod.path
-
-    @property
-    def source(self):
-        return self._mod.source.path
-
-    @property
-    def mod_data(self):
-        return os.path.join(self._a2.paths.module_data, self._mod.source.name, self._mod.name)
 
 
 class EditAddElem(QtWidgets.QWidget):
