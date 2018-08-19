@@ -223,3 +223,6 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def reset_filter(self):
         self.ui.search_field.setText('')
+
+    def enable_search_field(self, state):
+        self.ui.search_field.setVisible(state)
