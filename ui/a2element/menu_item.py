@@ -25,7 +25,7 @@ class Draw(QtWidgets.QAction):
         label = cfg.get('label')
         if not label:
             label = 'Menu Item has no label yet!'
-            log.error('Menu Item has no label yet!')
+            log.error(label)
         self.setText(label)
         self.triggered.connect(self.call_code)
 
