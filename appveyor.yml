@@ -1,0 +1,8 @@
+install:
+  - cmd: cinst autohotkey.install
+  - cmd: npm install
+
+build: off
+
+test_script:
+  - cmd: npm test
