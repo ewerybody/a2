@@ -32,7 +32,7 @@ class ScopeDialog(QtWidgets.QDialog):
 
     def check(self):
         cfg = self.ui.scope_widget.get_config()
-        if not cfg[Vars.scope]:
+        if not cfg.get(Vars.scope):
             if cfg[Vars.scope_mode] == 1:
                 self.ui.a2ok_button.setEnabled(False)
                 self.ui.a2ok_button.setText('Include "nothing" Deactivates the scope!')
@@ -48,3 +48,9 @@ class ScopeDialog(QtWidgets.QDialog):
         cfg = self.ui.scope_widget.get_config()
         self.okayed.emit(cfg)
         self.accept()
+
+
+def get_dialog_changable_no_global(parent):
+    cfg = {Vars.scope_change: True}
+    dialog = ScopeDialog(parent, cfg)
+    return dialog
