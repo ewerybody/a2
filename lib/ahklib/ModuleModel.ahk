@@ -11,6 +11,9 @@
  *             the folder on the FileSystem)
  *         * Manifest of the Module (a2module.json)
  */
+
+#include lib\ahklib\CManifest.ahk
+
 class ModuleModel
 {
     /**
@@ -77,11 +80,11 @@ class ModuleModel
     static manifest
 
     /**
-    * Constructor
-    *     Populate the module's information properties from the manifest
+     * Constructor
+     *     Populate the module's information properties from the manifest
      *
-    * When this class is extended by another class, the extendee must
-    * call this (parent) constructor by `this.base.__New()`
+     * When this class is extended by another class, the extendee must
+     * call this (parent) constructor by `this.base.__New()`
      *
      * @sample
      *     class MyAwesomeModule extends ModuleModel
@@ -104,14 +107,14 @@ class ModuleModel
      *     msgbox % MyAwesomeModule.moduleName
      *
      * @param   string  LineFile        Path to the file of the module (that extended this class)
-    *
-    */
+     *
+     */
     __New(LineFile)
     {
         this.manifest     := new CManifest(LineFile)
         this.moduleSource := this.manifest.metaData.source
         this.moduleName   := this.manifest.metaData.name
-        this.moduleURL   := this.manifest.metaData.url
+        this.moduleURL    := this.manifest.metaData.url
         this.modulePath   := a2.path "\" a2.modules "\" this.moduleSource "\" this.moduleName
         this.moduleKey    := this.moduleSource "|" this.moduleName
         for i,v in [".svg", ".png", ".ico"] {

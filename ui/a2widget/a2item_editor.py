@@ -24,7 +24,7 @@ class A2ItemEditor(QtWidgets.QWidget):
     _value_changed = QtCore.Signal(str)
 
     data = {}
-    draw_labels = True
+    draw_labels = False
 
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)

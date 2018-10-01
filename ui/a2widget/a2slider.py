@@ -3,16 +3,16 @@ A Qt/PySide2 slider widget that:
 * emits proper signals when the slider range is clicked,
 * solves the field<>slider juggling and
 * allows for float values right away
+* slider can act logarithmic having more density at the start
 """
-from functools import partial
-
+import math
 from PySide2 import QtCore, QtWidgets
 
 
 class A2Slider(QtWidgets.QWidget):
-    #: Immediately emitted on any value change, best for ui updates. Rapid fires on slide!
+    # : Immediately emitted on any value change, best for ui updates. Rapid fires on slide!
     value_changed = QtCore.Signal(float)
-    #: Emitted when sliding ended OR slider bar was clicked or field change is finished.
+    # : Emitted when sliding ended OR slider bar was clicked or field change is finished.
     editing_finished = QtCore.Signal(float)
 
     def __init__(self, parent=None, has_field=True, value=1.0, mini=0, maxi=100, decimals=2, step_len=1):
@@ -22,9 +22,6 @@ class A2Slider(QtWidgets.QWidget):
         self.setLayout(self.main_layout)
 
         self._slider_pressed = None
-        self._slider_ignore = False
-        self._field_ignore = False
-
         self.value_ctrl = None
         self.has_field = has_field
         self.slider = self._build_slider()
@@ -32,28 +29,27 @@ class A2Slider(QtWidgets.QWidget):
         self._decimals = decimals
         self._min = mini
         self._max = maxi
+        self._range = maxi - mini
         self._value = value
         self._step_len = step_len
-        self._slider_factor = 1.0
-        self._init_ctrls()
+        self._single_step = step_len
+        self._page_step = step_len
 
-    def _init_ctrls(self):
-        """
-        Under the hood the slider always uses integers. So according to the decimals
-        we're displaying we multiply the values * 10
-        """
+        self._log = False
+        self._log_max = 100000
+        self._vlog_max = math.log(self._log_max + 1)
+
+        # : Under the hood the slider always uses integers. So according
+        # : to the decimals we're displaying we multiply the values * 10
+        self._slider_factor = 1.0
         self.setDecimals()
-        self.setMinimum()
-        self.setMaximum()
-        self.setValue()
-        self.setSingleStep()
 
     def _build_slider(self):
         slider = QtWidgets.QSlider(self)
         slider.setOrientation(QtCore.Qt.Horizontal)
         slider.valueChanged.connect(self._slider_change)
-        slider.sliderPressed.connect(partial(self._set_slider_pressed, True))
-        slider.sliderReleased.connect(partial(self._set_slider_pressed, False))
+        slider.sliderPressed.connect(self._set_slider_pressed)
+        slider.sliderReleased.connect(self._set_slider_released)
         slider.sliderReleased.connect(self._emit_finished)
         self.main_layout.addWidget(slider)
         return slider
@@ -64,38 +60,48 @@ class A2Slider(QtWidgets.QWidget):
     def _emit_finished(self):
         self.editing_finished.emit(self._value)
 
-    def _set_slider_pressed(self, state):
-        self._slider_pressed = state
+    def _set_slider_pressed(self):
+        self._slider_pressed = True
+
+    def _set_slider_released(self):
+        self._slider_pressed = False
 
     def _slider_change(self, value):
-        if self._slider_ignore:
-            return
-
         value = value / self._slider_factor
+        if self._log:
+            f = (self._max - value) / self._range
+            vlog = math.log((self._log_max * f) + 1)
+            value = self._max - (self._range * vlog / self._vlog_max)
+
         if value != self._value:
             self._value = value
             if self.has_field:
-                self._field_ignore = True
+                self.value_ctrl.blockSignals(True)
                 self.value_ctrl.setValue(self._value)
-                self._field_ignore = False
+                self.value_ctrl.blockSignals(False)
             self._emit_changed()
 
         if self._slider_pressed:
             return
         self._emit_finished()
 
-    def _field_change(self, value):
-        if self._field_ignore:
-            return
+    def _set_slider_value(self):
+        value = self._value
+        if self._log:
+            vlog = (self._max - value) * self._vlog_max / self._range
+            f = (math.exp(vlog) - 1) / self._log_max
+            value = self._max - (f * self._range)
+        self.slider.setValue(value * self._slider_factor)
 
+    def _field_change(self, value):
         value = round(value, self.decimals)
         if value != self._value:
             self._value = value
             self._emit_changed()
 
-            self._slider_ignore = True
-            self.slider.setValue(value * self._slider_factor)
-            self._slider_ignore = False
+            self.slider.blockSignals(True)
+            self._set_slider_value()
+            self.slider.blockSignals(False)
 
     @property
     def has_field(self):
@@ -145,7 +151,7 @@ class A2Slider(QtWidgets.QWidget):
 
         if self.has_field:
             self.value_ctrl.setValue(self._value)
-        self.slider.setValue(self._value * self._slider_factor)
+        self._set_slider_value()
 
     @property
     def decimals(self):
@@ -176,6 +182,8 @@ class A2Slider(QtWidgets.QWidget):
         self._slider_factor = pow(10, self._decimals)
         self.setMinimum()
         self.setMaximum()
+        self.setSingleStep()
+        self.setPageStep()
         self.setValue(self._value)
 
     @property
@@ -201,6 +209,7 @@ class A2Slider(QtWidgets.QWidget):
         """
         if value is not None:
             self._min = value
+            self._range = self._max - self._min
 
         if self.has_field:
             self.value_ctrl.setMinimum(self._min)
@@ -229,6 +238,7 @@ class A2Slider(QtWidgets.QWidget):
         """
         if value is not None:
             self._max = value
+            self._range = self._max - self._min
 
         if self.has_field:
             self.value_ctrl.setMaximum(self._max)
@@ -262,18 +272,19 @@ class A2Slider(QtWidgets.QWidget):
     @step_len.setter
     def step_len(self, value):
         """
-        Sets step length or single step for both the slider and the field, if any.
+        Sets BOTH SingleStep and PageStep for the slider and the field, if any.
 
         When the user uses the arrows to change the spin box's value the value will
          be incremented/decremented by the amount ...
 
         :param float value: Length/amount of a single step.
         """
+        self._step_len = value
         self.setSingleStep(value)
 
     def setSingleStep(self, value=None):
         """
-        Sets step length or single step for both the slider and the field, if any.
+        Sets specifically SINGLE STEP for both the slider and the field, if any.
 
         When the user uses the arrows to change the spin box's value the value will
          be incremented/decremented by the amount ...
@@ -281,11 +292,25 @@ class A2Slider(QtWidgets.QWidget):
         :param float value: Length/amount of a single step.
         """
         if value is not None:
-            self._step_len = value
+            self._single_step = value
 
         if self.has_field:
-            self.value_ctrl.setSingleStep(self._step_len)
-        self.slider.setSingleStep(self._step_len * self._slider_factor)
+            self.value_ctrl.setSingleStep(self._single_step)
+        self.slider.setSingleStep(self._single_step * self._slider_factor)
+
+    def setPageStep(self, value=None):
+        """
+        Sets specifically PAGE STEP for both the slider and the field, if any.
+
+        When the user clicks onto the slider the value will
+         be incremented/decremented by the amount ...
+
+        :param float value: Length/amount of a page step.
+        """
+        if value is not None:
+            self._page_step = value
+
+        self.slider.setPageStep(self._page_step * self._slider_factor)
 
     def setOrientation(self, orientation):
         """

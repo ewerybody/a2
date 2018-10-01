@@ -17,10 +17,10 @@ class SliderDemo(QtWidgets.QMainWindow):
         slider = a2slider.A2Slider(widget)
         slider.setMinimumWidth(500)
 
-        slider.minmax = (0.001, 100.0)
-        slider.value = 10
+        slider.minmax = (0.001, 10.0)
+        slider.value = 5
         slider.decimals = 3
-        slider.step_len = 0.05
+        # slider.step_len = 10.0
 
         slider.editing_finished.connect(self.finished)
         slider.value_changed.connect(self.changed)
@@ -30,12 +30,23 @@ class SliderDemo(QtWidgets.QMainWindow):
         vlayout.addWidget(QtWidgets.QLabel('Slider without field and only finished connected but a custom label:'))
         hlayout = QtWidgets.QHBoxLayout()
         self.label = QtWidgets.QLabel('1.0')
+        self.label.setMinimumWidth(50)
+        self.label.setMaximumWidth(50)
         slider2 = a2slider.A2Slider(widget, has_field=False)
         hlayout.addWidget(self.label)
         hlayout.addWidget(slider2)
         slider2.editing_finished.connect(self.finished)
         slider2.value_changed.connect(self.label_update)
         vlayout.addLayout(hlayout)
+
+        log_slider = a2slider.A2Slider(widget)
+        log_slider._log = True
+        log_slider.minmax = (0.001, 25.0)
+        log_slider.value = 1
+        log_slider.decimals = 3
+        log_slider.editing_finished.connect(self.finished)
+        vlayout.addWidget(QtWidgets.QLabel('A logarithmic slider:'))
+        vlayout.addWidget(log_slider)
 
         vlayout.addWidget(QtWidgets.QLabel('old slider'))
         old_slider = QtWidgets.QSlider(self)
@@ -45,7 +56,7 @@ class SliderDemo(QtWidgets.QMainWindow):
         old_slider.sliderReleased.connect(self.finished)
 
     def label_update(self, value):
-        self.label.setText(str(value))
+        self.label.setText(str(round(value, 2)))
 
     @staticmethod
     def finished(x=None):
