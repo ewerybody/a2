@@ -73,11 +73,9 @@ class ScopeWidget(QtWidgets.QWidget):
         self.blockSignals(False)
 
     def on_scope_mode_change(self):
-        scope_mode = self._cfg.get(Vars.scope_mode)
-        for widget in [self.ui.fields_widget,
-                       self.ui.tool_buttons_widget,
-                       self.ui.cfg_scope]:
-            widget.setEnabled(scope_mode != 0)
+        scope_mode = self._cfg.get(Vars.scope_mode) != 0
+        for wgt in [self.ui.fields_widget, self.ui.tool_buttons_widget, self.ui.cfg_scope]:
+            wgt.setEnabled(scope_mode)
         self.changed.emit()
 
     def add_scope(self, scope_string=''):
@@ -250,6 +248,11 @@ class ScopeWidget(QtWidgets.QWidget):
         for f in self.input_fields.values():
             f.setText('')
         self.blockSignals(False)
+
+    def hide_global_button(self):
+        self.ui.scopeMode_0.setVisible(False)
+        self.ui.scopeMode_1.setChecked(True)
+        self.on_scope_mode_change()
 
 
 def get_scope_string(title, class_name, process):

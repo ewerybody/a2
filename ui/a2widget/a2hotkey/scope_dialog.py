@@ -8,6 +8,8 @@ from .hotkey_widget import Vars
 
 log = a2core.get_logger(__name__)
 SCOPE_ITEMS = ['titles', 'classes', 'processes']
+INCLUDE_MSG = 'Include "nothing" Deactivates the scope!'
+EXCLUDE_MSG = 'Exclude "nothing" makes it global!'
 
 
 class ScopeDialog(QtWidgets.QDialog):
@@ -35,11 +37,11 @@ class ScopeDialog(QtWidgets.QDialog):
         if not cfg.get(Vars.scope):
             if cfg[Vars.scope_mode] == 1:
                 self.ui.a2ok_button.setEnabled(False)
-                self.ui.a2ok_button.setText('Include "nothing" Deactivates the scope!')
+                self.ui.a2ok_button.setText(INCLUDE_MSG)
                 return
             elif cfg[Vars.scope_mode] == 2:
                 self.ui.a2ok_button.setEnabled(False)
-                self.ui.a2ok_button.setText('Exclude "nothing" makes it global!')
+                self.ui.a2ok_button.setText(EXCLUDE_MSG)
                 return
         self.ui.a2ok_button.setText('OK')
         self.ui.a2ok_button.setEnabled(True)
@@ -50,7 +52,8 @@ class ScopeDialog(QtWidgets.QDialog):
         self.accept()
 
 
-def get_dialog_changable_no_global(parent):
+def get_changable_no_global(parent):
     cfg = {Vars.scope_change: True}
     dialog = ScopeDialog(parent, cfg)
+    dialog.ui.scope_widget.hide_global_button()
     return dialog
