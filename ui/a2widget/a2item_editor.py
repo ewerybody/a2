@@ -63,6 +63,10 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
         self.update_filter()
 
+    def set_data(self, data):
+        self.data = data
+        self.fill_item_list()
+
     def add_data_label_widget(self, value_name, widget, set_function, change_signal=None,
                               default_value=None, label=None):
         """
