@@ -52,8 +52,14 @@ class ScopeDialog(QtWidgets.QDialog):
         self.accept()
 
 
-def get_changable_no_global(parent):
-    cfg = {Vars.scope_change: True}
+def get_changable_no_global(parent, cfg=None):
+    if cfg is None:
+        cfg = {Vars.scope_change: True}
+    elif isinstance(cfg, dict):
+        cfg[Vars.scope_change] = True
+    else:
+        raise TypeError('Unusable config type "%s"' % type(cfg))
+
     dialog = ScopeDialog(parent, cfg)
     dialog.ui.scope_widget.hide_global_button()
     return dialog
