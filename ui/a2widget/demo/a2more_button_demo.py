@@ -21,15 +21,12 @@ class Demo(QtWidgets.QMainWindow):
                    'So the menu is always rebuilt', button1)
 
         button2 = A2MoreButton(self)
-        action = button2.add_action('A disabled action')
-        action.setEnabled(False)
+        button2.add_note('A disabled action')
         action = button2.add_action('An enabled one')
         action.triggered.connect(self.print_something)
         lyt.addRow('<b>A2MoreButton</b> with directly added actions:<br>'
                    'The menu is built once and just popps up', button2)
         button2.menu_called.connect(self.never_called_function)
-
-
 
         path_field = A2PathField(self)
         lyt.addRow(QtWidgets.QLabel('Path field with A2MoreButton implemented:'))
