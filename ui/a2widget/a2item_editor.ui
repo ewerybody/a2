@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1026</width>
-    <height>836</height>
+    <height>866</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -44,7 +44,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="buttons_layout">
+      <layout class="QHBoxLayout" name="buttons_layout" stretch="1,0">
        <item>
         <widget class="QPushButton" name="add_entry_button">
          <property name="text">
@@ -65,7 +65,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QListWidget" name="item_list">
+      <widget class="A2List" name="item_list">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
@@ -88,6 +88,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2List</class>
+   <extends>QListWidget</extends>
+   <header>a2widget.a2list</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

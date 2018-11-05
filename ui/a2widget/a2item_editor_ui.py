@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui' applies.
 #
-# Created: Sun Aug 19 18:09:41 2018
+# Created: Sun Nov  4 22:16:36 2018
 #      by: pyside2-uic  running on PySide2 5.11.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_A2ItemEditor(object):
     def setupUi(self, A2ItemEditor):
         A2ItemEditor.setObjectName("A2ItemEditor")
-        A2ItemEditor.resize(1026, 836)
+        A2ItemEditor.resize(1026, 866)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -43,8 +43,9 @@ class Ui_A2ItemEditor(object):
         self.del_entry_button.setEnabled(False)
         self.del_entry_button.setObjectName("del_entry_button")
         self.buttons_layout.addWidget(self.del_entry_button)
+        self.buttons_layout.setStretch(0, 1)
         self.list_layout.addLayout(self.buttons_layout)
-        self.item_list = QtWidgets.QListWidget(A2ItemEditor)
+        self.item_list = A2List(A2ItemEditor)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -70,3 +71,4 @@ class Ui_A2ItemEditor(object):
         self.add_entry_button.setText(QtWidgets.QApplication.translate("A2ItemEditor", "Add", None, -1))
         self.del_entry_button.setText(QtWidgets.QApplication.translate("A2ItemEditor", "Remove", None, -1))
 
+from a2widget.a2list import A2List
