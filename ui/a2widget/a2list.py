@@ -14,8 +14,8 @@ class A2List(QtWidgets.QListWidget):
     name_double_clicked = QtCore.Signal(str)
     item_double_clicked = QtCore.Signal(QtWidgets.QListWidgetItem)
     changed = QtCore.Signal()
-    item_removed = QtCore.Signal()
-    context_menu_requested = QtCore.Signal(QtCore.QPoint)
+    items_removed = QtCore.Signal(list)
+    context_menu_requested = QtCore.Signal(QtWidgets.QMenu)
 
     def __init__(self, parent=None, names=None):
         """
@@ -23,6 +23,7 @@ class A2List(QtWidgets.QListWidget):
         """
         super(A2List, self).__init__(parent)
         self._unique = True
+        self._menu = None
 
         if names:
             self.blockSignals(True)
@@ -32,10 +33,10 @@ class A2List(QtWidgets.QListWidget):
         self.itemSelectionChanged.connect(self._on_selection_change)
 
         shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete),
-                                   self, self.remove_selected)
+                                       self, self.remove_selected)
         shortcut.setContext(QtCore.Qt.WidgetShortcut)
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.context_menu_requested.emit)
+        self.customContextMenuRequested.connect(self._on_context_menu_requested)
 
     def add(self, names):
         current = self.get_names_lower()
@@ -166,7 +167,20 @@ class A2List(QtWidgets.QListWidget):
         for item in items:
             idx = self.indexFromItem(item)
             self.takeItem(idx.row())
+        self.items_removed.emit(items)
         self.changed.emit()
+
+    def _on_context_menu_requested(self, pos):
+        if self._menu is None:
+            self._menu = QtWidgets.QMenu(self)
+
+        self.context_menu_requested.emit(self._menu)
+
+        if not self._menu.isEmpty():
+            self._menu.popup(self.mapToGlobal(pos))
+
+    def set_context_menu(self, menu):
+        self._menu = menu
 
 
 class A2ListCompact(A2List):

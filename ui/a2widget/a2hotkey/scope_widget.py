@@ -87,10 +87,6 @@ class ScopeWidget(QtWidgets.QWidget):
             self._cfg['scope'] = self.ui.cfg_scope.get_names()
         self.changed.emit()
 
-    def build_list_context_menu(self, pos):
-        if self.ui.cfg_scope.selectedItems():
-            self.context_menu.popup(self.ui.cfg_scope.mapToGlobal(pos))
-
     def build_button_field_menu(self, index, menu):
         name = SCOPE_ITEMS[index]
         # usedmenu = menu.addMenu('%s in use' % name.title())
@@ -208,11 +204,11 @@ class ScopeWidget(QtWidgets.QWidget):
         self.ui.cfg_scope.selection_cleared.connect(self.on_selection_clear)
 
         self.ui.cfg_scope.changed.connect(self.scope_update)
-        self.ui.cfg_scope.context_menu_requested.connect(self.build_list_context_menu)
 
         self.context_menu = QtWidgets.QMenu(self)
         self.context_menu.addAction(icons.delete, 'Delete scope item',
                                     self.ui.cfg_scope.remove_selected)
+        self.ui.cfg_scope.set_context_menu(self.context_menu)
 
         self._scope_mode_changed.connect(self.on_scope_mode_change)
         self._scope_text_changed.connect(self.on_text_change)
