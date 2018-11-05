@@ -21,6 +21,7 @@ class Demo(QtWidgets.QMainWindow):
         self.widget1.single_item_selected.connect(self.on_thing_selection)
         self.widget1.single_name_selected.connect(self.on_thing_selection)
         self.widget1.changed.connect(self.changed1)
+        self.widget1.context_menu_requested.connect(self.build_context_menu)
 
         lyt.addWidget(QtWidgets.QLabel('a height adjusted list:'))
         self.widget2 = A2ListCompact(self)
@@ -31,6 +32,10 @@ class Demo(QtWidgets.QMainWindow):
         self.widget2.single_item_selected.connect(self.on_thing_selection)
         self.widget2.single_name_selected.connect(self.on_thing_selection)
         self.widget2.changed.connect(self.changed2)
+
+        menu = QtWidgets.QMenu(self)
+        menu.addAction('blank action static menu')
+        self.widget2.set_context_menu(menu)
 
         button = QtWidgets.QPushButton('add random')
         button.clicked.connect(self.bla)
@@ -54,6 +59,11 @@ class Demo(QtWidgets.QMainWindow):
     @staticmethod
     def changed2():
         print('list 2 changed!')
+
+    def build_context_menu(self, menu):
+        menu.clear()
+        for name in self.widget1.get_selected_names():
+            menu.addAction('context_menu for item "%s"' % name)
 
 
 def show():
