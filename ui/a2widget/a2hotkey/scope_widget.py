@@ -35,7 +35,7 @@ class ScopeWidget(QtWidgets.QWidget):
         if self.ui.cfg_scope.count():
             self.ui.cfg_scope.set_item_name(scope_string)
         else:
-            self.add_scope(scope_string)
+            self.ui.cfg_scope.add(scope_string)
         self.scope_update()
 
     def set_config(self, config_dict=None):
