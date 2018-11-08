@@ -44,7 +44,9 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         print('dialog canceled!')
 
     def call_confirm_dialog(self):
-        dialog = A2ConfirmDialog(self, 'A title', msg='some text bla blaaa')
+        dialog = A2ConfirmDialog(self, 'A title',
+                                 msg="Some <b>more</b> text bla blaaa with extra formatting and stuff.\n"
+                                     "We wouldn't want it to be <i>too</i> boring, right? 😉")
         dialog.okayed.connect(self.confirm_dialog_okayed)
         dialog.canceled.connect(self.confirm_dialog_canceled)
         dialog.show()
