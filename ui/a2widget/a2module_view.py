@@ -118,7 +118,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
             else:
                 self.ui.head_widget.setVisible(True)
-                self.ui.modName.setText('%i modules' % self.main.num_selected)
+                self.ui.a2_mod_name.setText('%i modules' % self.main.num_selected)
                 num_enabled = sum([mod.enabled for mod in self.main.selected])
                 if num_enabled == 0:
                     self.ui.modCheck.setChecked(False)
@@ -130,7 +130,7 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             self.ui.head_widget.setVisible(True)
             self.ui.a2mod_view_source_label.setText(self.main.mod.source.name)
-            self.ui.modName.setText(self.main.mod.name)
+            self.ui.a2_mod_name.setText(self.main.mod.name)
             # weird.. need to set false first to fix tristate effect
             self.ui.modCheck.setChecked(False)
             self.ui.modCheck.setChecked(self.main.mod.enabled)

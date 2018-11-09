@@ -1,99 +1,104 @@
 * {
-    font-size: %(font_size)ipx;
-    color: "%(font_color)s";
+	font-size: %(font_size)ipx;
+	color: "%(font_color)s";
 }
 
 *:disabled {
-    color: "%(color_darkgrey)s";
+	color: "%(color_darkgrey)s";
 }
 
 QPushButton {
-    border-radius: %(border_radius)ipx;
-    padding: %(margin)ipx;
-    padding-left: %(margin_h)ipx;
-    padding-right: %(margin_h)ipx;
-    background-color: "%(color_button)s";
-    icon-size: %(icon_size_small)ipx;
+	border-radius: %(border_radius)ipx;
+	padding: %(margin)ipx;
+	padding-left: %(margin_h)ipx;
+	padding-right: %(margin_h)ipx;
+	background-color: "%(color_button)s";
+	icon-size: %(icon_size_small)ipx;
 }
 
 QPushButton:hover,
 QGroupBox::indicator:hover,
 QCheckBox::indicator:hover {
-    background-color: "%(color_hover)s";
+	background-color: "%(color_hover)s";
 }
 
 QPushButton:pressed,
 QGroupBox::indicator:pressed,
 QCheckBox::indicator:pressed {
-    background-color: "%(color_pressed)s";
+	background-color: "%(color_pressed)s";
 }
 
 QGroupBox::indicator {
-    margin: %(margin)ipx;
+	margin: %(margin)ipx;
 }
 
 QGroupBox::indicator,
 QCheckBox::indicator {
 	height: %(icon_size)ipx;
 	width: %(icon_size)ipx;
-    image: url(res/css_check_off.svg);
+	image: url(res/css_check_off.svg);
 }
 
 QGroupBox::indicator:checked,
 QCheckBox::indicator:checked {
-    image: url(res/css_check_on.svg);
+	image: url(res/css_check_on.svg);
 }
 
 QCheckBox::indicator:indeterminate {
-    image: url(res/css_check_int.svg);
+	image: url(res/css_check_int.svg);
 }
 
 QCheckBox::indicator:indeterminate:hover {
-    background-color: "%(color_hover)s";
-    image: url(res/css_check_off.svg);
+	background-color: "%(color_hover)s";
+	image: url(res/css_check_off.svg);
 }
 
 QLabel#a2mod_view_source_label {
-    color: "%(color_pressed)s";
+	color: "%(color_pressed)s";
+}
+
+QLabel#a2mod_view_source_label {
+	color: "%(color_pressed)s";
 }
 
 QGroupBox {
+	font-weight: bold;
 	margin: %(margin)ipx;
 	margin-top: %(group_label_space)ipx;
 	border-width: 1px;
-    border-style: solid;
-    border-radius: %(border_radius)ipx;
-    border-color: "%(color_hover)s";
+	border-style: solid;
+	border-radius: %(border_radius)ipx;
+	border-color: "%(color_hover)s";
 }
 QGroupBox::title {
 	font-size: %(font_size_big)ipx;
-    left: %(line)ipx;
-    top: -%(group_label_space)ipx;
-    padding-left: %(spacing)ipx;
-    padding-right: %(spacing)ipx;
+	left: %(line)ipx;
+	top: -%(group_label_space)ipx;
+	padding-left: %(spacing)ipx;
+	padding-right: %(spacing)ipx;
 }
 
 QScrollArea#a2scroll_area,
 QListWidget#a2module_list_widget {
-    border-style: none;
+	border-style: none;
 }
 
 QPushButton#a2cancel_button,
 QPushButton#a2ok_button,
 QPushButton#a2add_button,
 A2Hotkey {
-    font-size: %(font_size_large)ipx;
+	font-size: %(font_size_large)ipx;
 }
 
 QPushButton#a2cancel_button {
-    background:transparent;
+	background:transparent;
 }
 
 QPushButton#a2cancel_button:hover {
-    background-color: "%(color_hover)s";
+	background-color: "%(color_hover)s";
 }
 QPushButton#a2cancel_button:pressed {
-    background-color: "%(color_pressed)s";
+	background-color: "%(color_pressed)s";
 }
 
 QPushButton#a2ok_button {
@@ -107,49 +112,49 @@ QPushButton#a2ok_button:pressed {
 }
 
 QPushButton#a2add_button {
-    background-color: "%(color_green)s";
-    icon-size: %(icon_size)ipx;
+	background-color: "%(color_green)s";
+	icon-size: %(icon_size)ipx;
 }
 QPushButton#a2add_button:hover {
-    background-color: "%(color_green_hover)s";
+	background-color: "%(color_green_hover)s";
 }
 QPushButton#a2add_button:pressed {
-    background-color: "%(color_green_pressed)s";
+	background-color: "%(color_green_pressed)s";
 }
 
 QPushButton[flat="true"] {
-    background-color:transparent;
+	background-color:transparent;
 }
 QPushButton[flat="true"]:hover {
-    background-color: "%(color_hover)s";
+	background-color: "%(color_hover)s";
 }
 
 QPushButton#a2help_button {
 	padding: 0px;
 	max-height: %(icon_size)ipx;
 	max-width: %(icon_size)ipx;
-    min-height: %(icon_size)ipx;
-    min-width: %(icon_size)ipx;
-    margin: %(border_radius)ipx;
-    color: "%(color_pressed)s";
+	min-height: %(icon_size)ipx;
+	min-width: %(icon_size)ipx;
+	margin: %(border_radius)ipx;
+	color: "%(color_pressed)s";
 }
 
 QPushButton#a2search_x_button {
 	padding: 0px;
-    margin: 0px;
+	margin: 0px;
 	max-height: %(search_x_button_size)ipx;
 	max-width: %(search_x_button_size)ipx;
-    min-height: %(search_x_button_size)ipx;
-    min-width: %(search_x_button_size)ipx;
-    color: "%(color_pressed)s";
+	min-height: %(search_x_button_size)ipx;
+	min-width: %(search_x_button_size)ipx;
+	color: "%(color_pressed)s";
 }
 
 QPushButton#A2HotkeyButton,
 QPushButton#A2HotkeyScope {
-    border-radius: 0px;
-    background-color: "%(color_yellow)s";
-    font-size: %(font_size_large)ipx;
-    min-height: %(hotkey_button_size)ipx;
+	border-radius: 0px;
+	background-color: "%(color_yellow)s";
+	font-size: %(font_size_large)ipx;
+	min-height: %(hotkey_button_size)ipx;
 }
 QPushButton#A2HotkeyButton:hover,
 QPushButton#A2HotkeyScope:hover {
@@ -160,11 +165,11 @@ QPushButton#A2HotkeyScope:pressed {
 	background-color: "%(color_yellow_pressed)s";
 }
 QPushButton#A2HotkeyScope {
-    icon-size: %(icon_size)ipx;
-    padding-left: %(margin)ipx;
-    padding-right: %(margin)ipx;
-    max-width: %(hotkey_button_size)ipx;
-    min-width: %(hotkey_button_size)ipx;
+	icon-size: %(icon_size)ipx;
+	padding-left: %(margin)ipx;
+	padding-right: %(margin)ipx;
+	max-width: %(hotkey_button_size)ipx;
+	min-width: %(hotkey_button_size)ipx;
 }
 
 QScrollBar:vertical,
@@ -181,7 +186,7 @@ QScrollBar:horizontal {
 
 QScrollBar::add-line,
 QScrollBar::sub-line{
-    background: transparent;
+	background: transparent;
 	border: 0px;
 	width: 0px;
 	height: 0px;
@@ -217,15 +222,19 @@ A2CodeField {
 }
 
 QLabel#a2license_text {
-    background-color: "%(color_bright)s";
+	background-color: "%(color_bright)s";
 }
 
 QToolButton#a2option_button {
-    image: url(res/more.svg);
-    color: "%(color_darkgrey)s";
+	image: url(res/more.svg);
+	color: "%(color_darkgrey)s";
 }
 
 A2MoreButton {
-    image: url(res/more.svg);
-    color: "%(color_darkgrey)s";
+	image: url(res/more.svg);
+	color: "%(color_darkgrey)s";
+}
+
+QLabel#a2_mod_name {
+	font-size: %(font_size_big)ipx;
 }
