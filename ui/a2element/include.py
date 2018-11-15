@@ -26,7 +26,8 @@ class Edit(EditCtrl):
         self.labelCtrl.setAlignment(QtCore.Qt.AlignRight)
         self.base_layout.addWidget(self.labelCtrl)
         self.button = QtWidgets.QPushButton(self.cfg['file'])
-        self.button_menu = BrowseScriptsMenu(self.main, self.set_script)
+        self.button_menu = BrowseScriptsMenu(self.main)
+        self.button_menu.script_selected.connect(self.set_script)
         self.button.setMenu(self.button_menu)
         self.base_layout.addWidget(self.button)
 
