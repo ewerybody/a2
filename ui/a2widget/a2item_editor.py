@@ -49,9 +49,10 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.context_menu_requested.connect(self.list_menu_called.emit)
         self.ui.add_entry_button.clicked.connect(self.add_item)
-        self.ui.del_entry_button.clicked.connect(self.delete_item)
+        self.ui.del_entry_button.clicked.connect(self.ui.item_list.remove_selected)
+        self.ui.item_list.items_removed.connect(self._on_items_removed)
 
-        self.ui.item_list.itemSelectionChanged.connect(self.selection_change)
+        self.ui.item_list.items_selected.connect(self._on_selection_change)
         self._drawing = False
         self._current_data = {}
         self.selected_name_changed.connect(self.draw_data)
@@ -166,8 +167,7 @@ class A2ItemEditor(QtWidgets.QWidget):
     def selected_name(self):
         return self._selected_name
 
-    def selection_change(self):
-        item_objs = self.ui.item_list.selectedItems()
+    def _on_selection_change(self, item_objs):
         self.selection_changed.emit(item_objs)
 
         text = item_objs[0].text() if item_objs else ''
@@ -191,18 +191,15 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.item_list.editItem(item)
         self.ui.item_list.select_items([item])
 
-    def delete_item(self):
-        item_objs = self.ui.item_list.selectedItems()
+    def _on_items_removed(self, item_objs):
         for item in item_objs:
-            item_row = self.ui.item_list.row(item)
-            self.ui.item_list.takeItem(item_row)
-        item_name = item_objs[0].text()
-        try:
-            self.data.pop(item_name)
-            self.data_changed.emit()
-            self.item_deleted.emit(item_name)
-        except KeyError:
-            pass
+            item_name = item.text()
+            try:
+                self.data.pop(item_name)
+                self.data_changed.emit()
+                self.item_deleted.emit(item_name)
+            except KeyError:
+                pass
 
     def update_filter(self, text=None):
         """
