@@ -11,6 +11,9 @@ import a2ctrl
 from a2ctrl import Icons
 
 
+LOCAL_MENU_PREFIX = 'local: '
+
+
 class DrawCtrlMixin(object):
     """
     Display widget to host everything that you want to show to the
@@ -203,7 +206,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         a2util.surf_to(self.helpUrl)
 
     def _setup_ui(self, add_layout):
-        self.setTitle(self.cfg['typ'])
+        # self.setTitle(self.cfg['typ'])
+        self.setTitle(self.element_name())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
@@ -370,28 +374,35 @@ class EditAddElem(QtWidgets.QWidget):
 
     def build_menu(self):
         self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.main, self._add_element)
+        self.menu_include = BrowseScriptsMenu(self.main)
+        self.menu_include.script_selected.connect(self._add_element)
         self.menu.addMenu(self.menu_include)
 
         import a2element
         for name, display_name, icon in a2element.get_list():
-            action = QtWidgets.QAction(display_name, self.menu, triggered=partial(self._add_element, name))
+            action = self.menu.addAction(display_name, self._on_add_element_action)
+            action.setData((name, None))
             if icon:
                 action.setIcon(icon)
-            self.menu.addAction(action)
 
         self.menu.addSeparator()
         self.menu.addAction(self.main.ui.actionCreate_New_Element)
         self._check_for_local_element_mods()
         self.menu.popup(QtGui.QCursor.pos())
 
-    def _add_element(self, typ, name=''):
+    def _on_add_element_action(self):
+        typ, name = self.sender().data()
+        self._add_element(typ, name)
+
+    def _add_element(self, typ, name=None):
         """
         Just adds a new dict with the according typ value to the temp_config.
         Only if it's an include we already enter the file selected.
         Every other default value will be handled by the very control element.
         """
         cfg = {'typ': typ}
+        if name:
+            cfg['name'] = name
         if typ == 'include':
             cfg['file'] = name
 
@@ -402,27 +413,32 @@ class EditAddElem(QtWidgets.QWidget):
         if self.main.mod is None:
             return
 
-        for item in os.listdir(self.main.mod.path):
-            itempath = os.path.join(self.main.mod.path, item)
-            if not os.path.isfile(itempath):
+        for item in os.scandir(self.main.mod.path):
+            if not item.is_file():
                 continue
-            base, ext = os.path.splitext(item)
-            if ext.lower() != '.py':
+            base, ext = os.path.splitext(item.name)
+            if not base.startswith(a2ctrl.LOCAL_ELEMENT_ID) or ext.lower() != '.py':
                 continue
 
-            element_objects = a2ctrl.get_local_element(itempath)
-            if element_objects is not None and 'Edit' in element_objects:
-                name = element_objects['Edit'].element_name()
-                icon = element_objects['Edit'].element_icon()
-                action = self.menu.addAction(name, partial(self._add_element, base))
-                if icon:
-                    action.setIcon(icon)
+            element_module = a2ctrl.get_local_element(item.path)
+            if element_module is None:
+                continue
+
+            edit_class = getattr(element_module, 'Edit')
+            display_name = edit_class.element_name()
+            icon = edit_class.element_icon()
+            name = base[len(a2ctrl.LOCAL_ELEMENT_ID) + 1:]
+            action = self.menu.addAction(LOCAL_MENU_PREFIX + display_name, self._on_add_element_action)
+            action.setData((a2ctrl.LOCAL_ELEMENT_ID, name))
+            if icon:
+                action.setIcon(icon)
 
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
-    def __init__(self, main, func):
+    script_selected = QtCore.Signal(tuple)
+
+    def __init__(self, main):
         super(BrowseScriptsMenu, self).__init__()
-        self.func = func
         self.main = main
         self.setIcon(Icons.inst().code)
         self.setTitle('Include Script')
@@ -439,25 +455,28 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         scripts_unused = set(self.main.mod.scripts) - scripts_in_use
 
         for script_name in scripts_unused:
-            self.addAction(icons.code, script_name, partial(self.set_script, script_name))
+            action = self.addAction(icons.code, script_name, self._on_action_click)
+            action.setData(script_name)
 
         if scripts_unused:
             self.addSeparator()
 
         self.addAction(icons.code, 'Create New Script', self.set_script)
 
-    def set_script(self, name='', create=False):
-        if not name:
-            from a2widget.a2input_dialog import A2InputDialog
-            dialog = A2InputDialog(
-                self.main, 'New Script',
-                self.main.mod.check_create_script,
-                text='awesomeScript',
-                msg='Give a name for the new script file:')
-            dialog.okayed.connect(partial(self.set_script, create=True))
-            dialog.show()
+    def _on_action_click(self):
+        self.script_selected.emit(('include', self.sender().data()))
+
+    def set_script(self):
+        from a2widget.a2input_dialog import A2InputDialog
+        dialog = A2InputDialog(
+            self.main, 'New Script',
+            self.main.mod.check_create_script,
+            text='awesomeScript',
+            msg='Give a name for the new script file:')
+        # dialog.okayed.connect(partial(self.set_script, create=True))
+        dialog.exec_()
+        if not dialog.output:
             return
 
-        if create:
-            name = self.main.mod.create_script(name, self.main.devset.author_name)
-        self.func('include', name)
+        name = self.main.mod.create_script(dialog.output, self.main.devset.author_name)
+        self.script_selected.emit(('include', name))

@@ -18,6 +18,7 @@ log = a2core.get_logger(__name__)
 UI_FILE_SUFFIX = '_ui'
 NO_DRAW_TYPES = ['include', 'init']
 ELEMENTS_PACKAGE = 'a2element'
+LOCAL_ELEMENT_ID = 'a2_local_element'
 _element_map = {}
 
 
@@ -67,66 +68,70 @@ def check_ui_module(module):
         reload(module)
 
 
-def draw(main, cfg, mod, user_cfg):
+def draw(main, element_cfg, mod, user_cfg):
     """
     Mapper that returns display control objects
     according to the 'typ' of a config element.
     """
-    typ = cfg.get('typ')
-    if typ in NO_DRAW_TYPES:
+    element_typ = element_cfg.get('typ')
+    if element_typ in NO_DRAW_TYPES:
         return
 
-    element_module = get_a2element_module(cfg.get('typ'))
+    element_module = get_a2element_module(element_typ)
     try:
-        return element_module.Draw(main, cfg, mod, user_cfg)
-
+        return element_module.Draw(main, element_cfg, mod, user_cfg)
     except Exception:
         mod_path = None if mod is None else mod.path
-        ElementDrawClass = get_a2element_object('Draw', cfg.get('typ'), mod_path)
+        ElementDrawClass = get_a2element_object('Draw', element_cfg, mod_path)
 
         if ElementDrawClass is not None:
             try:
-                return ElementDrawClass(main, cfg, mod, user_cfg)
+                return ElementDrawClass(main, element_cfg, mod, user_cfg)
             except Exception:
                 log.error(traceback.format_exc().strip())
-        log.error('Draw type "%s" not supported (yet)! Module: %s' % (cfg.get('typ'), mod))
+        log.error('Draw type "%s" not supported (yet)! Module: %s' % (element_typ, mod))
 
 
-def edit(cfg, main, parent_cfg):
-
-    element_module = get_a2element_module(cfg.get('typ'))
+def edit(element_cfg, main, parent_cfg):
+    element_module = get_a2element_module(element_cfg.get('typ'))
     try:
-        return element_module.Edit(cfg, main, parent_cfg)
+        return element_module.Edit(element_cfg, main, parent_cfg)
 
     except Exception:
         mod_path = None if main.mod is None else main.mod.path
-        ElementEditClass = get_a2element_object('Edit', cfg.get('typ'), mod_path)
+        ElementEditClass = get_a2element_object('Edit', element_cfg, mod_path)
         if ElementEditClass is not None:
             try:
-                return ElementEditClass(cfg, main, parent_cfg)
+                return ElementEditClass(element_cfg, main, parent_cfg)
 
             except Exception:
                 log.error(traceback.format_exc().strip())
                 log.error('Error getting Edit class for type "%s"!'
-                          ' Type not supported (yet)?!' % cfg.get('typ'))
+                          ' Type not supported (yet)?!' % element_cfg.get('typ'))
 
 
-def get_a2element_object(obj_name, element_type, module_path=None):
+def get_a2element_object(obj_name, element_cfg, module_path=None):
     """
     :param str obj_name:
     :param element_type:
     :param module_path:
     :rtype: class
     """
-    element_mod = get_a2element_module(element_type)
+    element_typ = element_cfg['typ']
+    element_mod = get_a2element_module(element_typ)
     if element_mod is not None:
         return getattr(element_mod, obj_name)
 
-    elif module_path:
-        element_objects = get_local_element(os.path.join(module_path, element_type + '.py'))
-        if obj_name not in element_objects:
-            raise RuntimeError('Local Element "%s" has no object "%s"!!' % (element_type, obj_name))
-        return element_objects[obj_name]
+    elif element_typ == LOCAL_ELEMENT_ID and module_path:
+        element_path = os.path.join(
+            module_path, '%s_%s.py' % (LOCAL_ELEMENT_ID, element_cfg['name']))
+        element_mod = get_local_element(element_path)
+        try:
+            return getattr(element_mod, obj_name)
+        except Exception as error:
+            log.error(error)
+            raise RuntimeError('Local Element "%s" has no object "%s"!!' %
+                               (element_path, obj_name))
 
 
 def get_a2element_module(element_type):
@@ -157,22 +162,25 @@ def get_a2element_module(element_type):
             log.error('Could not import element type "%s"!' % element_type)
 
 
-def get_local_element(itempath):
-    if os.path.isfile(itempath):
-        with open(itempath) as fobj:
-            element_content = fobj.read()
+def get_local_element(item_path):
+    if os.path.isfile(item_path):
+        dir_path, file_name = os.path.split(item_path)
+        if dir_path not in sys.path:
+            sys.path.append(dir_path)
 
-        element_objects = {'__file__': itempath}
+        base, _ = os.path.splitext(file_name)
         try:
-            exec(element_content, element_objects)
-            # element_objects.pop('__builtins__')
-
+            element_module = import_module(base)
         except Exception:
             log.error(traceback.format_exc().strip())
-            log.error('Could not exec code from "%s"' % itempath)
-        return element_objects
+            log.error('Could not get local element module! "%s"' % item_path)
+
+        sys.path.remove(dir_path)
+
+        return element_module
     else:
-        raise RuntimeError('Cannot load local element! File does not exist! (%s)' % itempath)
+        raise RuntimeError(
+            'Cannot load local element! File does not exist! (%s)' % item_path)
 
 
 def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None):
@@ -202,31 +210,34 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
     return value
 
 
-def assemble_settings(module_key, cfg_dict, db_dict, module_path=None):
+def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
     a2obj = a2core.A2Obj.inst()
     module_user_cfg = a2obj.db.get('user_cfg', module_key) or {}
-    for cfg in cfg_dict:
+    for element_cfg in cfg_list:
         # get configs named db entry of module or None
-        cfg_name = a2util.get_cfg_default_name(cfg)
+        cfg_name = a2util.get_cfg_default_name(element_cfg)
         user_cfg = module_user_cfg.get(cfg_name)
         # pass if there is an 'enabled' entry and it's False
-        if not get_cfg_value(cfg, user_cfg, 'enabled', default=True):
+        if not get_cfg_value(element_cfg, user_cfg, 'enabled', default=True):
             continue
 
-        element_get_settings_func = get_a2element_object('get_settings', cfg['typ'], module_path)
+        element_get_settings_func = get_a2element_object(
+            'get_settings', element_cfg, module_path)
 
         # no result try again with getting the module path:
         if element_get_settings_func is None and module_path is None:
             source_name, mod_name = module_key.split('|')
             module_path = a2obj.module_sources[source_name].mods[mod_name].path
-            element_get_settings_func = get_a2element_object('get_settings', cfg['typ'], module_path)
+            element_get_settings_func = get_a2element_object(
+                'get_settings', element_cfg, module_path)
 
         if element_get_settings_func is not None:
             try:
-                element_get_settings_func(module_key, cfg, db_dict, user_cfg)
+                element_get_settings_func(module_key, element_cfg, db_dict, user_cfg)
             except Exception:
                 log.error(traceback.format_exc().strip())
-                log.error('Error calling get_settings function for module: "%s"' % module_key)
+                log.error('Error calling get_settings function '
+                          'for module: "%s"' % module_key)
 
 
 if __name__ == '__main__':
