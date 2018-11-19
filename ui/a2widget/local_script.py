@@ -19,9 +19,7 @@ class ScriptSelector(QtWidgets.QWidget):
     def _setup_ui(self):
         layout = QtWidgets.QHBoxLayout(self)
         self.button = QtWidgets.QPushButton(self)
-        self.button_menu = BrowseScriptsMenu(self)
-        self.button_menu.script_selected.connect(self.set_script)
-        self.button.setMenu(self.button_menu)
+        self.button_menu = None
         layout.addWidget(self.button)
 
         self.edit_button = QtWidgets.QPushButton('edit script')
@@ -33,23 +31,14 @@ class ScriptSelector(QtWidgets.QWidget):
         # self.base_layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
         # self.mainWidget.setLayout(self.base_layout)
 
-    def
-
-
-class LocalAHKScriptsMenu(BrowseScriptsMenu):
-    def __init__(self, parent):
-        super(LocalAHKScriptsMenu, self).__init__(parent)
-        self.setTitle('Include Script')
-
-
-class LocalPyScriptMenu(BrowseScriptsMenu):
-    def __init__(self, parent):
-        super(LocalPyScriptMenu, self).__init__(parent)
-        self.setTitle('Use Script')
+    def set_menu(self, menu_object):
+        self.button_menu = menu_object
+        self.button_menu.file_selected.connect(self.set_script)
+        self.button.setMenu(self.button_menu)
 
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
-    script_selected = QtCore.Signal(tuple)
+    script_selected = QtCore.Signal(str)
 
     def __init__(self, main):
         super(BrowseScriptsMenu, self).__init__()
@@ -57,28 +46,25 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         self.setIcon(CODE_ICON)
         self.aboutToShow.connect(self.build_menu)
 
+    def get_available_scripts(self):
+        raise NotImplementedError()
+
     def build_menu(self):
         self.clear()
-        scripts_in_use = set()
-        for cfg in self.main.temp_config:
-            if cfg['typ'] == 'include':
-                scripts_in_use.add(cfg['file'])
+        available = self.get_available_scripts()
 
-        scripts_unused = set(self.main.mod.scripts) - scripts_in_use
-
-        for script_name in scripts_unused:
-            action = self.addAction(CODE_ICON, script_name, self._on_action_click)
+        for script_name in available:
+            action = self.addAction(CODE_ICON, script_name, self._on_script_selected)
             action.setData(script_name)
-
-        if scripts_unused:
+        if available:
             self.addSeparator()
 
-        self.addAction(CODE_ICON, 'Create New Script', self.set_script)
+        self.addAction(CODE_ICON, 'Create New', self._on_create_script)
 
-    def _on_action_click(self):
-        self.script_selected.emit(('include', self.sender().data()))
+    def _on_script_selected(self):
+        self.script_selected.emit(self.sender().data())
 
-    def set_script(self):
+    def _on_create_script(self):
         from a2widget.a2input_dialog import A2InputDialog
         dialog = A2InputDialog(
             self.main, 'New Script',
@@ -91,7 +77,34 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
             return
 
         name = self.main.mod.create_script(dialog.output, self.main.devset.author_name)
-        self.script_selected.emit(('include', name))
+        self.script_selected.emit(name)
+
+
+class LocalAHKScriptsMenu(BrowseScriptsMenu):
+    include_selected = QtCore.signal(tuple)
+
+    def __init__(self, parent, main):
+        super(LocalAHKScriptsMenu, self).__init__(parent)
+        self.setTitle('Include Script')
+        self.main = main
+        self.script_selected.connect(self._on_include_selected)
+
+    def get_available_scripts(self):
+        scripts_in_use = set()
+        for cfg in self.main.temp_config:
+            if cfg['typ'] == 'include':
+                scripts_in_use.add(cfg['file'])
+
+        return set(self.main.mod.scripts) - scripts_in_use
+
+    def _on_include_selected(self, name):
+        self.include_selected.emit(('include', name))
+
+
+class LocalPyScriptMenu(BrowseScriptsMenu):
+    def __init__(self, parent):
+        super(LocalPyScriptMenu, self).__init__(parent)
+        self.setTitle('Python Script')
 
 
 if __name__ == '__main__':
