@@ -9,6 +9,7 @@ import a2core
 import a2util
 import a2ctrl
 from a2ctrl import Icons
+import a2widget.local_script
 
 
 LOCAL_MENU_PREFIX = 'local: '
@@ -375,7 +376,7 @@ class EditAddElem(QtWidgets.QWidget):
     def build_menu(self):
         self.menu.clear()
         self.menu_include = BrowseScriptsMenu(self.main)
-        self.menu_include.script_selected.connect(self._on_script_selected)
+        self.menu_include.script_selected.connect(self._on_add_include)
         self.menu.addMenu(self.menu_include)
 
         import a2element
@@ -390,7 +391,7 @@ class EditAddElem(QtWidgets.QWidget):
         self._check_for_local_element_mods()
         self.menu.popup(QtGui.QCursor.pos())
 
-    def _on_script_selected(self, args):
+    def _on_add_include(self, args):
         typ, name = args
         self._add_element(typ, name)
 
@@ -405,10 +406,10 @@ class EditAddElem(QtWidgets.QWidget):
         Every other default value will be handled by the very control element.
         """
         cfg = {'typ': typ}
-        if name:
-            cfg['name'] = name
         if typ == 'include':
             cfg['file'] = name
+        elif name:
+            cfg['name'] = name
 
         self.config.append(cfg)
         self.main.edit_mod()
@@ -436,6 +437,41 @@ class EditAddElem(QtWidgets.QWidget):
             action.setData((a2ctrl.LOCAL_ELEMENT_ID, name))
             if icon:
                 action.setIcon(icon)
+
+
+class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
+    """WIP. placeholder so far ..."""
+    script_selected = QtCore.Signal(tuple)
+
+    def __init__(self, parent, main):
+        super(LocalAHKScriptsMenu, self).__init__(parent, main)
+        self.setTitle('Include Script')
+
+    def get_available_scripts(self):
+        scripts_in_use = set()
+        for cfg in self.main.temp_config:
+            if cfg['typ'] == 'include':
+                scripts_in_use.add(cfg['file'])
+
+        return set(self.main.mod.scripts) - scripts_in_use
+
+    def _on_script_selected(self):
+        self.script_selected.emit(('include', self.sender().data()))
+
+    def _on_create_script(self):
+        from a2widget.a2input_dialog import A2InputDialog
+        dialog = A2InputDialog(
+            self.main, 'New Script',
+            self.main.mod.check_create_script,
+            text='awesome_script',
+            msg='Give a name for the new script file:')
+
+        dialog.exec_()
+        if not dialog.output:
+            return
+
+        name = self.main.mod.create_script(dialog.output, self.main.devset.author_name)
+        self.script_selected.emit(('include', name))
 
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
