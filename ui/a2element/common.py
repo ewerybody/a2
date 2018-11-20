@@ -375,7 +375,7 @@ class EditAddElem(QtWidgets.QWidget):
     def build_menu(self):
         self.menu.clear()
         self.menu_include = BrowseScriptsMenu(self.main)
-        self.menu_include.script_selected.connect(self._add_element)
+        self.menu_include.script_selected.connect(self._on_script_selected)
         self.menu.addMenu(self.menu_include)
 
         import a2element
@@ -389,6 +389,10 @@ class EditAddElem(QtWidgets.QWidget):
         self.menu.addAction(self.main.ui.actionCreate_New_Element)
         self._check_for_local_element_mods()
         self.menu.popup(QtGui.QCursor.pos())
+
+    def _on_script_selected(self, args):
+        typ, name = args
+        self._add_element(typ, name)
 
     def _on_add_element_action(self):
         typ, name = self.sender().data()
