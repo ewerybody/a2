@@ -14,13 +14,14 @@ import os
 import json
 import time
 import uuid
+import shutil
+import traceback
 
 import a2core
 import a2ctrl
 import a2util
-import shutil
+
 from PySide2 import QtCore
-import traceback
 
 
 log = a2core.get_logger(__name__)
@@ -600,11 +601,10 @@ class Mod(object):
         return script_name
 
     def check_create_script(self, name):
-        if name.strip() == '':
-            return 'Script name cannot be empty!'
-        if os.path.splitext(name.lower())[0] in [os.path.splitext(s)[0].lower() for s in self.scripts]:
-            return 'Module has already a script named "%s"!' % name
-        return True
+        name = os.path.splitext(name.lower())[0]
+        black_list = [os.path.splitext(s)[0].lower() for s in self.scripts]
+        return a2util.standard_name_check(
+            name, black_list, 'Module has already a script named "%s"!')
 
     def set_user_cfg(self, element_cfg, value, attr_name=None):
         """
