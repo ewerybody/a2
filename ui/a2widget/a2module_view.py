@@ -166,6 +166,14 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.draw_ui()
 
+#         new_widget = EditView(self, self.controls, self.main.temp_config)
+#
+#         # turn scroll layout content to new host widget
+#         _current_widget = self.ui.a2scroll_area.takeWidget()
+#         _current_widget.deleteLater()
+#         self.ui.a2scroll_area.setWidget(new_widget)
+#         self.settings_widget = new_widget
+
         self.toggle_edit(True)
         self.settings_widget.setFocus()
 
@@ -239,3 +247,38 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             self.main.mod.help()
 
+
+class EditView(QtWidgets.QWidget):
+    def __init__(self, parent, controls, config_list):
+        super(EditView, self).__init__(parent)
+        self.edit_layout = QtWidgets.QVBoxLayout(self)
+        self.controls = controls
+        self.config_list = config_list
+
+        for ctrl in controls:
+            if ctrl is None:
+                continue
+
+            self.edit_layout.addWidget(ctrl)
+
+            if isinstance(ctrl, a2element.common.EditCtrl):
+                ctrl.delete_requested.connect(self.delete_element)
+                ctrl.move_abs_requested.connect(self.move_absolute)
+                ctrl.move_rel_requested.connect(self.move_relative)
+
+        # amend a spacer
+        policy = QtWidgets.QSizePolicy
+        spacer = QtWidgets.QSpacerItem(10, 10, policy.Minimum, policy.Minimum)
+        self.edit_layout.addItem(spacer)
+
+        self.setSizePolicy(policy(policy.Preferred, policy.Maximum))
+
+    def delete_element(self):
+        sender = self.sender()
+        print('delete_element', sender)
+
+    def move_relative(self, value):
+        print('value', value)
+
+    def move_absolute(self, value):
+        print('value', value)

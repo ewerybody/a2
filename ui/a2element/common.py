@@ -140,6 +140,12 @@ class EditCtrl(QtWidgets.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
+    delete_requested = QtCore.Signal()
+    move_rel_requested = QtCore.Signal(int)
+    move_abs_requested = QtCore.Signal(bool)
+    duplicate_requested = QtCore.Signal()
+    cut_requested = QtCore.Signal()
+
     def __init__(self, cfg, main, parent_cfg, add_layout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
@@ -185,6 +191,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         self.main.edit_mod(keep_scroll=True)
 
     def delete(self):
+        self.delete_requested.emit()
+
         if self.cfg in self.parent_cfg:
             self.parent_cfg.remove(self.cfg)
             self.main.edit_mod()
