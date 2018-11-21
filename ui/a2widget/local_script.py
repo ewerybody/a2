@@ -1,13 +1,13 @@
-import a2ctrl
-
-from a2ctrl import Icons
-
-from PySide2 import QtWidgets, QtCore
 import os
 
+import a2ctrl
+import a2util
 
-CODE_ICON = Icons.inst().code
-EDIT_ICON = Icons.inst().edit
+from PySide2 import QtWidgets
+
+
+CODE_ICON = a2ctrl.Icons.inst().code
+EDIT_ICON = a2ctrl.Icons.inst().edit
 
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
@@ -17,14 +17,38 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         self.setIcon(CODE_ICON)
         self.aboutToShow.connect(self.build_menu)
 
+        self.extension = '.py'
+        self.file_prefix = ''
+        self.config_typ = ''
+
     def get_available_scripts(self):
-        raise NotImplementedError()
+        scripts_in_use = set()
+        for cfg in a2ctrl.iter_element_cfg_type(self.main.temp_config, self.config_typ):
+            this_name = cfg.get('script_name')
+            if this_name:
+                scripts_in_use.add(this_name)
+
+        return self._list_scripts() - scripts_in_use
+
+    def _list_scripts(self):
+        menu_script_files = set()
+        for item in os.scandir(self.main.mod.path):
+            if item.is_file():
+                base, ext = os.path.splitext(item.name)
+                if base.startswith(self.file_prefix) and ext.lower() == self.extension:
+                    menu_script_files.add(base[len(self.file_prefix):])
+        return menu_script_files
 
     def _on_script_selected(self):
         raise NotImplementedError()
 
     def _on_create_script(self):
         raise NotImplementedError()
+
+    def _name_check(self, name):
+        name = os.path.splitext(name)[0]
+        black_list = self._list_scripts()
+        return a2util.standard_name_check(name, black_list)
 
     def build_menu(self):
         self.clear()
