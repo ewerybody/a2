@@ -163,9 +163,9 @@ class A2Window(QtWidgets.QMainWindow):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F1),
                             self, self.module_view.help)
 
-    def edit_mod(self, keep_scroll=False):
+    def edit_mod(self):
         if self.num_selected == 1:
-            self.module_view.edit_mod(keep_scroll)
+            self.module_view.edit_mod()
 
     def check_main_menu_bar(self):
         dev_mode = self.a2.dev_mode

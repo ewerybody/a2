@@ -1,3 +1,4 @@
+import traceback
 from copy import deepcopy
 
 from PySide2 import QtCore, QtWidgets
@@ -5,10 +6,9 @@ from PySide2 import QtCore, QtWidgets
 import a2core
 import a2ctrl
 import a2util
-from a2element.common import EditAddElem
+import a2element.common
 from a2widget import a2settings_view
 from a2widget import a2module_view_ui
-import traceback
 
 
 log = a2core.get_logger(__name__)
@@ -19,7 +19,6 @@ NEW_MODULE_CFG = {'typ': 'nfo',
 
 
 class A2ModuleView(QtWidgets.QWidget):
-
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
         self.main = None
@@ -135,7 +134,7 @@ class A2ModuleView(QtWidgets.QWidget):
             self.ui.modCheck.setChecked(False)
             self.ui.modCheck.setChecked(self.main.mod.enabled)
 
-    def edit_mod(self, keep_scroll=False):
+    def edit_mod(self):
         """
         From the modules config creates controls to edit the config itself.
         If a header is not found one will be added to the in-edit config.
@@ -162,14 +161,15 @@ class A2ModuleView(QtWidgets.QWidget):
         for cfg in self.main.temp_config:
             self.controls.append(a2ctrl.edit(cfg, self.main, self.main.temp_config))
 
-        edit_select = EditAddElem(self.main, self.main.temp_config)
+        edit_select = a2element.common.EditAddElem(self.main, self.main.temp_config)
         self.controls.append(edit_select)
 
-        self.draw_ui(keep_scroll)
+        self.draw_ui()
+
         self.toggle_edit(True)
         self.settings_widget.setFocus()
 
-    def draw_ui(self, keep_scroll=False):
+    def draw_ui(self):
         """
         takes list of controls and arranges them in the scroll layout
 
@@ -187,19 +187,9 @@ class A2ModuleView(QtWidgets.QWidget):
         # to refill the scroll layout:
         # create widget to host the module's new layout
         new_widget = QtWidgets.QWidget(self.main)
-        policy = QtWidgets.QSizePolicy
-
-        if keep_scroll:
-            current_height = self.settings_widget.height()
-            current_scroll_value = self.ui.scrollBar.value()
-            new_widget.setSizePolicy(policy(policy.Preferred, policy.Fixed))
-            new_widget.setMinimumHeight(current_height)
 
         # create new column layout for the module controls
         new_layout = QtWidgets.QVBoxLayout(new_widget)
-
-        # turn scroll layout content to new host widget
-        self.ui.a2scroll_area.setWidget(new_widget)
 
         # make the new inner layout the mainLayout
         # add the controls to it
@@ -220,6 +210,7 @@ class A2ModuleView(QtWidgets.QWidget):
                 log.error(traceback.format_exc().strip())
                 raise error
 
+        policy = QtWidgets.QSizePolicy
         # amend a spacer
         spacer = QtWidgets.QSpacerItem(0, 0, policy.Minimum, policy.Minimum)
         new_layout.addItem(spacer)
@@ -227,9 +218,10 @@ class A2ModuleView(QtWidgets.QWidget):
         vertical_policy = policy.Minimum if has_expandable_widget else policy.Maximum
         new_widget.setSizePolicy(policy(policy.Preferred, vertical_policy))
 
-        if keep_scroll:
-            self.ui.scrollBar.setValue(current_scroll_value)
-
+        # turn scroll layout content to new host widget
+        _current_widget = self.ui.a2scroll_area.takeWidget()
+        _current_widget.deleteLater()
+        self.ui.a2scroll_area.setWidget(new_widget)
         self.settings_widget = new_widget
 
     def toggle_edit(self, state):
@@ -247,30 +239,3 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             self.main.mod.help()
 
-    def scroll_to(self):
-        # TODO:
-        # if self.ui.module_view.ui.scrollArea.hasFocus():
-        # print('self.ui.scrollArea.hasFocus(): %s' % self.ui.scrollArea.hasFocus())
-        #    current = self.ui.scrollBar.value()
-        #    scroll_end = self.ui.scrollBar.maximum()
-        #    if isinstance(value, bool):
-        #        value = 0 if value else self.ui.scrollBar.maximum()
-        #    if value == current or scroll_end == 0:
-        #        return
-        #    if not smooth:
-        #        self.ui.scrollBar.setValue(value)
-        pass
-    #             tmax = 0.3
-    #             curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
-    #             res = 0.01
-    #             steps = tmax / res
-    #             tsteps = 1 / steps
-    #             t = 0.0
-    #
-    #             rng = value - current
-    #             while t <= 1.0:
-    #                 time.sleep(res)
-    #                 t += tsteps
-    #                 v = curve.valueForProgress(t)
-    #                 scrollval = current + (v * rng)
-    #                 self.ui.scrollBar.setValue(scrollval)

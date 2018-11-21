@@ -170,12 +170,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         if isinstance(value, bool):
             if value:
                 newindex = top_index
-                # self.main.ui.scrollArea.scrollToTop()
-                # self.main.ui.scrollArea
             else:
                 newindex = maxIndex
-                # TODO: scrolling should be done in module_view
-                # self.scroll_to_bottom()
         else:
             newindex = index + value
         # hop out if already at start or end
@@ -191,13 +187,12 @@ class EditCtrl(QtWidgets.QGroupBox):
     def delete(self):
         if self.cfg in self.parent_cfg:
             self.parent_cfg.remove(self.cfg)
-            self.main.edit_mod(keep_scroll=True)
+            self.main.edit_mod()
 
     def duplicate(self):
         newCfg = deepcopy(self.cfg)
         self.parent_cfg.append(newCfg)
         self.main.edit_mod()
-        self.scroll_to_bottom()
 
     def cut(self):
         self.main.edit_clipboard.append(deepcopy(self.cfg))
@@ -299,35 +294,6 @@ class EditCtrl(QtWidgets.QGroupBox):
 
             new_name = a2util.get_next_free_number(new_name, controls)
             self.cfg['name'] = new_name
-
-    def scroll_to_bottom(self):
-        # self._scrollValB4 = self.main.ui.scrollBar.value()
-        # self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
-        # print('scroll_to_bottom...')
-        # QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
-        pass
-
-    def _scroll_to_bottom(self, *args):
-        # print('scrollValB4: %s' % self._scrollValB4)
-        time.sleep(0.1)
-        tmax = 0.3
-        curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
-        res = 0.01
-        steps = tmax / res
-        tsteps = 1 / steps
-        t = 0.0
-        # this = self.main.ui.scrollBar.value()
-        scrollEnd = self.main.ui.scrollBar.maximum()
-        if not scrollEnd:
-            scrollEnd = self._scrollMaxB4 + 100
-        r = scrollEnd - self._scrollValB4
-        self.main.ui.scrollBar.setValue(self._scrollValB4)
-        while t <= 1.0:
-            time.sleep(res)
-            t += tsteps
-            v = curve.valueForProgress(t)
-            scrollval = self._scrollValB4 + (v * r)
-            self.main.ui.scrollBar.setValue(scrollval)
 
     def enterEvent(self, event):
         self._ctrl_button.setVisible(True)
