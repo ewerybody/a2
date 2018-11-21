@@ -758,10 +758,9 @@ def get_files(path):
 
 def iter_file_paths(path):
     if os.path.isdir(path):
-        for item in os.listdir(path):
-            item_path = os.path.join(path, item)
-            if os.path.isfile(item_path):
-                yield (item_path, item)
+        for item in os.scandir(path):
+            if item.is_file():
+                yield item.path, item.name
 
 
 def get_file_paths(path):
