@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\menu_item_edit.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2element\menu_item_edit.ui' applies.
 #
-# Created: Tue Nov 20 19:56:50 2018
-#      by: pyside2-uic  running on PySide2 5.11.1
+# Created: Wed Nov 21 20:45:50 2018
+#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1542405709
 #
 # WARNING! All changes made in this file will be lost!
 

@@ -1,15 +1,23 @@
 # -*- coding: utf-8 -*-
-import os
-import traceback
-
-import a2ahk
 import a2ctrl
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
+from a2widget import local_script
+import os
 
 
 log = get_logger(__name__)
+BUTTON_SCRIPT_PREFIX = 'a2_button_script_'
+BUTTON_SCRIPT_TEMPLATE = '''# a2 button script "{name}"
+
+def main(a2, mod):
+    """
+    :param a2: Main A2 object instance.
+    :param mod: Current a2 module instance.
+    """
+    print('calling {name} ...')
+'''
 
 
 class Draw(DrawCtrl):
@@ -32,26 +40,8 @@ class Draw(DrawCtrl):
         self.button_layout.addWidget(self.button)
 
     def call_code(self):
-        code = self.cfg.get('code', '')
-        if not code:
-            raise RuntimeError('Button has no code to execute!')
-        else:
-            try:
-                # amend the globals dict with some useful info
-                globals_dict = globals()
-                globals_dict.update({'a2path': self.mod.path,
-                                     'call_local_ahk': self.call_local_ahk,
-                                     'call_lib_cmd': a2ahk.call_lib_cmd})
-                exec(code, globals_dict)
-            except Exception:
-                log.error(traceback.format_exc().strip())
-                log.error('Failed to call button code in "%s":\n  %s'
-                          % (self.mod.name, code))
-
-    def call_local_ahk(self, script_name, *args):
-        script_name = a2ahk.ensure_ahk_ext(script_name)
-        script_path = os.path.join(self.mod.path, script_name)
-        return a2ahk.call_cmd(script_path, cwd=self.mod.path, *args)
+        file_name = build_script_file_name(self.cfg.get('script_name'))
+        self.mod.call_python_script(file_name)
 
 
 class Edit(EditCtrl):
@@ -67,6 +57,14 @@ class Edit(EditCtrl):
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
+        self.menu = ButtonScriptMenu(self, main)
+        self.menu.script_selected.connect(self._on_script_selected)
+
+        self.ui.script_selector.set_selection(
+            build_script_file_name(cfg.get('script_name')), cfg.get('script_name'))
+        self.ui.script_selector.set_main(main)
+        self.ui.script_selector.set_menu(self.menu)
+
     @staticmethod
     def element_name():
         """The elements display name shown in UI"""
@@ -76,6 +74,50 @@ class Edit(EditCtrl):
     def element_icon():
         return a2ctrl.Icons.inst().button
 
+    def _on_script_selected(self, name):
+        file_name = build_script_file_name(name)
+        self.ui.script_selector.set_selection(file_name, name)
+        self.cfg['script_name'] = name
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+        path = os.path.join(self.main.mod.path, file_name)
+        if not os.path.isfile(path):
+            with open(path, 'w') as file_object:
+                file_object.write(BUTTON_SCRIPT_TEMPLATE.format(name=name))
+
+
+def build_script_file_name(name):
+    if name is None:
+        return None
+    else:
+        return BUTTON_SCRIPT_PREFIX + name + '.py'
+
+
+class ButtonScriptMenu(local_script.BrowseScriptsMenu):
+    script_selected = QtCore.Signal(str)
+
+    def __init__(self, parent, main):
+        super(ButtonScriptMenu, self).__init__(parent, main)
+        self.extension = '.py'
+        self.file_prefix = BUTTON_SCRIPT_PREFIX
+        self.config_typ = 'button'
+
+    def _on_script_selected(self):
+        self.script_selected.emit(self.sender().data())
+
+    def _on_create_script(self):
+        from a2widget.a2input_dialog import A2InputDialog
+        dialog = A2InputDialog(
+            self.main, 'New Button Script',
+            self._name_check,
+            text='awesome_script',
+            msg='Give a name for the new button script:')
+
+        dialog.exec_()
+        if not dialog.output:
+            return
+
+        self.script_selected.emit(dialog.output)
+
+
+def get_settings(*args):
     pass
