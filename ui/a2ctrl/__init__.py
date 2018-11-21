@@ -240,6 +240,14 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
                           'for module: "%s"' % module_key)
 
 
+def iter_element_cfg_type(cfg_list, typ):
+    for element_cfg in cfg_list:
+        if element_cfg['typ'] == 'group':
+            yield from iter_element_cfg_type(element_cfg['children'], typ)
+        elif element_cfg['typ'] == typ:
+            yield element_cfg
+
+
 if __name__ == '__main__':
     import a2app
     a2app.main()

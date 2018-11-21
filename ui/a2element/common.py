@@ -341,7 +341,7 @@ class EditAddElem(QtWidgets.QWidget):
 
     def build_menu(self):
         self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.main)
+        self.menu_include = LocalAHKScriptsMenu(self, self.main)
         self.menu_include.script_selected.connect(self._on_add_include)
         self.menu.addMenu(self.menu_include)
 
@@ -414,12 +414,13 @@ class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
         self.setTitle('Include Script')
 
     def get_available_scripts(self):
-        scripts_in_use = set()
-        for cfg in self.main.temp_config:
-            if cfg['typ'] == 'include':
-                scripts_in_use.add(cfg['file'])
+        scripts_used = set()
+        for cfg in a2ctrl.iter_element_cfg_type(self.main.temp_config, 'include'):
+            scripts_used.add(cfg['file'].lower())
 
-        return set(self.main.mod.scripts) - scripts_in_use
+        available = [name for name in self.main.mod.scripts
+                     if name.lower() not in scripts_used]
+        return available
 
     def _on_script_selected(self):
         self.script_selected.emit(('include', self.sender().data()))
@@ -432,54 +433,6 @@ class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
             text='awesome_script',
             msg='Give a name for the new script file:')
 
-        dialog.exec_()
-        if not dialog.output:
-            return
-
-        name = self.main.mod.create_script(dialog.output, self.main.devset.author_name)
-        self.script_selected.emit(('include', name))
-
-
-class BrowseScriptsMenu(QtWidgets.QMenu):
-    script_selected = QtCore.Signal(tuple)
-
-    def __init__(self, main):
-        super(BrowseScriptsMenu, self).__init__()
-        self.main = main
-        self.setIcon(Icons.inst().code)
-        self.setTitle('Include Script')
-        self.aboutToShow.connect(self.build_menu)
-
-    def build_menu(self):
-        self.clear()
-        scripts_in_use = set()
-        for cfg in self.main.temp_config:
-            if cfg['typ'] == 'include':
-                scripts_in_use.add(cfg['file'])
-
-        icons = Icons.inst()
-        scripts_unused = set(self.main.mod.scripts) - scripts_in_use
-
-        for script_name in scripts_unused:
-            action = self.addAction(icons.code, script_name, self._on_action_click)
-            action.setData(script_name)
-
-        if scripts_unused:
-            self.addSeparator()
-
-        self.addAction(icons.code, 'Create New Script', self.set_script)
-
-    def _on_action_click(self):
-        self.script_selected.emit(('include', self.sender().data()))
-
-    def set_script(self):
-        from a2widget.a2input_dialog import A2InputDialog
-        dialog = A2InputDialog(
-            self.main, 'New Script',
-            self.main.mod.check_create_script,
-            text='awesomeScript',
-            msg='Give a name for the new script file:')
-        # dialog.okayed.connect(partial(self.set_script, create=True))
         dialog.exec_()
         if not dialog.output:
             return

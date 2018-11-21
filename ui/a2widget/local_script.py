@@ -40,11 +40,11 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
 
 
 class ScriptSelector(QtWidgets.QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, main=None):
         super(ScriptSelector, self).__init__(parent)
         self._setup_ui()
         self._script_file = ''
-        self.main = None
+        self.main = main
 
     def set_main(self, main):
         self.main = main
@@ -69,9 +69,12 @@ class ScriptSelector(QtWidgets.QWidget):
     def set_name(self, name):
         self.button.setText(name)
 
-    def set_selection(self, file_path, display_name):
+    def set_selection(self, file_name, display_name=None):
+        if display_name is None:
+            display_name = file_name
+
         self.set_name(display_name)
-        self._script_file = file_path
+        self._script_file = file_name
 
     def edit_script(self):
         script_path = os.path.join(self.main.mod.path, self._script_file)
