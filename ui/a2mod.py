@@ -11,6 +11,7 @@ They can be enabled/disabled individually affecting all their child modules.
 @author: eRiC
 """
 import os
+import sys
 import json
 import time
 import uuid
@@ -750,6 +751,46 @@ class Mod(object):
         shutil.copy(backup_file_path, self.config_file)
         self.get_config()
         self.change()
+
+    def call_ahk_script(self, script_name, *args):
+        import a2ahk
+        script_name = a2ahk.ensure_ahk_ext(script_name)
+        script_path = os.path.join(self.path, script_name)
+        return a2ahk.call_cmd(script_path, cwd=self.path, *args)
+
+    def call_python_script(self, script_name):
+        if not script_name:
+            return
+
+        path = os.path.join(self.path, script_name)
+        if not os.path.isfile(path):
+            return
+
+        from importlib import import_module
+
+        if self.path not in sys.path:
+            sys.path.append(self.path)
+
+        base, _ = os.path.splitext(script_name)
+        try:
+            script_module = import_module(base)
+        except ImportError:
+            log.error(traceback.format_exc().strip())
+            log.error('Could not import local script_module! "%s"' % script_name)
+
+        try:
+            script_module.main(self.a2, self)
+        except Exception:
+            tb = traceback.format_exc().strip()
+
+            if base in sys.modules:
+                log.info('unloading module "%s" ...' % base)
+                del sys.modules[base]
+
+            log.error('\n  Error executing main() of script_module "%s"\n'
+                      '%s\n  path: %s' % (script_name, tb, path))
+
+        sys.path.remove(self.path)
 
 
 def get_files(path):
