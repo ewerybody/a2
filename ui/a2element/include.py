@@ -1,5 +1,3 @@
-import os
-
 import a2ctrl
 import a2core
 
@@ -64,4 +62,6 @@ class Edit(EditCtrl):
 
 
 def get_settings(_module_key, cfg, db_dict, _user_cfg):
-    db_dict.setdefault('includes', []).append(cfg['file'])
+    file_name = cfg.get('file')
+    if file_name:
+        db_dict.setdefault('includes', []).append(file_name)
