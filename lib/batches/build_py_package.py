@@ -49,19 +49,17 @@ def main(package_name):
     a2uipath = join(a2path, 'ui')
 
     def ui_ignore(path, items):
-        if path.endswith('\\siding'):
-            return ['docs', 'examples']
-        else:
-            return [f for f in items if f.endswith('.ui')] + ['__pycache__', 'demo', 'work']
-    for folder in ['a2ctrl', 'a2widget', 'a2element', 'siding', 'res']:
+        return [f for f in items if f.endswith('.ui')] + ['__pycache__', 'demo', 'work']
+
+    for folder in ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']:
         shutil.copytree(join(a2uipath, folder), join(distui, folder), ignore=ui_ignore)
 
     for folder in ['examples', 'docs', 'include', 'translations']:
         shutil.rmtree(join(distui, 'PySide', folder), ignore_errors=True)
 
-    settings_file = join(distlib, '_defaults', 'a2_settings.ahk')
-    a2ahk.set_variable(settings_file, 'a2_ui_call', 'a2app.exe')
-    a2ahk.set_variable(settings_file, 'a2_title', package_name)
+#     settings_file = join(distlib, '_defaults', 'a2_settings.ahk')
+#     a2ahk.set_variable(settings_file, 'a2_ui_call', 'a2app.exe')
+#     a2ahk.set_variable(settings_file, 'a2_title', package_name)
 
 
 if __name__ == '__main__':

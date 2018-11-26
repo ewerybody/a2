@@ -1,10 +1,10 @@
 @echo off
 
-set package_name=a2 - alpha preview
+set package_name=a2 - alpha preview 0.1
 set a2path=%~dp0..\..
 set scriptpath=%a2path%\ui\a2app.py
 set iconpath=%a2path%\ui\res\a2.ico
-set pypath=C:\Python34\
+set pypath=C:\Python37\
 set pyinstaller=%pypath%Scripts\pyinstaller.exe
 set buildpath=%temp%\a2_temp_buildpath
 set distpath=%a2path%\_ package
@@ -15,7 +15,7 @@ echo ...
 
 
 if not exist %pypath% (
-  echo ERROR: Could not find Python34 package: %pypath%!
+  echo ERROR: Could not find Python37 package: %pypath%!
   pause
   exit
 )
