@@ -40,8 +40,9 @@ class A2List(QtWidgets.QListWidget):
 
     def add(self, names):
         current = self.get_names_lower()
-        addded_something = False
+        added_something = False
 
+        item = None
         for NAME in ensure_list(names):
             name = NAME.lower()
             if self._unique:
@@ -52,11 +53,13 @@ class A2List(QtWidgets.QListWidget):
             item = QtWidgets.QListWidgetItem(NAME)
             self.addItem(item)
 
-            addded_something = True
+            added_something = True
 
-        if addded_something:
+        if added_something:
             item.setSelected(True)
             self.changed.emit()
+
+        return item
 
     def set_names(self, names):
         self.clear()

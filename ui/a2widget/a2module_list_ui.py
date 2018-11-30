@@ -3,12 +3,12 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_list.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_list.ui' applies.
 #
-# Created: Wed Jun 20 16:46:02 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Fri Nov 30 14:13:38 2018
+#      by: pyside2-uic  running on PySide2 5.11.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_ModuleList(object):
     def setupUi(self, ModuleList):
@@ -33,7 +33,7 @@ class Ui_ModuleList(object):
         self.filter_menu_button.setObjectName("filter_menu_button")
         self.horizontalLayout.addWidget(self.filter_menu_button)
         self.module_list_layout.addLayout(self.horizontalLayout)
-        self.a2module_list_widget = QtWidgets.QListWidget(ModuleList)
+        self.a2module_list_widget = A2List(ModuleList)
         self.a2module_list_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.a2module_list_widget.setAlternatingRowColors(True)
         self.a2module_list_widget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -49,3 +49,4 @@ class Ui_ModuleList(object):
         self.a2module_list_widget.setSortingEnabled(True)
 
 from a2widget import A2MoreButton
+from a2widget.a2list import A2List
