@@ -1,25 +1,3 @@
-paste( byref inputString, sleepTime=50 ){
-    SavedClipboard := ClipboardAll
-    Clipboard =
-    Sleep, %sleepTime%
-    Clipboard := inputString
-    ClipWait, 1
-    Send, {Ctrl down}^v{Ctrl up}
-    Clipboard := SavedClipboard
-}
-
-; looks up the items of an array object
-; returns index of search string if found
-; returns 0 otherwise
-inArray(byref search, byref array) {
-    ;for i, value in array {
-    Loop % array.MaxIndex() {
-        if (search == array[A_Index])
-            Return A_Index
-    }
-    Return 0
-}
-
 /**
  * Helper Function
  *     Returns a free identifier for a GUI
@@ -436,7 +414,7 @@ SetTimerF( Function, Period=0, ParmObject=0, Priority=0 ) {
     Static current,tmrs:=Object() ;current will hold timer that is currently running
     If IsFunc( Function ) || IsObject( Function ) {
         if IsObject(tmr:=tmrs[Function]) ;destroy timer before creating a new one
-            ret := DllCall( "KillTimer", UInt,0, UInt, tmr.tmr)
+            ret := DllCall("KillTimer", UInt,0, UInt, tmr.tmr)
                 , DllCall("GlobalFree", UInt, tmr.CBA)
                 , tmrs.Remove(Function)
         if (Period = 0 || Period ? "off")
@@ -599,15 +577,6 @@ HWNDToClassNN(hwnd)
         if (hwnd1=hwnd)
         return A_LoopField
     }
-}
-
-; Gets width of all screens combined. NOTE: Single screens may have different vertical resolutions so some parts of the area returned here might not belong to any screens!
-GetVirtualScreenCoordinates(ByRef x, ByRef y, ByRef w, ByRef h)
-{
-    SysGet, x, 76 ;Get virtual screen coordinates of all monitors
-    SysGet, y, 77
-    SysGet, w, 78
-    SysGet, h, 79
 }
 
 

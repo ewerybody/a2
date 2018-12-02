@@ -1,4 +1,8 @@
-﻿get_selection(clipWaitTime=0.5)
+﻿; Uses the clipboard to get selected things.
+;
+; Basically stores current clipboard, fires Ctrl+C, gets variable from clipboard,
+; restores clipboard and returns variable.
+clipboard_get(clipWaitTime=0.5)
 {
     SavedClipboard := ClipboardAll
     Clipboard =
@@ -41,4 +45,31 @@
     Clipboard := SavedClipboard
 
     Return Selection
+}
+
+; Uses the clipboard to paste given text.
+clipboard_paste( byref inputString, sleepTime=50 ){
+    SavedClipboard := ClipboardAll
+    Clipboard =
+    Sleep, %sleepTime%
+    Clipboard := inputString
+    ClipWait, 1
+    Send, {Ctrl down}^v{Ctrl up}
+    Clipboard := SavedClipboard
+}
+
+
+; collects existing file paths in clipboard text
+clipboard_get_files() {
+    files := StrSplit(Clipboard, "`r`n")
+    is_files := true
+    for i, item in files {
+        if !FileExist(item) {
+            is_files := false
+            Break
+        }
+    }
+
+    if (is_files)
+        return files
 }
