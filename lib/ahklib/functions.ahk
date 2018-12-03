@@ -1,25 +1,3 @@
-paste( byref inputString, sleepTime=50 ){
-    SavedClipboard := ClipboardAll
-    Clipboard =
-    Sleep, %sleepTime%
-    Clipboard := inputString
-    ClipWait, 1
-    Send, {Ctrl down}^v{Ctrl up}
-    Clipboard := SavedClipboard
-}
-
-; looks up the items of an array object
-; returns index of search string if found
-; returns 0 otherwise
-inArray(byref search, byref array) {
-    ;for i, value in array {
-    Loop % array.MaxIndex() {
-        if (search == array[A_Index])
-            Return A_Index
-    }
-    Return 0
-}
-
 /**
  * Helper Function
  *     Returns a free identifier for a GUI

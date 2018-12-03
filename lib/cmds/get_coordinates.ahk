@@ -12,8 +12,6 @@ Escape::ExitApp
 LButton::Gosub, PickCoordinates
 
 return
-#Include *i ..\ahklib\tt.ahk
-#Include *i lib\ahklib\tt.ahk
 
 WatchCursor:
     text := get_coords_str() "`nLeft Mouse Button To Pick`nEscape To Cancel"

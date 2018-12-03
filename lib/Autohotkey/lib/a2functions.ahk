@@ -187,7 +187,6 @@ IsNumeric(InputObject)
  * @docu   https://github.com/HotKeyIt/WatchDirectory/
  * @docu   https://autohotkey.com/board/topic/60125-ahk-lv2-watchdirectory-report-directory-changes/
  */
-;#include lib\ahklib\_Struct.ahk
 WatchDirectory(p*){
     ;Structures
     static FILE_NOTIFY_INFORMATION:="DWORD NextEntryOffset,DWORD Action,DWORD FileNameLength,WCHAR FileName[1]"

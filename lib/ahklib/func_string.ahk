@@ -115,18 +115,6 @@ is_whitespace(byref string) {
         return false
 }
 
-; Determines if a string starts with another string.
-; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
-strStartsWith(byref string, byref startstr)
-{
-    return InStr(string, startstr) = 1
-}
-
-; Determines if a string ends with another string
-strEndsWith(byref string, byref end)
-{
-    return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
-}
 
 strTrim(byref string, byref trim)
 {

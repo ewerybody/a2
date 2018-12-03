@@ -60,7 +60,7 @@ clipboard_paste( byref inputString, sleepTime=50 ){
 
 
 ; Parses lines in clipboard, returns list of found existing file paths
-clipboard_files() {
+clipboard_get_files() {
     files := []
     lines := StrSplit(Clipboard, "`r`n")
     for i, line in lines

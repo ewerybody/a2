@@ -9,8 +9,6 @@ RButton::ExitApp
 LButton::Gosub, PickInfo
 
 return
-#Include *i ..\ahklib\tt.ahk
-#Include *i lib\ahklib\tt.ahk
 
 WatchCursor:
     winfo := get_scope_info()

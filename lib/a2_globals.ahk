@@ -2,7 +2,6 @@ global a2 := new Ca2()
 global Settings := {} ;empty object for setting to be injected into
 
 global UIresources := a2.Path "\ui\res"
-global libs := a2.Path "\lib\ahklib"
 
 global WinVer := GetWindowsVersion()
 global WIN_XP := 5.1
