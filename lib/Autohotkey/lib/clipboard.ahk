@@ -59,17 +59,14 @@ clipboard_paste( byref inputString, sleepTime=50 ){
 }
 
 
-; collects existing file paths in clipboard text
-clipboard_get_files() {
-    files := StrSplit(Clipboard, "`r`n")
-    is_files := true
-    for i, item in files {
-        if !FileExist(item) {
-            is_files := false
-            Break
-        }
-    }
+; Parses lines in clipboard, returns list of found existing file paths
+clipboard_files() {
+    files := []
+    lines := StrSplit(Clipboard, "`r`n")
+    for i, line in lines
+        if FileExist(line)
+            files.push(line)
 
-    if (is_files)
+    if (files.length())
         return files
 }

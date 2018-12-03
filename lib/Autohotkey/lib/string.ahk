@@ -39,3 +39,16 @@ string_is_web_adress(string) {
         }
     }
 }
+
+; Determines if a string starts with another string.
+; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
+string_startswith(byref string, byref startstr)
+{
+    return InStr(string, startstr) = 1
+}
+
+; Determines if a string ends with another string
+string_endswith(byref string, byref end)
+{
+    return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
+}

@@ -15,3 +15,10 @@ path_basename(byref path) {
     SplitPath, path, OutFileName
     Return OutFileName
 }
+
+path_is_dir(byref path) {
+    if (InStr(FileExist(path), "D"))
+        return true
+    else
+        return false
+}
