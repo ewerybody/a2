@@ -12,9 +12,6 @@ import a2util
 EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
 log = a2core.get_logger(__name__)
 
-TODO_DEFAULT_LIBS = ['a2', 'func_file', 'func_string', 'functions', 'Explorer_Get',
-                     'ahk_functions', 'ObjectTools', 'RichObject', 'Array', 'uri_encode',
-                     'HTTPRequest', 'base64']
 A2_DATA = '%a2data%'
 ENTRYPOINT_FILENAME = 'user_data_includes'
 
@@ -27,7 +24,6 @@ class Scope:
 
 class IncludeType(enum.Enum):
     variables = 0
-    libs = 1
     includes = 2
     hotkeys = 3
     init = 4
@@ -39,7 +35,6 @@ class IncludeDataCollector(object):
         self.a2.fetch_modules()
 
         self.variables = None
-        self.libs = None
         self.includes = None
         self.hotkeys = None
         self.init = None
@@ -97,13 +92,10 @@ class IncludeDataCollector(object):
     @property
     def collections(self):
         """property to be dynamically fillable"""
-        return [self.variables, self.libs, self.includes, self.hotkeys, self.init]
+        return [self.variables, self.includes, self.hotkeys, self.init]
 
     def get_vars(self):
         self.variables = VariablesCollection(self.a2)
-
-    def get_libs(self):
-        self.libs = LibsCollection(self.a2)
 
     def get_includes(self):
         self.includes = IncludesCollection(self.a2)
@@ -116,7 +108,6 @@ class IncludeDataCollector(object):
 
     def get_all_collections(self):
         self.get_vars()
-        self.get_libs()
         self.get_includes()
         self.get_hotkeys()
         self.get_init()
@@ -145,8 +136,7 @@ class _Collection(object):
         raise NotImplementedError
 
     def _get_final_content(self):
-        return (EDIT_DISCLAIMER % self.name + '\n'
-                +self.get_content())
+        return (EDIT_DISCLAIMER % self.name + '\n' + self.get_content())
 
 
 class VariablesCollection(_Collection):
@@ -174,28 +164,6 @@ class VariablesCollection(_Collection):
     @property
     def has_content(self):
         return self.data != {}
-
-
-class LibsCollection(_Collection):
-    def __init__(self, a2obj_instance):
-        super(LibsCollection, self).__init__(a2obj_instance)
-        self.name = 'libs'
-
-        # TODO: currently this just packs a list of commonly used default libraries.
-        # self.libs_ahk = ['#include lib/ahklib/%s.ahk' % lib for lib in TODO_DEFAULT_LIBS]
-        self.libs_ahk = []
-
-    def gather(self, mod):
-        # TODO: Used Libraries also need to be collected
-        # from all the active modules!
-        pass
-
-    @property
-    def has_content(self):
-        return self.libs_ahk != []
-
-    def get_content(self):
-        return '\n'.join(self.libs_ahk)
 
 
 class IncludesCollection(_Collection):
@@ -351,8 +319,6 @@ def collect_includes(specific=None):
     elif specific in IncludeType:
         if specific is IncludeType.variables:
             collector.get_vars()
-        elif specific is IncludeType.libs:
-            collector.get_libs()
         elif specific is IncludeType.includes:
             collector.get_includes()
         elif specific is IncludeType.hotkeys:
