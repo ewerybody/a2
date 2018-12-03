@@ -1,10 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Some element description ...
-
-@created: 2016 11 10
-@author: Eric Werner
-"""
 import a2ctrl.connect
 from PySide2 import QtWidgets
 from a2element import DrawCtrl, EditCtrl
@@ -16,8 +10,8 @@ class Draw(DrawCtrl):
     The frontend widget visible to the user with options
     to change the default behavior of the element.
     """
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
 
         self.main_layout = QtWidgets.QVBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)

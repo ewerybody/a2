@@ -4,8 +4,8 @@ from a2element import string_edit_ui, DrawCtrl, EditCtrl
 
 
 class Draw(DrawCtrl):
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
         self.value = self.get_user_value(str)
         self._setupUi()
 
@@ -18,7 +18,6 @@ class Draw(DrawCtrl):
         self.value_ctrl.editingFinished.connect(self.delayed_check)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.value_ctrl)
-        # self.setLayout(self.layout)
 
         if self.cfg.get('password_mode', False):
             self.value_ctrl.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -64,7 +63,7 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().string
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
     db_dict['variables'][cfg['name']] = value

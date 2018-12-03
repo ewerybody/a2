@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>607</width>
-    <height>296</height>
+    <height>195</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
       </size>
      </property>
      <property name="text">
-      <string>label text:</string>
+      <string>label text</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -42,7 +42,7 @@
       <string notr="true"/>
      </property>
      <property name="placeholderText">
-      <string notr="true">space used by button if no label text</string>
+      <string notr="true">Space used by Button if empty!</string>
      </property>
     </widget>
    </item>
@@ -55,7 +55,7 @@
       </size>
      </property>
      <property name="text">
-      <string>button text:</string>
+      <string>button text</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -68,7 +68,7 @@
       <string/>
      </property>
      <property name="placeholderText">
-      <string>text to show on the button</string>
+      <string>Text to show on the Button.</string>
      </property>
     </widget>
    </item>
@@ -81,7 +81,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Python Code:</string>
+      <string>python script</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -89,15 +89,16 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="A2CodeField" name="cfg_code"/>
+    <widget class="ScriptSelector" name="script_selector" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>A2CodeField</class>
-   <extends>QPlainTextEdit</extends>
-   <header>a2widget</header>
+   <class>ScriptSelector</class>
+   <extends>QWidget</extends>
+   <header>a2widget.local_script</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

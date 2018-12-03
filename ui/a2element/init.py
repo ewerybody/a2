@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-@created: 2016 11 11
-@author: Eric Werner
-"""
 import a2ctrl.connect
+
 from PySide2 import QtWidgets
 from a2element import EditCtrl
 from a2widget import A2CodeField
@@ -32,5 +29,5 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().code
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, _user_cfg):
     db_dict.setdefault('init_calls', []).append(cfg['code'])

@@ -1,5 +1,5 @@
 import a2core
-from a2element.common import DrawCtrl, EditCtrl
+from a2element.common import DrawCtrl, EditCtrl, DrawCtrlMixin
 
 
 # amend with new elements to show in edit mode on Add Element-buttons:
@@ -25,7 +25,7 @@ def _load_ui_data():
     global _UI_DATA
     _UI_DATA = []
     for element in DISPLAY_ELEMENTS:
-        element_mod = a2ctrl.get_a2element(element)
+        element_mod = a2ctrl.get_a2element_module(element)
         if element_mod:
             display_name = element_mod.Edit.element_name()
             icon = element_mod.Edit.element_icon()

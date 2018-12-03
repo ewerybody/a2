@@ -35,7 +35,7 @@ class ScopeWidget(QtWidgets.QWidget):
         if self.ui.cfg_scope.count():
             self.ui.cfg_scope.set_item_name(scope_string)
         else:
-            self.add_scope(scope_string)
+            self.ui.cfg_scope.add(scope_string)
         self.scope_update()
 
     def set_config(self, config_dict=None):
@@ -73,11 +73,9 @@ class ScopeWidget(QtWidgets.QWidget):
         self.blockSignals(False)
 
     def on_scope_mode_change(self):
-        scope_mode = self._cfg.get(Vars.scope_mode)
-        for widget in [self.ui.fields_widget,
-                       self.ui.tool_buttons_widget,
-                       self.ui.cfg_scope]:
-            widget.setEnabled(scope_mode != 0)
+        scope_mode = self._cfg.get(Vars.scope_mode) != 0
+        for wgt in [self.ui.fields_widget, self.ui.tool_buttons_widget, self.ui.cfg_scope]:
+            wgt.setEnabled(scope_mode)
         self.changed.emit()
 
     def add_scope(self, scope_string=''):
@@ -88,10 +86,6 @@ class ScopeWidget(QtWidgets.QWidget):
         if self._cfg is not None:
             self._cfg['scope'] = self.ui.cfg_scope.get_names()
         self.changed.emit()
-
-    def build_list_context_menu(self, pos):
-        if self.ui.cfg_scope.selectedItems():
-            self.context_menu.popup(self.ui.cfg_scope.mapToGlobal(pos))
 
     def build_button_field_menu(self, index, menu):
         name = SCOPE_ITEMS[index]
@@ -210,11 +204,11 @@ class ScopeWidget(QtWidgets.QWidget):
         self.ui.cfg_scope.selection_cleared.connect(self.on_selection_clear)
 
         self.ui.cfg_scope.changed.connect(self.scope_update)
-        self.ui.cfg_scope.context_menu_requested.connect(self.build_list_context_menu)
 
         self.context_menu = QtWidgets.QMenu(self)
         self.context_menu.addAction(icons.delete, 'Delete scope item',
                                     self.ui.cfg_scope.remove_selected)
+        self.ui.cfg_scope.set_context_menu(self.context_menu)
 
         self._scope_mode_changed.connect(self.on_scope_mode_change)
         self._scope_text_changed.connect(self.on_text_change)
@@ -250,6 +244,11 @@ class ScopeWidget(QtWidgets.QWidget):
         for f in self.input_fields.values():
             f.setText('')
         self.blockSignals(False)
+
+    def hide_global_button(self):
+        self.ui.scopeMode_0.setVisible(False)
+        self.ui.scopeMode_1.setChecked(True)
+        self.on_scope_mode_change()
 
 
 def get_scope_string(title, class_name, process):

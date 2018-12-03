@@ -1,49 +1,3 @@
-getSelection( clipWaitTime=0.5 )
-{
-    SavedClipboard := ClipboardAll
-    Clipboard =
-    Sleep, 0
-
-    ; also watch for the process-executable instead of just window title:
-    WinGetClass, Class, A
-    WinGet, this_process, ProcessName, ahk_class %Class%
-
-    ; sending keystroke Ctrl+C in maya can cause a "scene clipboard save" which can be heavy
-    ; to avoid this we go sure we are in the text editor window of maya
-    if (this_process == "maya.exe")
-    {
-        WinGetTitle, this_title, A
-        if (this_title != "Script Editor")
-            Return ""
-    }
-
-    ;Send, {Blind}%resetModifiers%^c%restoreModifiers%
-    if (this_process == "Photoshop.exe")
-    {
-        SetKeyDelay, 20, 20
-        SendEvent, {Ctrl down}^c{Ctrl up}
-    }
-    Else If Class in PuTTY,ConsoleWindowClass,ytWindow
-        Send, {ENTER}
-    Else
-        Send, {Ctrl down}^c{Ctrl up}
-
-    If clipWaitTime <>
-    {
-        If copyAsText = 0
-            ClipWait, %clipWaitTime%, 1
-        Else
-            ClipWait, %clipWaitTime%
-    }
-    Sleep,0
-
-    Selection := Clipboard
-    Clipboard := SavedClipboard
-
-    Return Selection
-}
-
-
 ; good ol getSelection function from ac'tivAid
 ; copyOnly=1 to actually fill the clipboard
 aagetSelection( copyAsText=1, copyOnly=0, clipWaitTime=0.5 )
@@ -67,7 +21,6 @@ aagetSelection( copyAsText=1, copyOnly=0, clipWaitTime=0.5 )
         }
     }
 
-    ;Send, {Blind}%resetModifiers%^c%restoreModifiers%
     if (this_process == "Photoshop.exe")
     {
         SetKeyDelay, 20, 20
@@ -233,34 +186,6 @@ strip(byref inputString)
     return inputString
 }
 
-
-; checks for some aspects to assume that the given string is a URL
-; TODO: this can probably be done much much better!!!...
-isURL(byref str)
-{
-    ; look if the start of the string is url like
-    if (SubStr(str,1,7) == "http://" || SubStr(str,1,8) == "https://" || SubStr(str,1,4) == "www.")
-        return true
-    ; now the end of the string
-    if (SubStr(str,-3,4) == ".htm" || SubStr(str,-4,5) == ".html")
-        return true
-    ; now if inbetween are TLDs like .com, .de, .co.uk ...
-    else
-    {
-        dotpos := InStr(str,".")
-        sub := SubStr(str,dotpos,3)
-        if (sub == ".de" || sub == ".at" || sub == ".ch")
-            return true
-        sub := SubStr(str,dotpos,4)
-        if (sub == ".com" || sub == ".org" || sub == ".net")
-            return true
-        if (SubStr(str,dotpos,6) == ".co.uk")
-            return true
-    }
-    return false
-}
-
-
 ; Remove quotes from a string if necessary
 UnQuote(string)
 {
@@ -281,19 +206,4 @@ Quote(string, once = 1)
         return string
     }
     return """" string """"
-}
-
-
-is_web_adress(string) {
-    if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
-        return true
-    else {
-;        global WEB_TLDS
-        Loop, % WEB_TLDS.MaxIndex() {
-            ext := WEB_TLDS[A_Index]
-            sub := SubStr(string, - StrLen(ext))
-            if (sub == "." ext)
-                return true
-        }
-    }
 }

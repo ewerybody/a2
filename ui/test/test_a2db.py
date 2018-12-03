@@ -1,3 +1,4 @@
+# encoding: utf-8
 import os
 import logging
 import unittest
@@ -17,7 +18,38 @@ db = a2db.A2db(temp_db_path)
 
 class Test(unittest.TestCase):
 
-    def test1_set_changes(self):
+    def test1_get_set(self):
+        table = 'test'
+
+        val_int = 2342
+        val_float = 1.337
+        val_str = str(uuid.uuid4())
+        val_list = list(val_str)
+        val_dict = {'val_int': val_int,
+                    'val_float': val_float,
+                    'val_str': val_str,
+                    'val_list': val_list}
+
+        for key, value in val_dict.items():
+            db.set(key, value, table)
+            ret_value = db.get(key, table)
+            self.assertEqual(ret_value, value)
+            self.assertEqual(type(ret_value), type(value))
+
+        string_test = ('Another String with \'\" so called "quotation marks",\n'
+                       'a linebreak, emoji👍  and a key with spaces in it!.')
+        db.set('string test', string_test, table)
+        ret_value = db.get('string test', table)
+        self.assertEqual(ret_value, string_test)
+
+        db.set('val_dict', val_dict, table)
+        ret_value = db.get('val_dict', table)
+        self.assertEqual(ret_value, val_dict)
+
+        db.drop_table(table)
+        self.assertFalse(table in db.tables())
+
+    def test2_set_changes(self):
         key = 'test_entry'
         table = 'test_table'
         # set to something different than default:
@@ -44,7 +76,7 @@ class Test(unittest.TestCase):
         db.drop_table(table)
         self.assertFalse(table in db.tables())
 
-    def test2_get_changes(self):
+    def test3_get_changes(self):
         key = 'test_entry'
         table = 'test_table'
 

@@ -1,0 +1,19 @@
+{
+    "name": "a2",
+    "version": "1.0.0",
+    "description": "Script managing and developing framework for Autohotkey",
+    "main": "index.js",
+    "dependencies": {},
+    "devDependencies": {
+        "ahk-unit": "^1.0.5"
+    },
+    "scripts": {
+        "test": "ahk-unit ./tests/tests.ahk"
+    },
+    "author": "ewerybody https://github.com/ewerybody",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ewerybody/a2/issues"
+    },
+    "homepage": "https://github.com/ewerybody/a2#readme"
+}

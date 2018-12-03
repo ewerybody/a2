@@ -47,6 +47,16 @@ class MenuMixin(object):
         self._actions_added = True
         return self._menu.addAction(*args)
 
+    def add_note(self, *args):
+        """
+        Adds a disabled QAction.
+
+        To make a note in the menu or something ...
+        """
+        action = self._menu.addAction(*args)
+        action.setEnabled(False)
+        return action
+
     def add_menu(self, *args):
         """
         :rtype QtWidgets.QMenu:

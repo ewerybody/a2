@@ -57,7 +57,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="a2module_list_widget">
+    <widget class="A2List" name="a2module_list_widget">
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
@@ -79,6 +79,11 @@
    <class>A2MoreButton</class>
    <extends>QToolButton</extends>
    <header>a2widget</header>
+  </customwidget>
+  <customwidget>
+   <class>A2List</class>
+   <extends>QListWidget</extends>
+   <header>a2widget.a2list</header>
   </customwidget>
  </customwidgets>
  <resources/>

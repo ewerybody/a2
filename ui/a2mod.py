@@ -11,16 +11,18 @@ They can be enabled/disabled individually affecting all their child modules.
 @author: eRiC
 """
 import os
+import sys
 import json
 import time
 import uuid
+import shutil
+import traceback
 
 import a2core
 import a2ctrl
 import a2util
-import shutil
+
 from PySide2 import QtCore
-import traceback
 
 
 log = a2core.get_logger(__name__)
@@ -30,6 +32,7 @@ ICON_FILENAME = 'a2icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [ICON_FILENAME + ext for ext in ICON_FORMATS]
 STALE_CONFIG_TIMEOUT = 0.5
+USER_CFG_KEY = 'user_cfg'
 
 MSG_NO_UPDATE_URL = 'No update-URL given!'
 MSG_DOWNLOAD = 'Downloading %s - %s (%i%s)'
@@ -77,7 +80,7 @@ class ModSource(object):
         self.name = name
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, MOD_SOURCE_NAME)
-        self.backup_path = os.path.join(a2.paths.a2_temp, name)
+        self.backup_path = os.path.join(a2.paths.temp, name, 'versions')
         self.mods = {}
         self.mod_count = 0
 
@@ -484,6 +487,8 @@ class Mod(object):
         self.name = modname
         self.a2 = a2core.A2Obj.inst()
         self.path = os.path.join(self.source.path, modname)
+        self._data_path = None
+        self._backup_path = None
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
@@ -495,7 +500,7 @@ class Mod(object):
 
     @property
     def has_config_file(self):
-        return os.path.exists(self.config_file)
+        return os.path.isfile(self.config_file)
 
     @property
     def config(self):
@@ -506,20 +511,7 @@ class Mod(object):
     @config.setter
     def config(self, cfg_dict):
         self._config = cfg_dict
-        # backup current config_file
-        backup_path = os.path.join(self.path, '_config_backups')
-        if not os.path.exists(backup_path):
-            os.mkdir(backup_path)
-        _config_backups = [f for f in os.listdir(backup_path) if f.startswith('%s.' % CONFIG_FILENAME)]
-        if _config_backups:
-            _config_backups.sort()
-            backup_index = int(_config_backups[-1].rsplit('.', 1)[1]) + 1
-        else:
-            backup_index = 1
-        if self.has_config_file:
-            shutil.copy2(self.config_file, os.path.join(backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index)))
-
-        # overwrite config_file
+        self.backup_config()
         a2util.json_write(self.config_file, self._config)
 
     def get_config(self):
@@ -533,14 +525,40 @@ class Mod(object):
         self._config = []
         return self._config
 
+    def backup_config(self):
+        """
+        Backups the current config_file.
+        """
+        if not self.has_config_file:
+            return
+
+        if not os.path.isdir(self.backup_path):
+            os.makedirs(self.backup_path)
+
+        config_backups = [f for f in os.listdir(self.backup_path)
+                          if f.startswith('%s.' % CONFIG_FILENAME)]
+        if config_backups:
+            config_backups.sort()
+            # split and increase appended version index
+            backup_index = int(config_backups[-1].rsplit('.', 1)[1]) + 1
+        else:
+            backup_index = 1
+
+        path = os.path.join(self.backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index))
+        shutil.copy2(self.config_file, path)
+
     def change(self):
         """
-        Sets the mods own db entries
+        Sets the mods own db entries.
+        TODO: remove empty entries!
         """
         db_dict = {'variables': {}, 'hotkeys': {}, 'includes': [], 'init_calls': []}
         a2ctrl.assemble_settings(self.key, self.config[1:], db_dict, self.path)
         for typ, data in db_dict.items():
-            self.a2.db.set(typ, data, self.key)
+            if data:
+                self.a2.db.set(typ, data, self.key)
+            else:
+                self.a2.db.pop(typ, self.key)
 
     @property
     def scripts(self):
@@ -584,32 +602,41 @@ class Mod(object):
         return script_name
 
     def check_create_script(self, name):
-        if name.strip() == '':
-            return 'Script name cannot be empty!'
-        if os.path.splitext(name.lower())[0] in [os.path.splitext(s)[0].lower() for s in self.scripts]:
-            return 'Module has already a script named "%s"!' % name
-        return True
+        name = os.path.splitext(name.lower())[0]
+        black_list = [os.path.splitext(s)[0].lower() for s in self.scripts]
+        return a2util.standard_name_check(
+            name, black_list, 'Module has already a script named "%s"!')
 
-    def set_user_cfg(self, sub_cfg, value, attr_name=None):
+    def set_user_cfg(self, element_cfg, value, attr_name=None):
         """
         Sets an elements user value.
 
-        Helps to keep the user config as small as possible. For instance if there is a value
-        'enabled' True by default only setting it to False will be saved. User setting it to True
+        Helps to keep the user config as small as possible.
+        For instance if there is a value 'enabled' True by default
+        only setting it to False will be saved. User setting it to True
         would delete it from user settings, so it's taking the default again.
 
         user sets True AND default is True:
             delete from user_cfg
         user sets True AND default it False:
             set to user_cfg
+
+        :param dict element_cfg: The modules original config for the element.
+        :param any value: Variable value o
+        :param str attr_name: If given sets the value to the name inside a dict.
+            Otherwise the value is regarded as a whole.
         """
-        cfg_name = a2util.get_cfg_default_name(sub_cfg)
-        current_cfg = self.a2.db.get(cfg_name, self.key) or {}
+        cfg_name = a2util.get_cfg_default_name(element_cfg)
+        module_user_cfg = self.get_user_cfg()
+
         if attr_name is None:
+            current_cfg = module_user_cfg.get(cfg_name)
             if value == current_cfg:
                 return
             current_cfg = value
+
         else:
+            current_cfg = module_user_cfg.get(cfg_name, {})
             if attr_name in current_cfg:
                 # value to set equals CURRENT value: done
                 if value == current_cfg.get(attr_name):
@@ -618,10 +645,52 @@ class Mod(object):
                 current_cfg.pop(attr_name)
 
             # value to set equals CONFIG value: done. otherwise: save it:
-            if value != sub_cfg.get(attr_name):
+            if value != element_cfg.get(attr_name):
                 current_cfg[attr_name] = value
 
-        self.a2.db.set(cfg_name, current_cfg, self.key)
+        # delete the value from module_user_cfg if needed
+        if current_cfg is None:
+            try:
+                del module_user_cfg[cfg_name]
+            except KeyError:
+                pass
+        else:
+            module_user_cfg[cfg_name] = current_cfg
+
+        # delete module_user_cfg alltogether if needed
+        if module_user_cfg:
+            self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
+        else:
+            self.clear_user_cfg()
+
+    def get_user_cfg(self):
+        return self.a2.db.get(USER_CFG_KEY, self.key) or {}
+
+    def clear_user_cfg(self):
+        self.a2.db.pop(USER_CFG_KEY, self.key)
+        self.change()
+
+    def clear_user_cfg_name(self, cfg_name):
+        module_user_cfg = self.get_user_cfg()
+        try:
+            del module_user_cfg[cfg_name]
+        except KeyError:
+            pass
+
+        # delete module_user_cfg alltogether if needed
+        if module_user_cfg:
+            self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
+        else:
+            self.clear_user_cfg()
+        self.change()
+
+    def is_in_user_cfg(self, name):
+        """
+        Tells you if an element has user data saved.
+        :param str name: Name of the element
+        :rtype: bool
+        """
+        return name in self.get_user_cfg()
 
     def help(self):
         try:
@@ -647,22 +716,101 @@ class Mod(object):
             return True
         return False
 
-    def get_user_data(self):
-        """
-        temp: will be removed when merging with new-structure brach.
-        """
-        data = {}
-        print('self.key: %s' % self.key)
-        value_names = set(self.a2.db.keys(self.key)).difference(
-            ['includes', 'init_calls', 'hotkeys', 'variables'])
-        print('value_names: %s' % value_names)
-        for name in value_names:
-            data[name] = self.a2.db.get(name, self.key)
-        return data
+    @property
+    def data_path(self):
+        if self._data_path is None:
+            self._data_path = os.path.join(
+                self.a2.paths.data, 'module_data', self.source.name, self.name)
+        return self._data_path
+
+    @property
+    def backup_path(self):
+        if self._backup_path is None:
+            self._backup_path = os.path.join(
+                self.a2.paths.temp, self.source.name, 'config_backups', self.name)
+        return self._backup_path
+
+    def get_config_backups(self):
+        times_and_files = []
+        for file_path, file_name in iter_file_paths(self.backup_path):
+            if not file_name[-1].isdigit():
+                continue
+            times_and_files.append((os.path.getmtime(file_path), file_name))
+        times_and_files.sort()
+        return times_and_files
+
+    def clear_backups(self):
+        for file_path, _ in iter_file_paths(self.backup_path):
+            os.remove(file_path)
+        os.rmdir(self.backup_path)
+
+    def rollback(self, backup_file_name):
+        backup_file_path = os.path.join(self.backup_path, backup_file_name)
+        self.backup_config()
+        os.remove(self.config_file)
+        shutil.copy(backup_file_path, self.config_file)
+        self.get_config()
+        self.change()
+
+    def call_ahk_script(self, script_name, *args):
+        import a2ahk
+        script_name = a2ahk.ensure_ahk_ext(script_name)
+        script_path = os.path.join(self.path, script_name)
+        return a2ahk.call_cmd(script_path, cwd=self.path, *args)
+
+    def call_python_script(self, script_name):
+        if not script_name:
+            return
+
+        path = os.path.join(self.path, script_name)
+        if not os.path.isfile(path):
+            return
+
+        from importlib import import_module
+
+        if self.path not in sys.path:
+            sys.path.append(self.path)
+
+        base, _ = os.path.splitext(script_name)
+        try:
+            script_module = import_module(base)
+        except ImportError:
+            log.error(traceback.format_exc().strip())
+            log.error('Could not import local script_module! "%s"' % script_name)
+
+        try:
+            script_module.main(self.a2, self)
+        except Exception:
+            tb = traceback.format_exc().strip()
+
+            if base in sys.modules:
+                log.info('unloading module "%s" ...' % base)
+                del sys.modules[base]
+
+            log.error('\n  Error executing main() of script_module "%s"\n'
+                      '%s\n  path: %s' % (script_name, tb, path))
+
+        sys.path.remove(self.path)
 
 
 def get_files(path):
     return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
+
+
+def iter_file_paths(path):
+    if os.path.isdir(path):
+        for item in os.scandir(path):
+            if item.is_file():
+                yield item.path, item.name
+
+
+def get_file_paths(path):
+    files = []
+    for item in os.listdir(path):
+        item_path = os.path.join(path, item)
+        if os.path.isfile(item_path):
+            files.append(item_path)
+    return files
 
 
 def get_folders(path):

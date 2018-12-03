@@ -1,4 +1,4 @@
-#include lib\ahklib\Class_SQLiteDB.ahk
+;#include lib\ahklib\Class_SQLiteDB.ahk
 
 /**
  * a2 global object definition

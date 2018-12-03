@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 New a2app backend hosting the actual a2ui window.
-Makes sure its only visible once through the 'siding' package
+Makes sure its only visible once through the 'singlesiding' package
 and enables sending messages to the main app instance.
-
-Created on Aug 7, 2015
-
-@author: eRiC
 """
 import os
 import sys
@@ -18,7 +14,6 @@ from ctypes import windll
 from singlesiding import QSingleApplication
 from PySide2 import QtWidgets
 
-# first basicConfic. No need for more.
 logging.basicConfig()
 log = logging.getLogger('a2app')
 log.setLevel(logging.DEBUG)
@@ -31,12 +26,14 @@ a2win = None
 def main():
     global app, a2win
     app = QSingleApplication(sys.argv)
+
     # ensure_single will already exit() after sending the message
     if not sys.argv[1:]:
         app.ensure_single(['--show'])
     else:
         app.ensure_single()
     app.message_received.connect(app_msg_get)
+    app.lastWindowClosed.connect(last_window_closed)
 
     # adding PySide plugin paths. e.g. to make all the imageformats available
     pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
@@ -50,8 +47,12 @@ def main():
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
 
     a2win = init_a2_win(app)
-
     app.exec_()
+
+
+def last_window_closed():
+    print('a2 lastWindowClosed!')
+    app.exit()
 
 
 def init_a2_win(app):

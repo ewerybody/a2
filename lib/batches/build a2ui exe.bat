@@ -6,4 +6,4 @@ set script=%lib_path%\_source\a2ui_starter.ahk
 set executable=%a2path%\a2ui.exe
 set icon=%a2path%\ui\res\a2.ico
 
-%Ahk2Exe% /in "%script%" /out "%executable%" /icon %icon% /mpress 1
+%Ahk2Exe% /in "%script%" /out "%executable%" /icon %icon% /mpress 0

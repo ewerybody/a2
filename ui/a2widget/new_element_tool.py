@@ -105,7 +105,8 @@ class NewElementDialog(A2InputDialog):
                 importlib.reload(a2element)
                 a2element.get_list(force=True)
         else:
-            new_path = os.path.join(self.main.mod.path, name + '.py')
+            new_path = os.path.join(self.main.mod.path, '%s_%s.py' %
+                                    (a2ctrl.LOCAL_ELEMENT_ID, name))
 
         with open(new_path, 'w') as fobj:
             fobj.write(new_element_code)

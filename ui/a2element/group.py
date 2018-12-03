@@ -1,23 +1,21 @@
-'''
-Created on Dec 28, 2015
-
-@author: eRiC
-'''
 import a2ctrl
+import a2util
+
 from PySide2 import QtWidgets
-from a2element import group_edit_ui, DrawCtrl, EditCtrl
+from a2element import group_edit_ui, DrawCtrlMixin, EditCtrl
 from a2element.common import EditAddElem
 
 
-class Draw(QtWidgets.QGroupBox, DrawCtrl):
+class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
     """
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.
     """
-    def __init__(self, main, cfg, mod):
+    def __init__(self, main, cfg, mod, user_cfg):
         self.is_expandable_widget = False
         super(Draw, self).__init__(parent=main)
-        DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
+        DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
+
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
         self.setChecked(self.get_user_value(bool, 'enabled'))
@@ -33,8 +31,10 @@ class Draw(QtWidgets.QGroupBox, DrawCtrl):
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
 
         expandable = False
+        module_user_cfg = self.mod.get_user_cfg()
         for child in self.cfg.get('children', []):
-            ctrl = a2ctrl.draw(self.main, child, self.mod)
+            name = a2util.get_cfg_default_name(child)
+            ctrl = a2ctrl.draw(self.main, child, self.mod, module_user_cfg.get(name))
             if ctrl is not None and ctrl.is_expandable_widget:
                 expandable = True
             if ctrl:
@@ -110,6 +110,6 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().group
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(module_key, cfg, db_dict, _user_cfg):
     sub_cfg = cfg.get('children', [])
     a2ctrl.assemble_settings(module_key, sub_cfg, db_dict)

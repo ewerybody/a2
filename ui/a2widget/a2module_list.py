@@ -1,7 +1,7 @@
 from PySide2 import QtGui, QtCore, QtWidgets
 
 import a2mod
-import a2ctrl.qlist
+import a2ctrl
 import a2core
 from a2widget import a2module_list_ui
 
@@ -17,7 +17,7 @@ class A2ModuleList(QtWidgets.QWidget):
         self.a2 = a2core.A2Obj.inst()
         self.setup_ui()
         self.selection = None
-        self.ui.a2module_list_widget.itemSelectionChanged.connect(self.selection_change)
+
         self._filtered = False
         self._filter_tags = []
         self._show_enabled_only = self.a2.db.get('modlist_show_enabled_only') or False
@@ -27,13 +27,13 @@ class A2ModuleList(QtWidgets.QWidget):
         self.brush_default = None
         self.brush_tinted = None
 
-    def selection_change(self):
-        self.selection = [item._module for item in self.ui.a2module_list_widget.selectedItems()]
+    def _on_selection_change(self, items):
+        self.selection = [item._module for item in items]
         self.selection_changed.emit(self.selection)
 
     def select(self, modules=None):
         self.ui.a2module_list_widget.blockSignals(True)
-        a2ctrl.qlist.deselect_all(self.ui.a2module_list_widget)
+        self.ui.a2module_list_widget.clear_selection()
         selection = []
         lastitem = None
         if modules is not None:
@@ -94,7 +94,8 @@ class A2ModuleList(QtWidgets.QWidget):
                 self.set_item_state(mod)
                 self.ui.a2module_list_widget.addItem(item)
 
-        self.select(select_mods)
+        if select_mods:
+            self.select(select_mods)
         self.ui.a2module_list_widget.blockSignals(False)
 
     def is_filtered(self, mod):
@@ -121,6 +122,8 @@ class A2ModuleList(QtWidgets.QWidget):
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
         self.ui.filter_menu_button.menu_called.connect(self.build_filter_menu)
         self.setLayout(self.ui.module_list_layout)
+
+        self.ui.a2module_list_widget.items_selected.connect(self._on_selection_change)
 
     def update_filter(self, phrase=''):
         self._filter_phrase = phrase

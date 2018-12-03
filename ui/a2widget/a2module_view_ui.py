@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_view.ui' applies.
 #
-# Created: Thu Jun 21 20:06:35 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Fri Nov  9 14:42:52 2018
+#      by: pyside2-uic  running on PySide2 5.11.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -28,22 +28,21 @@ class Ui_A2ModuleView(object):
         self.modCheck.setTristate(False)
         self.modCheck.setObjectName("modCheck")
         self.horizontalLayout.addWidget(self.modCheck)
-        self.modName = QtWidgets.QLabel(self.head_widget)
+        self.a2_mod_name = QtWidgets.QLabel(self.head_widget)
         font = QtGui.QFont()
         font.setFamily("Segoe UI")
         font.setPointSize(11)
         font.setWeight(75)
         font.setBold(True)
-        self.modName.setFont(font)
-        self.modName.setToolTip("")
-        self.modName.setStatusTip("")
-        self.modName.setWhatsThis("")
-        self.modName.setAccessibleName("")
-        self.modName.setAccessibleDescription("")
-        self.modName.setText("ModName")
-        self.modName.setTextFormat(QtCore.Qt.PlainText)
-        self.modName.setObjectName("modName")
-        self.horizontalLayout.addWidget(self.modName)
+        self.a2_mod_name.setFont(font)
+        self.a2_mod_name.setStatusTip("")
+        self.a2_mod_name.setWhatsThis("")
+        self.a2_mod_name.setAccessibleName("")
+        self.a2_mod_name.setAccessibleDescription("")
+        self.a2_mod_name.setText("ModName")
+        self.a2_mod_name.setTextFormat(QtCore.Qt.PlainText)
+        self.a2_mod_name.setObjectName("a2_mod_name")
+        self.horizontalLayout.addWidget(self.a2_mod_name)
         self.modVersion = QtWidgets.QLabel(self.head_widget)
         font = QtGui.QFont()
         font.setFamily("Segoe UI")

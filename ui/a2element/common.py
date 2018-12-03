@@ -9,23 +9,27 @@ import a2core
 import a2util
 import a2ctrl
 from a2ctrl import Icons
+import a2widget.local_script
 
 
-class DrawCtrl(QtWidgets.QWidget):
+LOCAL_MENU_PREFIX = 'local: '
+
+
+class DrawCtrlMixin(object):
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
     """
-    def __init__(self, main, cfg, mod, _init_ctrl=True):
+    def __init__(self, main, cfg, mod, user_cfg=None):
         """"
-        :param bool _init_ctrl: Set False when using multiple inheritance to keep it from calling super() again.
+        :param bool _init_ctrl: Set False when using multiple inheritance
+        to keep it from calling super() again.
         """
-        if _init_ctrl:
-            super(DrawCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.cfg = cfg
         self.mod = mod
+
         self.check_delay = 250
         self._check_scheduled = False
         self.is_expandable_widget = False
@@ -33,12 +37,7 @@ class DrawCtrl(QtWidgets.QWidget):
         self._check_timer.setInterval(self.check_delay)
         self._check_timer.timeout.connect(self._check)
         self._check_args = None
-
-        cfg_name = a2util.get_cfg_default_name(self.cfg)
-        try:
-            self.user_cfg = self.a2.db.get(cfg_name, self.mod.key) or {}
-        except AttributeError:
-            self.user_cfg = {}
+        self.user_cfg = user_cfg or {}
 
     def get_user_value(self, typ, name=None, default=None):
         """
@@ -72,6 +71,19 @@ class DrawCtrl(QtWidgets.QWidget):
             # cannot set config if no module given
             pass
 
+    def has_user_cfg(self):
+        """
+        Tells you if the element has user data saved.
+        :rtype: bool
+        """
+        name = a2util.get_cfg_default_name(self.cfg)
+        return self.mod.is_in_user_cfg(name)
+
+    def clear_user_cfg(self):
+        name = a2util.get_cfg_default_name(self.cfg)
+        self.mod.clear_user_cfg_name(name)
+        self.main.load_runtime_and_ui()
+
     def change(self, specific=None):
         """
         Triggers the module to save it's settings to the database and
@@ -101,6 +113,16 @@ class DrawCtrl(QtWidgets.QWidget):
         pass
 
 
+class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
+    """
+    Display widget to host everything that you want to show to the
+    user for him to set up on your module.
+    """
+    def __init__(self, main, cfg, mod, user_cfg=None):
+        super(DrawCtrl, self).__init__(parent=main)
+        DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
+
+
 class EditCtrl(QtWidgets.QGroupBox):
     """
     frame widget for an edit control which enables basic arrangement of the
@@ -118,12 +140,19 @@ class EditCtrl(QtWidgets.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
+    delete_requested = QtCore.Signal()
+    move_rel_requested = QtCore.Signal(int)
+    move_abs_requested = QtCore.Signal(bool)
+    duplicate_requested = QtCore.Signal()
+    cut_requested = QtCore.Signal()
+
     def __init__(self, cfg, main, parent_cfg, add_layout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
         self.cfg = cfg
         self.main = main
         self.parent_cfg = parent_cfg
+
         self._setup_ui(add_layout)
         self.helpUrl = self.a2.urls.helpEditCtrl
         self.is_expandable_widget = False
@@ -147,12 +176,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         if isinstance(value, bool):
             if value:
                 newindex = top_index
-                # self.main.ui.scrollArea.scrollToTop()
-                # self.main.ui.scrollArea
             else:
                 newindex = maxIndex
-                # TODO: scrolling should be done in module_view
-                # self.scroll_to_bottom()
         else:
             newindex = index + value
         # hop out if already at start or end
@@ -166,15 +191,16 @@ class EditCtrl(QtWidgets.QGroupBox):
         self.main.edit_mod(keep_scroll=True)
 
     def delete(self):
+        self.delete_requested.emit()
+
         if self.cfg in self.parent_cfg:
             self.parent_cfg.remove(self.cfg)
-            self.main.edit_mod(keep_scroll=True)
+            self.main.edit_mod()
 
     def duplicate(self):
         newCfg = deepcopy(self.cfg)
         self.parent_cfg.append(newCfg)
         self.main.edit_mod()
-        self.scroll_to_bottom()
 
     def cut(self):
         self.main.edit_clipboard.append(deepcopy(self.cfg))
@@ -184,7 +210,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         a2util.surf_to(self.helpUrl)
 
     def _setup_ui(self, add_layout):
-        self.setTitle(self.cfg['typ'])
+        # self.setTitle(self.cfg['typ'])
+        self.setTitle(self.element_name())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Maximum)
         self.setSizePolicy(sizePolicy)
@@ -265,8 +292,9 @@ class EditCtrl(QtWidgets.QGroupBox):
         """
         if 'name' not in self.cfg:
             # build the base control name
-            new_name = '%s_%s' % (self.main.mod.name.replace(' ', '_'),
-                                  self.element_name())
+            new_name = '%s_%s' % (self.main.mod.name, self.element_name())
+            new_name = new_name.replace(' ', '_')
+
             # find biggest number
             this_type = self.cfg['typ']
             controls = [cfg.get('name', '') for cfg in self.main.temp_config
@@ -274,35 +302,6 @@ class EditCtrl(QtWidgets.QGroupBox):
 
             new_name = a2util.get_next_free_number(new_name, controls)
             self.cfg['name'] = new_name
-
-    def scroll_to_bottom(self):
-        # self._scrollValB4 = self.main.ui.scrollBar.value()
-        # self._scrollMaxB4 = self.main.ui.scrollBar.maximum()
-        # print('scroll_to_bottom...')
-        # QtCore.QTimer.singleShot(300, self._scroll_to_bottom)
-        pass
-
-    def _scroll_to_bottom(self, *args):
-        # print('scrollValB4: %s' % self._scrollValB4)
-        time.sleep(0.1)
-        tmax = 0.3
-        curve = QtCore.QEasingCurve(QtCore.QEasingCurve.OutQuad)
-        res = 0.01
-        steps = tmax / res
-        tsteps = 1 / steps
-        t = 0.0
-        # this = self.main.ui.scrollBar.value()
-        scrollEnd = self.main.ui.scrollBar.maximum()
-        if not scrollEnd:
-            scrollEnd = self._scrollMaxB4 + 100
-        r = scrollEnd - self._scrollValB4
-        self.main.ui.scrollBar.setValue(self._scrollValB4)
-        while t <= 1.0:
-            time.sleep(res)
-            t += tsteps
-            v = curve.valueForProgress(t)
-            scrollval = self._scrollValB4 + (v * r)
-            self.main.ui.scrollBar.setValue(scrollval)
 
     def enterEvent(self, event):
         self._ctrl_button.setVisible(True)
@@ -350,22 +349,31 @@ class EditAddElem(QtWidgets.QWidget):
 
     def build_menu(self):
         self.menu.clear()
-        self.menu_include = BrowseScriptsMenu(self.main, self._add_element)
+        self.menu_include = LocalAHKScriptsMenu(self, self.main)
+        self.menu_include.script_selected.connect(self._on_add_include)
         self.menu.addMenu(self.menu_include)
 
         import a2element
         for name, display_name, icon in a2element.get_list():
-            action = QtWidgets.QAction(display_name, self.menu, triggered=partial(self._add_element, name))
+            action = self.menu.addAction(display_name, self._on_add_element_action)
+            action.setData((name, None))
             if icon:
                 action.setIcon(icon)
-            self.menu.addAction(action)
 
         self.menu.addSeparator()
         self.menu.addAction(self.main.ui.actionCreate_New_Element)
         self._check_for_local_element_mods()
         self.menu.popup(QtGui.QCursor.pos())
 
-    def _add_element(self, typ, name=''):
+    def _on_add_include(self, args):
+        typ, name = args
+        self._add_element(typ, name)
+
+    def _on_add_element_action(self):
+        typ, name = self.sender().data()
+        self._add_element(typ, name)
+
+    def _add_element(self, typ, name=None):
         """
         Just adds a new dict with the according typ value to the temp_config.
         Only if it's an include we already enter the file selected.
@@ -374,6 +382,8 @@ class EditAddElem(QtWidgets.QWidget):
         cfg = {'typ': typ}
         if typ == 'include':
             cfg['file'] = name
+        elif name:
+            cfg['name'] = name
 
         self.config.append(cfg)
         self.main.edit_mod()
@@ -382,62 +392,58 @@ class EditAddElem(QtWidgets.QWidget):
         if self.main.mod is None:
             return
 
-        for item in os.listdir(self.main.mod.path):
-            itempath = os.path.join(self.main.mod.path, item)
-            if not os.path.isfile(itempath):
+        for item in os.scandir(self.main.mod.path):
+            if not item.is_file():
                 continue
-            base, ext = os.path.splitext(item)
-            if ext.lower() != '.py':
+            base, ext = os.path.splitext(item.name)
+            if not base.startswith(a2ctrl.LOCAL_ELEMENT_ID) or ext.lower() != '.py':
                 continue
 
-            element_objects = a2ctrl.get_local_element(itempath)
-            if element_objects is not None and 'Edit' in element_objects:
-                name = element_objects['Edit'].element_name()
-                icon = element_objects['Edit'].element_icon()
+            element_module = a2ctrl.get_local_element(item.path)
+            if element_module is None:
+                continue
 
-                action = QtWidgets.QAction(name, self.menu, triggered=partial(self._add_element, base))
-                if icon:
-                    action.setIcon(icon)
-                self.menu.addAction(action)
+            edit_class = getattr(element_module, 'Edit')
+            display_name = edit_class.element_name()
+            icon = edit_class.element_icon()
+            name = base[len(a2ctrl.LOCAL_ELEMENT_ID) + 1:]
+            action = self.menu.addAction(LOCAL_MENU_PREFIX + display_name, self._on_add_element_action)
+            action.setData((a2ctrl.LOCAL_ELEMENT_ID, name))
+            if icon:
+                action.setIcon(icon)
 
 
-class BrowseScriptsMenu(QtWidgets.QMenu):
-    def __init__(self, main, func):
-        super(BrowseScriptsMenu, self).__init__()
-        self.func = func
-        self.main = main
-        self.setIcon(Icons.inst().code)
+class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
+    """WIP. placeholder so far ..."""
+    script_selected = QtCore.Signal(tuple)
+
+    def __init__(self, parent, main):
+        super(LocalAHKScriptsMenu, self).__init__(parent, main)
         self.setTitle('Include Script')
-        self.aboutToShow.connect(self.build_menu)
 
-    def build_menu(self):
-        self.clear()
-        scripts_in_use = set()
-        for cfg in self.main.temp_config:
-            if cfg['typ'] == 'include':
-                scripts_in_use.add(cfg['file'])
+    def get_available_scripts(self):
+        scripts_used = set()
+        for cfg in a2ctrl.iter_element_cfg_type(self.main.temp_config, 'include'):
+            scripts_used.add(cfg['file'].lower())
 
-        icons = Icons.inst()
-        scripts_unused = set(self.main.mod.scripts) - scripts_in_use
+        available = [name for name in self.main.mod.scripts
+                     if name.lower() not in scripts_used]
+        return available
 
-        for script_name in scripts_unused:
-            self.addAction(icons.code, script_name, partial(self.set_script, script_name))
-        if scripts_unused:
-            self.addSeparator()
-        self.addAction(icons.code, 'Create New Script', self.set_script)
+    def _on_script_selected(self):
+        self.script_selected.emit(('include', self.sender().data()))
 
-    def set_script(self, name='', create=False):
-        if not name:
-            from a2widget.a2input_dialog import A2InputDialog
-            dialog = A2InputDialog(
-                self.main, 'New Script',
-                self.main.mod.check_create_script,
-                text='awesomeScript',
-                msg='Give a name for the new script file:')
-            dialog.okayed.connect(partial(self.set_script, create=True))
-            dialog.show()
+    def _on_create_script(self):
+        from a2widget.a2input_dialog import A2InputDialog
+        dialog = A2InputDialog(
+            self.main, 'New Script',
+            self.main.mod.check_create_script,
+            text='awesome_script',
+            msg='Give a name for the new script file:')
+
+        dialog.exec_()
+        if not dialog.output:
             return
 
-        if create:
-            name = self.main.mod.create_script(name, self.main.devset.author_name)
-        self.func('include', name)
+        name = self.main.mod.create_script(dialog.output, self.main.devset.author_name)
+        self.script_selected.emit(('include', name))

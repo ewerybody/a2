@@ -3,12 +3,12 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\combo_edit.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2element\combo_edit.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Fri Nov 30 14:45:43 2018
+#      by: pyside2-uic  running on PySide2 5.11.1
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_edit(object):
     def setupUi(self, edit):
@@ -16,11 +16,11 @@ class Ui_edit(object):
         edit.resize(407, 309)
         self.edit_layout = QtWidgets.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.edit_layout.setObjectName("edit_layout")
         self.internalNameLabel = QtWidgets.QLabel(edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
         self.cfg_name = QtWidgets.QLineEdit(edit)
@@ -28,13 +28,13 @@ class Ui_edit(object):
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QtWidgets.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_label = QtWidgets.QLineEdit(edit)
         self.cfg_label.setObjectName("cfg_label")
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
-        self.cfg_items = QtWidgets.QListWidget(edit)
+        self.cfg_items = A2List(edit)
         self.cfg_items.setMaximumSize(QtCore.QSize(16777215, 145))
         self.cfg_items.setAlternatingRowColors(True)
         self.cfg_items.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
@@ -43,7 +43,7 @@ class Ui_edit(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_6 = QtWidgets.QLabel(edit)
-        self.label_6.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.label_6.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_6.setObjectName("label_6")
         self.verticalLayout.addWidget(self.label_6)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -82,3 +82,4 @@ class Ui_edit(object):
         self.minus_button.setText(QtWidgets.QApplication.translate("edit", "-", None, -1))
         self.cfg_user_edit.setText(QtWidgets.QApplication.translate("edit", "allow user edit", None, -1))
 
+from a2widget.a2list import A2List

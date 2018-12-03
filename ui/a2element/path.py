@@ -1,20 +1,18 @@
-"""
-a2 path control
-"""
+import a2ctrl
+
 from PySide2 import QtWidgets
 
-import a2ctrl
-from a2element import path_edit_ui, DrawCtrl, EditCtrl
 from a2widget import a2path_field
+from a2element import path_edit_ui, DrawCtrl, EditCtrl
 
 
 class Draw(DrawCtrl):
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
         self.value = self.get_user_value(str)
-        self._setupUi()
+        self._setup_ui()
 
-    def _setupUi(self):
+    def _setup_ui(self):
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.label_text = self.cfg.get('label', '')
@@ -85,7 +83,7 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().folder
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
     db_dict['variables'][cfg['name']] = value

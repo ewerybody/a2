@@ -2,10 +2,12 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
+import time
 import subprocess
 from copy import deepcopy
 from functools import partial
 
+import a2dev
 import a2core
 import a2ctrl
 import a2util
@@ -38,7 +40,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.style = None
         self.rebuild_css()
 
-        self.devset = DevSettings(self.a2)
+        self.devset = a2dev.DevSettings(self.a2)
         if self.devset.loglevel_debug:
             a2core.set_loglevel(debug=True)
             log.debug('Loglevel set to DEBUG!')
@@ -100,15 +102,15 @@ class A2Window(QtWidgets.QMainWindow):
     def _setup_actions(self):
         icons = a2ctrl.Icons.inst()
         self.ui.actionEdit_module.triggered.connect(self.edit_mod)
-        self.ui.actionEdit_module.setShortcut('Ctrl+E')
         self.ui.actionEdit_module.setIcon(icons.edit)
 
         self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionExplore_to.setIcon(icons.folder)
+
         self.ui.actionAbout_a2.triggered.connect(partial(a2util.surf_to, self.a2.urls.help))
-        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2util.surf_to, self.a2.urls.ahk))
         self.ui.actionAbout_a2.setIcon(icons.a2help)
+        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2util.surf_to, self.a2.urls.ahk))
         self.ui.actionAbout_Autohotkey.setIcon(icons.autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
@@ -135,6 +137,11 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
+        self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
+        self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
+        self.ui.menuRollback_Changes.setIcon(icons.rollback)
+        self.ui.actionRevert_Settings.triggered.connect(self.on_revert_settings)
+
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
     def _setup_shortcuts(self):
@@ -153,10 +160,12 @@ class A2Window(QtWidgets.QMainWindow):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End),
                             self.module_view.ui.a2scroll_area,
                             partial(self.scroll_to, False))
+        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F1),
+                            self, self.module_view.help)
 
-    def edit_mod(self, keep_scroll=False):
+    def edit_mod(self):
         if self.num_selected == 1:
-            self.module_view.edit_mod(keep_scroll)
+            self.module_view.edit_mod()
 
     def check_main_menu_bar(self):
         dev_mode = self.a2.dev_mode
@@ -238,7 +247,7 @@ class A2Window(QtWidgets.QMainWindow):
             log.debug('Exiting Module edit mode!')
             self.module_view.draw_mod()
         else:
-            log.debug('Exiting a2 Ui! okithxbye')
+            log.info('Exiting a2 Ui! okithxbye')
             self.close()
 
     def explore_mod(self):
@@ -378,6 +387,90 @@ class A2Window(QtWidgets.QMainWindow):
             for action in self.module_view.menu_items:
                 menu.addAction(action)
 
+    def diff_files(self, file1, file2):
+        if os.path.isfile(self.devset.diff_app):
+            subprocess.Popen([self.devset.diff_app, file1, file2])
+        else:
+            _TASK_MSG = 'browse for a Diff executable'
+            _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
+
+            reply = QtWidgets.QMessageBox.question(
+                self, 'No Diff application set!', _QUEST_MSG,
+                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
+
+            if reply == QtWidgets.QMessageBox.Yes:
+                exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
+                    self, _TASK_MSG.title(), self.devset.diff_app, 'Executable (*.exe)')
+                if exepath:
+                    self.devset.set_var('diff_app', exepath)
+                    self.diff_files(file1, file2)
+
+    def on_dev_menu_build(self):
+        self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
+
+    def build_rollback_menu(self):
+        icons = a2ctrl.Icons.inst()
+        menu = self.ui.menuRollback_Changes
+        menu.clear()
+        backups_sorted = self.mod.get_config_backups()
+        if not backups_sorted:
+            action = menu.addAction('Nothing to roll back to!')
+            action.setEnabled(False)
+        else:
+            now = time.time()
+            for this_time, backup_name in backups_sorted[:15]:
+                try:
+                    label = a2util.unroll_seconds(now - this_time, 2)
+                    label = 'version %s - %s ago' % (int(backup_name[-1]), label)
+                except ValueError:
+                    continue
+                action = menu.addAction(icons.rollback, label, self.module_rollback_to)
+                action.setData(backup_name)
+            menu.addSeparator()
+            menu.addAction(icons.delete, 'Clear Backups', self.mod.clear_backups)
+
+    def module_rollback_to(self):
+        title = self.sender().text()
+        file_name = self.sender().data()
+        file_path = os.path.join(self.mod.backup_path, file_name)
+
+        from a2dev import RollbackDiffDialog
+        dialog = RollbackDiffDialog(self, title)
+        dialog.diff.connect(partial(self.diff_files, self.mod.config_file, file_path))
+        dialog.okayed.connect(partial(self.on_rollback, file_name))
+        dialog.show()
+
+    def on_rollback(self, file_name):
+        self.mod.rollback(file_name)
+        self.settings_changed()
+
+    def on_help_action(self):
+        text = self.sender().text()
+        print('text: %s' % text)
+        print('self.a2.urls.help: %s' % self.a2.urls.help)
+        a2util.surf_to(self.a2.urls.help)
+
+    def on_revert_settings(self):
+        if self.mod is None:
+            return
+        from a2widget import A2ConfirmDialog
+
+        module_user_cfg = self.mod.get_user_cfg()
+        if module_user_cfg:
+            dialog = A2ConfirmDialog(self, 'Revert User Settings',
+                                     msg='This will throw away any user changes!')
+            dialog.okayed.connect(self._on_revert_settings)
+            dialog.show()
+        else:
+            dialog = A2ConfirmDialog(self, 'Nothing to Revert!',
+                                     msg='Appears everything is on "factory settings"!')
+            dialog.show()
+
+    def _on_revert_settings(self):
+        self.mod.clear_user_cfg()
+        self.mod.change()
+        self.load_runtime_and_ui()
+
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):
@@ -432,49 +525,6 @@ class RuntimeWatcher(QtCore.QThread):
                 self.message.emit('Runtime is Offline!')
 
         return QtCore.QThread.run(self, *args, **kwargs)
-
-
-class DevSettings(object):
-    def __init__(self, a2):
-        self._enabled = False
-        self.author_name = ''
-        self.author_url = ''
-        self.code_editor = ''
-        self.json_indent = 2
-        self.loglevel_debug = False
-
-        self._a2 = a2
-        self._defaults = {
-            'author_name': os.getenv('USERNAME'),
-            'author_url': '',
-            'code_editor': '',
-            'json_indent': 2,
-            'loglevel_debug': False}
-        self.get()
-
-        log.info('loglevel_debug: %s' % self.loglevel_debug)
-        log.debug('loglevel_debug: %s' % self.loglevel_debug)
-
-    def _get_from_db(self):
-        return self._a2.db.get_changes('dev_settings', self._defaults)
-
-    def get(self):
-        settings = self._get_from_db()
-        self._set_attrs(settings)
-        return settings
-
-    def _set_attrs(self, settings):
-        for key, value in settings.items():
-            setattr(self, key, value)
-
-    def set(self, these):
-        self._a2.db.set_changes('dev_settings', these, self._defaults)
-        self._set_attrs(these)
-
-    def set_var(self, key, value):
-        settings = self._get_from_db()
-        settings[key] = value
-        self.set(settings)
 
 
 if __name__ == '__main__':

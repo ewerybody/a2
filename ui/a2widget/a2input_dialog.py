@@ -30,7 +30,9 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
         self.ui.a2ok_button.clicked.connect(self.okay)
         self.ui.a2cancel_button.clicked.connect(self.cancel_button_click)
-        self.ui.label.setText(msg)
+
+        self.ui.label.setTextFormat(QtCore.Qt.RichText)
+        self.ui.label.setText(msg.replace('\n', '<br>'))
 
         self.rejected.connect(self.canceled.emit)
 
@@ -117,5 +119,5 @@ class A2InputDialog(A2ConfirmDialog):
 
 
 if __name__ == '__main__':
-    import a2widget.demo.a2input_dialog
-    a2widget.demo.a2input_dialog.show()
+    import a2widget.demo.a2input_dialog_demo
+    a2widget.demo.a2input_dialog_demo.show()

@@ -5,7 +5,6 @@ If (!A_IsCompiled)
     ExitApp
 }
 
-_init_check_settings()
 a2_ahk := _init_get_autohotkey_exe()
 
 Run, %a2_ahk% a2ui.ahk, %A_ScriptDir%\lib

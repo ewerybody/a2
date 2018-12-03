@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>697</width>
-    <height>448</height>
+    <width>1026</width>
+    <height>866</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,9 +21,9 @@
   </property>
   <layout class="QHBoxLayout" name="item_editor_layout" stretch="1,3">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="list_layout">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="search_field_layout">
        <item>
         <widget class="QLineEdit" name="search_field">
          <property name="placeholderText">
@@ -44,7 +44,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
+      <layout class="QHBoxLayout" name="buttons_layout" stretch="1,0">
        <item>
         <widget class="QPushButton" name="add_entry_button">
          <property name="text">
@@ -65,7 +65,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QListWidget" name="item_list">
+      <widget class="A2List" name="item_list">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
@@ -88,6 +88,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2List</class>
+   <extends>QListWidget</extends>
+   <header>a2widget.a2list</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

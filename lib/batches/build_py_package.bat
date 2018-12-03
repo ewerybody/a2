@@ -1,10 +1,10 @@
 @echo off
 
-set package_name=a2 - alpha preview
+set package_name=a2 - alpha preview 0.1
 set a2path=%~dp0..\..
 set scriptpath=%a2path%\ui\a2app.py
 set iconpath=%a2path%\ui\res\a2.ico
-set pypath=C:\Python34\
+set pypath=C:\Python37\
 set pyinstaller=%pypath%Scripts\pyinstaller.exe
 set buildpath=%temp%\a2_temp_buildpath
 set distpath=%a2path%\_ package
@@ -15,7 +15,7 @@ echo ...
 
 
 if not exist %pypath% (
-  echo ERROR: Could not find Python34 package: %pypath%!
+  echo ERROR: Could not find Python37 package: %pypath%!
   pause
   exit
 )
@@ -47,6 +47,15 @@ echo running pyinstaller ...
 
 echo running py build script ...
 %pypath%python.exe %~dp0build_py_package.py "%package_name%"
+
+set Ahk2Exe="C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
+set source_path=%a2path%\lib\_source
+echo building root a2ui executable ...
+%Ahk2Exe% /in "%source_path%\a2ui_starter.ahk" /out "%distpath%\a2ui.exe" /icon %iconpath% /mpress 0
+
+echo building root a2 executable ...
+%Ahk2Exe% /in "%source_path%\a2_starter.ahk" /out "%distpath%\a2.exe" /icon %iconpath% /mpress 0
+
 
 echo Done!
 pause

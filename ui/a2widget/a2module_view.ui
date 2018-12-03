@@ -43,7 +43,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="modName">
+       <widget class="QLabel" name="a2_mod_name">
         <property name="font">
          <font>
           <family>Segoe UI</family>
@@ -51,9 +51,6 @@
           <weight>75</weight>
           <bold>true</bold>
          </font>
-        </property>
-        <property name="toolTip">
-         <string notr="true"/>
         </property>
         <property name="statusTip">
          <string notr="true"/>

@@ -1,21 +1,22 @@
-'''
-Created on Apr 1, 2016
-
-@author: eRiC
-'''
-import a2ctrl.qlist
+import a2ctrl
+import a2util
 from PySide2 import QtCore, QtWidgets
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 
+_FLAGS = (QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
+          QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+_NEW_ITEM_NAME = 'new_item'
+
+
 class Draw(DrawCtrl):
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
         self.value = self.get_user_value(str)
         self.user_edit = self.cfg.get('user_edit', False)
-        self._setupUi()
+        self._setup_ui()
 
-    def _setupUi(self):
+    def _setup_ui(self):
         self.layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
@@ -60,58 +61,42 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number
 
+        a2ctrl.check_ui_module(combo_edit_ui)
         self.ui = combo_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
         self.ui.plus_button.clicked.connect(self.add_item)
-        self.ui.minus_button.clicked.connect(self.delete_item)
+        self.ui.minus_button.clicked.connect(self.ui.cfg_items.remove_selected)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
-        for item in a2ctrl.qlist.get_all_items(self.ui.cfg_items):
-            item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
-                          QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+        for item in self.ui.cfg_items.iter_items():
+            item.setFlags(_FLAGS)
 
         self.ui.cfg_items.itemChanged.connect(self.update_items)
 
     def add_item(self):
-        current_items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)
-        new_item_name = 'new_item'
-        item = QtWidgets.QListWidgetItem(new_item_name)
-        current_items.append(new_item_name)
-        self.update_items(items=current_items)
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
-                      QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
-        self.ui.cfg_items.addItem(item)
-        self.ui.cfg_items.editItem(item)
+        self.ui.cfg_items.blockSignals(True)
+        new_name = a2util.get_next_free_number(_NEW_ITEM_NAME, self.ui.cfg_items.get_names())
+        item = self.ui.cfg_items.add(new_name)
+        if item is None:
+            return
 
-    def delete_item(self):
-        item_objs = self.ui.cfg_items.selectedItems()
-        sel_items = [i.text() for i in item_objs]
-        new_items = [i for i in self.cfg.get('items', []) if i not in sel_items]
-        self.update_items(items=new_items)
-        for item in item_objs:
-            # doesnt doanything :(
-            # self.ui.cfg_items.removeItemWidget(item)
-            item_row = self.ui.cfg_items.row(item)
-            self.ui.cfg_items.takeItem(item_row)
+        item.setFlags(_FLAGS)
+        self.ui.cfg_items.blockSignals(False)
+        self.update_items()
+        self.ui.cfg_items.editItem(item)
 
     def update_items(self, item=None, items=None):
         if item is not None:
-            a2ctrl.qlist.select_items(self.ui.cfg_items, item)
-            # item.setSelected(True)
+            if isinstance(item, QtWidgets.QListWidgetItem):
+                self.ui.cfg_items.select_items([item])
+            else:
+                self.ui.cfg_items.select_names(item)
         if items is None:
-            items = a2ctrl.qlist.get_items_as_text(self.ui.cfg_items)
+            items = self.ui.cfg_items.get_names()
         self.cfg['items'] = items
-
-    def keyPressEvent(self, event):
-        """
-        Capture delete key to remove entries
-        """
-        if event.key() == QtCore.Qt.Key_Delete:
-            self.delete_item()
-        return EditCtrl.keyPressEvent(self, event)
 
     @staticmethod
     def element_name():
@@ -122,7 +107,9 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().combo
 
 
-def get_settings(module_key, cfg, db_dict, user_cfg):
+def get_settings(_module_key, cfg, db_dict, user_cfg):
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
-    db_dict['variables'][cfg['name']] = value
+    # user values might been stuck in the db only save if allowed.
+    if cfg.get('user_edit', False) or value in cfg.get('items', []):
+        db_dict['variables'][cfg['name']] = value

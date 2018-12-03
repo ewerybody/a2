@@ -58,9 +58,15 @@
     <property name="title">
      <string>&amp;Dev</string>
     </property>
+    <widget class="QMenu" name="menuRollback_Changes">
+     <property name="title">
+      <string>Rollback Changes</string>
+     </property>
+    </widget>
     <addaction name="actionNew_Module_Dialog"/>
     <addaction name="actionEdit_module"/>
     <addaction name="actionExplore_to"/>
+    <addaction name="menuRollback_Changes"/>
     <addaction name="separator"/>
     <addaction name="actionDisable_all_modules"/>
     <addaction name="actionExplore_to_a2_dir"/>
@@ -98,12 +104,15 @@
     <string>About a2</string>
    </property>
    <property name="shortcut">
-    <string notr="true">F1</string>
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionEdit_module">
    <property name="text">
-    <string>Edit Module</string>
+    <string notr="true">Edit Module</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+E</string>
    </property>
   </action>
   <action name="actionDisable_all_modules">
@@ -208,6 +217,11 @@
   <action name="actionLoad_a2_Runtime">
    <property name="text">
     <string>Load a2 Runtime</string>
+   </property>
+  </action>
+  <action name="actionRollback_Changes">
+   <property name="text">
+    <string>Rollback Changes</string>
    </property>
   </action>
  </widget>

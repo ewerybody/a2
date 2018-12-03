@@ -37,8 +37,8 @@ class Draw(DrawCtrl):
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
         additional shortcuts, controls to change scope if that's enabled...
     """
-    def __init__(self, main, cfg, mod):
-        super(Draw, self).__init__(main, cfg, mod)
+    def __init__(self, *args):
+        super(Draw, self).__init__(*args)
         self._setup_ui()
 
     def _setup_hotkey(self):
@@ -107,8 +107,8 @@ class Draw(DrawCtrl):
         self.change('hotkeys')
 
     def build_hotkey_options_menu(self, menu):
-        action = menu.addAction('Revert to Default')
-        action.setEnabled(False)
+        if self.has_user_cfg():
+            menu.addAction('Revert to Default', self.clear_user_cfg)
 
         if self.cfg.get(Vars.key_change, True):
             build_hotkey_menu(menu, self.hotkey_button, self.help)

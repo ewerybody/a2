@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
+import a2ctrl
+
 from PySide2 import QtCore, QtWidgets
 
-import a2ctrl
 from a2widget import A2PathField
-from a2element import pathlist_edit_ui, DrawCtrl, EditCtrl
+from a2element import pathlist_edit_ui, DrawCtrlMixin, EditCtrl
 
 
-class Draw(QtWidgets.QGroupBox, DrawCtrl):
-    def __init__(self, main, cfg, mod):
+class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
+    def __init__(self, main, cfg, mod, user_cfg):
         super(Draw, self).__init__(main)
-        DrawCtrl.__init__(self, main, cfg, mod, _init_ctrl=False)
+        DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
+
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(False)
 
@@ -153,7 +155,6 @@ class PathEntry(QtWidgets.QWidget):
 
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
-    """default get_settings"""
     db_dict.setdefault('variables', {})
     value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=list, default=[])
     db_dict['variables'][cfg['name']] = value
