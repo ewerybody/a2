@@ -14,16 +14,17 @@ _init_has_config_test() {
         a2data := a2data "\a2\data\"
     }
     IfExist, %a2data%\includes\hotkeys.ahk
-        return true
+        value := true
     Else
-        return false
+        value := false
+    return value
 }
 
 a2_ahk := _init_get_autohotkey_exe()
 
 Run, %a2_ahk% lib\a2.ahk
 
-if !_init_has_config_test() {
+if (!_init_has_config_test()) {
     MsgBox, 65, a2 Not configured yet!, Welcome!`nThe a2 runtime is has no configuration yet! The Interface can be only opened through the Tray Icon or the a2ui executable.`n`nOr I can do that right now!
     IfMsgBox, Ok
         Run, "%a2_ahk%" a2ui.ahk, %A_ScriptDir%\lib

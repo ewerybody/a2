@@ -43,7 +43,8 @@ if exist "%distpath%" (
 )
 
 echo running pyinstaller ...
-"%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0 --icon "%iconpath%"
+"%pyinstaller%" --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0 --icon "%iconpath%"
+rem "%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%~dp0 --icon "%iconpath%"
 
 echo running py build script ...
 %pypath%python.exe %~dp0build_py_package.py "%package_name%"
