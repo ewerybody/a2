@@ -27,7 +27,7 @@ def check_ui_module(module):
         return
 
     if getattr(sys, 'frozen', False):
-        log.info('frozen! no need to compile %s' % module)
+        # log.info('frozen! no need to compile %s' % module)
         return
 
     pyfile = module.__file__
