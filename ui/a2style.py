@@ -4,7 +4,7 @@ import a2util
 from PySide2 import QtWidgets
 
 
-BASE_DPI = 120.0
+BASE_DPI = 96.0
 DEFAULT_STYLE = 'light'
 TEMPLATE_NAME = 'css.template'
 DEFAULTS_NAME = 'css_defaults.json'
