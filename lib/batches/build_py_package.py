@@ -8,9 +8,10 @@ import sys
 import shutil
 from os.path import join
 
+this_path = os.path.dirname(__file__)
+
 
 def main(package_name):
-    this_path = os.path.dirname(__file__)
     a2path = os.path.abspath(join(this_path, '..', '..'))
     uipath = join(a2path, 'ui')
     sys.path.append(uipath)
@@ -23,23 +24,20 @@ def main(package_name):
     print('copying root files ...')
 
     for item in os.scandir(a2path):
-        if item.name in ['a2_init.ahk', 'a2_settings.ahk']:
-            continue
-
-        if item.is_file():
-            if item.name.endswith('.ahk') or item.name in ['LICENSE']:
-                shutil.copy2(item.path, distpath)
+        if item.is_file() and item.name in ['a2 on github.com.URL', 'LICENSE']:
+            shutil.copy2(item.path, distpath)
 
     print('copying lib files ...')
     distlib = join(distpath, 'lib')
     a2lib = join(a2path, 'lib')
     os.mkdir(distlib)
     for item in os.scandir(a2lib):
-        base, ext = os.path.splitext(item.name)
-        if base in ['batches', '_source', 'a2ui', 'a2ui dev',
-                    'a2init_check', 'a2dev_find_py', 'a2init_check']:
+        if item.name.startswith('_ '):
             continue
-        if base.startswith('_ '):
+
+        base, ext = os.path.splitext(item.name)
+        if base in ['batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
+                    'a2init_check', 'a2dev_find_py', 'a2init_check']:
             continue
 
         if item.name == 'a2ui release.ahk':
@@ -50,37 +48,60 @@ def main(package_name):
             if ext == '.ahk':
                 shutil.copy2(item.path, distlib)
         else:
-            shutil.copytree(item.path, join(distlib, item.name))
+            shutil.copytree(item.path, join(distlib, item.name), ignore=_ignore_items)
 
     print('copying ui files ...')
     a2uipath = join(a2path, 'ui')
 
-    def ui_ignore(path, items):
-        return [f for f in items if f.endswith('.ui')] + ['__pycache__', 'demo', 'work']
-
     for folder in ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']:
         shutil.copytree(join(a2uipath, folder),
-                        join(distui, folder), ignore=ui_ignore)
+                        join(distui, folder), ignore=_ignore_items)
 
     shutil.rmtree(join(distui, 'PySide', folder), ignore_errors=True)
     for item in os.scandir(distui):
         if item.name.startswith('libopenblas.') and item.name.endswith('.dll'):
             print('removing libopenblas ...')
             os.remove(item.path)
-            break
-
-    numpy_path = join(distui, 'numpy')
-    if os.path.isdir(numpy_path):
-        print('removing numpy ...')
-        shutil.rmtree(numpy_path, ignore_errors=True)
-
-    github_link_name = 'a2 on github.com.URL'
-    shutil.copy(join(a2path, github_link_name),
-                join(distpath, github_link_name))
+        if item.is_dir() and item.name in ['lib2to3', 'Include', 'numpy']:
+            print(f'removing {item.name} ...')
+            shutil.rmtree(item.path, ignore_errors=True)
 
     config_file = join(distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
 
+def _ignore_items(path, items):
+    result = []
+    for item in items:
+        if item.startswith('_ '):
+            result.append(item)
+            continue
+
+        item_path = join(path, item)
+        if os.path.isdir(item_path):
+            if item in ['__pycache__']:
+                result.append(item)
+            elif item == 'demo' and os.path.basename(path) == 'a2widget':
+                result.append(item)
+
+        elif item.endswith('.ui'):
+            result.append(item)
+
+    if result:
+        print('IGNORING: %s' % result)
+
+    return result
+
+
+def _get_package_name():
+    with open(join(this_path, 'build_py_package.bat')) as file_obj:
+        for line in file_obj:
+            if line.startswith('set package_name'):
+                return line.split('=')[1].strip()
+    raise RuntimeError('package_name could not be fetched from batch file!')
+
+
 if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        sys.argv.append(_get_package_name())
     main(sys.argv[1])
