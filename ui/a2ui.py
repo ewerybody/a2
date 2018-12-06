@@ -292,9 +292,21 @@ class A2Window(QtWidgets.QMainWindow):
             self.ui.splitter.setSizes(splitter_size)
 
     def showRaise(self):
+        """
+        Calls the window to show as currently active window.
+
+        btw: These aren't random shots to make the window appear somehow.
+        Each step has its purpose and is needed.
+        """
+        # call to render the window
         self.show()
+        # restore the window from minimized state
+        state = self.windowState()
+        if (state == QtCore.Qt.WindowMinimized or
+                state not in QtCore.Qt.WindowState.values.values()):
+            self.setWindowState(QtCore.Qt.WindowActive)
+        # make it the currently active window
         self.activateWindow()
-        # self.setFocus()
 
     def scroll_to(self, value, smooth=False):
         # TODO: reimplement in each widget
