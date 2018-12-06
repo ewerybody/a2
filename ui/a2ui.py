@@ -302,8 +302,10 @@ class A2Window(QtWidgets.QMainWindow):
         self.show()
         # restore the window from minimized state
         state = self.windowState()
-        if (state == QtCore.Qt.WindowMinimized or
-                state not in QtCore.Qt.WindowState.values.values()):
+        if state == QtCore.Qt.WindowMinimized:
+            self.setWindowState(QtCore.Qt.WindowActive)
+        elif state not in QtCore.Qt.WindowState.values.values():
+            log.info('Window state undefined! %s' % state)
             self.setWindowState(QtCore.Qt.WindowActive)
         # make it the currently active window
         self.activateWindow()
