@@ -5,6 +5,11 @@ data/
 a2_init.ahk
 a2_settings.ahk
 
+# build files
+a2.exe
+a2ui.exe
+lib/batches/a2app.spec
+
 # NPM packages
 node_modules/
 *-lock.json
