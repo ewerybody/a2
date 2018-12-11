@@ -9,3 +9,5 @@ class Vars(object):
     function_code = 'functionCode'
     function_url = 'functionURL'
     function_send = 'functionSend'
+
+    dialog_style_setting = 'hotkey_dialog_style'

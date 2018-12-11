@@ -51,8 +51,8 @@ class A2Hotkey(QtWidgets.QWidget):
         self._scope_button.clicked.connect(self.scope_clicked)
         self._hotkey_buttons[0].clicked.connect(self.popup_dialog)
 
-        self.dialog_styles = [HotKeyBoard]
-        self.dialog_default = HotkeyDialog1
+        self.dialog_styles = [HotkeyDialog1]
+        self.dialog_default = HotKeyBoard
         self.dialog_styles.append(self.dialog_default)
 
     def set_config(self, config_dict):
@@ -94,7 +94,7 @@ class A2Hotkey(QtWidgets.QWidget):
             self.hotkey_changed.emit(keys)
 
     def popup_dialog(self):
-        class_name = self.a2.db.get('hotkey_dialog_style')
+        class_name = self.a2.db.get(Vars.dialog_style_setting)
         hotkey_dialog_class = None  # type: class
         if class_name:
             for hotkey_dialog_class in self.dialog_styles:
