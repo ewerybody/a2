@@ -62,7 +62,7 @@ def get_module_sources(main, path, modsource_dict):
 
     # add new ones
     for name in modsources:
-        if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
+        if not os.path.isfile(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
         modsource_dict.setdefault(name.lower(), ModSource(main, name)).fetch_modules()
 
