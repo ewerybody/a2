@@ -92,6 +92,7 @@ class A2Settings(QtWidgets.QWidget):
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
+        self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
 
     def toggle_console(self, state):

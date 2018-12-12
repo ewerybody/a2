@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Wed Dec 12 13:04:44 2018
+# Created: Wed Dec 12 14:18:55 2018
 #      by: pyside2-uic  running on PySide2 5.11.1a1.dev1542405709
 #
 # WARNING! All changes made in this file will be lost!
@@ -234,7 +234,7 @@ class Ui_a2settings(object):
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
 
         self.retranslateUi(a2settings)
-        self.a2settings_tab.setCurrentIndex(1)
+        self.a2settings_tab.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(a2settings)
 
     def retranslateUi(self, a2settings):
