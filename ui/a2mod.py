@@ -492,11 +492,10 @@ class Mod(object):
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
+        self._icon = None
+
         # the compound modulesource|modulename identifier
         self.key = self.source.name + '|' + self.name
-        # to identify the module in the module list widget e.g. for selection
-        self._item = None
-        self._icon = None
 
     @property
     def has_config_file(self):

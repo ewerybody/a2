@@ -26,16 +26,20 @@ class A2ModuleList(QtWidgets.QWidget):
         self._font_color_tinted = None
         self.brush_default = None
         self.brush_tinted = None
+        # to avoid adding variables to external objects
+        self._item_map = {}
+        self._module_map = {}
 
     def _on_selection_change(self, items):
-        self.selection = [item._module for item in items]
+        modules = [self._item_map.get(id(item)) for item in items]
+        self.selection = [m for m in modules if m is not None]
         self.selection_changed.emit(self.selection)
 
     def select(self, modules=None):
         self.ui.a2module_list_widget.blockSignals(True)
         self.ui.a2module_list_widget.clear_selection()
         selection = []
-        lastitem = None
+        last_item = None
         if modules is not None:
             if isinstance(modules, str):
                 modules = [modules]
@@ -43,24 +47,23 @@ class A2ModuleList(QtWidgets.QWidget):
             for item in modules:
                 if isinstance(item, a2mod.Mod):
                     selection.append(item)
-                    try:
-                        item._item.setSelected(True)
-                        lastitem = item._item
-                    except AttributeError:
-                        continue
+                    list_item = self._module_map.get(item.key)
 
                 elif isinstance(item, str):
-                    srcname, modname = item.split('|', 1)
+                    list_item = self._module_map.get(item)
                     try:
+                        srcname, modname = item.split('|', 1)
                         mod = self.a2.module_sources[srcname].mods[modname]
-                        mod._item.setSelected(True)
-                        lastitem = mod._item
                         selection.append(mod)
                     except (KeyError, AttributeError):
                         continue
 
-        if lastitem is not None:
-            self.ui.a2module_list_widget.setCurrentItem(lastitem)
+                if list_item is not None:
+                    list_item.setSelected(True)
+                    last_item = list_item
+
+        if last_item is not None:
+            self.ui.a2module_list_widget.setCurrentItem(last_item)
 
         self.ui.a2module_list_widget.blockSignals(False)
         if selection != self.selection:
@@ -80,6 +83,8 @@ class A2ModuleList(QtWidgets.QWidget):
 
         self.ui.a2module_list_widget.blockSignals(True)
         self.ui.a2module_list_widget.clear()
+        self._item_map, self._module_map = {}, {}
+
         for source in self.a2.module_sources.values():
             for mod in source.mods.values():
                 if mod not in select_mods:
@@ -89,9 +94,9 @@ class A2ModuleList(QtWidgets.QWidget):
                         continue
 
                 item = QtWidgets.QListWidgetItem(mod.name)
-                item._module = mod
-                mod._item = item
-                self.set_item_state(mod)
+                self._item_map[id(item)] = mod
+                self._module_map[mod.key] = item
+                self._set_item_state(item, mod)
                 self.ui.a2module_list_widget.addItem(item)
 
         if select_mods:
@@ -169,12 +174,19 @@ class A2ModuleList(QtWidgets.QWidget):
         self.draw_modules()
 
     def set_item_state(self, module):
-        if module.enabled:
-            module._item.setIcon(module.icon)
-            module._item.setForeground(self.brush_default)
+        item = self._module_map.get(module.key)
+        if item is None:
+            log.error('Could not get item from module: %s' % module.key)
         else:
-            module._item.setIcon(module.icon.tinted)
-            module._item.setForeground(self.brush_tinted)
+            self._set_item_state(item, module)
+
+    def _set_item_state(self, item, module):
+        if module.enabled:
+            item.setIcon(module.icon)
+            item.setForeground(self.brush_default)
+        else:
+            item.setIcon(module.icon.tinted)
+            item.setForeground(self.brush_tinted)
 
     def set_item_states(self, modules):
         for mod in modules:
