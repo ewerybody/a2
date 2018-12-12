@@ -87,6 +87,7 @@ class A2Settings(QtWidgets.QWidget):
 #        self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
+        self.ui.ui_scale_slider.setPageStep(0.1)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)

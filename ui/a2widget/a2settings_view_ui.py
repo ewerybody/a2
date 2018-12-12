@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Sun Jul  8 13:21:48 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1530382130
+# Created: Wed Dec 12 13:04:44 2018
+#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1542405709
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(1356, 938)
+        a2settings.resize(729, 605)
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtWidgets.QVBoxLayout(a2settings)
@@ -98,7 +98,7 @@ class Ui_a2settings(object):
         self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.ui_scale_label)
         self.ui_scale_slider = A2Slider(self.tab)
         self.ui_scale_slider.setDecimals(2)
-        self.ui_scale_slider.setMinimum(0.3)
+        self.ui_scale_slider.setMinimum(0.5)
         self.ui_scale_slider.setMaximum(2.0)
         self.ui_scale_slider.setSingleStep(0.05)
         self.ui_scale_slider.setProperty("value", 1.0)
@@ -234,12 +234,12 @@ class Ui_a2settings(object):
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
 
         self.retranslateUi(a2settings)
-        self.a2settings_tab.setCurrentIndex(0)
+        self.a2settings_tab.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(a2settings)
 
     def retranslateUi(self, a2settings):
         pass
 
-from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
 from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2path_field import A2PathField

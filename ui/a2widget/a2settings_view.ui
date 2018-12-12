@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1356</width>
-    <height>938</height>
+    <width>729</width>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="a2settings_tab">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <property name="styleSheet">
@@ -179,7 +179,7 @@ Go ahead and add or create one:</string>
           <number>2</number>
          </property>
          <property name="minimum">
-          <double>0.300000000000000</double>
+          <double>0.500000000000000</double>
          </property>
          <property name="maximum">
           <double>2.000000000000000</double>
