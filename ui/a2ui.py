@@ -3,7 +3,6 @@ a2ui - setup interface for an Autohotkey environment.
 """
 import os
 import time
-import subprocess
 from copy import deepcopy
 from functools import partial
 
@@ -357,8 +356,8 @@ class A2Window(QtWidgets.QMainWindow):
     def build_package(self):
         batch_path = os.path.join(self.a2.paths.lib, 'batches')
         batch_name = 'build_py_package.bat'
-        subprocess.Popen([os.getenv('COMSPEC'), '/c', 'start %s' % batch_name],
-                         cwd=batch_path)
+        _result, _pid = a2util.start_process_detached(
+            os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path)
 
     def _set_runtime_actions_vis(self):
         live = self.runtime_watcher.is_live
@@ -375,7 +374,8 @@ class A2Window(QtWidgets.QMainWindow):
 
     def edit_code(self, file_path):
         if os.path.isfile(self.devset.code_editor):
-            subprocess.Popen([self.devset.code_editor, file_path])
+            _result, _pid = a2util.start_process_detached(self.devset.code_editor, file_path)
+
         else:
             _TASK_MSG = 'browse for a code editor executable'
             _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
@@ -403,7 +403,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def diff_files(self, file1, file2):
         if os.path.isfile(self.devset.diff_app):
-            subprocess.Popen([self.devset.diff_app, file1, file2])
+            _result, _pid = a2util.start_process_detached(self.devset.diff_app, [file1, file2])
         else:
             _TASK_MSG = 'browse for a Diff executable'
             _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
@@ -493,8 +493,7 @@ class RestartThread(QtCore.QThread):
 
     def run(self, *args, **kwargs):
         self.msleep(RESTART_DELAY)
-        ahk_process = QtCore.QProcess()
-        _retval, _pid = ahk_process.startDetached(
+        _retval, _pid = a2util.start_process_detached(
             self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
         return QtCore.QThread.run(self, *args, **kwargs)
 
