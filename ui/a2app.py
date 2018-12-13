@@ -51,7 +51,7 @@ def main():
 
 
 def last_window_closed():
-    print('a2 lastWindowClosed!')
+    log.info('a2 lastWindowClosed!')
     app.exit()
 
 

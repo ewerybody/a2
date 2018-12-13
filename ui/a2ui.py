@@ -56,7 +56,6 @@ class A2Window(QtWidgets.QMainWindow):
             self.module_view.draw_mod()
 
         self.runtime_watcher = RuntimeWatcher(self)
-        self.runtime_watcher.finished.connect(self.runtime_watcher.deleteLater)
         self.runtime_watcher.message.connect(self.runtime_watcher_message)
         self.runtime_watcher.start()
 
@@ -218,14 +217,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.settings_changed(refresh_ui=True)
 
     def settings_changed(self, specific=None, refresh_ui=False):
-        if self._restart_thread is not None:
-            self._restart_thread.quit()
-
-        # kill old a2 process
-        # TODO: make process killing optional:
-        #   remember process id, restart, see if old process still there, remove it
-        #   if there is only one: keep it like it is,
-        # threading.Thread(target=a2core.killA2process).start()
         log.info('Runtime refresh called!')
         self.a2.fetch_modules()
 
@@ -268,7 +259,10 @@ class A2Window(QtWidgets.QMainWindow):
 
         for thread in [self._restart_thread, self.runtime_watcher, self._shutdown_thread]:
             if thread is not None:
-                thread.quit()
+                try:
+                    thread.quit()
+                except RuntimeError:
+                    pass
 
         QtWidgets.QMainWindow.closeEvent(self, event)
 
@@ -369,7 +363,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def shut_down_runtime(self):
         self._shutdown_thread = ShutdownThread(self)
-        self._shutdown_thread.finished.connect(self._restart_thread.deleteLater)
+        self._shutdown_thread.finished.connect(self._shutdown_thread.deleteLater)
         self._shutdown_thread.start()
 
     def load_runtime_and_ui(self):
