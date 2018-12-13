@@ -9,10 +9,11 @@ import time
 import string
 import codecs
 import webbrowser
-import subprocess
 
 import a2ahk
 import a2core
+
+from PySide2 import QtCore
 
 
 UTF8_CODEC = 'utf-8-sig'
@@ -153,13 +154,13 @@ def explore(path):
     path = os.path.normpath(path)
 
     if os.path.isdir(path):
-        args = [EXPLORER_PATH, path]
+        args = [path]
     elif os.path.isfile(path):
-        args = [EXPLORER_PATH, '/select,', path]
+        args = ['/select,', path]
     else:
         raise FileNotFoundError('Cannot explore to path "%s"' % path)
 
-    subprocess.run(args)
+    start_process_detached(EXPLORER_PATH, args)
 
 
 def unroll_seconds(value, decimals=2):
@@ -195,6 +196,30 @@ def unroll_seconds(value, decimals=2):
         if v == 1:
             name = name[:-1]
     return '%s %s' % (v, name)
+
+
+def start_process_detached(path, args=None, working_dir=None):
+    """
+    Uses QtCore.QProcess to start off detached processes
+
+    :param str path: Path to the thing to start.
+    :param list args: List of argument strings.
+    :param str working_dir: Current Working Dir or cwd to set for the process.
+    :return: Tuple of process result value and process ID.
+    :rtype: tuple
+    """
+    if args is None:
+        args = []
+    if not isinstance(args, list):
+        args = [args]
+    if working_dir is None:
+        a2 = a2core.A2Obj.inst()
+        working_dir = a2.paths.a2
+
+    process = QtCore.QProcess()
+    result, pid = process.startDetached(
+        path, args, working_dir)
+    return result, pid
 
 
 if __name__ == '__main__':
