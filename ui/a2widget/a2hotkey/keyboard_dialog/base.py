@@ -10,6 +10,7 @@ import a2ahk
 import a2core
 import a2util
 import a2ctrl.connect
+from a2widget.a2hotkey import hotkey_common
 from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
 from PySide2 import QtGui, QtCore, QtWidgets
@@ -204,7 +205,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         new_key_label.append(self.checked_key)
 
-        self.key = '+'.join([k.title() for k in new_key_label])
+        self.key = hotkey_common.sort_modifiers('+'.join(new_key_label))
         self.ui.key_field.setText(self.key)
 
     def _fill_key_dict(self):

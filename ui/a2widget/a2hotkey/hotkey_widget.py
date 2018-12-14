@@ -4,7 +4,7 @@ from PySide2 import QtCore, QtWidgets
 import a2ctrl
 from a2widget.a2hotkey.simple_dialog import HotkeyDialog1
 from a2widget.a2hotkey.dialogs import HotKeyBoard
-from a2widget.a2hotkey.hotkey_common import Vars
+from a2widget.a2hotkey.hotkey_common import Vars, get_keys_list
 
 
 SCOPE_TOOLTIP_GLOBAL = 'Hotkey scope is set "global" so it works anywhere.'
@@ -51,14 +51,14 @@ class A2Hotkey(QtWidgets.QWidget):
         self._scope_button.clicked.connect(self.scope_clicked)
         self._hotkey_buttons[0].clicked.connect(self.popup_dialog)
 
-        self.dialog_styles = [HotKeyBoard]
-        self.dialog_default = HotkeyDialog1
+        self.dialog_styles = [HotkeyDialog1]
+        self.dialog_default = HotKeyBoard
         self.dialog_styles.append(self.dialog_default)
 
     def set_config(self, config_dict):
         self._cfg = config_dict or {}
         self.setup_scope_button()
-        self.set_key(self._cfg.get('key', ['']))
+        self.set_key(get_keys_list(self._cfg.get('key', '')))
 
     def setText(self, key):
         if isinstance(key, list):
@@ -66,10 +66,10 @@ class A2Hotkey(QtWidgets.QWidget):
         self._hotkey_buttons[0].setText(key)
 
     def set_key(self, key):
-        if key != self.key:
-            self.key = key
-            keys = self.get_keys_list()
-            num_keys, num_buttons = len(keys), len(self._hotkey_buttons)
+        key_list = get_keys_list(key)
+        if key_list != self.key:
+            self.key = key_list
+            num_keys, num_buttons = len(key_list), len(self._hotkey_buttons)
             if num_keys > num_buttons:
                 for i in range(num_buttons, num_keys):
                     button = QtWidgets.QPushButton(self)
@@ -84,17 +84,17 @@ class A2Hotkey(QtWidgets.QWidget):
 
             locked = not self.is_edit_mode and not self._cfg.get(Vars.key_change, True)
             for i, button in enumerate(self._hotkey_buttons):
-                button.setText(keys[i])
+                button.setText(key_list[i])
                 button.setEnabled(not locked)
                 if locked:
                     button.setToolTip(HOTKEY_CANNOT_CHANGE)
-                elif keys[i] == '':
+                elif key_list[i] == '':
                     button.setToolTip('Empty Hotkeys will be ignored!')
 
-            self.hotkey_changed.emit(keys)
+            self.hotkey_changed.emit(key_list)
 
     def popup_dialog(self):
-        class_name = self.a2.db.get('hotkey_dialog_style')
+        class_name = self.a2.db.get(Vars.dialog_style_setting)
         hotkey_dialog_class = None  # type: class
         if class_name:
             for hotkey_dialog_class in self.dialog_styles:
@@ -115,7 +115,7 @@ class A2Hotkey(QtWidgets.QWidget):
         dialog.show()
 
     def _dialog_set_key(self, key):
-        current_keys = self.get_keys_list()
+        current_keys = get_keys_list(self.key)
         current_keys[self._hotkey_index] = key
         self.set_key(current_keys)
 
@@ -189,13 +189,13 @@ class A2Hotkey(QtWidgets.QWidget):
 
     @property
     def has_empty(self):
-        return '' in self.get_keys_list()
+        return '' in get_keys_list(self.key)
 
     def add_hotkey(self):
         """
         Adds an Empty string to the hotkey list if there is none already.
         """
-        keys = self.get_keys_list()
+        keys = get_keys_list(self.key)
         if '' in keys:
             return
         self.set_key(keys + [''])
@@ -206,21 +206,9 @@ class A2Hotkey(QtWidgets.QWidget):
             return True
         return False
 
-    def get_keys_list(self):
-        if self.key is None:
-            return ['']
-        if isinstance(self.key, str):
-            return [self.key]
-        elif isinstance(self.key, list):
-            return list(self.key)
-        else:
-            raise TypeError('Wrong Value Type for A2Hotkey.key: %s (%s)\n'
-                            'Need string or list of strings!'
-                            % (str(self.key), type(self.key)))
-
     def on_remove_key_action(self):
         key = self.sender().data()
-        current_keys = self.get_keys_list()
+        current_keys = get_keys_list(self.key)
         current_keys.remove(key)
         self.set_key(current_keys)
 

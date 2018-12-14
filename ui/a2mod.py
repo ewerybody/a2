@@ -62,7 +62,7 @@ def get_module_sources(main, path, modsource_dict):
 
     # add new ones
     for name in modsources:
-        if not os.path.exists(os.path.join(path, name, MOD_SOURCE_NAME)):
+        if not os.path.isfile(os.path.join(path, name, MOD_SOURCE_NAME)):
             continue
         modsource_dict.setdefault(name.lower(), ModSource(main, name)).fetch_modules()
 
@@ -492,11 +492,10 @@ class Mod(object):
         self._config = None
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
         self.ui = None
+        self._icon = None
+
         # the compound modulesource|modulename identifier
         self.key = self.source.name + '|' + self.name
-        # to identify the module in the module list widget e.g. for selection
-        self._item = None
-        self._icon = None
 
     @property
     def has_config_file(self):

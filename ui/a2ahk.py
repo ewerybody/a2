@@ -41,10 +41,15 @@ def call_lib_cmd(cmd_name, *args, **kwargs):
     a2 = a2core.A2Obj.inst()
     cmd_name = ensure_ahk_ext(cmd_name)
     cmd_path = os.path.join(a2.paths.lib, 'cmds', cmd_name)
+    if not os.path.isfile(cmd_path):
+        raise RuntimeError('Cannot find command script "%s" in lib!' % cmd_name)
     return call_cmd(cmd_path, cwd=a2.paths.a2, *args, **kwargs)
 
 
 def call_cmd(cmd_path, *args, **kwargs):
+    if not os.path.isfile(cmd_path):
+        raise RuntimeError('Cannot call command script! No such file!\n  %s' % cmd_path)
+
     import a2core
     a2 = a2core.A2Obj.inst()
 
@@ -194,7 +199,7 @@ def py_dict_to_ahk_string(dict_obj):
     return result + '}'
 
 
-#: http://www.autohotkey.com/docs/KeyList.htm
+# : http://www.autohotkey.com/docs/KeyList.htm
 modifiers = {'altgr': '<^>'}
 for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
     modifiers[_key] = _code

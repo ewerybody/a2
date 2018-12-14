@@ -15,7 +15,8 @@ class A2Slider(QtWidgets.QWidget):
     # : Emitted when sliding ended OR slider bar was clicked or field change is finished.
     editing_finished = QtCore.Signal(float)
 
-    def __init__(self, parent=None, has_field=True, value=1.0, mini=0, maxi=100, decimals=2, step_len=1):
+    def __init__(self, parent=None, has_field=True, value=1.0, mini=0, maxi=100,
+                 decimals=2, step_len=1):
         super(A2Slider, self).__init__(parent)
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)

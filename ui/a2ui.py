@@ -3,7 +3,6 @@ a2ui - setup interface for an Autohotkey environment.
 """
 import os
 import time
-import subprocess
 from copy import deepcopy
 from functools import partial
 
@@ -218,14 +217,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.settings_changed(refresh_ui=True)
 
     def settings_changed(self, specific=None, refresh_ui=False):
-        if self._restart_thread is not None:
-            self._restart_thread.quit()
-
-        # kill old a2 process
-        # TODO: make process killing optional:
-        #   remember process id, restart, see if old process still there, remove it
-        #   if there is only one: keep it like it is,
-        # threading.Thread(target=a2core.killA2process).start()
         log.info('Runtime refresh called!')
         self.a2.fetch_modules()
 
@@ -234,6 +225,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         log.info('  Restarting runtime ...')
         self._restart_thread = RestartThread(self.a2, self)
+        self._restart_thread.finished.connect(self._restart_thread.deleteLater)
         self._restart_thread.start()
 
         if refresh_ui:
@@ -267,7 +259,10 @@ class A2Window(QtWidgets.QMainWindow):
 
         for thread in [self._restart_thread, self.runtime_watcher, self._shutdown_thread]:
             if thread is not None:
-                thread.quit()
+                try:
+                    thread.quit()
+                except RuntimeError:
+                    pass
 
         QtWidgets.QMainWindow.closeEvent(self, event)
 
@@ -357,8 +352,8 @@ class A2Window(QtWidgets.QMainWindow):
     def build_package(self):
         batch_path = os.path.join(self.a2.paths.lib, 'batches')
         batch_name = 'build_py_package.bat'
-        subprocess.Popen([os.getenv('COMSPEC'), '/c', 'start %s' % batch_name],
-                         cwd=batch_path)
+        _result, _pid = a2util.start_process_detached(
+            os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path)
 
     def _set_runtime_actions_vis(self):
         live = self.runtime_watcher.is_live
@@ -368,6 +363,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def shut_down_runtime(self):
         self._shutdown_thread = ShutdownThread(self)
+        self._shutdown_thread.finished.connect(self._shutdown_thread.deleteLater)
         self._shutdown_thread.start()
 
     def load_runtime_and_ui(self):
@@ -375,7 +371,8 @@ class A2Window(QtWidgets.QMainWindow):
 
     def edit_code(self, file_path):
         if os.path.isfile(self.devset.code_editor):
-            subprocess.Popen([self.devset.code_editor, file_path])
+            _result, _pid = a2util.start_process_detached(self.devset.code_editor, file_path)
+
         else:
             _TASK_MSG = 'browse for a code editor executable'
             _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
@@ -403,7 +400,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def diff_files(self, file1, file2):
         if os.path.isfile(self.devset.diff_app):
-            subprocess.Popen([self.devset.diff_app, file1, file2])
+            _result, _pid = a2util.start_process_detached(self.devset.diff_app, [file1, file2])
         else:
             _TASK_MSG = 'browse for a Diff executable'
             _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
@@ -491,23 +488,20 @@ class RestartThread(QtCore.QThread):
         super(RestartThread, self).__init__(parent)
         self.a2 = a2
 
-    def run(self, *args, **kwargs):
+    def run(self):
         self.msleep(RESTART_DELAY)
-        ahk_process = QtCore.QProcess()
-        _retval, _pid = ahk_process.startDetached(
+        _retval, _pid = a2util.start_process_detached(
             self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
-        return QtCore.QThread.run(self, *args, **kwargs)
 
 
 class ShutdownThread(QtCore.QThread):
     def __init__(self, parent):
         super(ShutdownThread, self).__init__(parent)
 
-    def run(self, *args, **kwargs):
+    def run(self):
         pid = a2runtime.kill_a2_process()
         if pid:
             log.info('Shut down process with PID: %s' % pid)
-        return QtCore.QThread.run(self, *args, **kwargs)
 
 
 class RuntimeWatcher(QtCore.QThread):
@@ -519,11 +513,11 @@ class RuntimeWatcher(QtCore.QThread):
         self.is_live = False
         self.stopped = False
 
-    def quit(self, *args, **kwargs):
+    def quit(self):
         self.stopped = True
         self.terminate()
 
-    def run(self, *args, **kwargs):
+    def run(self):
         while not self.stopped:
             self.msleep(RUNTIME_WATCH_INTERVAL)
             self.is_live = a2runtime.is_runtime_live()
@@ -537,8 +531,6 @@ class RuntimeWatcher(QtCore.QThread):
             else:
                 self.lifetime = 0
                 self.message.emit('Runtime is Offline!')
-
-        return QtCore.QThread.run(self, *args, **kwargs)
 
 
 if __name__ == '__main__':

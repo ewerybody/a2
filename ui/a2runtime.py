@@ -49,7 +49,7 @@ class IncludeDataCollector(object):
             if not source_enabled:
                 continue
 
-            source = self.a2.module_sources.get(source_name)
+            source = self.a2.module_sources.get(source_name.lower())
             if source is None:
                 log.debug('Source: "%s" is enabled but missing!' % source_name)
                 continue

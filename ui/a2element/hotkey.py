@@ -116,13 +116,13 @@ class Draw(DrawCtrl):
         menu.addSeparator()
 
         submenu = QtWidgets.QMenu('Hotkey Dialog Style', menu)
-        current_style = self.a2.db.get('hotkey_dialog_style') or ''
+        current_style = self.a2.db.get(Vars.dialog_style_setting) or ''
         for hotkey_dialog_style in self.hotkey_button.dialog_styles:
             this_name = hotkey_dialog_style.__name__
             action = submenu.addAction(hotkey_dialog_style.label)
             action.setCheckable(True)
             action.setChecked(current_style == this_name)
-            action.triggered.connect(partial(self.a2.db.set, 'hotkey_dialog_style', this_name))
+            action.triggered.connect(partial(self.a2.db.set, Vars.dialog_style_setting, this_name))
 
         menu.addMenu(submenu)
 

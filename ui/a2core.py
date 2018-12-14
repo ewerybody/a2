@@ -9,8 +9,8 @@ to make functionality available without passing the main ui object.
 @author: eric
 """
 import os
-import logging
 import sys
+import logging
 
 # only spot where this is set! Use a2core.get_logger() anywhere else!
 LOG_LEVEL = logging.INFO
