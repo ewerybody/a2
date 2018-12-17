@@ -114,6 +114,8 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionExplore_to_a2_dir.setIcon(icons.folder)
+        self.ui.actionExplore_to_a2_data_dir.triggered.connect(self.explore_a2data)
+        self.ui.actionExplore_to_a2_data_dir.setIcon(icons.folder)
         self.ui.actionA2_settings.triggered.connect(partial(self.module_list.select, None))
         self.ui.actionA2_settings.setIcon(icons.a2)
         self.ui.actionExit_a2ui.triggered.connect(self.close)
@@ -250,6 +252,9 @@ class A2Window(QtWidgets.QMainWindow):
 
     def explore_a2(self):
         a2util.explore(self.a2.paths.a2)
+
+    def explore_a2data(self):
+        a2util.explore(self.a2.paths.data)
 
     def closeEvent(self, event):
         win_geom_str = self.saveGeometry().toBase64().data().decode()

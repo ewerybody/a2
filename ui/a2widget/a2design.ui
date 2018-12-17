@@ -70,6 +70,7 @@
     <addaction name="separator"/>
     <addaction name="actionDisable_all_modules"/>
     <addaction name="actionExplore_to_a2_dir"/>
+    <addaction name="actionExplore_to_a2_data_dir"/>
     <addaction name="separator"/>
     <addaction name="actionCreate_New_Element"/>
     <addaction name="actionBuild_A2_Package"/>
@@ -140,7 +141,7 @@
   </action>
   <action name="actionExplore_to_a2_dir">
    <property name="text">
-    <string>Explore to a2 Dir ...</string>
+    <string>Explore to a2 ...</string>
    </property>
   </action>
   <action name="actionTest_restorewin">
@@ -222,6 +223,11 @@
   <action name="actionRollback_Changes">
    <property name="text">
     <string>Rollback Changes</string>
+   </property>
+  </action>
+  <action name="actionExplore_to_a2_data_dir">
+   <property name="text">
+    <string>Explore to a2 data ...</string>
    </property>
   </action>
  </widget>

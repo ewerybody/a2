@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui' applies.
 #
-# Created: Wed Jul 18 15:58:14 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1531258024
+# Created: Mon Dec 17 12:41:46 2018
+#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1542405709
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -95,6 +95,8 @@ class Ui_a2MainWindow(object):
         self.actionLoad_a2_Runtime.setObjectName("actionLoad_a2_Runtime")
         self.actionRollback_Changes = QtWidgets.QAction(a2MainWindow)
         self.actionRollback_Changes.setObjectName("actionRollback_Changes")
+        self.actionExplore_to_a2_data_dir = QtWidgets.QAction(a2MainWindow)
+        self.actionExplore_to_a2_data_dir.setObjectName("actionExplore_to_a2_data_dir")
         self.menuHelp.addAction(self.actionReport_Issue)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
@@ -105,6 +107,7 @@ class Ui_a2MainWindow(object):
         self.menuDev.addSeparator()
         self.menuDev.addAction(self.actionDisable_all_modules)
         self.menuDev.addAction(self.actionExplore_to_a2_dir)
+        self.menuDev.addAction(self.actionExplore_to_a2_data_dir)
         self.menuDev.addSeparator()
         self.menuDev.addAction(self.actionCreate_New_Element)
         self.menuDev.addAction(self.actionBuild_A2_Package)
@@ -138,7 +141,7 @@ class Ui_a2MainWindow(object):
         self.actionExplore_to.setText(QtWidgets.QApplication.translate("a2MainWindow", "Explore to Module ...", None, -1))
         self.actionDev_settings.setText(QtWidgets.QApplication.translate("a2MainWindow", "Dev Settings ...", None, -1))
         self.actionAbout_Autohotkey.setText(QtWidgets.QApplication.translate("a2MainWindow", "About Autohotkey", None, -1))
-        self.actionExplore_to_a2_dir.setText(QtWidgets.QApplication.translate("a2MainWindow", "Explore to a2 Dir ...", None, -1))
+        self.actionExplore_to_a2_dir.setText(QtWidgets.QApplication.translate("a2MainWindow", "Explore to a2 ...", None, -1))
         self.actionTest_restorewin.setText(QtWidgets.QApplication.translate("a2MainWindow", "test restoring window outside of screen", None, -1))
         self.actionNew_module.setText(QtWidgets.QApplication.translate("a2MainWindow", "New Module", None, -1))
         self.actionA2_settings.setText(QtWidgets.QApplication.translate("a2MainWindow", "a2 Settings", None, -1))
@@ -155,6 +158,7 @@ class Ui_a2MainWindow(object):
         self.actionUnload_a2_Runtime.setText(QtWidgets.QApplication.translate("a2MainWindow", "Unload a2 Runtime", None, -1))
         self.actionLoad_a2_Runtime.setText(QtWidgets.QApplication.translate("a2MainWindow", "Load a2 Runtime", None, -1))
         self.actionRollback_Changes.setText(QtWidgets.QApplication.translate("a2MainWindow", "Rollback Changes", None, -1))
+        self.actionExplore_to_a2_data_dir.setText(QtWidgets.QApplication.translate("a2MainWindow", "Explore to a2 data ...", None, -1))
 
-from a2widget.a2module_view import A2ModuleView
 from a2widget.a2module_list import A2ModuleList
+from a2widget.a2module_view import A2ModuleView
