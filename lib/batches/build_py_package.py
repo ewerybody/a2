@@ -21,6 +21,9 @@ def main(package_name):
     print('distpath: %s' % distpath)
     distui = join(distpath, 'ui')
     os.rename(join(distpath, 'a2app'), distui)
+        raise RuntimeError(
+            'Package already handled?\n  Path "%s" was not found!' %
+            join(distpath, 'a2app'))
     print('copying root files ...')
 
     for item in os.scandir(a2path):
