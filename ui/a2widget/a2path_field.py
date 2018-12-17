@@ -21,8 +21,8 @@ from a2widget import A2MoreButton
 
 
 class BrowseType(object):
-    folder = '0'
-    file = '1'
+    folder = 0
+    file = 1
 
 
 class A2PathField(QtWidgets.QWidget):

@@ -54,8 +54,8 @@ class Edit(EditCtrl):
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         self._adjust_path_field()
-        for ctrl in [self.ui.cfg_writable, self.ui.cfg_browse_type_0, self.ui.cfg_browse_type_1,
-                     self.ui.cfg_save_mode]:
+        for ctrl in [self.ui.cfg_writable, self.ui.cfg_browse_type_0,
+                     self.ui.cfg_browse_type_1, self.ui.cfg_save_mode]:
             ctrl.clicked.connect(self._adjust_path_field)
         self.ui.cfg_file_types.editingFinished.connect(self._adjust_path_field)
 
@@ -63,7 +63,7 @@ class Edit(EditCtrl):
         self.ui.cfg_value.writable = self.cfg.get('writable', False)
         self.ui.cfg_value.file_types = self.cfg.get('file_types', '')
         self.ui.cfg_value.save_mode = self.cfg.get('save_mode', False)
-        browse_type = self.cfg.get('browse_type', a2path_field.BrowseType.file)
+        browse_type = int(self.cfg.get('browse_type', a2path_field.BrowseType.file))
         self.ui.cfg_value.browse_type = browse_type
 
         file_ctrls_visible = browse_type == a2path_field.BrowseType.file
