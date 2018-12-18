@@ -9,6 +9,9 @@ import shutil
 from os.path import join
 
 this_path = os.path.dirname(__file__)
+DESKTOP_INI_FILE = 'ui/res/a2.ico'
+DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
+                    DESKTOP_INI_FILE)
 
 
 def main(package_name):
@@ -18,12 +21,19 @@ def main(package_name):
     import a2ahk
 
     distpath = join(a2path, '_ package')
+    if not os.path.isdir(distpath):
+        raise FileNotFoundError('No Package found at "%s"!' % distpath)
+
     print('distpath: %s' % distpath)
+    app_path = join(distpath, 'a2app')
+    if not os.path.isdir(app_path):
+        raise FileNotFoundError('App Path "%s" was not found!\n'
+                                'Package already handled?' % app_path)
+
     distui = join(distpath, 'ui')
-    os.rename(join(distpath, 'a2app'), distui)
-        raise RuntimeError(
-            'Package already handled?\n  Path "%s" was not found!' %
-            join(distpath, 'a2app'))
+    os.rename(app_path, distui)
+    print('distui: %s' % distui)
+
     print('copying root files ...')
 
     for item in os.scandir(a2path):
@@ -72,21 +82,32 @@ def main(package_name):
     config_file = join(distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
+    with open(join(distpath, 'desktop.ini'), 'w') as file_obj:
+        file_obj.write(DESKTOP_INI_CODE)
+
 
 def _ignore_items(path, items):
     result = []
+    path_low = os.path.normpath(path.lower())
     for item in items:
+        # ignore temp stuff
         if item.startswith('_ '):
+            result.append(item)
+            continue
+        # ignore ahk lib tests
+        if path_low.endswith('\\a2\\lib\\autohotkey\\lib\\test'):
             result.append(item)
             continue
 
         item_path = join(path, item)
         if os.path.isdir(item_path):
+            # ignore autmatically build python 3 cache files
             if item in ['__pycache__']:
                 result.append(item)
+            # ignore a2 dev build stuff
             elif item == 'demo' and os.path.basename(path) == 'a2widget':
                 result.append(item)
-
+        # ignore uncompiled ui files
         elif item.endswith('.ui'):
             result.append(item)
 
