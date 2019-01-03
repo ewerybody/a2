@@ -31,7 +31,6 @@ class A2Hotkey(QtWidgets.QWidget):
         self.key = None
         self._cfg = {}
         self._edit_mode = False
-        self.scope_data = None
 
         self.setObjectName('A2HotkeyButton')
         self._vlayout = QtWidgets.QVBoxLayout(self)
@@ -110,7 +109,7 @@ class A2Hotkey(QtWidgets.QWidget):
             key = self.key[hotkey_index]
             self._hotkey_index = hotkey_index
 
-        dialog = hotkey_dialog_class(self, key, self.scope_data)
+        dialog = hotkey_dialog_class(self, key, self.get_scope_cfg_copy())
         dialog.hotkey_set.connect(self._dialog_set_key)
         dialog.show()
 

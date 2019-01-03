@@ -19,8 +19,8 @@ class HotKeyBoard(KeyboardDialogBase, _HotkeyDialogBase):
     label = 'Hotkey Keyboard'
 
     def __init__(self, parent, key, scope_data=None):
-        KeyboardDialogBase.__init__(self, parent)
         _HotkeyDialogBase.__init__(self, parent, key, scope_data)
+        KeyboardDialogBase.__init__(self, parent)
 
         keyboard_id = self.a2.db.get('keyboard_id') or 'en_us'
         self.build_keyboard(keyboard_id)
