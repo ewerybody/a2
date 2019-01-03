@@ -11,6 +11,7 @@ import a2core
 import a2util
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
+
 from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
 
 from PySide2 import QtGui, QtCore, QtWidgets
@@ -24,6 +25,7 @@ DB_KEY_NUMPAD = 'hotkey_dialog_show_numpad'
 _HERE = os.path.dirname(__file__)
 _IGNORE_BUTTONS = ['a2cancel_button', 'a2ok_button']
 HOTKEY_HELP_PAGE = 'Hotkey-Setup'
+WIN_STANDARD_FILE = 'standard_windows_keys.json'
 
 
 class KeyboardDialogBase(QtWidgets.QDialog):
@@ -32,7 +34,6 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         super(KeyboardDialogBase, self).__init__(parent)
         self.setModal(True)
 
-        self.a2 = a2core.A2Obj.inst()
         self.key_dict = {}
         self.modifier = {}
         self.checked_key = ''
@@ -51,6 +52,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         self._fill_key_dict()
         self._setup_ui()
+        self._check_conflicts()
         self.rejected.connect(self._log_size)
 
     def set_key(self):
@@ -339,6 +341,11 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def goto_help(self):
         a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
+
+    def _check_conflicts(self):
+        if self.scope_data.get(hotkey_common.Vars.scope_mode) == 0:
+            keys = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
+            self.key_dict
 
 
 class CursorBlockWidget(QtWidgets.QWidget):
