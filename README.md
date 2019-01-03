@@ -15,7 +15,7 @@ See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially
 * **a2/a2.modules separation complete!** There are still a lot of features to add but the main functionality is implemented: One can have multiple module sources and enable/disable them individually. You see there is a lot less [Autohotkey code here](https://github.com/ewerybody/a2/search?l=autohotkey) now. See [the **a2.modules** project](https://github.com/ewerybody/a2.modules) for the standard ones. 
 
 ## a2 main loop layout:
-![](doc/a2_layout.gif?raw=true)
+![](https://i.imgur.com/zyv1mUb.gif)
 
 ## blog posts:
 * [a2 – the first humble steps](http://goodsoul.de/?p=780)
