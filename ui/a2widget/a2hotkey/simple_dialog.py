@@ -128,4 +128,3 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
     def _init_dialog_size(self):
         global _dialog_size
         _dialog_size = (self.width(), self.height())
-
