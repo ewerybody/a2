@@ -120,6 +120,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             update_check_thread = self.mod_source.get_update_checker(self.main)
             update_check_thread.data_fetched.connect(self._show_check_result)
             update_check_thread.update_error.connect(self._show_update_error)
+            update_check_thread.finished.connect(update_check_thread.deleteLater)
             update_check_thread.start()
         else:
             self._change_version(self._update_to_version)
@@ -201,6 +202,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         update_thread.fetched.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
         update_thread.status.connect(self._show_update_status)
+        update_thread.finished.connect(update_thread.deleteLater)
         update_thread.start()
 
     def rollback(self):
@@ -314,6 +316,7 @@ class AddSourceDialog(A2InputDialog):
 
         thread = a2mod.ModSourceCheckThread(self.main, check_url=url)
         thread.data_fetched.connect(self.on_data_fetched)
+        thread.finished.connect(thread.deleteLater)
         thread.update_error.connect(self.show_error)
         thread.start()
 
@@ -368,6 +371,7 @@ class AddSourceDialog(A2InputDialog):
         thread.fetched.connect(self.on_install_finished)
         thread.failed.connect(self.show_error)
         thread.status.connect(self.show_status)
+        thread.finished.connect(thread.deleteLater)
         thread.start()
 
     def show_status(self, msg):
