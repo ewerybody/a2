@@ -35,8 +35,8 @@ STALE_CONFIG_TIMEOUT = 0.5
 USER_CFG_KEY = 'user_cfg'
 
 MSG_NO_UPDATE_URL = 'No update-URL given!'
-MSG_DOWNLOAD = 'Downloading %s - %s (%i%s)'
-MSG_UNPACK = 'Unpacking %s'
+MSG_DOWNLOAD = 'Downloading %s - %s (%s)'
+MSG_UNPACK = 'Unpacking %s - %s'
 MSG_BACKUP = 'Backing up %s'
 MSG_BACKUP_ERROR = 'Error Backing up %s'
 MSG_NOT_EMPTY_ERROR = 'Error preparing folder: Not empty but no previous version found!'
@@ -183,13 +183,13 @@ class ModSource(object):
         """
         return ModSourceCheckThread(parent, self)
 
-    def get_updater(self, parent, version):
+    def get_updater(self, parent, version, remote_data):
         """
         Provides a thread object for the according Module Source instance.
 
         :rtype: ModSourceFetchThread
         """
-        return ModSourceFetchThread(self, parent, version)
+        return ModSourceFetchThread(self, parent, version, remote_data)
 
     def get_backup_versions(self):
         """
@@ -353,46 +353,113 @@ class ModSourceFetchThread(QtCore.QThread):
     failed = QtCore.Signal(str)
     status = QtCore.Signal(str)
 
-    def __init__(self, mod_source, parent, version, url=None):
+    def __init__(self, mod_source, parent, version, remote_data=None, url=None):
         super(ModSourceFetchThread, self).__init__(parent)
         self.mod_source = mod_source
         self.version = version
         self.url = url
+        self.remote_data = remote_data
         self._downloaded_blocks = 0
+        self._download_size = None
 
     def _error(self, msg):
         self.failed.emit(str(msg))
         self.quit()
 
     def _download_status(self, blocknum, blocksize, fullsize):
+        """Used as 'reporthook' callback for url request"""
         if not blocknum:
             return
+
         self._downloaded_blocks += blocksize
-        percentage = min(100, (100 * float(self._downloaded_blocks) / fullsize))
-        self.status.emit(MSG_DOWNLOAD % (self.mod_source.name,
-                                         self.version, percentage, '%'))
+
+        if not self._download_size:
+            # not all headers contain a "content-length"
+            if fullsize != -1:
+                self._download_size = fullsize
+            elif self.remote_data is not None and 'zip_size' in self.remote_data:
+                self._download_size = self.remote_data.get('zip_size')
+
+        if self._download_size:
+            percentage = 100 * float(self._downloaded_blocks) / self._download_size
+            msg = MSG_DOWNLOAD % (self.mod_source.name, self.version,
+                                  '%i%%' % min(100, percentage))
+        else:
+            msg = MSG_DOWNLOAD % (self.mod_source.name, self.version,
+                                  '%i kb' % (self._downloaded_blocks * 1024))
+        log.info(msg)
+        self.status.emit(msg)
 
     def run(self):
-        old_version = self.mod_source.config.get('version')
-        if old_version is not None and old_version == self.version:
-            self.fetched.emit()
-            return
-
+        # exit if there is no URL to actually use
         update_url = self.url or self.mod_source.config.get('update_url')
         if not update_url:
             self._error(MSG_NO_UPDATE_URL)
             return
 
+        old_version = self.mod_source.config.get('version')
+
+        # exit if given version is current version
+        if old_version is not None and old_version == self.version:
+            self.fetched.emit()
+            return
+
+        if not self._handle_old_version(old_version):
+            return
+
+        pack_basename = self.version + '.zip'
+        temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
+        temp_new_version = os.path.join(self.mod_source.backup_path, self.version)
+
+        if not os.path.isdir(temp_new_version):
+            self.status.emit(MSG_DOWNLOAD % (self.mod_source.name, self.version, 0))
+            os.makedirs(self.mod_source.backup_path, exist_ok=True)
+
+            if update_url.startswith('http') or 'github.com/' in update_url:
+                if not self._handle_url_download(update_url, pack_basename, temp_packpath):
+                    return
+            else:
+                if not self._handle_file_copy(update_url, pack_basename, temp_packpath):
+                    return
+
+            self.status.emit(MSG_UNPACK % (self.mod_source.name, self.version))
+            import zipfile
+            with zipfile.ZipFile(temp_packpath) as tmp_zip:
+                for filename in tmp_zip.namelist():
+                    tmp_zip.extract(filename, temp_new_version)
+            os.remove(temp_packpath)
+
+            new_version_dir = temp_new_version
+            # if mod_source_config not directly under path search for it
+            if MOD_SOURCE_NAME not in get_files(temp_new_version):
+                new_version_dir = None
+                for this_path, _dirs, this_files in os.walk(temp_new_version):
+                    if MOD_SOURCE_NAME in this_files:
+                        new_version_dir = this_path
+                        break
+                if new_version_dir is None:
+                    self._error('Could not find %s in new package!' % MOD_SOURCE_NAME)
+                    return
+
+        # cleanup
+        self.status.emit(MSG_INSTALL % self.version)
+        os.rename(new_version_dir, self.mod_source.path)
+        if os.path.isdir(temp_new_version):
+            shutil.rmtree(temp_new_version)
+
+        self.fetched.emit()
+
+    def _handle_old_version(self, old_version):
         if old_version is None:
             files = os.listdir(self.mod_source.path)
             if files:
                 self._error(MSG_NOT_EMPTY_ERROR)
-                return
+                return False
             try:
                 self.mod_source.remove()
             except Exception as error:
                 self._error(MSG_NOT_EMPTY_ERROR)
-                return
+                return False
         else:
             self.status.emit(MSG_BACKUP % old_version)
             log.debug(MSG_BACKUP % old_version)
@@ -402,68 +469,38 @@ class ModSourceFetchThread(QtCore.QThread):
                 log.error(MSG_BACKUP_ERROR % old_version + '(%s)' % self.mod_source.path)
                 log.error(error)
                 self._error(MSG_BACKUP_ERROR % old_version)
-                return
+                return False
+        return True
 
-        pack_basename = self.version + '.zip'
-        temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
-        temp_new_version = os.path.join(self.mod_source.backup_path, self.version)
-        new_version_dir = temp_new_version
+    def _handle_url_download(self, update_url, pack_basename, temp_packpath):
+        if 'github.com/' in update_url:
+            owner, repo = _get_github_owner_repo(update_url)
+            update_url = '/'.join(['https://github.com', owner, repo, 'archive'])
+        update_url = _add_slash(update_url)
+        update_url += pack_basename
 
-        if not os.path.isdir(temp_new_version):
-            self.status.emit(MSG_DOWNLOAD % (self.mod_source.name, self.version, 0, '%'))
-            os.makedirs(self.mod_source.backup_path, exist_ok=True)
+        from urllib import request
+        try:
+            request.FancyURLopener().retrieve(
+                update_url, temp_packpath, self._download_status)
+        except Exception as error:
+            log.error(traceback.format_exc().strip())
+            self._error('Error retrieving package...\n' + str(error))
+            return False
+        return True
 
-            if update_url.startswith('http') or 'github.com/' in update_url:
-                if 'github.com/' in update_url:
-                    owner, repo = _get_github_owner_repo(update_url)
-                    update_url = '/'.join(['https://github.com', owner, repo, 'archive'])
-                update_url = _add_slash(update_url)
-                update_url += pack_basename
+    def _handle_file_copy(self, update_url, pack_basename, temp_packpath):
+        if not os.path.exists(update_url):
+            self._error(MSG_UPDATE_URL_INVALID)
+            return False
 
-                from urllib import request
-                try:
-                    request.FancyURLopener().retrieve(
-                        update_url, temp_packpath, self._download_status)
-                except Exception as error:
-                    log.error(traceback.format_exc().strip())
-                    self._error('Error retrieving package...\n' + str(error))
-                    return
-
-            else:
-                if not os.path.exists(update_url):
-                    self._error(MSG_UPDATE_URL_INVALID)
-                    return
-
-                try:
-                    remote_path = os.path.join(update_url, pack_basename)
-                    shutil.copy2(remote_path, temp_packpath)
-                except Exception as error:
-                    self._error('Error copying from path...\n' + str(error))
-                    return
-
-            import zipfile
-            with zipfile.ZipFile(temp_packpath) as tmp_zip:
-                for filename in tmp_zip.namelist():
-                    tmp_zip.extract(filename, temp_new_version)
-            os.remove(temp_packpath)
-
-            # if mod_source_config not directly under path search for it
-            if MOD_SOURCE_NAME not in get_files(temp_new_version):
-                new_version_dir = None
-                for _this_path, _dirs, _this_files in os.walk(temp_new_version):
-                    if MOD_SOURCE_NAME in _this_files:
-                        new_version_dir = _this_path
-                        break
-                if new_version_dir is None:
-                    self._error('Could not find %s in new package!' % MOD_SOURCE_NAME)
-                    return
-
-        self.status.emit(MSG_INSTALL % self.version)
-        os.rename(new_version_dir, self.mod_source.path)
-        if os.path.isdir(temp_new_version):
-            shutil.rmtree(temp_new_version)
-
-        self.fetched.emit()
+        try:
+            remote_path = os.path.join(update_url, pack_basename)
+            shutil.copy2(remote_path, temp_packpath)
+        except Exception as error:
+            self._error('Error copying from path...\n' + str(error))
+            return False
+        return True
 
 
 class Mod(object):

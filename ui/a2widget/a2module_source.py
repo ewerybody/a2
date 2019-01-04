@@ -26,6 +26,8 @@ class ModSourceWidget(QtWidgets.QWidget):
         super(ModSourceWidget, self).__init__()
         self.main = main
         self.mod_source = mod_source
+        self._update_to_version = None
+        self._remote_data = None
 
         self.ui_body = None
         self._setup_ui(show_enabled)
@@ -135,6 +137,7 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def _show_check_result(self, remote_data):
         self.set_idle()
+        self._remote_data = remote_data
         remote_version = remote_data.get('version')
 
         if remote_version == self.mod_source.config.get('version'):
@@ -198,7 +201,7 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def _change_version(self, version):
         self.set_busy()
-        update_thread = self.mod_source.get_updater(self.main, version)
+        update_thread = self.mod_source.get_updater(self.main, version, self._remote_data)
         update_thread.fetched.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
         update_thread.status.connect(self._show_update_status)
@@ -366,7 +369,8 @@ class AddSourceDialog(A2InputDialog):
         a2mod.create_module_source_dir(name)
         mod_source = a2mod.ModSource(self.a2, name)
         thread = a2mod.ModSourceFetchThread(
-            mod_source, self.main, self.remote_data['version'], self.repo_url)
+            mod_source, self.main, self.remote_data['version'],
+            self.remote_data, self.repo_url)
 
         thread.fetched.connect(self.on_install_finished)
         thread.failed.connect(self.show_error)
