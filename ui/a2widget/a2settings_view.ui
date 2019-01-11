@@ -17,7 +17,16 @@
    <string notr="true">b</string>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -69,7 +78,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0" colspan="2">
+         <item row="5" column="0" colspan="2">
           <widget class="Line" name="line_2">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -87,6 +96,26 @@
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string notr="true">Hotkey Dialog Style:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string notr="true">Keyboard Layout:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="hk_dialog_style"/>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="hk_dialog_layout"/>
          </item>
         </layout>
        </item>

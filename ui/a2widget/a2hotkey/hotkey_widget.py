@@ -19,6 +19,10 @@ class A2Hotkey(QtWidgets.QWidget):
     hotkey_changed = QtCore.Signal(list)
     scope_changed = QtCore.Signal(list, int)
 
+    dialog_styles = [HotkeyDialog1]
+    dialog_default = HotKeyBoard
+    dialog_styles.append(dialog_default)
+
     def __init__(self, parent=None):
         """
         :param QWidget parent: Parent Qt object.
@@ -49,10 +53,6 @@ class A2Hotkey(QtWidgets.QWidget):
         self._layout.addWidget(self._scope_button)
         self._scope_button.clicked.connect(self.scope_clicked)
         self._hotkey_buttons[0].clicked.connect(self.popup_dialog)
-
-        self.dialog_styles = [HotkeyDialog1]
-        self.dialog_default = HotKeyBoard
-        self.dialog_styles.append(self.dialog_default)
 
     def set_config(self, config_dict):
         self._cfg = config_dict or {}

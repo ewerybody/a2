@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Wed Dec 12 14:18:55 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1542405709
+# Created: Fri Jan 11 13:37:16 2019
+#      by: pyside2-uic  running on PySide2 5.12.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -56,7 +56,21 @@ class Ui_a2settings(object):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.SpanningRole, self.line_2)
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.line_2)
+        self.label_7 = QtWidgets.QLabel(self.tab_2)
+        self.label_7.setText("Hotkey Dialog Style:")
+        self.label_7.setObjectName("label_7")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_7)
+        self.label_13 = QtWidgets.QLabel(self.tab_2)
+        self.label_13.setText("Keyboard Layout:")
+        self.label_13.setObjectName("label_13")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_13)
+        self.hk_dialog_style = QtWidgets.QComboBox(self.tab_2)
+        self.hk_dialog_style.setObjectName("hk_dialog_style")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.hk_dialog_style)
+        self.hk_dialog_layout = QtWidgets.QComboBox(self.tab_2)
+        self.hk_dialog_layout.setObjectName("hk_dialog_layout")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.hk_dialog_layout)
         self.verticalLayout.addLayout(self.formLayout)
         self.module_source_box = QtWidgets.QGroupBox(self.tab_2)
         self.module_source_box.setTitle("Module Sources")
@@ -240,6 +254,6 @@ class Ui_a2settings(object):
     def retranslateUi(self, a2settings):
         pass
 
-from a2widget.a2slider import A2Slider
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
+from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2slider import A2Slider
