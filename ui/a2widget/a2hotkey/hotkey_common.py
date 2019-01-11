@@ -48,7 +48,7 @@ def get_keys_list(in_keys):
     elif isinstance(in_keys, str):
         keys_list.append(in_keys)
     elif isinstance(in_keys, list):
-        keys_list = in_keys
+        keys_list.extend(in_keys)
     else:
         raise TypeError(
             'Wrong Value Type for A2Hotkey.key: "%s" (%s)\n'

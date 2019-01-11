@@ -57,7 +57,7 @@ class A2Hotkey(QtWidgets.QWidget):
     def set_config(self, config_dict):
         self._cfg = config_dict or {}
         self.setup_scope_button()
-        self.set_key(get_keys_list(self._cfg.get('key', '')))
+        self.set_key(self._cfg.get('key', ''))
 
     def setText(self, key):
         if isinstance(key, list):
