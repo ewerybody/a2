@@ -65,13 +65,20 @@ def get_keys_list(in_keys):
 
 def sort_modifiers(key_string):
     """
-    Returns a sorted comparable verified keys list given a string or list of shortcut+keys.
+    Returns a sorted comparable verified hotkey string.
 
     :param str key_string: String of a keyboard shortcut.
-    :rtype: list
+    :rtype: str
     """
     modifiers = key_string.lower().split('+')
-    trigger_key = modifiers.pop(-1).title()
+    trigger_key = modifiers.pop(-1)
+
+    # try to title-case the trigger_key:
+    _title_cased = trigger_key.title()
+    # to avoid malforming keys like german umlaut 's' to 'Ss'
+    if len(_title_cased) == len(trigger_key):
+        trigger_key = _title_cased
+
     if modifiers:
         new_mods = []
         for low_name, disp_name in DISPLAY_MODIFIERS.items():
