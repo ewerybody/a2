@@ -278,7 +278,10 @@ class HotkeysCollection(_Collection):
 
     @property
     def has_content(self):
-        return any([d != {} for d in [self.hotkeys_global, self.hotkeys_scope_incl, self.hotkeys_scope_excl]])
+        return any([d != {} for d in [
+            self.hotkeys_global,
+            self.hotkeys_scope_incl,
+            self.hotkeys_scope_excl]])
 
 
 class InitCollection(_Collection):
@@ -346,6 +349,13 @@ def collect_hotkeys():
     return data
 
 
+def _get_hidden_process_startup_nfo():
+    startup_nfo = subprocess.STARTUPINFO()
+    startup_nfo.wShowWindow = subprocess.SW_HIDE
+    startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    return startup_nfo
+
+
 def kill_a2_process():
     """
     finds and kills Autohotkey processes that run a2.ahk.
@@ -358,12 +368,9 @@ def kill_a2_process():
     pid = get_a2_runtime_pid()
 
     if pid:
-        startup_nfo = subprocess.STARTUPINFO()
-        startup_nfo.wShowWindow = subprocess.SW_HIDE
-        startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
-        taskkill_proc = subprocess.Popen('taskkill /f /pid %s' % pid,
-                                         startupinfo=startup_nfo)
+        taskkill_proc = subprocess.Popen(
+            'taskkill /f /pid %s' % pid,
+            startupinfo=_get_hidden_process_startup_nfo())
         taskkill_proc.wait()
         taskkill_proc.kill()
         return pid
@@ -377,12 +384,9 @@ def get_a2_runtime_pid():
     :return: PID string of the Autohotkey process running a2
     :rtype: str
     """
-    startup_nfo = subprocess.STARTUPINFO()
-    startup_nfo.wShowWindow = subprocess.SW_HIDE
-    startup_nfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-
     wmicall = f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" get ProcessID,CommandLine'
-    wmicout = subprocess.check_output(wmicall, startupinfo=startup_nfo)
+    wmicout = subprocess.check_output(
+        wmicall, startupinfo=_get_hidden_process_startup_nfo())
     wmicout = str(wmicout).split('\\r\\r\\n')
     for line in wmicout[1:-1]:
         if a2ahk.EXECUTABLE_NAME in line.lower():
