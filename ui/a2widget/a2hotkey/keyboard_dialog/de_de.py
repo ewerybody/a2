@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A fillin for german qwertz keyboard.
 """
@@ -6,8 +7,9 @@ A fillin for german qwertz keyboard.
 def main(keyboard):
     keyboard.insert_key(0, '^', keyboard.ui.number_row, tooltip='Circumflex Accent')
     # add those before the Backspace key
-    for i, k in [(11, 'ß'), (12, '´')]:
-        keyboard.insert_key(i, k, keyboard.ui.number_row)
+    # if we don't give a label it will try uppercase ß to SS :|
+    for i, key, label, in [(11, 'ß', 'ß'), (12, '´', None)]:
+        keyboard.insert_key(i, key, keyboard.ui.number_row, label)
 
     for l in 'qwertzuiopü+':
         keyboard.add_key(l, keyboard.ui.letter_row_top)

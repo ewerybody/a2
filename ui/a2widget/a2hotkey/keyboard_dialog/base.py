@@ -1,4 +1,5 @@
-﻿"""
+﻿  # -*- coding: utf-8 -*-
+"""
 Created on 11.09.2017
 
 @author: eric
@@ -258,6 +259,8 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 log.error('NOT IN!: %s' % objname)
 
     def build_keyboard(self, keyboard_id):
+        # from . import de_de
+        # de_de.main(self)
         if keyboard_id == 'en_us':
             from . import en_us
             en_us.main(self)
