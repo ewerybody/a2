@@ -1,4 +1,4 @@
-﻿  # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on 11.09.2017
 
@@ -6,6 +6,7 @@ Created on 11.09.2017
 """
 import os
 import inspect
+import importlib
 
 import a2ahk
 import a2core
@@ -259,11 +260,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 log.error('NOT IN!: %s' % objname)
 
     def build_keyboard(self, keyboard_id):
-        # from . import de_de
-        # de_de.main(self)
-        if keyboard_id == 'en_us':
-            from . import en_us
-            en_us.main(self)
+        from . import layouts
+        keyboard_module = layouts.get_module(keyboard_id)
+        keyboard_module.main(self)
 
     def refresh_style(self):
         try:

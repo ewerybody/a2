@@ -14,14 +14,13 @@ SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
 HOTKEY_CANNOT_CHANGE = 'The hotkey cannot be changed!'
 
+DIALOG_DEFAULT = HotKeyBoard
+DIALOG_CLASSES = [DIALOG_DEFAULT, HotkeyDialog1]
+
 
 class A2Hotkey(QtWidgets.QWidget):
     hotkey_changed = QtCore.Signal(list)
     scope_changed = QtCore.Signal(list, int)
-
-    dialog_styles = [HotkeyDialog1]
-    dialog_default = HotKeyBoard
-    dialog_styles.append(dialog_default)
 
     def __init__(self, parent=None):
         """
@@ -96,11 +95,11 @@ class A2Hotkey(QtWidgets.QWidget):
         class_name = self.a2.db.get(Vars.dialog_style_setting)
         hotkey_dialog_class = None  # type: class
         if class_name:
-            for hotkey_dialog_class in self.dialog_styles:
+            for hotkey_dialog_class in DIALOG_CLASSES:
                 if hotkey_dialog_class.__name__ == class_name:
                     break
         if hotkey_dialog_class is None:
-            hotkey_dialog_class = self.dialog_default
+            hotkey_dialog_class = DIALOG_DEFAULT
 
         if isinstance(self.key, str):
             key = self.key

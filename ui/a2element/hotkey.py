@@ -23,11 +23,9 @@ import a2core
 import a2ctrl
 import a2util
 from a2element import DrawCtrl, EditCtrl
-from a2widget import A2MoreButton
-from a2widget.a2hotkey import A2Hotkey, Vars
-from functools import partial
+from a2widget import A2MoreButton, a2hotkey
 
-
+Vars = a2hotkey.Vars
 log = a2core.get_logger(__name__)
 
 
@@ -77,7 +75,7 @@ class Draw(DrawCtrl):
 
         self.hotkey_list_layout = QtWidgets.QVBoxLayout()
         self.hotkey_layout = QtWidgets.QHBoxLayout()
-        self.hotkey_button = A2Hotkey(self)
+        self.hotkey_button = a2hotkey.A2Hotkey(self)
         self._setup_hotkey()
         self.hotkey_button.hotkey_changed.connect(self.hotkey_change)
         self.hotkey_button.scope_changed.connect(self.scope_change)
@@ -116,18 +114,20 @@ class Draw(DrawCtrl):
         menu.addSeparator()
 
         submenu = QtWidgets.QMenu('Hotkey Dialog Style', menu)
-        current_style = self.a2.db.get(Vars.dialog_style_setting) or ''
-        for hotkey_dialog_style in self.hotkey_button.dialog_styles:
-            this_name = hotkey_dialog_style.__name__
-            action = submenu.addAction(hotkey_dialog_style.label)
+        current_style = a2hotkey.get_current_style()
+        for name, label in a2hotkey.iter_dialog_styles():
+            action = submenu.addAction(label)
             action.setCheckable(True)
-            action.setChecked(current_style == this_name)
-            action.triggered.connect(partial(self.a2.db.set, Vars.dialog_style_setting, this_name))
-
+            action.setChecked(current_style == name)
+            action.triggered.connect(self._on_hotkey_dialog_style_change)
         menu.addMenu(submenu)
 
     def help(self):
         a2util.surf_to(self.helpUrl)
+
+    def _on_hotkey_dialog_style_change(self):
+        action = self.sender()
+        a2hotkey.set_dialog_style(action.text())
 
 
 class Edit(EditCtrl):
