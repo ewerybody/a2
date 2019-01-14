@@ -12,8 +12,8 @@ import a2ahk
 import a2core
 import a2util
 import a2ctrl.connect
-from a2widget import a2settings_view_ui, a2module_source
-
+import a2widget.a2hotkey.keyboard_dialog.layouts
+from a2widget import a2settings_view_ui, a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
 
@@ -48,8 +48,8 @@ class A2Settings(QtWidgets.QWidget):
         self.ui = a2settings_view_ui.Ui_a2settings()
         self.ui.setupUi(self)
 
-        a2_hotkey = self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY
-        self.ui.a2hotkey.set_config({'key': a2_hotkey})
+        a2ui_hotkey = self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY
+        self.ui.a2hotkey.set_config({'key': a2ui_hotkey})
         self.ui.a2hotkey.hotkey_changed.connect(self.set_a2_hotkey)
 
         self.ui.dev_box.setChecked(self.a2.dev_mode)
@@ -92,8 +92,30 @@ class A2Settings(QtWidgets.QWidget):
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
+        self._setup_hotkey_dialog()
+
         self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
+
+    def _setup_hotkey_dialog(self):
+        current_style = a2hotkey.get_current_style()
+        index = 0
+        for i, (style, label) in enumerate(a2hotkey.iter_dialog_styles()):
+            self.ui.hk_dialog_style.addItem(label)
+            if style == current_style:
+                index = i
+        self.ui.hk_dialog_style.setCurrentIndex(index)
+        self.ui.hk_dialog_style.currentTextChanged.connect(a2hotkey.set_dialog_style)
+
+        layouts = a2widget.a2hotkey.keyboard_dialog.layouts
+        current_layout = layouts.get_current()
+        index = 0
+        for i, (keyboard_id, label) in enumerate(layouts.iterate()):
+            self.ui.hk_dialog_layout.addItem(label)
+            if keyboard_id == current_layout:
+                index = i
+        self.ui.hk_dialog_layout.setCurrentIndex(index)
+        self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
     def toggle_console(self, state):
         base_name = ['pythonw.exe', 'python.exe'][state]

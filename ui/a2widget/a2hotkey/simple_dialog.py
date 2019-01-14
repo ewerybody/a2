@@ -11,6 +11,7 @@ _dialog_size = None
 
 
 class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
+    hotkey_set = QtCore.Signal(str)
     label = 'Simple Dialog'
 
     def __init__(self, parent, key, scope_data=None):

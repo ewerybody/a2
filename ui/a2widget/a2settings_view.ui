@@ -78,7 +78,17 @@
            </property>
           </widget>
          </item>
-         <item row="5" column="0" colspan="2">
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string notr="true">Keyboard Layout:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="hk_dialog_layout"/>
+         </item>
+         <item row="4" column="0" colspan="2">
           <widget class="Line" name="line_2">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -96,26 +106,6 @@
             <enum>Qt::Horizontal</enum>
            </property>
           </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string notr="true">Hotkey Dialog Style:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_13">
-           <property name="text">
-            <string notr="true">Keyboard Layout:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QComboBox" name="hk_dialog_style"/>
-         </item>
-         <item row="4" column="1">
-          <widget class="QComboBox" name="hk_dialog_layout"/>
          </item>
         </layout>
        </item>
@@ -221,7 +211,7 @@ Go ahead and add or create one:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="dev_box">
          <property name="title">
           <string notr="true">a2 dev mode</string>
@@ -411,6 +401,16 @@ Go ahead and add or create one:</string>
           </item>
          </layout>
         </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string notr="true">Hotkey Dialog Style:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="hk_dialog_style"/>
        </item>
       </layout>
      </widget>

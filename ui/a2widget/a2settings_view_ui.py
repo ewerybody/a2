@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Fri Jan 11 13:37:16 2019
+# Created: Mon Jan 14 21:35:36 2019
 #      by: pyside2-uic  running on PySide2 5.12.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,6 +46,13 @@ class Ui_a2settings(object):
         self.remember_selection.setText("Remember last selected Module")
         self.remember_selection.setObjectName("remember_selection")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.remember_selection)
+        self.label_13 = QtWidgets.QLabel(self.tab_2)
+        self.label_13.setText("Keyboard Layout:")
+        self.label_13.setObjectName("label_13")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_13)
+        self.hk_dialog_layout = QtWidgets.QComboBox(self.tab_2)
+        self.hk_dialog_layout.setObjectName("hk_dialog_layout")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.hk_dialog_layout)
         self.line_2 = QtWidgets.QFrame(self.tab_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -56,21 +63,7 @@ class Ui_a2settings(object):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        self.formLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.line_2)
-        self.label_7 = QtWidgets.QLabel(self.tab_2)
-        self.label_7.setText("Hotkey Dialog Style:")
-        self.label_7.setObjectName("label_7")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_7)
-        self.label_13 = QtWidgets.QLabel(self.tab_2)
-        self.label_13.setText("Keyboard Layout:")
-        self.label_13.setObjectName("label_13")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_13)
-        self.hk_dialog_style = QtWidgets.QComboBox(self.tab_2)
-        self.hk_dialog_style.setObjectName("hk_dialog_style")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.hk_dialog_style)
-        self.hk_dialog_layout = QtWidgets.QComboBox(self.tab_2)
-        self.hk_dialog_layout.setObjectName("hk_dialog_layout")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.hk_dialog_layout)
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.line_2)
         self.verticalLayout.addLayout(self.formLayout)
         self.module_source_box = QtWidgets.QGroupBox(self.tab_2)
         self.module_source_box.setTitle("Module Sources")
@@ -223,7 +216,14 @@ class Ui_a2settings(object):
         self.python_executable.setObjectName("python_executable")
         self.formLayout_2.setWidget(13, QtWidgets.QFormLayout.FieldRole, self.python_executable)
         self.verticalLayout_3.addWidget(self.dev_widget)
-        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.SpanningRole, self.dev_box)
+        self.formLayout_3.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.dev_box)
+        self.label_7 = QtWidgets.QLabel(self.tab)
+        self.label_7.setText("Hotkey Dialog Style:")
+        self.label_7.setObjectName("label_7")
+        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_7)
+        self.hk_dialog_style = QtWidgets.QComboBox(self.tab)
+        self.hk_dialog_style.setObjectName("hk_dialog_style")
+        self.formLayout_3.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.hk_dialog_style)
         self.a2settings_tab.addTab(self.tab, "Advanced")
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
@@ -255,5 +255,5 @@ class Ui_a2settings(object):
         pass
 
 from a2widget.a2path_field import A2PathField
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2slider import A2Slider
+from a2widget.a2hotkey import A2Hotkey
