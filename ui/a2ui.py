@@ -487,6 +487,12 @@ class A2Window(QtWidgets.QMainWindow):
         self.mod.change()
         self.load_runtime_and_ui()
 
+    def check_element(self, name):
+        """
+        Finds a named element and calls its check func.
+        """
+        self.module_view.check_element(name)
+
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):

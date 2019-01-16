@@ -247,6 +247,18 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             self.main.mod.help()
 
+    def check_element(self, name):
+        """
+        Finds a named element and calls its check func.
+        """
+        for widget in self.controls:
+            try:
+                if widget.cfg['name'] == name:
+                    widget.check()
+                    return
+            except (AttributeError, KeyError):
+                pass
+
 
 class EditView(QtWidgets.QWidget):
     def __init__(self, parent, controls, config_list):
