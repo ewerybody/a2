@@ -808,6 +808,10 @@ class Mod(object):
             sys.path.append(self.path)
 
         base, _ = os.path.splitext(script_name)
+        # make sure that script changes make it to runtime
+        if base in sys.modules:
+            del sys.modules[base]
+
         try:
             script_module = import_module(base)
         except ImportError:
@@ -826,7 +830,8 @@ class Mod(object):
             log.error('\n  Error executing main() of script_module "%s"\n'
                       '%s\n  path: %s' % (script_name, tb, path))
 
-        sys.path.remove(self.path)
+        if self.path in sys.path:
+            sys.path.remove(self.path)
 
 
 def get_files(path):
