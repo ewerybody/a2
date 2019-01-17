@@ -18,8 +18,8 @@ from PySide2 import QtCore
 
 UTF8_CODEC = 'utf-8-sig'
 JSON_INDENT = 2
-ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 com9 lpt1 lpt2 lpt3 '
-                 'lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
+ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 '
+                 'com9 lpt1 lpt2 lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
 EXPLORER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 DEFAULT_NAME_MSG = 'Name "%s" already in use!'
@@ -64,8 +64,9 @@ def get_cfg_default_name(cfg):
 
 def get_next_free_number(name, name_list, separator=''):
     """
-    Browses a list of names to find a free new version of the given name + integer number.
-    Just returns the name if its not even in the name_list. Otherwise the first next will be 2.
+    Browses a list of names to find a free new version of
+    the given name + integer number. Just returns the name if its not even
+    in the name_list. Otherwise the first next will be 2.
 
     Example:
 
@@ -79,7 +80,8 @@ def get_next_free_number(name, name_list, separator=''):
 
     :param str name: Base name to look up in the list
     :param iterable name_list: List to look for instances of "name"
-    :param str separator: string to put between the initial name and the integer number.
+    :param str separator: string to put between the initial name and
+        the integer number.
     :rtype: str
     """
     if name not in name_list:

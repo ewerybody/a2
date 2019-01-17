@@ -20,13 +20,14 @@ log.setLevel(LOG_LEVEL)
 a2ahk, a2db, a2mod = None, None, None
 
 A2DEFAULT_HOTKEY = 'Win+Shift+A'
-A2TAGS = {'file': 'File system',
-          'window': 'Window handling',
-          'text': 'Text manipulation',
-          'code': 'Programming',
-          'lookup': 'Searching things',
-          'web': 'Internet related',
-          'wip': 'Experimental'}
+A2TAGS = {
+    'file': 'File system',
+    'window': 'Window handling',
+    'text': 'Text manipulation',
+    'code': 'Programming',
+    'lookup': 'Searching things',
+    'web': 'Internet related',
+    'wip': 'Experimental'}
 _IS_DEV = None
 
 
