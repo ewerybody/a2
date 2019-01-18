@@ -7,7 +7,11 @@ set iconpath=%a2path%\ui\res\a2.ico
 set pypath=C:\Python37\
 set pyinstaller=%pypath%Scripts\pyinstaller.exe
 set buildpath=%temp%\a2_temp_buildpath
-set distpath=%a2path%\_ package
+set distroot=%a2path%\_ package
+set distpath=%distroot%\a2
+set Ahk2Exe="C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
+set source_path=%a2path%\lib\_source
+
 
 echo ### building a2 package "%package_name%" ###
 echo distpath: %distpath%
@@ -49,14 +53,11 @@ rem "%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%
 echo running py build script ...
 %pypath%python.exe %~dp0build_py_package.py "%package_name%"
 
-set Ahk2Exe="C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
-set source_path=%a2path%\lib\_source
 echo building root a2ui executable ...
 %Ahk2Exe% /in "%source_path%\a2ui_starter.ahk" /out "%distpath%\a2ui.exe" /icon %iconpath% /mpress 0
 
 echo building root a2 executable ...
 %Ahk2Exe% /in "%source_path%\a2_starter.ahk" /out "%distpath%\a2.exe" /icon %iconpath% /mpress 0
-
 
 echo Done!
 pause

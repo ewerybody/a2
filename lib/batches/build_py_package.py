@@ -5,6 +5,7 @@ Whow! Batch files are such a pain. Petter keep them as short as possible.
 """
 import os
 import sys
+import json
 import shutil
 from os.path import join
 
@@ -12,6 +13,15 @@ this_path = os.path.dirname(__file__)
 DESKTOP_INI_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
                     DESKTOP_INI_FILE)
+ROOT_FILES = ['package.json', 'a2 on github.com.URL', 'LICENSE']
+LIB_EXCLUDES = ['batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
+                'a2init_check', 'a2dev_find_py', 'a2init_check']
+UI_FOLDERS = ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']
+
+INSTALLER_CFG = (
+    ';!@Install@!UTF-8!\n'
+    'RunProgram="a2\setup.exe"\n'
+    ';!@InstallEnd@!')
 
 
 def main(package_name):
@@ -19,8 +29,13 @@ def main(package_name):
     uipath = join(a2path, 'ui')
     sys.path.append(uipath)
     import a2ahk
+    import a2util
 
-    distpath = join(a2path, '_ package')
+    package_cfg = a2util.json_read(join(a2path, 'package.json'))
+    print('version:', package_cfg['version'])
+
+    distroot = join(a2path, '_ package')
+    distpath = join(distroot, 'a2')
     if not os.path.isdir(distpath):
         raise FileNotFoundError('No Package found at "%s"!' % distpath)
 
@@ -37,7 +52,7 @@ def main(package_name):
     print('copying root files ...')
 
     for item in os.scandir(a2path):
-        if item.is_file() and item.name in ['a2 on github.com.URL', 'LICENSE']:
+        if item.is_file() and item.name in ROOT_FILES:
             shutil.copy2(item.path, distpath)
 
     print('copying lib files ...')
@@ -49,8 +64,7 @@ def main(package_name):
             continue
 
         base, ext = os.path.splitext(item.name)
-        if base in ['batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
-                    'a2init_check', 'a2dev_find_py', 'a2init_check']:
+        if base in LIB_EXCLUDES:
             continue
 
         if item.name == 'a2ui release.ahk':
@@ -66,7 +80,7 @@ def main(package_name):
     print('copying ui files ...')
     a2uipath = join(a2path, 'ui')
 
-    for folder in ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']:
+    for folder in UI_FOLDERS:
         shutil.copytree(join(a2uipath, folder),
                         join(distui, folder), ignore=_ignore_items)
 
@@ -85,6 +99,9 @@ def main(package_name):
     with open(join(distpath, 'desktop.ini'), 'w') as file_obj:
         file_obj.write(DESKTOP_INI_CODE)
 
+    with open(join(distroot, 'config.txt'), 'w') as file_obj:
+        file_obj.write(INSTALLER_CFG)
+
 
 def _ignore_items(path, items):
     result = []
@@ -94,6 +111,7 @@ def _ignore_items(path, items):
         if item.startswith('_ '):
             result.append(item)
             continue
+
         # ignore ahk lib tests
         if path_low.endswith('\\a2\\lib\\autohotkey\\lib\\test'):
             result.append(item)
@@ -107,6 +125,9 @@ def _ignore_items(path, items):
             # ignore a2 dev build stuff
             elif item == 'demo' and os.path.basename(path) == 'a2widget':
                 result.append(item)
+            elif item == 'work' and os.path.basename(path) == 'res':
+                result.append(item)
+
         # ignore uncompiled ui files
         elif item.endswith('.ui'):
             result.append(item)
