@@ -9,7 +9,8 @@ set distpath=%distroot%\a2
 
 set sevenpath=%~dp0\7zr
 set sevenx=%sevenpath%\7zr.exe
-set sevensfx=%sevenpath%\7zSD.sfx
+rem set sfx=%sevenpath%\7zSD.sfx
+set sfx=%~dp0\a2SD.sfx
 set archive=%distroot%\archive.7z
 set config=%distroot%\config.txt
 set installerx=%distroot%\a2_setup.exe
@@ -21,7 +22,7 @@ echo packing installer archive
 "%sevenx%" a "%archive%" "%distpath%" -m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
 
 echo building installer executable ...
-copy /b "%sevensfx%" + "%config%" + "%archive%" "%installerx%"
+copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
 
 echo Done!
 pause
