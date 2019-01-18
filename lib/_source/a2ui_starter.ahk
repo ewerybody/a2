@@ -1,7 +1,7 @@
 ; this is the script that becomes the a2ui.exe in root!
 If (!A_IsCompiled)
 {
-    MsgBox a2ui_starter should only be run compiled!
+    MsgBox, 16, ERROR, a2ui_starter should only be run compiled!
     ExitApp
 }
 
