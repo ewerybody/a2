@@ -1,12 +1,11 @@
+#Include ..\Autohotkey\lib\string.ahk
+#include ..\Autohotkey\lib\jxon.ahk
+
 If (!A_IsCompiled)
 {
     MsgBox, 16, ERROR, This should ONLY be run compiled!
     ExitApp
 }
-
-#Include ..\Autohotkey\lib\string.ahk
-#include C:\Users\eric\io\code\a2\lib\Autohotkey\lib
-#include jxon.ahk
 
 A2DIR := get_a2dir()
 A2STUFF := ["lib", "ui", "a2.exe", "a2ui.exe"]
@@ -16,7 +15,6 @@ install_script := "setup.exe"
 
 intro()
 runs_a2runtime := check_running()
-MsgBox runs_a2runtime: %runs_a2runtime%
 backup_dir := backup()
 install(backup_dir)
 if runs_a2runtime
@@ -82,7 +80,6 @@ backup() {
     backup_dir = %A2DIR%\data\temp\%backup_dir_name%\%install_ver%
     IfExist, %backup_dir%
     {
-        MsgBox already backed up:`n%backup_dir%
         delete_later := true
         backup_dir = %A_Temp%\%backup_dir_name%\%A_Now%
     }
