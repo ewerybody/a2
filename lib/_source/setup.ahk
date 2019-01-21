@@ -17,8 +17,8 @@ intro()
 runs_a2runtime := check_running()
 backup_dir := backup()
 install(backup_dir)
-if runs_a2runtime
-    Run, %A2DIR%\a2.exe, %A2DIR%
+
+Run, %A_WinDir%\explorer.exe %A2DIR%
 
 ; --------------------------------------------------------
 Return
