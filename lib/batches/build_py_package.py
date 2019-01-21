@@ -1,14 +1,14 @@
 """
-package builder script
+a2 package build script.
 
-Whow! Batch files are such a pain. Petter keep them as short as possible.
+Whow! Batch files are such a pain. Better keep them as short as possible.
 """
 import os
 import sys
-import json
 import shutil
 from os.path import join
 
+PACKAGE_SUB_NAME = 'alpha'
 this_path = os.path.dirname(__file__)
 DESKTOP_INI_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
@@ -24,7 +24,7 @@ INSTALLER_CFG = (
     ';!@InstallEnd@!')
 
 
-def main(package_name):
+def main():
     a2path = os.path.abspath(join(this_path, '..', '..'))
     uipath = join(a2path, 'ui')
     sys.path.append(uipath)
@@ -32,7 +32,8 @@ def main(package_name):
     import a2util
 
     package_cfg = a2util.json_read(join(a2path, 'package.json'))
-    print('version:', package_cfg['version'])
+    package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
+    print('package_name: %s' % package_name)
 
     distroot = join(a2path, '_ package')
     distpath = join(distroot, 'a2')
@@ -138,15 +139,5 @@ def _ignore_items(path, items):
     return result
 
 
-def _get_package_name():
-    with open(join(this_path, 'build_py_package.bat')) as file_obj:
-        for line in file_obj:
-            if line.startswith('set package_name'):
-                return line.split('=')[1].strip()
-    raise RuntimeError('package_name could not be fetched from batch file!')
-
-
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        sys.argv.append(_get_package_name())
-    main(sys.argv[1])
+    main()

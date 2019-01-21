@@ -11,7 +11,7 @@
         "test": "ahk-unit ./tests/tests.ahk"
     },
     "author": "ewerybody https://github.com/ewerybody",
-    "license": "MIT",
+    "license": "GPL3",
     "bugs": {
         "url": "https://github.com/ewerybody/a2/issues"
     },
