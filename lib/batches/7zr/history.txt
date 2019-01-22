@@ -1,6 +1,12 @@
 7-Zip Extra history
 -------------------
 
+9.34 alpha          2014-06-22
+------------------------------
+  - Minimum supported system now is Windows 2000 for EXE and DLL files.
+  - all EXE and DLL files use msvcrt.dll.
+
+
 9.18                2010-11-02
 ------------------------------
   - New small SFX module for installers.

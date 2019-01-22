@@ -1,9 +1,9 @@
-7-Zip for installers 9.20
+7-Zip for installers 9.22
 -------------------------
 
 7-Zip is a file archiver for Windows 98/ME/NT/2000/2003/XP. 
 
-7-Zip Copyright (C) 1999-2010 Igor Pavlov.
+7-Zip Copyright (C) 1999-2011 Igor Pavlov.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -133,7 +133,7 @@ Small SFX uses 3 levels of priorities to select file to execute:
 
   1) Files in root folder have higher priority than files in subfolders.
   2) File extension priorities (from high to low priority order): 
-       bat, exe, inf, msi, cab (under Windows CE), html, htm
+       bat, cmd, exe, inf, msi, cab (under Windows CE), html, htm
   3) File name priorities (from high to low priority order): 
        setup, install, run, start
 
