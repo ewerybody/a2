@@ -10,7 +10,6 @@ import string
 import codecs
 import webbrowser
 
-import a2ahk
 import a2core
 
 from PySide2 import QtCore
@@ -110,13 +109,6 @@ def json_write(path, data):
 def get_date():
     now = time.localtime()
     return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)
-
-
-def set_windows_startup(state=True):
-    """
-    might be doable via python but this is just too easy with AHKs A_Startup
-    """
-    a2ahk.call_lib_cmd('set_windows_startup', a2core.A2Obj.inst().paths.a2, int(state))
 
 
 def surf_to(url):

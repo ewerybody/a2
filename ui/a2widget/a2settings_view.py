@@ -26,7 +26,6 @@ class A2Settings(QtWidgets.QWidget):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self._setup_ui()
-        self._check_win_startup()
         self._source_widgets = {}
         self._draw_module_sources()
         self.is_expandable_widget = True
@@ -97,6 +96,24 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
 
+        self._check_win_startup()
+
+    def _check_win_startup(self):
+        startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
+        if not startup_path:
+            self.ui.load_on_win_start.setChecked(False)
+        else:
+            startup_path = os.path.normpath(startup_path)
+            is_current_path = startup_path == self.a2.paths.a2exe
+            if not is_current_path:
+                log.warn('Different Windows Startup path set!\n  %s' % startup_path)
+            self.ui.load_on_win_start.setChecked(is_current_path)
+
+        self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
+
+    def _set_windows_startup(self, state):
+        a2ahk.call_lib_cmd('set_windows_startup', self.a2.paths.a2, int(state))
+
     def _setup_hotkey_dialog(self):
         current_style = a2hotkey.get_current_style()
         index = 0
@@ -129,12 +146,6 @@ class A2Settings(QtWidgets.QWidget):
 
     def on_dev_setting_changed(self, *args):
         self.main.devset.set(self.dev_set_dict)
-
-    def _check_win_startup(self):
-        win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
-        win_startup_lnk = os.path.join(win_startup_path, 'a2.lnk')
-        self.ui.load_on_win_start.setChecked(os.path.exists(win_startup_lnk))
-        self.ui.load_on_win_start.clicked[bool].connect(a2util.set_windows_startup)
 
     def dev_mode_toggle(self, state):
         self.a2.set_dev_mode(state)

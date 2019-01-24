@@ -223,3 +223,8 @@ keys = (['capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backsp
          'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak', 'pause',
          'break', 'help', 'sleep'] + mouse_keys + numpad_keys +
         ['f%i' % _i for _i in range(1, 25)])
+
+
+if __name__ == '__main__':
+    win_startup_path = call_lib_cmd('get_win_startup_path')
+    print('win_startup_path: "%s"' % win_startup_path)

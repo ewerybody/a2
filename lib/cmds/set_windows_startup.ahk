@@ -17,11 +17,8 @@ IfNotExist %a2dir%
 
 a2_script_path := a2dir "\a2.exe"
 link_path := A_Startup "\a2.lnk"
-ico_path := a2dir "\ui\a2.ico"
 
 if %state%
-{
-    FileCreateShortcut, %a2_script_path%, %link_path%, %a2dir%,,,%ico_path%
-}
+    FileCreateShortcut, %a2_script_path%, %link_path%, %a2dir%
 Else
     FileDelete, %link_path%

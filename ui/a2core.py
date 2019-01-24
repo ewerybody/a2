@@ -150,6 +150,7 @@ class Paths(object):
     def __init__(self):
         self.ui = os.path.dirname(os.path.abspath(__file__))
         self.a2 = os.path.dirname(self.ui)
+        self.a2exe = os.path.join(self.a2, 'a2.exe')
         self.widgets = os.path.join(self.ui, 'a2widget')
         self.elements = os.path.join(self.ui, 'a2element')
 
