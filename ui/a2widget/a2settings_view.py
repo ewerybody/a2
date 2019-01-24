@@ -186,6 +186,6 @@ class A2Settings(QtWidgets.QWidget):
             from a2widget import a2licenses_widget_ui
             a2ctrl.check_ui_module(a2licenses_widget_ui)
             ui = a2licenses_widget_ui.Ui_Form()
-            ui.setupUi(self)
+            ui.setupUi(self.ui.a2settings_tab)
             self.ui.a2settings_tab.widget(tab_index).setLayout(
                 ui.license_layout)

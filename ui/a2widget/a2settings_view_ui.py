@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Tue Jan 15 09:40:51 2019
+# Created: Thu Jan 24 14:10:37 2019
 #      by: pyside2-uic  running on PySide2 5.12.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -259,6 +259,6 @@ class Ui_a2settings(object):
     def retranslateUi(self, a2settings):
         self.groupBox.setTitle(QtWidgets.QApplication.translate("a2settings", "Hotkey Dialog", None, -1))
 
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2slider import A2Slider
+from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
