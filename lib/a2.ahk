@@ -35,15 +35,17 @@ Menu, Tray, NoStandard
 Menu, Tray, DeleteAll
 Menu, Tray, Tip, %a2_title%
 Menu, Tray, Click, %a2_tray_click_button%
-Menu, Tray, add, open a2 user interface, a2ui
-Menu, Tray, icon, open a2 user interface, %a2ui_res%a2.ico
-Menu, Tray, default, open a2 user interface
-Menu, Tray, add, reload a2, a2ui_reload
-Menu, Tray, icon, reload a2, %a2ui_res%a2reload.ico
-Menu, Tray, add, help on a2, a2ui_help
-Menu, Tray, icon, help on a2, %a2ui_res%a2help.ico
-Menu, Tray, add, quit a2, a2ui_exit
-Menu, Tray, icon, quit a2, %a2ui_res%a2x.ico
+Menu, Tray, add, Open a2 User Interface, a2ui
+Menu, Tray, icon, Open a2 User Interface, %a2ui_res%a2.ico
+Menu, Tray, default, Open a2 User Interface
+Menu, Tray, add, Open a2 Directory, a2_explore
+Menu, Tray, icon, Open a2 Directory, %a2ui_res%a2.ico
+Menu, Tray, add, Reload a2 Runtime, a2ui_reload
+Menu, Tray, icon, Reload a2 Runtime, %a2ui_res%a2reload.ico
+Menu, Tray, add, Help on a2, a2ui_help
+Menu, Tray, icon, Help on a2, %a2ui_res%a2help.ico
+Menu, Tray, add, Quit a2 Runtime, a2ui_exit
+Menu, Tray, icon, Quit a2 Runtime, %a2ui_res%a2x.ico
 
 if a2_startup_tool_tips
     tt(a2_title, 1)
@@ -68,4 +70,8 @@ Return
 
 a2ui_exit:
     ExitApp
+Return
+
+a2_explore:
+    Run, %A_WinDir%\explorer.exe %a2dir%
 Return
