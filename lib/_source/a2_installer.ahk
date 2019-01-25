@@ -18,7 +18,7 @@ runs_a2runtime := check_running()
 backup_dir := backup()
 install(backup_dir)
 
-Run, %A_WinDir%\explorer.exe %A2DIR%
+Run, %A_WinDir%\a2ui.exe
 
 ; --------------------------------------------------------
 Return
