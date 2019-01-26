@@ -14,20 +14,20 @@ set sfx=%distroot%\a2_installer.sfx.exe
 set archive=%distroot%\archive.7z
 set config=%distroot%\config.txt
 set installerx=%distroot%\a2_installer.exe
-set mtx=C:\Program Files (x86)\Windows Kits\10\bin\x86\mt.exe
+set mtx=C:\Program Files (x86)\Windows Kits\8.1\bin\x86\mt.exe
 set manifest=%distroot%\a2_installer_manifest.xml
-a2_installer_minifext.xml
-echo ### building a2 installer executable ###
+
+
+echo ### building a2 installer packed executable ###
 echo distroot: %distroot%
-echo ...
 
-REM echo looking for Ahk2Exe: %Ahk2Exe% ...
-REM if not exist "%Ahk2Exe%" (
-  REM echo ERROR: Could not find Ahk2Exe.exe! (at: %Ahk2Exe%)
-  REM pause
-  REM exit
-REM )
+if not exist "%Ahk2Exe%" (
+  echo Could not find Ahk2Exe.exe! [at: %Ahk2Exe%]
+  pause
+  exit
+)
 
+echo copying fresh sfx-file ...
 copy "%srcsfx%" "%sfx%" 
 
 if exist "%mtx%" (
@@ -38,8 +38,8 @@ if exist "%mtx%" (
 echo building installer script executable...
 "%Ahk2Exe%" /in "%source_path%\a2_installer.ahk" /out "%distpath%\setup.exe" /icon %iconpath% /mpress 0
 
-REM echo packing installer archive ...
-REM "%sevenx%" a "%archive%" "%distpath%" -m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
+echo packing installer archive ...
+"%sevenx%" a "%archive%" "%distpath%" -m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
 
 echo building installer executable ...
 copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
