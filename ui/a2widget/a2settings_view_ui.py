@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Thu Jan 24 14:10:37 2019
+# Created: Thu Jan 31 22:14:37 2019
 #      by: pyside2-uic  running on PySide2 5.12.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,7 +45,7 @@ class Ui_a2settings(object):
         self.remember_selection = QtWidgets.QCheckBox(self.tab_2)
         self.remember_selection.setText("Remember last selected Module")
         self.remember_selection.setObjectName("remember_selection")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.remember_selection)
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.remember_selection)
         self.line_2 = QtWidgets.QFrame(self.tab_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -56,7 +56,11 @@ class Ui_a2settings(object):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.SpanningRole, self.line_2)
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.SpanningRole, self.line_2)
+        self.add_desktop_shortcut = QtWidgets.QCheckBox(self.tab_2)
+        self.add_desktop_shortcut.setText("Add Shortcut to Desktop")
+        self.add_desktop_shortcut.setObjectName("add_desktop_shortcut")
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.add_desktop_shortcut)
         self.verticalLayout.addLayout(self.formLayout)
         self.module_source_box = QtWidgets.QGroupBox(self.tab_2)
         self.module_source_box.setTitle("Module Sources")

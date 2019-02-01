@@ -96,7 +96,10 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
 
+        self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
         self._check_win_startup()
+        self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
+        self._check_desktop_link()
 
     def _check_win_startup(self):
         startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
@@ -109,10 +112,20 @@ class A2Settings(QtWidgets.QWidget):
                 log.warn('Different Windows Startup path set!\n  %s' % startup_path)
             self.ui.load_on_win_start.setChecked(is_current_path)
 
-        self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
-
     def _set_windows_startup(self, state):
         a2ahk.call_lib_cmd('set_windows_startup', self.a2.paths.a2, int(state))
+
+    def _check_desktop_link(self):
+        desktop_path = a2ahk.call_lib_cmd('get_desktop_link_path')
+        if not desktop_path:
+            self.ui.add_desktop_shortcut.setChecked(False)
+        else:
+            desktop_path = os.path.normpath(desktop_path)
+            is_current_path = desktop_path == self.a2.paths.a2uiexe
+            self.ui.add_desktop_shortcut.setChecked(is_current_path)
+
+    def _set_desktop_link(self, state):
+        a2ahk.call_lib_cmd('set_desktop_link', self.a2.paths.a2, int(state))
 
     def _setup_hotkey_dialog(self):
         current_style = a2hotkey.get_current_style()
