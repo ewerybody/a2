@@ -28,6 +28,7 @@ _HERE = os.path.dirname(__file__)
 _IGNORE_BUTTONS = ['a2cancel_button', 'a2ok_button']
 HOTKEY_HELP_PAGE = 'Hotkey-Setup'
 WIN_STANDARD_FILE = 'standard_windows_keys.json'
+GLOBAL_NO_MOD_WARNING = 'Global Hotkeys should have a modifier!'
 
 
 class KeyboardDialogBase(QtWidgets.QDialog):
@@ -52,6 +53,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self.numpad_block_widget = NumpadWidget(self)
         self.mouse_block_widget = MouseWidget(self)
 
+        self.scope = Scope(self.scope_data)
         self._fill_key_dict()
         self._setup_ui()
         self._check_conflicts()
@@ -158,17 +160,18 @@ class KeyboardDialogBase(QtWidgets.QDialog):
     def on_key_press(self):
         button = self.sender()
         self._check_key(button)
-        self.update_hotkey_label()
+        self.update_ui()
 
     def on_modifier_press(self):
         button = self.sender()
         self._check_modifier(button)
-        self.update_hotkey_label()
+        self.update_ui()
 
     def _check_modifier(self, button):
         # modifiers can be toggled however you like
         checked = button.isChecked()
-        ctrl_modifier = QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+        ctrl_modifier = (QtWidgets.QApplication.keyboardModifiers() ==
+                         QtCore.Qt.ControlModifier)
 
         if checked:
             if button.a2key not in self.checked_modifier:
@@ -193,7 +196,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 self.key_dict[self.checked_key].setChecked(False)
             self.checked_key = button.a2key
 
-    def update_hotkey_label(self):
+    def update_ui(self):
         new_key_label = []
         handled = []
         for modkeyname in self.checked_modifier:
@@ -211,6 +214,14 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         self.key = hotkey_common.sort_modifiers('+'.join(new_key_label))
         self.ui.key_field.setText(self.key)
+
+        if self.scope.is_global:
+            if not self.checked_modifier:
+                self.ui.a2ok_button.setText(GLOBAL_NO_MOD_WARNING)
+                self.ui.a2ok_button.setEnabled(False)
+            else:
+                self.ui.a2ok_button.setText('OK')
+                self.ui.a2ok_button.setEnabled(True)
 
     def _fill_key_dict(self):
         for modkeyname in BASE_MODIFIERS:
@@ -339,15 +350,25 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         if self.checked_key:
             self.key_dict[self.checked_key].setChecked(False)
         self.checked_key = ''
-        self.update_hotkey_label()
+        self.update_ui()
 
     def goto_help(self):
         a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
 
     def _check_conflicts(self):
-        if self.scope_data.get(hotkey_common.Vars.scope_mode) == 0:
+        if self.scope.is_global:
             keys = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
             self.key_dict
+
+
+class Scope(object):
+    def __init__(self, scope_data):
+        self._scope_data = scope_data
+
+        self.scope_mode = self._scope_data.get(hotkey_common.Vars.scope_mode)
+        self.is_global = self.scope_mode == 0
+        self.is_include = self.scope_mode == 1
+        self.is_exclude = self.scope_mode == 2
 
 
 class CursorBlockWidget(QtWidgets.QWidget):
