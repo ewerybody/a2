@@ -6,7 +6,6 @@ Created on 11.09.2017
 """
 import os
 import inspect
-import importlib
 
 import a2ahk
 import a2core
@@ -357,8 +356,14 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def _check_conflicts(self):
         if self.scope.is_global:
-            keys = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
-            self.key_dict
+            # checks against the global windows shortcuts
+            # and other global hotkeys set up
+            # keys = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
+            # self.key_dict
+            pass
+        else:
+            # checks against other hotkeys set up in the same scope
+            pass
 
 
 class Scope(object):
