@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import a2ctrl
+import a2core
 
 from PySide2 import QtWidgets
 from a2element import coords_edit_ui, DrawCtrl, EditCtrl
 from a2widget import A2CoordsField
+
+
+log = a2core.get_logger(__name__)
 
 
 class Draw(DrawCtrl):
@@ -13,7 +17,6 @@ class Draw(DrawCtrl):
     """
     def __init__(self, *args):
         super(Draw, self).__init__(*args)
-        self.value = self.get_user_value((list, tuple), default=(0, 0))
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.main_layout)
@@ -21,21 +24,19 @@ class Draw(DrawCtrl):
         self.label = QtWidgets.QLabel(self.cfg.get('label', ''), self)
         self.main_layout.addWidget(self.label)
 
+        self.value = self.get_user_value((list, tuple), default=(0, 0))
         self.value_ctrl = A2CoordsField(self)
-        self.value_ctrl.value = self.value
+        try:
+            self.value_ctrl.value = self.value
+        except ValueError:
+            log.error('Coords Element incoming value broken "%s"\n'
+                      '  Defaulting to (0, 0)' % self.value)
+
         self.main_layout.addWidget(self.value_ctrl)
         self.value_ctrl.changed.connect(self.delayed_check)
 
     def check(self, *args):
-        value = args[0]
-
-        # prevent being called double
-        if self.value == value:
-            return
-
-        self.value = value
-        self.set_user_value(value)
-        self.change('variables')
+        self.default_check(*args)
 
 
 class Edit(EditCtrl):

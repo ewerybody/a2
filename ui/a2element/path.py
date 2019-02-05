@@ -27,19 +27,11 @@ class Draw(DrawCtrl):
         self.main_layout.addWidget(self.label)
         self.main_layout.addWidget(self.value_ctrl)
 
+    def get_ui_value(self):
+        return self.value_ctrl.text()
+
     def check(self, *args):
-        if args:
-            value = args[0]
-        else:
-            value = self.value_ctrl.text()
-
-        # prevent being called double
-        if self.value == value:
-            return
-
-        self.value = value
-        self.set_user_value(value)
-        self.change('variables')
+        self.default_check(*args)
 
 
 class Edit(EditCtrl):

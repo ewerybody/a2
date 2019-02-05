@@ -22,7 +22,6 @@ class A2CoordsField(QtWidgets.QWidget):
 
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self._internal_change = False
 
         self.x_field = QtWidgets.QSpinBox(self)
         self.x_field.setMinimum(-16777214)
@@ -66,18 +65,20 @@ class A2CoordsField(QtWidgets.QWidget):
 
     def set_value(self, values, y=None):
         if isinstance(values, (tuple, list)) and len(values) < 2:
-            raise RuntimeError('A2CoordsField.set_value needs a tuple or list of 2 integers!\n'
-                               '  received: %s' % str(values))
+            raise ValueError('A2CoordsField.set_value needs tuple or list '
+                             'of 2 integers!\n  received: %s' % str(values))
         elif isinstance(values, QtCore.QPoint):
             values = values.x(), values.y()
         elif isinstance(values, QtCore.QSize):
             values = values.width(), values.height()
 
-        self._internal_change = True
+        self.x_field.blockSignals(True)
+        self.y_field.blockSignals(True)
         self.x_field.setValue(values[0])
-        self._internal_change = False
         self.y_field.setValue(values[1])
-        # self.changed.emit((self.x, self.y))
+        self.x_field.blockSignals(False)
+        self.y_field.blockSignals(False)
+        self.change_triggered()
 
     def show_menu(self, menu):
         icons = a2ctrl.Icons.inst()
@@ -87,8 +88,6 @@ class A2CoordsField(QtWidgets.QWidget):
             menu.addAction(icon, '%s Coordinates' % func.__name__.title(), func)
 
     def change_triggered(self):
-        if self._internal_change:
-            return
         self.changed.emit((self.x, self.y))
 
     def copy(self):

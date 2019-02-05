@@ -111,6 +111,23 @@ class DrawCtrlMixin(object):
         """
         pass
 
+    def get_ui_value(self):
+        raise NotImplementedError('get_ui_value Implementation Missing!')
+
+    def default_check(self, *args):
+        if args:
+            value = args[0]
+        else:
+            value = self.get_ui_value()
+
+        # prevent being called double
+        if self.value == value:
+            return
+
+        self.value = value
+        self.set_user_value(value)
+        self.change('variables')
+
 
 class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
     """
