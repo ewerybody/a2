@@ -1,17 +1,22 @@
 """
 a2 package build script.
 
-Whow! Batch files are such a pain. Better keep them as short as possible.
+Whow! Batch files are such a pain.
+Better keep them as short as possible.
 """
 import os
-import sys
 import shutil
 import codecs
 from os.path import join
 
+import _build_package_init
+import a2ahk
+import a2util
 
+
+A2PATH = _build_package_init.a2path
+A2UIPATH = _build_package_init.uipath
 PACKAGE_SUB_NAME = 'alpha'
-this_path = os.path.dirname(__file__)
 DESKTOP_INI_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
                     DESKTOP_INI_FILE)
@@ -26,32 +31,26 @@ INSTALLER_CFG = (
     ';!@InstallEnd@!')
 MANIFEST_NAME = 'a2_installer_manifest.xml'
 
-# adding a2 paths for imports
-a2path = os.path.abspath(join(this_path, '..', '..'))
-uipath = join(a2path, 'ui')
-sys.path.append(uipath)
-import a2ahk
-import a2util
-
 
 def main():
-    package_cfg = a2util.json_read(join(a2path, 'package.json'))
+    package_cfg = a2util.json_read(join(A2PATH, 'package.json'))
     package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
     print('package_name: %s' % package_name)
 
-    distroot = join(a2path, '_ package')
+    distroot = join(A2PATH, '_ package')
     distpath = join(distroot, 'a2')
     if not os.path.isdir(distpath):
         raise FileNotFoundError('No Package found at "%s"!' % distpath)
 
-    srcpath = join(a2path, 'lib', '_source')
+    srcpath = join(A2PATH, 'lib', '_source')
     update_manifest(srcpath, package_cfg["version"], distroot)
 
     print('distpath: %s' % distpath)
     app_path = join(distpath, 'a2app')
     if not os.path.isdir(app_path):
-        raise FileNotFoundError('App Path "%s" was not found!\n'
-                                'Package already handled?' % app_path)
+        raise FileNotFoundError(
+            'App Path was not found!\n  %s\n'
+            'Package already handled?' % app_path)
 
     distui = join(distpath, 'ui')
     os.rename(app_path, distui)
@@ -59,13 +58,13 @@ def main():
 
     print('copying root files ...')
 
-    for item in os.scandir(a2path):
+    for item in os.scandir(A2PATH):
         if item.is_file() and item.name in ROOT_FILES:
             shutil.copy2(item.path, distpath)
 
     print('copying lib files ...')
     distlib = join(distpath, 'lib')
-    a2lib = join(a2path, 'lib')
+    a2lib = join(A2PATH, 'lib')
     os.mkdir(distlib)
     for item in os.scandir(a2lib):
         if item.name.startswith('_ '):
@@ -86,10 +85,8 @@ def main():
             shutil.copytree(item.path, join(distlib, item.name), ignore=_ignore_items)
 
     print('copying ui files ...')
-    a2uipath = join(a2path, 'ui')
-
     for folder in UI_FOLDERS:
-        shutil.copytree(join(a2uipath, folder),
+        shutil.copytree(join(A2UIPATH, folder),
                         join(distui, folder), ignore=_ignore_items)
 
     shutil.rmtree(join(distui, 'PySide', folder), ignore_errors=True)
@@ -155,7 +152,7 @@ def update_manifest(srcpath, version, distroot):
     versions = []
     for i, n in enumerate(version.split('.')):
         if not n.isdigit():
-            print('ERROR:\n  Bad Nr in version string %i: %n' % (i, n))
+            print('ERROR:\n  Bad Nr in version string %i: %s' % (i, n))
             continue
         versions.append(n)
     versions.extend((4 - len(versions)) * '0')
