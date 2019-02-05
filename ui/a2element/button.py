@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import a2ctrl
-from PySide2 import QtWidgets, QtCore
+from PySide2 import QtWidgets
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
 from a2widget import local_script
-import os
 
 
 log = get_logger(__name__)

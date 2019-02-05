@@ -2,9 +2,7 @@
 a2element.menu_item - To create module-custom menu entries
 in the main menu bar under module.
 """
-import os
-
-from PySide2 import QtWidgets, QtCore
+from PySide2 import QtWidgets
 
 import a2ctrl
 import a2core
