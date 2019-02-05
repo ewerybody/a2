@@ -3,7 +3,7 @@ import os
 import a2ctrl
 import a2util
 
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 
 
 CODE_ICON = a2ctrl.Icons.inst().code
@@ -11,6 +11,8 @@ EDIT_ICON = a2ctrl.Icons.inst().edit
 
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
+    script_selected = QtCore.Signal(str, str)
+
     def __init__(self, parent, main):
         super(BrowseScriptsMenu, self).__init__(parent)
         self.main = main
@@ -19,7 +21,11 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
 
         self.extension = '.py'
         self.file_prefix = ''
+        self.script_template = ''
         self.config_typ = ''
+        self._script_default_name = 'awesome_script'
+        self.dialog_title = 'dialog_title'
+        self.dialog_msg = 'dialog_msg'
 
     def get_available_scripts(self):
         scripts_in_use = set()
@@ -39,11 +45,32 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
                     menu_script_files.add(base[len(self.file_prefix):])
         return menu_script_files
 
-    def _on_script_selected(self):
-        raise NotImplementedError()
+    def _on_script_selected_action(self):
+        script_name = self.sender().data()
+        self.set_script(script_name)
 
     def _on_create_script(self):
-        raise NotImplementedError()
+        from a2widget.a2input_dialog import A2InputDialog
+        dialog = A2InputDialog(
+            self.main, self.dialog_title,
+            self._name_check,
+            text=self._script_default_name,
+            msg=self.dialog_msg)
+
+        dialog.exec_()
+        if not dialog.output:
+            return
+
+        self.set_script(dialog.output)
+
+    def set_script(self, name):
+        file_name = build_file_name(name, self.file_prefix)
+        self.script_selected.emit(file_name, name)
+
+        path = os.path.join(self.main.mod.path, file_name)
+        if not os.path.isfile(path):
+            with open(path, 'w') as file_object:
+                file_object.write(self.script_template.format(name=name))
 
     def _name_check(self, name):
         name = os.path.splitext(name)[0]
@@ -55,7 +82,8 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         available = self.get_available_scripts()
 
         for script_name in available:
-            action = self.addAction(CODE_ICON, script_name, self._on_script_selected)
+            action = self.addAction(CODE_ICON, script_name,
+                                    self._on_script_selected_action)
             action.setData(script_name)
         if available:
             self.addSeparator()
@@ -70,9 +98,6 @@ class ScriptSelector(QtWidgets.QWidget):
         self._script_file = ''
         self.main = main
 
-    def set_main(self, main):
-        self.main = main
-
     def _setup_ui(self):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -85,6 +110,14 @@ class ScriptSelector(QtWidgets.QWidget):
         self.edit_button.setIcon(EDIT_ICON)
         layout.addWidget(self.edit_button)
         layout.setStretch(0, 1)
+
+    def set_config(self, prefix, cfg, main, menu):
+        self.prefix = prefix
+        name = cfg.get('script_name')
+        self.set_selection(build_file_name(name, prefix), name)
+
+        self.main = main
+        self.set_menu(menu)
 
     def set_menu(self, menu_object):
         self.button_menu = menu_object
@@ -103,6 +136,13 @@ class ScriptSelector(QtWidgets.QWidget):
     def edit_script(self):
         script_path = os.path.join(self.main.mod.path, self._script_file)
         self.main.edit_code(script_path)
+
+
+def build_file_name(name, prefix):
+    if name is None:
+        return None
+    else:
+        return prefix + name + '.py'
 
 
 if __name__ == '__main__':

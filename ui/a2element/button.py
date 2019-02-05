@@ -40,7 +40,8 @@ class Draw(DrawCtrl):
         self.button_layout.addWidget(self.button)
 
     def call_code(self):
-        file_name = build_script_file_name(self.cfg.get('script_name'))
+        file_name = local_script.build_file_name(
+            self.cfg.get('script_name'), BUTTON_SCRIPT_PREFIX)
         self.mod.call_python_script(file_name)
 
 
@@ -57,66 +58,25 @@ class Edit(EditCtrl):
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
-        self.menu = ButtonScriptMenu(self, main)
+        self.menu = local_script.BrowseScriptsMenu(self, main)
+        self.menu.file_prefix = BUTTON_SCRIPT_PREFIX
+        self.menu.config_typ = 'button'
+        self.menu.dialog_title = 'New Button Script'
+        self.menu.dialog_msg = 'Give a name for the new button script:'
         self.menu.script_selected.connect(self._on_script_selected)
-
-        self.ui.script_selector.set_selection(
-            build_script_file_name(cfg.get('script_name')), cfg.get('script_name'))
-        self.ui.script_selector.set_main(main)
-        self.ui.script_selector.set_menu(self.menu)
+        self.ui.script_selector.set_config(BUTTON_SCRIPT_PREFIX, cfg, main, self.menu)
 
     @staticmethod
     def element_name():
-        """The elements display name shown in UI"""
         return 'Button'
 
     @staticmethod
     def element_icon():
         return a2ctrl.Icons.inst().button
 
-    def _on_script_selected(self, name):
-        file_name = build_script_file_name(name)
-        self.ui.script_selector.set_selection(file_name, name)
+    def _on_script_selected(self, file_name, name):
         self.cfg['script_name'] = name
-
-        path = os.path.join(self.main.mod.path, file_name)
-        if not os.path.isfile(path):
-            with open(path, 'w') as file_object:
-                file_object.write(BUTTON_SCRIPT_TEMPLATE.format(name=name))
-
-
-def build_script_file_name(name):
-    if name is None:
-        return None
-    else:
-        return BUTTON_SCRIPT_PREFIX + name + '.py'
-
-
-class ButtonScriptMenu(local_script.BrowseScriptsMenu):
-    script_selected = QtCore.Signal(str)
-
-    def __init__(self, parent, main):
-        super(ButtonScriptMenu, self).__init__(parent, main)
-        self.extension = '.py'
-        self.file_prefix = BUTTON_SCRIPT_PREFIX
-        self.config_typ = 'button'
-
-    def _on_script_selected(self):
-        self.script_selected.emit(self.sender().data())
-
-    def _on_create_script(self):
-        from a2widget.a2input_dialog import A2InputDialog
-        dialog = A2InputDialog(
-            self.main, 'New Button Script',
-            self._name_check,
-            text='awesome_script',
-            msg='Give a name for the new button script:')
-
-        dialog.exec_()
-        if not dialog.output:
-            return
-
-        self.script_selected.emit(dialog.output)
+        self.ui.script_selector.set_selection(file_name, name)
 
 
 def get_settings(*args):

@@ -65,7 +65,9 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.text()
 
-    elif isinstance(ctrl, a2widget.A2PathField):
+    elif isinstance(ctrl, (a2widget.A2CoordsField,
+                           a2widget.A2TagField,
+                           a2widget.A2PathField)):
         ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
@@ -131,15 +133,6 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             ctrl.setText(cfg[name])
         else:
             cfg[name] = ctrl.toPlainText()
-
-    elif isinstance(ctrl, (a2widget.A2CoordsField, a2widget.A2TagField)):
-        ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
-        if change_signal is not None:
-            ctrl.changed.connect(change_signal.emit)
-        if name in cfg:
-            ctrl.value = cfg[name]
-        else:
-            cfg[name] = ctrl.value
 
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %

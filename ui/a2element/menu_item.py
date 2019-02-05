@@ -40,7 +40,8 @@ class Draw(QtWidgets.QAction):
         self.triggered.connect(self.call_code)
 
     def call_code(self):
-        file_name = build_script_file_name(self.cfg.get('script_name'))
+        file_name = local_script.build_file_name(
+            self.cfg.get('script_name'), MENU_ITEM_PREFIX)
         self.mod.call_python_script(file_name)
 
 
@@ -54,13 +55,14 @@ class Edit(EditCtrl):
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
-        self.menu = MenuItemScriptMenu(self, main)
+        self.menu = local_script.BrowseScriptsMenu(self, main)
+        self.menu.file_prefix = MENU_ITEM_PREFIX
+        self.menu.script_template = MENU_ITEM_TEMPLATE
+        self.menu.config_typ = 'menu_item'
+        self.menu.dialog_title = 'New Menu Item Script'
+        self.menu.dialog_msg = 'Give a name for the new menu item script:'
         self.menu.script_selected.connect(self._on_script_selected)
-
-        self.ui.script_selector.set_selection(
-            build_script_file_name(cfg.get('script_name')), cfg.get('script_name'))
-        self.ui.script_selector.set_main(main)
-        self.ui.script_selector.set_menu(self.menu)
+        self.ui.script_selector.set_config(MENU_ITEM_PREFIX, cfg, main, self.menu)
 
     @staticmethod
     def element_name():
@@ -70,49 +72,9 @@ class Edit(EditCtrl):
     def element_icon():
         return a2ctrl.Icons.inst().combo
 
-    def _on_script_selected(self, name):
-        file_name = build_script_file_name(name)
-        self.ui.script_selector.set_selection(file_name, name)
+    def _on_script_selected(self, file_name, name):
         self.cfg['script_name'] = name
-
-        path = os.path.join(self.main.mod.path, file_name)
-        if not os.path.isfile(path):
-            with open(path, 'w') as file_object:
-                file_object.write(MENU_ITEM_TEMPLATE.format(name=name))
-
-
-def build_script_file_name(name):
-    if name is None:
-        return None
-    else:
-        return MENU_ITEM_PREFIX + name + '.py'
-
-
-class MenuItemScriptMenu(local_script.BrowseScriptsMenu):
-    script_selected = QtCore.Signal(str)
-
-    def __init__(self, parent, main):
-        super(MenuItemScriptMenu, self).__init__(parent, main)
-        self.extension = '.py'
-        self.file_prefix = MENU_ITEM_PREFIX
-        self.config_typ = 'menu_item'
-
-    def _on_script_selected(self):
-        self.script_selected.emit(self.sender().data())
-
-    def _on_create_script(self):
-        from a2widget.a2input_dialog import A2InputDialog
-        dialog = A2InputDialog(
-            self.main, 'New Menu Item Script',
-            self._name_check,
-            text='awesome_script',
-            msg='Give a name for the new menu item script:')
-
-        dialog.exec_()
-        if not dialog.output:
-            return
-
-        self.script_selected.emit(dialog.output)
+        self.ui.script_selector.set_selection(file_name, name)
 
 
 def get_settings(*_args):
