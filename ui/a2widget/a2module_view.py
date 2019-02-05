@@ -290,7 +290,9 @@ class EditView(QtWidgets.QWidget):
         print('delete_element', sender)
 
     def move_relative(self, value):
-        print('value', value)
+        sender = self.sender()
+        print('move_relative', sender, value)
 
     def move_absolute(self, value):
-        print('value', value)
+        sender = self.sender()
+        print('move_absolute', sender, value)

@@ -506,6 +506,8 @@ class RestartThread(QtCore.QThread):
 
 
 class ShutdownThread(QtCore.QThread):
+    success = QtCore.Signal(bool)
+
     def __init__(self, parent):
         super(ShutdownThread, self).__init__(parent)
 
@@ -513,6 +515,7 @@ class ShutdownThread(QtCore.QThread):
         pid = a2runtime.kill_a2_process()
         if pid:
             log.info('Shut down process with PID: %s' % pid)
+            self.success.emit(not a2runtime.is_runtime_live())
 
 
 class RuntimeWatcher(QtCore.QThread):
