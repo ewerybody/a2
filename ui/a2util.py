@@ -211,8 +211,7 @@ def start_process_detached(path, args=None, working_dir=None):
         working_dir = a2.paths.a2
 
     process = QtCore.QProcess()
-    result, pid = process.startDetached(
-        path, args, working_dir)
+    result, pid = process.startDetached(path, args, working_dir)
     return result, pid
 
 

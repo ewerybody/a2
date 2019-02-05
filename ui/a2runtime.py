@@ -359,35 +359,36 @@ def _get_hidden_process_startup_nfo():
 def kill_a2_process():
     """
     finds and kills Autohotkey processes that run a2.ahk.
-    takes a moment. so start it in a thread!
-    TODO: make sure restart happens after this finishes?
+    Takes a moment. So start it in a thread!
 
     note there is also:
     ctypes.windll.kernel32.TerminateProcess(handle, 0)
+
+    :return: Process Id of found and terminated a2 runtime.
+    :rtype: str
     """
     pid = get_a2_runtime_pid()
 
     if pid:
-        taskkill_proc = subprocess.Popen(
-            'taskkill /f /pid %s' % pid,
-            startupinfo=_get_hidden_process_startup_nfo())
-        taskkill_proc.wait()
-        taskkill_proc.kill()
+        args = ['/f', '/pid', pid]
+        a2util.start_process_detached('taskkill.exe', args)
         return pid
 
 
 def get_a2_runtime_pid():
     """
-    Uses WMIC to get the PID and commandline arguments from any Autohotkey processes
-    to find a running a2 instance.
+    Uses WMIC to get the PID and commandline arguments from
+    any Autohotkey processes to find a running a2 instance.
 
-    :return: PID string of the Autohotkey process running a2
+    :return: PID string of an Autohotkey process running a2.
     :rtype: str
     """
-    wmicall = f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" get ProcessID,CommandLine'
+    wmicall = (f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" '
+               'get ProcessID,CommandLine')
     wmicout = subprocess.check_output(
         wmicall, startupinfo=_get_hidden_process_startup_nfo())
     wmicout = str(wmicout).split('\\r\\r\\n')
+
     for line in wmicout[1:-1]:
         if a2ahk.EXECUTABLE_NAME in line.lower():
             cmd, pid = line.rsplit(maxsplit=1)

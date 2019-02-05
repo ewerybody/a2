@@ -37,6 +37,12 @@ def ensure_ahk_ext(filename):
 
 
 def call_lib_cmd(cmd_name, *args, **kwargs):
+    """
+    Calls built-in Autohotkey with given script name from commands lib.
+
+    :param str cmd_name: Name of the script to run.
+    :rtype: str
+    """
     import a2core
     a2 = a2core.A2Obj.inst()
     cmd_name = ensure_ahk_ext(cmd_name)
@@ -47,25 +53,30 @@ def call_lib_cmd(cmd_name, *args, **kwargs):
 
 
 def call_cmd(cmd_path, *args, **kwargs):
+    """
+    Calls built-in Autohotkey with given script file + args returns result.
+
+    :param str cmd_path: Path to the Autohotkey script file to run.
+    :rtype: str
+    """
     if not os.path.isfile(cmd_path):
-        raise RuntimeError('Cannot call command script! No such file!\n  %s' % cmd_path)
+        raise RuntimeError(
+            'Cannot call command script! No such file!\n  %s' % cmd_path)
 
     import a2core
     a2 = a2core.A2Obj.inst()
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
-    if 'cwd' in kwargs:
-        proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs['cwd'])
-    else:
-        proc = subprocess.Popen(args, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs.get('cwd'))
 
     cmd_result = str(proc.communicate()[0])
     proc.kill()
 
     cmd_result = cmd_result.strip()
-    quote_char = cmd_result[-1]
     # cut away first & last quote char
-    cmd_result = cmd_result[cmd_result.find(quote_char) + 1:cmd_result.rfind(quote_char)]
+    quote_char = cmd_result[-1]
+    cmd_result = cmd_result[
+        cmd_result.find(quote_char) + 1:cmd_result.rfind(quote_char)]
 
     return cmd_result
 
