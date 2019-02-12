@@ -63,15 +63,11 @@ def get_keys_list(in_keys):
     return keys_list
 
 
-def sort_modifiers(key_string):
+def get_parts_from_list(key_list):
     """
-    Returns a sorted comparable verified hotkey string.
-
-    :param str key_string: String of a keyboard shortcut.
-    :rtype: str
     """
-    modifiers = key_string.lower().split('+')
-    trigger_key = modifiers.pop(-1)
+    trigger_key = key_list.pop(-1)
+    modifiers = key_list
 
     # try to title-case the trigger_key:
     _title_cased = trigger_key.title()
@@ -84,14 +80,56 @@ def sort_modifiers(key_string):
         for low_name, disp_name in DISPLAY_MODIFIERS.items():
             if low_name in modifiers:
                 new_mods.append(disp_name)
+
         if len(new_mods) != len(modifiers):
             low_mods = map(str.lower, new_mods)
             raise ValueError('Some modifiers could not be identified!:\n  %s' %
                              set(modifiers).difference(low_mods))
         else:
-            return '+'.join(new_mods + [trigger_key])
+            mod_string = '+'.join(new_mods)
+            return mod_string, trigger_key
+    else:
+        return '', trigger_key
+
+
+def get_sorted_parts(key_string):
+    """
+    """
+    key_list = key_string.lower().split('+')
+    mod_string, trigger_key = get_parts_from_list(key_list)
+    return mod_string, trigger_key
+
+
+def sort_modifiers(key_string):
+    """
+    Returns a sorted comparable verified hotkey string.
+
+    :param str key_string: String of a keyboard shortcut.
+    :return: Cleaned up, sorted hotkey string.
+    :rtype: str
+    """
+    modifier_string, trigger_key = get_sorted_parts(key_string)
+    return build_string(modifier_string, trigger_key)
+
+
+def build_string(modifier_string, trigger_key):
+    if modifier_string:
+        return modifier_string + '+' + trigger_key
     else:
         return trigger_key
+
+
+def parent_modifier_string(modifier_string):
+    """
+    Gets the modifier string without the side variant l/r.
+
+    A hotkey with the modifier LWin+J would collide with Win+J.
+    """
+    modifiers = modifier_string.split('+')
+    for i, part in enumerate(modifiers):
+        if part[0].lower() in 'lr':
+            modifiers[i] = part[1:]
+    return '+'.join(modifiers)
 
 
 if __name__ == '__main__':

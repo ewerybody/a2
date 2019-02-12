@@ -340,12 +340,15 @@ def write_includes(specific=None):
 
 def collect_hotkeys():
     """
-    :rtype: list
+    Kicks of Hotkeys collection and returns all dictionaries.
+
+    :return: Tuple with 3 collections: global, include, exclude
+    :rtype: tuple[dict, dict, dict]
     """
     collector = collect_includes(IncludeType.hotkeys)
-    data = [collector.hotkeys.hotkeys_global,
+    data = (collector.hotkeys.hotkeys_global,
             collector.hotkeys.hotkeys_scope_incl,
-            collector.hotkeys.hotkeys_scope_excl]
+            collector.hotkeys.hotkeys_scope_excl)
     return data
 
 
@@ -428,4 +431,5 @@ if __name__ == '__main__':
     idc.get_hotkeys()
     idc.collect()
     print('idc.hotkeys: %s' % idc.hotkeys)
+    # glob, incl, excl = collect_hotkeys()
     # idc.write()

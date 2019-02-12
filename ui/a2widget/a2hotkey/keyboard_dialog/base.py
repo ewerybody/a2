@@ -10,6 +10,7 @@ import inspect
 import a2ahk
 import a2core
 import a2util
+import a2runtime
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
 
@@ -27,6 +28,7 @@ _HERE = os.path.dirname(__file__)
 _IGNORE_BUTTONS = ['a2cancel_button', 'a2ok_button']
 HOTKEY_HELP_PAGE = 'Hotkey-Setup'
 WIN_STANDARD_FILE = 'standard_windows_keys.json'
+_WIN_STANDARD_KEYS = {}
 GLOBAL_NO_MOD_WARNING = 'Global Hotkeys should have a modifier!'
 
 
@@ -55,7 +57,6 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self.scope = Scope(self.scope_data)
         self._fill_key_dict()
         self._setup_ui()
-        self._check_conflicts()
         self.rejected.connect(self._log_size)
 
     def set_key(self):
@@ -196,7 +197,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             self.checked_key = button.a2key
 
     def update_ui(self):
-        new_key_label = []
+        new_key_list = []
         handled = []
         for modkeyname in self.checked_modifier:
             if modkeyname in handled:
@@ -205,22 +206,86 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             modkey = self.key_dict[modkeyname]
             if modkey.a2buddy in self.checked_modifier:
                 handled.append(modkey.a2buddy)
-                new_key_label.append(modkey.a2modifier)
+                new_key_list.append(modkey.a2modifier)
             else:
-                new_key_label.append(modkeyname)
+                new_key_list.append(modkeyname)
 
-        new_key_label.append(self.checked_key)
+        new_key_list.append(self.checked_key)
 
-        self.key = hotkey_common.sort_modifiers('+'.join(new_key_label))
+        mod_string, trigger_key = hotkey_common.get_parts_from_list(new_key_list)
+        self.key = hotkey_common.build_string(mod_string, trigger_key)
         self.ui.key_field.setText(self.key)
 
+        # TODO this might be kicked of delayed after dialog popup
+        global_hks, include_hks, exclude_hks = get_current_hotkeys()
+        parent_mod = hotkey_common.parent_modifier_string(mod_string)
+
         if self.scope.is_global:
+            win_globals = win_standard_keys()
             if not self.checked_modifier:
+                win_no_mods, a2_no_mods = win_globals.get(''), global_hks.get('')
+                if win_no_mods:
+                    print('Possible collisions with Windows Shortcuts:')
+                    for key, op in win_no_mods:
+                        print('  %s: %s' % (key, op))
+                    if trigger_key in win_no_mods:
+                        print('Actual collisions with Windows Shortcut:\n'
+                              '  %s' % win_no_mods[trigger_key])
+
+                if a2_no_mods:
+                    print('Possible collisions with a2 Hotkeys:')
+                    for key, ops in a2_no_mods:
+                        print('  %s: %s' % (key, ';'.join(ops)))
+                    if trigger_key in a2_no_mods:
+                        print('Actual collisions with a2 Hoykeys:\n'
+                              '  %s' % a2_no_mods[trigger_key])
+
                 self.ui.a2ok_button.setText(GLOBAL_NO_MOD_WARNING)
                 self.ui.a2ok_button.setEnabled(False)
             else:
+                if parent_mod != mod_string:
+                    if parent_mod in win_globals:
+                        win_shortcuts = win_globals[parent_mod]
+                        print('Possible collisions with Windows Shortcuts '
+                              'on %s:' % parent_mod)
+                        for key, op in win_shortcuts.items():
+                            print('  %s: %s' % (key, op))
+                        if trigger_key in win_shortcuts:
+                            print('Actual collisions with Windows Shortcut:\n'
+                                  '  %s' % win_shortcuts[trigger_key])
+
+                    if parent_mod in global_hks:
+                        a2_shortcuts = global_hks[parent_mod]
+                        print('Possible collisions with a2 Hotkeys on %s:' % parent_mod)
+                        for key, op in a2_shortcuts.items():
+                            print('  %s: %s' % (key, op))
+                        if trigger_key in a2_shortcuts:
+                            print('Actual collisions with Windows Shortcut:\n'
+                                  '  %s' % a2_shortcuts[trigger_key])
+
+                if mod_string in win_globals:
+                    win_shortcuts = win_globals[mod_string]
+                    print('Possible collisions with Windows Shortcuts '
+                          'on %s:' % mod_string)
+                    for key, op in win_shortcuts.items():
+                        print('  %s: %s' % (key, op))
+                    if trigger_key in win_shortcuts:
+                        print('Actual collisions with Windows Shortcut:\n'
+                              '  %s' % win_shortcuts[trigger_key])
+
+                if mod_string in global_hks:
+                    a2_shortcuts = global_hks[mod_string]
+                    print('Possible collisions with a2 Hotkeys on %s:' % mod_string)
+                    for key, op in a2_shortcuts.items():
+                        print('  %s: %s' % (key, op))
+                    if trigger_key in a2_shortcuts:
+                        print('Actual collisions with Windows Shortcut:\n'
+                              '  %s' % a2_shortcuts[trigger_key])
+
                 self.ui.a2ok_button.setText('OK')
                 self.ui.a2ok_button.setEnabled(True)
+        else:
+            self.scope._scope_data
 
     def _fill_key_dict(self):
         for modkeyname in BASE_MODIFIERS:
@@ -354,17 +419,6 @@ class KeyboardDialogBase(QtWidgets.QDialog):
     def goto_help(self):
         a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
 
-    def _check_conflicts(self):
-        if self.scope.is_global:
-            # checks against the global windows shortcuts
-            # and other global hotkeys set up
-            # keys = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
-            # self.key_dict
-            pass
-        else:
-            # checks against other hotkeys set up in the same scope
-            pass
-
 
 class Scope(object):
     def __init__(self, scope_data):
@@ -422,3 +476,33 @@ def load_css(name):
     with open(template_file) as fobj:
         css = fobj.read()
     return css
+
+
+def win_standard_keys():
+    global _WIN_STANDARD_KEYS
+    if not _WIN_STANDARD_KEYS:
+        _WIN_STANDARD_KEYS = a2util.json_read(
+            os.path.join(_HERE, WIN_STANDARD_FILE))
+    return _WIN_STANDARD_KEYS
+
+
+def get_current_hotkeys():
+    global_hks, include_hks, exclude_hks = a2runtime.collect_hotkeys()
+    modifiers_global = _sort_hotkey_modifiers(global_hks)
+
+    modifiers_include, modifiers_exclude = {}, {}
+    for from_dict, to_dict in [(include_hks, modifiers_include),
+                               (exclude_hks, modifiers_exclude)]:
+        for scope, hotkey_dict in from_dict.items():
+            to_dict[scope] = _sort_hotkey_modifiers(hotkey_dict)
+
+    return modifiers_global, modifiers_include, modifiers_exclude
+
+
+def _sort_hotkey_modifiers(hotkey_dict):
+    modifier_dict = {}
+    for key, call in hotkey_dict.items():
+        mod_string, trigger_key = hotkey_common.get_sorted_parts(key)
+        modifier_dict.setdefault(mod_string, {}).setdefault(
+            trigger_key, []).extend(call)
+    return modifier_dict
