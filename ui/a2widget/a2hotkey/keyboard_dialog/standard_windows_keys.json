@@ -1,40 +1,54 @@
 {
-    "Win+D": "Show Desktop",
-    "Win+M": "Minimize all",
-    "Win+A": "Show Sidebar",
-    "Win+F": "Open Feedback Hub",
-    "Win+X": "Start Button Context Menu",
-    "Win+S": "Windows Search",
-    "Win+G": "Game Capturing",
-    "Win+H": "Start Speech Recognition",
-    "Win+K": "Windows Connect Assistant",
-    "Win+L": "Logoff",
-    "Win+P": "Windows Project Assistant",
-    "Win+I": "Windows Settings",
-    "Win+U": "Windows Display Settings",
-    "Win+T": "Focus Taskbar",
-    "Win+R": "Open Run Dialog",
-    "Win+E": "Open Explorer",
-    "Win+W": "Windows Ink Workspace",
-    "Win+1": "App 1 on Taskbar",
-    "Win+2": "App 2 on Taskbar",
-    "Win+3": "App 3 on Taskbar",
-    "Win+4": "App 4 on Taskbar",
-    "Win+5": "App 5 on Taskbar",
-    "Win+6": "App 6 on Taskbar",
-    "Win+7": "App 7 on Taskbar",
-    "Win+8": "App 8 on Taskbar",
-    "Win+9": "App 9 on Taskbar",
-    "Win+B": "Focus Tray Icons",
-    "Win+;": "Emoji Tool",
-    "Win+.": "Emoji Tool",
-    "Win++": "Magnifier Zoom In",
-    "Win+-": "Magnifier Zoom Out",
-    "Ctrl+Shift+Esc": "Task Manager",
-    "Alt+F4": "Close Current Application",
-    "Ctrl+W": "Close Current Tab/Window",
-    "Alt+Tab": "Switch Application",
-    "Alt+Shift+Tab": "Switch Application backwards",
-    "Ctrl+Alt+Del": "Windows Session Tools",
-    "F11": "Toggle Fullscreen"
+    "Win": {
+        "D": "Show Desktop",
+        "M": "Minimize all",
+        "A": "Show Sidebar",
+        "F": "Open Feedback Hub",
+        "X": "Start Button Context Menu",
+        "S": "Windows Search",
+        "G": "Game Capturing",
+        "H": "Start Speech Recognition",
+        "K": "Windows Connect Assistant",
+        "L": "Logoff",
+        "P": "Windows Project Assistant",
+        "I": "Windows Settings",
+        "U": "Windows Display Settings",
+        "T": "Focus Taskbar",
+        "R": "Open Run Dialog",
+        "E": "Open Explorer",
+        "W": "Windows Ink Workspace",
+        "1": "App 1 on Taskbar",
+        "2": "App 2 on Taskbar",
+        "3": "App 3 on Taskbar",
+        "4": "App 4 on Taskbar",
+        "5": "App 5 on Taskbar",
+        "6": "App 6 on Taskbar",
+        "7": "App 7 on Taskbar",
+        "8": "App 8 on Taskbar",
+        "9": "App 9 on Taskbar",
+        "B": "Focus Tray Icons",
+        ";": "Emoji Tool",
+        ".": "Emoji Tool",
+        "+": "Magnifier Zoom In",
+        "-": "Magnifier Zoom Out"
+    },
+    "Ctrl": {
+        "W": "Close Current Tab/Window"
+    },
+    "Ctrl+Shift": {
+        "Esc": "Task Manager"
+    },
+    "Ctrl+Alt": {
+        "Del": "Windows Session Tools"
+    },
+    "Alt": {
+        "F4": "Close Current Application",
+        "Tab": "Switch Application"
+    },
+    "Alt+Shift": {
+        "Tab": "Switch Application backwards"
+    },
+    "": {
+        "F11": "Toggle Fullscreen"
+    }
 }
