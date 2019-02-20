@@ -136,7 +136,7 @@ class _Collection(object):
         raise NotImplementedError
 
     def _get_final_content(self):
-        return (EDIT_DISCLAIMER % self.name + '\n' + self.get_content())
+        return EDIT_DISCLAIMER % self.name + '\n' + self.get_content()
 
 
 class VariablesCollection(_Collection):
@@ -216,7 +216,7 @@ class HotkeysCollection(_Collection):
         # add a2 standard hotkey
         a2_standard_hotkey = self.a2.db.get('a2_hotkey') or a2core.A2DEFAULT_HOTKEY
         for key in iter_str_or_list(a2_standard_hotkey):
-            self.hotkeys_global.setdefault(key, []).append('a2UI()')
+            self.hotkeys_global.setdefault(key, []).append(('a2UI()', None))
 
     def gather(self, mod):
         mod_hotkey_data = self.a2.db.get('hotkeys', mod.key) or {}
@@ -231,7 +231,7 @@ class HotkeysCollection(_Collection):
                     for key in iter_str_or_list(hotkeys):
                         if not key:
                             continue
-                        self.hotkeys_global.setdefault(key, []).append(command)
+                        self.hotkeys_global.setdefault(key, []).append((command, mod))
 
                 # '1' & '2' are include/exclude scopes
                 # gather per type (0) hotkeys (1) and commands (2)
@@ -247,7 +247,7 @@ class HotkeysCollection(_Collection):
                             if not key:
                                 continue
                             self._scope_types[scope_type][scope_string].setdefault(
-                                key, []).append(command)
+                                key, []).append((command, mod))
 
     def get_content(self):
         scope_modes = {Scope.incl: '#IfWinActive',
@@ -258,9 +258,11 @@ class HotkeysCollection(_Collection):
             for hotkey, commands in hotkey_data.items():
                 code += a2ahk.translate_hotkey(hotkey) + '::'
 
-                command_code = '\n\t'.join(commands)
+                command_code = '\n\t'.join([cmd for cmd, module in commands])
+                # to gather more than 1 command in a code block
                 if '\n' in command_code:
                     code += '\n\t' + command_code + '\nreturn\n'
+                # or just inline
                 else:
                     code += command_code + '\n'
             return code
