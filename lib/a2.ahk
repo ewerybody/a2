@@ -20,6 +20,9 @@ If !a2data {
     EnvGet, a2data, LOCALAPPDATA
     a2data := a2data "\a2\data\"
 }
+If !string_endswith(a2data, "\")
+    a2data := a2data "\"
+
 global a2modules := a2data "modules\"
 global a2module_data := a2data "module_data\"
 global a2includes := a2data "includes\"
