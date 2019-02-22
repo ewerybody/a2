@@ -56,11 +56,14 @@ def last_window_closed():
 
 
 def init_a2_win(app):
+    this_dir = os.path.abspath(os.path.dirname(__file__))
+    if os.getcwd() != this_dir:
+        log.info(f'Bending cwd to "{this_dir}"')
+        os.chdir(this_dir)
+
     try:
         import a2core
         a2 = a2core.A2Obj.inst()
-        # TODO: remove this:
-        # a2core._dbCleanup()
         a2.start_up()
 
         import a2ui
