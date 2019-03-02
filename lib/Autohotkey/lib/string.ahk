@@ -27,7 +27,7 @@ string_is_in_array(byref search, byref array) {
 
 
 ; Returns true if given string looks like an URL
-string_is_web_adress(string) {
+string_is_web_address(string) {
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
     else {
