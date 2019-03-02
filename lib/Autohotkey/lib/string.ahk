@@ -52,3 +52,92 @@ string_endswith(byref string, byref end)
 {
     return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
 }
+
+
+is_whitespace(byref string) {
+    if (string == A_Space OR string == A_Tab OR string == "`n" OR string == "`r")
+        return true
+    else
+        return false
+}
+
+
+string_trim(byref string, byref trim)
+{
+    return string_trimLeft(string_trimRight(string, trim), trim)
+}
+
+; Removes all occurences of trim at the beginning of string
+; trim can be an array of strings that should be removed.
+string_trimLeft(string, trim)
+{
+    if (!IsObject(trim))
+        trim := [trim]
+    for index, trimString in trim
+    {
+        len := strLen(trimString)
+        while(InStr(string, trimString) = 1)
+            StringTrimLeft, string, string, %len%
+    }
+    return string
+}
+
+; Removes all occurences of trim at the end of string
+; trim can be an array of strings that should be removed.
+string_trimRight(string, trim)
+{
+    if (!IsObject(trim))
+        trim := [trim]
+    for index, trimString in trim
+    {
+        len := strLen(trimString)
+        while(string_endsWith(string, trimString))
+            StringTrimRight, string, string, %len%
+    }
+    return string
+}
+
+
+; WIP: Which version do you like more?!?!
+; strips whitespace from start and end of a string:
+string_strip(byref inputString)
+{
+    ; if first char is space, tab or linefeed, remove it and look again:
+    c := SubStr(inputString, 1, 1)
+    if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
+    {
+        StringTrimLeft, inputString, inputString, 1
+        string_strip(inputString)
+    }
+    ; now last character:
+    c := SubStr(inputString, 0)
+    if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
+    {
+        StringTrimRight, inputString, inputString, 1
+        string_strip(inputString)
+    }
+
+    return inputString
+}
+
+; Remove quotes from a string if necessary
+string_unquote(string)
+{
+    if (InStr(string, """") = 1 && string_endsWith(string, """"))
+        return string_trim(string, """")
+    return string
+}
+
+; Add quotes to a string only if necessary
+string_quote(string, once = 1)
+{
+    if (once)
+    {
+        if (InStr(string, """") != 1)
+            string := """" string
+        if (!string_endsWith(string, """"))
+            string := string """"
+        return string
+    }
+    return """" string """"
+}
