@@ -1,3 +1,5 @@
+#Include <CNotification>
+
 Notify(Title, Text, Timeout = "", Icon = "", Action = "", Progress = "", Style = "")
 {
     if ((WinVer < Win_10) OR (Actione != "") OR (Progress != "") OR (Style != ""))

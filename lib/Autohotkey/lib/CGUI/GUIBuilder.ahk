@@ -1,5 +1,3 @@
-#include lib\ahklib\func_string.ahk
-#include lib\ahklib\ExplorerHelpers.ahk
 ; Adds a row of controls to a GUI using a value associated with ValueObject. Control handles are stored in GUI, and can be stored back and have the controls delete by CSubEvent.GUISubmit
 AddControl(ValueObj, GUI, type, name, text = "", glabel = "", description = "", Button1Text = "", Button1gLabel = "", Button2Text = "", Button2gLabel = "", Tooltip = "")
 {
@@ -137,7 +135,7 @@ AddControl(ValueObj, GUI, type, name, text = "", glabel = "", description = "", 
                 else
                     text1 .= A_LoopField (A_LoopField = value ? "||" : "|")
         }
-        if (!strEndsWith(text1, "||"))
+        if (!string_endsWith(text1, "||"))
             text1 := SubStr(text1, 1, -1)
         if (type = "DropDownList")
         {
@@ -279,7 +277,7 @@ Browse(Subevent, GUI, name, Title = "Select Folder", Options = 0, Quote = 0)
             if (InStr(key,"_" name) && !InStr(key, "Button1_") && !InStr(key, "Button2_") && !InStr(key, "Desc_"))
             {
                 if (Quote)
-                    path := Quote(path)
+                    path := string_quote(path)
                 ControlSetText, , %path%, ahk_id %value%
                 break
             }
@@ -299,7 +297,7 @@ SelectFile(SubEvent, GUI, name, Title = "Select File", Filter = "", Quote = 0, o
             if (InStr(key,"_" name) && !InStr(key, "Button1_") && !InStr(key, "Button2_") && !InStr(key, "Desc_"))
             {
                 if (Quote)
-                    path := Quote(path)
+                    path := string_quote(path)
                 ControlSetText, , %path%, ahk_id %value%
                 break
             }

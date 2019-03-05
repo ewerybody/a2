@@ -1,5 +1,5 @@
-#include lib\ahklib\CGUI\EventHandler.ahk
-#include lib\ahklib\CGUI\Delegate.ahk
+#include CGUI\EventHandler.ahk
+#include CGUI\Delegate.ahk
 /*
 Class: CControl
 Basic control class from which all controls extend.
@@ -710,20 +710,20 @@ Class CControl ;Never created directly
     }
 }
 
-#include lib\ahklib\CGUI\CTextControl.ahk
-#include lib\ahklib\CGUI\CEditControl.ahk
-#include lib\ahklib\CGUI\CButtonControl.ahk
-#include lib\ahklib\CGUI\CCheckboxControl.ahk
-#include lib\ahklib\CGUI\CChoiceControl.ahk
-#include lib\ahklib\CGUI\CListViewControl.ahk
-#include lib\ahklib\CGUI\CLinkControl.ahk
-#include lib\ahklib\CGUI\CPictureControl.ahk
-#include lib\ahklib\CGUI\CGroupBoxControl.ahk
-#include lib\ahklib\CGUI\CStatusBarControl.ahk
-#include lib\ahklib\CGUI\CTreeViewControl.ahk
-#include lib\ahklib\CGUI\CTabControl.ahk
-#include lib\ahklib\CGUI\CProgressControl.ahk
-#include lib\ahklib\CGUI\CSliderControl.ahk
-#include lib\ahklib\CGUI\CHotkeyControl.ahk
-#include lib\ahklib\CGUI\CActiveXControl.ahk
-#include lib\ahklib\CGUI\GUIBuilder.ahk
+#include CGUI\CTextControl.ahk
+#include CGUI\CEditControl.ahk
+#include CGUI\CButtonControl.ahk
+#include CGUI\CCheckboxControl.ahk
+#include CGUI\CChoiceControl.ahk
+#include CGUI\CListViewControl.ahk
+#include CGUI\CLinkControl.ahk
+#include CGUI\CPictureControl.ahk
+#include CGUI\CGroupBoxControl.ahk
+#include CGUI\CStatusBarControl.ahk
+#include CGUI\CTreeViewControl.ahk
+#include CGUI\CTabControl.ahk
+#include CGUI\CProgressControl.ahk
+#include CGUI\CSliderControl.ahk
+#include CGUI\CHotkeyControl.ahk
+#include CGUI\CActiveXControl.ahk
+#include CGUI\GUIBuilder.ahk

@@ -50,7 +50,7 @@ Class Navigation
     SetPath(Path, hwnd = 0)
     {
         ; If Path is a file, select it in new explorer instances or ignore it elsewhere
-        if (!InStr(FileExist(Path), "D") && !StrEndsWith(Path, ".search-ms"))
+        if (!InStr(FileExist(Path), "D") && !string_endsWith(Path, ".search-ms"))
             SplitPath, Path, Name, Dir
         else
             Dir := Path
@@ -130,7 +130,7 @@ Class CWinRarNavigationSource
                     {
                         if (InStr(A_LoopReadLine,"8f827d31") = 1)
                         {
-                            WinRarTitle := Unquote(A_LoopReadLine)
+                            WinRarTitle := string_unquote(A_LoopReadLine)
                             break
                         }
                     }
@@ -787,7 +787,7 @@ Class CExplorerNavigationSource
     GoUpward(hwnd)
     {
         path := this.GetPath(hwnd)
-        if (WinVer >= WIN_Vista && !strEndsWith(path,".search-ms"))
+        if (WinVer >= WIN_Vista && !string_endsWith(path,".search-ms"))
             Send !{Up}
         else
             Send {Backspace}

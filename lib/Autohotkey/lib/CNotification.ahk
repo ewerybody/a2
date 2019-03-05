@@ -1,5 +1,4 @@
-#include lib\ahklib\func_file.ahk
-#include lib\ahklib\CGUI\CGUI.ahk
+#include CGUI\CGUI.ahk
 
 Class CNotifyIcons
 {
@@ -286,6 +285,10 @@ Class CNotificationWindow Extends CGUI
         {
             this.txtTitle.Text := Value
             this.txtTitle.AutoSize()
+        }
+        else if (Key = "Icon")
+        {
+            this.icoIcon.Picture := Value
         }
         else
             Ignore := true

@@ -72,7 +72,7 @@ ToArray(InputString, ByRef Separator = "`n", ByRef wasQuoted = 0)
 ; Array Lib - temp01 - http://www.autohotkey.com/forum/viewtopic.php?t=49736
 ; Modified by Fragman
 ; Array is 1-based!!!
-#include %A_ScriptDir%\..\lib\ahklib\CEnumerator.ahk
+#include <CEnumerator>
 Array(Params*){
     return new CArray(Params*)
 }
