@@ -212,13 +212,13 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         new_key_list.append(self.checked_key)
 
-        mod_string, trigger_key = hotkey_common.get_parts_from_list(new_key_list)
-        self.key = hotkey_common.build_string(mod_string, trigger_key)
+        modifier_string, trigger_key = hotkey_common.get_parts_from_list(new_key_list)
+        self.key = hotkey_common.build_string(modifier_string, trigger_key)
         self.ui.key_field.setText(self.key)
 
         # TODO this might be kicked of delayed after dialog popup
         global_hks, include_hks, exclude_hks = get_current_hotkeys()
-        parent_mod = hotkey_common.parent_modifier_string(mod_string)
+        parent_modifier = hotkey_common.parent_modifier_string(modifier_string)
 
         if self.scope.is_global:
             win_globals = win_standard_keys()
@@ -243,43 +243,43 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 self.ui.a2ok_button.setText(GLOBAL_NO_MOD_WARNING)
                 self.ui.a2ok_button.setEnabled(False)
             else:
-                if parent_mod != mod_string:
-                    if parent_mod in win_globals:
-                        win_shortcuts = win_globals[parent_mod]
+                if parent_modifier != modifier_string:
+                    if parent_modifier in win_globals:
+                        win_shortcuts = win_globals[parent_modifier]
                         print('Possible collisions with Windows Shortcuts '
-                              'on %s:' % parent_mod)
+                              'on %s:' % parent_modifier)
                         for key, op in win_shortcuts.items():
                             print('  %s: %s' % (key, op))
                         if trigger_key in win_shortcuts:
                             print('Actual collisions with Windows Shortcut:\n'
                                   '  %s' % win_shortcuts[trigger_key])
 
-                    if parent_mod in global_hks:
-                        a2_shortcuts = global_hks[parent_mod]
-                        print('Possible collisions with a2 Hotkeys on %s:' % parent_mod)
+                    if parent_modifier in global_hks:
+                        a2_shortcuts = global_hks[parent_modifier]
+                        print('Possible collisions with a2 Hotkeys on %s:' % parent_modifier)
                         for key, op in a2_shortcuts.items():
                             print('  %s: %s' % (key, op))
                         if trigger_key in a2_shortcuts:
                             print('Actual collisions with Windows Shortcut:\n'
                                   '  %s' % a2_shortcuts[trigger_key])
 
-                if mod_string in win_globals:
-                    win_shortcuts = win_globals[mod_string]
+                if modifier_string in win_globals:
+                    win_shortcuts = win_globals[modifier_string]
                     print('Possible collisions with Windows Shortcuts '
-                          'on %s:' % mod_string)
+                          'on %s:' % modifier_string)
                     for key, op in win_shortcuts.items():
                         print('  %s: %s' % (key, op))
                     if trigger_key in win_shortcuts:
                         print('Actual collisions with Windows Shortcut:\n'
                               '  %s' % win_shortcuts[trigger_key])
 
-                if mod_string in global_hks:
-                    a2_shortcuts = global_hks[mod_string]
-                    print('Possible collisions with a2 Hotkeys on %s:' % mod_string)
+                if modifier_string in global_hks:
+                    a2_shortcuts = global_hks[modifier_string]
+                    print('Possible collisions with a2 Hotkeys on %s:' % modifier_string)
                     for key, op in a2_shortcuts.items():
                         print('  %s: %s' % (key, op))
                     if trigger_key in a2_shortcuts:
-                        print('Actual collisions with Windows Shortcut:\n'
+                        print('Actual collisions with a2 Hotkeys:\n'
                               '  %s' % a2_shortcuts[trigger_key])
 
                 self.ui.a2ok_button.setText('OK')
