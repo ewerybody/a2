@@ -3,7 +3,7 @@ global Settings := {} ;empty object for setting to be injected into
 
 global UIresources := a2.Path "\ui\res"
 
-global WinVer := GetWindowsVersion()
+global WinVer := windows_get_version()
 global WIN_XP := 5.1
 global WIN_XP64 := 5.2
 global WIN_VISTA := 6.0

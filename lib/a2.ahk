@@ -5,7 +5,7 @@
 #NoTrayIcon
 
 #include <ahk_functions>
-#include <a2functions>
+; #include <a2functions>
 #include lib\a2_config.ahk
 #include lib\a2_globals.ahk
 #include lib\a2_urls.ahk
