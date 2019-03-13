@@ -717,7 +717,7 @@ Class CControl ;Never created directly
 #include CGUI\CChoiceControl.ahk
 #include CGUI\CListViewControl.ahk
 #include CGUI\CLinkControl.ahk
-#include CGUI\CPictureControl.ahk
+; #include CGUI\CPictureControl.ahk
 #include CGUI\CGroupBoxControl.ahk
 #include CGUI\CStatusBarControl.ahk
 #include CGUI\CTreeViewControl.ahk
