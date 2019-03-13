@@ -73,6 +73,7 @@ ToArray(InputString, ByRef Separator = "`n", ByRef wasQuoted = 0)
 ; Modified by Fragman
 ; Array is 1-based!!!
 #include <CEnumerator>
+#include <RichObject>
 Array(Params*){
     return new CArray(Params*)
 }

@@ -1,4 +1,5 @@
 #include CGUI\CGUI.ahk
+#include <os>
 
 Class CNotifyIcons
 {
