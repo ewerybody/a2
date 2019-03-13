@@ -726,4 +726,4 @@ Class CControl ;Never created directly
 #include CGUI\CSliderControl.ahk
 #include CGUI\CHotkeyControl.ahk
 #include CGUI\CActiveXControl.ahk
-#include CGUI\GUIBuilder.ahk
+; #include CGUI\GUIBuilder.ahk
