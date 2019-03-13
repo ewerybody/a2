@@ -238,3 +238,9 @@ A2MoreButton {
 QLabel#a2_mod_name {
 	font-size: %(font_size_big)ipx;
 }
+
+QLineEdit {
+    border: 1px solid "%(color_button)s";
+    border-radius: %(border_radius)ipx;
+    padding: %(small_spacing)ipx;
+}
