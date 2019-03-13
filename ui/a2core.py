@@ -66,6 +66,7 @@ class A2Obj(object):
 
     def start_up(self):
         self.fetch_modules()
+        setup_proxy(self)
 
     def fetch_modules(self):
         """
@@ -274,6 +275,35 @@ def set_dev_mode(state):
     """
     a2 = A2Obj.inst()
     a2.set_dev_mode(state)
+
+
+def setup_proxy(a2=None):
+    if a2 is None:
+        a2 = A2Obj.inst()
+
+    if a2.db.get('proxy_enabled') or False:
+        settins = a2.db.get('proxy_settings') or {}
+        server, port = settins.get('server'), settins.get('port')
+        if server and port:
+            from urllib import request
+
+            http_mode = settins.get('http')
+            proxy_str = http_mode + '://'
+            usr, pwd = settins.get('user'), settins.get('pass')
+            if usr and pwd:
+                proxy_str += usr + ':' + pwd + '@'
+            proxy_str += server + ':' + port
+
+            log.info('setting up proxy: %s' % proxy_str)
+            proxy_handler = request.ProxyHandler({http_mode: proxy_str})
+            opener = request.build_opener(proxy_handler)
+            request.install_opener(opener)
+            return
+
+    if 'urllib.request' in sys.modules:
+        from urllib import request
+        log.info('disabling proxy ...')
+        request.install_opener(None)
 
 
 if __name__ == '__main__':

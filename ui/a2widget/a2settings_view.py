@@ -16,6 +16,7 @@ import a2widget.a2hotkey.keyboard_dialog.layouts
 from a2widget import a2settings_view_ui, a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
+_PROXY_ITEMS = 'user', 'pass', 'server', 'port'
 
 
 class A2Settings(QtWidgets.QWidget):
@@ -82,8 +83,9 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
         self.ui.show_console.clicked[bool].connect(self.toggle_console)
 
-#        ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
-#        self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
+        # TODO: #182
+        # ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
+        # self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
         self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.setPageStep(0.1)
@@ -100,6 +102,22 @@ class A2Settings(QtWidgets.QWidget):
         self._check_win_startup()
         self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
         self._check_desktop_link()
+
+        # filling proxy ui
+        self.ui.proxy_box.setChecked(self.a2.db.get('proxy_enabled') or False)
+        settings = self.a2.db.get('proxy_settings') or {}
+        self.ui.proxy_http.setCurrentIndex(
+            ('http', 'https').index(settings.get('http') or 'http'))
+        proxy_line_widgets = (self.ui.proxy_user, self.ui.proxy_pass,
+                              self.ui.proxy_server, self.ui.proxy_port)
+        for i, name in enumerate(_PROXY_ITEMS):
+            value = settings.get(name) or ''
+            proxy_line_widgets[i].setText(value)
+
+        self.ui.proxy_box.clicked.connect(self._check_proxy_settings)
+        self.ui.proxy_http.currentIndexChanged.connect(self._check_proxy_settings)
+        for widget in proxy_line_widgets:
+            widget.textChanged.connect(self._check_proxy_settings)
 
     def _check_win_startup(self):
         startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
@@ -213,3 +231,14 @@ class A2Settings(QtWidgets.QWidget):
             ui.setupUi(self.ui.a2settings_tab)
             self.ui.a2settings_tab.widget(tab_index).setLayout(
                 ui.license_layout)
+
+    def _check_proxy_settings(self):
+        self.a2.db.set('proxy_enabled', self.ui.proxy_box.isChecked())
+        settings = {'http': ('http', 'https')[self.ui.proxy_http.currentIndex()]}
+        for item in _PROXY_ITEMS:
+            widget = getattr(self.ui, 'proxy_' + item)
+            text = widget.text()
+            if text:
+                settings[item] = text
+        self.a2.db.set('proxy_settings', settings)
+        a2core.setup_proxy(self.a2)
