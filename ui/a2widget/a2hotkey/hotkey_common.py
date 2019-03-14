@@ -123,8 +123,15 @@ def parent_modifier_string(modifier_string):
     """
     Gets the modifier string without the side variant l/r.
 
-    A hotkey with the modifier LWin+J would collide with Win+J.
+    As a hotkey like "LWin+Shift+J" would still collide with "Win+Shift+J".
+    This turns a given string like 'LWin+Shift' to 'Win+Shift'.
+
+    :param str modifier_string: Hotkey modifier string with Ls or Rs.
+    :rtype: str
     """
+    if not modifier_string:
+        return []
+
     modifiers = modifier_string.split('+')
     for i, part in enumerate(modifiers):
         if part[0].lower() in 'lr':
