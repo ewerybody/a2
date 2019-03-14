@@ -278,21 +278,42 @@ def set_dev_mode(state):
 
 
 def setup_proxy(a2=None):
+    """
+    Looks up a2.db "proxy_enabled" and "proxy_settings".
+    Configures urllib.request accordingly.
+
+    If set a2.db.get('proxy_settings') will give a dictionary::
+
+        {'http': 'http', # or 'https'
+         'user': 'username',
+         'pass': 'p4$$w0Rd',
+         'server': 'server.address.com',
+         'port': 1337
+        }
+
+    Where 'user', 'pass' and 'port' might be optional!
+    """
     if a2 is None:
         a2 = A2Obj.inst()
 
     if a2.db.get('proxy_enabled') or False:
         settins = a2.db.get('proxy_settings') or {}
-        server, port = settins.get('server'), settins.get('port')
-        if server and port:
+        server = settins.get('server')
+        if server:
             from urllib import request
 
             http_mode = settins.get('http')
             proxy_str = http_mode + '://'
+
             usr, pwd = settins.get('user'), settins.get('pass')
             if usr and pwd:
                 proxy_str += usr + ':' + pwd + '@'
-            proxy_str += server + ':' + port
+
+            proxy_str += server
+
+            port = settins.get('port')
+            if port is not None:
+                proxy_str += ':' + port
 
             log.info('setting up proxy: %s' % proxy_str)
             proxy_handler = request.ProxyHandler({http_mode: proxy_str})
