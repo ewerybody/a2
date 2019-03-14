@@ -94,6 +94,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 self._check_key(button)
 
         self.ui.key_field.setText(self.key)
+        self.update_ui()
 
     def _setup_ui(self):
         # css debug shortcut
@@ -219,6 +220,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         # TODO this might be kicked of delayed after dialog popup
         global_hks, include_hks, exclude_hks = get_current_hotkeys()
         parent_modifier = hotkey_common.parent_modifier_string(modifier_string)
+        win_shortcuts, a2_shortcuts = {}, {}
 
         if self.scope.is_global:
             win_globals = win_standard_keys()
@@ -226,7 +228,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 win_no_mods, a2_no_mods = win_globals.get(''), global_hks.get('')
                 if win_no_mods:
                     print('Possible collisions with Windows Shortcuts:')
-                    for key, op in win_no_mods:
+                    for key, op in win_no_mods.items():
                         print('  %s: %s' % (key, op))
                     if trigger_key in win_no_mods:
                         print('Actual collisions with Windows Shortcut:\n'
@@ -234,8 +236,8 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
                 if a2_no_mods:
                     print('Possible collisions with a2 Hotkeys:')
-                    for key, ops in a2_no_mods:
-                        print('  %s: %s' % (key, ';'.join(ops)))
+                    for key, ops in a2_no_mods.items():
+                        print('  %s: %s' % (key, ';'.join([str(o) for o in ops])))
                     if trigger_key in a2_no_mods:
                         print('Actual collisions with a2 Hoykeys:\n'
                               '  %s' % a2_no_mods[trigger_key])
@@ -286,6 +288,33 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 self.ui.a2ok_button.setEnabled(True)
         else:
             self.scope._scope_data
+
+        self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
+
+    def _highlight_keys(self, win_shortcuts, a2_shortcuts, trigger_key):
+        for name, button in self.key_dict.items():
+            if button in self.modifier.values():
+                continue
+
+            name = name.lower()
+            a2_shortcuts = dict([(k.lower(), v) for k, v in a2_shortcuts.items()])
+            tooltip = []
+            style_sheet = 'border: 2px solid "#CCC";'
+
+            if name in win_shortcuts:
+                style_sheet = 'border: 2px solid "#43B6FF";'
+                tooltip.append('Windows Shortcut: %s' % win_shortcuts[name])
+
+            if name in a2_shortcuts:
+                style_sheet = 'border: 2px solid "#FFC23E";'
+                for command, module in a2_shortcuts[name]:
+                    if module is None:
+                        tooltip.append('a2: %s' % command)
+                    else:
+                        tooltip.append('%s: %s' % (module.name, command))
+
+            button.setStyleSheet(style_sheet)
+            button.setToolTip('\n'.join(tooltip))
 
     def _fill_key_dict(self):
         for modkeyname in BASE_MODIFIERS:

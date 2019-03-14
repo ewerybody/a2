@@ -1,5 +1,6 @@
 QPushButton {
     font-size: %(font_size)ipx;
+    border: 2px solid "%(color_button)s";
 }
 
 QPushButton:checked {

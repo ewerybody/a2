@@ -1,22 +1,22 @@
 {
     "Win": {
-        "D": "Show Desktop",
-        "M": "Minimize all",
-        "A": "Show Sidebar",
-        "F": "Open Feedback Hub",
-        "X": "Start Button Context Menu",
-        "S": "Windows Search",
-        "G": "Game Capturing",
-        "H": "Start Speech Recognition",
-        "K": "Windows Connect Assistant",
-        "L": "Logoff",
-        "P": "Windows Project Assistant",
-        "I": "Windows Settings",
-        "U": "Windows Display Settings",
-        "T": "Focus Taskbar",
-        "R": "Open Run Dialog",
-        "E": "Open Explorer",
-        "W": "Windows Ink Workspace",
+        "d": "Show Desktop",
+        "m": "Minimize all",
+        "a": "Show Sidebar",
+        "f": "Open Feedback Hub",
+        "x": "Start Button Context Menu",
+        "s": "Windows Search",
+        "g": "Game Capturing",
+        "h": "Start Speech Recognition",
+        "k": "Windows Connect Assistant",
+        "l": "Logoff",
+        "p": "Windows Project Assistant",
+        "i": "Windows Settings",
+        "u": "Windows Display Settings",
+        "t": "Focus Taskbar",
+        "r": "Open Run Dialog",
+        "e": "Open Explorer",
+        "w": "Windows Ink Workspace",
         "1": "App 1 on Taskbar",
         "2": "App 2 on Taskbar",
         "3": "App 3 on Taskbar",
@@ -26,29 +26,30 @@
         "7": "App 7 on Taskbar",
         "8": "App 8 on Taskbar",
         "9": "App 9 on Taskbar",
-        "B": "Focus Tray Icons",
+        "0": "App 10 on Taskbar",
+        "b": "Focus Tray Icons",
         ";": "Emoji Tool",
         ".": "Emoji Tool",
         "+": "Magnifier Zoom In",
         "-": "Magnifier Zoom Out"
     },
     "Ctrl": {
-        "W": "Close Current Tab/Window"
+        "w": "Close Current Tab/Window"
     },
     "Ctrl+Shift": {
-        "Esc": "Task Manager"
+        "esc": "Task Manager"
     },
     "Ctrl+Alt": {
-        "Del": "Windows Session Tools"
+        "del": "Windows Session Tools"
     },
     "Alt": {
-        "F4": "Close Current Application",
-        "Tab": "Switch Application"
+        "f4": "Close Current Application",
+        "tab": "Switch Application"
     },
     "Alt+Shift": {
-        "Tab": "Switch Application backwards"
+        "tab": "Switch Application backwards"
     },
     "": {
-        "F11": "Toggle Fullscreen"
+        "f11": "Toggle Fullscreen"
     }
 }
