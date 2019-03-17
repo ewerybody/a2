@@ -56,8 +56,8 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         self.scope = Scope(self.scope_data)
         self._fill_key_dict()
+        self._ui_styles = {}
         self._setup_ui()
-        self.rejected.connect(self._log_size)
 
     def set_key(self):
         """
@@ -299,14 +299,14 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             name = name.lower()
             a2_shortcuts = dict([(k.lower(), v) for k, v in a2_shortcuts.items()])
             tooltip = []
-            style_sheet = 'border: 2px solid "#CCC";'
+            style_sheet = self._ui_styles['default']
 
             if name in win_shortcuts:
-                style_sheet = 'border: 2px solid "#43B6FF";'
+                style_sheet = self._ui_styles['win_button']
                 tooltip.append('Windows Shortcut: %s' % win_shortcuts[name])
 
             if name in a2_shortcuts:
-                style_sheet = 'border: 2px solid "#FFC23E";'
+                style_sheet = self._ui_styles['a2_button']
                 for command, module in a2_shortcuts[name]:
                     if module is None:
                         tooltip.append('a2: %s' % command)
@@ -399,6 +399,12 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         cursor_block_css = load_css('cursorblock') % values
         self.cursor_block_widget.setStyleSheet(cursor_block_css)
         self.numpad_block_widget.setStyleSheet(cursor_block_css)
+
+        border_tmp = 'border: %.1fpx solid "%%s";' % css_values['border_radius']
+        self._ui_styles['default'] = border_tmp % css_values['color_button']
+        self._ui_styles['a2_button'] = border_tmp % css_values['color_yellow']
+        self._ui_styles['win_button'] = border_tmp % css_values['color_blue']
+        self._ui_styles['orig_button'] = border_tmp % css_values['color_green']
 
     def build_option_menu(self, menu):
         icons = a2ctrl.Icons.inst()

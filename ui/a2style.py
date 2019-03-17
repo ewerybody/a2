@@ -1,5 +1,4 @@
 import os
-from copy import deepcopy
 import a2util
 from PySide2 import QtWidgets
 
@@ -40,7 +39,7 @@ class A2StyleBuilder(object):
         return self._css_values.get(value_name, default)
 
     def get_value_dict(self):
-        return deepcopy(self._css_values)
+        return self._css_values.copy()
 
     def get_style(self, user_scale=1.0):
         if user_scale == self._user_scale and self._last_style is not None:
