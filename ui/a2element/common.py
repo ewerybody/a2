@@ -12,6 +12,7 @@ import a2widget.local_script
 
 
 LOCAL_MENU_PREFIX = 'local: '
+DELAYED_CHECK_DELAY = 250
 
 
 class DrawCtrlMixin(object):
@@ -29,11 +30,10 @@ class DrawCtrlMixin(object):
         self.cfg = cfg
         self.mod = mod
 
-        self.check_delay = 250
         self._check_scheduled = False
         self.is_expandable_widget = False
         self._check_timer = QtCore.QTimer()
-        self._check_timer.setInterval(self.check_delay)
+        self._check_timer.setInterval(DELAYED_CHECK_DELAY)
         self._check_timer.timeout.connect(self._check)
         self._check_args = None
         self.user_cfg = user_cfg or {}
