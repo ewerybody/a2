@@ -176,6 +176,7 @@ def py_bool_to_ahk_string(py_bool):
 
 
 def py_string_to_ahk_string(py_str):
+    py_str = py_str.replace('\n', '`n')
     return '"%s"' % py_str
 
 
