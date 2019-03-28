@@ -1,6 +1,7 @@
 import a2ctrl
-from PySide2 import QtWidgets
+from PySide2 import QtWidgets, QtCore
 from a2element import string_edit_ui, DrawCtrl, EditCtrl
+from a2widget import A2TextField
 
 
 class Draw(DrawCtrl):
@@ -10,17 +11,28 @@ class Draw(DrawCtrl):
         self._setupUi()
 
     def _setupUi(self):
-        self.layout = QtWidgets.QHBoxLayout(self)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
 
-        self.value_ctrl = QtWidgets.QLineEdit(self.value)
-        self.value_ctrl.editingFinished.connect(self.delayed_check)
-        self.layout.addWidget(self.label)
-        self.layout.addWidget(self.value_ctrl)
-
         if self.cfg.get('password_mode', False):
+            self.value_ctrl = QtWidgets.QLineEdit(self)
             self.value_ctrl.setEchoMode(QtWidgets.QLineEdit.Password)
+            self.value_ctrl.editingFinished.connect(self.delayed_check)
+        else:
+            self.value_ctrl = A2TextField(self)
+            self.value_ctrl.editing_finished.connect(self.delayed_check)
+        self.value_ctrl.setText(self.value)
+
+        if self.cfg.get('label_over_field', False):
+            layout = QtWidgets.QVBoxLayout(self)
+            layout.addWidget(self.label)
+        else:
+            layout = QtWidgets.QHBoxLayout(self)
+            layout.addWidget(self.label)
+            self.label.setAlignment(
+                QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+
+        layout.addWidget(self.value_ctrl)
 
     def get_ui_value(self):
         return self.value_ctrl.text()

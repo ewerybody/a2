@@ -52,6 +52,9 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         self.finish_editing()
         return QtWidgets.QPlainTextEdit.focusOutEvent(self, *args, **kwargs)
 
+    def text(self):
+        return self.toPlainText()
+
     def setText(self, this):
         self._internal_change = True
         try:

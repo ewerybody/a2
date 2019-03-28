@@ -6,42 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
-    <height>105</height>
+    <width>495</width>
+    <height>239</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QFormLayout" name="edit_layout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
-   <property name="leftMargin">
-    <number>10</number>
-   </property>
-   <property name="topMargin">
-    <number>5</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>5</number>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="labelAlignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="internalNameLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
+    <widget class="QLabel" name="label">
      <property name="text">
       <string>internal name:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -53,18 +32,9 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="displayLabelLabel">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
+    <widget class="QLabel" name="label_2">
      <property name="text">
       <string>display label:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
@@ -75,41 +45,39 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="displayLabelLabel_2">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>0</height>
-      </size>
-     </property>
+   <item row="2" column="1">
+    <widget class="QCheckBox" name="cfg_label_over_field">
      <property name="text">
-      <string>default text:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <string>Label over field</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="cfg_value">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_3">
      <property name="text">
-      <string/>
-     </property>
-     <property name="echoMode">
-      <enum>QLineEdit::Normal</enum>
+      <string>default text:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1">
+    <widget class="A2TextField" name="cfg_value"/>
+   </item>
+   <item row="4" column="1">
     <widget class="QCheckBox" name="cfg_password_mode">
      <property name="text">
-      <string notr="true">password mode</string>
+      <string notr="true">password mode (forces single line)</string>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2TextField</class>
+   <extends>QPlainTextEdit</extends>
+   <header>a2widget</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
