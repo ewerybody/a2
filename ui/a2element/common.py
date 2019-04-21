@@ -204,7 +204,7 @@ class EditCtrl(QtWidgets.QGroupBox):
         # cfg = self.parent_cfg.pop(index)
         self.parent_cfg.pop(index)
         self.parent_cfg.insert(newindex, self.cfg)
-        self.main.edit_mod(keep_scroll=True)
+        self.main.edit_mod()
 
     def delete(self):
         self.delete_requested.emit()
