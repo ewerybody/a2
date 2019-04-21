@@ -8,7 +8,7 @@ screen_get_virtual_size(ByRef x, ByRef y, ByRef w, ByRef h)
 }
 
 
- /**
+ /*
  * Helper Function
  *     Returns the MonitorID where the specified window is located on
  *     By shnywong
@@ -21,6 +21,7 @@ screen_get_virtual_size(ByRef x, ByRef y, ByRef w, ByRef h)
  *
  * @docu    https://autohotkey.com/board/topic/69464-how-to-determine-a-window-is-in-which-monitor/#entry440355
  */
+
 screen_get_index(hwnd)
 {
     ; Starts with 1.
@@ -36,11 +37,6 @@ screen_get_index(hwnd)
         monitorTop    := NumGet(monitorInfo,  8, "Int")
         monitorRight  := NumGet(monitorInfo, 12, "Int")
         monitorBottom := NumGet(monitorInfo, 16, "Int")
-        workLeft      := NumGet(monitorInfo, 20, "Int")
-        workTop       := NumGet(monitorInfo, 24, "Int")
-        workRight     := NumGet(monitorInfo, 28, "Int")
-        workBottom    := NumGet(monitorInfo, 32, "Int")
-        isPrimary     := NumGet(monitorInfo, 36, "Int") & 1
 
         SysGet, monitorCount, MonitorCount
 
@@ -59,4 +55,17 @@ screen_get_index(hwnd)
     }
 
     return %monitorIndex%
+}
+
+class Screen_Workarea
+{
+	__new(index=1) {
+		SysGet, WorkArea, MonitorWorkArea, %index%
+		this.left := WorkAreaLeft
+		this.right := WorkAreaRight
+		this.top := WorkAreaTop
+		this.bottom	:= WorkAreaBottom
+		this.width := WorkAreaRight - WorkAreaLeft
+		this.height := WorkAreaBottom - WorkAreaTop
+	}
 }
