@@ -158,7 +158,7 @@ class VariablesCollection(_Collection):
     def get_content(self):
         content = ''
         for var_name, value in sorted(self.data.items(), key=lambda k: k[0].lower()):
-            content += '%s := %s\n' % (var_name, a2ahk.py_value_to_ahk_string(value))
+            content += 'global %s := %s\n' % (var_name, a2ahk.py_value_to_ahk_string(value))
         return content
 
     @property
