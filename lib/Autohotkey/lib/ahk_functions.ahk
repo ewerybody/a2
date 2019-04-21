@@ -235,12 +235,20 @@ WinGetTitle(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
     WinGetTitle, v, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
     Return, v
 }
-
 WinGetStyle(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
     WinGet, v, Style, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
     return v
 }
-
+WinGetMinMax(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+    WinGet, v, MinMax, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+    return v
+}
+WinRestore(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+    WinRestore, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+}
+WinMaximize(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+    WinMaximize, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+}
 DetectHiddenWindows(state=-1) {
     ; To make some sense out of this command
     ; this here accepts and returns only 0/1 true/false values.
