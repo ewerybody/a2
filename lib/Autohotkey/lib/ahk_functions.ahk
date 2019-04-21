@@ -236,6 +236,11 @@ WinGetTitle(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
     Return, v
 }
 
+WinGetStyle(WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
+    WinGet, v, Style, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
+    return v
+}
+
 DetectHiddenWindows(state=-1) {
     ; To make some sense out of this command
     ; this here accepts and returns only 0/1 true/false values.
