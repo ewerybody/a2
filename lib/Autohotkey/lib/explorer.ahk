@@ -99,3 +99,20 @@ explorer_get(hwnd="",selection=false)
 
     return Trim(ret)
 }
+
+; Selects a file with the given basename
+explorer_select(basename) {
+	if !(window := explorer_get_window(hwnd))
+		return ErrorLevel := "ERROR"
+	file_found := 0
+    for item in window.document.Folder.Items
+    {
+        if (item.name == basename)
+        {
+            window.document.SelectItem(item, 1)
+            file_found := 1
+        } else
+            window.document.SelectItem(item, 0)
+    }
+    return file_found
+}
