@@ -65,8 +65,10 @@ class A2ModuleView(QtWidgets.QWidget):
                 config = [{'typ': 'nfo', 'author': '', 'version': '',
                            'description': 'Multiple modules selected. Here goes some '
                                           'useful info in the future...'}]
+            module_user_cfg = {}
         else:
             config = self.main.mod.config
+            module_user_cfg = self.main.mod.get_user_cfg()
             self.main.temp_config = None
 
         if len(config):
@@ -82,7 +84,6 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls = []
         self.menu_items = []
 
-        module_user_cfg = self.main.mod.get_user_cfg()
         for element_cfg in config:
             cfg_name = a2util.get_cfg_default_name(element_cfg)
             user_cfg = module_user_cfg.get(cfg_name, {})

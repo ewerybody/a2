@@ -31,7 +31,7 @@ class Draw(DrawCtrl):
             layout.addWidget(self.label)
             self.label.setAlignment(
                 QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.value_ctrl)
 
     def get_ui_value(self):

@@ -29,7 +29,6 @@ class Ca2
      */
     __New()
     {
-        msgbox New!
         global a2_modules
         this.title := "a2"
         this.path := A_ScriptDir "\.."

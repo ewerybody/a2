@@ -441,7 +441,7 @@ SetTimerF( Function, Period=0, ParmObject=0, Priority=0 ) {
  * @param   var    hWndOrMouseX  Window handler or Mouse X coords from which to guess the monitor in question
  * @param   var    MouseY                          Mouse Y coords from which to guess the monitor in question
  */
-GetActiveMonitorWorkspaceArea(ByRef MonLeft, ByRef MonTop, ByRef MonW, ByRef MonH,hWndOrMouseX, MouseY = "")
+GetActiveMonitorWorkspaceArea(ByRef MonLeft, ByRef MonTop, ByRef MonW, ByRef MonH, hWndOrMouseX, MouseY = "")
 {
     mon := GetActiveMonitor(hWndOrMouseX, MouseY)
     if (mon>=0)
