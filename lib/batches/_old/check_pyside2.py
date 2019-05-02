@@ -1,8 +1,14 @@
+"""
+Script to search the code for usage of a PySide package
+to prepare for porting to a new PySide package ...
+"""
+
 import os
 import codecs
 import importlib
 from pprint import pprint
 
+# rename to unique `pyside_package`
 import PySide2 as pyside_package
 
 IMPORT_STR = ' import '
