@@ -1,6 +1,7 @@
 # a2 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0bc56698a44144e68ff191105f97215d)](https://app.codacy.com/app/ewerybody/a2?utm_source=github.com&utm_medium=referral&utm_content=ewerybody/a2&utm_campaign=badger) [![Join the chat at https://gitter.im/ewerybody/a2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ewerybody/a2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Script managing and developing framework for [Autohotkey](http://ahkscript.org/) (currently **Autohotkey_L**) with [Qt for Python](https://wiki.qt.io/PySide) (PySide2) frontend.<br>
+Script managing and developing framework for [Autohotkey](http://ahkscript.org/) (currently **Autohotkey_L**)<br>
+with [Qt for Python](https://wiki.qt.io/PySide) (PySide2) frontend.<br>
 See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially the page about [setting you up](https://github.com/ewerybody/a2/wiki/setting-you-up).
 
 ## news:
