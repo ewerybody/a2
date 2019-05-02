@@ -1,0 +1,1 @@
+FileAppend, %A_AhkVersion%, *
