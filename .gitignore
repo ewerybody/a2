@@ -8,7 +8,7 @@ a2_settings.ahk
 # build files
 a2.exe
 a2ui.exe
-lib/batches/a2app.spec
+lib/batches/build/a2app.spec
 
 # NPM packages
 node_modules/

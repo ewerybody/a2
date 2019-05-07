@@ -1,5 +1,5 @@
-CALL _build_py_package.bat
-CALL _build_installer.bat
+CALL build\_build_py_package.bat
+CALL build\_build_installer.bat
 
 echo Build ALL Done!
 pause
