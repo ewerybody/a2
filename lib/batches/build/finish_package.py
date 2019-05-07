@@ -6,11 +6,13 @@ Better keep them as short as possible.
 """
 import os
 import shutil
+import codecs
 from os.path import join
 
 import _build_package_init
 import a2ahk
 import a2util
+import subprocess
 
 A2PATH = _build_package_init.a2path
 A2UIPATH = _build_package_init.uipath
@@ -33,11 +35,14 @@ def main():
     distpath = join(distroot, 'a2')
     distlib = join(distpath, 'lib')
     distui = join(distpath, 'ui')
+    a2lib = join(A2PATH, 'lib')
 
     if not os.path.isdir(distpath):
         raise FileNotFoundError('No Package found at "%s"!' % distpath)
 
-    copy_files(distpath, distlib, distui)
+    update_readme(a2lib)
+
+    copy_files(distpath, distlib, a2lib, distui)
 
     config_file = join(distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
@@ -48,7 +53,50 @@ def main():
     print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
 
 
-def copy_files(distpath, distlib, distui):
+def update_readme(a2lib):
+    # get currently used versions
+    AHKEXE = os.path.join(a2lib, 'Autohotkey', 'Autohotkey.exe')
+    batches_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    version_scripts_dir = os.path.join(batches_dir, 'versions')
+
+    versions = {}
+    for script in os.scandir(version_scripts_dir):
+        name = script.name
+        if script.is_dir() or not name.startswith('get_') or not name.endswith('.ahk'):
+            continue
+        version_str = subprocess.check_output(
+            [AHKEXE, script.path], cwd=batches_dir).decode()
+        # cut off "get_" and "_version.ahk"
+        versions[name[4:-12]] = version_str
+
+    # get versions in readme:
+    readme_path = os.path.join(A2PATH, 'README.md')
+    with codecs.open(readme_path, encoding='utf8') as fileobj:
+        lines = fileobj.read().split('\r\n')
+
+    print('Versions:\n')
+    for name, version_str in versions.items():
+        print('* %s: %s' % (name, version_str))
+    print('')
+
+    changed = False
+    for i, line in enumerate(lines):
+        for name in versions:
+            if line.startswith('* %s: ' % name):
+                set_version = line.split(':')[1].strip()
+                if set_version != versions[name]:
+                    lines[i] = '* %s: %s' % (name, versions[name])
+                    changed = True
+
+    if changed:
+        print('Updating %s' % readme_path)
+        with open(readme_path, 'w', encoding='utf8') as fileobj:
+            fileobj.write('\r\n'.join(lines))
+    else:
+        print('Versions unchanged!')
+
+
+def copy_files(distpath, distlib, a2lib, distui):
     print('distpath: %s' % distpath)
     app_path = join(distpath, 'a2app')
     if not os.path.isdir(app_path):
@@ -66,7 +114,6 @@ def copy_files(distpath, distlib, distui):
             shutil.copy2(item.path, distpath)
 
     print('copying lib files ...')
-    a2lib = join(A2PATH, 'lib')
     os.mkdir(distlib)
     for item in os.scandir(a2lib):
         if item.name.startswith('_ '):
