@@ -1,50 +1,54 @@
 """
-a2 package build script.
+a2 package assembly script to prepare deployment.
 
-Whow! Batch files are such a pain.
+Whow! Batch files are such a pain!
 Better keep them as short as possible.
 """
 import os
 import shutil
-import codecs
 from os.path import join
 
 import _build_package_init
 import a2ahk
 import a2util
 
-
 A2PATH = _build_package_init.a2path
 A2UIPATH = _build_package_init.uipath
 PACKAGE_SUB_NAME = 'alpha'
-DESKTOP_INI_FILE = 'ui/res/a2.ico'
+DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
-                    DESKTOP_INI_FILE)
+                    DESKTOP_ICO_FILE)
 ROOT_FILES = ['package.json', 'a2 on github.com.URL', 'LICENSE']
 LIB_EXCLUDES = ['batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
                 'a2init_check', 'a2dev_find_py', 'a2init_check']
 UI_FOLDERS = ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']
 
-INSTALLER_CFG = (
-    ';!@Install@!UTF-8!\n'
-    'RunProgram="a2\setup.exe"\n'
-    ';!@InstallEnd@!')
-MANIFEST_NAME = 'a2_installer_manifest.xml'
-
 
 def main():
     package_cfg = a2util.json_read(join(A2PATH, 'package.json'))
     package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
-    print('package_name: %s' % package_name)
+    print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
 
     distroot = join(A2PATH, '_ package')
     distpath = join(distroot, 'a2')
+    distlib = join(distpath, 'lib')
+    distui = join(distpath, 'ui')
+
     if not os.path.isdir(distpath):
         raise FileNotFoundError('No Package found at "%s"!' % distpath)
 
-    srcpath = join(A2PATH, 'lib', '_source')
-    update_manifest(srcpath, package_cfg["version"], distroot)
+    copy_files(distpath, distlib, distui)
 
+    config_file = join(distlib, 'a2_config.ahk')
+    a2ahk.set_variable(config_file, 'a2_title', package_name)
+
+    with open(join(distpath, 'desktop.ini'), 'w') as file_obj:
+        file_obj.write(DESKTOP_INI_CODE)
+
+    print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
+
+
+def copy_files(distpath, distlib, distui):
     print('distpath: %s' % distpath)
     app_path = join(distpath, 'a2app')
     if not os.path.isdir(app_path):
@@ -52,7 +56,6 @@ def main():
             'App Path was not found!\n  %s\n'
             'Package already handled?' % app_path)
 
-    distui = join(distpath, 'ui')
     os.rename(app_path, distui)
     print('distui: %s' % distui)
 
@@ -63,7 +66,6 @@ def main():
             shutil.copy2(item.path, distpath)
 
     print('copying lib files ...')
-    distlib = join(distpath, 'lib')
     a2lib = join(A2PATH, 'lib')
     os.mkdir(distlib)
     for item in os.scandir(a2lib):
@@ -97,15 +99,6 @@ def main():
         if item.is_dir() and item.name in ['lib2to3', 'Include', 'numpy']:
             print(f'removing {item.name} ...')
             shutil.rmtree(item.path, ignore_errors=True)
-
-    config_file = join(distlib, 'a2_config.ahk')
-    a2ahk.set_variable(config_file, 'a2_title', package_name)
-
-    with open(join(distpath, 'desktop.ini'), 'w') as file_obj:
-        file_obj.write(DESKTOP_INI_CODE)
-
-    with open(join(distroot, 'config.txt'), 'w') as file_obj:
-        file_obj.write(INSTALLER_CFG)
 
 
 def _ignore_items(path, items):
@@ -141,44 +134,6 @@ def _ignore_items(path, items):
         print('IGNORING: %s' % result)
 
     return result
-
-
-def update_manifest(srcpath, version, distroot):
-    manifest_path = join(srcpath, MANIFEST_NAME)
-    if not os.path.isfile(manifest_path):
-        print('ERROR: No manifest file: %s' % manifest_path)
-        return
-
-    versions = []
-    for i, n in enumerate(version.split('.')):
-        if not n.isdigit():
-            print('ERROR:\n  Bad Nr in version string %i: %s' % (i, n))
-            continue
-        versions.append(n)
-    versions.extend((4 - len(versions)) * '0')
-
-    content = ''
-    with codecs.open(manifest_path, encoding=a2util.UTF8_CODEC) as fobj:
-        for line in fobj:
-            line = line.strip()
-            if not line:
-                continue
-            if line.startswith('<?xml version="'):
-                continue
-            if line.startswith('<!--'):
-                continue
-
-            if line.startswith('version="'):
-                line = 'version="%s"' % '.'.join(versions)
-                print(line)
-
-            if not line.endswith('>'):
-                line += ' '
-            content += line
-
-    manifest_trg = join(distroot, MANIFEST_NAME)
-    a2util.write_utf8(manifest_trg, content)
-    print('manifest written: %s' % manifest_trg)
 
 
 if __name__ == '__main__':
