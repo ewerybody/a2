@@ -5,7 +5,7 @@ with [Qt for Python](https://wiki.qt.io/PySide) (PySide2) frontend.<br>
 See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially the page about [setting you up](https://github.com/ewerybody/a2/wiki/setting-you-up).
 
 ## news:
-* Thanks to ["rcedit"](https://github.com/electron/rcedit) from the electron team we now have fully automated package building, zipping and versioning. 🚀 Before I actually opened up Visual Studio 2017 and hacked in the updated version numbers into the sfx file for building the installer executable.
+* Thanks to [rcedit](https://github.com/electron/rcedit) from the **electron** project we now have fully automated package building, zipping and versioning. 🚀 Before I actually opened up Visual Studio 2017 and hacked in the updated version numbers into the sfx file for building the installer executable...
 * The humongous ["new structure" branch](https://github.com/ewerybody/a2/issues/152) was finally merged back to master ↪ and the issues in the endless [road-to-release-project](https://github.com/ewerybody/a2/projects/1) are thinning out. So we have the package builder back up and running, the structure is much nicer and maintainable 👍, local python snippets are now files and finally debugable!
 * **PySide2 ✔**!! And **Python 3.6.5 ✔**!! Whow! The [first release project](https://github.com/ewerybody/a2/projects/1) is coming closer! We also reached > **1000 commits** already and on [4. of July](https://github.com/ewerybody/a2/commit/71031e49299a2e1189a30405380581b02c28c5c9) **a2 will turn 5** on github! 
 * **Hotkey widgets** now show the scope right away and users can edit if they desire. Some shots in the [gallery](http://imgur.com/a/fkD8u)
