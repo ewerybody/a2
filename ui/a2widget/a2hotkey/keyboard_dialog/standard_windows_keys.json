@@ -49,6 +49,18 @@
     "Alt+Shift": {
         "tab": "Switch Application backwards"
     },
+    "Win+Shift": {
+        "1": "New App 1 on Taskbar",
+        "2": "New App 2 on Taskbar",
+        "3": "New App 3 on Taskbar",
+        "4": "New App 4 on Taskbar",
+        "5": "New App 5 on Taskbar",
+        "6": "New App 6 on Taskbar",
+        "7": "New App 7 on Taskbar",
+        "8": "New App 8 on Taskbar",
+        "9": "New App 9 on Taskbar",
+        "0": "New App 10 on Taskbar"
+    },
     "": {
         "f11": "Toggle Fullscreen"
     }
