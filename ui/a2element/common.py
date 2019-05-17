@@ -1,5 +1,4 @@
 import os
-from copy import deepcopy
 from functools import partial
 
 from PySide2 import QtGui, QtCore, QtWidgets
@@ -214,12 +213,14 @@ class EditCtrl(QtWidgets.QGroupBox):
             self.main.edit_mod()
 
     def duplicate(self):
-        newCfg = deepcopy(self.cfg)
-        self.parent_cfg.append(newCfg)
+        new_cfg = self.cfg.copy()
+        if 'name' in new_cfg:
+            new_cfg['name'] = self.increase_name_number(new_cfg['name'])
+        self.parent_cfg.append(new_cfg)
         self.main.edit_mod()
 
     def cut(self):
-        self.main.edit_clipboard.append(deepcopy(self.cfg))
+        self.main.edit_clipboard.append(self.cfg.copy())
         self.delete()
 
     def help(self):
@@ -310,14 +311,18 @@ class EditCtrl(QtWidgets.QGroupBox):
             # build the base control name
             new_name = '%s_%s' % (self.main.mod.name, self.element_name())
             new_name = new_name.replace(' ', '_')
+            self.cfg['name'] = self.increase_name_number(new_name)
 
-            # find biggest number
-            this_type = self.cfg['typ']
-            controls = [cfg.get('name', '') for cfg in self.main.temp_config
-                        if cfg.get('typ') == this_type]
-
-            new_name = a2util.get_next_free_number(new_name, controls)
-            self.cfg['name'] = new_name
+    def increase_name_number(self, name):
+        """
+        Looks up the current controls to find a free number for ne given name.
+        """
+        # we don't even need the type, right?
+        # this_type = self.cfg['typ']
+        controls = [cfg.get('name', '') for cfg in self.main.temp_config]
+        #            if cfg.get('typ') == this_type]
+        new_name = a2util.get_next_free_number(name, controls)
+        return new_name
 
     def enterEvent(self, event):
         self._ctrl_button.setVisible(True)
