@@ -1,6 +1,6 @@
 ﻿/*
  * WIP logging functions.
- * 
+ *
  */
 
 a2log_debug(title, input_object = "", module = "", delay = 0, Delimiter = "`n")

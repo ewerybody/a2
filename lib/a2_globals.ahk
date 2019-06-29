@@ -11,8 +11,6 @@ global WIN_7 := 6.1
 global WIN_8 := 6.2
 global WIN_10 := 10.0
 
-global NotifyIcons := new CNotifyIcons()
-
 global WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
 
 ; groups for explorer classes

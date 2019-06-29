@@ -1,29 +1,4 @@
-/**
- * Helper Function
- *     Returns a free identifier for a GUI
- *     v0.81 by majkinetor  Licenced under BSD <http://creativecommons.org/licenses/BSD/>
- *
- * @sample
- *     GetFreeGuiNum(0)         ; returns the first integer that is not used by a GUI
- * @sample
- *     GetFreeGuiNum(10, "Foo") ; returns "Foo10" or the next higher integer that is not used by a GUI
- *
- * @param   integer     start   Number from where to start counting up
- * @param   string      prefix  String to help the GUI identifier to be unique
- * @return  string
- */
-GetFreeGuiNum(start, prefix = ""){
-    loop
-    {
-        Gui %prefix%%start%:+LastFoundExist
-        IfWinNotExist
-            return prefix start
-        start++
-        if (start = 100)
-            return 0
-    }
-    return 0
-}
+
 
 /**
  * Helper Function
@@ -496,7 +471,6 @@ GetActiveMonitor(hWndOrMouseX, MouseY = "")
    return iMonitor
 }
 
-
 TranslateMUI(resDll, resID)
 {
     VarSetCapacity(buf, 256)
@@ -504,7 +478,6 @@ TranslateMUI(resDll, resID)
     Result := DllCall("LoadString", "Ptr", hDll, "uint", resID, "str", buf, "int", 128)
     return buf
 }
-
 
 /**
  * Helper Function
@@ -548,21 +521,6 @@ IsInArea(px, py, x, y, w, h)
 {
     return (px > x && py > y && px < x + w && py < y + h)
 }
-
-; Gets ClassNN from hwnd
-HWNDToClassNN(hwnd)
-{
-    win := DllCall("GetParent", "PTR", hwnd, "PTR")
-    WinGet ctrlList, ControlList, ahk_id %win%
-    ; Built an array indexing the control names by their hwnd
-    Loop Parse, ctrlList, `n
-    {
-        ControlGet hwnd1, Hwnd, , %A_LoopField%, ahk_id %win%
-        if (hwnd1=hwnd)
-        return A_LoopField
-    }
-}
-
 
 fixMaximizedScreenCoord(Window, ByRef maxL, ByRef maxT, ByRef maxW, ByRef maxH, newBase=0)
 {
