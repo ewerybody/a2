@@ -193,7 +193,8 @@ class ModSourceWidget(QtWidgets.QWidget):
         dialog = A2ConfirmDialog(
             self.main, 'Uninstall "%s"' % self.mod_source.name,
             'This will delete the package "%s" from the module\n'
-            'storage. There is NO UNDO! Beware with your own creations!')
+            'storage. There is NO UNDO! Beware with your own creations!' %
+            self.mod_source.name)
         dialog.exec_()
         if dialog.result:
             self.mod_source.remove()
