@@ -180,7 +180,7 @@ class A2Slider(QtWidgets.QWidget):
 
         if self.has_field:
             self.value_ctrl.setDecimals(self._decimals)
-        self._slider_factor = pow(10, self._decimals)
+        self._slider_factor = float(pow(10, self._decimals))
         self.setMinimum()
         self.setMaximum()
         self.setSingleStep()
