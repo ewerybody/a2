@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Wed Mar 13 19:17:28 2019
-#      by: pyside2-uic  running on PySide2 5.12.0
+# Created: Thu Dec 19 14:36:32 2019
+#      by: pyside2-uic  running on PySide2 5.12.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(824, 830)
+        a2settings.resize(771, 722)
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtWidgets.QVBoxLayout(a2settings)
@@ -296,13 +296,16 @@ class Ui_a2settings(object):
         self.db_printout.setObjectName("db_printout")
         self.verticalLayout_5.addWidget(self.db_printout)
         self.a2settings_tab.addTab(self.tab_4, "Database View")
-        self.tab_3 = QtWidgets.QWidget()
-        self.tab_3.setObjectName("tab_3")
-        self.a2settings_tab.addTab(self.tab_3, "Licenses")
+        self.licenses = QtWidgets.QWidget()
+        self.licenses.setObjectName("licenses")
+        self.a2settings_tab.addTab(self.licenses, "Licenses")
+        self.console = QtWidgets.QWidget()
+        self.console.setObjectName("console")
+        self.a2settings_tab.addTab(self.console, "")
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
 
         self.retranslateUi(a2settings)
-        self.a2settings_tab.setCurrentIndex(1)
+        self.a2settings_tab.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(a2settings)
 
     def retranslateUi(self, a2settings):
@@ -312,7 +315,8 @@ class Ui_a2settings(object):
         self.label.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
         self.label_14.setText(QtWidgets.QApplication.translate("a2settings", "@", None, -1))
         self.label_15.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
 
-from a2widget.a2path_field import A2PathField
-from a2widget.a2slider import A2Slider
 from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2slider import A2Slider
+from a2widget.a2path_field import A2PathField

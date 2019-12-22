@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>824</width>
-    <height>830</height>
+    <width>771</width>
+    <height>722</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="a2settings_tab">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_2">
       <property name="styleSheet">
@@ -551,10 +551,20 @@ Go ahead and add or create one:</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="licenses">
       <attribute name="title">
        <string notr="true">Licenses</string>
       </attribute>
+     </widget>
+     <widget class="QWidget" name="console_tab">
+      <attribute name="title">
+       <string>Console</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="console"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
