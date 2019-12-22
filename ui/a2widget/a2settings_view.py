@@ -17,6 +17,7 @@ from a2widget import a2settings_view_ui, a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
 _PROXY_ITEMS = 'user', 'pass', 'server', 'port'
+LICENSES_TAB_NAME = 'licenses'
 
 
 class A2Settings(QtWidgets.QWidget):
@@ -221,16 +222,16 @@ class A2Settings(QtWidgets.QWidget):
         dialog.show()
 
     def on_tab_changed(self, tab_index):
+        widget = self.ui.a2settings_tab.widget(tab_index)
         # to build the licenses tab on demand only
-        if tab_index == self.ui.a2settings_tab.count() - 1:
-            if self.ui.a2settings_tab.widget(tab_index).children():
+        if widget.objectName() == LICENSES_TAB_NAME:
+            if widget.children():
                 return
             from a2widget import a2licenses_widget_ui
             a2ctrl.check_ui_module(a2licenses_widget_ui)
             ui = a2licenses_widget_ui.Ui_Form()
             ui.setupUi(self.ui.a2settings_tab)
-            self.ui.a2settings_tab.widget(tab_index).setLayout(
-                ui.license_layout)
+            widget.setLayout(ui.license_layout)
 
     def _check_proxy_settings(self):
         self.a2.db.set('proxy_enabled', self.ui.proxy_box.isChecked())
