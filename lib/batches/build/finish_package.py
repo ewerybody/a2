@@ -7,7 +7,6 @@ Better keep them as short as possible.
 import os
 import shutil
 import codecs
-from os.path import join
 
 import _build_package_init
 import a2ahk
@@ -27,15 +26,15 @@ UI_FOLDERS = ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']
 
 
 def main():
-    package_cfg = a2util.json_read(join(A2PATH, 'package.json'))
+    package_cfg = a2util.json_read(os.path.join(A2PATH, 'package.json'))
     package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
     print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
 
-    distroot = join(A2PATH, '_ package')
-    distpath = join(distroot, 'a2')
-    distlib = join(distpath, 'lib')
-    distui = join(distpath, 'ui')
-    a2lib = join(A2PATH, 'lib')
+    distroot = os.path.join(A2PATH, '_ package')
+    distpath = os.path.join(distroot, 'a2')
+    distlib = os.path.join(distpath, 'lib')
+    distui = os.path.join(distpath, 'ui')
+    a2lib = os.path.join(A2PATH, 'lib')
 
     if not os.path.isdir(distpath):
         raise FileNotFoundError('No Package found at "%s"!' % distpath)
@@ -44,10 +43,10 @@ def main():
 
     copy_files(distpath, distlib, a2lib, distui)
 
-    config_file = join(distlib, 'a2_config.ahk')
+    config_file = os.path.join(distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
-    with open(join(distpath, 'desktop.ini'), 'w') as file_obj:
+    with open(os.path.join(distpath, 'desktop.ini'), 'w') as file_obj:
         file_obj.write(DESKTOP_INI_CODE)
 
     print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
@@ -98,13 +97,14 @@ def update_readme(a2lib):
 
 def copy_files(distpath, distlib, a2lib, distui):
     print('distpath: %s' % distpath)
-    app_path = join(distpath, 'a2app')
+    app_path = os.path.join(distpath, 'a2app')
     if not os.path.isdir(app_path):
-        raise FileNotFoundError(
-            'App Path was not found!\n  %s\n'
-            'Package already handled?' % app_path)
-
-    os.rename(app_path, distui)
+        # raise FileNotFoundError(
+        print(
+            f'App Path was not found!\n  {app_path}\n'
+            'Package already handled?')
+    else:
+        os.rename(app_path, distui)
     print('distui: %s' % distui)
 
     print('copying root files ...')
@@ -114,7 +114,9 @@ def copy_files(distpath, distlib, a2lib, distui):
             shutil.copy2(item.path, distpath)
 
     print('copying lib files ...')
-    os.mkdir(distlib)
+    if not os.path.isdir(distlib):
+        os.mkdir(distlib)
+
     for item in os.scandir(a2lib):
         if item.name.startswith('_ '):
             continue
@@ -124,21 +126,28 @@ def copy_files(distpath, distlib, a2lib, distui):
             continue
 
         if item.name == 'a2ui release.ahk':
-            shutil.copy2(item.path, join(distlib, 'a2ui.ahk'))
+            shutil.copy2(item.path, os.path.join(distlib, 'a2ui.ahk'))
             continue
 
         if item.is_file():
             if ext == '.ahk':
                 shutil.copy2(item.path, distlib)
         else:
-            shutil.copytree(item.path, join(distlib, item.name), ignore=_ignore_items)
+            this_dest = os.path.join(distlib, item.name)
+            if os.path.isdir(this_dest):
+                print(f'  dir already copied: {this_dest}')
+            else:
+                shutil.copytree(item.path, this_dest, ignore=_ignore_items)
 
     print('copying ui files ...')
     for folder in UI_FOLDERS:
-        shutil.copytree(join(A2UIPATH, folder),
-                        join(distui, folder), ignore=_ignore_items)
+        this_dest = os.path.join(distui, folder)
+        if os.path.isdir(this_dest):
+            print(f'  dir already copied: {this_dest}')
+            continue
+        shutil.copytree(os.path.join(A2UIPATH, folder), this_dest, ignore=_ignore_items)
 
-    shutil.rmtree(join(distui, 'PySide', folder), ignore_errors=True)
+    shutil.rmtree(os.path.join(distui, 'PySide', folder), ignore_errors=True)
     for item in os.scandir(distui):
         if item.name.startswith('libopenblas.') and item.name.endswith('.dll'):
             print('removing libopenblas ...')
@@ -150,7 +159,7 @@ def copy_files(distpath, distlib, a2lib, distui):
 
 def _ignore_items(path, items):
     result = []
-    path_low = os.path.normpath(path.lower())
+    path_low = os.path.normcase(path)
     for item in items:
         # ignore temp stuff
         if item.startswith('_ '):
@@ -162,7 +171,7 @@ def _ignore_items(path, items):
             result.append(item)
             continue
 
-        item_path = join(path, item)
+        item_path = os.path.join(path, item)
         if os.path.isdir(item_path):
             # ignore autmatically build python 3 cache files
             if item in ['__pycache__']:
