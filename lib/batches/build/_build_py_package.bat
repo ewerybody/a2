@@ -8,8 +8,17 @@ set distpath=%a2path%\_ package\a2
 set Ahk2Exe="C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
 set source_path=%a2path%\lib\_source
 
-set pypath=C:\Python37
+rem getting latest python path
+set ahk_exe=%here%..\..\Autohotkey\Autohotkey.exe
+set tmp_txt=_ sfdgsdfgsdfgsdfg.txt
+
+"%ahk_exe%" %here%..\versions\get_Python_path.ahk > "%tmp_txt%"
+set /p pypath= < "%tmp_txt%"
+del "%tmp_txt%"
+
+echo pypath: %pypath%
 set pyinstaller=%pypath%\Scripts\pyinstaller.exe
+
 
 echo ### building a2 package ###
 echo distpath: %distpath%
@@ -17,7 +26,7 @@ echo ...
 
 
 if not exist %pypath% (
-  echo ERROR: Could not find Python37 package: %pypath%!
+  echo ERROR: Could not find Python package: %pypath%!
   pause
   exit
 )
