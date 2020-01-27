@@ -3,7 +3,6 @@ a2ui - setup interface for an Autohotkey environment.
 """
 import os
 import time
-from copy import deepcopy
 from functools import partial
 
 import a2dev
@@ -59,7 +58,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.runtime_watcher.message.connect(self.runtime_watcher_message)
         self.runtime_watcher.start()
 
-        log.info('A2Window initialised!')
+        log.info('A2Window initialised! (took %.4fs)' % (time.process_time()))
 
     def runtime_watcher_message(self, message):
         if not message:
@@ -193,7 +192,7 @@ class A2Window(QtWidgets.QMainWindow):
         if not self.module_view.editing:
             return
 
-        self.mod.config = deepcopy(self.temp_config)
+        self.mod.config = self.temp_config.copy()
         if self.mod.enabled:
             self.mod.change()
             self.settings_changed()
@@ -287,9 +286,11 @@ class A2Window(QtWidgets.QMainWindow):
                 log.debug('Could not restore the ui geometry with stored data!')
                 log.debug(error)
 
-        splitter_size = win_prefs.get('splitter')
-        if splitter_size is not None:
-            self.ui.splitter.setSizes(splitter_size)
+        # delaying this on startup saves > 200ms
+        if self.isVisible():
+            self._restore_splitter(win_prefs)
+        else:
+            QtCore.QTimer().singleShot(250, self._restore_splitter)
 
     def showRaise(self):
         """
@@ -492,6 +493,13 @@ class A2Window(QtWidgets.QMainWindow):
         Finds a named element and calls its check func.
         """
         self.module_view.check_element(name)
+
+    def _restore_splitter(self, win_prefs=None):
+        if win_prefs is None:
+            win_prefs = self.a2.db.get('windowprefs') or {}
+        splitter_size = win_prefs.get('splitter')
+        if splitter_size is not None:
+            self.ui.splitter.setSizes(splitter_size)    
 
 
 class RestartThread(QtCore.QThread):
