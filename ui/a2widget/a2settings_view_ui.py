@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Thu Dec 19 14:36:32 2019
-#      by: pyside2-uic  running on PySide2 5.12.1
+# Created: Tue Dec 24 23:43:21 2019
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -299,9 +299,14 @@ class Ui_a2settings(object):
         self.licenses = QtWidgets.QWidget()
         self.licenses.setObjectName("licenses")
         self.a2settings_tab.addTab(self.licenses, "Licenses")
-        self.console = QtWidgets.QWidget()
+        self.console_tab = QtWidgets.QWidget()
+        self.console_tab.setObjectName("console_tab")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.console_tab)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.console = QtWidgets.QPlainTextEdit(self.console_tab)
         self.console.setObjectName("console")
-        self.a2settings_tab.addTab(self.console, "")
+        self.verticalLayout_2.addWidget(self.console)
+        self.a2settings_tab.addTab(self.console_tab, "")
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
 
         self.retranslateUi(a2settings)
@@ -315,8 +320,8 @@ class Ui_a2settings(object):
         self.label.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
         self.label_14.setText(QtWidgets.QApplication.translate("a2settings", "@", None, -1))
         self.label_15.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
 
-from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2slider import A2Slider
+from a2widget.a2hotkey import A2Hotkey
 from a2widget.a2path_field import A2PathField
