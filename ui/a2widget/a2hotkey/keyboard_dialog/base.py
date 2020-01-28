@@ -14,8 +14,6 @@ import a2runtime
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
 
-from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
-
 from PySide2 import QtGui, QtCore, QtWidgets
 
 
@@ -45,6 +43,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self._original_key = None
         self._original_modifier = None
 
+        from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
         a2ctrl.check_ui_module(base_ui)
         a2ctrl.check_ui_module(mouse_ui)
         a2ctrl.check_ui_module(numpad_ui)

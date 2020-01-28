@@ -8,7 +8,7 @@ from PySide2 import QtCore, QtWidgets
 import a2ahk
 import a2ctrl
 import a2core
-from a2widget import A2MoreButton
+from a2widget.a2more_button import A2MoreButton
 
 
 log = a2core.get_logger(__name__)

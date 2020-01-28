@@ -1,6 +1,5 @@
 from PySide2 import QtCore, QtWidgets
-
-from a2widget import A2MoreButton
+from a2widget.a2more_button import A2MoreButton
 
 
 class A2ButtonField(QtWidgets.QWidget):

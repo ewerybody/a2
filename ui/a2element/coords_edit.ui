@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>edit</class>
  <widget class="QWidget" name="edit">
@@ -86,9 +85,9 @@
   <customwidget>
    <class>A2CoordsField</class>
    <extends>QSpinBox</extends>
-   <header>a2widget</header>
+   <header>a2widget.a2coords_field</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources />
+ <connections />
 </ui>

@@ -1,7 +1,9 @@
 from PySide2 import QtWidgets
 
 import a2ctrl
-from a2widget import A2MoreButton, A2PathField, A2ButtonField
+from a2widget.a2more_button import A2MoreButton
+from a2widget.a2path_field import A2PathField
+from a2widget.a2button_field import A2ButtonField
 
 
 class Demo(QtWidgets.QMainWindow):

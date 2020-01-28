@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets
-from a2widget import A2TagField
+from a2widget.a2tag_field import A2TagField
 
 
 class TagFieldDemo(QtWidgets.QMainWindow):
@@ -22,7 +22,7 @@ class TagFieldDemo(QtWidgets.QMainWindow):
 
     def bla(self):
         print(self.c.value)
-        #self.c.value = 'Blaab blaa!'
+        # self.c.value = 'Blaab blaa!'
 
 
 def show():

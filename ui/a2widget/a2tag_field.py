@@ -4,7 +4,7 @@ from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
 from a2widget.flowlayout import FlowLayout
-from a2widget import A2InputDialog
+from a2widget.a2input_dialog import A2InputDialog
 
 
 class A2TagField(QtWidgets.QWidget):

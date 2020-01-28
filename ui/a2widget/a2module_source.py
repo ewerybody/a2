@@ -2,7 +2,9 @@ import a2mod
 import a2core
 import a2ctrl
 from PySide2 import QtGui, QtCore, QtWidgets
-from a2widget import a2module_source_ui, A2ConfirmDialog, A2InputDialog
+from a2widget import a2module_source_ui
+from a2widget.a2input_dialog import A2ConfirmDialog, A2InputDialog
+
 
 log = a2core.get_logger(__name__)
 MOD_COUNT_TEXT = '%i modules, %i enabled'

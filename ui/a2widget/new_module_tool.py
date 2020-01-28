@@ -1,7 +1,3 @@
-"""
-@created: 20.09.2016
-@author: eric
-"""
 import os
 
 from PySide2 import QtWidgets
@@ -10,7 +6,7 @@ import a2mod
 import a2core
 import a2util
 import a2ctrl.connect
-from a2widget import A2InputDialog
+from a2widget.a2input_dialog import A2InputDialog
 
 
 class NewModulueTool(A2InputDialog):

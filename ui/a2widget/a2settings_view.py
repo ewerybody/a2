@@ -12,8 +12,7 @@ import a2ahk
 import a2core
 import a2util
 import a2ctrl.connect
-import a2widget.a2hotkey.keyboard_dialog.layouts
-from a2widget import a2settings_view_ui, a2module_source, a2hotkey
+from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
 _PROXY_ITEMS = 'user', 'pass', 'server', 'port'
@@ -45,6 +44,7 @@ class A2Settings(QtWidgets.QWidget):
             self._source_widgets[module_source] = widget
 
     def _setup_ui(self):
+        from a2widget import a2settings_view_ui
         a2ctrl.check_ui_module(a2settings_view_ui)
         self.ui = a2settings_view_ui.Ui_a2settings()
         self.ui.setupUi(self)
@@ -156,7 +156,7 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.hk_dialog_style.setCurrentIndex(index)
         self.ui.hk_dialog_style.currentTextChanged.connect(a2hotkey.set_dialog_style)
 
-        layouts = a2widget.a2hotkey.keyboard_dialog.layouts
+        from a2widget.a2hotkey.keyboard_dialog import layouts
         current_layout = layouts.get_current()
         index = 0
         for i, (keyboard_id, label) in enumerate(layouts.iterate()):

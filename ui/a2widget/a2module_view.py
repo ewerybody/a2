@@ -1,5 +1,4 @@
 import traceback
-from copy import deepcopy
 
 from PySide2 import QtCore, QtWidgets
 
@@ -8,7 +7,6 @@ import a2ctrl
 import a2util
 import a2element.common
 from a2widget import a2settings_view
-from a2widget import a2module_view_ui
 
 
 log = a2core.get_logger(__name__)
@@ -28,6 +26,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
     def setup_ui(self, main):
         self.main = main
+        from a2widget import a2module_view_ui
         a2ctrl.check_ui_module(a2module_view_ui)
         self.ui = a2module_view_ui.Ui_A2ModuleView()
         self.ui.setupUi(self)
@@ -149,10 +148,10 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls = []
         self.menu_items = []
         if self.main.temp_config is None:
-            self.main.temp_config = deepcopy(self.main.mod.config)
+            self.main.temp_config = self.main.mod.config.copy()
 
         if not len(self.main.temp_config):
-            new_cfg = deepcopy(NEW_MODULE_CFG)
+            new_cfg = NEW_MODULE_CFG.copy()
             new_cfg.update({
                 'description': NEW_MODULE_DESC % self.main.mod.name,
                 'date': a2util.get_date(),

@@ -1,6 +1,6 @@
 import uuid
 from PySide2 import QtWidgets
-from a2widget import A2ButtonField
+from a2widget.a2button_field import A2ButtonField
 
 
 class Demo(QtWidgets.QMainWindow):

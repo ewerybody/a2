@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>FuncWidget</class>
  <widget class="QWidget" name="FuncWidget">
@@ -105,7 +104,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="function_text"/>
+      <widget class="QLineEdit" name="function_text" />
      </item>
     </layout>
    </item>
@@ -115,9 +114,9 @@
   <customwidget>
    <class>A2MoreButton</class>
    <extends>QToolButton</extends>
-   <header>a2widget</header>
+   <header>a2widget.a2more_button</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources />
+ <connections />
 </ui>

@@ -6,17 +6,13 @@ import a2util
 from PySide2 import QtWidgets, QtCore
 
 
-CODE_ICON = a2ctrl.Icons.inst().code
-EDIT_ICON = a2ctrl.Icons.inst().edit
-
-
 class BrowseScriptsMenu(QtWidgets.QMenu):
     script_selected = QtCore.Signal(str, str)
 
     def __init__(self, parent, main):
         super(BrowseScriptsMenu, self).__init__(parent)
         self.main = main
-        self.setIcon(CODE_ICON)
+        self.setIcon(a2ctrl.Icons.inst().code)
         self.aboutToShow.connect(self.build_menu)
 
         self.extension = '.py'
@@ -82,13 +78,13 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         available = self.get_available_scripts()
 
         for script_name in available:
-            action = self.addAction(CODE_ICON, script_name,
+            action = self.addAction(a2ctrl.Icons.inst().code, script_name,
                                     self._on_script_selected_action)
             action.setData(script_name)
         if available:
             self.addSeparator()
 
-        self.addAction(CODE_ICON, 'Create New', self._on_create_script)
+        self.addAction(a2ctrl.Icons.inst().code, 'Create New', self._on_create_script)
 
 
 class ScriptSelector(QtWidgets.QWidget):
@@ -107,7 +103,7 @@ class ScriptSelector(QtWidgets.QWidget):
 
         self.edit_button = QtWidgets.QPushButton('edit script')
         self.edit_button.clicked.connect(self.edit_script)
-        self.edit_button.setIcon(EDIT_ICON)
+        self.edit_button.setIcon(a2ctrl.Icons.inst().edit)
         layout.addWidget(self.edit_button)
         layout.setStretch(0, 1)
 
@@ -143,7 +139,3 @@ def build_file_name(name, prefix):
         return None
     else:
         return prefix + name + '.py'
-
-
-if __name__ == '__main__':
-    pass

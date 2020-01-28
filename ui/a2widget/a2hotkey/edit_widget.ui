@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>edit</class>
  <widget class="QWidget" name="edit">
@@ -98,7 +97,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string notr="true"/>
+          <string notr="true" />
          </property>
         </widget>
        </item>
@@ -196,7 +195,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="FuncWidget" name="func_widget" native="true"/>
+    <widget class="FuncWidget" name="func_widget" native="true" />
    </item>
   </layout>
  </widget>
@@ -215,9 +214,9 @@
   <customwidget>
    <class>A2MoreButton</class>
    <extends>QToolButton</extends>
-   <header>a2widget</header>
+   <header>a2widget.a2more_button</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources />
+ <connections />
 </ui>
