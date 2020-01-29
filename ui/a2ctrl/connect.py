@@ -4,7 +4,11 @@ from functools import partial
 from PySide2 import QtWidgets
 
 import a2core
-import a2widget
+from a2widget.a2button_field import A2ButtonField
+from a2widget.a2coords_field import A2CoordsField
+from a2widget.a2tag_field import A2TagField
+from a2widget.a2path_field import A2PathField
+from a2widget.a2text_field import A2CodeField, A2TextField
 
 
 log = a2core.get_logger(__name__)
@@ -56,7 +60,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.isChecked()
 
-    elif isinstance(ctrl, (QtWidgets.QLineEdit, a2widget.A2ButtonField)):
+    elif isinstance(ctrl, (QtWidgets.QLineEdit, A2ButtonField)):
         ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.textChanged[str].connect(change_signal.emit)
@@ -65,9 +69,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.text()
 
-    elif isinstance(ctrl, (a2widget.A2CoordsField,
-                           a2widget.A2TagField,
-                           a2widget.A2PathField)):
+    elif isinstance(ctrl, (A2CoordsField, A2TagField, A2PathField)):
         ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
@@ -120,7 +122,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         elif ctrl.isChecked():
             cfg[name] = value
 
-    elif isinstance(ctrl, (QtWidgets.QTextEdit, a2widget.A2TextField, a2widget.A2CodeField)):
+    elif isinstance(ctrl, (QtWidgets.QTextEdit, A2TextField, A2CodeField)):
         # For if a not immediate change signal is wanted
         # TODO: Do this for the other ctrl types
         if trigger_signal is None:
