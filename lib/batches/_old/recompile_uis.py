@@ -6,6 +6,7 @@ from pprint import pprint
 from importlib import import_module
 from xml.etree import ElementTree
 from pyside2uic import compileUi
+import _ensure_a2_path
 import a2widget
 import inspect
 from PySide2 import QtWidgets
