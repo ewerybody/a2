@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\string_edit.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2element\string_edit.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\string_edit.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\string_edit.ui' applies.
 #
-# Created: Thu Mar 28 14:20:11 2019
-#      by: pyside2-uic  running on PySide2 5.12.0
+# Created: Tue Jan 28 21:59:37 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -55,4 +55,4 @@ class Ui_edit(object):
         self.cfg_label_over_field.setText(QtWidgets.QApplication.translate("edit", "Label over field", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("edit", "default text:", None, -1))
 
-from a2widget import A2TextField
+from a2widget.a2text_field import A2TextField

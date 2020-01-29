@@ -4,7 +4,7 @@ import a2ctrl
 
 from PySide2 import QtWidgets
 
-from a2widget import A2Slider
+from a2widget.a2slider import A2Slider
 from a2element import number_edit_ui, DrawCtrl, EditCtrl
 
 

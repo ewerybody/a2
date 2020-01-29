@@ -20,10 +20,11 @@ A hotkey configuration can have a lot of stuff to it:
 from PySide2 import QtCore, QtWidgets
 
 import a2core
-import a2ctrl
+import a2ctrl.connect
 import a2util
 from a2element import DrawCtrl, EditCtrl
-from a2widget import A2MoreButton, a2hotkey
+from a2widget import a2hotkey
+from a2widget.a2more_button import A2MoreButton
 
 Vars = a2hotkey.Vars
 log = a2core.get_logger(__name__)

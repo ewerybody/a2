@@ -2,7 +2,7 @@
 import a2ctrl.connect
 from PySide2 import QtWidgets
 from a2element import DrawCtrl, EditCtrl
-from a2widget import A2TextField
+from a2widget.a2text_field import A2TextField
 
 
 class Draw(DrawCtrl):

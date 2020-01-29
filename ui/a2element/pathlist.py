@@ -3,7 +3,7 @@ import a2ctrl
 
 from PySide2 import QtCore, QtWidgets
 
-from a2widget import A2PathField
+from a2widget.a2path_field import A2PathField
 from a2element import pathlist_edit_ui, DrawCtrlMixin, EditCtrl
 
 

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\nfo_edit.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Tue Jan 28 21:59:37 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_edit(object):
     def setupUi(self, edit):
@@ -16,7 +16,7 @@ class Ui_edit(object):
         edit.resize(1059, 579)
         self.edit_layout = QtWidgets.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.edit_layout.setObjectName("edit_layout")
         self.cfg_description = QtWidgets.QTextEdit(edit)
         self.cfg_description.setMaximumSize(QtCore.QSize(16777215, 100))
@@ -24,7 +24,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.cfg_description)
         self.internalNameLabel = QtWidgets.QLabel(edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
         self.cfg_author = QtWidgets.QLineEdit(edit)
@@ -33,7 +33,7 @@ class Ui_edit(object):
         self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_author)
         self.displayLabelLabel = QtWidgets.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.edit_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_version = QtWidgets.QLineEdit(edit)
@@ -72,4 +72,4 @@ class Ui_edit(object):
         self.label_2.setText(QtWidgets.QApplication.translate("edit", "URL:", None, -1))
         self.label_3.setText(QtWidgets.QApplication.translate("edit", "Tags:", None, -1))
 
-from a2widget import A2TagField
+from a2widget.a2tag_field import A2TagField

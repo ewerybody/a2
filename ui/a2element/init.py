@@ -3,7 +3,7 @@ import a2ctrl.connect
 
 from PySide2 import QtWidgets
 from a2element import EditCtrl
-from a2widget import A2CodeField
+from a2widget.a2text_field import A2CodeField
 
 
 class Edit(EditCtrl):

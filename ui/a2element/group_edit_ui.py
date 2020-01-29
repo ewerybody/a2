@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2element\group_edit.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2element\group_edit.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\group_edit.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\group_edit.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Tue Jan 28 21:59:36 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_edit(object):
     def setupUi(self, edit):
@@ -24,7 +24,7 @@ class Ui_edit(object):
         self.internalNameLabel = QtWidgets.QLabel(edit)
         self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.internalNameLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.internalNameLabel.setObjectName("internalNameLabel")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
         self.cfg_name = QtWidgets.QLineEdit(edit)
@@ -33,7 +33,7 @@ class Ui_edit(object):
         self.displayLabelLabel = QtWidgets.QLabel(edit)
         self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
         self.displayLabelLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing | QtCore.Qt.AlignVCenter)
+        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.displayLabelLabel.setObjectName("displayLabelLabel")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
         self.cfg_label = QtWidgets.QLineEdit(edit)
