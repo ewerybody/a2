@@ -5,12 +5,9 @@ a2ctrl - basic functionality for all the a2element building blocks
 import os
 import sys
 import traceback
-from pyside2uic import compileUi
 from importlib import reload, import_module
 
 import a2core
-import a2util
-from a2ctrl import connect
 from a2ctrl.icons import Ico, Icons
 
 
@@ -62,6 +59,7 @@ def check_ui_module(module):
     ui_time = os.path.getmtime(uifile)
     diff = py_time - ui_time
     if diff < 0:
+        from pyside2uic import compileUi
         log.debug('%s needs compile! (age: %is)' % (pybase, diff))
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
