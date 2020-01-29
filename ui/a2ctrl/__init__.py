@@ -116,11 +116,9 @@ def get_a2element_object(obj_name, element_cfg, module_path=None):
     :rtype: class
     """
     element_typ = element_cfg['typ']
-    element_mod = get_a2element_module(element_typ)
-    if element_mod is not None:
-        return getattr(element_mod, obj_name)
+    if element_typ == LOCAL_ELEMENT_ID:
+        print(f'local element {module_path}')
 
-    elif element_typ == LOCAL_ELEMENT_ID and module_path:
         element_path = os.path.join(
             module_path, '%s_%s.py' % (LOCAL_ELEMENT_ID, element_cfg['name']))
         element_mod = get_local_element(element_path)
@@ -130,8 +128,12 @@ def get_a2element_object(obj_name, element_cfg, module_path=None):
             log.error(error)
             raise RuntimeError('Local Element "%s" has no object "%s"!!' %
                                (element_path, obj_name))
+    else:
+        element_mod = get_a2element_module(element_typ)
+        if element_mod is not None:
+            return getattr(element_mod, obj_name)
 
-
+    
 def get_a2element_module(element_type):
     """
     From the "typ" tries to import the according module from a2element
@@ -152,9 +154,6 @@ def get_a2element_module(element_type):
             _element_map[element_type] = element_mod
             return element_mod
 
-        # import error is expected if the element is local only
-        except ImportError:
-            pass
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error('Could not import element type "%s"!' % element_type)
@@ -172,6 +171,7 @@ def get_local_element(item_path):
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error('Could not get local element module! "%s"' % item_path)
+            element_module = None
 
         sys.path.remove(dir_path)
 
@@ -209,6 +209,7 @@ def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None)
 
 
 def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
+    import a2util
     a2obj = a2core.A2Obj.inst()
     module_user_cfg = a2obj.db.get('user_cfg', module_key) or {}
     for element_cfg in cfg_list:
