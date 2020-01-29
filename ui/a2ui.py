@@ -10,7 +10,6 @@ import a2core
 import a2ctrl
 import a2util
 import a2runtime
-from a2widget import a2design_ui
 
 from PySide2 import QtGui, QtCore, QtWidgets
 
@@ -46,13 +45,10 @@ class A2Window(QtWidgets.QMainWindow):
         self._setup_ui()
 
         self.num_selected = 0
-        init_selection = []
+        self._init_selection = []
         if self.a2.db.get('remember_last') or False:
-            init_selection = self.a2.db.get('last_selected') or []
+            self._init_selection = self.a2.db.get('last_selected') or []
         self.module_list.selection_changed.connect(self._module_selected)
-        self.module_list.draw_modules(init_selection)
-        if not init_selection:
-            self.module_view.draw_mod()
 
         self.runtime_watcher = RuntimeWatcher(self)
         self.runtime_watcher.message.connect(self.runtime_watcher_message)
@@ -78,6 +74,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_view.draw_mod()
 
     def _setup_ui(self):
+        from a2widget import a2design_ui
         a2ctrl.check_ui_module(a2design_ui)
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
@@ -501,6 +498,15 @@ class A2Window(QtWidgets.QMainWindow):
         if splitter_size is not None:
             self.ui.splitter.setSizes(splitter_size)    
 
+    def showEvent(self, event):
+        print('A2Window showEvent')
+
+        self.module_list.draw_modules(self._init_selection)
+        if not self._init_selection:
+            # QtCore.QTimer().singleShot(1250, self.module_view.draw_mod)
+            self.module_view.draw_mod()
+
+        super(A2Window, self).showEvent(event)
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):
