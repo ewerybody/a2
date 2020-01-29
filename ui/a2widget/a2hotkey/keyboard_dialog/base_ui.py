@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Tue Jan 28 21:59:38 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -190,6 +190,7 @@ class Ui_Keyboard(object):
 
     def retranslateUi(self, Keyboard):
         Keyboard.setWindowTitle(QtWidgets.QApplication.translate("Keyboard", "Hotkey Dialog", None, -1))
+        self.option_button.setText(QtWidgets.QApplication.translate("Keyboard", "...", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("Keyboard", "Show:", None, -1))
 
-from a2widget import A2MoreButton
+from a2widget.a2more_button import A2MoreButton

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui' applies.
 #
-# Created: Sun Nov  4 22:16:36 2018
-#      by: pyside2-uic  running on PySide2 5.11.1
+# Created: Tue Jan 28 21:59:37 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 

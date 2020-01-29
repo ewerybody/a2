@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source_body.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2module_source_body.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2module_source_body.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2module_source_body.ui' applies.
 #
-# Created: Tue Jul  3 17:33:51 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1529944648
+# Created: Tue Jan 28 21:59:37 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -80,4 +80,5 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         pass
 
-from a2widget import A2PathField, A2MoreButton
+from a2widget.a2path_field import A2PathField
+from a2widget.a2more_button import A2MoreButton

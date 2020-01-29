@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Tue Jan 28 21:59:38 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_ScopeWidget(object):
     def setupUi(self, ScopeWidget):
@@ -147,4 +147,5 @@ class Ui_ScopeWidget(object):
         self.label_3.setText(QtWidgets.QApplication.translate("ScopeWidget", "window class", None, -1))
         self.label_4.setText(QtWidgets.QApplication.translate("ScopeWidget", "executable", None, -1))
 
-from a2widget import A2ListCompact, A2ButtonField
+from a2widget.a2button_field import A2ButtonField
+from a2widget.a2list import A2ListCompact

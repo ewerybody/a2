@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Tue Dec 24 23:43:21 2019
+# Created: Tue Jan 28 21:59:37 2020
 #      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -322,6 +322,6 @@ class Ui_a2settings(object):
         self.label_15.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
 
+from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
 from a2widget.a2hotkey import A2Hotkey
-from a2widget.a2path_field import A2PathField

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui' applies.
 #
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
+# Created: Tue Jan 28 21:59:37 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_FuncWidget(object):
     def setupUi(self, FuncWidget):
@@ -67,4 +67,4 @@ class Ui_FuncWidget(object):
         self.function_send_mode.setItemText(4, QtWidgets.QApplication.translate("FuncWidget", "SendEvent", None, -1))
         self.run_label.setText(QtWidgets.QApplication.translate("FuncWidget", "Run, ", None, -1))
 
-from a2widget import A2MoreButton
+from a2widget.a2more_button import A2MoreButton

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui' applies.
 #
-# Created: Wed Jul  4 10:15:52 2018
-#      by: pyside2-uic  running on PySide2 5.11.1a1.dev1529944648
+# Created: Tue Jan 28 21:59:37 2020
+#      by: pyside2-uic  running on PySide2 5.14.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -108,6 +108,6 @@ class Ui_edit(object):
         self.cfg_multiple.setText(QtWidgets.QApplication.translate("edit", "allow multiple hotkeys", None, -1))
         self.functionLabel.setText(QtWidgets.QApplication.translate("edit", "function:", None, -1))
 
-from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2more_button import A2MoreButton
 from a2widget.a2hotkey.edit_func_widget import FuncWidget
-from a2widget import A2MoreButton
+from a2widget.a2hotkey import A2Hotkey
