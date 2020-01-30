@@ -51,8 +51,6 @@ def check_ui_module(module):
 
     uifile = os.path.join(folder, uibase)
     if not uibase or not os.path.isfile(uifile):
-        # Nothing to test against. That's alright!
-        # log.debug('Ui-file not found: %s' % pybase)
         return
 
     py_time = os.path.getmtime(pyfile)
@@ -60,9 +58,25 @@ def check_ui_module(module):
     diff = py_time - ui_time
     if diff < 0:
         from pyside2uic import compileUi
-        log.debug('%s needs compile! (age: %is)' % (pybase, diff))
+        log.debug('%s needs compile! (age: %is)' % (uibase, diff))
         with open(pyfile, 'w') as pyfobj:
             compileUi(uifile, pyfobj)
+
+        # patch compiled main ui file to have resizing handled by settings.
+        # Could be useful for ANY compiled UI:
+        #     main sizes are usually related to parent arrangement!?
+        if uiname == 'a2design_ui':
+            with open(pyfile) as pyfobj:
+                lines = pyfobj.readlines()
+
+            skip_lines = 12
+            for i, line in enumerate(lines[12:]):
+                if line.startswith('        a2MainWindow.resize('):
+                    with open(pyfile, 'w') as pyfobj:
+                        pyfobj.write(''.join(lines[:i + skip_lines]) +
+                                     ''.join(lines[i + skip_lines + 1:]))
+                        break
+
         reload(module)
 
 
