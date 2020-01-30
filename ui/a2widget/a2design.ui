@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>635</height>
+    <width>755</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="font">
@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>a2</string>
+   <string notr="true">a2</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -42,13 +42,13 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>766</width>
-     <height>25</height>
+     <width>755</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>&amp;Help</string>
+     <string notr="true">&amp;Help</string>
     </property>
     <addaction name="actionReport_Issue"/>
     <addaction name="actionAbout_a2"/>
@@ -56,11 +56,11 @@
    </widget>
    <widget class="QMenu" name="menuDev">
     <property name="title">
-     <string>&amp;Dev</string>
+     <string notr="true">&amp;Dev</string>
     </property>
     <widget class="QMenu" name="menuRollback_Changes">
      <property name="title">
-      <string>Rollback Changes</string>
+      <string notr="true">Rollback Changes</string>
      </property>
     </widget>
     <addaction name="actionNew_Module_Dialog"/>
@@ -77,7 +77,7 @@
    </widget>
    <widget class="QMenu" name="menuMain">
     <property name="title">
-     <string>&amp;Main</string>
+     <string notr="true">&amp;Main</string>
     </property>
     <addaction name="actionA2_settings"/>
     <addaction name="actionRefresh_UI"/>
@@ -90,7 +90,7 @@
    </widget>
    <widget class="QMenu" name="menuModule">
     <property name="title">
-     <string>Module</string>
+     <string notr="true">Module</string>
     </property>
     <addaction name="actionHelp_on_Module"/>
     <addaction name="actionRevert_Settings"/>
@@ -102,10 +102,7 @@
   </widget>
   <action name="actionAbout_a2">
    <property name="text">
-    <string>About a2</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true"/>
+    <string notr="true">About a2</string>
    </property>
   </action>
   <action name="actionEdit_module">
@@ -118,68 +115,59 @@
   </action>
   <action name="actionDisable_all_modules">
    <property name="text">
-    <string>Disable All Modules</string>
+    <string notr="true">Disable All Modules</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionExplore_to">
    <property name="text">
-    <string>Explore to Module ...</string>
+    <string notr="true">Explore to Module ...</string>
    </property>
    <property name="shortcut">
     <string notr="true">Alt+E</string>
    </property>
   </action>
-  <action name="actionDev_settings">
-   <property name="text">
-    <string>Dev Settings ...</string>
-   </property>
-  </action>
   <action name="actionAbout_Autohotkey">
    <property name="text">
-    <string>About Autohotkey</string>
+    <string notr="true">About Autohotkey</string>
    </property>
   </action>
   <action name="actionExplore_to_a2_dir">
    <property name="text">
-    <string>Explore to a2 ...</string>
+    <string notr="true">Explore to a2 ...</string>
    </property>
-  </action>
-  <action name="actionTest_restorewin">
-   <property name="text">
-    <string>test restoring window outside of screen</string>
-   </property>
-  </action>
-  <action name="actionNew_module">
-   <property name="text">
-    <string>New Module</string>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionA2_settings">
    <property name="text">
-    <string>a2 Settings</string>
+    <string notr="true">a2 Settings</string>
    </property>
   </action>
   <action name="actionExit_a2ui">
    <property name="text">
-    <string>Exit a2UI</string>
+    <string notr="true">Exit a2UI</string>
    </property>
   </action>
   <action name="actionRefresh_UI">
    <property name="text">
-    <string>Refresh UI</string>
+    <string notr="true">Refresh UI</string>
    </property>
    <property name="shortcut">
-    <string>F5</string>
+    <string notr="true">F5</string>
    </property>
   </action>
   <action name="actionReport_Issue">
    <property name="text">
-    <string>Report Issue</string>
+    <string notr="true">Report Issue</string>
    </property>
   </action>
   <action name="actionNew_Module_Dialog">
    <property name="text">
-    <string>Create New Module</string>
+    <string notr="true">Create New Module</string>
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+N</string>
@@ -187,47 +175,60 @@
   </action>
   <action name="actionBuild_A2_Package">
    <property name="text">
-    <string>Build A2 Package</string>
+    <string notr="true">Build A2 Package</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionCreate_New_Element">
    <property name="text">
-    <string>Create New Element</string>
+    <string notr="true">Create New Element</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionHelp_on_Module">
    <property name="text">
-    <string>Help on Module</string>
+    <string notr="true">Help on Module</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionRevert_Settings">
    <property name="text">
-    <string>Revert Settings</string>
+    <string notr="true">Revert Settings</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionReload_a2_Runtime">
    <property name="text">
-    <string>Reload a2 Runtime</string>
+    <string notr="true">Reload a2 Runtime</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
   <action name="actionUnload_a2_Runtime">
    <property name="text">
-    <string>Unload a2 Runtime</string>
+    <string notr="true">Unload a2 Runtime</string>
    </property>
   </action>
   <action name="actionLoad_a2_Runtime">
    <property name="text">
-    <string>Load a2 Runtime</string>
-   </property>
-  </action>
-  <action name="actionRollback_Changes">
-   <property name="text">
-    <string>Rollback Changes</string>
+    <string notr="true">Load a2 Runtime</string>
    </property>
   </action>
   <action name="actionExplore_to_a2_data_dir">
    <property name="text">
-    <string>Explore to a2 data ...</string>
+    <string notr="true">Explore to a2 data ...</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true"/>
    </property>
   </action>
  </widget>

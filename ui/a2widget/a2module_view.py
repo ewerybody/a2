@@ -30,11 +30,12 @@ class A2ModuleView(QtWidgets.QWidget):
         a2ctrl.check_ui_module(a2module_view_ui)
         self.ui = a2module_view_ui.Ui_A2ModuleView()
         self.ui.setupUi(self)
+        self.update_header()
 
         self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()
         self.settings_widget = self.ui.scroll_area_contents
 
-        self.ui.modCheck.clicked[bool].connect(self.main.mod_enable)
+        self.ui.mod_check.clicked[bool].connect(self.main.mod_enable)
         self.ui.a2help_button.clicked.connect(self.help)
 
         self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
@@ -105,9 +106,9 @@ class A2ModuleView(QtWidgets.QWidget):
         Updates the module settings view to the right of the UI
         when something different is elected in the module list
         """
-        self.ui.modCheck.setTristate(False)
-        self.ui.modAuthor.setText(author)
-        self.ui.modVersion.setText(version)
+        self.ui.mod_check.setTristate(False)
+        self.ui.mod_author.setText(author)
+        self.ui.mod_version.setText(version)
 
         if self.main.mod is None:
             self.ui.a2mod_view_source_label.setText('')
@@ -120,19 +121,19 @@ class A2ModuleView(QtWidgets.QWidget):
                 self.ui.a2_mod_name.setText('%i modules' % self.main.num_selected)
                 num_enabled = sum([mod.enabled for mod in self.main.selected])
                 if num_enabled == 0:
-                    self.ui.modCheck.setChecked(False)
+                    self.ui.mod_check.setChecked(False)
                 elif num_enabled == self.main.num_selected:
-                    self.ui.modCheck.setChecked(True)
+                    self.ui.mod_check.setChecked(True)
                 else:
-                    self.ui.modCheck.setTristate(True)
-                    self.ui.modCheck.setCheckState(QtCore.Qt.PartiallyChecked)
+                    self.ui.mod_check.setTristate(True)
+                    self.ui.mod_check.setCheckState(QtCore.Qt.PartiallyChecked)
         else:
             self.ui.head_widget.setVisible(True)
             self.ui.a2mod_view_source_label.setText(self.main.mod.source.name)
             self.ui.a2_mod_name.setText(self.main.mod.name)
             # weird.. need to set false first to fix tristate effect
-            self.ui.modCheck.setChecked(False)
-            self.ui.modCheck.setChecked(self.main.mod.enabled)
+            self.ui.mod_check.setChecked(False)
+            self.ui.mod_check.setChecked(self.main.mod.enabled)
 
     def edit_mod(self):
         """

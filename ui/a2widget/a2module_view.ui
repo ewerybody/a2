@@ -10,30 +10,18 @@
     <height>578</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="A2ModuleViewLayout">
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
     <widget class="QWidget" name="head_widget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,1,0">
       <item>
-       <widget class="QCheckBox" name="modCheck">
+       <widget class="QCheckBox" name="mod_check">
         <property name="text">
          <string/>
         </property>
@@ -73,7 +61,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="modVersion">
+       <widget class="QLabel" name="mod_version">
         <property name="font">
          <font>
           <family>Segoe UI</family>
@@ -81,12 +69,12 @@
          </font>
         </property>
         <property name="text">
-         <string>v0.0</string>
+         <string notr="true">v0.0</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="modAuthor">
+       <widget class="QLabel" name="mod_author">
         <property name="font">
          <font>
           <family>Segoe UI</family>
@@ -94,7 +82,7 @@
          </font>
         </property>
         <property name="text">
-         <string>- Author Name</string>
+         <string notr="true">- Author Name</string>
         </property>
        </widget>
       </item>
@@ -113,14 +101,14 @@
          </font>
         </property>
         <property name="text">
-         <string>- Module Source</string>
+         <string notr="true">- Module Source</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="a2help_button">
         <property name="text">
-         <string>?</string>
+         <string notr="true">?</string>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -141,7 +129,7 @@
         <x>0</x>
         <y>0</y>
         <width>614</width>
-        <height>481</height>
+        <height>473</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4"/>
@@ -159,7 +147,7 @@
          </font>
         </property>
         <property name="text">
-         <string>OK</string>
+         <string notr="true">OK</string>
         </property>
        </widget>
       </item>
@@ -177,7 +165,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Cancel</string>
+         <string notr="true">Cancel</string>
         </property>
         <property name="flat">
          <bool>true</bool>

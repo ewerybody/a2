@@ -43,7 +43,7 @@ class A2StyleBuilder(object):
 
     def get_style(self, user_scale=1.0):
         if user_scale == self._user_scale and self._last_style is not None:
-            return  self._last_style
+            return self._last_style
 
         self._css_values['user_scale'] = user_scale
         scale = self._css_values['local_scale'] * user_scale
