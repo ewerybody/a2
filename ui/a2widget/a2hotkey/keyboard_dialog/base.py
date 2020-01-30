@@ -43,14 +43,10 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self._original_key = None
         self._original_modifier = None
 
-        from . import base_ui, mouse_ui, numpad_ui, cursor_block_ui
-        a2ctrl.check_ui_module(base_ui)
-        a2ctrl.check_ui_module(mouse_ui)
-        a2ctrl.check_ui_module(numpad_ui)
-        a2ctrl.check_ui_module(cursor_block_ui)
-
+        from . import base_ui
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
+
         self.cursor_block_widget = CursorBlockWidget(self)
         self.numpad_block_widget = NumpadWidget(self)
         self.mouse_block_widget = MouseWidget(self)
@@ -102,7 +98,8 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def _setup_ui(self):
         # css debug shortcut
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
+        QtWidgets.QShortcut(QtGui.QKeySequence(
+            QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
 
         self.ui.keys_layout.addWidget(self.cursor_block_widget)
         self.ui.keys_layout.addWidget(self.numpad_block_widget)
@@ -222,7 +219,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self.ui.key_field.setText(self.key)
 
         # TODO this might be kicked of delayed after dialog popup
-        global_hks, include_hks, exclude_hks = get_current_hotkeys()
+        global_hks, _include_hks, _exclude_hks = get_current_hotkeys()
         parent_modifier = hotkey_common.parent_modifier_string(modifier_string)
         win_shortcuts, a2_shortcuts = {}, {}
 
@@ -261,18 +258,18 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             name = name.lower()
             a2_shortcuts = dict([(k.lower(), v) for k, v in a2_shortcuts.items()])
             tooltip = []
-            style_sheet = self._ui_styles['default']
+            style_sheet = self._ui_styles.get('default', '')
 
             if self._original_key == name and self.checked_modifier == self._original_modifier:
-                style_sheet = self._ui_styles['orig_button']
+                style_sheet = self._ui_styles.get('orig_button', '')
                 tooltip.append('Original Shortcut')
             else:
                 if name in win_shortcuts:
-                    style_sheet = self._ui_styles['win_button']
+                    style_sheet = self._ui_styles.get('win_button', '')
                     tooltip.append('Windows Shortcut: %s' % win_shortcuts[name])
 
                 if name in a2_shortcuts:
-                    style_sheet = self._ui_styles['a2_button']
+                    style_sheet = self._ui_styles.get('a2_button', '')
                     for command, module in a2_shortcuts[name]:
                         if module is None:
                             tooltip.append('a2: %s' % command)
@@ -294,7 +291,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                         log.info('  %s: %s' % (key, ops))
                 if trigger_key in collection:
                     log.info(f'Actual collisions with {name}:\n'
-                            '  %s' % collection[trigger_key])
+                             '  %s' % collection[trigger_key])
 
     def _fill_key_dict(self):
         for modkeyname in BASE_MODIFIERS:
@@ -352,7 +349,10 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         try:
             css_values = self.a2.win.style.get_value_dict()
         except AttributeError:
-            return
+            import a2style
+            style = a2style.A2StyleBuilder()
+            style.get_style()
+            css_values = style.get_value_dict()
 
         scale = css_values['scale']
         values = a2util.json_read(os.path.join(_HERE, 'style_values.json'))
@@ -448,6 +448,9 @@ class Scope(object):
 class CursorBlockWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(CursorBlockWidget, self).__init__(parent)
+
+        from . import cursor_block_ui
+        a2ctrl.check_ui_module(cursor_block_ui)
         self.ui = cursor_block_ui.Ui_CursorBlock()
         self.ui.setupUi(self)
 
@@ -464,8 +467,12 @@ class NumpadWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(NumpadWidget, self).__init__(parent)
         self.a2 = parent.a2
+
+        from . import numpad_ui
+        a2ctrl.check_ui_module(numpad_ui)
         self.ui = numpad_ui.Ui_Numpad()
         self.ui.setupUi(self)
+
         self.setVisible(self.a2.db.get(DB_KEY_NUMPAD) or False)
 
 
@@ -473,8 +480,12 @@ class MouseWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super(MouseWidget, self).__init__(parent)
         self.a2 = parent.a2
+
+        from . import mouse_ui
+        a2ctrl.check_ui_module(mouse_ui)
         self.ui = mouse_ui.Ui_Mouse()
         self.ui.setupUi(self)
+
         self.setVisible(self.a2.db.get(DB_KEY_MOUSE) or False)
 
     def set_spacing(self, spacing):

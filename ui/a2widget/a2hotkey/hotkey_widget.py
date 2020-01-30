@@ -121,7 +121,7 @@ class A2Hotkey(QtWidgets.QWidget):
         is_global = self._cfg.get(Vars.scope_mode, 0) == 0
         scope_change = self._cfg.get(Vars.scope_change, False)
         if not self.is_edit_mode and not scope_change and is_global:
-            from a2widget import A2ConfirmDialog
+            from a2widget.a2input_dialog import A2ConfirmDialog
             dialog = A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
             dialog.show()
         else:

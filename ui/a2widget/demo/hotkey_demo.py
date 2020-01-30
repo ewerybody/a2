@@ -2,7 +2,7 @@ from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
 import a2element.hotkey
-from a2widget import A2CodeField
+from a2widget.a2text_field import A2CodeField
 from a2widget.a2hotkey import scope_widget_ui, edit_widget_ui
 from copy import deepcopy
 

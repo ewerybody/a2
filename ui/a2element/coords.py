@@ -4,7 +4,7 @@ import a2core
 
 from PySide2 import QtWidgets
 from a2element import coords_edit_ui, DrawCtrl, EditCtrl
-from a2widget import A2CoordsField
+from a2widget.a2coords_field import A2CoordsField
 
 
 log = a2core.get_logger(__name__)
