@@ -89,7 +89,13 @@ def draw(main, element_cfg, mod, user_cfg):
     if element_typ in NO_DRAW_TYPES:
         return
 
-    element_module = get_a2element_module(element_typ)
+    if element_typ == LOCAL_ELEMENT_ID:
+        element_path = os.path.join(
+            mod.path, '%s_%s.py' % (LOCAL_ELEMENT_ID, element_cfg['name']))
+        element_module = get_local_element(element_path)
+    else:
+        element_module = get_a2element_module(element_typ)
+
     try:
         return element_module.Draw(main, element_cfg, mod, user_cfg)
     except Exception:
@@ -147,7 +153,7 @@ def get_a2element_object(obj_name, element_cfg, module_path=None):
         if element_mod is not None:
             return getattr(element_mod, obj_name)
 
-    
+
 def get_a2element_module(element_type):
     """
     From the "typ" tries to import the according module from a2element
