@@ -24,6 +24,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
+        self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
         self._restart_thread = None
@@ -32,6 +33,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.edit_clipboard = []
         self.temp_config = None
         self.selected = []
+        self.num_selected = 0
         self.mod = None
 
         self.style = None
@@ -42,19 +44,15 @@ class A2Window(QtWidgets.QMainWindow):
             a2core.set_loglevel(debug=True)
             log.debug('Loglevel set to DEBUG!')
 
-        self._setup_ui()
-
-        self.num_selected = 0
         self._init_selection = []
         if self.a2.db.get('remember_last') or False:
             self._init_selection = self.a2.db.get('last_selected') or []
-        self.module_list.selection_changed.connect(self._module_selected)
 
         self.runtime_watcher = RuntimeWatcher(self)
         self.runtime_watcher.message.connect(self.runtime_watcher_message)
         self.runtime_watcher.start()
 
-        log.info('A2Window initialised! (took %.4fs)' % (time.process_time()))
+        self._initial_draw_finished = False
 
     def runtime_watcher_message(self, message):
         if not message:
@@ -78,21 +76,20 @@ class A2Window(QtWidgets.QMainWindow):
         a2ctrl.check_ui_module(a2design_ui)
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
-        # shortcuts
+
         self.module_list = self.ui.module_list
         self.module_list.set_item_colors(
             default=self.style.get('font_color'),
             tinted=self.style.get('font_color_tinted'))
-        self.module_view = self.ui.module_view
+        self.module_list.selection_changed.connect(self._module_selected)
 
+        self.module_view = self.ui.module_view
         self.module_view.setup_ui(self)
 
         self._setup_actions()
         self._setup_shortcuts()
 
         self.check_main_menu_bar()
-        self.setWindowIcon(a2ctrl.Icons.inst().a2)
-        self.restore_ui()
 
     def _setup_actions(self):
         icons = a2ctrl.Icons.inst()
@@ -274,20 +271,15 @@ class A2Window(QtWidgets.QMainWindow):
         that are partially outside of the left,right and bottom desktop border
         """
         win_prefs = self.a2.db.get('windowprefs') or {}
+
         geometry = win_prefs.get('geometry')
         if geometry is not None:
             try:
-                geometry = QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8'))
-                self.restoreGeometry(geometry)
+                self.restoreGeometry(
+                    QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8')))
             except Exception as error:
                 log.debug('Could not restore the ui geometry with stored data!')
                 log.debug(error)
-
-        # delaying this on startup saves > 200ms
-        if self.isVisible():
-            self._restore_splitter(win_prefs)
-        else:
-            QtCore.QTimer().singleShot(250, self._restore_splitter)
 
     def showRaise(self):
         """
@@ -298,13 +290,14 @@ class A2Window(QtWidgets.QMainWindow):
         """
         # call to render the window
         self.show()
+
         # restore the window from minimized state
         state = self.windowState()
         if state == QtCore.Qt.WindowMinimized:
             self.setWindowState(QtCore.Qt.WindowActive)
         elif state not in QtCore.Qt.WindowState.values.values():
-            log.info('Window state undefined! %s' % state)
             self.setWindowState(QtCore.Qt.WindowActive)
+
         # make it the currently active window
         self.activateWindow()
 
@@ -467,7 +460,7 @@ class A2Window(QtWidgets.QMainWindow):
     def on_revert_settings(self):
         if self.mod is None:
             return
-        from a2widget import A2ConfirmDialog
+        from a2widget.a2input_dialog import A2ConfirmDialog
 
         module_user_cfg = self.mod.get_user_cfg()
         if module_user_cfg:
@@ -496,17 +489,33 @@ class A2Window(QtWidgets.QMainWindow):
             win_prefs = self.a2.db.get('windowprefs') or {}
         splitter_size = win_prefs.get('splitter')
         if splitter_size is not None:
-            self.ui.splitter.setSizes(splitter_size)    
+            self.ui.splitter.setSizes(splitter_size)
 
-    def showEvent(self, event):
-        print('A2Window showEvent')
-
+    def _finish_initial_draw(self):
+        self._setup_ui()
         self.module_list.draw_modules(self._init_selection)
         if not self._init_selection:
-            # QtCore.QTimer().singleShot(1250, self.module_view.draw_mod)
             self.module_view.draw_mod()
+        self._restore_splitter()
+        self.setEnabled(True)
+        log.info('A2Window initialised! (%.3fs)' % (time.process_time()))
 
-        super(A2Window, self).showEvent(event)
+    def showEvent(self, event):
+        if not self._initial_draw_finished:
+            self.setWindowTitle('a2')
+            self.setWindowIcon(a2ctrl.Icons.inst().a2)
+            widget = QtWidgets.QWidget(self)
+            layout = QtWidgets.QVBoxLayout(widget)
+            label = QtWidgets.QLabel()
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setPixmap(a2ctrl.Icons.inst().a2.pixmap(256))
+            layout.addWidget(label)
+            self.setCentralWidget(widget)
+            self.restore_ui()
+            self._initial_draw_finished = True
+            QtCore.QTimer(self).singleShot(250, self._finish_initial_draw)
+        return super(A2Window, self).showEvent(event)
+
 
 class RestartThread(QtCore.QThread):
     def __init__(self, a2, parent):
