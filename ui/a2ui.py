@@ -198,7 +198,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         :param bool check: Checkbox state incoming from the module view header.
         """
-        check_box = self.module_view.ui.modCheck
+        check_box = self.module_view.ui.mod_check
         check = not check_box.isTristate() and check
         for mod in self.selected:
             mod.enabled = check
