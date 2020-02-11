@@ -137,7 +137,8 @@ def get_a2element_object(obj_name, element_cfg, module_path=None):
     """
     element_typ = element_cfg['typ']
     if element_typ == LOCAL_ELEMENT_ID:
-        print(f'local element {module_path}')
+        if module_path is None:
+            raise ValueError('module_path cannot be None for local element!')
 
         element_path = os.path.join(
             module_path, '%s_%s.py' % (LOCAL_ELEMENT_ID, element_cfg['name']))
@@ -240,15 +241,17 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
         if not get_cfg_value(element_cfg, user_cfg, 'enabled', default=True):
             continue
 
+        if module_path is None and element_cfg['typ'] == LOCAL_ELEMENT_ID:
+            module_path = _get_module_path(module_key, a2obj)
+
         element_get_settings_func = get_a2element_object(
             'get_settings', element_cfg, module_path)
 
         # no result try again with getting the module path:
         if element_get_settings_func is None and module_path is None:
-            source_name, mod_name = module_key.split('|')
-            module_path = a2obj.module_sources[source_name].mods[mod_name].path
+            module_path = _get_module_path(module_key, a2obj)
             element_get_settings_func = get_a2element_object(
-                'get_settings', element_cfg, module_path)
+            'get_settings', element_cfg, module_path)
 
         if element_get_settings_func is not None:
             try:
@@ -257,6 +260,12 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
                 log.error(traceback.format_exc().strip())
                 log.error('Error calling get_settings function '
                           'for module: "%s"' % module_key)
+
+
+def _get_module_path(module_key, a2obj):
+    source_name, mod_name = module_key.split('|')
+    module_path = a2obj.module_sources[source_name].mods[mod_name].path
+    return module_path
 
 
 def iter_element_cfg_type(cfg_list, typ):
