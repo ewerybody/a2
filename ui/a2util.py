@@ -4,11 +4,10 @@ Misc functions - gathered from the a2core module.
 This is all too random to be core.
 """
 import os
-import json
 import time
+import json
 import string
 import codecs
-import webbrowser
 
 import a2core
 
@@ -112,6 +111,7 @@ def get_date():
 
 
 def surf_to(url):
+    import webbrowser
     if url:
         webbrowser.get().open(url)
 
