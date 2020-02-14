@@ -12,6 +12,7 @@ import codecs
 import a2core
 
 from PySide2 import QtCore
+import stat
 
 
 UTF8_CODEC = 'utf-8-sig'
@@ -213,6 +214,14 @@ def start_process_detached(path, args=None, working_dir=None):
     process = QtCore.QProcess()
     result, pid = process.startDetached(path, args, working_dir)
     return result, pid
+
+
+def write_enable(file_path):
+    """
+    :param str file_path: Path to file to make writable.
+    """
+    if os.path.isfile(file_path):
+        os.chmod(file_path, stat.S_IWRITE)
 
 
 if __name__ == '__main__':

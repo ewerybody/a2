@@ -548,7 +548,11 @@ class Mod(object):
     def config(self, cfg_dict):
         self._config = cfg_dict
         self.backup_config()
-        a2util.json_write(self.config_file, self._config)
+        try:
+            a2util.json_write(self.config_file, self._config)
+        except PermissionError:
+            a2util.write_enable(self.config_file)
+            a2util.json_write(self.config_file, self._config)
 
     def get_config(self):
         if self.has_config_file:
@@ -581,7 +585,7 @@ class Mod(object):
             backup_index = 1
 
         path = os.path.join(self.backup_path, '%s.%i' % (CONFIG_FILENAME, backup_index))
-        shutil.copy2(self.config_file, path)
+        shutil.copyfile(self.config_file, path)
 
     def change(self):
         """
@@ -784,7 +788,7 @@ class Mod(object):
         backup_file_path = os.path.join(self.backup_path, backup_file_name)
         self.backup_config()
         os.remove(self.config_file)
-        shutil.copy(backup_file_path, self.config_file)
+        shutil.copyfile(backup_file_path, self.config_file)
         self.get_config()
         self.change()
 
