@@ -19,10 +19,14 @@ PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
                     DESKTOP_ICO_FILE)
-ROOT_FILES = ['package.json', 'a2 on github.com.URL', 'LICENSE']
-LIB_EXCLUDES = ['batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
-                'a2init_check', 'a2dev_find_py', 'a2init_check']
-UI_FOLDERS = ['a2ctrl', 'a2widget', 'a2element', 'res', 'style']
+ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
+LIB_EXCLUDES = ('batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
+                'a2init_check', 'a2dev_find_py', 'a2init_check')
+UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
+UI_REMOVE_FILES = ('d3dcompiler_47.dll', 'Qt5VirtualKeyboard.dll', 'libGLESv2.dll',
+                   'Qt5Quick.dll', 'opengl32sw.dll', 'Qt5QmlModels.dll', 'Qt5DBus.dll',
+                   r'PySide2\plugins\platforms\qwebgl.dll')
+UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', r'PySide2\translations'
 
 
 def main():
@@ -42,6 +46,7 @@ def main():
     update_readme(a2lib)
 
     copy_files(distpath, distlib, a2lib, distui)
+    cleanup(distui)
 
     config_file = os.path.join(distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
@@ -159,14 +164,16 @@ def copy_files(distpath, distlib, a2lib, distui):
             continue
         shutil.copytree(os.path.join(A2UIPATH, folder), this_dest, ignore=_ignore_items)
 
-    shutil.rmtree(os.path.join(distui, 'PySide', folder), ignore_errors=True)
-    for item in os.scandir(distui):
-        if item.name.startswith('libopenblas.') and item.name.endswith('.dll'):
-            print('removing libopenblas ...')
-            os.remove(item.path)
-        if item.is_dir() and item.name in ['lib2to3', 'Include', 'numpy']:
-            print(f'removing {item.name} ...')
-            shutil.rmtree(item.path, ignore_errors=True)
+
+def cleanup(distui):
+    print('cleaning up package ...')
+    for dirname in UI_REMOVE_DIRS:
+        path = os.path.join(distui, dirname)
+        shutil.rmtree(path, ignore_errors=True)
+    for filename in UI_REMOVE_FILES:
+        path = os.path.join(distui, filename)
+        if os.path.isfile(path):
+            os.remove(path)
 
 
 def _ignore_items(path, items):
