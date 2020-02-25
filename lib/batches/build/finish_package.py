@@ -70,8 +70,20 @@ def update_readme(a2lib):
 
     # get versions in readme:
     readme_path = os.path.join(A2PATH, 'README.md')
+    lines = []
+    linebreak = ''
     with codecs.open(readme_path, encoding='utf8') as fileobj:
-        lines = fileobj.read().split('\r\n')
+        for line in fileobj:
+            lines.append(line)
+
+            if not linebreak:
+                if line[-2:] == '\r\n':
+                    linebreak = '\r\n'
+                elif line[-1:] == '\n':
+                    linebreak = '\n'
+
+    if not linebreak:
+        raise RuntimeError('Linebreak could not be determined from readme file!!!')
 
     print('Versions:\n')
     for name, version_str in versions.items():
@@ -81,16 +93,16 @@ def update_readme(a2lib):
     changed = False
     for i, line in enumerate(lines):
         for name in versions:
-            if line.startswith('* %s: ' % name):
+            if line.startswith(f'* {name}: '):
                 set_version = line.split(':')[1].strip()
                 if set_version != versions[name]:
-                    lines[i] = '* %s: %s' % (name, versions[name])
+                    lines[i] = f'* {name}: {versions[name]}{linebreak}'
                     changed = True
 
     if changed:
         print('Updating %s' % readme_path)
-        with open(readme_path, 'w', encoding='utf8') as fileobj:
-            fileobj.write('\r\n'.join(lines))
+        with open(readme_path, 'wb') as fileobj:
+            fileobj.write(''.join(lines).encode('utf8'))
     else:
         print('Versions unchanged!')
 
