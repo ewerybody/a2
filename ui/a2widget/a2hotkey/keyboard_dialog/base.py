@@ -226,7 +226,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         if self.scope.is_global:
             win_globals = win_standard_keys()
             if not self.checked_modifier:
-                win_shortcuts, a2_shortcuts = win_globals.get(''), global_hks.get('')
+                win_shortcuts, a2_shortcuts = win_globals.get('', {}), global_hks.get('', {})
                 self.ui.a2ok_button.setText(GLOBAL_NO_MOD_WARNING)
                 self.ui.a2ok_button.setEnabled(False)
             else:
