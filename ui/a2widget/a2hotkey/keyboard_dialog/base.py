@@ -249,8 +249,6 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
 
     def _highlight_keys(self, win_shortcuts, a2_shortcuts, trigger_key):
-        self._tmp_log_collisions(win_shortcuts, a2_shortcuts, trigger_key)
-
         for name, button in self.key_dict.items():
             if button in self.modifier.values():
                 continue
@@ -280,6 +278,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             button.setToolTip('\n'.join(tooltip))
 
     def _tmp_log_collisions(self, win_shortcuts, a2_shortcuts, trigger_key):
+        """TODO: remove after verifying everything is covered in UI for reals"""
         for name, collection in (('Windows Shortcut', win_shortcuts),
                                  ('a2 Hotkeys', a2_shortcuts)):
             if collection:
