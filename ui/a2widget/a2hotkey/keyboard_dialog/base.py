@@ -283,7 +283,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         for name, collection in (('Windows Shortcut', win_shortcuts),
                                  ('a2 Hotkeys', a2_shortcuts)):
             if collection:
-                log.info(f'Possible collisions with {name}s:')
+                log.info(f'Possible collisions with {name}:')
                 for key, ops in collection.items():
                     if isinstance(ops, (tuple, list)):
                         log.info('  %s: %s' % (key, ';'.join([str(o) for o in ops])))
