@@ -1,6 +1,6 @@
 import uuid
 from PySide2 import QtWidgets
-from a2widget import A2List, A2ListCompact
+from a2widget.a2list import A2List, A2ListCompact
 
 
 class Demo(QtWidgets.QMainWindow):

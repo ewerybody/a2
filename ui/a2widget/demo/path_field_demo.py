@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets
-from a2widget import A2PathField
+from a2widget.a2path_field import A2PathField
 
 
 class Demo(QtWidgets.QMainWindow):
@@ -14,7 +14,7 @@ class Demo(QtWidgets.QMainWindow):
         self.widget1 = A2PathField(self)
         lyt.addWidget(self.widget1)
 
-        self.write_check = QtWidgets.QCheckBox('asdf')
+        self.write_check = QtWidgets.QCheckBox('writable')
         lyt.addWidget(self.write_check)
 
         self.write_check.clicked[bool].connect(self.set_write_state)

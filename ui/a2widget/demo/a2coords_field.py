@@ -1,14 +1,7 @@
-'''
-Created on 08.03.2017
-
-@author: eric
-'''
 from pprint import pprint
 from PySide2 import QtGui, QtCore, QtWidgets
-
 import a2ctrl.connect
-from a2widget import A2CoordsField
-
+from a2widget.a2coords_field import A2CoordsField
 
 class CoordsFieldDemo(QtWidgets.QMainWindow):
     dict_changed = QtCore.Signal(tuple)

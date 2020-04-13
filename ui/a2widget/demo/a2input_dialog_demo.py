@@ -1,4 +1,5 @@
-from a2widget import A2InputDialog, A2ConfirmDialog
+# import _demo_env
+from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
 from PySide2 import QtWidgets
 
 

@@ -53,7 +53,6 @@ class Demo(QtWidgets.QMainWindow):
 
         self.user_hotkey = None
         lyt.addRow(QtWidgets.QLabel('user hotkey:'))
-        lyt.addRow(self.user_hotkey)
 
     def check_changes(self):
         if self._config_backup != config:

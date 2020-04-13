@@ -1,6 +1,6 @@
 from PySide2 import QtCore, QtWidgets
 from a2widget.flowlayout import FlowLayout
-from a2widget import A2Slider
+from a2widget.a2slider import A2Slider
 
 
 class Window(QtWidgets.QWidget):
