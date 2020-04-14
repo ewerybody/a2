@@ -74,6 +74,8 @@ class DrawCtrlMixin(object):
         Tells you if the element has user data saved.
         :rtype: bool
         """
+        if self.mod is None:
+            return False
         name = a2util.get_cfg_default_name(self.cfg)
         return self.mod.is_in_user_cfg(name)
 
@@ -87,6 +89,9 @@ class DrawCtrlMixin(object):
         Triggers the module to save it's settings to the database and
         a2 include rewrite and restart if the module is enabled.
         """
+        if self.mod is None:
+            return
+
         self.mod.change()
         if self.mod.enabled:
             self.main.settings_changed(specific)

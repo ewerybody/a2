@@ -113,7 +113,7 @@ class A2Hotkey(QtWidgets.QWidget):
         dialog.show()
 
     def _dialog_set_key(self, key):
-        current_keys = get_keys_list(self.key)
+        current_keys = self.get_keys_list()
         current_keys[self._hotkey_index] = key
         self.set_key(current_keys)
 
@@ -187,13 +187,13 @@ class A2Hotkey(QtWidgets.QWidget):
 
     @property
     def has_empty(self):
-        return '' in get_keys_list(self.key)
+        return '' in self.get_keys_list()
 
     def add_hotkey(self):
         """
         Adds an Empty string to the hotkey list if there is none already.
         """
-        keys = get_keys_list(self.key)
+        keys = self.get_keys_list()
         if '' in keys:
             return
         self.set_key(keys + [''])
@@ -206,10 +206,12 @@ class A2Hotkey(QtWidgets.QWidget):
 
     def on_remove_key_action(self):
         key = self.sender().data()
-        current_keys = get_keys_list(self.key)
+        current_keys = self.get_keys_list()
         current_keys.remove(key)
         self.set_key(current_keys)
 
+    def get_keys_list(self):
+        return get_keys_list(self.key)
 
 if __name__ == '__main__':
     import a2widget.demo.hotkey_demo
