@@ -20,7 +20,6 @@ a2db.rem('tempstuff', 'a2')
 import os
 import json
 import sqlite3
-from copy import deepcopy
 
 import a2core
 
@@ -277,7 +276,7 @@ class A2db(object):
         given default_dict.
         """
         current = self.get(key, table) or {}
-        result = deepcopy(default_dict)
+        result = default_dict.copy()
         for value_name, value in default_dict.items():
             if value_name in current:
                 set_value = current.get(value_name)

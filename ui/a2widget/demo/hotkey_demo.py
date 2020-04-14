@@ -4,7 +4,6 @@ import a2ctrl
 import a2element.hotkey
 from a2widget.a2text_field import A2CodeField
 from a2widget.a2hotkey import scope_widget_ui, edit_widget_ui
-from copy import deepcopy
 
 
 config = {"typ": "hotkey",
@@ -57,7 +56,7 @@ class Demo(QtWidgets.QMainWindow):
     def check_changes(self):
         if self._config_backup != config:
             self.code.setText(config)
-            self._config_backup = deepcopy(config)
+            self._config_backup = config.copy()
 
             if self.user_hotkey is not None:
                 self.user_hotkey.deleteLater()
