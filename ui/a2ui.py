@@ -24,7 +24,9 @@ class A2Window(QtWidgets.QMainWindow):
 
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
-        self.setEnabled(False)
+        # Disabling disabled as long as qt.accessibility.core is throwing these
+        # "Cannot create accessible child interface for object:"-warnings
+        # self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
         self._restart_thread = None
