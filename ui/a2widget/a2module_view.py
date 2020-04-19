@@ -42,7 +42,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
         self.toggle_edit(False)
 
-        margin = self.main.style.get('margin')
+        margin = self.main.style.get('margin', 0)
         self.ui.a2edit_okcancel_layout.setContentsMargins(margin, margin, margin, margin)
 
     def draw_mod(self):
