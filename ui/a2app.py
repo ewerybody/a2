@@ -11,8 +11,8 @@ import platform
 import traceback
 from ctypes import windll
 
-from singlesiding import QSingleApplication
 from PySide2 import QtWidgets
+from singlesiding import QSingleApplication
 
 logging.basicConfig()
 log = logging.getLogger('a2app')
@@ -40,8 +40,7 @@ def main():
     app.addLibraryPath(pyside_plugin_path)
 
     winfo = platform.uname()
-    log.info('initialised!\n  python: %s\n  windows: %s'
-             % (sys.version, str(winfo)[31:-1]))
+    log.info('initialised!\n  python: %s\n  windows: %s', sys.version, str(winfo)[31:-1])
 
     # this is to set the actual taskbar icon
     windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
@@ -58,7 +57,7 @@ def last_window_closed():
 def init_a2_win(app):
     this_dir = os.path.abspath(os.path.dirname(__file__))
     if os.getcwd() != this_dir:
-        log.info(f'Bending cwd to "{this_dir}"')
+        log.info('Bending cwd to "%s"', this_dir)
         os.chdir(this_dir)
 
     try:
@@ -84,7 +83,7 @@ def init_a2_win(app):
 
 
 def app_msg_get(msg):
-    global app, a2win
+    # global app, a2win
     if '--close' in msg:
         app.exit()
     elif '--show' in msg:
@@ -92,9 +91,8 @@ def app_msg_get(msg):
         a2win.showRaise()
     elif '--reload' in msg:
         log.error('reload is deprecated!')
-
     else:
-        log.info('received unhandled message: %s' % ' '.join(msg))
+        log.info('received unhandled message: %s',  ' '.join(msg))
 
 
 if __name__ == '__main__':
