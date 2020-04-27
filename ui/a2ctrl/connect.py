@@ -132,13 +132,12 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         if change_signal is not None:
             trigger_signal.connect(partial(change_signal.emit, ctrl))
         if name in cfg:
-            ctrl.setText(cfg[name])
+            ctrl.setPlainText(cfg[name])
         else:
             cfg[name] = ctrl.toPlainText()
 
     else:
-        log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!' %
-                  (name, type(ctrl)))
+        log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!', name, type(ctrl))
 
 
 def _update_cfg_data(cfg, name, value):
@@ -164,23 +163,23 @@ def _text_edit_send(signal, ctrl):
     signal.emit(ctrl.toPlainText())
 
 
-def control_to_db(widget, db, key, default_value=None):
+def control_to_db(widget, database, key, default_value=None):
     """
     Only for direct connections to the default db table.
 
     :param QtWidgets.QWidget widget: Some Qt Widget to connect to.
     """
     if isinstance(widget, QtWidgets.QCheckBox):
-        _connect_checkbox_to_db(widget, db, key, default_value)
+        _connect_checkbox_to_db(widget, database, key, default_value)
 
 
-def _connect_checkbox_to_db(widget, db, key, default_value):
+def _connect_checkbox_to_db(widget, database, key, default_value):
     if default_value is None:
         default_value = False
 
-    def _db_setter(value, db_object=db, setting_key=key, *args):
+    def _db_setter(value, db_object=database, setting_key=key):
         db_object.set(setting_key, value)
         value = db_object.get(setting_key)
 
-    widget.setChecked(db.get(key) or default_value)
+    widget.setChecked(database.get(key) or default_value)
     widget.clicked[bool].connect(_db_setter)
