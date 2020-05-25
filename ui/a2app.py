@@ -14,8 +14,6 @@ from ctypes import windll
 from PySide2 import QtWidgets
 from singlesiding import QSingleApplication
 
-logging.basicConfig()
-
 
 class A2Main(QSingleApplication):
     """The a2 foundation object."""
@@ -24,6 +22,8 @@ class A2Main(QSingleApplication):
         # self._app = None
         self._core = None
         self._win = None
+
+        logging.basicConfig()
         self._log = logging.getLogger('a2app')
         self._log.setLevel(logging.DEBUG)
 

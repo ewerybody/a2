@@ -10,7 +10,6 @@ class Demo(QtWidgets.QMainWindow):
         lyt = QtWidgets.QVBoxLayout(w)
         w.setLayout(lyt)
 
-        lyt.addWidget(QtWidgets.QLabel('a simple list:'))
         self.widget1 = A2PathField(self)
         lyt.addWidget(self.widget1)
 

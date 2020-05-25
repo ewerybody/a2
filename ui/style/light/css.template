@@ -1,6 +1,7 @@
 * {
 	font-size: %(font_size)ipx;
 	color: "%(font_color)s";
+	icon-size: %(icon_size_small)ipx;
 }
 
 *:disabled {
@@ -253,4 +254,11 @@ QAbstractItemView {
 
 ModSourceWidget QToolButton#tool_button {
 	icon-size: %(icon_size_small)ipx;
+}
+
+QMenu::item {
+	background: "%(color_background)s";
+}
+QMenu::item:selected {
+	background: "%(color_hover)s";
 }
