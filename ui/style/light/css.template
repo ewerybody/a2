@@ -228,11 +228,13 @@ QLabel#a2license_text {
 QToolButton#a2option_button {
 	image: url(res/more.svg);
 	color: "%(color_darkgrey)s";
+	icon-size: %(icon_size_small)ipx;
 }
 
 A2MoreButton {
 	image: url(res/more.svg);
 	color: "%(color_darkgrey)s";
+	icon-size: %(icon_size_small)ipx;
 }
 
 QLabel#a2_mod_name {
@@ -243,4 +245,12 @@ QLineEdit {
     border: 1px solid "%(color_button)s";
     border-radius: %(border_radius)ipx;
     padding: %(small_spacing)ipx;
+}
+
+QAbstractItemView {
+	icon-size: %(icon_size_small)ipx;
+}
+
+ModSourceWidget QToolButton#tool_button {
+	icon-size: %(icon_size_small)ipx;
 }
