@@ -261,6 +261,8 @@ class A2Window(QtWidgets.QMainWindow):
             if thread is not None:
                 try:
                     thread.quit()
+                    if thread.isRunning():
+                        log.error('thread NOT stopped: %s', thread)
                 except RuntimeError:
                     pass
 
