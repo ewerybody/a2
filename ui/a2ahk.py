@@ -11,6 +11,7 @@ import subprocess
 
 
 EXECUTABLE_NAME = 'autohotkey.exe'
+_LOW_BOOLS = {'true': True, 'false': False}
 
 
 def translate_hotkey(display_string):
@@ -97,7 +98,7 @@ def get_variables(ahk_file):
         if key[0] != _key[0]:
             continue
         key = _key
-        result[key] = _convert_string_to_type(value)
+        result[key] = convert_string_to_type(value)
     return result
 
 
@@ -124,7 +125,7 @@ def set_variable(ahk_file, key, value):
         if key != curkey:
             continue
         found = True
-        curvalue = _convert_string_to_type(_value.strip('" '))
+        curvalue = convert_string_to_type(_value.strip('" '))
         if curvalue != value:
             write = True
             if isinstance(value, bool):
@@ -141,19 +142,26 @@ def set_variable(ahk_file, key, value):
             fobj.write('\n'.join(lines))
 
 
-def _convert_string_to_type(string):
+def convert_string_to_type(string):
+    """
+    Find proper type for string input.
+
+    Examples:
+        '1' -> 1
+        '2.3' -> 2.3
+        'true' -> True
+        'something' -> 'something'
+    """
     try:
         return int(string)
     except ValueError:
         try:
             return float(string)
         except ValueError:
-            lowstring = string.lower()
-            if lowstring == 'true':
-                return True
-            elif lowstring == 'false':
-                return False
-            return string
+            try:
+                return _LOW_BOOLS[string.lower()]
+            except KeyError:
+                return string
 
 
 def py_value_to_ahk_string(py_obj):

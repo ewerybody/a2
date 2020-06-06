@@ -1,15 +1,10 @@
-'''
-Created on Aug 24, 2016
-
-@author: eRiC
-'''
-import os
+"""Test the a2ahk module"""
 import uuid
 import unittest
-from os.path import exists
+import os.path
+from functools import partial
 
 import a2ahk
-from functools import partial
 
 
 class Test(unittest.TestCase):
@@ -43,29 +38,27 @@ class Test(unittest.TestCase):
         self.assertEqual(ahkvars['a_string'], test_string)
 
         os.remove(test_file)
-        self.assertFalse(exists(test_file))
+        self.assertFalse(os.path.isfile(test_file))
 
     def test_string_convert(self):
-        result = a2ahk._convert_string_to_type('string')
+        result = a2ahk.convert_string_to_type('string')
         self.assertTrue(isinstance(result, str))
         self.assertEqual('string', result)
-        result = a2ahk._convert_string_to_type('true')
+        result = a2ahk.convert_string_to_type('true')
         self.assertTrue(result)
-        result = a2ahk._convert_string_to_type('faLSe')
+        result = a2ahk.convert_string_to_type('faLSe')
         self.assertFalse(result)
-        result = a2ahk._convert_string_to_type('345243')
+        result = a2ahk.convert_string_to_type('345243')
         self.assertTrue(isinstance(result, int))
-        result = a2ahk._convert_string_to_type('345243.')
+        result = a2ahk.convert_string_to_type('345243.')
         self.assertTrue(isinstance(result, float))
 
     def test_py_value_to_string(self):
-        for item, result in [(True, 'true'),
-                             (False, 'false'),
-                             ('String', '"String"'),
-                             (0.333, '0.333'),
-                             (1337, '1337'),
-                             (['something', 42, 13.37], '["something", 42, 13.37]')]:
-
+        for item, result in [
+                (True, 'true'), (False, 'false'),
+                ('String', '"String"'),
+                (0.333, '0.333'), (1337, '1337'),
+                (['something', 42, 13.37], '["something", 42, 13.37]')]:
             converted = a2ahk.py_value_to_ahk_string(item)
             self.assertEqual(converted, result)
 
