@@ -10,6 +10,7 @@ to make functionality available without passing the main ui object.
 """
 import os
 import sys
+import time
 import logging
 
 # only spot where this is set! Use a2core.get_logger() anywhere else!
@@ -32,6 +33,7 @@ _IS_DEV = None
 
 
 class A2Obj(object):
+    """Non-Ui a2 backend object."""
     _instance = None
 
     @classmethod
@@ -59,6 +61,8 @@ class A2Obj(object):
 
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
+        self.log = A2Logger(self.paths.data)
+        print(f'Logger set up: {self.log}')
 
         self.db = a2db.A2db(self.paths.db)
         self._enabled = None
@@ -188,7 +192,8 @@ class Paths(object):
                                % self.data)
 
 
-def _dbCleanup():
+def _db_cleanup():
+    """Legacy database cleanup. to be deleted."""
     a2 = A2Obj.inst()
     for table in a2.db.tables():
         if table == 'a2':
@@ -201,7 +206,7 @@ def _dbCleanup():
                 write = False
                 for name, data in enabled.items():
                     if not isinstance(data, list) or not data:
-                        log.error('Bad data: %s: "%s"' % (name, data))
+                        log.error('Bad data: %s: "%s"', name, data)
                         enabled[name] = [False, []]
                         write = True
                     if not isinstance(data[0], bool):
@@ -211,7 +216,7 @@ def _dbCleanup():
                         enabled[name] = data[0] + [[]]
                         write = True
                     if len(data) > 2:
-                        log.error('Too much data: %s: "%s"' % (name, data))
+                        log.error('Too much data: %s: "%s"', name, data)
                         enabled[name] = data[:2]
                         write = True
                 if write:
@@ -278,6 +283,7 @@ def set_dev_mode(state):
 
 
 def setup_proxy(a2=None):
+    # TODO: Why is this not in the A2Obj class?!?!
     """
     Looks up a2.db "proxy_enabled" and "proxy_settings".
     Configures urllib.request accordingly.
@@ -315,7 +321,7 @@ def setup_proxy(a2=None):
             if port is not None:
                 proxy_str += ':' + port
 
-            log.info('setting up proxy: %s' % proxy_str)
+            log.info('setting up proxy: %s', proxy_str)
             proxy_handler = request.ProxyHandler({http_mode: proxy_str})
             opener = request.build_opener(proxy_handler)
             request.install_opener(opener)
@@ -325,6 +331,35 @@ def setup_proxy(a2=None):
         from urllib import request
         log.info('disabling proxy ...')
         request.install_opener(None)
+
+
+class A2Logger(object):
+    def __init__(self, data_path):
+        self._data = data_path
+        self._std_path = os.path.join(self._data, 'a2.log')
+        self._err_path = os.path.join(self._data, 'a2_errors.log')
+        import a2output
+        a2output.connect(self._write_std)
+        a2output.connect_error(self._write_err)
+
+    def _now(self):
+        return round(time.time(), 2)
+
+    def _write_msg(self, log_path, msg):
+        if not msg.strip():
+            return
+
+        if not msg.endswith('\n'):
+            msg += '\n'
+
+        with open(log_path, 'a') as file_obj:
+            file_obj.write(f'{self._now()} - {msg}')
+
+    def _write_std(self, msg):
+        self._write_msg(self._std_path, msg)
+
+    def _write_err(self, msg):
+        self._write_msg(self._err_path, msg)
 
 
 if __name__ == '__main__':
