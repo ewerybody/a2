@@ -96,7 +96,7 @@ class A2InputDialog(A2ConfirmDialog):
 
         if self.check_func is not None:
             answer = self.check_func(text)
-            if answer is True:
+            if answer == '' or answer is True:
                 self.ui.a2ok_button.setEnabled(True)
                 self.ui.a2ok_button.setText('OK')
                 return True

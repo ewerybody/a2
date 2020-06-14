@@ -6,13 +6,13 @@ This is all too random to be core.
 import os
 import time
 import json
+import stat
 import string
 import codecs
 
-import a2core
-
 from PySide2 import QtCore
-import stat
+
+import a2core
 
 
 UTF8_CODEC = 'utf-8-sig'
@@ -24,28 +24,39 @@ EXPLORER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 DEFAULT_NAME_MSG = 'Name "%s" already in use!'
 
 
-def standard_name_check(NAME, black_list=None, black_list_msg=None):
+def standard_name_check(name, black_list=None, black_list_msg=None):
+    """
+    Report about standard naming issues or nothing if all is OK.
+
+    :param str name: Incoming name to check.
+    :param list black_list: List of names that are already taken.
+    :param str black_list_msg: Optional black list message if its more specific than default.
+    :rtype: str
+    """
+    if not name:
+        return 'Name cannot be empty!'
+
     if black_list_msg is None:
         black_list_msg = DEFAULT_NAME_MSG
 
-    name = NAME.lower()
-    if NAME == '':
-        return 'Name cannot be empty!'
-    if name == 'a2':
-        return 'You just cannot name it "a2"! Ok?'
-    if name.startswith('.'):
-        return 'Names starting with a dot would be ignored!'
-    if black_list is not None and name in black_list:
-        return black_list_msg % name
-    if any([(l in string.whitespace) for l in name]):
-        return 'Name cannot have whitespace! Use _ or - insead!'
-    if not all([(l in ALLOWED_CHARS) for l in name]):
-        return 'Name can only have letters, digits and "_.-"'
-    if name in ILLEGAL_NAMES:
-        return 'Name cannot be reserved OS device name!'
-    if not any([(l in string.ascii_letters) for l in name]):
-        return 'Have at least 1 letter in the name!'
-    return True
+    _name = name.lower()
+    msg = ''
+    if _name == 'a2':
+        msg = 'You just cannot name it "a2"! Ok?'
+    elif name.startswith('.'):
+        msg = 'Names starting with a dot would be ignored!'
+    elif black_list is not None and name in black_list:
+        msg = black_list_msg % name
+    elif any([(l in string.whitespace) for l in name]):
+        msg = 'Name cannot have whitespace! Use _ or - insead!'
+    elif not all([(l in ALLOWED_CHARS) for l in name]):
+        msg = 'Name can only have letters, digits and "_.-"'
+    elif name in ILLEGAL_NAMES:
+        msg = 'Name cannot be reserved OS device name!'
+    elif not any([(l in string.ascii_letters) for l in name]):
+        msg = 'Have at least 1 letter in the name!'
+
+    return msg
 
 
 def get_cfg_default_name(cfg):
