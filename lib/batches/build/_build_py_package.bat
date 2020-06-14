@@ -43,7 +43,7 @@ if not exist %buildpath% (
 if exist "%distpath%" (
   echo removing old package ...
   rd "%distpath%" /Q /S
-  
+
   if exist "%distpath%" (
     echo ERROR: distpath: "%distpath%" could not be removed!
     pause
@@ -52,7 +52,7 @@ if exist "%distpath%" (
 )
 
 echo running pyinstaller ...
-"%pyinstaller%" --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%here% --icon "%iconpath%"
-rem "%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%here% --icon "%iconpath%"
+rem "%pyinstaller%" --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%here% --icon "%iconpath%"
+"%pyinstaller%" --noconsole --noupx --onedir -y "%scriptpath%" --distpath="%distpath%" --workpath="%buildpath%" --specpath=%here% --icon "%iconpath%"
 
 echo ######## Build Py Package Done! ########
