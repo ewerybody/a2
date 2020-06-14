@@ -39,7 +39,7 @@ class A2Obj(object):
     @classmethod
     def inst(cls):
         """
-        Returns the singleton instance of A2Obj.
+        Return the singleton instance of A2Obj.
 
         :rtype: A2Obj
         """
@@ -55,13 +55,15 @@ class A2Obj(object):
         # lazy import so importing a2core does not depend on other a2 module
         global a2ahk, a2db, a2mod
         import a2ahk, a2db, a2mod
+        import a2output
         self.app = None
         self.win = None
         self.module_sources = {}
 
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
-        self.log = A2Logger(self.paths.data)
+        self.log = a2output.get_logger()
+        self.log.set_data_path(self.paths.data)
         print(f'Logger set up: {self.log}')
 
         self.db = a2db.A2db(self.paths.db)
@@ -331,35 +333,6 @@ def setup_proxy(a2=None):
         from urllib import request
         log.info('disabling proxy ...')
         request.install_opener(None)
-
-
-class A2Logger(object):
-    def __init__(self, data_path):
-        self._data = data_path
-        self._std_path = os.path.join(self._data, 'a2.log')
-        self._err_path = os.path.join(self._data, 'a2_errors.log')
-        import a2output
-        a2output.connect(self._write_std)
-        a2output.connect_error(self._write_err)
-
-    def _now(self):
-        return round(time.time(), 2)
-
-    def _write_msg(self, log_path, msg):
-        if not msg.strip():
-            return
-
-        if not msg.endswith('\n'):
-            msg += '\n'
-
-        with open(log_path, 'a') as file_obj:
-            file_obj.write(f'{self._now()} - {msg}')
-
-    def _write_std(self, msg):
-        self._write_msg(self._std_path, msg)
-
-    def _write_err(self, msg):
-        self._write_msg(self._err_path, msg)
 
 
 if __name__ == '__main__':
