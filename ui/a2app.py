@@ -16,7 +16,7 @@ from singlesiding import QSingleApplication
 
 
 class A2Main(QSingleApplication):
-    """The a2 foundation object."""
+    """The a2 app foundation object."""
     def __init__(self):
         super(A2Main, self).__init__(sys.argv)
         # self._app = None
@@ -68,6 +68,7 @@ class A2Main(QSingleApplication):
             import a2ui
             self._win = a2ui.A2Window(self)
             self._core.win = self._win
+            print('self._win: %s' % self._win)
             self._core.app = self
             self._core.win.showRaise()
 
@@ -108,8 +109,15 @@ class A2Main(QSingleApplication):
 
 
 def main():
-    app = A2Main()
-    app.exec_()
+    try:
+        import a2output
+        logger = a2output.get_logger()
+        app = A2Main()
+        app.exec_()
+    except:
+        this_dir = os.path.abspath(os.path.dirname(__file__))
+        with open(os.path.join(this_dir, 'error.log'), 'w') as fobj:
+            fobj.write(traceback.format_exc().strip())
 
 
 if __name__ == '__main__':
