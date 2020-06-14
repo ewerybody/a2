@@ -31,7 +31,10 @@ class _OutputWrangler(object):
     """Mimic standard output object but connected to multiple target functions."""
     def __init__(self, root):
         self._root = root
-        self._write_funcs = [self._root.write]
+        if self._root is None:
+            self._write_funcs = []
+        else:
+            self._write_funcs = [self._root.write]
 
     def write(self, msg):
         """Write incoming message to all writer functions."""
