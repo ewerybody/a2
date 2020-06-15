@@ -15,15 +15,15 @@
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 189.16579 24.999317"
-   height="24.999317"
-   width="189.16579">
+   viewBox="0 0 151.33676 20"
+   height="20"
+   width="151.33676">
   <style
      id="style10"></style>
   <defs
      id="defs2">
     <linearGradient
-       gradientTransform="translate(-138.477,10.144602)"
+       gradientTransform="matrix(0.80002185,0,0,0.80002185,-108.19239,21.384386)"
        inkscape:collect="always"
        xlink:href="#tlogo-a"
        id="linearGradient1529"
@@ -96,45 +96,45 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1">
     <rect
-       ry="2.0246921"
+       ry="1.6197979"
        y="66.349663"
        x="12.962572"
-       height="24.999315"
-       width="160.36583"
+       height="19.999998"
+       width="128.29617"
        id="rect26"
-       style="fill:url(#linearGradient1529);fill-opacity:1;fill-rule:evenodd;stroke-width:0.565669" />
+       style="fill:url(#linearGradient1529);fill-opacity:1;fill-rule:evenodd;stroke-width:0.452548" />
     <rect
-       style="fill:#4f4f4f;fill-opacity:1;fill-rule:evenodd;stroke-width:0.565669"
+       style="fill:#4f4f4f;fill-opacity:1;fill-rule:evenodd;stroke-width:0.452548"
        id="rect1533"
-       width="81.238548"
-       height="24.999317"
-       x="120.88982"
+       width="64.992615"
+       height="20"
+       x="99.306725"
        y="66.349663"
-       ry="2.0246921" />
+       ry="1.6197979" />
     <text
        id="text855"
-       y="84.541306"
-       x="42.407875"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4928px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.487321"
+       y="80.903374"
+       x="36.519459"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.5947px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.389867"
        xml:space="preserve"><tspan
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.487321"
-         y="84.541306"
-         x="42.407875"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.389867"
+         y="80.903374"
+         x="36.519459"
          id="tspan853"
          sodipodi:role="line">Telegram</tspan></text>
     <path
        fill="#ffffff"
        fill-rule="nonzero"
-       d="m 19.507859,77.973184 c 4.4449,-1.93657 7.40886,-3.213275 8.89188,-3.830116 4.23433,-1.761206 5.11419,-2.067146 5.68767,-2.077356 0.12613,-0.0021 0.40815,0.02914 0.59083,0.177378 0.15426,0.125165 0.1967,0.294245 0.21701,0.412916 0.0203,0.11867 0.0456,0.389004 0.0255,0.600234 -0.22946,2.410957 -1.22233,8.261712 -1.72744,10.962024 -0.21374,1.142604 -0.63458,1.525713 -1.04202,1.563205 -0.88543,0.08148 -1.55779,-0.585159 -2.41538,-1.147321 -1.34196,-0.879671 -2.10009,-1.427269 -3.40269,-2.285666 -1.50538,-0.992026 -0.52951,-1.537261 0.32841,-2.428327 0.22452,-0.233196 4.12578,-3.781695 4.20129,-4.1036 0.009,-0.04026 0.0182,-0.190328 -0.071,-0.26957 -0.0891,-0.07924 -0.22073,-0.05214 -0.31568,-0.03059 -0.1346,0.03055 -2.2784,1.447519 -6.4314,4.250913 -0.60851,0.41785 -1.15968,0.62144 -1.65351,0.610771 -0.5444,-0.01176 -1.59162,-0.307816 -2.37012,-0.560875 -0.95487,-0.310388 -1.71377,-0.474493 -1.64769,-1.001628 0.0344,-0.274565 0.41252,-0.555361 1.1343,-0.842389 z"
+       d="m 18.198945,75.648734 c 3.556017,-1.549299 5.92725,-2.57069 7.113698,-3.064177 3.387556,-1.409003 4.091464,-1.653762 4.55026,-1.66193 0.100907,-0.0017 0.326529,0.02331 0.472677,0.141906 0.123412,0.100135 0.157364,0.235403 0.173613,0.330342 0.01624,0.09494 0.03648,0.311212 0.0204,0.4802 -0.183573,1.928819 -0.97789,6.609551 -1.381989,8.769859 -0.170997,0.914108 -0.507678,1.220604 -0.833639,1.250598 -0.708363,0.06519 -1.246266,-0.46814 -1.932357,-0.917882 -1.073597,-0.703756 -1.680118,-1.141846 -2.722226,-1.828582 -1.204337,-0.793643 -0.42362,-1.229843 0.262735,-1.942715 0.179621,-0.186562 3.300714,-3.025439 3.361124,-3.28297 0.0072,-0.03221 0.01456,-0.152266 -0.0568,-0.215661 -0.07128,-0.06339 -0.176589,-0.04171 -0.252551,-0.02447 -0.107683,0.02444 -1.822769,1.158047 -5.14526,3.400823 -0.486822,0.334289 -0.92777,0.497166 -1.322844,0.48863 -0.435532,-0.0094 -1.273331,-0.246259 -1.896148,-0.448712 -0.763917,-0.248317 -1.371054,-0.379605 -1.318188,-0.801324 0.02752,-0.219658 0.330025,-0.444301 0.907465,-0.67393 z"
        id="path1531"
-       style="stroke-width:0.238239" />
+       style="stroke-width:0.190596" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4928px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:71.8543;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.487321"
        x="240.32533"
        y="166.96341"
        id="text1537"
-       transform="translate(-112.636,-82.396759)"><tspan
+       transform="matrix(0.80002185,0,0,0.80002185,-87.51903,-52.650725)"><tspan
          x="240.32533"
          y="166.96341"><tspan
            style="stroke-width:0.487321">join chat</tspan></tspan></text>
