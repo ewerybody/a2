@@ -5,19 +5,50 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:export-ydpi="96"
+   inkscape:export-xdpi="96"
+   inkscape:export-filename="C:\Users\eric\io\code\a2\telegram_join.png"
    sodipodi:docname="telegram_join.svg"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 160.36583 24.999315"
-   height="24.999315"
-   width="160.36583">
+   viewBox="0 0 189.16579 24.999317"
+   height="24.999317"
+   width="189.16579">
   <style
      id="style10"></style>
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       gradientTransform="translate(-138.477,10.144602)"
+       inkscape:collect="always"
+       xlink:href="#tlogo-a"
+       id="linearGradient1529"
+       x1="208.95351"
+       y1="56.773903"
+       x2="208.95351"
+       y2="81.046944"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="tlogo-a"
+       x1="64"
+       x2="64"
+       y1="0"
+       y2="127.05025"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0%"
+         stop-color="#2AABEE"
+         id="stop899" />
+      <stop
+         offset="100%"
+         stop-color="#229ED9"
+         id="stop901" />
+    </linearGradient>
+  </defs>
   <sodipodi:namedview
      inkscape:window-maximized="1"
      inkscape:window-y="0"
@@ -38,9 +69,9 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="px"
-     inkscape:cy="-0.4914314"
-     inkscape:cx="86.254692"
-     inkscape:zoom="5.6"
+     inkscape:cy="9.7138226"
+     inkscape:cx="67.698455"
+     inkscape:zoom="2.8"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -71,32 +102,41 @@
        height="24.999315"
        width="160.36583"
        id="rect26"
-       style="fill:#5d5d5d;fill-opacity:1;fill-rule:evenodd;stroke-width:0.565669" />
-    <path
-       d="m 94.585256,66.349663 v 25 h 76.720394 c 1.12168,0 2.02106,-0.903541 2.02106,-2.02522 V 68.374885 c 0,-1.121678 -0.89938,-2.025222 -2.02106,-2.025222 z"
-       style="fill:#00e58d;fill-opacity:1;fill-rule:evenodd;stroke-width:0.565669"
-       id="rect863" />
+       style="fill:url(#linearGradient1529);fill-opacity:1;fill-rule:evenodd;stroke-width:0.565669" />
+    <rect
+       style="fill:#4f4f4f;fill-opacity:1;fill-rule:evenodd;stroke-width:0.565669"
+       id="rect1533"
+       width="81.238548"
+       height="24.999317"
+       x="120.88982"
+       y="66.349663"
+       ry="2.0246921" />
     <text
        id="text855"
-       y="84.541298"
-       x="17.5474"
+       y="84.541306"
+       x="42.407875"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4928px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.487321"
        xml:space="preserve"><tspan
          style="fill:#ffffff;fill-opacity:1;stroke-width:0.487321"
-         y="84.541298"
-         x="17.5474"
+         y="84.541306"
+         x="42.407875"
          id="tspan853"
          sodipodi:role="line">Telegram</tspan></text>
+    <path
+       fill="#ffffff"
+       fill-rule="nonzero"
+       d="m 19.507859,77.973184 c 4.4449,-1.93657 7.40886,-3.213275 8.89188,-3.830116 4.23433,-1.761206 5.11419,-2.067146 5.68767,-2.077356 0.12613,-0.0021 0.40815,0.02914 0.59083,0.177378 0.15426,0.125165 0.1967,0.294245 0.21701,0.412916 0.0203,0.11867 0.0456,0.389004 0.0255,0.600234 -0.22946,2.410957 -1.22233,8.261712 -1.72744,10.962024 -0.21374,1.142604 -0.63458,1.525713 -1.04202,1.563205 -0.88543,0.08148 -1.55779,-0.585159 -2.41538,-1.147321 -1.34196,-0.879671 -2.10009,-1.427269 -3.40269,-2.285666 -1.50538,-0.992026 -0.52951,-1.537261 0.32841,-2.428327 0.22452,-0.233196 4.12578,-3.781695 4.20129,-4.1036 0.009,-0.04026 0.0182,-0.190328 -0.071,-0.26957 -0.0891,-0.07924 -0.22073,-0.05214 -0.31568,-0.03059 -0.1346,0.03055 -2.2784,1.447519 -6.4314,4.250913 -0.60851,0.41785 -1.15968,0.62144 -1.65351,0.610771 -0.5444,-0.01176 -1.59162,-0.307816 -2.37012,-0.560875 -0.95487,-0.310388 -1.71377,-0.474493 -1.64769,-1.001628 0.0344,-0.274565 0.41252,-0.555361 1.1343,-0.842389 z"
+       id="path1531"
+       style="stroke-width:0.238239" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4928px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.487321"
-       x="100.20271"
-       y="84.541298"
-       id="text859"><tspan
-         style="stroke-width:0.487321"
-         y="84.541298"
-         x="100.20271"
-         id="tspan861"
-         sodipodi:role="line">join chat</tspan></text>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.4928px;line-height:1.25;font-family:Calibri;-inkscape-font-specification:'Calibri, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:71.8543;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.487321"
+       x="240.32533"
+       y="166.96341"
+       id="text1537"
+       transform="translate(-112.636,-82.396759)"><tspan
+         x="240.32533"
+         y="166.96341"><tspan
+           style="stroke-width:0.487321">join chat</tspan></tspan></text>
   </g>
 </svg>
