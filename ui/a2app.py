@@ -77,9 +77,10 @@ class A2Main(QSingleApplication):
             # error_class, error_msg, trace_back = sys.exc_info()
             title = 'a2app: Error on "init_a2_win()"!'
             msg = ('Could not call A2Window! Error:\n%s\n'
-                   'Traceback:%s\n\nPress Ctrl+C to copy this message.'
-                   % (error, traceback.format_exc().strip()))
-            QtWidgets.QMessageBox.critical(None, title, msg)
+                   'Traceback:%s' % (error, traceback.format_exc().strip()))
+
+            QtWidgets.QMessageBox.critical(
+                None, title, msg + '\n\nPress Ctrl+C to copy this message.')
             raise RuntimeError(msg)
 
     def app_msg_get(self, msg):
@@ -114,10 +115,12 @@ def main():
         logger = a2output.get_logger()
         app = A2Main()
         app.exec_()
-    except:
+    except Exception:
+        error_msg = traceback.format_exc().strip()
+        print(error_msg)
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        with open(os.path.join(this_dir, 'error.log'), 'w') as fobj:
-            fobj.write(traceback.format_exc().strip())
+        with open(os.path.join(this_dir, '_ startup_error.log'), 'w') as fobj:
+            fobj.write(error_msg)
 
 
 if __name__ == '__main__':
