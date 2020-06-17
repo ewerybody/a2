@@ -269,28 +269,14 @@ class HotkeysCollection(_Collection):
         scope_modes = {Scope.incl: '#IfWinActive',
                        Scope.excl: '#IfWinNotActive'}
 
-        def create_hotkey_code(hotkey_data):
-            code = ''
-            for hotkey, commands in hotkey_data.items():
-                code += a2ahk.translate_hotkey(hotkey) + '::'
-
-                command_code = '\n\t'.join([cmd for cmd, module in commands])
-                # to gather more than 1 command in a code block
-                if '\n' in command_code:
-                    code += '\n\t' + command_code + '\nreturn\n'
-                # or just inline
-                else:
-                    code += command_code + '\n'
-            return code
-
         # write global hotkey text
         content = scope_modes[Scope.incl] + ',\n'
-        content += create_hotkey_code(self.hotkeys_global)
+        content += self._create_hotkey_code(self.hotkeys_global)
         # write the scoped stuff
         for mode, scope_dict in self._scope_types.items():
             for scope, hotkey_data in scope_dict.items():
                 content += '\n%s, %s\n' % (scope_modes[mode], scope)
-                content += create_hotkey_code(hotkey_data)
+                content += self._create_hotkey_code(hotkey_data)
 
         return content
 
@@ -300,6 +286,21 @@ class HotkeysCollection(_Collection):
             self.hotkeys_global,
             self.hotkeys_scope_incl,
             self.hotkeys_scope_excl]])
+
+    @staticmethod
+    def _create_hotkey_code(hotkey_data):
+        code = ''
+        for hotkey, commands in hotkey_data.items():
+            code += a2ahk.translate_hotkey(hotkey) + '::'
+
+            command_code = '\n\t'.join([cmd for cmd, module in commands])
+            # to gather more than 1 command in a code block
+            if '\n' in command_code:
+                code += '\n\t' + command_code + '\nreturn\n'
+            # or just inline
+            else:
+                code += command_code + '\n'
+        return code
 
 
 class InitCollection(_Collection):

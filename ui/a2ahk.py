@@ -16,7 +16,7 @@ _LOW_BOOLS = {'true': True, 'false': False}
 
 def translate_hotkey(display_string):
     """
-    Creates AHK readable string out of a human readable like:
+    Create AHK readable string out of a human readable like:
     Win+Ctrl+M > #^m
     """
     # Strip and reattach tilde if given.
@@ -25,10 +25,17 @@ def translate_hotkey(display_string):
         tilde = '~'
         display_string = display_string[1:]
 
-    parts = display_string.split('+')
-    parts = [p.strip().lower() for p in parts]
-    modifier = parts[:-1]
-    return tilde + ''.join([modifiers[m] for m in modifier]) + parts[-1]
+    # split by "plus", lower and make sure to remove empties ''
+    parts = [p.strip() for p in display_string.lower().split('+')]
+    parts = [p for p in parts if p]
+
+    if len(parts) == 1 and parts[0] in MODIFIERS:
+        # make sure single modifiers are forwarded by full name
+        result = tilde + parts[0]
+    else:
+        modifier = parts[:-1]
+        result = tilde + ''.join([MODIFIERS[m] for m in modifier]) + parts[-1]
+    return result
 
 
 def ensure_ahk_ext(filename):
