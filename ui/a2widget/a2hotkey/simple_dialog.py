@@ -75,7 +75,7 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
         tilde = ''
         # TODO: implement check for joystick keys and scancodes: 2joy4, SCnnn
         # http://www.autohotkey.com/docs/KeyList.htm#SpecialKeys
-        if len(key) != 1 and key not in a2ahk.keys:
+        if len(key) != 1 and key not in a2ahk.KEYS:
             msg = 'Invalid key! (%s)' % key
         elif len(hk_parts) == 1:
             okay_state = True
@@ -84,7 +84,7 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
             if modifier[0].startswith('~'):
                 tilde = '~'
                 modifier[0] = modifier[0][1:]
-            bad_modifier = [k for k in modifier if k not in a2ahk.modifiers]
+            bad_modifier = [k for k in modifier if k not in a2ahk.MODIFIERS]
             if bad_modifier:
                 msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(bad_modifier))
             else:

@@ -78,9 +78,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 buddy = self.modifier[button.a2buddy]
                 buttons.extend([button, buddy])
 
-            if key in a2ahk.mouse_keys:
+            if key in a2ahk.MOUSE_KEYS:
                 self.mouse_block_widget.setVisible(True)
-            elif key in a2ahk.numpad_keys:
+            elif key in a2ahk.NUMPAD_KEYS:
                 self.numpad_block_widget.setVisible(True)
 
         for button in buttons:
@@ -323,7 +323,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 button.clicked.connect(self.on_key_press)
                 self.key_dict[key_name] = button
 
-                if not key_name.startswith('_') and key_name not in a2ahk.keys:
+                if not key_name.startswith('_') and key_name not in a2ahk.KEYS:
                     log.warn('What kind of key is this?!? %s' % key_name)
 
         self._look_for_unlisted_keys()

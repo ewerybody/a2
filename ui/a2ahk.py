@@ -220,20 +220,20 @@ def py_dict_to_ahk_string(dict_obj):
 
 
 # : http://www.autohotkey.com/docs/KeyList.htm
-modifiers = {'altgr': '<^>'}
+MODIFIERS = {'altgr': '<^>'}
 for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control': '^'}.items():
-    modifiers[_key] = _code
-    modifiers['l' + _key] = '<' + _code
-    modifiers['r' + _key] = '>' + _code
+    MODIFIERS[_key] = _code
+    MODIFIERS['l' + _key] = '<' + _code
+    MODIFIERS['r' + _key] = '>' + _code
 
-mouse_keys = ['lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2',
+MOUSE_KEYS = ['lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2',
               'wheeldown', 'wheelup', 'wheelleft', 'wheelright']
-numpad_keys = ['numlock', 'numpadins', 'numpadend', 'numpadpgup', 'numpadpgdn',
+NUMPAD_KEYS = ['numlock', 'numpadins', 'numpadend', 'numpadpgup', 'numpadpgdn',
                'numpaddown', 'numpadleft', 'numpadright', 'numpadclear', 'numpadhome',
                'numpadup', 'numpaddot', 'numpaddel', 'numpad0', 'numpad1', 'numpad2',
                'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8',
                'numpad9', 'numpaddiv', 'numpadmult', 'numpadadd', 'numpadsub', 'numpadenter', ]
-keys = (['capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backspace',
+KEYS = (['capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backspace',
          'bs', 'scrolllock', 'delete', 'del', 'insert', 'ins', 'home', 'end',
          'pgup', 'pgdn', 'up', 'down', 'left', 'right',
          'browser_back', 'browser_forward', 'browser_refresh', 'browser_stop',
@@ -241,7 +241,7 @@ keys = (['capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backsp
          'volume_down', 'volume_up', 'media_next', 'media_prev', 'media_stop',
          'media_play_pause', 'launch_mail', 'launch_media', 'launch_app1',
          'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak', 'pause',
-         'break', 'help', 'sleep'] + mouse_keys + numpad_keys +
+         'break', 'help', 'sleep'] + MOUSE_KEYS + NUMPAD_KEYS +
         ['f%i' % _i for _i in range(1, 25)])
 
 
