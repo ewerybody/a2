@@ -92,7 +92,6 @@ class ScopeWidget(QtWidgets.QWidget):
         # usedmenu = menu.addMenu('%s in use' % name.title())
         submenu = menu.addMenu('Available %s' % name.title())
         for item in sorted(self.system_scope_data[name], key=lambda s: s.lower()):
-            # action = QtGui.QAction(item, submenu, triggered=partial(self.set_scope, i, item))
             action = submenu.addAction(item, self._set_button_field)
             action.setData(name)
 
@@ -164,11 +163,11 @@ class ScopeWidget(QtWidgets.QWidget):
     def get_scope_data(self):
         # call AHK script to get all window classes, titles and executables
         scope_nfo = a2ahk.call_lib_cmd('get_scope_nfo')
-        scope_nfo = scope_nfo.split('\\n')
+        scope_nfo = scope_nfo.split('\n')
         if not scope_nfo:
             log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)
             return
-
+        # sort found items into dictionary of sets
         self.system_scope_data = dict([(n, set()) for n in SCOPE_ITEMS])
         self.system_scope_data['__all'] = set()
         num_items = len(scope_nfo)

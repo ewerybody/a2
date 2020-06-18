@@ -78,15 +78,11 @@ def call_cmd(cmd_path, *args, **kwargs):
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs.get('cwd'))
 
-    cmd_result = str(proc.communicate()[0])
+    cmd_result = proc.communicate()[0].decode()
     proc.kill()
 
-    cmd_result = cmd_result.strip()
-    # cut away first & last quote char
-    quote_char = cmd_result[-1]
-    cmd_result = cmd_result[
-        cmd_result.find(quote_char) + 1:cmd_result.rfind(quote_char)]
-
+    # cut away quote characters if any
+    cmd_result = cmd_result.strip(' \'"')
     return cmd_result
 
 
