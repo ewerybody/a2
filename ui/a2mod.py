@@ -625,17 +625,19 @@ class Mod(object):
         self.change()
 
     def create_script(self, script_name, author_name):
-        if not script_name:
-            return
-        # make sure there is lowercase .ahk as extension
-        script_name = '%s.ahk' % os.path.splitext(script_name)[0]
         script_name = script_name.strip()
+        if not script_name:
+            returns
+        if script_name != a2ahk.ensure_ahk_ext(script_name):
+            raise NameError('The script needs to have an "%s" extension!!' % a2ahk.EXTENSION)
 
-        with open(os.path.join(self.path, script_name), 'w') as fObj:
-            content = '; %s - %s\n' % (self.name, script_name)
-            content += '; author: %s\n' % author_name
-            content += '; created: %s\n\n' % a2util.get_date()
-            fObj.write(content)
+        script_path = os.path.join(self.path, script_name)
+        if not os.path.isfile(script_path):
+            with open(script_path, 'w') as file_obj:
+                content = '; %s - %s\n' % (self.name, script_name)
+                content += '; author: %s\n' % author_name
+                content += '; created: %s\n\n' % a2util.get_date()
+                file_obj.write(content)
         return script_name
 
     def check_create_script(self, name):
