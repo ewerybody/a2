@@ -59,6 +59,7 @@ class Edit(EditCtrl):
 
         self.menu = local_script.BrowseScriptsMenu(self, main)
         self.menu.file_prefix = BUTTON_SCRIPT_PREFIX
+        self.menu.script_template = BUTTON_SCRIPT_TEMPLATE
         self.menu.config_typ = 'button'
         self.menu.dialog_title = 'New Button Script'
         self.menu.dialog_msg = 'Give a name for the new button script:'
