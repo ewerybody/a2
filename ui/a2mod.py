@@ -6,18 +6,15 @@ These are collections of 1 or more modules.
 A module always comes with a package. These can come from arbitrary locations.
 Basically just locally or from an FTP, github, another URL, network location ...
 They can be enabled/disabled individually affecting all their child modules.
-
-@created Jul 9, 2015
-@author: eRiC
 """
 import os
 import sys
 import json
 import time
-import uuid
 import shutil
 import traceback
 
+import a2ahk
 import a2core
 import a2ctrl
 import a2util
@@ -602,7 +599,7 @@ class Mod(object):
 
     @property
     def scripts(self):
-        return [f for f in self.files if f.lower().endswith('.ahk')]
+        return [f for f in self.files if f.lower().endswith(a2ahk.EXTENSION)]
 
     @property
     def files(self):
@@ -877,6 +874,7 @@ def remove_folder(path):
     correctly fail moving to temp if ANY of the containing items is locked.
     So there is no other safeguard needed.
     """
+    import uuid
     trash_path = os.path.join(os.getenv('TEMP'), str(uuid.uuid4()))
     os.rename(path, trash_path)
     shutil.rmtree(trash_path)

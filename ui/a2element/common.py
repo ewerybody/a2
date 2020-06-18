@@ -447,7 +447,9 @@ class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
 
     def __init__(self, parent, main):
         super(LocalAHKScriptsMenu, self).__init__(parent, main)
+        import a2ahk
         self.setTitle('Include Script')
+        self.extension = a2ahk.EXTENSION
 
     def get_available_scripts(self):
         scripts_used = set()

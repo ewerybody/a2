@@ -66,7 +66,7 @@ def update_readme(a2lib):
     versions = {}
     for script in os.scandir(version_scripts_dir):
         name = script.name
-        if script.is_dir() or not name.startswith('get_') or not name.endswith('.ahk'):
+        if script.is_dir() or not name.startswith('get_') or not name.endswith(a2ahk.EXTENSION):
             continue
         version_str = subprocess.check_output(
             [AHKEXE, script.path], cwd=batches_dir).decode()
@@ -147,7 +147,7 @@ def copy_files(distpath, distlib, a2lib, distui):
             continue
 
         if item.is_file():
-            if ext == '.ahk':
+            if ext == a2ahk.EXTENSION:
                 shutil.copy2(item.path, distlib)
         else:
             this_dest = os.path.join(distlib, item.name)

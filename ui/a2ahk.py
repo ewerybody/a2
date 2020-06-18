@@ -11,6 +11,7 @@ import subprocess
 
 
 EXECUTABLE_NAME = 'autohotkey.exe'
+EXTENSION = '.ahk'
 _LOW_BOOLS = {'true': True, 'false': False}
 
 
@@ -39,8 +40,8 @@ def translate_hotkey(display_string):
 
 
 def ensure_ahk_ext(filename):
-    if not filename.lower().endswith('.ahk'):
-        filename += '.ahk'
+    if not filename.lower().endswith(EXTENSION):
+        filename += EXTENSION
     return filename
 
 

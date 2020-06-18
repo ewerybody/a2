@@ -17,7 +17,7 @@ class Test(unittest.TestCase):
             'a_number = 42133723\n'
             'a_float = 123.567')
 
-        test_file = os.path.join(os.getenv('temp'), str(uuid.uuid4()) + '.ahk')
+        test_file = os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
         with open(test_file, 'w') as fob:
             fob.write(test_content)
         ahkvars = a2ahk.get_variables(test_file)

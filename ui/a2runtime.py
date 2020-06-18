@@ -92,7 +92,7 @@ class IncludeDataCollector(object):
             self._entrypoint_script = template.format(data_path=data_path)
 
             script_path = os.path.join(
-                self.a2.paths.lib, '_ ' + ENTRYPOINT_FILENAME + '.ahk')
+                self.a2.paths.lib, '_ ' + ENTRYPOINT_FILENAME + a2ahk.EXTENSION)
             a2util.write_utf8(script_path, self._entrypoint_script)
 
     @property
@@ -135,7 +135,7 @@ class _Collection(object):
         self.name = None
 
     def write(self):
-        path = os.path.join(self.a2.paths.includes, self.name + '.ahk')
+        path = os.path.join(self.a2.paths.includes, self.name + a2ahk.EXTENSION)
         a2util.write_utf8(path, self._get_final_content())
 
     def gather(self, mod):
@@ -342,7 +342,7 @@ class SourceLibsCollection(_Collection):
             if item.is_dir():
                 continue
             _, ext = os.path.splitext(item.name)
-            if ext.lower() != '.ahk':
+            if ext.lower() != a2ahk.EXTENSION:
                 continue
             self.includes.append(os.path.join(rel_path, item.name))
 
