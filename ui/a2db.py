@@ -275,8 +275,9 @@ class A2db(object):
         Fetches settings from the db if set in the db and different from the
         given default_dict.
         """
+        from copy import deepcopy
         current = self.get(key, table) or {}
-        result = default_dict.copy()
+        result = deepcopy(default_dict)
         for value_name, value in default_dict.items():
             if value_name in current:
                 set_value = current.get(value_name)

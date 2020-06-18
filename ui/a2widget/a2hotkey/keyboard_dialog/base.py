@@ -41,7 +41,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self.checked_key = ''
         self.checked_modifier = []
         self._original_key = None
-        self._original_modifier = None
+        self._original_modifier = []
 
         from . import base_ui
         self.ui = base_ui.Ui_Keyboard()
@@ -91,7 +91,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 self._check_key(button)
 
         self._original_key = self.checked_key
-        self._original_modifier = self.checked_modifier.copy()
+        self._original_modifier[:] = self.checked_modifier[:]
 
         self.ui.key_field.setText(self.key)
         self.update_ui()

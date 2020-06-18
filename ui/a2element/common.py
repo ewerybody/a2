@@ -218,14 +218,16 @@ class EditCtrl(QtWidgets.QGroupBox):
             self.main.edit_mod()
 
     def duplicate(self):
-        new_cfg = self.cfg.copy()
+        from copy import deepcopy
+        new_cfg = deepcopy(self.cfg)
         if 'name' in new_cfg:
             new_cfg['name'] = self.increase_name_number(new_cfg['name'])
         self.parent_cfg.append(new_cfg)
         self.main.edit_mod()
 
     def cut(self):
-        self.main.edit_clipboard.append(self.cfg.copy())
+        from copy import deepcopy
+        self.main.edit_clipboard.append(deepcopy(self.cfg))
         self.delete()
 
     def help(self):

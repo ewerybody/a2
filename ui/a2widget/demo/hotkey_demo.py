@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from PySide2 import QtCore, QtWidgets
 
 import a2ctrl
@@ -56,7 +58,7 @@ class Demo(QtWidgets.QMainWindow):
     def check_changes(self):
         if self._config_backup != config:
             self.code.setText(config)
-            self._config_backup = config.copy()
+            self._config_backup = deepcopy(config)
 
             if self.user_hotkey is not None:
                 self.user_hotkey.deleteLater()

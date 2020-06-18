@@ -187,8 +187,8 @@ class A2Window(QtWidgets.QMainWindow):
         """
         if not self.module_view.editing:
             return
-
-        self.mod.config = self.temp_config.copy()
+        from copy import deepcopy
+        self.mod.config = deepcopy(self.temp_config)
         if self.mod.enabled:
             self.mod.change()
             self.settings_changed()
