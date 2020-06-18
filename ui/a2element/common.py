@@ -7,7 +7,7 @@ import a2core
 import a2util
 import a2ctrl
 from a2ctrl import Icons
-import a2widget.local_script
+from a2widget import local_script
 
 
 LOCAL_MENU_PREFIX = 'local: '
@@ -393,9 +393,8 @@ class EditAddElem(QtWidgets.QWidget):
         self._check_for_local_element_mods()
         self.menu.popup(QtGui.QCursor.pos())
 
-    def _on_add_include(self, args):
-        typ, name = args
-        self._add_element(typ, name)
+    def _on_add_include(self, file_name, _name):
+        self._add_element('include', file_name)
 
     def _on_add_element_action(self):
         typ, name = self.sender().data()
@@ -441,15 +440,18 @@ class EditAddElem(QtWidgets.QWidget):
                 action.setIcon(icon)
 
 
-class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
-    """WIP. placeholder so far ..."""
-    script_selected = QtCore.Signal(tuple)
+class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
+    """Selection menu for module-local Autohotkey scripts."""
+    # script_selected = QtCore.Signal(tuple)
 
     def __init__(self, parent, main):
         super(LocalAHKScriptsMenu, self).__init__(parent, main)
         import a2ahk
         self.setTitle('Include Script')
+        self.dialog_title = 'New Autohotkey Script'
+        self.dialog_msg = 'Give a name for the new Autohotkety script:'
         self.extension = a2ahk.EXTENSION
+        self.on_create_name_check = self.main.mod.check_create_script
 
     def get_available_scripts(self):
         scripts_used = set()
@@ -460,20 +462,5 @@ class LocalAHKScriptsMenu(a2widget.local_script.BrowseScriptsMenu):
                      if name.lower() not in scripts_used]
         return available
 
-    def _on_script_selected(self):
-        self.script_selected.emit(('include', self.sender().data()))
-
-    def _on_create_script(self):
-        from a2widget.a2input_dialog import A2InputDialog
-        dialog = A2InputDialog(
-            self.main, 'New Script',
-            self.main.mod.check_create_script,
-            text='awesome_script',
-            msg='Give a name for the new script file:')
-
-        dialog.exec_()
-        if not dialog.output:
-            return
-
-        name = self.main.mod.create_script(dialog.output, self.main.devset.author_name)
-        self.script_selected.emit(('include', name))
+    def create_script(self, name):
+        self.main.mod.create_script(name, self.main.devset.author_name)

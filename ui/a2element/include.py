@@ -34,21 +34,7 @@ class Edit(EditCtrl):
         self.local_scripts_menu.script_selected.connect(self._on_script_selected)
         self.script_selector.set_menu(self.local_scripts_menu)
 
-#         self.button = QtWidgets.QPushButton(self.cfg['file'])
-#         self.button_menu = BrowseScriptsMenu(self.main)
-#         self.button_menu.script_selected.connect(self.set_script)
-#         self.button.setMenu(self.button_menu)
-#         self.base_layout.addWidget(self.button)
-#
-#         self.edit_button = QtWidgets.QPushButton('edit script')
-#         self.edit_button.clicked.connect(self.edit_script)
-#         self.edit_button.setIcon(a2ctrl.Icons.inst().edit)
-#         self.base_layout.addWidget(self.edit_button)
-#
-#         self.base_layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
-
-    def _on_script_selected(self, args):
-        _, file_name = args
+    def _on_script_selected(self, file_name, _name):
         self.cfg['file'] = file_name
         self.script_selector.set_selection(file_name)
 

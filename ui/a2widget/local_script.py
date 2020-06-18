@@ -5,6 +5,9 @@ import a2util
 
 from PySide2 import QtWidgets, QtCore
 
+DEFAULT_EXT = '.py'
+DEFAULT_SCRIPT_NAME = 'awesome_script'
+
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
     script_selected = QtCore.Signal(str, str)
@@ -15,11 +18,11 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         self.setIcon(a2ctrl.Icons.inst().code)
         self.aboutToShow.connect(self.build_menu)
 
-        self.extension = '.py'
+        self.extension = DEFAULT_EXT
         self.file_prefix = ''
         self.script_template = ''
         self.config_typ = ''
-        self._script_default_name = 'awesome_script'
+        self._script_default_name = DEFAULT_SCRIPT_NAME
         self.dialog_title = 'dialog_title'
         self.dialog_msg = 'dialog_msg'
 
@@ -49,7 +52,7 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         from a2widget.a2input_dialog import A2InputDialog
         dialog = A2InputDialog(
             self.main, self.dialog_title,
-            self._name_check,
+            self.on_create_name_check,
             text=self._script_default_name,
             msg=self.dialog_msg)
 
@@ -57,18 +60,21 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         if not dialog.output:
             return
 
-        self.set_script(dialog.output)
+        file_name = self.set_script(dialog.output)
+        self.create_script(file_name)
 
     def set_script(self, name):
-        file_name = build_file_name(name, self.file_prefix)
+        file_name = build_file_name(name, self.file_prefix, self.extension)
         self.script_selected.emit(file_name, name)
+        return file_name
 
+    def create_script(self, file_name):
         path = os.path.join(self.main.mod.path, file_name)
         if not os.path.isfile(path):
             with open(path, 'w') as file_object:
-                file_object.write(self.script_template.format(name=name))
+                file_object.write(self.script_template.format(name=file_name))
 
-    def _name_check(self, name):
+    def on_create_name_check(self, name):
         name = os.path.splitext(name)[0]
         black_list = self._list_scripts()
         return a2util.standard_name_check(name, black_list)
@@ -134,8 +140,12 @@ class ScriptSelector(QtWidgets.QWidget):
         self.main.edit_code(script_path)
 
 
-def build_file_name(name, prefix):
+def build_file_name(name, prefix, extension=None):
     if name is None:
         return None
+    if extension is None:
+        extension = DEFAULT_EXT
+    if name.lower().endswith(extension.lower()):
+        return prefix + name
     else:
-        return prefix + name + '.py'
+        return prefix + name + extension

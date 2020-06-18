@@ -15,7 +15,7 @@ def main(a2, mod):
     :param a2: Main A2 object instance.
     :param mod: Current a2 module instance.
     """
-    print('calling {name} ...')
+    print('calling button script "{name}" main() ...')
 '''
 
 
