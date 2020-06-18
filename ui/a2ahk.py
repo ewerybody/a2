@@ -39,10 +39,11 @@ def translate_hotkey(display_string):
     return result
 
 
-def ensure_ahk_ext(filename):
-    if not filename.lower().endswith(EXTENSION):
-        filename += EXTENSION
-    return filename
+def ensure_ahk_ext(file_name):
+    """Make sure the given file_name ends with proper Autohotkey extension."""
+    if not file_name.lower().endswith(EXTENSION):
+        file_name += EXTENSION
+    return file_name
 
 
 def call_lib_cmd(cmd_name, *args, **kwargs):
@@ -250,5 +251,6 @@ KEYS = (['capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backsp
 
 
 if __name__ == '__main__':
-    win_startup_path = call_lib_cmd('get_win_startup_path')
-    print('win_startup_path: "%s"' % win_startup_path)
+    import unittest
+    import test.test_ahk
+    unittest.main(test.test_ahk, verbosity=2)

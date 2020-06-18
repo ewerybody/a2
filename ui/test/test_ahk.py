@@ -62,6 +62,18 @@ class Test(unittest.TestCase):
             converted = a2ahk.py_value_to_ahk_string(item)
             self.assertEqual(converted, result)
 
+    def test_ensure_ahk_ext(self):
+        base = str(uuid.uuid4())
+        name = a2ahk.ensure_ahk_ext(base)
+        parts = os.path.splitext(name)
+        self.assertEqual(parts[0], base)
+        self.assertEqual(parts[1], a2ahk.EXTENSION)
+
+    def test_call_lib_cmd(self):
+        win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
+        win_startup_path
+        print('win_startup_path: "%s"' % win_startup_path)
+
 
 if __name__ == "__main__":
     unittest.main()
