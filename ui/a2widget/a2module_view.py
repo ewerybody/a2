@@ -5,8 +5,6 @@ from PySide2 import QtCore, QtWidgets
 import a2core
 import a2ctrl
 import a2util
-import a2element.common
-from a2widget import a2settings_view
 
 
 log = a2core.get_logger(__name__)
@@ -56,6 +54,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
         if self.main.mod is None:
             if not self.main.num_selected:
+                from a2widget import a2settings_view
                 self.controls = [a2settings_view.A2Settings(self.main)]
                 self.update_header()
                 self.draw_ui()
@@ -146,6 +145,7 @@ class A2ModuleView(QtWidgets.QWidget):
         if self.main.mod is None:
             return
 
+        import a2element.common
         from copy import deepcopy
 
         self.controls = []
@@ -270,6 +270,7 @@ class EditView(QtWidgets.QWidget):
         self.controls = controls
         self.config_list = config_list
 
+        import a2element.common
         for ctrl in controls:
             if ctrl is None:
                 continue
