@@ -285,9 +285,9 @@ class A2Window(QtWidgets.QMainWindow):
                 log.debug('Could not restore the ui geometry with stored data!')
                 log.debug(error)
 
-    def showRaise(self):
+    def show_raise(self):
         """
-        Calls the window to show as currently active window.
+        Call the window to show as currently active window.
 
         btw: These aren't random shots to make the window appear somehow.
         Each step has its purpose and is needed.
@@ -301,9 +301,15 @@ class A2Window(QtWidgets.QMainWindow):
             self.setWindowState(QtCore.Qt.WindowActive)
         elif state not in QtCore.Qt.WindowState.values.values():
             self.setWindowState(QtCore.Qt.WindowActive)
+        else:
+            print(state)
 
         # make it the currently active window
-        self.activateWindow()
+        for i in range(5):
+            if self.isActiveWindow():
+                break
+            QtCore.QTimer(self).singleShot(50, self.activateWindow)
+            time.sleep(0.05)
 
     def scroll_to(self, value, smooth=False):
         # TODO: reimplement in each widget

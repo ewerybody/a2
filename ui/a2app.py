@@ -70,7 +70,7 @@ class A2Main(QSingleApplication):
             self._core.win = self._win
             print('self._win: %s' % self._win)
             self._core.app = self
-            self._core.win.showRaise()
+            self._core.win.show_raise()
 
         except Exception as error:
             # TODO: provide more detailed startup error report
@@ -92,7 +92,7 @@ class A2Main(QSingleApplication):
 
         elif '--show' in msg:
             self.info('received show command ...')
-            self._win.showRaise()
+            self._win.show_raise()
 
         elif '--reload' in msg:
             self.error('reload is deprecated!')
