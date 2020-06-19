@@ -62,10 +62,17 @@ def check_ui_module(module):
     ui_time = os.path.getmtime(uifile)
     diff = py_time - ui_time
     if diff < 0:
-        from pyside2uic import compileUi
         log.debug('%s needs compile! (age: %is)', uibase, diff)
-        with open(pyfile, 'w') as pyfobj:
-            compileUi(uifile, pyfobj)
+
+        try:
+            from pyside2uic import compileUi
+            with open(pyfile, 'w') as pyfobj:
+                compileUi(uifile, pyfobj)
+        except ModuleNotFoundError:
+            import subprocess
+            import PySide2
+            uic_path = os.path.join(PySide2.__path__[0], 'uic.exe')
+            subprocess.call([uic_path, '-g', 'python', uifile, '-o', pyfile])
 
         # patch compiled main ui file to have resizing handled by settings.
         # Could be useful for ANY compiled UI:
