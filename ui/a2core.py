@@ -59,20 +59,25 @@ class A2Obj(object):
         self.app = None
         self.win = None
         self.module_sources = {}
+        self._modules_fetched = 0
 
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
         self.log = a2output.get_logger()
-        self.log.set_data_path(self.paths.data)
-        print(f'Logger set up: {self.log}')
-
-        self.db = a2db.A2db(self.paths.db)
-        self._enabled = None
         log.info('A2Obj initialised!')
 
     def start_up(self):
+        self.log.set_data_path(self.paths.data)
+        self.db = a2db.A2db(self.paths.db)
+        self._enabled = None
         self.fetch_modules()
         setup_proxy(self)
+        log.info(f'A2Obj loaded with data path: "{self.paths.data}"')
+
+    def fetch_modules_if_stale(self):
+        if time.time() - self._modules_fetched > 0.5:
+            self.fetch_modules()
+            self._modules_fetched = time.time()
 
     def fetch_modules(self):
         """
@@ -87,7 +92,9 @@ class A2Obj(object):
             ModSource.mods = {'module1': a2Mod.Mod,
                               'module2': a2Mod.Mod, ...}
         """
-        a2mod.get_module_sources(self, self.paths.modules, self.module_sources)
+        self.module_sources.clear()
+        self.module_sources.update(a2mod.get_module_sources(self, self.paths.modules))
+        self._modules_fetched = time.time()
 
     def get_module_obj(self, source_name, module_name):
         source = self.module_sources.get(source_name)
@@ -171,27 +178,31 @@ class Paths(object):
         self.python = sys.executable
 
         # get data dir from config override or the default appdata dir.
-        _data = os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
+        self.default_data = os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
+        self.data_override_file = os.path.join(self.default_data, 'a2_data_path.ahk')
+        self._build_data_paths()
+        self._test_dirs()
+
+    def _build_data_paths(self):
         try:
-            self.data = a2ahk.get_variables(
-                os.path.join(_data, 'a2_data_path.ahk')).get('a2data')
+            self.data = self.get_data_override_path()
         except FileNotFoundError:
-            self.data = _data
+            self.data = self.default_data
+
         self.modules = os.path.join(self.data, 'modules')
         self.module_data = os.path.join(self.data, 'module_data')
         self.includes = os.path.join(self.data, 'includes')
         self.temp = os.path.join(self.data, 'temp')
         self.db = os.path.join(self.data, 'a2.db')
 
+    def _test_dirs(self):
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.ui]
         missing = [p for p in main_items if not os.path.exists(p)]
         if missing:
-            raise RuntimeError('a2ui start interrupted! %s not found in main dir!'
-                               % missing)
+            raise RuntimeError(
+                'a2ui start interrupted! %s Not found in main dir!' % missing)
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
-            raise RuntimeError('a2ui start interrupted! %s inaccessable!'
-                               % self.data)
 
 
 def _db_cleanup():
@@ -241,6 +252,22 @@ def _db_cleanup():
 
         if include is not None:
             a2.db.pop('include', table)
+
+    def set_data_override(self, path):
+        if not path:
+            if os.path.isfile(self.data_override_file):
+                os.remove(self.data_override_file)
+                self.data = self.default_data
+        else:
+            a2ahk.set_variable(self.data_override_file, 'a2data', path)
+            self.data = path
+        self._build_data_paths()
+
+    def get_data_override_path(self):
+        return a2ahk.get_variables(self.data_override_file).get('a2data')
+
+    def has_data_override(self):
+        return self.data != self.default_data
 
 
 def get_logger(name):

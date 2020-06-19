@@ -42,27 +42,32 @@ MSG_UPDATE_URL_INVALID = 'Update URL Invalid'
 MSG_NO_CFG_FILE = 'The Package has no config file!'
 
 
-def get_module_sources(main, path, modsource_dict):
+def get_module_sources(main, modules_path):
     """
     Browses the a2 module folder for module sources and updates given
     modsource_dict with new ModSource objects if found or deletes vanished ones.
     Skips folders that have CONFIG_FILENAME inside.
     Calls all module sources to update their modules.
     """
-    modsources = get_folders(path)
+    # modsources = get_folders(path)
 
-    # get rid of inexistent module sources
-    # getting list avoids "dictionary changed size during iteration"-error
-    for source_name in list(modsource_dict):
-        if source_name not in modsources:
-            modsource_dict.pop(source_name)
-
+    # # get rid of inexistent module sources
+    # # getting list avoids "dictionary changed size during iteration"-error
+    # for source_name in list(modsource_dict):
+    #     if source_name not in modsources:
+    #         modsource_dict.pop(source_name)
+    modsource_dict = {}
     # add new ones
-    for name in modsources:
-        if not os.path.isfile(os.path.join(path, name, MOD_SOURCE_NAME)):
+    for name in get_folders(modules_path):
+        if not os.path.isfile(os.path.join(modules_path, name, MOD_SOURCE_NAME)):
             continue
-        modsource_dict.setdefault(name.lower(), ModSource(main, name)).fetch_modules()
+        this_source = ModSource(main, name)
+        this_source.fetch_modules()
+        modsource_dict[name.lower()] = this_source
 
+    log.info('Gathered %i sources with %i modules in total. (%s)' %
+             (len(modsource_dict), sum(s.mod_count for s in modsource_dict.values()), modules_path))
+    return modsource_dict
 
 def create_module_source_dir(name):
     a2 = a2core.A2Obj.inst()

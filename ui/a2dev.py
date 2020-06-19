@@ -1,8 +1,4 @@
-'''
-Created on 11.07.2018
-
-@author: eric
-'''
+"""a2 Developer stuff."""
 import os
 
 import a2core
@@ -29,7 +25,7 @@ class RollbackDiffDialog(A2ConfirmDialog):
         self.ui.diff_button.clicked.connect(self.diff.emit)
 
 
-class DevSettings(object):
+class DevSettings:
     def __init__(self, a2):
         self._enabled = False
         self.author_name = ''

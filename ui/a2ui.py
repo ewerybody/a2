@@ -211,11 +211,11 @@ class A2Window(QtWidgets.QMainWindow):
 
     def mod_disable_all(self):
         self.a2.enabled = {}
-        self.settings_changed(refresh_ui=True)
+        self.load_runtime_and_ui()
 
-    def settings_changed(self, specific=None, refresh_ui=False):
+    def settings_changed(self, specific=None):
         log.info('Runtime refresh called!')
-        self.a2.fetch_modules()
+        self.a2.fetch_modules_if_stale()
 
         log.info('  Writing includes ...')
         a2runtime.write_includes(specific)
@@ -225,11 +225,11 @@ class A2Window(QtWidgets.QMainWindow):
         self._restart_thread.finished.connect(self._restart_thread.deleteLater)
         self._restart_thread.start()
 
-        if refresh_ui:
-            log.info('  Refreshing Ui ...')
-            self.module_list.draw_modules()
-            self.module_view.draw_mod()
-        log.info('  Done!')
+    def refresh_ui(self):
+        log.info('  Refreshing Ui ...')
+        self.rebuild_css()
+        self.module_list.draw_modules()
+        self.module_view.draw_mod()
 
     def escape(self):
         if self.module_view.editing:
@@ -367,7 +367,8 @@ class A2Window(QtWidgets.QMainWindow):
         self._shutdown_thread.start()
 
     def load_runtime_and_ui(self):
-        self.settings_changed(refresh_ui=True)
+        self.settings_changed()
+        self.refresh_ui()
 
     def edit_code(self, file_path):
         if os.path.isfile(self.devset.code_editor):
