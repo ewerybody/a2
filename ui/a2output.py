@@ -54,7 +54,12 @@ class _OutputWrangler(object):
 
     def __getattr__(self, attrname):
         """Handle any calls that might be thrown against the root output."""
+        if self._root is None:
+            return self._pass
         return getattr(self._root, attrname)
+
+    def _pass(self, *args):
+        pass
 
 
 class A2Logger(object):
