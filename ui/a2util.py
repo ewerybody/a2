@@ -235,6 +235,22 @@ def write_enable(file_path):
         os.chmod(file_path, stat.S_IWRITE)
 
 
+def rolling_list_add(item, to_list, max_items=10):
+    """
+    Sort given item to top of a list.
+
+    :param str item: Item to make the first element in given list.
+    :param list to_list: List object to treat as rolling list with given item.
+    """
+    if item in to_list:
+        if to_list[0] == item:
+            return to_list[:max_items]
+        to_list.remove(item)
+
+    to_list.insert(0, item)
+    return to_list[:max_items]
+
+
 if __name__ == '__main__':
     x = unroll_seconds(29030400.0, 0)
     print('x: %s' % x)
