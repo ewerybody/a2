@@ -1,4 +1,7 @@
-﻿path_is_absolute(byref path) {
+﻿;a2 Autohotkey path library.
+
+; Return true/false according to if given path is absolute or relative.
+path_is_absolute(byref path) {
 	SplitPath, path ,,,,, OutDrive
 	if (OutDrive == "")
 		return false
@@ -6,18 +9,30 @@
 		return true
 }
 
+; Return the parent directory to the path.
 path_dirname(byref path) {
     SplitPath, path,, OutDir
     Return OutDir
 }
 
+; Return the short-name of a given path without its path.
 path_basename(byref path) {
     SplitPath, path, OutFileName
     Return OutFileName
 }
 
+; Return true/false according to if the given path exists and is a directory.
 path_is_dir(byref path) {
     if (InStr(FileExist(path), "D"))
+        return true
+    else
+        return false
+}
+
+; Return true/false according to if the given path exists and is a file.
+path_is_file(byref path) {
+    attrs := FileExist(path)
+    if (attrs != "" && !InStr(attrs, "D"))
         return true
     else
         return false
