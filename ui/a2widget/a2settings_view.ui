@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>722</height>
+    <width>834</width>
+    <height>740</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,16 +17,7 @@
    <string notr="true">b</string>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -50,7 +41,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string notr="true">Open a2 Dialog:</string>
+            <string notr="true">Open a2 Dialog</string>
            </property>
           </widget>
          </item>
@@ -322,6 +313,9 @@ Go ahead and add or create one:</string>
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="label_12">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string notr="true">a2 runtime:</string>
                </property>
@@ -329,40 +323,22 @@ Go ahead and add or create one:</string>
              </item>
              <item row="4" column="1">
               <widget class="QCheckBox" name="startup_tooltips">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string notr="true">Enable Startup Tooltips</string>
                </property>
               </widget>
              </item>
              <item row="5" column="0">
-              <widget class="QLabel" name="label_11">
-               <property name="text">
-                <string notr="true">Python Output:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QCheckBox" name="loglevel_debug">
-               <property name="text">
-                <string notr="true">LogLevel:DEBUG</string>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="1">
-              <widget class="QCheckBox" name="show_console">
-               <property name="text">
-                <string notr="true">Show Console</string>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="0">
               <widget class="QLabel" name="label_9">
                <property name="text">
                 <string notr="true">JSON Indent:</string>
                </property>
               </widget>
              </item>
-             <item row="7" column="1">
+             <item row="5" column="1">
               <widget class="QSpinBox" name="json_indent">
                <property name="maximumSize">
                 <size>
@@ -372,7 +348,7 @@ Go ahead and add or create one:</string>
                </property>
               </widget>
              </item>
-             <item row="11" column="0" colspan="2">
+             <item row="9" column="0" colspan="2">
               <widget class="Line" name="line">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -391,14 +367,14 @@ Go ahead and add or create one:</string>
                </property>
               </widget>
              </item>
-             <item row="12" column="0">
+             <item row="10" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
                 <string notr="true">User Data:</string>
                </property>
               </widget>
              </item>
-             <item row="12" column="1">
+             <item row="10" column="1">
               <widget class="A2PathField" name="data_folder">
                <property name="enabled">
                 <bool>false</bool>
@@ -408,14 +384,14 @@ Go ahead and add or create one:</string>
                </property>
               </widget>
              </item>
-             <item row="13" column="0">
+             <item row="12" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
                 <string notr="true">Python Executable:</string>
                </property>
               </widget>
              </item>
-             <item row="13" column="1">
+             <item row="12" column="1">
               <widget class="A2PathField" name="python_executable">
                <property name="enabled">
                 <bool>false</bool>
@@ -424,6 +400,24 @@ Go ahead and add or create one:</string>
                 <string notr="true"/>
                </property>
               </widget>
+             </item>
+             <item row="11" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <item>
+                <widget class="QPushButton" name="button_set_user_dir_standard">
+                 <property name="text">
+                  <string>Set To User Dir Standard </string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="button_set_user_dir_custom">
+                 <property name="text">
+                  <string>Set Override Path</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>

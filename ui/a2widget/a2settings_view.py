@@ -1,8 +1,5 @@
 """
-a2ctrl.a2settings
-
-@created: 29.02.2016
-@author: eric
+Objects for the the a2 settings tabs.
 """
 import os
 
@@ -15,7 +12,6 @@ import a2ctrl.connect
 from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
-_PROXY_ITEMS = 'user', 'pass', 'server', 'port'
 LICENSES_TAB_NAME = 'licenses'
 
 
@@ -67,27 +63,26 @@ class A2Settings(QtWidgets.QWidget):
 
         self.ui.code_editor.file_types = "Executables (*.exe)"
         self.ui.code_editor.writable = False
-        self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
+        # self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
 
         self.dev_set_dict = self.main.devset.get()
-        a2ctrl.connect.control_list([self.ui.author_name, self.ui.author_url,
-                                     self.ui.code_editor, self.ui.json_indent,
-                                     self.ui.loglevel_debug],
-                                    self.dev_set_dict,
-                                    self.dev_setting_changed)
+        a2ctrl.connect.control_list(
+            [self.ui.author_name, self.ui.author_url, self.ui.code_editor, self.ui.json_indent],
+            self.dev_set_dict, self.dev_setting_changed)
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
-        self.ui.data_folder.setText(self.a2.paths.data)
+        self._data_path_ui_handler = DataPathUiHandler(self.ui, self.a2)
         self.ui.python_executable.setText(self.a2.paths.python)
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
 
-        self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
-        self.ui.show_console.clicked[bool].connect(self.toggle_console)
+        # self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
+        # self.ui.show_console.clicked[bool].connect(self.toggle_console)
 
         # TODO: #182
         # ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
         # self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
-        self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
+        # self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
+
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.setPageStep(0.1)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
@@ -104,21 +99,7 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
         self._check_desktop_link()
 
-        # filling proxy ui
-        self.ui.proxy_box.setChecked(self.a2.db.get('proxy_enabled') or False)
-        settings = self.a2.db.get('proxy_settings') or {}
-        self.ui.proxy_http.setCurrentIndex(
-            ('http', 'https').index(settings.get('http') or 'http'))
-        proxy_line_widgets = (self.ui.proxy_user, self.ui.proxy_pass,
-                              self.ui.proxy_server, self.ui.proxy_port)
-        for i, name in enumerate(_PROXY_ITEMS):
-            value = settings.get(name) or ''
-            proxy_line_widgets[i].setText(value)
-
-        self.ui.proxy_box.clicked.connect(self._check_proxy_settings)
-        self.ui.proxy_http.currentIndexChanged.connect(self._check_proxy_settings)
-        for widget in proxy_line_widgets:
-            widget.textChanged.connect(self._check_proxy_settings)
+        self._proxt_ui_handler = ProxyUiHandler(self.ui, self.a2)
 
     def _check_win_startup(self):
         startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
@@ -166,15 +147,15 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.hk_dialog_layout.setCurrentIndex(index)
         self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
-    def toggle_console(self, state):
-        base_name = ['pythonw.exe', 'python.exe'][state]
-        new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
-        a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', new_path)
-        self.a2.paths.python = new_path
-        self.ui.python_executable.setText(new_path)
+    # def toggle_console(self, state):
+    #     base_name = ['pythonw.exe', 'python.exe'][state]
+    #     new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
+    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', new_path)
+    #     self.a2.paths.python = new_path
+    #     self.ui.python_executable.setText(new_path)
 
-    def toggle_startup_tooltips(self, state):
-        a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
+    # def toggle_startup_tooltips(self, state):
+    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
     def on_dev_setting_changed(self, *args):
         self.main.devset.set(self.dev_set_dict)
@@ -233,13 +214,101 @@ class A2Settings(QtWidgets.QWidget):
             ui.setupUi(self.ui.a2settings_tab)
             widget.setLayout(ui.license_layout)
 
-    def _check_proxy_settings(self):
+
+class ProxyUiHandler:
+    def __init__(self, ui, a2):
+        self.ui = ui
+        self.a2 = a2
+        self.proxy_items = 'user', 'pass', 'server', 'port'
+
+        # filling proxy ui
+        self.ui.proxy_box.setChecked(self.a2.db.get('proxy_enabled') or False)
+        settings = self.a2.db.get('proxy_settings') or {}
+        self.ui.proxy_http.setCurrentIndex(
+            ('http', 'https').index(settings.get('http') or 'http'))
+        proxy_line_widgets = (self.ui.proxy_user, self.ui.proxy_pass,
+                              self.ui.proxy_server, self.ui.proxy_port)
+        for i, name in enumerate(self.proxy_items):
+            value = settings.get(name) or ''
+            proxy_line_widgets[i].setText(value)
+
+        self.ui.proxy_box.clicked.connect(self.check_proxy_settings)
+        self.ui.proxy_http.currentIndexChanged.connect(self.check_proxy_settings)
+        for widget in proxy_line_widgets:
+            widget.textChanged.connect(self.check_proxy_settings)
+
+    def check_proxy_settings(self):
         self.a2.db.set('proxy_enabled', self.ui.proxy_box.isChecked())
         settings = {'http': ('http', 'https')[self.ui.proxy_http.currentIndex()]}
-        for item in _PROXY_ITEMS:
+        for item in self.proxy_items:
             widget = getattr(self.ui, 'proxy_' + item)
             text = widget.text()
             if text:
                 settings[item] = text
         self.a2.db.set('proxy_settings', settings)
         a2core.setup_proxy(self.a2)
+
+
+class DataPathUiHandler(QtCore.QObject):
+    def __init__(self, ui, a2):
+        super(DataPathUiHandler, self).__init__()
+        self.ui = ui
+        self.a2 = a2
+        self.ui.data_folder.setText(self.a2.paths.data)
+
+        self.ui.button_set_user_dir_standard.clicked.connect(self.set_standard)
+        self.ui.button_set_user_dir_custom.clicked.connect(self.build_custom_data_menu)
+        self.ui.button_set_user_dir_custom.setIcon(a2ctrl.Icons.inst().more)
+        self.menu = QtWidgets.QMenu(self.ui.button_set_user_dir_custom)
+
+        self.ui.button_set_user_dir_standard.setEnabled(self.a2.paths.has_data_override())
+
+    def set_standard(self):
+        self._set_path(None)
+
+    def build_custom_data_menu(self):
+        icons = a2ctrl.Icons.inst()
+        self.menu.clear()
+
+        for path in self.a2.db.get('recent_override_paths') or ():
+            action = self.menu.addAction(icons.folder, path, self._on_set_path_action)
+
+        self.menu.addAction(icons.folder2, 'Browse ...', self.browse)
+        if self.is_dev and os.path.isdir(self.dev_data_path) and self.dev_data_path != self.a2.paths.data:
+            self.menu.addAction(icons.folder2, 'Use Dev Location', self.use_dev)
+
+        self.menu.popup(QtGui.QCursor.pos())
+
+    def _set_path(self, path):
+        """Set the data path and deal with restarts and all."""
+        self.a2.paths.set_data_override(path)
+
+        # enlist to recent paths list
+        if path and path not in (self.a2.paths.default_data, self.dev_data_path):
+            recent_override_paths = self.a2.db.get('recent_override_paths') or []
+            if a2util.rolling_list_add(path, recent_override_paths):
+                self.a2.db.set('recent_override_paths', recent_override_paths)
+
+        self.a2.start_up()
+        self.a2.win.load_runtime_and_ui()
+
+    def _on_set_path_action(self):
+        x = self.sender().data()
+        x
+
+    def browse(self):
+        file_path = QtWidgets.QFileDialog.getExistingDirectory(
+            self.a2.win, caption='Select a Custom Data path', dir=self.a2.paths.data)
+        if file_path:
+            self._set_path(file_path)
+
+    def use_dev(self):
+        self._set_path(self.dev_data_path)
+
+    @property
+    def is_dev(self):
+        return os.path.isdir(os.path.join(self.a2.paths.a2, '.git'))
+
+    @property
+    def dev_data_path(self):
+        return os.path.join(self.a2.paths.a2, 'data')

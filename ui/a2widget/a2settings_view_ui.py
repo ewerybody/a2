@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
+# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
+# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
+# Created: Fri Jun 19 18:03:38 2020
+#      by: pyside2-uic  running on PySide2 5.15.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(771, 722)
+        a2settings.resize(834, 740)
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtWidgets.QVBoxLayout(a2settings)
@@ -30,7 +30,7 @@ class Ui_a2settings(object):
         self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.formLayout.setObjectName("formLayout")
         self.label_3 = QtWidgets.QLabel(self.tab_2)
-        self.label_3.setText("Open a2 Dialog:")
+        self.label_3.setText("Open a2 Dialog")
         self.label_3.setObjectName("label_3")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_3)
         self.a2hotkey = A2Hotkey(self.tab_2)
@@ -176,33 +176,23 @@ class Ui_a2settings(object):
         self.autohotkey.setObjectName("autohotkey")
         self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.autohotkey)
         self.label_12 = QtWidgets.QLabel(self.dev_widget)
+        self.label_12.setEnabled(False)
         self.label_12.setText("a2 runtime:")
         self.label_12.setObjectName("label_12")
         self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_12)
         self.startup_tooltips = QtWidgets.QCheckBox(self.dev_widget)
+        self.startup_tooltips.setEnabled(False)
         self.startup_tooltips.setText("Enable Startup Tooltips")
         self.startup_tooltips.setObjectName("startup_tooltips")
         self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.startup_tooltips)
-        self.label_11 = QtWidgets.QLabel(self.dev_widget)
-        self.label_11.setText("Python Output:")
-        self.label_11.setObjectName("label_11")
-        self.formLayout_2.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_11)
-        self.loglevel_debug = QtWidgets.QCheckBox(self.dev_widget)
-        self.loglevel_debug.setText("LogLevel:DEBUG")
-        self.loglevel_debug.setObjectName("loglevel_debug")
-        self.formLayout_2.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.loglevel_debug)
-        self.show_console = QtWidgets.QCheckBox(self.dev_widget)
-        self.show_console.setText("Show Console")
-        self.show_console.setObjectName("show_console")
-        self.formLayout_2.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.show_console)
         self.label_9 = QtWidgets.QLabel(self.dev_widget)
         self.label_9.setText("JSON Indent:")
         self.label_9.setObjectName("label_9")
-        self.formLayout_2.setWidget(7, QtWidgets.QFormLayout.LabelRole, self.label_9)
+        self.formLayout_2.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_9)
         self.json_indent = QtWidgets.QSpinBox(self.dev_widget)
         self.json_indent.setMaximumSize(QtCore.QSize(70, 16777215))
         self.json_indent.setObjectName("json_indent")
-        self.formLayout_2.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.json_indent)
+        self.formLayout_2.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.json_indent)
         self.line = QtWidgets.QFrame(self.dev_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -213,25 +203,34 @@ class Ui_a2settings(object):
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.formLayout_2.setWidget(11, QtWidgets.QFormLayout.SpanningRole, self.line)
+        self.formLayout_2.setWidget(9, QtWidgets.QFormLayout.SpanningRole, self.line)
         self.label_2 = QtWidgets.QLabel(self.dev_widget)
         self.label_2.setText("User Data:")
         self.label_2.setObjectName("label_2")
-        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.LabelRole, self.label_2)
+        self.formLayout_2.setWidget(10, QtWidgets.QFormLayout.LabelRole, self.label_2)
         self.data_folder = A2PathField(self.dev_widget)
         self.data_folder.setEnabled(False)
         self.data_folder.setText("")
         self.data_folder.setObjectName("data_folder")
-        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.FieldRole, self.data_folder)
+        self.formLayout_2.setWidget(10, QtWidgets.QFormLayout.FieldRole, self.data_folder)
         self.label_10 = QtWidgets.QLabel(self.dev_widget)
         self.label_10.setText("Python Executable:")
         self.label_10.setObjectName("label_10")
-        self.formLayout_2.setWidget(13, QtWidgets.QFormLayout.LabelRole, self.label_10)
+        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.LabelRole, self.label_10)
         self.python_executable = A2PathField(self.dev_widget)
         self.python_executable.setEnabled(False)
         self.python_executable.setText("")
         self.python_executable.setObjectName("python_executable")
-        self.formLayout_2.setWidget(13, QtWidgets.QFormLayout.FieldRole, self.python_executable)
+        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.FieldRole, self.python_executable)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.button_set_user_dir_standard = QtWidgets.QPushButton(self.dev_widget)
+        self.button_set_user_dir_standard.setObjectName("button_set_user_dir_standard")
+        self.horizontalLayout_4.addWidget(self.button_set_user_dir_standard)
+        self.button_set_user_dir_custom = QtWidgets.QPushButton(self.dev_widget)
+        self.button_set_user_dir_custom.setObjectName("button_set_user_dir_custom")
+        self.horizontalLayout_4.addWidget(self.button_set_user_dir_custom)
+        self.formLayout_2.setLayout(11, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_4)
         self.verticalLayout_3.addWidget(self.dev_widget)
         self.formLayout_3.setWidget(3, QtWidgets.QFormLayout.SpanningRole, self.dev_box)
         self.proxy_box = QtWidgets.QGroupBox(self.tab)
@@ -315,6 +314,8 @@ class Ui_a2settings(object):
 
     def retranslateUi(self, a2settings):
         self.hotkey_box.setTitle(QtWidgets.QApplication.translate("a2settings", "Hotkey Dialog", None, -1))
+        self.button_set_user_dir_standard.setText(QtWidgets.QApplication.translate("a2settings", "Set To User Dir Standard ", None, -1))
+        self.button_set_user_dir_custom.setText(QtWidgets.QApplication.translate("a2settings", "Set Override Path", None, -1))
         self.proxy_http.setItemText(0, QtWidgets.QApplication.translate("a2settings", "http://", None, -1))
         self.proxy_http.setItemText(1, QtWidgets.QApplication.translate("a2settings", "https://", None, -1))
         self.label.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
