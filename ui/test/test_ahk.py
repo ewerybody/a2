@@ -20,6 +20,7 @@ class Test(unittest.TestCase):
         test_file = os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
         with open(test_file, 'w') as fob:
             fob.write(test_content)
+
         ahkvars = a2ahk.get_variables(test_file)
         self.assertEqual(len(ahkvars), 4)
         self.assertTrue('a_string' in ahkvars)
@@ -28,7 +29,7 @@ class Test(unittest.TestCase):
         a2ahk.set_variable(test_file, 'a_bool', True)
         ahkvars = a2ahk.get_variables(test_file)
         self.assertTrue(ahkvars['a_bool'])
-        self.assertRaises(ValueError, partial(a2ahk.set_variable, test_file, 'MissingName', False))
+        self.assertRaises(KeyError, partial(a2ahk.set_variable, test_file, 'MissingName', False))
         a2ahk.set_variable(test_file, 'a_number', 1)
         ahkvars = a2ahk.get_variables(test_file)
         self.assertEqual(ahkvars['a_number'], 1)
@@ -39,6 +40,18 @@ class Test(unittest.TestCase):
 
         os.remove(test_file)
         self.assertFalse(os.path.isfile(test_file))
+
+    def test_get_set_vars_new_file(self):
+        test_file = os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
+        self.assertFalse(os.path.isfile(test_file))
+        for key, value in (('somekey', "Monkeys"), ('another', 4815162342)):
+            a2ahk.set_variable(test_file, key, value)
+            self.assertTrue(os.path.isfile(test_file))
+            vars = a2ahk.get_variables(test_file)
+            self.assertTrue(key in vars)
+            self.assertTrue(vars[key] == value)
+            os.remove(test_file)
+            self.assertFalse(os.path.isfile(test_file))
 
     def test_string_convert(self):
         result = a2ahk.convert_string_to_type('string')

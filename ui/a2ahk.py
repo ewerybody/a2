@@ -1,9 +1,5 @@
 """
-nfo about Autohotkey that we might use across the modules
-
-Created on Aug 7, 2015
-
-@author: eRiC
+Autohotkey stuff to be used across the modules.
 """
 import os
 import codecs
@@ -109,42 +105,55 @@ def get_variables(ahk_file):
 
 def set_variable(ahk_file, key, value):
     """
-    Sets a single root variable in a Autohotkey script file.
-    Raises ValueError if value was not found as root variable ie not indented.
+    Set a single root variable in an Autohotkey script file.
+
+    Root variable means ignore scoped or indented entries.
+    If wile does not exist: Create new file with entry.
+    Otherwise raise KeyError if value was not found.
     """
-    with open(ahk_file) as fobj:
-        lines = [l for l in fobj.read().split('\n')]
+    try:
+        with open(ahk_file) as fobj:
+            lines = [l for l in fobj.read().split('\n')]
 
-    found = False
-    write = False
-    for i, line in enumerate(lines):
-        parts = line.split('=', 1)
-        if not len(parts) == 2:
-            continue
-        _key, _value = parts
-        curkey = _key.strip(': ')
-        # skip lines with indentation
-        if curkey[0] != _key[0]:
-            continue
-        # skip if its not the key we're looking for
-        if key != curkey:
-            continue
-        found = True
-        curvalue = convert_string_to_type(_value.strip('" '))
-        if curvalue != value:
-            write = True
-            if isinstance(value, bool):
-                lines[i] = '%s := %s' % (key, value)
-            else:
-                lines[i] = '%s = %s' % (key, value)
-        break
+        found = False
+        write = False
+        for i, line in enumerate(lines):
+            parts = line.split('=', 1)
+            if not len(parts) == 2:
+                continue
+            _key, _value = parts
+            curkey = _key.strip(': ')
+            # skip lines with indentation
+            if curkey[0] != _key[0]:
+                continue
+            # skip if its not the key we're looking for
+            if key != curkey:
+                continue
+            found = True
+            curvalue = convert_string_to_type(_value.strip('" '))
+            if curvalue != value:
+                write = True
+                write_line_nr = i
+            break
 
-    if not found:
-        raise ValueError('There is no value "%s" to set in %s' % (key, ahk_file))
+        if not found:
+            raise KeyError('There is no key "%s" to set in %s' % (key, ahk_file))
 
-    if write:
-        with open(ahk_file, 'w') as fobj:
-            fobj.write('\n'.join(lines))
+    except FileNotFoundError:
+        lines = ['']
+        write_line_nr = 0
+        write = True
+
+    if not write:
+        return
+
+    if isinstance(value, bool):
+        lines[write_line_nr] = '%s := %s' % (key, value)
+    else:
+        lines[write_line_nr] = '%s := "%s"' % (key, value)
+
+    with open(ahk_file, 'w') as file_obj:
+        file_obj.write('\n'.join(lines))
 
 
 def convert_string_to_type(string):
