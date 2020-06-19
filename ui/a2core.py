@@ -203,55 +203,8 @@ class Paths(object):
             raise RuntimeError(
                 'a2ui start interrupted! %s Not found in main dir!' % missing)
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
-
-
-def _db_cleanup():
-    """Legacy database cleanup. to be deleted."""
-    a2 = A2Obj.inst()
-    for table in a2.db.tables():
-        if table == 'a2':
-            a2.db.pop('aValue')
-            enabled = a2.db.get('enabled', asjson=False) or ''
-            if not enabled.startswith('{'):
-                a2.db.set('enabled', {})
-            else:
-                enabled = a2.db.get('enabled')
-                write = False
-                for name, data in enabled.items():
-                    if not isinstance(data, list) or not data:
-                        log.error('Bad data: %s: "%s"', name, data)
-                        enabled[name] = [False, []]
-                        write = True
-                    if not isinstance(data[0], bool):
-                        enabled[name] = [False] + data[1:]
-                        write = True
-                    if not isinstance(data[1], list):
-                        enabled[name] = data[0] + [[]]
-                        write = True
-                    if len(data) > 2:
-                        log.error('Too much data: %s: "%s"', name, data)
-                        enabled[name] = data[:2]
-                        write = True
-                if write:
-                    a2.db.set('enabled', enabled)
-            continue
-
-        includes = a2.db.get('includes', table, asjson=False)
-        include = a2.db.get('include', table, asjson=False)
-
-        # turn string separated entries into lists
-        if includes is None and include is not None:
-            includes = include.split('|')
-        elif includes is not None and not includes.startswith('['):
-            includes = includes.split('|')
-        elif includes == '[""]':
-            includes = []
-
-        if isinstance(includes, list):
-            a2.db.set('includes', includes, table)
-
-        if include is not None:
-            a2.db.pop('include', table)
+            raise RuntimeError(
+                'a2ui start interrupted! %s inaccessable!' % self.data)
 
     def set_data_override(self, path):
         if not path:
