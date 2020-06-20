@@ -272,6 +272,7 @@ class DataPathUiHandler(QtCore.QObject):
 
         for path in self.a2.db.get('recent_override_paths') or ():
             action = self.menu.addAction(icons.folder, path, self._on_set_path_action)
+            action.setData(path)
 
         self.menu.addAction(icons.folder2, 'Browse ...', self.browse)
         if self.is_dev and os.path.isdir(self.dev_data_path) and self.dev_data_path != self.a2.paths.data:
@@ -293,8 +294,7 @@ class DataPathUiHandler(QtCore.QObject):
         self.a2.win.load_runtime_and_ui()
 
     def _on_set_path_action(self):
-        x = self.sender().data()
-        x
+        self._set_path(self.sender().data())
 
     def browse(self):
         file_path = QtWidgets.QFileDialog.getExistingDirectory(
