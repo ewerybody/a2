@@ -46,6 +46,7 @@ class A2StyleBuilder(object):
         if user_scale == self._user_scale and self._last_style is not None:
             return self._last_style
 
+        self._user_scale = user_scale
         self._css_values['user_scale'] = user_scale
         scale = self._css_values['local_scale'] * user_scale
         self._css_values['scale'] = scale
@@ -56,3 +57,7 @@ class A2StyleBuilder(object):
             self._css_values[name] = value
 
         return self.template % self._css_values
+
+    @property
+    def user_scale(self):
+        return self._user_scale

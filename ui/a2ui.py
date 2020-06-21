@@ -275,9 +275,12 @@ class A2Window(QtWidgets.QMainWindow):
         that are partially outside of the left,right and bottom desktop border
         """
         win_prefs = self.a2.db.get('windowprefs') or {}
-
         geometry = win_prefs.get('geometry')
-        if geometry is not None:
+        if geometry is None:
+            # TODO: Build initial geometry from display settings and user scale
+            # self.style.user_scale
+            pass
+        else:
             try:
                 self.restoreGeometry(
                     QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8')))
