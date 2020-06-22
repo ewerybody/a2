@@ -36,13 +36,30 @@ class A2StyleBuilder(object):
             self.template = fobj.read()
 
     def get(self, value_name, default=None):
+        """
+        Get a specific value from the calculated ones.
+        :param str value_name: Name of the value to retrieve.
+        :param float default: Default value in case there is None among the caluculated ones.
+        :rtype: float
+        """
         return self._css_values.get(value_name, default)
 
     def get_value_dict(self):
+        """
+        Get the dictionary of calculated styling values.
+        :rtype: dict
+        """
         from copy import deepcopy
         return deepcopy(self._css_values)
 
     def get_style(self, user_scale=1.0):
+        """
+        Build stylesheet code from the user scale and default variables.
+
+        :param user_scale float: User defined factor to modify the variable sizes by.
+        :return: QSS Style sheet code with calculated values.
+        :rtype: str
+        """
         if user_scale == self._user_scale and self._last_style is not None:
             return self._last_style
 
@@ -57,7 +74,3 @@ class A2StyleBuilder(object):
             self._css_values[name] = value
 
         return self.template % self._css_values
-
-    @property
-    def user_scale(self):
-        return self._user_scale

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Fri Jun 19 18:03:38 2020
+# Created: Mon Jun 22 11:39:54 2020
 #      by: pyside2-uic  running on PySide2 5.15.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(834, 740)
+        a2settings.resize(834, 660)
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtWidgets.QVBoxLayout(a2settings)
@@ -159,7 +159,7 @@ class Ui_a2settings(object):
         self.author_url.setObjectName("author_url")
         self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.author_url)
         self.label_5 = QtWidgets.QLabel(self.dev_widget)
-        self.label_5.setText("Autohotkey Code Editor:")
+        self.label_5.setText("Default Code Editor:")
         self.label_5.setObjectName("label_5")
         self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_5)
         self.code_editor = A2PathField(self.dev_widget)
@@ -323,6 +323,6 @@ class Ui_a2settings(object):
         self.label_15.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
 
-from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
+from a2widget.a2path_field import A2PathField
 from a2widget.a2hotkey import A2Hotkey

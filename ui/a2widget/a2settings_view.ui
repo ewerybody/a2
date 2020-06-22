@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>834</width>
-    <height>740</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,16 @@
    <string notr="true">b</string>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -283,7 +292,7 @@ Go ahead and add or create one:</string>
              <item row="2" column="0">
               <widget class="QLabel" name="label_5">
                <property name="text">
-                <string notr="true">Autohotkey Code Editor:</string>
+                <string notr="true">Default Code Editor:</string>
                </property>
               </widget>
              </item>

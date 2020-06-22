@@ -18,6 +18,7 @@ log = a2core.get_logger(__name__)
 ui_defaults = None
 RESTART_DELAY = 300
 RUNTIME_WATCH_INTERVAL = 1000
+DEFAULT_WIN_SIZE = (700, 480)
 
 
 class A2Window(QtWidgets.QMainWindow):
@@ -277,9 +278,14 @@ class A2Window(QtWidgets.QMainWindow):
         win_prefs = self.a2.db.get('windowprefs') or {}
         geometry = win_prefs.get('geometry')
         if geometry is None:
-            # TODO: Build initial geometry from display settings and user scale
-            # self.style.user_scale
-            pass
+            scale = self.style.get('scale', 1)
+            geometry = self.geometry()
+            geometry.setSize(QtCore.QSize(
+                DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
+            center = QtWidgets.QApplication.instance().desktop().size() / 2
+            geometry.moveCenter(QtCore.QPoint(*center.toTuple()))
+            log.info('Initializing window position & size: %s', geometry)
+            self.setGeometry(geometry)
         else:
             try:
                 self.restoreGeometry(
