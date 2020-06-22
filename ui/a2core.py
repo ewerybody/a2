@@ -71,7 +71,7 @@ class A2Obj(object):
         self.db = a2db.A2db(self.paths.db)
         self._enabled = None
         self.fetch_modules()
-        setup_proxy(self)
+        self.setup_proxy()
         log.info(f'A2Obj loaded with data path: "{self.paths.data}"')
 
     def fetch_modules_if_stale(self):
@@ -128,6 +128,52 @@ class A2Obj(object):
         _IS_DEV = state
         self.db.set('dev_mode', state)
 
+    def setup_proxy(self):
+        """
+        Looks up a2.db "proxy_enabled" and "proxy_settings".
+        Configures urllib.request accordingly.
+
+        If set a2.db.get('proxy_settings') will give a dictionary::
+
+            {'http': 'http', # or 'https'
+            'user': 'username',
+            'pass': 'p4$$w0Rd',
+            'server': 'server.address.com',
+            'port': 1337
+            }
+
+        Where 'user', 'pass' and 'port' might be optional!
+        """
+        if self.db.get('proxy_enabled') or False:
+            settins = self.db.get('proxy_settings') or {}
+            server = settins.get('server')
+            if server:
+                from urllib import request
+
+                http_mode = settins.get('http')
+                proxy_str = http_mode + '://'
+
+                usr, pwd = settins.get('user'), settins.get('pass')
+                if usr and pwd:
+                    proxy_str += usr + ':' + pwd + '@'
+
+                proxy_str += server
+
+                port = settins.get('port')
+                if port is not None:
+                    proxy_str += ':' + port
+
+                log.info('setting up proxy: %s', proxy_str)
+                proxy_handler = request.ProxyHandler({http_mode: proxy_str})
+                opener = request.build_opener(proxy_handler)
+                request.install_opener(opener)
+                return
+
+        if 'urllib.request' in sys.modules:
+            from urllib import request
+            log.info('disabling proxy ...')
+            request.install_opener(None)
+
 
 class URLs(object):
     def __init__(self, a2_urls_ahk):
@@ -180,6 +226,7 @@ class Paths(object):
         # get data dir from config override or the default appdata dir.
         self.default_data = os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
         self.data_override_file = os.path.join(self.default_data, 'a2_data_path.ahk')
+        self.data = None
         self._build_data_paths()
         self._test_dirs()
 
@@ -236,11 +283,11 @@ def set_loglevel(debug=False):
         if name.startswith('a2'):
             try:
                 logger.setLevel(level)
-                log.debug(f'"{name}" Log level DEBUG: active')
-                log.info(f'"{name}" Log level INFO: active')
+                log.debug('"%s" Log level DEBUG: active', name)
+                log.info('"%s" Log level INFO: active', name)
             except AttributeError as error:
                 if not isinstance(logger, logging.PlaceHolder):
-                    log.info('Could not set log level on logger object "%s": %s' % (name, str(logger)))
+                    log.info('Could not set log level on logger object "%s": %s', name, str(logger))
                     log.error(error)
 
 
@@ -263,57 +310,6 @@ def set_dev_mode(state):
     """
     a2 = A2Obj.inst()
     a2.set_dev_mode(state)
-
-
-def setup_proxy(a2=None):
-    # TODO: Why is this not in the A2Obj class?!?!
-    """
-    Looks up a2.db "proxy_enabled" and "proxy_settings".
-    Configures urllib.request accordingly.
-
-    If set a2.db.get('proxy_settings') will give a dictionary::
-
-        {'http': 'http', # or 'https'
-         'user': 'username',
-         'pass': 'p4$$w0Rd',
-         'server': 'server.address.com',
-         'port': 1337
-        }
-
-    Where 'user', 'pass' and 'port' might be optional!
-    """
-    if a2 is None:
-        a2 = A2Obj.inst()
-
-    if a2.db.get('proxy_enabled') or False:
-        settins = a2.db.get('proxy_settings') or {}
-        server = settins.get('server')
-        if server:
-            from urllib import request
-
-            http_mode = settins.get('http')
-            proxy_str = http_mode + '://'
-
-            usr, pwd = settins.get('user'), settins.get('pass')
-            if usr and pwd:
-                proxy_str += usr + ':' + pwd + '@'
-
-            proxy_str += server
-
-            port = settins.get('port')
-            if port is not None:
-                proxy_str += ':' + port
-
-            log.info('setting up proxy: %s', proxy_str)
-            proxy_handler = request.ProxyHandler({http_mode: proxy_str})
-            opener = request.build_opener(proxy_handler)
-            request.install_opener(opener)
-            return
-
-    if 'urllib.request' in sys.modules:
-        from urllib import request
-        log.info('disabling proxy ...')
-        request.install_opener(None)
 
 
 if __name__ == '__main__':

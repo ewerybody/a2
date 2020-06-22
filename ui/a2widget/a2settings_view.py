@@ -246,7 +246,7 @@ class ProxyUiHandler:
             if text:
                 settings[item] = text
         self.a2.db.set('proxy_settings', settings)
-        a2core.setup_proxy(self.a2)
+        self.a2.setup_proxy()
 
 
 class DataPathUiHandler(QtCore.QObject):
