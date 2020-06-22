@@ -55,6 +55,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.runtime_watcher.message.connect(self.runtime_watcher_message)
         self.runtime_watcher.start()
 
+        self._initial_activation_tries = 0
         self._initial_draw_finished = False
 
     def runtime_watcher_message(self, message):
@@ -313,12 +314,20 @@ class A2Window(QtWidgets.QMainWindow):
         else:
             print(state)
 
-        # make it the currently active window
-        for i in range(5):
-            if self.isActiveWindow():
-                break
-            QtCore.QTimer(self).singleShot(50, self.activateWindow)
-            time.sleep(0.05)
+        self._initial_activation_tries = 0
+        self._activate_window()
+
+    def _activate_window(self):
+        """Make sure we're the currently active window."""
+        if self.isActiveWindow():
+            return
+
+        if self._initial_activation_tries > 5:
+            return
+
+        self.activateWindow()
+        self._initial_activation_tries += 1
+        QtCore.QTimer(self).singleShot(50, self._activate_window)
 
     def scroll_to(self, value, smooth=False):
         # TODO: reimplement in each widget
