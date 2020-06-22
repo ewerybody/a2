@@ -38,7 +38,7 @@ MSG_BACKUP = 'Backing up %s'
 MSG_BACKUP_ERROR = 'Error Backing up %s'
 MSG_NOT_EMPTY_ERROR = 'Error preparing folder: Not empty but no previous version found!'
 MSG_INSTALL = 'Installing %s'
-MSG_UPDATE_URL_INVALID = 'Update URL Invalid'
+MSG_UPDATE_URL_INVALID = 'Update URL Invalid (%s)'
 MSG_NO_CFG_FILE = 'The Package has no config file!'
 
 
@@ -280,7 +280,7 @@ class ModSourceCheckThread(QtCore.QThread):
         try:
             remote_data = _get_remote_data(update_url)
         except FileNotFoundError:
-            self._error(MSG_UPDATE_URL_INVALID)
+            self._error(MSG_UPDATE_URL_INVALID % update_url)
             return
         except Exception as error:
             self._error(str(error))
@@ -493,7 +493,8 @@ class ModSourceFetchThread(QtCore.QThread):
 
     def _handle_file_copy(self, update_url, pack_basename, temp_packpath):
         if not os.path.exists(update_url):
-            self._error(MSG_UPDATE_URL_INVALID)
+            print('os.path.exists: %s %s', (update_url, False))
+            self._error(MSG_UPDATE_URL_INVALID % update_url)
             return False
 
         try:

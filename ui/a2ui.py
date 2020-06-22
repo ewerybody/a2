@@ -317,6 +317,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def _activate_window(self):
         """Make sure we're the currently active window."""
+        self.activateWindow()
         if self.isActiveWindow():
             return
 
