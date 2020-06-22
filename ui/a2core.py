@@ -188,6 +188,7 @@ class Paths(object):
             self.data = self.get_data_override_path()
         except FileNotFoundError:
             self.data = self.default_data
+        os.makedirs(self.data, exist_ok=True)
 
         self.modules = os.path.join(self.data, 'modules')
         self.module_data = os.path.join(self.data, 'module_data')

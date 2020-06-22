@@ -27,7 +27,7 @@ class A2Window(QtWidgets.QMainWindow):
         super(A2Window, self).__init__(parent=None)
         # Disabling disabled as long as qt.accessibility.core is throwing these
         # "Cannot create accessible child interface for object:"-warnings
-        # self.setEnabled(False)
+        self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
         self._restart_thread = None
@@ -311,8 +311,6 @@ class A2Window(QtWidgets.QMainWindow):
             self.setWindowState(QtCore.Qt.WindowActive)
         elif state not in QtCore.Qt.WindowState.values.values():
             self.setWindowState(QtCore.Qt.WindowActive)
-        else:
-            print(state)
 
         self._initial_activation_tries = 0
         self._activate_window()
@@ -527,9 +525,10 @@ class A2Window(QtWidgets.QMainWindow):
             self.module_view.draw_mod()
         self._restore_splitter()
         self.setEnabled(True)
-        log.info('A2Window initialised! (%.3fs)' % (time.process_time()))
+        log.info('A2Window initialised! (%.3fs)', time.process_time())
 
     def showEvent(self, event):
+        """Override Qt showEvent with window initialization."""
         if not self._initial_draw_finished:
             self.setWindowTitle('a2')
             self.setWindowIcon(a2ctrl.Icons.inst().a2)

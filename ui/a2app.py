@@ -68,7 +68,6 @@ class A2Main(QSingleApplication):
             import a2ui
             self._win = a2ui.A2Window(self)
             self._core.win = self._win
-            print('self._win: %s' % self._win)
             self._core.app = self
             self._core.win.show_raise()
 
