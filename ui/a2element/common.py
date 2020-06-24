@@ -1,14 +1,13 @@
 import os
 from functools import partial
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore, QtGui, QtWidgets
 
 import a2core
-import a2util
 import a2ctrl
+import a2util
 from a2ctrl import Icons
 from a2widget import local_script
-
 
 LOCAL_MENU_PREFIX = 'local: '
 DELAYED_CHECK_DELAY = 250
@@ -191,18 +190,25 @@ class EditCtrl(QtWidgets.QGroupBox):
         else:
             top_index = 0
 
-        index = self.parent_cfg.index(self.cfg)
-        maxIndex = len(self.parent_cfg) - 1
+        index = None
+        for i, cfg in enumerate(self.parent_cfg):
+            if self.cfg is cfg:
+                index = i
+                break
+        if index is None:
+            index = self.parent_cfg.index(self.cfg)
+
+        max_index = len(self.parent_cfg) - 1
         if isinstance(value, bool):
             if value:
                 newindex = top_index
             else:
-                newindex = maxIndex
+                newindex = max_index
         else:
             newindex = index + value
         # hop out if already at start or end
-        if index == newindex or newindex < top_index or newindex > maxIndex:
-            # print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, maxIndex))
+        if index == newindex or newindex < top_index or newindex > max_index:
+            # print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, max_index))
             return
 
         # cfg = self.parent_cfg.pop(index)
@@ -322,13 +328,11 @@ class EditCtrl(QtWidgets.QGroupBox):
 
     def increase_name_number(self, name):
         """
-        Looks up the current controls to find a free number for ne given name.
+        Look up the current controls to find a free number for given name.
         """
-        # we don't even need the type, right?
-        # this_type = self.cfg['typ']
-        controls = [cfg.get('name', '') for cfg in self.main.temp_config]
-        #            if cfg.get('typ') == this_type]
-        new_name = a2util.get_next_free_number(name, controls)
+        names = [e.get('name') for e in a2ctrl.iter_element_cfg_type(self.main.temp_config)]
+        names = [n for n in names if n is not None]
+        new_name = a2util.get_next_free_number(name, names)
         return new_name
 
     def enterEvent(self, event):

@@ -294,13 +294,16 @@ def _get_module_path(module_key, a2obj):
     return module_path
 
 
-def iter_element_cfg_type(cfg_list, typ):
+def iter_element_cfg_type(cfg_list, typ=None):
     """
     Loop over each element configuration in and out of groups likewise.
     """
     for element_cfg in cfg_list:
         if element_cfg['typ'] == 'group':
             yield from iter_element_cfg_type(element_cfg['children'], typ)
+
+        if typ is None:
+            yield element_cfg
         elif element_cfg['typ'] == typ:
             yield element_cfg
 
