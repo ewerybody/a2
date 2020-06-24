@@ -64,11 +64,12 @@ class A2Obj(object):
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
         self.log = a2output.get_logger()
+        self._db = None
         log.info('A2Obj initialised!')
 
     def start_up(self):
         self.log.set_data_path(self.paths.data)
-        self.db = a2db.A2db(self.paths.db)
+        self._db = a2db.A2db(self.paths.db)
         self._enabled = None
         self.fetch_modules()
         self.setup_proxy()
@@ -173,6 +174,12 @@ class A2Obj(object):
             from urllib import request
             log.info('disabling proxy ...')
             request.install_opener(None)
+
+    @property
+    def db(self):
+        if self._db is None:
+            self.start_up()
+        return self._db
 
 
 class URLs(object):
