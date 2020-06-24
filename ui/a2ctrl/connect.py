@@ -16,8 +16,10 @@ log = a2core.get_logger(__name__)
 
 def cfg_controls(cfg, ui_object, prefix='cfg_'):
     """
-    browses all members of the given ui object to connect ones named with prefix
-    ('cfg_' by default) with a config dict and fill it with current value.
+    Browse members of ui object with prefix ('cfg_' by default) to connect
+    with a config dict and fill it with current value.
+
+    This way prefixed controls will create data in given cfg dictionary if there was none yet.
     """
     for name, ctrl in [(objname[len(prefix):], ctrl) for objname, ctrl
                        in inspect.getmembers(ui_object)
@@ -25,16 +27,30 @@ def cfg_controls(cfg, ui_object, prefix='cfg_'):
         control(ctrl, name, cfg)
 
 
+def matching_controls(cfg, ui_object, change_signal=None):
+    """Connect matching keys and members of ui object."""
+    matches = [(name, member) for name, member in inspect.getmembers(ui_object) if name in cfg]
+    control_name_list(matches, cfg, change_signal)
+
+
+def control_name_list(name_list, cfg, change_signal=None):
+    """Connect list of (name, control) to config dictionary."""
+    for name, ctrl in name_list:
+        control(ctrl, name, cfg, change_signal)
+
+
 def control_list(controls, cfg, change_signal=None):
     """
-    Connects a list of controls to their names in a given cfg dictionary
+    Connect list of controls to their names in a given cfg dictionary.
     """
     for ctrl in controls:
-        object_name = ctrl.objectName()
-        if not object_name:
+        name_list = []
+        if object_name := ctrl.objectName():
+            name_list.append((object_name, ctrl))
+        else:
             raise RuntimeError('Cannot connect widget without objectName!\n  '
                                'Please do "widget.setObjectName(\'attribname\')"')
-        control(ctrl, ctrl.objectName(), cfg, change_signal)
+    control_name_list(name_list, cfg, change_signal)
 
 
 def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
@@ -45,7 +61,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     :param str name: The key name to look for in the dict.
     :param dict cfg: The whole config dictionary object to connect to.
     :param QtCore.Signal change_signal: Optional. A signal to emit on change.
-    :param QtCore.Signal trigger_signal: Optional. The signal get the change event from.
+    :param QtCore.Signal trigger_signal: Optional. The signal to get the change event from.
     """
     if isinstance(ctrl, QtWidgets.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
