@@ -43,8 +43,8 @@ def control_list(controls, cfg, change_signal=None):
     """
     Connect list of controls to their names in a given cfg dictionary.
     """
+    name_list = []
     for ctrl in controls:
-        name_list = []
         if object_name := ctrl.objectName():
             name_list.append((object_name, ctrl))
         else:
