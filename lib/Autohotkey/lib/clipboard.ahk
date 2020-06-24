@@ -1,7 +1,7 @@
-﻿; Uses the clipboard to get selected things.
+﻿; Use the clipboard to get selected text.
 ;
-; Basically stores current clipboard, fires Ctrl+C, gets variable from clipboard,
-; restores clipboard and returns variable.
+; Basically stores current clipboard, fires Ctrl+C, gets variable
+; from clipboard, restores clipboard and returns variable. Voila!
 clipboard_get(clipWaitTime=0.5)
 {
     SavedClipboard := ClipboardAll
@@ -47,11 +47,16 @@ clipboard_get(clipWaitTime=0.5)
     Return Selection
 }
 
-; Uses the clipboard to paste given text.
-clipboard_paste( byref inputString, sleepTime=50 ){
+; Use the clipboard to paste given text.
+clipboard_paste( byref inputString, sleepTime=50 ) {
     SavedClipboard := ClipboardAll
-    Clipboard =
-    Sleep, %sleepTime%
+    Clipboard := ""
+    Loop, 10
+    {
+        if (Clipboard == "")
+            Break
+        Clipboard := ""
+    }
     Clipboard := inputString
     ClipWait, 1
     Send, {Ctrl down}^v{Ctrl up}
@@ -59,7 +64,7 @@ clipboard_paste( byref inputString, sleepTime=50 ){
 }
 
 
-; Parses lines in clipboard, returns list of found existing file paths
+; Parse lines in clipboard, return list of existing file paths.
 clipboard_get_files() {
     files := []
     for i, line in StrSplit(Clipboard, "`r`n")
