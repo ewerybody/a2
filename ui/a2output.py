@@ -98,7 +98,7 @@ class A2Logger(object):
         if not msg.endswith('\n'):
             msg += '\n'
 
-        with open(log_path, 'a') as file_obj:
+        with open(log_path, 'a', encoding='utf8') as file_obj:
             file_obj.write(f'{self._now()} - {msg}')
 
     def _write_std(self, msg):
