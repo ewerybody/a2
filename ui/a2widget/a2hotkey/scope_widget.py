@@ -153,7 +153,7 @@ class ScopeWidget(QtWidgets.QWidget):
     def pick_scope_info(self):
         scope_nfo_string = a2ahk.call_lib_cmd('pick_scope_nfo')
         try:
-            title, class_name, process = scope_nfo_string.split('\\n')
+            title, class_name, process = scope_nfo_string.split('\n')
             scope_string = get_scope_string(title, class_name, process)
             self.add_scope(scope_string)
 
