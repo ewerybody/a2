@@ -75,7 +75,11 @@ def call_cmd(cmd_path, *args, **kwargs):
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs.get('cwd'))
 
-    cmd_result = proc.communicate()[0].decode()
+    cmd_result = proc.communicate()[0]
+    try:
+        cmd_result = cmd_result.decode()
+    except UnicodeDecodeError:
+        cmd_result = cmd_result.decode('latin1')
     proc.kill()
 
     # cut away quote characters if any
