@@ -5,7 +5,7 @@
 clipboard_get(clipWaitTime=0.5)
 {
     SavedClipboard := ClipboardAll
-    Clipboard =
+    clipboard_empty()
     Sleep, 0
 
     ; also watch for the process-executable instead of just window title:
@@ -50,19 +50,12 @@ clipboard_get(clipWaitTime=0.5)
 ; Use the clipboard to paste given text.
 clipboard_paste( byref inputString, sleepTime=50 ) {
     SavedClipboard := ClipboardAll
-    Clipboard := ""
-    Loop, 10
-    {
-        if (Clipboard == "")
-            Break
-        Clipboard := ""
-    }
+    clipboard_empty()
     Clipboard := inputString
     ClipWait, 1
     Send, {Ctrl down}^v{Ctrl up}
     Clipboard := SavedClipboard
 }
-
 
 ; Parse lines in clipboard, return list of existing file paths.
 clipboard_get_files() {
@@ -76,4 +69,15 @@ clipboard_get_files() {
     }
     if (files.length())
         return files
+}
+
+; make sure the clipboard is empty
+clipboard_empty() {
+    Loop, 10
+    {
+        if (Clipboard == "")
+            return
+        Clipboard := ""
+    }
+    MsgBox, Could not empty the clipboard after 10 tries :/ (clipboard: "%clipboard%")
 }

@@ -38,7 +38,6 @@ path_is_file(byref path) {
         return false
 }
 
-
 ; Append two paths together and treat possibly double or missing backslashes
 path_join(byref base_path, byref items) {
     path := RTrim(base_path, "\")
@@ -46,7 +45,6 @@ path_join(byref base_path, byref items) {
         path := path "\" Trim(items[A_Index], "\")
     return path
 }
-
 
 ; From the documentation - https://www.autohotkey.com/docs/misc/LongPaths.htm
 path_normalize(byref path) {
