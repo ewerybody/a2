@@ -347,14 +347,8 @@ class A2Window(QtWidgets.QMainWindow):
         dialog.show()
 
     def _create_local_source(self, name):
-        import a2mod
-        path = a2mod.create_module_source_dir(name)
-        # write empty cfg json so its found by the package lister
-        cfg = a2mod.get_default_package_cfg()
-        cfg['name'] = name
-        cfg['maintainer'] = self.devset.author_name
-        cfg['url'] = self.devset.author_url
-        a2util.json_write(os.path.join(path, a2mod.MOD_SOURCE_NAME), cfg)
+        import a2modsource
+        a2modsource.create(name, self.devset.author_name, self.devset.author_url)
         # update the ui without runtime reload
         self.a2.fetch_modules()
         self.module_view.draw_mod()

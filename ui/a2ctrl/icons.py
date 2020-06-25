@@ -1,5 +1,6 @@
 import os
 import a2core
+import a2path
 
 from PySide2 import QtGui, QtCore, QtSvg
 
@@ -8,6 +9,9 @@ log = a2core.get_logger(__name__)
 ICO_PATH = None
 DEFAULT_ALPHA = 0.6
 LOW_ALPHA = 0.25
+DEFAULT_NAME = 'a2icon'
+ICON_FORMATS = ['.svg', '.png', '.ico']
+ICON_TYPES = [DEFAULT_NAME + ext for ext in ICON_FORMATS]
 
 
 class Ico(QtGui.QIcon):
@@ -158,3 +162,21 @@ class Icons(object):
         self.string = LibIco('string')
         self.up = LibIco('up')
         self.up_align = LibIco('up_align')
+
+
+def get(current_icon, folder, fallback=None):
+    if current_icon is None or not os.path.isfile(current_icon.path):
+        icon_path = ''
+        for item in a2path.iter_files(folder):
+            if item.name in ICON_TYPES:
+                icon_path = item.path
+                break
+
+        if icon_path:
+            current_icon = Ico(icon_path)
+        else:
+            if fallback is None:
+                fallback = Icons.inst().a2
+            current_icon = fallback
+
+    return current_icon

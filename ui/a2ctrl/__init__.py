@@ -256,9 +256,9 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
     """
     Get user settings from a modules elements.
     """
-    import a2util
+    import a2util, a2mod
     a2obj = a2core.A2Obj.inst()
-    module_user_cfg = a2obj.db.get('user_cfg', module_key) or {}
+    module_user_cfg = a2obj.db.get(a2mod.USER_CFG_KEY, module_key) or {}
     for element_cfg in cfg_list:
         # get configs named db entry of module or None
         cfg_name = a2util.get_cfg_default_name(element_cfg)

@@ -18,7 +18,7 @@ LOG_LEVEL = logging.INFO
 log = logging.getLogger(__name__)
 log.setLevel(LOG_LEVEL)
 
-a2ahk, a2db, a2mod = None, None, None
+a2ahk, a2db, a2mod, a2modsource = None, None, None, None
 
 A2DEFAULT_HOTKEY = 'Win+Shift+A'
 A2TAGS = {
@@ -53,8 +53,8 @@ class A2Obj(object):
                                '  Use A2Obj.inst() to get the instance!')
 
         # lazy import so importing a2core does not depend on other a2 module
-        global a2ahk, a2db, a2mod
-        import a2ahk, a2db, a2mod
+        global a2ahk, a2db, a2mod, a2modsource
+        import a2ahk, a2db, a2mod, a2modsource
         import a2output
         self.app = None
         self.win = None
@@ -94,7 +94,7 @@ class A2Obj(object):
                               'module2': a2Mod.Mod, ...}
         """
         self.module_sources.clear()
-        self.module_sources.update(a2mod.get_module_sources(self, self.paths.modules))
+        self.module_sources.update(a2modsource.get(self, self.paths.modules))
         self._modules_fetched = time.time()
 
     def get_module_obj(self, source_name, module_name):
