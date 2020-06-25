@@ -18,14 +18,13 @@ class A2TextField(QtWidgets.QPlainTextEdit):
 
     def __init__(self, parent=None, *args, **kwargs):
         super(A2TextField, self).__init__(parent, *args, **kwargs)
-
         self.finish_delay = 1500
-        self._internal_change = False
 
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        qsize_pol = QtWidgets.QSizePolicy
+        size_policy = qsize_pol(qsize_pol.Expanding, qsize_pol.Maximum)
         size_policy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         size_policy.setVerticalStretch(0)
         size_policy.setHorizontalStretch(0)
@@ -56,14 +55,14 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         return self.toPlainText()
 
     def setText(self, this):
-        self._internal_change = True
+        self.blockSignals(True)
         try:
             self.setPlainText(this)
         except TypeError:
             self.setPlainText(pprint.pformat(this))
 
         self._set_height_to_block_count()
-        self._internal_change = False
+        self.blockSignals(False)
 
     def _set_height_to_block_count(self, block_count=None):
         if block_count is None:
@@ -84,9 +83,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         self.setMaximumHeight(height)
 
     def check_editing_finished(self):
-        if self._internal_change:
-            return
-        # rewinds the timer
+        """rewind the timer"""
         self._timer.start()
 
     def finish_editing(self):

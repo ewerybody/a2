@@ -1,11 +1,11 @@
 """a2 Developer stuff."""
 import os
+from PySide2 import QtWidgets, QtCore
 
 import a2core
 import a2util
 
 from a2widget.a2input_dialog import A2ConfirmDialog
-from PySide2 import QtWidgets, QtCore
 
 
 log = a2core.get_logger(__name__)
@@ -45,13 +45,14 @@ class DevSettings:
             'loglevel_debug': False}
         self.get()
 
-        log.info('loglevel_debug: %s' % self.loglevel_debug)
-        log.debug('loglevel_debug: %s' % self.loglevel_debug)
+        log.info('loglevel_debug: %s', self.loglevel_debug)
+        log.debug('loglevel_debug: %s', self.loglevel_debug)
 
     def _get_from_db(self):
         return self._a2.db.get_changes('dev_settings', self._defaults)
 
     def get(self):
+        """Fetch developer settings from the database."""
         settings = self._get_from_db()
         self._set_attrs(settings)
         return settings
@@ -62,10 +63,12 @@ class DevSettings:
         a2util.JSON_INDENT = self.json_indent
 
     def set(self, these):
+        """Set given developer settings to the database."""
         self._a2.db.set_changes('dev_settings', these, self._defaults)
         self._set_attrs(these)
 
     def set_var(self, key, value):
+        """Set a specific developer setting to the database."""
         settings = self._get_from_db()
         settings[key] = value
         self.set(settings)

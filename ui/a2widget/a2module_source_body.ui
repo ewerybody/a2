@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Form</class>
  <widget class="QWidget" name="Form">
@@ -5,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>156</height>
+    <width>646</width>
+    <height>180</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="modsource_layout">
@@ -86,7 +87,7 @@
         <item>
          <widget class="A2MoreButton" name="a2option_button">
           <property name="text">
-           <string notr="true" />
+           <string notr="true"/>
           </property>
           <property name="autoRaise">
            <bool>true</bool>
@@ -103,7 +104,7 @@
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="A2PathField" name="local_path" />
+       <widget class="A2PathField" name="local_path"/>
       </item>
      </layout>
     </widget>
@@ -122,6 +123,6 @@
    <header>a2widget.a2more_button</header>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

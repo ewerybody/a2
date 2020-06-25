@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
 # licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Mon Jun 22 11:39:54 2020
+# Created: Tue Jun 23 16:39:15 2020
 #      by: pyside2-uic  running on PySide2 5.15.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(834, 660)
+        a2settings.resize(803, 674)
         a2settings.setWindowTitle("a2settings")
         a2settings.setStyleSheet("b")
         self.a2settings_view_layout = QtWidgets.QVBoxLayout(a2settings)
@@ -67,6 +67,7 @@ class Ui_a2settings(object):
         self.module_source_box.setObjectName("module_source_box")
         self.mod_source_box_layout = QtWidgets.QVBoxLayout(self.module_source_box)
         self.mod_source_box_layout.setSpacing(10)
+        self.mod_source_box_layout.setContentsMargins(-1, 25, -1, -1)
         self.mod_source_box_layout.setObjectName("mod_source_box_layout")
         self.mod_source_layout = QtWidgets.QVBoxLayout()
         self.mod_source_layout.setObjectName("mod_source_layout")
@@ -133,6 +134,7 @@ class Ui_a2settings(object):
         self.dev_box.setCheckable(True)
         self.dev_box.setObjectName("dev_box")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.dev_box)
+        self.verticalLayout_3.setContentsMargins(-1, 25, -1, -1)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.dev_widget = QtWidgets.QWidget(self.dev_box)
         self.dev_widget.setAccessibleDescription("")
@@ -314,7 +316,7 @@ class Ui_a2settings(object):
 
     def retranslateUi(self, a2settings):
         self.hotkey_box.setTitle(QtWidgets.QApplication.translate("a2settings", "Hotkey Dialog", None, -1))
-        self.button_set_user_dir_standard.setText(QtWidgets.QApplication.translate("a2settings", "Set To User Dir Standard ", None, -1))
+        self.button_set_user_dir_standard.setText(QtWidgets.QApplication.translate("a2settings", "Set User Dir Standard ", None, -1))
         self.button_set_user_dir_custom.setText(QtWidgets.QApplication.translate("a2settings", "Set Override Path", None, -1))
         self.proxy_http.setItemText(0, QtWidgets.QApplication.translate("a2settings", "http://", None, -1))
         self.proxy_http.setItemText(1, QtWidgets.QApplication.translate("a2settings", "https://", None, -1))
@@ -323,6 +325,6 @@ class Ui_a2settings(object):
         self.label_15.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
 
-from a2widget.a2slider import A2Slider
 from a2widget.a2path_field import A2PathField
+from a2widget.a2slider import A2Slider
 from a2widget.a2hotkey import A2Hotkey

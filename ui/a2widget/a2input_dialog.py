@@ -29,15 +29,12 @@ class A2ConfirmDialog(QtWidgets.QDialog):
             self.okayed.connect(ok_func)
 
         self.ui.a2ok_button.clicked.connect(self.okay)
-        self.ui.a2cancel_button.clicked.connect(self.cancel_button_click)
+        self.ui.a2cancel_button.clicked.connect(self.reject)
 
         self.ui.label.setTextFormat(QtCore.Qt.RichText)
         self.ui.label.setText(msg.replace('\n', '<br>'))
 
         self.rejected.connect(self.canceled.emit)
-
-    def cancel_button_click(self):
-        self.close()
 
     def okay(self):
         self._result = True

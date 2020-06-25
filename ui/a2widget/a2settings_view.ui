@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>660</height>
+    <width>803</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,6 +114,9 @@
          <layout class="QVBoxLayout" name="mod_source_box_layout">
           <property name="spacing">
            <number>10</number>
+          </property>
+          <property name="topMargin">
+           <number>25</number>
           </property>
           <item>
            <layout class="QVBoxLayout" name="mod_source_layout"/>
@@ -249,6 +252,9 @@ Go ahead and add or create one:</string>
           <bool>true</bool>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="topMargin">
+           <number>25</number>
+          </property>
           <item>
            <widget class="QWidget" name="dev_widget" native="true">
             <property name="accessibleDescription">
@@ -415,7 +421,7 @@ Go ahead and add or create one:</string>
                <item>
                 <widget class="QPushButton" name="button_set_user_dir_standard">
                  <property name="text">
-                  <string>Set To User Dir Standard </string>
+                  <string>Set User Dir Standard </string>
                  </property>
                 </widget>
                </item>
@@ -575,14 +581,14 @@ Go ahead and add or create one:</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>A2Hotkey</class>
-   <extends>QPushButton</extends>
-   <header>a2widget.a2hotkey</header>
-  </customwidget>
-  <customwidget>
    <class>A2PathField</class>
    <extends>QLineEdit</extends>
    <header>a2widget.a2path_field</header>
+  </customwidget>
+  <customwidget>
+   <class>A2Hotkey</class>
+   <extends>QPushButton</extends>
+   <header>a2widget.a2hotkey</header>
   </customwidget>
   <customwidget>
    <class>A2Slider</class>

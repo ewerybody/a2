@@ -3,8 +3,8 @@
 # Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2module_source_body.ui',
 # licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2module_source_body.ui' applies.
 #
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
+# Created: Tue Jun 23 18:21:06 2020
+#      by: pyside2-uic  running on PySide2 5.15.0
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(535, 156)
+        Form.resize(646, 180)
         self.modsource_layout = QtWidgets.QVBoxLayout(Form)
         self.modsource_layout.setObjectName("modsource_layout")
         self.frame = QtWidgets.QFrame(Form)
