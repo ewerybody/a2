@@ -112,6 +112,8 @@ class ModSource(object):
 
     @config.setter
     def config(self, data):
+        self._last_config = data
+        self._cfg_fetched = time.time()
         a2util.json_write(self.config_file, data)
 
     @property
