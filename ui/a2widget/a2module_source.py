@@ -1,14 +1,18 @@
-import a2mod
+"""
+Stuff for the module source widget in main settings.
+"""
+from PySide2 import QtGui, QtCore, QtWidgets
+
 import a2core
 import a2ctrl
-from PySide2 import QtGui, QtCore, QtWidgets
-from a2widget import a2module_source_ui
+import a2modsource
 from a2widget.a2input_dialog import A2ConfirmDialog, A2InputDialog
 
 
 log = a2core.get_logger(__name__)
 MOD_COUNT_TEXT = '%i modules, %i enabled'
 UPDATE_LABEL = 'Check for Updates'
+DEV_LABEL = 'Cannot update dev source'
 MSG_UPTODATE = 'You are Up-To-Date!'
 MSG_FETCHING = 'Fetching data ...'
 MSG_UPDATE_AVAILABLE = 'Update to version %s'
@@ -25,19 +29,23 @@ class ModSourceWidget(QtWidgets.QWidget):
     changed = QtCore.Signal()
 
     def __init__(self, main, mod_source, show_enabled=False):
+        """
+        :param a2modsource.ModSource mod_source: The module source to display.
+        """
         super(ModSourceWidget, self).__init__()
         self.main = main
         self.mod_source = mod_source
         self._update_to_version = None
         self._remote_data = None
+        self._reset_timer = None
 
         self.ui_body = None
         self._setup_ui(show_enabled)
         self.set_labels()
 
     def set_labels(self):
-        self.ui.mod_count.setText(MOD_COUNT_TEXT % (self.mod_source.mod_count,
-                                                    self.mod_source.enabled_count))
+        self.ui.mod_count.setText(
+            MOD_COUNT_TEXT % (self.mod_source.mod_count, self.mod_source.enabled_count))
         self._set_body_labels()
 
         if self.mod_source.has_problem:
@@ -47,25 +55,38 @@ class ModSourceWidget(QtWidgets.QWidget):
             self.ui.error_icon.setVisible(False)
 
     def _setup_ui(self, show_enabled):
+        from a2widget import a2module_source_ui
         a2ctrl.check_ui_module(a2module_source_ui)
         self.ui = a2module_source_ui.Ui_Form()
         self.ui.setupUi(self)
 
-        margin = 1
-        self.ui.modsource_layout.setContentsMargins(margin, margin, margin, margin)
-
-        self.ui.check.setText(self.mod_source.name)
+        self.ui.mod_label.setText(self.mod_source.name)
         self.ui.check.setChecked(show_enabled)
         self.ui.check.clicked[bool].connect(self.mod_source.toggle)
         self.ui.check.clicked.connect(self.toggled.emit)
 
         self.ui.tool_button.clicked.connect(self._toggle_details)
         self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
+        self.ui.icon_label.setPixmap(self.mod_source.icon.pixmap(self.main.style.get('icon_size')))
+        self.ui.label_widget.mousePressEvent = self._toggle_details
+        self.ui.details_widget.hide()
+        if self.mod_source.is_git():
+            self.ui.extra_label.setText('(git)')
+        else:
+            self.ui.extra_label.hide()
 
     def _set_body_labels(self):
         if self.ui_body is not None:
             self.ui_body.version_label.setText(self.mod_source.config.get('version', 'x.x.x'))
-            self.ui_body.update_button.setText(UPDATE_LABEL)
+            if self.mod_source.is_git():
+                self.ui_body.update_button.setText(DEV_LABEL)
+                self.ui_body.update_button.setEnabled(False)
+            elif not self.mod_source.config.get('update_url'):
+                self.ui_body.update_button.setText(a2modsource.MSG_NO_UPDATE_URL)
+                self.ui_body.update_button.setEnabled(False)
+            else:
+                self.ui_body.update_button.setText(UPDATE_LABEL)
+                self.ui_body.update_button.setEnabled(True)
             self.ui_body.maintainer_label.setText(self.mod_source.config.get('maintainer', ''))
             desc = self.mod_source.config.get('description', '')
             self.ui_body.description_label.setVisible(desc != '')
@@ -82,24 +103,21 @@ class ModSourceWidget(QtWidgets.QWidget):
                 url_label = url_label[4:]
             self.ui_body.homepage_label.setText('<a href="%s">%s</a>' % (url, url_label))
 
-    def _toggle_details(self):
+    def _toggle_details(self, *_args):
         if self.ui_body is None:
             from a2widget import a2module_source_body_ui
             a2ctrl.check_ui_module(a2module_source_body_ui)
             self.ui_body = a2module_source_body_ui.Ui_Form()
-            self.ui_body.setupUi(self)
+            self.ui_body.setupUi(self.ui.details_widget)
             self.ui_body.local_path.changable = False
-            self.ui_body.update_button.clicked.connect(self._check_update)
+            self.ui_body.update_button.clicked.connect(self._on_update_button)
             self._update_to_version = None
 
             self.ui_body.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
             self.ui_body.update_layout.insertWidget(1, self.ui_body.busy_icon)
 
-            self._reset_timer = QtCore.QTimer()
-            self._reset_timer.setSingleShot(True)
-            self._reset_timer.timeout.connect(self._update_msg)
             self.ui_body.a2option_button.menu_called.connect(self.build_version_menu)
-            self.version_menu = QtWidgets.QMenu(self)
+            # self.version_menu = QtWidgets.QMenu(self)
             self.ui.modsource_layout.addWidget(self.ui_body.frame)
             self._set_body_labels()
 
@@ -118,7 +136,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui_body.busy_icon.set_idle()
         self.ui_body.update_button.setEnabled(True)
 
-    def _check_update(self):
+    def _on_update_button(self):
         self.set_busy(MSG_FETCHING)
         if self._update_to_version is None:
             update_check_thread = self.mod_source.get_update_checker(self.main)
@@ -157,6 +175,11 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui_body.update_button.setText(msg)
 
     def _update_msg(self, msg=None, icon=None):
+        if self._reset_timer is None:
+            self._reset_timer = QtCore.QTimer()
+            self._reset_timer.setSingleShot(True)
+            self._reset_timer.timeout.connect(self._update_msg)
+
         if msg is None:
             self._reset_timer.stop()
             self.ui_body.update_button.setText(UPDATE_LABEL)
@@ -190,6 +213,8 @@ class ModSourceWidget(QtWidgets.QWidget):
         menu.addSeparator()
         menu.addAction(icons.delete, 'Uninstall "%s"' % self.mod_source.name,
                        self.uninstall)
+        if self.main.a2.dev_mode:
+            menu.addAction(icons.edit, 'Edit Meta Data', self._on_edit_meta_data)
 
     def uninstall(self):
         dialog = A2ConfirmDialog(
@@ -215,9 +240,15 @@ class ModSourceWidget(QtWidgets.QWidget):
         to_version = self.sender().data()
         self._change_version(to_version)
 
+    def _on_edit_meta_data(self):
+        from a2widget import modsource_editor
+        dialog = modsource_editor.ModuleSourceEditor(self.mod_source, self.main)
+        dialog.okayed.connect(self._set_body_labels)
+        dialog.exec_()
+
 
 class BusyIcon(QtWidgets.QLabel):
-    def __init__(self, parent, size):
+    def __init__(self, parent, size=32):
         super(BusyIcon, self).__init__(parent)
         self.anim_timer = QtCore.QTimer()
         self.anim_timer.setInterval(25)
@@ -320,7 +351,7 @@ class AddSourceDialog(A2InputDialog):
         self.busy_icon.set_busy()
         self.ui.label.setText('fetching data ...')
 
-        thread = a2mod.ModSourceCheckThread(self.main, check_url=url)
+        thread = a2modsource.ModSourceCheckThread(self.main, check_url=url)
         thread.data_fetched.connect(self.on_data_fetched)
         thread.finished.connect(thread.deleteLater)
         thread.update_error.connect(self.show_error)
@@ -369,9 +400,9 @@ class AddSourceDialog(A2InputDialog):
         self.busy_icon.set_busy()
 
         name = self.remote_data['name']
-        a2mod.create_module_source_dir(name)
-        mod_source = a2mod.ModSource(self.a2, name)
-        thread = a2mod.ModSourceFetchThread(
+        a2modsource.create_dir(name)
+        mod_source = a2modsource.ModSource(self.a2, name)
+        thread = a2modsource.ModSourceFetchThread(
             mod_source, self.main, self.remote_data['version'],
             self.remote_data, self.repo_url)
 
