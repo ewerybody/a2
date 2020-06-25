@@ -1,6 +1,7 @@
 """
 Editor stuff for module source package meta data.
 """
+import os
 from copy import deepcopy
 
 from PySide2 import QtWidgets, QtCore
@@ -21,7 +22,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         :param a2mod.ModSource mod_source: Module source package to work on.
         """
         super(ModuleSourceEditor, self).__init__(
-            main, f'Make a "{mod_source.name}" Release', 'blaaa')
+            main, f'Make a "{mod_source.name}" Release')
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.mod_source = mod_source
@@ -40,10 +41,16 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         self.source_ui.github_commits_btn.setIcon(a2ctrl.Icons.inst().github)
 
         SemVerUiHandler(self, self.source_ui, self.source_cfg)
+        self.okayed.connect(self._write_config)
+
+        if not os.access(self.mod_source.config_file, os.W_OK):
+            import a2modsource
+            self.ui.a2ok_button.setEnabled(False)
+            self.ui.a2ok_button.setText(f'"{a2modsource.CONFIG_FILENAME}" is READ ONLY!')
 
     def _on_ctrl_change(self, value):
-        print('value: %s' % (value))
-        print(self.source_cfg)
+        # TODO: check if there are actual changes.
+        pass
 
     def _fetch_github_commits(self):
         self.source_ui.busy_icon.set_busy()
@@ -79,6 +86,9 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
     def _show_error(self, error):
         self.source_ui.busy_icon.set_idle()
         print('_show_error: %s' % error)
+
+    def _write_config(self):
+        self.mod_source.config = self.source_cfg
 
 
 class SemVerUiHandler(QtCore.QObject):
