@@ -2,7 +2,7 @@ import os
 
 from PySide2 import QtWidgets
 
-import a2mod
+import a2path
 import a2core
 import a2util
 import a2ctrl.connect
@@ -13,12 +13,14 @@ class NewModulueTool(A2InputDialog):
     def __init__(self, main, module_source=None):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
+        self._module_list = []
 
         if not self.a2.module_sources:
             title = 'No Module Source!'
             msg = ('There is no <b>module source</b> to create a module in!\n'
                    'Would you like to create a local one?')
-            reply = QtWidgets.QMessageBox.question(None, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            reply = QtWidgets.QMessageBox.question(
+                None, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
             if reply is QtWidgets.QMessageBox.Yes:
                 self.main.create_local_source()
@@ -66,7 +68,7 @@ class NewModulueTool(A2InputDialog):
         source = self.source_dict['sources'][self.source_dict['source_index']]
         # fetch folders in module source as deactivated sources were not listed before
         if source not in self.source_dict['names']:
-            names = a2mod.get_folders(self.a2.module_sources[source].path)
+            names = a2path.get_dirs(self.a2.module_sources[source].path)
             self.source_dict['names'][source] = list(map(str.lower, names))
 
         self._module_list = self.source_dict['names'][source]
