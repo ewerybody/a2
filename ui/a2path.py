@@ -16,10 +16,12 @@ def iter_dirs(path):
             yield item
 
 
-def get_dirs(path):
+def get_dir_names(path):
     """
     From path return list of names to subfolders.
     """
+    if not os.path.isdir(path):
+        return []
     return [item.name for item in os.scandir(path) if item.is_dir()]
 
 

@@ -68,7 +68,7 @@ class NewModulueTool(A2InputDialog):
         source = self.source_dict['sources'][self.source_dict['source_index']]
         # fetch folders in module source as deactivated sources were not listed before
         if source not in self.source_dict['names']:
-            names = a2path.get_dirs(self.a2.module_sources[source].path)
+            names = a2path.get_dir_names(self.a2.module_sources[source].path)
             self.source_dict['names'][source] = list(map(str.lower, names))
 
         self._module_list = self.source_dict['names'][source]

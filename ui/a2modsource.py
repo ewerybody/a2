@@ -66,7 +66,7 @@ class ModSource(object):
 
     def fetch_modules(self, state=None):
         self._cfg_fetched = None
-        mods_in_path = a2path.get_dirs(self.path)
+        mods_in_path = a2path.get_dir_names(self.path)
         self.mod_count = len(mods_in_path)
         if self.mod_count == 0:
             log.debug('No modules in module source: %s' % self.path)
@@ -177,7 +177,7 @@ class ModSource(object):
         :return: List of strings of stored versions.
         :rtype: list
         """
-        return a2path.get_dirs(self.backup_path)
+        return a2path.get_dir_names(self.backup_path)
 
     def __repr__(self):
         return '<a2mod.ModSource %s at %s>' % (self.name, hex(id(self)))
