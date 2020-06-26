@@ -195,3 +195,10 @@ jxon_dump(obj, indent:="", lvl:=1)
 
     return q . obj . q
 }
+
+; directly json data read from filename
+jxon_read(Byref path, args*)
+{
+    FileRead, OutputVar, %path%
+    return jxon_load(OutputVar)
+}
