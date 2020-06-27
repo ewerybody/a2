@@ -66,7 +66,7 @@ class ModSource(object):
 
     def fetch_modules(self, state=None):
         self._cfg_fetched = None
-        mods_in_path = a2path.get_dir_names(self.path)
+        mods_in_path = a2path.get_dir_names_except(self.path, '.*')
         self.mod_count = len(mods_in_path)
         if self.mod_count == 0:
             log.debug('No modules in module source: %s' % self.path)

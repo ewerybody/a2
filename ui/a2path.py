@@ -3,6 +3,7 @@ All things file system.
 """
 import os
 import shutil
+import fnmatch
 
 
 def iter_dirs(path):
@@ -18,11 +19,21 @@ def iter_dirs(path):
 
 def get_dir_names(path):
     """
-    From path return list of names to subfolders.
+    From path return list of subfolder names.
     """
     if not os.path.isdir(path):
         return []
     return [item.name for item in os.scandir(path) if item.is_dir()]
+
+
+def get_dir_names_except(path, pattern):
+    """
+    From path return list of subfolder names that do not match a given pattern.
+    """
+    if not os.path.isdir(path):
+        return []
+    from fnmatch import fnmatch
+    return [i.name for i in os.scandir(path) if i.is_dir() and not fnmatch(i.name, pattern)]
 
 
 def remove_dir(path):
@@ -71,6 +82,13 @@ def ensure_ending(path, ending):
     if not path.endswith(ending):
         path += ending
     return path
+
+
+def is_same(path1, path2):
+    """
+    Return True if two normalised paths are identical.
+    """
+    return os.path.normcase(path1) == os.path.normcase(path2)
 
 
 class _PathObj:
