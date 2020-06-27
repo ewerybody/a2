@@ -19,7 +19,7 @@ LOCAL_ELEMENT_ID = 'a2_local_element'
 _element_map = {}
 
 
-def check_ui_module(module):
+def check_ui_module(module, force=False):
     """
     Recompile a ui xml file to Python if out-of-date.
 
@@ -61,7 +61,7 @@ def check_ui_module(module):
     py_time = os.path.getmtime(pyfile)
     ui_time = os.path.getmtime(uifile)
     diff = py_time - ui_time
-    if diff < 0:
+    if diff < 0 or force:
         log.debug('%s needs compile! (age: %is)', uibase, diff)
 
         try:

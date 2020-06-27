@@ -2,6 +2,7 @@
 Objects for the the a2 settings tabs.
 """
 import os
+import sys
 
 from PySide2 import QtGui, QtCore, QtWidgets
 
@@ -181,9 +182,16 @@ class A2Settings(QtWidgets.QWidget):
             if widget.children():
                 return
             from a2widget import a2licenses_widget_ui
-            a2ctrl.check_ui_module(a2licenses_widget_ui)
+            a2ctrl.check_ui_module(a2licenses_widget_ui, True)
             ui = a2licenses_widget_ui.Ui_Form()
             ui.setupUi(self.ui.a2settings_tab)
+            text = ui.a2license_text.text()
+            for tag, version in (('{ahk_version}', a2ahk.call_lib_cmd('get_AutoHotkey_version')),
+                                 ('{py_version}', sys.version.split(' ', 1)[0]),
+                                 ('{qt_version}', sys.modules[QtWidgets.__package__].__version__)):
+                if tag in text:
+                    text = text.replace(tag, version)
+            ui.a2license_text.setText(text)
             widget.setLayout(ui.license_layout)
 
 

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>688</height>
+    <width>676</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="license_layout">
    <item>
@@ -24,24 +24,15 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>458</width>
-        <height>666</height>
+        <width>630</width>
+        <height>649</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="a2license_text">
-         <property name="accessibleDescription">
-          <string notr="true"/>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_ahk.png&quot;/&gt;&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AutoHotkey&lt;/span&gt; - a scripting language for desktop automation&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://autohotkey.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;autohotkey.com&lt;/span&gt;&lt;/a&gt; - GNU GPLv2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_python.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Python&lt;/span&gt; - high-level programming language&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.python.org/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;python.org&lt;/span&gt;&lt;/a&gt; - Python Software Foundation License - GPL compatible&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_pyside.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Qt for Python&lt;/span&gt; - Python binding of the cross-platform GUI toolkit Qt&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.qt.io/qt-for-python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;qt.io/qt-for-python&lt;/span&gt;&lt;/a&gt; - LGPLv3/GPLv2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_material.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Material Icons&lt;/span&gt; - Material Design icons by Google&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://material.io/icons&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;material.io/icons&lt;/span&gt;&lt;/a&gt; - Apache License Version 2.0&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Thanks so much!&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          <string notr="true">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_ahk.png&quot;/&gt;&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AutoHotkey&lt;/span&gt; - a scripting language for desktop automation - {ahk_version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://autohotkey.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;autohotkey.com&lt;/span&gt;&lt;/a&gt; - &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU GPLv2&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_python.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Python&lt;/span&gt; - high-level programming language - {py_version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.python.org/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;python.org&lt;/span&gt;&lt;/a&gt; - &lt;a href=&quot;https://docs.python.org/3/license.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Python Software Foundation License - GPL compatible&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_pyside.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Qt for Python&lt;/span&gt; - Python binding of the cross-platform GUI toolkit Qt - {qt_version}&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://www.qt.io/qt-for-python&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;qt.io/qt-for-python&lt;/span&gt;&lt;/a&gt; - &lt;a href=&quot;https://www.qt.io/licensing&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;LGPLv3/GPLv2&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;img src=&quot;res/logo_material.png&quot;/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Material Icons&lt;/span&gt; - Material Design icons by Google&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://material.io/icons&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;material.io/icons&lt;/span&gt;&lt;/a&gt; - &lt;a href=&quot;https://www.apache.org/licenses/LICENSE-2.0.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Apache License Version 2.0&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Thanks so much!&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
