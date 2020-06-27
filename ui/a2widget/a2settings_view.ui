@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>803</width>
+    <width>791</width>
     <height>674</height>
    </rect>
   </property>
@@ -64,13 +64,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="load_on_win_start">
-           <property name="text">
-            <string notr="true">Load a2 on Windows Start</string>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="1">
           <widget class="QCheckBox" name="remember_selection">
            <property name="text">
@@ -97,12 +90,67 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="1">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="load_on_win_start">
+             <property name="text">
+              <string notr="true">Load a2 on Windows Start</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="load_on_win_start_alert">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
          <item row="2" column="1">
-          <widget class="QCheckBox" name="add_desktop_shortcut">
-           <property name="text">
-            <string notr="true">Add Shortcut to Desktop</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QCheckBox" name="add_desktop_shortcut">
+             <property name="text">
+              <string notr="true">Add Shortcut to Desktop</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="add_desktop_shortcut_alert">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>

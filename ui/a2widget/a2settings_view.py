@@ -9,6 +9,7 @@ import a2ahk
 import a2core
 import a2util
 import a2ctrl.connect
+import a2path
 from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
@@ -71,7 +72,7 @@ class A2Settings(QtWidgets.QWidget):
             self.dev_set_dict, self.dev_setting_changed)
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
-        self._data_path_ui_handler = DataPathUiHandler(self.ui, self.a2)
+        DataPathUiHandler(self, self.ui, self.a2)
         self.ui.python_executable.setText(self.a2.paths.python)
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
 
@@ -94,38 +95,8 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
 
-        self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
-        self._check_win_startup()
-        self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
-        self._check_desktop_link()
-
-        self._proxt_ui_handler = ProxyUiHandler(self.ui, self.a2)
-
-    def _check_win_startup(self):
-        startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
-        if not startup_path:
-            self.ui.load_on_win_start.setChecked(False)
-        else:
-            startup_path = os.path.normpath(startup_path)
-            is_current_path = startup_path == self.a2.paths.a2exe
-            if not is_current_path:
-                log.warn('Different Windows Startup path set!\n  %s' % startup_path)
-            self.ui.load_on_win_start.setChecked(is_current_path)
-
-    def _set_windows_startup(self, state):
-        a2ahk.call_lib_cmd('set_windows_startup', self.a2.paths.a2, int(state))
-
-    def _check_desktop_link(self):
-        desktop_path = a2ahk.call_lib_cmd('get_desktop_link_path')
-        if not desktop_path:
-            self.ui.add_desktop_shortcut.setChecked(False)
-        else:
-            desktop_path = os.path.normpath(desktop_path)
-            is_current_path = desktop_path == self.a2.paths.a2uiexe
-            self.ui.add_desktop_shortcut.setChecked(is_current_path)
-
-    def _set_desktop_link(self, state):
-        a2ahk.call_lib_cmd('set_desktop_link', self.a2.paths.a2, int(state))
+        ProxyUiHandler(self.ui, self.a2)
+        IntegrationUIHandler(self, self.ui, self.a2)
 
     def _setup_hotkey_dialog(self):
         current_style = a2hotkey.get_current_style()
@@ -134,6 +105,7 @@ class A2Settings(QtWidgets.QWidget):
             self.ui.hk_dialog_style.addItem(label)
             if style == current_style:
                 index = i
+                break
         self.ui.hk_dialog_style.setCurrentIndex(index)
         self.ui.hk_dialog_style.currentTextChanged.connect(a2hotkey.set_dialog_style)
 
@@ -157,7 +129,7 @@ class A2Settings(QtWidgets.QWidget):
     # def toggle_startup_tooltips(self, state):
     #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 
-    def on_dev_setting_changed(self, *args):
+    def on_dev_setting_changed(self, *_args):
         self.main.devset.set(self.dev_set_dict)
 
     def dev_mode_toggle(self, state):
@@ -250,8 +222,8 @@ class ProxyUiHandler:
 
 
 class DataPathUiHandler(QtCore.QObject):
-    def __init__(self, ui, a2):
-        super(DataPathUiHandler, self).__init__()
+    def __init__(self, parent, ui, a2):
+        super(DataPathUiHandler, self).__init__(parent)
         self.ui = ui
         self.a2 = a2
         self.ui.data_folder.setText(self.a2.paths.data)
@@ -312,3 +284,46 @@ class DataPathUiHandler(QtCore.QObject):
     @property
     def dev_data_path(self):
         return os.path.join(self.a2.paths.a2, 'data')
+
+
+class IntegrationUIHandler(QtCore.QObject):
+    def __init__(self, parent, ui, a2):
+        super(IntegrationUIHandler, self).__init__(parent)
+        self.ui = ui
+        self.a2 = a2
+        self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
+        self._check_win_startup()
+        self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
+        self._check_desktop_link()
+
+    def _check_win_startup(self):
+        self._update_checkbox('get_win_startup_path', self.a2.paths.a2exe,
+                              self.ui.load_on_win_start, self.ui.load_on_win_start_alert)
+
+    def _check_desktop_link(self):
+        self._update_checkbox('get_desktop_link_path', self.a2.paths.a2uiexe,
+                              self.ui.add_desktop_shortcut, self.ui.add_desktop_shortcut_alert)
+
+    def _set_windows_startup(self, state):
+        a2ahk.call_lib_cmd('set_windows_startup', self.a2.paths.a2, int(state))
+        self._check_win_startup()
+
+    def _set_desktop_link(self, state):
+        a2ahk.call_lib_cmd('set_desktop_link', self.a2.paths.a2, int(state))
+        self._check_desktop_link()
+
+    def _update_checkbox(self, cmd, target_path, checkbox, alert_label):
+        current_path = a2ahk.call_lib_cmd(cmd)
+        checked = False
+        tooltip = None
+        if current_path:
+            checked = a2path.is_same(current_path, target_path)
+            if not checked:
+                pixmap = a2ctrl.Icons.inst().help.pixmap(self.a2.win.style.get('icon_size_small'))
+                alert_label.setPixmap(pixmap)
+                tooltip = f'Currently set to: {current_path}'
+
+        alert_label.setVisible(current_path != '' and not checked)
+        for wgt in (checkbox, alert_label):
+            wgt.setToolTip(tooltip)
+        checkbox.setChecked(checked)
