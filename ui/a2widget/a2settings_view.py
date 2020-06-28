@@ -188,7 +188,7 @@ class A2Settings(QtWidgets.QWidget):
         if widget.children():
             return
         from a2widget import a2licenses_widget_ui
-        a2ctrl.check_ui_module(a2licenses_widget_ui, True)
+        a2ctrl.check_ui_module(a2licenses_widget_ui)
         ui = a2licenses_widget_ui.Ui_Form()
         ui.setupUi(self.ui.a2settings_tab)
         text = ui.a2license_text.text()
