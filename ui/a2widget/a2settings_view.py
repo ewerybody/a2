@@ -14,7 +14,8 @@ import a2path
 from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
-LICENSES_TAB_NAME = 'licenses'
+LICENSES_TAB_NAME = 'licenses_tab'
+CONSOLE_TAB_NAME = 'console_tab'
 
 
 class A2Settings(QtWidgets.QWidget):
@@ -177,8 +178,10 @@ class A2Settings(QtWidgets.QWidget):
 
     def on_tab_changed(self, tab_index):
         widget = self.ui.a2settings_tab.widget(tab_index)
-        if widget.objectName() == LICENSES_TAB_NAME:
-            self._build_licenses_tab(widget)
+        tab_func = {LICENSES_TAB_NAME: self._build_licenses_tab,
+                    CONSOLE_TAB_NAME: self._build_console_tab}.get(widget.objectName())
+        if tab_func is not None:
+            tab_func(widget)
 
     def _build_licenses_tab(self, widget):
         """Build the licenses tab on demand."""
@@ -196,6 +199,17 @@ class A2Settings(QtWidgets.QWidget):
                 text = text.replace(tag, version)
         ui.a2license_text.setText(text)
         widget.setLayout(ui.license_layout)
+
+    def _build_console_tab(self, widget):
+        self.a2.paths.data
+        import a2output
+        logger = a2output.get_logger()
+        block_size = pow(2,12)
+        for path in (logger.std_path, logger.err_path):
+            with open(path) as file_obj:
+                file_obj.seek(os.path.getsize(path) - block_size)
+                content = file_obj.read()
+                self.ui.console.setPlainText(content)
 
 
 class ProxyUiHandler:

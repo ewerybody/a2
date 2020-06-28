@@ -608,7 +608,7 @@ Go ahead and add or create one:</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="licenses">
+     <widget class="QWidget" name="licenses_tab">
       <attribute name="title">
        <string notr="true">Licenses</string>
       </attribute>

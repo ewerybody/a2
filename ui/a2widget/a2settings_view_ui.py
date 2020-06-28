@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
+# Form implementation generated from reading ui file:
+#   'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
+# licensing of that file applies.
 #
-# Created: Thu Jun 25 17:03:19 2020
+# Created: Sun Jun 28 22:35:59 2020
 #      by: pyside2-uic  running on PySide2 5.15.0
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_a2settings(object):
+
+class Ui_a2settings:
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
         a2settings.resize(791, 674)
@@ -315,9 +317,9 @@ class Ui_a2settings(object):
         self.db_printout.setObjectName("db_printout")
         self.verticalLayout_5.addWidget(self.db_printout)
         self.a2settings_tab.addTab(self.tab_4, "Database View")
-        self.licenses = QtWidgets.QWidget()
-        self.licenses.setObjectName("licenses")
-        self.a2settings_tab.addTab(self.licenses, "Licenses")
+        self.licenses_tab = QtWidgets.QWidget()
+        self.licenses_tab.setObjectName("licenses_tab")
+        self.a2settings_tab.addTab(self.licenses_tab, "Licenses")
         self.console_tab = QtWidgets.QWidget()
         self.console_tab.setObjectName("console_tab")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.console_tab)
@@ -342,7 +344,6 @@ class Ui_a2settings(object):
         self.label_14.setText(QtWidgets.QApplication.translate("a2settings", "@", None, -1))
         self.label_15.setText(QtWidgets.QApplication.translate("a2settings", ":", None, -1))
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), QtWidgets.QApplication.translate("a2settings", "Console", None, -1))
-
-from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
+from a2widget.a2path_field import A2PathField
 from a2widget.a2hotkey import A2Hotkey
