@@ -205,9 +205,12 @@ class A2Settings(QtWidgets.QWidget):
         import a2output
         logger = a2output.get_logger()
         block_size = pow(2,12)
+
         for path in (logger.std_path, logger.err_path):
             with open(path) as file_obj:
-                file_obj.seek(os.path.getsize(path) - block_size)
+                this_size = os.path.getsize(path)
+                if this_size > block_size:
+                    file_obj.seek(this_size - block_size)
                 content = file_obj.read()
                 self.ui.console.setPlainText(content)
 
