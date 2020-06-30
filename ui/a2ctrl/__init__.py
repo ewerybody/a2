@@ -125,21 +125,23 @@ def edit(element_cfg, main, parent_cfg):
     """
     Find Edit class according to the 'typ' of a config element.
     """
-    element_module = get_a2element_module(element_cfg.get('typ'))
-    try:
-        return element_module.Edit(element_cfg, main, parent_cfg)
+    this_type = element_cfg.get('typ')
+    if this_type != LOCAL_ELEMENT_ID:
+        element_module = get_a2element_module(element_cfg.get('typ'))
+        try:
+            return element_module.Edit(element_cfg, main, parent_cfg)
+        except Exception:
+            pass
 
-    except Exception:
-        mod_path = None if main.mod is None else main.mod.path
-        element_edit_class = get_a2element_object('Edit', element_cfg, mod_path)
-        if element_edit_class is not None:
-            try:
-                return element_edit_class(element_cfg, main, parent_cfg)
-
-            except Exception:
-                log.error(traceback.format_exc().strip())
-                log.error('Error getting Edit class for type "%s"!'
-                          ' Type not supported (yet)?!', element_cfg.get('typ'))
+    mod_path = None if main.mod is None else main.mod.path
+    element_edit_class = get_a2element_object('Edit', element_cfg, mod_path)
+    if element_edit_class is not None:
+        try:
+            return element_edit_class(element_cfg, main, parent_cfg)
+        except Exception:
+            log.error(traceback.format_exc().strip())
+            log.error('Error getting Edit class for type "%s"!'
+                      ' Type not supported (yet)?!', element_cfg.get('typ'))
     return None
 
 
