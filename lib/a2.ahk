@@ -59,8 +59,11 @@ if a2_startup_tool_tips
 Return ; -----------------------------------------------------------------------------
 
 a2ui() {
+    tt("Calling a2 ui ...")
     a2_ahk = %A_ScriptDir%\Autohotkey\Autohotkey.exe
     Run, "%a2_ahk%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
+    WinWait, a2,, 5
+    tt("Calling a2 ui ...", 1)
 }
 
 a2ui_help:
