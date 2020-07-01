@@ -35,10 +35,14 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         for child in self.cfg.get('children', []):
             name = a2util.get_cfg_default_name(child)
             ctrl = a2ctrl.draw(self.main, child, self.mod, module_user_cfg.get(name))
-            if ctrl is not None and ctrl.is_expandable_widget:
-                expandable = True
-            if ctrl:
-                self.a2_group_layout.addWidget(ctrl)
+            if ctrl is None:
+                continue
+            try:
+                expandable = ctrl.is_expandable_widget
+            except AttributeError:
+                pass
+
+            self.a2_group_layout.addWidget(ctrl)
         if expandable:
             self.is_expandable_widget = True
 
