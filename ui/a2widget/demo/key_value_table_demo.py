@@ -46,7 +46,7 @@ class Demo(QtWidgets.QMainWindow):
     def get_data(self):
         data = self.key_value_table.get_data()
         print(data)
-        pprint.pprint(data)
+        pprint.pprint(data, sort_dicts=False)
 
     def set_data(self):
         data = json.loads(self.text_field.text())
