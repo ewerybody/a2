@@ -5,7 +5,6 @@ This is all too random to be core.
 """
 import os
 import time
-import json
 import stat
 import string
 import codecs
@@ -108,11 +107,13 @@ def get_next_free_number(name, name_list, separator=''):
 
 
 def json_read(path):
+    import json
     with codecs.open(path, encoding=UTF8_CODEC) as fobj:
         return json.load(fobj)
 
 
 def json_write(path, data):
+    import json
     with codecs.open(path, 'w', encoding=UTF8_CODEC) as fobj:
         json.dump(data, fobj, indent=JSON_INDENT, sort_keys=True)
 

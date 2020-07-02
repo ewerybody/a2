@@ -264,7 +264,7 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
     for element_cfg in cfg_list:
         # get configs named db entry of module or None
         cfg_name = a2util.get_cfg_default_name(element_cfg)
-        user_cfg = module_user_cfg.get(cfg_name)
+        user_cfg = module_user_cfg.get(cfg_name, {})
         # pass if there is an 'enabled' entry and it's False
         if not get_cfg_value(element_cfg, user_cfg, 'enabled', default=True):
             continue

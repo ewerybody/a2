@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 """
-New a2app backend hosting the actual a2ui window.
-Makes sure its only visible once through the 'singlesiding' package
+a2app backend hosting only the QApplication.
+Tries makes sure it's only visible once through the 'singlesiding' package
 and enables sending messages to the main app instance.
 """
 import os
@@ -111,7 +110,7 @@ class A2Main(QSingleApplication):
 def main():
     try:
         import a2output
-        logger = a2output.get_logger()
+        a2output.get_logger()
         app = A2Main()
         app.exec_()
     except Exception:

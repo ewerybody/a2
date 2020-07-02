@@ -24,7 +24,6 @@ class A2ItemEditor(QtWidgets.QWidget):
     list_menu_called = QtCore.Signal(QtWidgets.QMenu)
 
     data = {}
-    draw_labels = False
 
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)
@@ -65,6 +64,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.update_filter()
 
     def set_data(self, data):
+        """Fill in some data."""
         self.data = data
         self.fill_item_list()
 
@@ -83,24 +83,17 @@ class A2ItemEditor(QtWidgets.QWidget):
         self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
 
     def add_data_widget(self, value_name, widget, set_function, change_signal=None,
-                        default_value=None, label=None):
+                        default_value=None):
         """
         Fills the config_layout with a control and connects it to the data.
 
         :param str value_name: Name of the data item to control.
         :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
-        :param function set_function: Function object of the widget to use to display the current data.
+        :param function set_function: Function object of widget to use to display the current data.
         :param QtCore.Signal change_signal: Optional signal to use for data change notification.
         :param * default_value: Fallback and reference value to check against.
-        :param str label: Deprecated! Use method add_data_label_widget()!
         """
-        if self.draw_labels:
-            log.warning('Deprecated "draw_labels"! Use dedicated methods add_data_label_widget() '
-                        'and add_data_widget() instead!')
-            this_label = label if label is not None else value_name.title()
-            self.ui.config_layout.addRow(this_label, widget)
-        else:
-            self.ui.config_layout.addRow(widget)
+        self.ui.config_layout.addRow(widget)
         self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
 
     def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
@@ -110,11 +103,13 @@ class A2ItemEditor(QtWidgets.QWidget):
                                           'change_signal': change_signal,
                                           'default_value': default_value}
 
-        a2ctrl.connect.control(widget, value_name, self._current_data, self._value_changed, change_signal)
+        a2ctrl.connect.control(
+            widget, value_name, self._current_data, self._value_changed, change_signal)
 
         self._drawing = False
 
     def draw_data(self, item_name):
+        """Fill the ui with the data from selected item."""
         self._drawing = True
         for value_name, widget_dict in self._data_widgets.items():
             value = self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
