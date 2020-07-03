@@ -172,6 +172,11 @@ QPushButton#A2HotkeyScope {
 	max-width: %(hotkey_button_size)ipx;
 	min-width: %(hotkey_button_size)ipx;
 }
+QPushButton#a2item_editor_add_button,
+QPushButton#a2item_editor_remove_button {
+	padding: %(spacing)ipx;;
+	font-size: %(font_size_small)ipx;
+}
 
 QScrollBar:vertical,
 QScrollBar:horizontal {

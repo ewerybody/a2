@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui' applies.
+# Form implementation generated from reading ui file:
+#   'c:\Users\eric\io\code\a2\ui\a2widget\a2item_editor.ui'
+# licensing of that file applies.
 #
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
+# Created: Fri Jul  3 18:27:41 2020
+#      by: pyside2-uic  running on PySide2 5.15.0
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_A2ItemEditor(object):
+
+class Ui_A2ItemEditor:
     def setupUi(self, A2ItemEditor):
         A2ItemEditor.setObjectName("A2ItemEditor")
-        A2ItemEditor.resize(1026, 866)
+        A2ItemEditor.resize(910, 653)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -36,13 +38,13 @@ class Ui_A2ItemEditor(object):
         self.list_layout.addLayout(self.search_field_layout)
         self.buttons_layout = QtWidgets.QHBoxLayout()
         self.buttons_layout.setObjectName("buttons_layout")
-        self.add_entry_button = QtWidgets.QPushButton(A2ItemEditor)
-        self.add_entry_button.setObjectName("add_entry_button")
-        self.buttons_layout.addWidget(self.add_entry_button)
-        self.del_entry_button = QtWidgets.QPushButton(A2ItemEditor)
-        self.del_entry_button.setEnabled(False)
-        self.del_entry_button.setObjectName("del_entry_button")
-        self.buttons_layout.addWidget(self.del_entry_button)
+        self.a2item_editor_add_button = QtWidgets.QPushButton(A2ItemEditor)
+        self.a2item_editor_add_button.setObjectName("a2item_editor_add_button")
+        self.buttons_layout.addWidget(self.a2item_editor_add_button)
+        self.a2item_editor_remove_button = QtWidgets.QPushButton(A2ItemEditor)
+        self.a2item_editor_remove_button.setEnabled(False)
+        self.a2item_editor_remove_button.setObjectName("a2item_editor_remove_button")
+        self.buttons_layout.addWidget(self.a2item_editor_remove_button)
         self.buttons_layout.setStretch(0, 1)
         self.list_layout.addLayout(self.buttons_layout)
         self.item_list = A2List(A2ItemEditor)
@@ -68,7 +70,7 @@ class Ui_A2ItemEditor(object):
     def retranslateUi(self, A2ItemEditor):
         A2ItemEditor.setWindowTitle(QtWidgets.QApplication.translate("A2ItemEditor", "Form", None, -1))
         self.search_field.setPlaceholderText(QtWidgets.QApplication.translate("A2ItemEditor", "search", None, -1))
-        self.add_entry_button.setText(QtWidgets.QApplication.translate("A2ItemEditor", "Add", None, -1))
-        self.del_entry_button.setText(QtWidgets.QApplication.translate("A2ItemEditor", "Remove", None, -1))
+        self.a2item_editor_add_button.setText(QtWidgets.QApplication.translate("A2ItemEditor", "Add", None, -1))
+        self.a2item_editor_remove_button.setText(QtWidgets.QApplication.translate("A2ItemEditor", "Remove", None, -1))
 
 from a2widget.a2list import A2List

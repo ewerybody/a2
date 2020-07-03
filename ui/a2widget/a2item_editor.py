@@ -1,20 +1,21 @@
 """
-a2widget.a2item_editor
-
-@created: Sep 26, 2016
-@author: eRiC
+Home of the A2ItemEditor Lister widget.
 """
+from collections import OrderedDict
+
+from PySide2 import QtCore, QtWidgets
+
 import a2core
 import a2ctrl.connect
-from PySide2 import QtCore, QtWidgets
+import a2ctrl.icons
 from a2widget import a2item_editor_ui
-from collections import OrderedDict
 
 
 log = a2core.get_logger(__name__)
 
 
 class A2ItemEditor(QtWidgets.QWidget):
+    """A lister widget for editing complex data dictionaries."""
     selected_name_changed = QtCore.Signal(str)
     selection_changed = QtCore.Signal(list)
     item_changed = QtCore.Signal(tuple)
@@ -35,20 +36,24 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
         self.ui.config_layout.setContentsMargins(0, 0, 0, 0)
 
-        # self.ui.config_widget.setLayout(self.ui.config_layout)
         self._data_widgets = OrderedDict()
 
         self.fill_item_list()
 
         self._selected_name = None
 
+        icons = a2ctrl.Icons.inst()
         self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.context_menu_requested.connect(self.list_menu_called.emit)
-        self.ui.add_entry_button.clicked.connect(self.add_item)
-        self.ui.del_entry_button.clicked.connect(self.ui.item_list.remove_selected)
         self.ui.item_list.items_removed.connect(self._on_items_removed)
-
         self.ui.item_list.items_selected.connect(self._on_selection_change)
+
+        self.ui.a2item_editor_add_button.clicked.connect(self.add_item)
+        self.ui.a2item_editor_add_button.setIcon(icons.list_add)
+
+        self.ui.a2item_editor_remove_button.setIcon(icons.clear)
+        self.ui.a2item_editor_remove_button.clicked.connect(self.ui.item_list.remove_selected)
+
         self._drawing = False
         self._current_data = {}
         self.selected_name_changed.connect(self.draw_data)
@@ -57,7 +62,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
-        self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
+        self.ui.a2search_x_button.setIcon(icons.clear)
         self.update_filter()
 
     def set_data(self, data):
@@ -70,7 +75,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         """
         :param str value_name: Name of the data item to control.
         :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
-        :param function set_function: Function object of the widget to use to display the current data.
+        :param function set_function: Widget member function to display its current data.
         :param QtCore.Signal change_signal: Optional signal to use for data change notification.
         :param * default_value: Fallback and reference value to check against.
         :param str label: Optional string to put into the Label Field of a FormLayout.
@@ -134,6 +139,7 @@ class A2ItemEditor(QtWidgets.QWidget):
             self.data_changed.emit()
 
     def check_item_change(self, item):
+        """Detect name changes and handle data move."""
         new_name = item.text()
         old_name = self._selected_name
         if new_name != old_name:
@@ -148,15 +154,18 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     @property
     def item_names(self):
+        """Return list of all items."""
         return self.ui.item_list.get_names()
 
     def fill_item_list(self):
+        """Put available keys from data to the item list."""
         self.ui.item_list.clear()
         for item_name in sorted(self.data.keys(), key=str.lower):
             self._add_and_setup_item(item_name)
 
     @property
     def selected_name(self):
+        """String name of currently selected item."""
         return self._selected_name
 
     def _on_selection_change(self, item_objs):
@@ -168,7 +177,7 @@ class A2ItemEditor(QtWidgets.QWidget):
             self.selected_name_changed.emit(text)
 
         self.ui.config_widget.setEnabled(item_objs != [])
-        self.ui.del_entry_button.setEnabled(item_objs != [])
+        self.ui.a2item_editor_remove_button.setEnabled(item_objs != [])
 
     def _add_and_setup_item(self, name):
         item = QtWidgets.QListWidgetItem(name)
@@ -178,6 +187,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         return item
 
     def add_item(self):
+        """Add empty entry to the list and enable edit mode for user to type."""
         new_item_name = ''
         item = self._add_and_setup_item(new_item_name)
         self.ui.item_list.editItem(item)
@@ -211,7 +221,13 @@ class A2ItemEditor(QtWidgets.QWidget):
                 item.setHidden(id(item) not in item_ids)
 
     def reset_filter(self):
+        """Reset Search filter so all entries are shown."""
         self.ui.search_field.setText('')
 
     def enable_search_field(self, state):
+        """Set the visible state of the field."""
+        if state:
+            print('Showing search field!')
+        else:
+            print('Hiding search field!')
         self.ui.search_field.setVisible(state)

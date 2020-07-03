@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1026</width>
-    <height>866</height>
+    <width>910</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,14 +46,14 @@
      <item>
       <layout class="QHBoxLayout" name="buttons_layout" stretch="1,0">
        <item>
-        <widget class="QPushButton" name="add_entry_button">
+        <widget class="QPushButton" name="a2item_editor_add_button">
          <property name="text">
           <string>Add</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="del_entry_button">
+        <widget class="QPushButton" name="a2item_editor_remove_button">
          <property name="enabled">
           <bool>false</bool>
          </property>
