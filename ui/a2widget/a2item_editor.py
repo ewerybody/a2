@@ -231,8 +231,8 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def enable_search_field(self, state):
         """Set the visible state of the field."""
-        if state:
-            print('Showing search field!')
-        else:
-            print('Hiding search field!')
         self.ui.search_field.setVisible(state)
+
+    def delete_item(self):
+        """Delete selected items from the list."""
+        self.ui.item_list.remove_selected()

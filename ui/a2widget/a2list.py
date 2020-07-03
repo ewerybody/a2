@@ -160,7 +160,9 @@ class A2List(QtWidgets.QListWidget):
             self.selection_cleared.emit()
 
     def remove_selected(self):
-        self.remove_items(self.selectedItems())
+        """Delete selected items from the list."""
+        if sel := self.selectedItems():
+            self.remove_items(sel)
 
     def remove_names(self, names):
         items = self.get_items_from_names(names)
