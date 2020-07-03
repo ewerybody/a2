@@ -12,6 +12,8 @@ from a2widget import a2item_editor_ui
 
 
 log = a2core.get_logger(__name__)
+#: Minimum number of to automatically show the search field.
+SEARCH_FIELD_MIN_ITEMS = 10
 
 
 class A2ItemEditor(QtWidgets.QWidget):
@@ -38,6 +40,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
         self._data_widgets = OrderedDict()
 
+        self.search_field_min_items = SEARCH_FIELD_MIN_ITEMS
         self.fill_item_list()
 
         self._selected_name = None
@@ -162,6 +165,8 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.item_list.clear()
         for item_name in sorted(self.data.keys(), key=str.lower):
             self._add_and_setup_item(item_name)
+        # enable search field only when there are more than x enties
+        self.enable_search_field(len(self.data) > self.search_field_min_items)
 
     @property
     def selected_name(self):
