@@ -33,12 +33,9 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.setupUi(self)
 
         self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
+        self.ui.config_layout.setContentsMargins(0, 0, 0, 0)
 
-        contents_margins = self.ui.config_layout.contentsMargins()
-        contents_margins.setTop(0)
-        self.ui.config_layout.setContentsMargins(contents_margins)
-
-        self.ui.config_widget.setLayout(self.ui.config_layout)
+        # self.ui.config_widget.setLayout(self.ui.config_layout)
         self._data_widgets = OrderedDict()
 
         self.fill_item_list()
