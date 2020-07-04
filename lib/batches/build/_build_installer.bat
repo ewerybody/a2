@@ -1,3 +1,4 @@
+rem This actually ONLY calls the Python installer builder!
 @echo off
 set here=%~dp0
 set a2path=%here%..\..\..
@@ -20,14 +21,10 @@ set /p pypath= < "%tmp_txt%"
 del "%tmp_txt%"
 echo pypath: %pypath%
 
-
 echo ### building a2 installer packed executable ###
 echo distroot: %distroot%
 
 echo running build assistant script ...
 %pypath%\python.exe %here%build_installer.py
-
-echo finishing installer executable ...
-copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
 
 echo ########### Build Installer Done! ###########
