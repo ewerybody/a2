@@ -7,11 +7,11 @@ Better keep them as short as possible.
 import os
 import shutil
 import codecs
+import subprocess
 
 import _build_package_init
 import a2ahk
 import a2util
-import subprocess
 
 A2PATH = _build_package_init.a2path
 A2UIPATH = _build_package_init.uipath
@@ -59,19 +59,18 @@ def main():
 
 def update_readme(a2lib):
     # get currently used versions
-    AHKEXE = os.path.join(a2lib, 'Autohotkey', 'Autohotkey.exe')
-    batches_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    version_scripts_dir = os.path.join(batches_dir, 'versions')
-
+    ahk_exe = os.path.join(a2lib, 'Autohotkey', 'Autohotkey.exe')
+    batches_dir = os.path.join(a2lib, 'batches')
+    pattern = 'get_%s_version.ahk'
+    names = 'AutoHotkey', 'PySide2', 'Python'
+    scripts = (os.path.join(a2lib, 'cmds', pattern % names[0]),
+               os.path.join(batches_dir, 'versions', pattern % names[1]),
+               os.path.join(batches_dir, 'versions', pattern % names[2]))
     versions = {}
-    for script in os.scandir(version_scripts_dir):
-        name = script.name
-        if script.is_dir() or not name.startswith('get_') or not name.endswith(a2ahk.EXTENSION):
-            continue
-        version_str = subprocess.check_output(
-            [AHKEXE, script.path], cwd=batches_dir).decode()
-        # cut off "get_" and "_version.ahk"
-        versions[name[4:-12]] = version_str
+    for name, script in zip(names, scripts):
+        cwd = os.path.dirname(os.path.dirname(script))
+        version_str = subprocess.check_output([ahk_exe, script], cwd=cwd).decode()
+        versions[name] = version_str
 
     # get versions in readme:
     readme_path = os.path.join(A2PATH, 'README.md')
