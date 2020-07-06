@@ -12,21 +12,21 @@ class Demo(QtWidgets.QMainWindow):
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
         lyt = QtWidgets.QFormLayout(w)
-        w.setLayout(lyt)
 
         self.lw = QtWidgets.QWidget(self)
         self.ui = layer_demo_ui.Ui_Form()
         self.ui.setupUi(self.lw)
 
-        self.ui.gridLayout.removeItem(self.ui.layout_0)
         self.ui.gridLayout.removeItem(self.ui.layout_1)
+        self.ui.gridLayout.removeItem(self.ui.layout_0)
 
         # the order of layout adding is not important!
         # what counts is the order of widget creation!
         # the label needs to be created first! Then the button Voila!
-        self.ui.gridLayout.addLayout(self.ui.layout_1, 0, 0)
         self.ui.gridLayout.addLayout(self.ui.layout_0, 0, 0)
-        self.ui.layout_1.setAlignment(self.ui.toolButton, QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)
+        self.ui.gridLayout.addLayout(self.ui.layout_1, 0, 0)
+        self.ui.layout_1.setAlignment(
+            self.ui.toolButton, QtCore.Qt.AlignBottom|QtCore.Qt.AlignRight)
 
         lyt.addRow(self.lw)
 
