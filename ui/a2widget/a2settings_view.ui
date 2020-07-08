@@ -6,15 +6,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>791</width>
-    <height>674</height>
+    <width>809</width>
+    <height>322</height>
    </rect>
-  </property>
-  <property name="windowTitle">
-   <string notr="true">a2settings</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">b</string>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
    <property name="leftMargin">
@@ -34,16 +28,16 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab_2">
-      <property name="styleSheet">
-       <string notr="true">Q</string>
-      </property>
+     <widget class="QWidget" name="main_tab">
       <attribute name="title">
        <string notr="true">a2 Settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QFormLayout" name="formLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
          <property name="labelAlignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
@@ -61,32 +55,6 @@
            </property>
            <property name="text">
             <string notr="true">Win+Shift+A</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="remember_selection">
-           <property name="text">
-            <string notr="true">Remember last selected Module</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0" colspan="2">
-          <widget class="Line" name="line_2">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -152,436 +120,82 @@
            </item>
           </layout>
          </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="remember_selection">
+           <property name="text">
+            <string notr="true">Remember last selected Module</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QGroupBox" name="module_source_box">
+           <property name="title">
+            <string notr="true">Module Sources</string>
+           </property>
+           <layout class="QVBoxLayout" name="mod_source_box_layout">
+            <property name="spacing">
+             <number>10</number>
+            </property>
+            <property name="topMargin">
+             <number>25</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="mod_source_layout"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="no_sources_msg">
+              <property name="text">
+               <string notr="true">Currently there are no modules sources listed.
+Go ahead and add or create one:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="a2add_button">
+                <property name="text">
+                 <string notr="true">Add Source</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </item>
-       <item>
-        <widget class="QGroupBox" name="module_source_box">
-         <property name="title">
-          <string notr="true">Module Sources</string>
-         </property>
-         <layout class="QVBoxLayout" name="mod_source_box_layout">
-          <property name="spacing">
-           <number>10</number>
-          </property>
-          <property name="topMargin">
-           <number>25</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" name="mod_source_layout"/>
-          </item>
-          <item>
-           <widget class="QLabel" name="no_sources_msg">
-            <property name="text">
-             <string notr="true">Currently there are no modules sources listed.
-Go ahead and add or create one:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="a2add_button">
-              <property name="text">
-               <string notr="true">Add Source</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="advanced_tab">
       <attribute name="title">
-       <string notr="true">Advanced</string>
+       <string>Advanced</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout_3">
-       <item row="0" column="0">
-        <widget class="QLabel" name="ui_scale_label">
-         <property name="text">
-          <string notr="true">UI Scale:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="A2Slider" name="ui_scale_slider">
-         <property name="decimals">
-          <number>2</number>
-         </property>
-         <property name="minimum">
-          <double>0.500000000000000</double>
-         </property>
-         <property name="maximum">
-          <double>2.000000000000000</double>
-         </property>
-         <property name="singleStep">
-          <double>0.050000000000000</double>
-         </property>
-         <property name="value">
-          <double>1.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QGroupBox" name="hotkey_box">
-         <property name="title">
-          <string>Hotkey Dialog</string>
-         </property>
-         <layout class="QFormLayout" name="formLayout_4">
-          <property name="topMargin">
-           <number>25</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string notr="true">Style:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="hk_dialog_style"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string notr="true">Keyboard Layout:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="hk_dialog_layout"/>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <widget class="QGroupBox" name="dev_box">
-         <property name="title">
-          <string notr="true">a2 dev mode</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <property name="topMargin">
-           <number>25</number>
-          </property>
-          <item>
-           <widget class="QWidget" name="dev_widget" native="true">
-            <property name="accessibleDescription">
-             <string notr="true"/>
-            </property>
-            <layout class="QFormLayout" name="formLayout_2">
-             <property name="fieldGrowthPolicy">
-              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-             </property>
-             <property name="labelAlignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_4">
-               <property name="text">
-                <string notr="true">Author Name:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="author_name">
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string notr="true">Author Homepage:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="author_url">
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string notr="true">Default Code Editor:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="A2PathField" name="code_editor">
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_8">
-               <property name="text">
-                <string notr="true">Autohotkey Executable:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="A2PathField" name="autohotkey">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_12">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true">a2 runtime:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="startup_tooltips">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true">Enable Startup Tooltips</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string notr="true">JSON Indent:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QSpinBox" name="json_indent">
-               <property name="maximumSize">
-                <size>
-                 <width>70</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="0" colspan="2">
-              <widget class="Line" name="line">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="10" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="text">
-                <string notr="true">User Data:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="10" column="1">
-              <widget class="A2PathField" name="data_folder">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="0">
-              <widget class="QLabel" name="label_10">
-               <property name="text">
-                <string notr="true">Python Executable:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="1">
-              <widget class="A2PathField" name="python_executable">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
-             <item row="11" column="1">
-              <layout class="QHBoxLayout" name="horizontalLayout_4">
-               <item>
-                <widget class="QPushButton" name="button_set_user_dir_standard">
-                 <property name="text">
-                  <string>Set User Dir Standard </string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="button_set_user_dir_custom">
-                 <property name="text">
-                  <string>Set Override Path</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QGroupBox" name="proxy_box">
-         <property name="title">
-          <string notr="true">Use a Proxy</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <property name="topMargin">
-           <number>25</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QComboBox" name="proxy_http">
-              <item>
-               <property name="text">
-                <string>http://</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>https://</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="proxy_user">
-              <property name="placeholderText">
-               <string notr="true">user name</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="proxy_pass">
-              <property name="echoMode">
-               <enum>QLineEdit::Password</enum>
-              </property>
-              <property name="placeholderText">
-               <string notr="true">password</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>@</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="proxy_server">
-              <property name="text">
-               <string/>
-              </property>
-              <property name="placeholderText">
-               <string notr="true">server</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="proxy_port">
-              <property name="placeholderText">
-               <string notr="true">port</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
      </widget>
-     <widget class="QWidget" name="tab_4">
+     <widget class="QWidget" name="database_tab">
       <attribute name="title">
        <string notr="true">Database View</string>
       </attribute>
@@ -617,11 +231,6 @@ Go ahead and add or create one:</string>
       <attribute name="title">
        <string>Console</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QPlainTextEdit" name="console"/>
-       </item>
-      </layout>
      </widget>
     </widget>
    </item>
@@ -629,19 +238,9 @@ Go ahead and add or create one:</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>A2PathField</class>
-   <extends>QLineEdit</extends>
-   <header>a2widget.a2path_field</header>
-  </customwidget>
-  <customwidget>
    <class>A2Hotkey</class>
    <extends>QPushButton</extends>
    <header>a2widget.a2hotkey</header>
-  </customwidget>
-  <customwidget>
-   <class>A2Slider</class>
-   <extends>QDoubleSpinBox</extends>
-   <header>a2widget.a2slider</header>
   </customwidget>
  </customwidgets>
  <resources/>

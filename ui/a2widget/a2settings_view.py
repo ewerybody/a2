@@ -14,13 +14,9 @@ import a2path
 from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
-LICENSES_TAB_NAME = 'licenses_tab'
-CONSOLE_TAB_NAME = 'console_tab'
 
 
 class A2Settings(QtWidgets.QWidget):
-    dev_setting_changed = QtCore.Signal(str)
-
     def __init__(self, main):
         super(A2Settings, self).__init__(parent=main)
         self.a2 = a2core.A2Obj.inst()
@@ -52,92 +48,19 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.a2hotkey.set_config({'key': a2ui_hotkey})
         self.ui.a2hotkey.hotkey_changed.connect(self.set_a2_hotkey)
 
-        self.ui.dev_box.setChecked(self.a2.dev_mode)
-        self.ui.dev_box.clicked[bool].connect(self.dev_mode_toggle)
-
         self.ui.remember_selection.setChecked(self.a2.db.get('remember_last') or False)
         self.ui.remember_selection.clicked[bool].connect(self.remember_last_toggle)
-
-        self.ui.dev_widget.setVisible(self.a2.dev_mode)
 
         self.add_source_menu = QtWidgets.QMenu(self)
         self.ui.a2add_button.clicked.connect(self.build_add_source_menu)
         self.ui.a2add_button.setIcon(a2ctrl.Icons.inst().list_add)
 
-        self.ui.code_editor.file_types = "Executables (*.exe)"
-        self.ui.code_editor.writable = False
-        # self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
-
-        self.dev_set_dict = self.main.devset.get()
-        a2ctrl.connect.control_list(
-            [self.ui.author_name, self.ui.author_url, self.ui.code_editor, self.ui.json_indent],
-            self.dev_set_dict, self.dev_setting_changed)
-        self.dev_setting_changed.connect(self.on_dev_setting_changed)
-
-        DataPathUiHandler(self, self.ui, self.a2)
-        self.ui.python_executable.setText(self.a2.paths.python)
-        self.ui.autohotkey.setText(self.a2.paths.autohotkey)
-
-        # self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
-        # self.ui.show_console.clicked[bool].connect(self.toggle_console)
-
-        # TODO: #182
-        # ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
-        # self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
-        # self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
-
-        self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
-        self.ui.ui_scale_slider.setPageStep(0.1)
-        self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
-
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
-
-        self._setup_hotkey_dialog()
 
         self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
 
-        ProxyUiHandler(self.ui, self.a2)
         IntegrationUIHandler(self, self.ui, self.a2)
-
-    def _setup_hotkey_dialog(self):
-        current_style = a2hotkey.get_current_style()
-        index = 0
-        for i, (style, label) in enumerate(a2hotkey.iter_dialog_styles()):
-            self.ui.hk_dialog_style.addItem(label)
-            if style == current_style:
-                index = i
-                break
-        self.ui.hk_dialog_style.setCurrentIndex(index)
-        self.ui.hk_dialog_style.currentTextChanged.connect(a2hotkey.set_dialog_style)
-
-        from a2widget.a2hotkey.keyboard_dialog import layouts
-        current_layout = layouts.get_current()
-        index = 0
-        for i, (keyboard_id, label) in enumerate(layouts.iterate()):
-            self.ui.hk_dialog_layout.addItem(label)
-            if keyboard_id == current_layout:
-                index = i
-        self.ui.hk_dialog_layout.setCurrentIndex(index)
-        self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
-
-    # def toggle_console(self, state):
-    #     base_name = ['pythonw.exe', 'python.exe'][state]
-    #     new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
-    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', new_path)
-    #     self.a2.paths.python = new_path
-    #     self.ui.python_executable.setText(new_path)
-
-    # def toggle_startup_tooltips(self, state):
-    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
-
-    def on_dev_setting_changed(self, *_args):
-        self.main.devset.set(self.dev_set_dict)
-
-    def dev_mode_toggle(self, state):
-        self.a2.set_dev_mode(state)
-        self.ui.dev_widget.setVisible(state)
-        self.main.check_main_menu_bar()
 
     def remember_last_toggle(self, state):
         self.a2.db.set('remember_last', state)
@@ -178,15 +101,20 @@ class A2Settings(QtWidgets.QWidget):
 
     def on_tab_changed(self, tab_index):
         widget = self.ui.a2settings_tab.widget(tab_index)
-        tab_func = {LICENSES_TAB_NAME: self._build_licenses_tab,
-                    CONSOLE_TAB_NAME: self._build_console_tab}.get(widget.objectName())
-        if tab_func is not None:
-            tab_func(widget)
+        if widget.children():
+            return
+
+        build_func_name = f'_build_{widget.objectName()}'
+        try:
+            build_func = getattr(self, build_func_name)
+        except AttributeError:
+            return
+
+        build_func(widget)
+        widget.sizeHint = self._size_hint
 
     def _build_licenses_tab(self, widget):
         """Build the licenses tab on demand."""
-        if widget.children():
-            return
         from a2widget import a2licenses_widget_ui
         a2ctrl.check_ui_module(a2licenses_widget_ui)
         ui = a2licenses_widget_ui.Ui_Form()
@@ -201,18 +129,14 @@ class A2Settings(QtWidgets.QWidget):
         widget.setLayout(ui.license_layout)
 
     def _build_console_tab(self, widget):
-        self.a2.paths.data
-        import a2output
-        logger = a2output.get_logger()
-        block_size = pow(2,12)
+        ConsoleUiHandler(self, widget, self.ui, self.a2)
 
-        for path in (logger.std_path, logger.err_path):
-            with open(path) as file_obj:
-                this_size = os.path.getsize(path)
-                if this_size > block_size:
-                    file_obj.seek(this_size - block_size)
-                content = file_obj.read()
-                self.ui.console.setPlainText(content)
+    def _build_advanced_tab(self, widget):
+        AdvancedSettingsUiHandler(self, widget, self.ui, self.a2)
+
+    def _size_hint(self):
+        """For building the tab widgets dynamically. Default sizeHint is WAY too big!"""
+        return QtCore.QSize(0, 0)
 
 
 class ProxyUiHandler:
@@ -355,3 +279,155 @@ class IntegrationUIHandler(QtCore.QObject):
         for wgt in (checkbox, alert_label):
             wgt.setToolTip(tooltip)
         checkbox.setChecked(checked)
+
+
+class AdvancedSettingsUiHandler(QtCore.QObject):
+    dev_setting_changed = QtCore.Signal(str)
+
+    def __init__(self, parent, widget, ui, a2):
+        super(AdvancedSettingsUiHandler, self).__init__(parent)
+        self.main = parent.main
+        self.tab_widget = widget
+        self.parent_ui = ui
+        self.ui = None
+        self.a2 = a2
+        self._setup_ui()
+
+    def _setup_ui(self):
+        from a2widget import a2settings_advanced_ui
+        a2ctrl.check_ui_module(a2settings_advanced_ui)
+        self.ui = a2settings_advanced_ui.Ui_Form()
+        self.ui.setupUi(self.tab_widget)
+
+        self.ui.dev_box.setChecked(self.a2.dev_mode)
+        self.ui.dev_box.clicked[bool].connect(self.dev_mode_toggle)
+        self.ui.dev_widget.setVisible(self.a2.dev_mode)
+        self.ui.code_editor.file_types = "Executables (*.exe)"
+        self.ui.code_editor.writable = False
+        # self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
+
+        self.dev_set_dict = self.main.devset.get()
+        a2ctrl.connect.control_list(
+            [self.ui.author_name, self.ui.author_url, self.ui.code_editor, self.ui.json_indent],
+            self.dev_set_dict, self.dev_setting_changed)
+        self.dev_setting_changed.connect(self.on_dev_setting_changed)
+
+        DataPathUiHandler(self, self.ui, self.a2)
+        self.ui.python_executable.setText(self.a2.paths.python)
+        self.ui.autohotkey.setText(self.a2.paths.autohotkey)
+
+        # self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
+        # self.ui.show_console.clicked[bool].connect(self.toggle_console)
+
+        # TODO: #182
+        # ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
+        # self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
+        # self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
+
+        self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
+        self.ui.ui_scale_slider.setPageStep(0.1)
+        self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
+
+        ProxyUiHandler(self.ui, self.a2)
+
+        self._setup_hotkey_dialog()
+
+    def _setup_hotkey_dialog(self):
+        current_style = a2hotkey.get_current_style()
+        index = 0
+        for i, (style, label) in enumerate(a2hotkey.iter_dialog_styles()):
+            self.ui.hk_dialog_style.addItem(label)
+            if style == current_style:
+                index = i
+                break
+        self.ui.hk_dialog_style.setCurrentIndex(index)
+        self.ui.hk_dialog_style.currentTextChanged.connect(a2hotkey.set_dialog_style)
+
+        from a2widget.a2hotkey.keyboard_dialog import layouts
+        current_layout = layouts.get_current()
+        index = 0
+        for i, (keyboard_id, label) in enumerate(layouts.iterate()):
+            self.ui.hk_dialog_layout.addItem(label)
+            if keyboard_id == current_layout:
+                index = i
+        self.ui.hk_dialog_layout.setCurrentIndex(index)
+        self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
+
+    # def toggle_console(self, state):
+    #     base_name = ['pythonw.exe', 'python.exe'][state]
+    #     new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
+    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', new_path)
+    #     self.a2.paths.python = new_path
+    #     self.ui.python_executable.setText(new_path)
+
+    # def toggle_startup_tooltips(self, state):
+    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
+
+    def on_dev_setting_changed(self, *_args):
+        self.main.devset.set(self.dev_set_dict)
+
+    def dev_mode_toggle(self, state):
+        self.a2.set_dev_mode(state)
+        self.ui.dev_widget.setVisible(state)
+        self.main.check_main_menu_bar()
+
+
+class ConsoleUiHandler(QtCore.QObject):
+    def __init__(self, parent, tab_widget, ui, a2):
+        super(ConsoleUiHandler, self).__init__(parent)
+        self.tab_widget = tab_widget
+        self.main = parent.main
+        self.parent_ui = ui
+        self.ui = None
+        self.a2 = a2
+        self._scroll_anim = None
+        self._setup_ui()
+
+    def _setup_ui(self):
+        layout = QtWidgets.QVBoxLayout(self.tab_widget)
+        self.a2console = QtWidgets.QPlainTextEdit(self.tab_widget)
+        console = self.a2console
+        console.setObjectName("a2console")
+        layout.addWidget(console)
+
+        import a2output
+        logger = a2output.get_logger()
+        block_size = pow(2,12)
+        for path in (logger.std_path, logger.err_path):
+            with open(path) as file_obj:
+                this_size = os.path.getsize(path)
+                if this_size > block_size:
+                    file_obj.seek(this_size - block_size)
+                content = file_obj.read()
+                console.setPlainText(content)
+
+        vscrollbar = self.a2console.verticalScrollBar()
+        maxim = vscrollbar.maximum()
+        print('maxim1: %s' % maxim)
+        QtCore.QTimer(self).singleShot(100, self._scroll_to_bottom)
+        # QtCore.QTimer(self).singleShot(50, self._set_bottom)
+
+    def _scroll_to_bottom(self):
+        vscrollbar = self.a2console.verticalScrollBar()
+        maxim = vscrollbar.maximum()
+        print('maxim2: %s' % maxim)
+        self._scroll_anim = QtCore.QPropertyAnimation(vscrollbar, b'value')
+        self._scroll_anim.setStartValue(vscrollbar.value())
+        self._scroll_anim.setEndValue(vscrollbar.maximum() + 10)
+        self._scroll_anim.setDuration(350)
+        self._scroll_anim.setLoopCount(1)
+        self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+        self._scroll_anim.finished.connect(self._set_bottom)
+        self._scroll_anim.start()
+        # self._scroll_anim.finished.connect(self._scroll_to_bottom)
+        # QtCore.QTimer(self).singleShot(50, self._scroll_anim.start)
+
+    def _set_bottom(self):
+        scrollbar = self.a2console.verticalScrollBar()
+        maxim = scrollbar.maximum()
+        print('maxim3: %s' % maxim)
+        scrollbar.setValue(scrollbar.maximum())
+
+    #     print('_scroll_to_bottom ...')
+    #     # for scrollbar in (console.verticalScrollBar(), console.horizontalScrollBar()):
+    #     #     scrollbar.setValue(scrollbar.maximum())
