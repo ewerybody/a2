@@ -79,10 +79,20 @@ QGroupBox::title {
 	padding-right: %(spacing)ipx;
 }
 
-QScrollArea#a2scroll_area,
+QScrollArea,
 QListWidget#a2module_list_widget {
 	border-style: none;
 }
+
+QScrollArea {
+	border-style: none;
+	background-color: "%(color_background)s";
+}
+
+QWidget#a2scroll_area_background {
+	background-color: "%(color_bright)s";
+}
+
 
 QPushButton#a2cancel_button,
 QPushButton#a2ok_button,
@@ -184,10 +194,10 @@ QScrollBar:horizontal {
 	margin: 0px;
 }
 QScrollBar:vertical {
-	width: %(font_size)ipx;
+	width: %(font_size_small)ipx;
 }
 QScrollBar:horizontal {
-	height: %(font_size)ipx;
+	height: %(font_size_small)ipx;
 }
 
 QScrollBar::add-line,
@@ -223,7 +233,8 @@ QScrollBar::handle:pressed {
 	background-color: "%(color_pressed)s";
 }
 
-A2CodeField {
+A2CodeField,
+QPlainTextEdit#a2console {
 	font-family: "Consolas";
 }
 

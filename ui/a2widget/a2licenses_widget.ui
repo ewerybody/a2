@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>676</width>
-    <height>584</height>
+    <width>677</width>
+    <height>213</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,11 +24,23 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>630</width>
-        <height>649</height>
+        <width>631</width>
+        <height>627</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QLabel" name="a2license_text">
          <property name="text">
