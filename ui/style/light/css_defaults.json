@@ -27,9 +27,10 @@
     "color_pressed": "#AAA",
     "color_darkgrey": "#777",
     "color_dark": "#444",
-    "border_radius": 2,
+    "border_radius": 3,
     "icon_size": 20,
     "icon_size_small": 15,
     "search_x_button_size": 18,
-    "hotkey_button_size": 20
+    "hotkey_button_size": 19,
+    "hotkey_widget_margin": 6
 }

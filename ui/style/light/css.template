@@ -97,9 +97,6 @@ QWidget#a2scroll_area_background {
 QPushButton#a2cancel_button,
 QPushButton#a2ok_button,
 QPushButton#a2add_button,
-A2Hotkey {
-	font-size: %(font_size_large)ipx;
-}
 
 QPushButton#a2cancel_button {
 	background:transparent;
@@ -160,10 +157,18 @@ QPushButton#a2search_x_button {
 	color: "%(color_pressed)s";
 }
 
+QWidget#A2Hotkey {
+	background-color: "%(color_yellow)s";
+	border-radius: %(border_radius)ipx;
+	/* border: %(border_radius)ipx solid "%(color_yellow)s"; */
+	margin: %(hotkey_widget_margin)ipx;
+	/* margin: 0px; */
+}
+
 QPushButton#A2HotkeyButton,
 QPushButton#A2HotkeyScope {
-	border-radius: 0px;
-	background-color: "%(color_yellow)s";
+	border-radius: %(border_radius)ipx;
+	background: transparent;
 	font-size: %(font_size_large)ipx;
 	min-height: %(hotkey_button_size)ipx;
 }
@@ -243,12 +248,6 @@ QLabel#a2license_text {
 }
 
 QToolButton#a2option_button {
-	image: url(res/more.svg);
-	color: "%(color_darkgrey)s";
-	icon-size: %(icon_size_small)ipx;
-}
-
-A2MoreButton {
 	image: url(res/more.svg);
 	color: "%(color_darkgrey)s";
 	icon-size: %(icon_size_small)ipx;

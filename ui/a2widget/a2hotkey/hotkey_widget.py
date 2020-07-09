@@ -1,21 +1,27 @@
-import a2core
+"""Home of the mighty a2Hotkey widget."""
+# pylint: disable=C0103,C0111
+
 from PySide2 import QtCore, QtWidgets
 
+import a2core
 import a2ctrl
 from a2widget.a2hotkey.simple_dialog import HotkeyDialog1
 from a2widget.a2hotkey.dialogs import HotKeyBoard
 from a2widget.a2hotkey.hotkey_common import Vars, get_keys_list
 
-
-SCOPE_TOOLTIP_GLOBAL = 'Hotkey scope is set "global" so it works anywhere.'
-SCOPE_TOOLTIP_INCLUDE = 'Hotkey scope is set to work only in specific windows.'
-SCOPE_TOOLTIP_EXCLUDE = 'Hotkey scope is set to exclude specific windows.'
+_SCOPE_TOOLTIP = 'Hotkey scope is set '
+SCOPE_TOOLTIP_GLOBAL = _SCOPE_TOOLTIP + '"global" so it works anywhere.'
+SCOPE_TOOLTIP_INCLUDE = _SCOPE_TOOLTIP + 'to work only in specific windows.'
+SCOPE_TOOLTIP_EXCLUDE = _SCOPE_TOOLTIP + 'to exclude specific windows.'
 SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
 HOTKEY_CANNOT_CHANGE = 'The hotkey cannot be changed!'
 
-DIALOG_DEFAULT = HotKeyBoard
-DIALOG_CLASSES = [DIALOG_DEFAULT, HotkeyDialog1]
+DIALOG_CLASSES = [HotKeyBoard, HotkeyDialog1]
+DIALOG_DEFAULT = DIALOG_CLASSES[0]
+QSS_NAME_WIDGET = 'A2Hotkey'
+QSS_NAME_HOTKEY = 'A2HotkeyButton'
+QSS_NAME_SCOPE = 'A2HotkeyScope'
 
 
 class A2Hotkey(QtWidgets.QWidget):
@@ -35,19 +41,21 @@ class A2Hotkey(QtWidgets.QWidget):
         self._cfg = {}
         self._edit_mode = False
 
-        self.setObjectName('A2HotkeyButton')
-        self._vlayout = QtWidgets.QVBoxLayout(self)
+        uber_layout = QtWidgets.QHBoxLayout(self)
+        uber_widget = QtWidgets.QWidget(self)
+        uber_widget.setObjectName(QSS_NAME_WIDGET)
+        uber_layout.addWidget(uber_widget)
+
+        self._vlayout = QtWidgets.QVBoxLayout(uber_widget)
         self._vlayout.setSpacing(0)
-        self._vlayout.setContentsMargins(0, 0, 0, 0)
         self._layout = QtWidgets.QHBoxLayout()
         self._vlayout.addLayout(self._layout)
-        self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
         self._hotkey_buttons = [QtWidgets.QPushButton(self)]
-        self._hotkey_buttons[0].setObjectName('A2HotkeyButton')
+        self._hotkey_buttons[0].setObjectName(QSS_NAME_HOTKEY)
         self._hotkey_index = 0
         self._scope_button = QtWidgets.QPushButton(self)
-        self._scope_button.setObjectName('A2HotkeyScope')
+        self._scope_button.setObjectName(QSS_NAME_SCOPE)
         self._layout.addWidget(self._hotkey_buttons[0])
         self._layout.addWidget(self._scope_button)
         self._scope_button.clicked.connect(self.scope_clicked)
@@ -72,7 +80,7 @@ class A2Hotkey(QtWidgets.QWidget):
                 for i in range(num_buttons, num_keys):
                     button = QtWidgets.QPushButton(self)
                     button.clicked.connect(self.popup_dialog)
-                    button.setObjectName('A2HotkeyButton')
+                    button.setObjectName(QSS_NAME_HOTKEY)
                     self._vlayout.addWidget(button)
                     self._hotkey_buttons.append(button)
             elif num_keys < num_buttons:
