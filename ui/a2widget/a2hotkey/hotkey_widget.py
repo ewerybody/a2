@@ -130,7 +130,8 @@ class A2Hotkey(QtWidgets.QWidget):
         scope_change = self._cfg.get(Vars.scope_change, False)
         if not self.is_edit_mode and not scope_change and is_global:
             from a2widget.a2input_dialog import A2ConfirmDialog
-            dialog = A2ConfirmDialog(self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
+            dialog = A2ConfirmDialog(
+                self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
             dialog.show()
         else:
             from a2widget.a2hotkey import scope_dialog
@@ -181,11 +182,11 @@ class A2Hotkey(QtWidgets.QWidget):
         """
         selecting the right items for this configuration
         """
-        tooltip, icon = [
+        scope_ui_map = (
             (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
             (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
-            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude)][
-            self._cfg.get(Vars.scope_mode, 0)]
+            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude))
+        tooltip, icon = scope_ui_map[self._cfg.get(Vars.scope_mode, 0)]
 
         if not self._cfg.get(Vars.scope_change, False):
             tooltip += SCOPE_CANNOT_CHANGE
@@ -220,6 +221,7 @@ class A2Hotkey(QtWidgets.QWidget):
 
     def get_keys_list(self):
         return get_keys_list(self.key)
+
 
 if __name__ == '__main__':
     import a2widget.demo.hotkey_demo
