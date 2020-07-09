@@ -45,6 +45,7 @@ class A2Hotkey(QtWidgets.QWidget):
         uber_widget = QtWidgets.QWidget(self)
         uber_widget.setObjectName(QSS_NAME_WIDGET)
         uber_layout.addWidget(uber_widget)
+        uber_layout.setContentsMargins(0, 0, 0, 0)
 
         self._vlayout = QtWidgets.QVBoxLayout(uber_widget)
         self._vlayout.setSpacing(0)

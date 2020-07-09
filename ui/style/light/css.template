@@ -170,6 +170,7 @@ QPushButton#A2HotkeyScope {
 	border-radius: %(border_radius)ipx;
 	background: transparent;
 	font-size: %(font_size_large)ipx;
+	/* font-weight: bold; */
 	min-height: %(hotkey_button_size)ipx;
 }
 QPushButton#A2HotkeyButton:hover,
