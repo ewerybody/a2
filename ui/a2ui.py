@@ -15,7 +15,6 @@ from PySide2 import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger(__name__)
-ui_defaults = None
 RESTART_DELAY = 300
 RUNTIME_WATCH_INTERVAL = 1000
 DEFAULT_WIN_SIZE = (700, 480)
@@ -32,6 +31,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.app = app
         self._restart_thread = None
         self._shutdown_thread = None
+        self._scroll_anim = None
 
         self.edit_clipboard = []
         self.temp_config = None
@@ -113,7 +113,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExplore_to_a2_dir.setIcon(icons.folder)
         self.ui.actionExplore_to_a2_data_dir.triggered.connect(self.explore_a2data)
         self.ui.actionExplore_to_a2_data_dir.setIcon(icons.folder)
-        self.ui.actionA2_settings.triggered.connect(partial(self.module_list.select, None))
+        self.ui.actionA2_settings.triggered.connect(self.module_list.select)
         self.ui.actionA2_settings.setIcon(icons.a2)
         self.ui.actionExit_a2ui.triggered.connect(self.close)
         self.ui.actionExit_a2ui.setIcon(icons.clear)
@@ -153,11 +153,9 @@ class A2Window(QtWidgets.QMainWindow):
                             self, self.edit_submit)
 
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home),
-                            self.module_view.ui.a2scroll_area,
-                            partial(self.scroll_to, True))
+                            self.module_view.ui.a2scroll_area, self.scroll_to_start)
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End),
-                            self.module_view.ui.a2scroll_area,
-                            partial(self.scroll_to, False))
+                            self.module_view.ui.a2scroll_area, self.scroll_to_end)
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F1),
                             self, self.module_view.help)
 
@@ -328,9 +326,28 @@ class A2Window(QtWidgets.QMainWindow):
         self._initial_activation_tries += 1
         QtCore.QTimer(self).singleShot(50, self._activate_window)
 
-    def scroll_to(self, value, smooth=False):
-        # TODO: reimplement in each widget
-        pass
+    def scroll_to_start(self, *things):
+        self._scroll(self.module_view.ui.a2scroll_area, False)
+
+    def scroll_to_end(self, *things):
+        self._scroll(self.module_view.ui.a2scroll_area, True)
+
+    def _scroll(self, widget, value, extra=0):
+        scrollbar = self.module_view.ui.a2scroll_area.verticalScrollBar()
+        if value:
+            start, end = scrollbar.value(), scrollbar.maximum() + extra
+            scrollbar.setValue(scrollbar.maximum() + extra)
+        else:
+            start, end = scrollbar.value(), 0
+
+        vscrollbar = widget.verticalScrollBar()
+        self._scroll_anim = QtCore.QPropertyAnimation(vscrollbar, b'value')
+        self._scroll_anim.setStartValue(start)
+        self._scroll_anim.setEndValue(end)
+        self._scroll_anim.setDuration(200)
+        self._scroll_anim.setLoopCount(1)
+        self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+        self._scroll_anim.start()
 
     def create_new_element(self):
         from a2widget import new_element_tool

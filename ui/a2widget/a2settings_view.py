@@ -401,33 +401,7 @@ class ConsoleUiHandler(QtCore.QObject):
                 content = file_obj.read()
                 console.setPlainText(content)
 
-        vscrollbar = self.a2console.verticalScrollBar()
-        maxim = vscrollbar.maximum()
-        print('maxim1: %s' % maxim)
         QtCore.QTimer(self).singleShot(100, self._scroll_to_bottom)
-        # QtCore.QTimer(self).singleShot(50, self._set_bottom)
 
     def _scroll_to_bottom(self):
-        vscrollbar = self.a2console.verticalScrollBar()
-        maxim = vscrollbar.maximum()
-        print('maxim2: %s' % maxim)
-        self._scroll_anim = QtCore.QPropertyAnimation(vscrollbar, b'value')
-        self._scroll_anim.setStartValue(vscrollbar.value())
-        self._scroll_anim.setEndValue(vscrollbar.maximum() + 10)
-        self._scroll_anim.setDuration(350)
-        self._scroll_anim.setLoopCount(1)
-        self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
-        self._scroll_anim.finished.connect(self._set_bottom)
-        self._scroll_anim.start()
-        # self._scroll_anim.finished.connect(self._scroll_to_bottom)
-        # QtCore.QTimer(self).singleShot(50, self._scroll_anim.start)
-
-    def _set_bottom(self):
-        scrollbar = self.a2console.verticalScrollBar()
-        maxim = scrollbar.maximum()
-        print('maxim3: %s' % maxim)
-        scrollbar.setValue(scrollbar.maximum())
-
-    #     print('_scroll_to_bottom ...')
-    #     # for scrollbar in (console.verticalScrollBar(), console.horizontalScrollBar()):
-    #     #     scrollbar.setValue(scrollbar.maximum())
+        self.main._scroll(self.a2console, True, 10)

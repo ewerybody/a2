@@ -160,9 +160,7 @@ QPushButton#a2search_x_button {
 QWidget#A2Hotkey {
 	background-color: "%(color_yellow)s";
 	border-radius: %(border_radius)ipx;
-	/* border: %(border_radius)ipx solid "%(color_yellow)s"; */
 	margin: %(hotkey_widget_margin)ipx;
-	/* margin: 0px; */
 }
 
 QPushButton#A2HotkeyButton,
