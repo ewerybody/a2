@@ -392,14 +392,25 @@ class ConsoleUiHandler(QtCore.QObject):
 
         import a2output
         logger = a2output.get_logger()
-        block_size = pow(2,12)
+        block_size = pow(2, 12)
+        lines = []
         for path in (logger.std_path, logger.err_path):
             with open(path) as file_obj:
                 this_size = os.path.getsize(path)
                 if this_size > block_size:
                     file_obj.seek(this_size - block_size)
-                content = file_obj.read()
-                console.setPlainText(content)
+                for line in file_obj.read().split('\n'):
+                    try:
+                        timestamp, txt = line.split(a2output.SEP, 1)
+                        ftime = float(timestamp)
+                        txt = txt.strip()
+                        if txt.strip():
+                            lines.append((ftime, txt))
+                    except ValueError as error:
+                        pass
+
+        content = '\n'.join('%.1f - %s' % (ftime, txt) for ftime, txt in sorted(lines))
+        console.setPlainText(content)
 
         QtCore.QTimer(self).singleShot(100, self._scroll_to_bottom)
 

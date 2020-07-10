@@ -7,6 +7,7 @@ _SOUT = None
 _SERR = None
 LOG_STD_NAME = 'a2.log'
 LOG_ERR_NAME = 'a2_errors.log'
+SEP = ' - '
 
 
 def connect(write_func):
@@ -62,7 +63,7 @@ class _OutputWrangler(object):
         pass
 
 
-class A2Logger(object):
+class A2Logger:
     _instance = None
 
     @classmethod
@@ -99,7 +100,7 @@ class A2Logger(object):
             msg += '\n'
 
         with open(log_path, 'a', encoding='utf8') as file_obj:
-            file_obj.write(f'{self._now()} - {msg}')
+            file_obj.write(f'{self._now()}{SEP}{msg}')
 
     def _write_std(self, msg):
         self._write_msg(self.std_path, msg)
