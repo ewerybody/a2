@@ -326,17 +326,19 @@ class A2Window(QtWidgets.QMainWindow):
         self._initial_activation_tries += 1
         QtCore.QTimer(self).singleShot(50, self._activate_window)
 
-    def scroll_to_start(self, *things):
+    def scroll_to_start(self):
+        """Scroll the main view to the top."""
         self._scroll(self.module_view.ui.a2scroll_area, False)
 
-    def scroll_to_end(self, *things):
+    def scroll_to_end(self):
+        """Scroll the main view to the bottom."""
         self._scroll(self.module_view.ui.a2scroll_area, True)
 
-    def _scroll(self, widget, value, extra=0):
-        scrollbar = self.module_view.ui.a2scroll_area.verticalScrollBar()
+    def _scroll(self, widget, value, extra=0, duration=250):
+        """Scroll the main view to the top."""
+        scrollbar = widget.verticalScrollBar()
         if value:
             start, end = scrollbar.value(), scrollbar.maximum() + extra
-            scrollbar.setValue(scrollbar.maximum() + extra)
         else:
             start, end = scrollbar.value(), 0
 
@@ -344,7 +346,7 @@ class A2Window(QtWidgets.QMainWindow):
         self._scroll_anim = QtCore.QPropertyAnimation(vscrollbar, b'value')
         self._scroll_anim.setStartValue(start)
         self._scroll_anim.setEndValue(end)
-        self._scroll_anim.setDuration(200)
+        self._scroll_anim.setDuration(duration)
         self._scroll_anim.setLoopCount(1)
         self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
         self._scroll_anim.start()
