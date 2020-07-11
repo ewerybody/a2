@@ -110,7 +110,7 @@ class A2Main(QSingleApplication):
 def main():
     try:
         import a2output
-        a2output.get_logger()
+        a2output.get_logwriter()
         app = A2Main()
         app.exec_()
     except Exception:

@@ -63,7 +63,7 @@ class A2Obj(object):
 
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
-        self.log = a2output.get_logger()
+        self.log = a2output.get_logwriter()
         self._db = None
         log.info('A2Obj initialised!')
 
