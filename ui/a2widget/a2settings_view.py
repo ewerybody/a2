@@ -377,42 +377,79 @@ class ConsoleUiHandler(QtCore.QObject):
         super(ConsoleUiHandler, self).__init__(parent)
         self.tab_widget = tab_widget
         self.main = parent.main
-        self.parent_ui = ui
-        self.ui = None
-        self.a2 = a2
-        self._scroll_anim = None
+
+        self._start_byte = None
+        self._end_byte = None
+        self._lines = []
+        self._lines_shown = 0
+        self._sep = None
+        self._init_block_size = pow(2, 12)
+        self.a2console = QtWidgets.QPlainTextEdit(self.tab_widget)
         self._setup_ui()
 
     def _setup_ui(self):
         layout = QtWidgets.QVBoxLayout(self.tab_widget)
-        self.a2console = QtWidgets.QPlainTextEdit(self.tab_widget)
-        console = self.a2console
-        console.setObjectName("a2console")
-        layout.addWidget(console)
+        self.a2console.setObjectName("a2console")
+        layout.addWidget(self.a2console)
 
         import a2output
-        logger = a2output.get_logger()
-        block_size = pow(2, 12)
-        lines = []
-        for path in (logger.std_path, logger.err_path):
-            with open(path) as file_obj:
-                this_size = os.path.getsize(path)
-                if this_size > block_size:
-                    file_obj.seek(this_size - block_size)
-                for line in file_obj.read().split('\n'):
-                    try:
-                        timestamp, txt = line.split(a2output.SEP, 1)
-                        ftime = float(timestamp)
-                        txt = txt.strip()
-                        if txt.strip():
-                            lines.append((ftime, txt))
-                    except ValueError as error:
-                        pass
+        logger = a2output.get_logwriter()
+        self._sep = a2output.SEP
 
-        content = '\n'.join('%.1f - %s' % (ftime, txt) for ftime, txt in sorted(lines))
-        console.setPlainText(content)
+        with open(logger.path) as file_obj:
+            num_bytes = os.path.getsize(logger.path)
+            if num_bytes > self._init_block_size:
+                self._start_byte = num_bytes - self._init_block_size
+                file_obj.seek(self._start_byte)
+            else:
+                self._start_byte = 0
+            self._end_byte = num_bytes
+
+            # first line might be incomplete, if so add len to start_byte
+            first_line = file_obj.__next__()
+            if not self.line_gathered(first_line):
+                self._start_byte += len(first_line)
+
+            for line in file_obj:
+                self.line_gathered(line)
+
+        self.append_lines()
+
+        self.log_watcher = QtCore.QFileSystemWatcher(self)
+        self.log_watcher.addPath(logger.path)
+        self.log_watcher.fileChanged.connect(self._log_changed)
 
         QtCore.QTimer(self).singleShot(100, self._scroll_to_bottom)
 
+    def _log_changed(self, log_path):
+        with open(log_path) as file_obj:
+            file_obj.seek(self._end_byte)
+            for line in file_obj:
+                self.line_gathered(line)
+            self._end_byte = file_obj.tell()
+        self.append_lines()
+
     def _scroll_to_bottom(self):
         self.main._scroll(self.a2console, True, 10)
+
+    def line_gathered(self, line):
+        try:
+            timestamp, txt = line.split(self._sep, 1)
+            if len(timestamp) < 11:
+                return False
+            txt = txt.strip()
+            if not txt:
+                return False
+            self._lines.append((float(timestamp), txt))
+        except ValueError:
+            return False
+        return True
+
+    def append_lines(self):
+        start, end = self._lines_shown, len(self._lines)
+        if start == end:
+            return
+
+        content = '\n'.join('%.2f - %s' % (ftime, txt) for ftime, txt in self._lines[start:end])
+        self.a2console.appendPlainText(content)
+        self._lines_shown = end
