@@ -1,11 +1,13 @@
-#Include ..\Autohotkey\lib\string.ahk
-#include ..\Autohotkey\lib\jxon.ahk
+; This is the a2 install script added to the 7z package
+; compiled to setup.exe. What does it do?
+; * get some default paths.
+; * compare the install package and probable installed version
+; * check for currently running a2 processes
+; * backup an installed version
+; * install to a2 dir
+; * run a2 ui
 
-If (!A_IsCompiled)
-{
-    MsgBox, 16, ERROR, This should ONLY be run compiled!
-    ExitApp
-}
+complain_if_uncompiled()
 
 A2DIR := get_a2dir()
 A2STUFF := ["lib", "ui", "a2.exe", "a2ui.exe"]
@@ -22,6 +24,8 @@ Run, %A2DIR%\a2ui.exe
 
 ; --------------------------------------------------------
 Return
+#include ..\Autohotkey\lib\jxon.ahk
+#Include, _installib.ahk
 
 intro() {
     global install_ver
@@ -52,10 +56,9 @@ intro() {
 
 read_version(path) {
     package_path = %path%\package.json
-    IfExist, %package_path%
+    if FileExist(package_path)
     {
-        FileRead, content, %package_path%
-        data := jxon_load(content)
+        data := jxon_read(package_path)
         v := data["version"]
         return %v%
     }
@@ -66,7 +69,7 @@ read_version(path) {
 has_a2_stuff() {
     global A2STUFF, A2DIR
     for i, thing in A2STUFF
-        IfExist, %A2DIR%\%thing%
+        If FileExist(A2DIR "\" thing)
             return 1
     return 0
 }
@@ -142,6 +145,7 @@ _remove_if_empty(path) {
     return empty
 }
 
+
 check_running() {
     global A2DIR
     processes := find_processes_running_under(A2DIR)
@@ -158,7 +162,7 @@ check_running() {
         MsgBox 49, a2 Applications running ..., Some a2 applications are currently running!`nTo savely continue the installation I'd suggest to shutdown these processes (%name_string%).`n`nOr you hit Cancel, do it by yourself and start the installation again.
         IfMsgBox Cancel
             ExitApp
-        
+
         for i, proc in processes
         {
             pid := proc.ProcessId
@@ -168,72 +172,4 @@ check_running() {
     }
 
     return runs_a2runtime
-}
-
-find_processes_running_under(path) {
-    attr_list := ["ExecutablePath", "ProcessId", "CommandLine", "Name"]
-    attr_ex_path := attr_list[1]
-    attrs := string_join(attr_list)
-    path_len := StrLen(path)
-
-    ; command =  where name='Autohotkey.exe' get %attrs% /format:list
-    command =  get %attrs% /format:list
-    result := get_wmic_process_output(command)
-    
-    processes := []
-    for i, block in get_blocks(result)
-    {
-        data := get_key_values(block)
-        if !data[attr_ex_path]
-            continue
-        sub_path := SubStr(data[attr_ex_path], 1, path_len)
-        if sub_path = %path%
-            processes.push(data)
-    }
-    return processes
-}
-
-get_a2dir() {
-    ;builds default a2 dir in User\AppData\Local
-    ;from roaming but without the dots "..\"
-    SplitPath, A_AppData ,, OutDir
-    a2dir = %OutDir%\Local\a2
-    return a2dir
-}
-
-get_wmic_process_output(args) {
-    cmd = wmic process %args%
-    shell := ComObjCreate("WScript.Shell")
-    exec := shell.Exec(ComSpec " /C " cmd)
-    result := exec.StdOut.ReadAll()
-    return result
-}
-
-get_blocks(string) {
-    blocks := StrSplit(string, "`r`r`n`r`r`n")
-    results := []
-    for i, block in blocks
-    {
-        block := Trim(block, " `n`r")
-        if !block
-            continue
-        results.push(block)
-    }
-    return results
-}
-
-get_key_values(string_block) {
-    lines := StrSplit(string_block, "`r`r`n")
-    results := {}
-    for i, line in lines
-    {
-        line := Trim(line, " `n`r")
-        if !line
-            continue
-        cut_pos := InStr(line, "=") + 1
-        key := SubStr(line, 1, cut_pos - 2)
-        value := SubStr(line, cut_pos)
-        results[key] := value
-    }
-    return results
 }
