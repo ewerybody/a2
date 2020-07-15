@@ -159,7 +159,12 @@ check_running() {
     }
     if (names.length()) {
         name_string := string_join(names)
-        MsgBox 49, a2 Applications running ..., Some a2 applications are currently running!`nTo savely continue the installation I'd suggest to shutdown these processes (%name_string%).`n`nOr you hit Cancel, do it by yourself and start the installation again.
+        msg := "Some a2 applications are currently running!`n"
+        msg .= "To savely continue the installation I'd suggest to shutdown these processes ("
+        msg .= name_string . ").`n`n"
+        msg .= "Or you hit Cancel, do it by yourself and start the installation again."
+
+        MsgBox 49, a2 Applications running ..., %msg%
         IfMsgBox Cancel
             ExitApp
 
