@@ -53,3 +53,10 @@ path_normalize(byref path) {
     DllCall("GetFullPathName", "str", path, "uint", cc, "str", buf, "ptr", 0)
     return buf
 }
+
+; tell if the given path contains anything
+path_is_empty(byref path) {
+    Loop, Files, %path%\*.*, FD
+        return false
+    return true
+}
