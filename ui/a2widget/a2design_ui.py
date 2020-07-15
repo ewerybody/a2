@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\a2widget\a2design.ui' applies.
+# Form implementation generated from reading ui file:
+#   'c:\Users\eric\io\code\a2\ui\a2widget\a2design.ui'
+# licensing of that file applies.
 #
-# Created: Wed Jan 29 15:51:58 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
+# Created: Wed Jul 15 15:26:47 2020
+#      by: pyside2-uic  running on PySide2 5.15.0
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_a2MainWindow(object):
+
+class Ui_a2MainWindow:
     def setupUi(self, a2MainWindow):
         a2MainWindow.setObjectName("a2MainWindow")
         font = QtGui.QFont()
@@ -33,7 +35,7 @@ class Ui_a2MainWindow(object):
         self.verticalLayout.addWidget(self.splitter)
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(a2MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 755, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 755, 29))
         self.menubar.setObjectName("menubar")
         self.menuHelp = QtWidgets.QMenu(self.menubar)
         self.menuHelp.setTitle("&Help")
@@ -120,6 +122,9 @@ class Ui_a2MainWindow(object):
         self.actionExplore_to_a2_data_dir.setText("Explore to a2 data ...")
         self.actionExplore_to_a2_data_dir.setShortcut("")
         self.actionExplore_to_a2_data_dir.setObjectName("actionExplore_to_a2_data_dir")
+        self.actionUninstall_a2 = QtWidgets.QAction(a2MainWindow)
+        self.actionUninstall_a2.setText("Uninstall a2")
+        self.actionUninstall_a2.setObjectName("actionUninstall_a2")
         self.menuHelp.addAction(self.actionReport_Issue)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
@@ -141,6 +146,8 @@ class Ui_a2MainWindow(object):
         self.menuMain.addAction(self.actionLoad_a2_Runtime)
         self.menuMain.addAction(self.actionUnload_a2_Runtime)
         self.menuMain.addSeparator()
+        self.menuMain.addAction(self.actionUninstall_a2)
+        self.menuMain.addSeparator()
         self.menuMain.addAction(self.actionExit_a2ui)
         self.menuModule.addAction(self.actionHelp_on_Module)
         self.menuModule.addAction(self.actionRevert_Settings)
@@ -148,12 +155,7 @@ class Ui_a2MainWindow(object):
         self.menubar.addAction(self.menuModule.menuAction())
         self.menubar.addAction(self.menuDev.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-
-        self.retranslateUi(a2MainWindow)
         QtCore.QMetaObject.connectSlotsByName(a2MainWindow)
 
-    def retranslateUi(self, a2MainWindow):
-        pass
-
-from a2widget.a2module_view import A2ModuleView
 from a2widget.a2module_list import A2ModuleList
+from a2widget.a2module_view import A2ModuleView

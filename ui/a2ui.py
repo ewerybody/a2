@@ -142,6 +142,9 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
+        self.ui.actionUninstall_a2.setIcon(icons.a2close)
+        self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
+
     def _setup_shortcuts(self):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
                             self, self.escape)
@@ -557,6 +560,10 @@ class A2Window(QtWidgets.QMainWindow):
             self._initial_draw_finished = True
             QtCore.QTimer(self).singleShot(250, self._finish_initial_draw)
         return super(A2Window, self).showEvent(event)
+
+    def on_uninstall_a2(self):
+        a2util.start_process_detached(
+            os.path.join(self.a2.paths.a2, 'Uninstall a2.exe'))
 
 
 class RestartThread(QtCore.QThread):
