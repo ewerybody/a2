@@ -239,14 +239,31 @@ class DataPathUiHandler(QtCore.QObject):
 
 
 class IntegrationUIHandler(QtCore.QObject):
+    """
+    Care for the system integration checkboxes in the main menu. Currently:
+    * Load on Windows Start
+    * Add Desktop Shortcut
+    * Add Start Menu Schortcuts - which are
+      . Start Runtime
+      . Open a2 UI
+      . Uninstall a2
+      . Goto a2 Directory
+    """
     def __init__(self, parent, ui, a2):
         super(IntegrationUIHandler, self).__init__(parent)
         self.ui = ui
         self.a2 = a2
+        icon_size = self.a2.win.style.get('icon_size_small')
+        pixmap = a2ctrl.Icons.inst().help.pixmap(icon_size)
+        for alert_label in (self.ui.load_on_win_start_alert, self.ui.add_desktop_shortcut_alert, self.ui.add_startmenu_shortcuts_alert):
+            alert_label.setPixmap(pixmap)
+
         self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
         self._check_win_startup()
         self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
         self._check_desktop_link()
+        self.ui.add_startmenu_shortcuts.clicked[bool].connect(self._set_startmenu_links)
+        self._check_startmenu_links()
 
     def _check_win_startup(self):
         self._update_checkbox('get_win_startup_path', self.a2.paths.a2exe,
@@ -256,6 +273,10 @@ class IntegrationUIHandler(QtCore.QObject):
         self._update_checkbox('get_desktop_link_path', self.a2.paths.a2uiexe,
                               self.ui.add_desktop_shortcut, self.ui.add_desktop_shortcut_alert)
 
+    def _check_startmenu_links(self):
+        self._update_checkbox('get_startmenu_link_paths', self.a2.paths.a2,
+                              self.ui.add_startmenu_shortcuts, self.ui.add_startmenu_shortcuts_alert)
+
     def _set_windows_startup(self, state):
         a2ahk.call_lib_cmd('set_windows_startup', self.a2.paths.a2, int(state))
         self._check_win_startup()
@@ -264,18 +285,27 @@ class IntegrationUIHandler(QtCore.QObject):
         a2ahk.call_lib_cmd('set_desktop_link', self.a2.paths.a2, int(state))
         self._check_desktop_link()
 
+    def _set_startmenu_links(self, state):
+        a2ahk.call_lib_cmd('set_startmenu_links', self.a2.paths.a2, int(state))
+        self._check_startmenu_links()
+
     def _update_checkbox(self, cmd, target_path, checkbox, alert_label):
-        current_path = a2ahk.call_lib_cmd(cmd)
+        try:
+            current_path = a2ahk.call_lib_cmd(cmd)
+            tooltip = None
+        except RuntimeError as error:
+            current_path = ''
+            tooltip = str(error)
+
         checked = False
-        tooltip = None
         if current_path:
             checked = a2path.is_same(current_path, target_path)
             if not checked:
-                pixmap = a2ctrl.Icons.inst().help.pixmap(self.a2.win.style.get('icon_size_small'))
-                alert_label.setPixmap(pixmap)
-                tooltip = f'Currently set to: {current_path}'
+                if tooltip is None:
+                    tooltip = f'Currently set to: {current_path}'
 
-        alert_label.setVisible(current_path != '' and not checked)
+        # alert_label.setVisible(current_path != '' and not checked)
+        alert_label.setVisible(tooltip is not None)
         for wgt in (checkbox, alert_label):
             wgt.setToolTip(tooltip)
         checkbox.setChecked(checked)
