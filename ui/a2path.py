@@ -11,6 +11,9 @@ def iter_dirs(path):
     Iterate over directory items in a path. Yield DirObj.
     """
     item = DirObj()
+    if not os.path.isdir(path):
+        return
+
     for this in os.scandir(path):
         if this.is_dir():
             item.set_path(this.path)
