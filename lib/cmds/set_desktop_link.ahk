@@ -18,7 +18,7 @@ IfNotExist %a2dir%
 a2_script_path := a2dir "\a2ui.exe"
 link_path := A_Desktop "\a2ui.lnk"
 
-if %state%
+if (state)
     FileCreateShortcut, %a2_script_path%, %link_path%, %a2dir%
 Else
     FileDelete, %link_path%
