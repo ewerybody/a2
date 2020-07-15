@@ -8,6 +8,7 @@ a2_settings.ahk
 # build files
 a2.exe
 a2ui.exe
+Uninstall a2.exe
 lib/batches/build/a2app.spec
 
 # NPM packages
@@ -29,3 +30,6 @@ _ *
 desktop.ini
 thumbs.db
 *.lnk
+
+# wip dev modules
+pyside2uic/
