@@ -1,6 +1,6 @@
 @echo off
 set Ahk2Exe="C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
-set this_path=%~dp0
+set this_path=%~dp0..\
 set script=%this_path%a2_uninstaller.ahk
 set executable=%this_path%Uninstall a2.exe
 set a2path=%this_path%..\..\
