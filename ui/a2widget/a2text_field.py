@@ -7,6 +7,8 @@ Text field that automatically gets bigger the more lines you add.
 import pprint
 from PySide2 import QtGui, QtCore, QtWidgets
 
+DEFAULT_MAX_LINES = 20
+
 
 class A2TextField(QtWidgets.QPlainTextEdit):
     """
@@ -21,7 +23,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         self.finish_delay = 1500
 
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        # self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         qsize_pol = QtWidgets.QSizePolicy
         size_policy = qsize_pol(qsize_pol.Expanding, qsize_pol.Maximum)
@@ -33,6 +35,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         self.blockCountChanged.connect(self._set_height_to_block_count)
         self._cursor_height = None
         self._backup_height = 16
+        self.maximum_blocks = DEFAULT_MAX_LINES
 
         self._timer = QtCore.QTimer()
         self._timer.setInterval(self.finish_delay)
@@ -67,6 +70,8 @@ class A2TextField(QtWidgets.QPlainTextEdit):
     def _set_height_to_block_count(self, block_count=None):
         if block_count is None:
             block_count = self.blockCount()
+        if self.maximum_blocks is not None:
+            block_count = min(block_count, max(self.maximum_blocks, 1))
 
         cursor_height = self.cursorRect().height()
         if cursor_height:
@@ -83,10 +88,11 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         self.setMaximumHeight(height)
 
     def check_editing_finished(self):
-        """rewind the timer"""
+        """Rewind the timer."""
         self._timer.start()
 
     def finish_editing(self):
+        """Care for the timer being stopped and send editing_finished signal."""
         if self._timer.isActive():
             self._timer.stop()
         self.editing_finished.emit()
