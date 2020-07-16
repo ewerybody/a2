@@ -37,29 +37,8 @@ class A2ModuleList(QtWidgets.QWidget):
     def select(self, modules=None):
         self.ui.a2module_list_widget.blockSignals(True)
         self.ui.a2module_list_widget.clear_selection()
-        selection = []
-        last_item = None
-        if modules is not None:
-            if isinstance(modules, str):
-                modules = [modules]
 
-            for item in modules:
-                if isinstance(item, a2mod.Mod):
-                    selection.append(item)
-                    list_item = self._module_map.get(item.key)
-
-                elif isinstance(item, str):
-                    list_item = self._module_map.get(item)
-                    try:
-                        srcname, modname = item.split('|', 1)
-                        mod = self.a2.module_sources[srcname].mods[modname]
-                        selection.append(mod)
-                    except (KeyError, AttributeError):
-                        continue
-
-                if list_item is not None:
-                    list_item.setSelected(True)
-                    last_item = list_item
+        selection, last_item = self._select(modules)
 
         if last_item is not None:
             self.ui.a2module_list_widget.setCurrentItem(last_item)
@@ -68,6 +47,35 @@ class A2ModuleList(QtWidgets.QWidget):
         if selection != self.selection:
             self.selection = selection
             self.selection_changed.emit(self.selection)
+
+    def _select(self, modules):
+        selection = []
+        last_item = None
+        if not modules:
+            return selection, last_item
+
+        if isinstance(modules, str):
+            modules = [modules]
+
+        for item in modules:
+            if isinstance(item, a2mod.Mod):
+                selection.append(item)
+                list_item = self._module_map.get(item.key)
+
+            elif isinstance(item, str):
+                list_item = self._module_map.get(item)
+                try:
+                    srcname, modname = item.split('|', 1)
+                    mod = self.a2.module_sources[srcname].mods[modname]
+                    selection.append(mod)
+                except (KeyError, AttributeError):
+                    continue
+
+            if list_item is not None:
+                list_item.setSelected(True)
+                last_item = list_item
+
+        return selection, last_item
 
     def draw_modules(self, select_mods=None):
         """
