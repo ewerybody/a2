@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\modsource_editor.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\modsource_editor.ui' applies.
+# Form implementation generated from reading ui file:
+#   'c:\Users\eric\io\code\a2\ui\a2widget\modsource_editor.ui'
+# licensing of that file applies.
 #
-# Created: Thu Jun 25 11:45:14 2020
+# Created: Thu Jul 16 18:55:29 2020
 #      by: pyside2-uic  running on PySide2 5.15.0
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_ModSourceUi(object):
+
+class Ui_ModSourceUi:
     def setupUi(self, ModSourceUi):
         ModSourceUi.setObjectName("ModSourceUi")
-        ModSourceUi.resize(747, 492)
+        ModSourceUi.resize(747, 369)
         self.formLayout = QtWidgets.QFormLayout(ModSourceUi)
+        self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
         self.formLayout.setObjectName("formLayout")
         self.news = A2CodeField(ModSourceUi)
         self.news.setObjectName("news")
@@ -84,6 +87,7 @@ class Ui_ModSourceUi(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(ModSourceUi)
+        self.label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.busy_icon = BusyIcon(ModSourceUi)
