@@ -23,6 +23,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         """
         super(ModuleSourceEditor, self).__init__(
             main, f'Make a "{mod_source.name}" Release')
+        self.ui.label.hide()
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.mod_source = mod_source
@@ -34,6 +35,8 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         self.source_ui = modsource_editor_ui.Ui_ModSourceUi()
         self.source_ui.setupUi(self.ui.attributes_widget)
         self.source_ui.description.setMinimumWidth(600 * self.main.style.get('scale'))
+
+        self.source_ui.news.minimum_blocks = 10
 
         a2ctrl.connect.matching_controls(self.source_cfg, self.source_ui, self.ctrl_change)
         self.ctrl_change.connect(self._on_ctrl_change)

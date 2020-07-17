@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
-# Form implementation generated from reading ui file:
-#   'c:\Users\eric\io\code\a2\ui\a2widget\modsource_editor.ui'
-# licensing of that file applies.
+
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\modsource_editor.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\modsource_editor.ui' applies.
 #
-# Created: Thu Jul 16 18:55:29 2020
+# Created: Fri Jul 17 16:45:20 2020
 #      by: pyside2-uic  running on PySide2 5.15.0
 #
-# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-
-class Ui_ModSourceUi:
+class Ui_ModSourceUi(object):
     def setupUi(self, ModSourceUi):
         ModSourceUi.setObjectName("ModSourceUi")
-        ModSourceUi.resize(747, 369)
+        ModSourceUi.resize(747, 336)
         self.formLayout = QtWidgets.QFormLayout(ModSourceUi)
         self.formLayout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
         self.formLayout.setObjectName("formLayout")
