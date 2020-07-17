@@ -8,6 +8,9 @@ import pprint
 from PySide2 import QtGui, QtCore, QtWidgets
 
 DEFAULT_MAX_LINES = 20
+DEFAULT_MIN_LINES = 1
+DEFAULT_FINISH_DELAY = 1500
+BACKUP_LINE_HEIGHT = 16
 
 
 class A2TextField(QtWidgets.QPlainTextEdit):
@@ -20,7 +23,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
 
     def __init__(self, parent=None, *args, **kwargs):
         super(A2TextField, self).__init__(parent, *args, **kwargs)
-        self.finish_delay = 1500
+        self.finish_delay = DEFAULT_FINISH_DELAY
 
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
         # self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -34,8 +37,9 @@ class A2TextField(QtWidgets.QPlainTextEdit):
 
         self.blockCountChanged.connect(self._set_height_to_block_count)
         self._cursor_height = None
-        self._backup_height = 16
+        self._backup_height = BACKUP_LINE_HEIGHT
         self.maximum_blocks = DEFAULT_MAX_LINES
+        self.minimum_blocks = DEFAULT_MIN_LINES
 
         self._timer = QtCore.QTimer()
         self._timer.setInterval(self.finish_delay)
@@ -71,7 +75,9 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         if block_count is None:
             block_count = self.blockCount()
         if self.maximum_blocks is not None:
-            block_count = min(block_count, max(self.maximum_blocks, 1))
+            block_count = min(
+                max(block_count, self.minimum_blocks),
+                max(1, self.maximum_blocks))
 
         cursor_height = self.cursorRect().height()
         if cursor_height:
