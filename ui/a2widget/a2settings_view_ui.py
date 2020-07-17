@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-# Form implementation generated from reading ui file:
-#   'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui'
-# licensing of that file applies.
+
+# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
+# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
 #
-# Created: Wed Jul 15 13:59:33 2020
+# Created: Fri Jul 17 16:35:22 2020
 #      by: pyside2-uic  running on PySide2 5.15.0
 #
-# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-
-class Ui_a2settings:
+class Ui_a2settings(object):
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
         a2settings.resize(794, 380)
@@ -104,6 +102,8 @@ class Ui_a2settings:
         self.a2add_button.setText("Add Source")
         self.a2add_button.setObjectName("a2add_button")
         self.horizontalLayout.addWidget(self.a2add_button)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.module_source_box)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
