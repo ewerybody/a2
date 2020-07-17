@@ -28,6 +28,6 @@ See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially
 * [Oliver Lipkau](https://github.com/lipkau)
 
 ## versions in latest build package:
-* AutoHotkey: 1.1.32.00
-* Python: 3.8.1150.1013
-* PySide2: 5.14.0.0
+* AutoHotkey: 1.1.33.02
+* Python: 3.8.4150.1013
+* PySide2: 5.15.0.0
