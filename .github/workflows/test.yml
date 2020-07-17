@@ -15,6 +15,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - run: |
+        
         echo "Hello ${{ github.event.inputs.name }}!"
         echo "- in '${{ github.event.inputs.home }}'!"
+        echo %GITHUB_WORKSPACE%
+        cd %GITHUB_WORKSPACE%
         dir
