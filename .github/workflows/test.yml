@@ -12,8 +12,9 @@ on:
 
 jobs:
   say_hello:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - run: |
         echo "Hello ${{ github.event.inputs.name }}!"
-        echo "- in ${{ github.event.inputs.home }}!"
+        echo "- in '${{ github.event.inputs.home }}'!"
+        dir
