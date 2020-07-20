@@ -108,11 +108,14 @@ class A2Main(QSingleApplication):
 
 
 def main():
+    """The main entrypoint for the whole thing."""
     try:
         import a2output
         a2output.get_logwriter()
         app = A2Main()
         app.exec_()
+    # Broad except is expected here!
+    # pylint: disable=broad-except
     except Exception:
         error_msg = traceback.format_exc().strip()
         print(error_msg)

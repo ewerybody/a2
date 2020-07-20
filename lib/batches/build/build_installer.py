@@ -294,20 +294,19 @@ def _rebuild_installer_script_executable(setup_exe):
 
 
 def _copy_together_installer_binary(version_label):
+    """To Replace the batch copy stuff.
+    Binary copy together works in Python like a charm too!
+    The original batch script was::
+
+        echo finishing installer executable ...
+        set installerx=%distroot%\\a2_installer.exe
+        copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
+    """
     installer_name = f'{NAME}_{version_label}_{PACKAGE_SUB_NAME}.exe'
     installer_target = os.path.join(Paths.distroot, installer_name)
     print('installer_target: %s' % installer_target)
     if os.path.isfile(installer_target):
         os.unlink(installer_target)
-    # echo finishing installer executable ...
-    # set installerx=%distroot%\a2_installer.exe
-    # copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
-
-    # copy_command:copy /b "C:\Users\eric\io\code\a2\lib\batches\build\..\..\..\_ package\a2_installer.sfx.exe" + "C:\Users\eric\io\code\a2\lib\batches\build\..\..\..\_ package\config.txt" + "C:\Users\eric\io\code\a2\lib\batches\build\..\..\..\_ package\archive.7z" "C:\Users\eric\io\code\a2\lib\batches\build\..\..\..\_ package\a2_installer.exe"
-
-    # assembly = ' + '.join(('"%s"' % p for p in (
-    #     Paths.sfx_target, Paths.config_target, Paths.archive_target)))
-    # subprocess.call(['copy', '/b', assembly, installer_target])
 
     with open(installer_target, 'wb') as installer_file:
         for source in (Paths.sfx_target, Paths.config_target, Paths.archive_target):

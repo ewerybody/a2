@@ -1,7 +1,9 @@
+"""X"""
 from PySide2 import QtWidgets, QtCore
 
 
 class KeyValueTable(QtWidgets.QTableWidget):
+    """Custom Table widget to handle simple key, value dictionaries."""
     changed = QtCore.Signal()
 
     def __init__(self, parent):
@@ -60,6 +62,7 @@ class KeyValueTable(QtWidgets.QTableWidget):
             self.editItem(items[0])
 
     def get_data(self):
+        """From rows & columns assemble key: value dictionary."""
         data = {}
         for row in range(self.rowCount()):
             kitem = self.item(row, 0)
@@ -77,8 +80,11 @@ class KeyValueTable(QtWidgets.QTableWidget):
         return data
 
     def set_data(self, data):
+        """From a key:value dictionary set rows & columns of the table."""
         if not isinstance(data, dict):
-            raise TypeError('Cannot set data of type "%s" to %s' % (type(data), self.__class__.__name__))
+            raise TypeError('Cannot set data of type "%s" to %s' %
+                            (type(data), self.__class__.__name__))
+
         self.blockSignals(True)
         self.clearContents()
         self.setRowCount(max(1, len(data)))

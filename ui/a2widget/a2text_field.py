@@ -21,8 +21,8 @@ class A2TextField(QtWidgets.QPlainTextEdit):
     """
     editing_finished = QtCore.Signal()
 
-    def __init__(self, parent=None, *args, **kwargs):
-        super(A2TextField, self).__init__(parent, *args, **kwargs)
+    def __init__(self, parent=None):
+        super(A2TextField, self).__init__(parent)
         self.finish_delay = DEFAULT_FINISH_DELAY
 
         self.setWordWrapMode(QtGui.QTextOption.NoWrap)
@@ -59,9 +59,13 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         return QtWidgets.QPlainTextEdit.focusOutEvent(self, *args, **kwargs)
 
     def text(self):
+        """Mapps toPlainText for standard text field handling."""
         return self.toPlainText()
 
+    # Bad naming from Qt override
+    # pylint: disable=invalid-name
     def setText(self, this):
+        """Catch default text setter to fix line height as well."""
         self.blockSignals(True)
         try:
             self.setPlainText(this)
@@ -108,5 +112,5 @@ class A2CodeField(A2TextField):
     """
     Just subclassed to be identifiable via CSS to apply a monospaced font.
     """
-    def __init__(self, parent=None, *args, **kwargs):
-        A2TextField.__init__(self, parent, *args, **kwargs)
+    def __init__(self, parent=None):
+        A2TextField.__init__(self, parent)
