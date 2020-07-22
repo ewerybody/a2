@@ -1,5 +1,5 @@
 """
-a2core - Foundation module to host basic info and functionality
+a2core - Foundation module to host basic info and functionality.
 
 Everything thats needed by but itself has no constrains to the user interface.
 Such as paths and os tweaks. Mainly this is to thin out the ui module but also
@@ -30,9 +30,10 @@ A2TAGS = {
     'web': 'Internet related',
     'wip': 'Experimental'}
 _IS_DEV = None
+NAME = 'a2'
 
-
-class A2Obj(object):
+# pylint: disable=too-many-instance-attributes
+class A2Obj:
     """Non-Ui a2 backend object."""
     _instance = None
 
@@ -53,13 +54,14 @@ class A2Obj(object):
                                '  Use A2Obj.inst() to get the instance!')
 
         # lazy import so importing a2core does not depend on other a2 module
+        # pylint: disable=invalid-name,global-statement,redefined-outer-name,multiple-imports
         global a2ahk, a2db, a2mod, a2modsource
         import a2ahk, a2db, a2mod, a2modsource
         import a2output
         self.app = None
         self.win = None
         self.module_sources = {}
-        self._modules_fetched = 0
+        self._modules_fetched = 0.0
 
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
@@ -73,7 +75,7 @@ class A2Obj(object):
         self._enabled = None
         self.fetch_modules()
         self.setup_proxy()
-        log.info(f'A2Obj loaded with data path: "{self.paths.data}"')
+        log.info('A2Obj loaded with data path: "%s"', self.paths.data)
 
     def fetch_modules_if_stale(self):
         if time.time() - self._modules_fetched > 0.5:
@@ -182,7 +184,8 @@ class A2Obj(object):
         return self._db
 
 
-class URLs(object):
+class URLs:
+    """Internet adresses for various things."""
     def __init__(self, a2_urls_ahk):
         """
         Common a2 & ahk related web links.
@@ -210,10 +213,8 @@ class URLs(object):
         self.ahkWinTitle = self.ahk + '/docs/misc/WinTitle.htm'
 
 
-class Paths(object):
-    """
-    Aquires and hosts common paths around a2.
-    """
+class Paths:
+    """Aquires and hosts common paths around a2."""
     def __init__(self):
         self.ui = os.path.dirname(os.path.abspath(__file__))
         self.a2 = os.path.dirname(self.ui)
@@ -229,9 +230,10 @@ class Paths(object):
         self.a2_config = os.path.join(self.lib, 'a2_config.ahk')
         self.autohotkey = os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
         self.python = sys.executable
+        self.git = os.path.join(self.a2, '.git')
 
         # get data dir from config override or the default appdata dir.
-        self.default_data = os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
+        self.default_data = os.path.join(os.getenv('LOCALAPPDATA'), NAME, 'data')
         self.data_override_file = os.path.join(self.default_data, 'a2_data_path.ahk')
         self.data = None
         self._build_data_paths()
@@ -287,7 +289,7 @@ def get_logger(name):
 def set_loglevel(debug=False):
     level = [logging.INFO, logging.DEBUG][debug]
     for name, logger in log.manager.loggerDict.items():
-        if name.startswith('a2'):
+        if name.startswith(NAME):
             try:
                 logger.setLevel(level)
                 log.debug('"%s" Log level DEBUG: active', name)

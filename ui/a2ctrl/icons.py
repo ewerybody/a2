@@ -9,7 +9,7 @@ log = a2core.get_logger(__name__)
 ICO_PATH = None
 DEFAULT_ALPHA = 0.6
 LOW_ALPHA = 0.25
-DEFAULT_NAME = 'a2icon'
+DEFAULT_NAME = f'{a2core.NAME}icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [DEFAULT_NAME + ext for ext in ICON_FORMATS]
 
@@ -117,7 +117,7 @@ class Icons(object):
             raise RuntimeError('Icons() has already been instanciated!\n'
                                'get it with .inst()')
 
-        self.a2 = Ico('a2')
+        self.a2 = Ico(a2core.NAME)
         self.a2close = Ico('a2x')
         self.a2reload = Ico('a2reload')
         self.a2help = Ico('a2help')
