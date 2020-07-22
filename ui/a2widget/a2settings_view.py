@@ -383,13 +383,6 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.hk_dialog_layout.setCurrentIndex(index)
         self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
-    # def toggle_console(self, state):
-    #     base_name = ['pythonw.exe', 'python.exe'][state]
-    #     new_path = os.path.join(os.path.dirname(self.a2.paths.python), base_name)
-    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_python', new_path)
-    #     self.a2.paths.python = new_path
-    #     self.ui.python_executable.setText(new_path)
-
     # def toggle_startup_tooltips(self, state):
     #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
 

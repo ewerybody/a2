@@ -40,8 +40,8 @@ def standard_name_check(name, black_list=None, black_list_msg=None):
 
     _name = name.lower()
     msg = ''
-    if _name == 'a2':
-        msg = 'You just cannot name it "a2"! Ok?'
+    if _name == a2core.NAME:
+        msg = f'You just cannot name it "{a2core.NAME}"! Ok?'
     elif name.startswith('.'):
         msg = 'Names starting with a dot would be ignored!'
     elif black_list is not None and name in black_list:

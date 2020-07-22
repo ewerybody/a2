@@ -12,6 +12,7 @@ log = a2core.get_logger(__name__)
 
 
 class RollbackDiffDialog(A2ConfirmDialog):
+    """Dialog to ask user for rollback confirmation and offer diffing."""
     diff = QtCore.Signal()
 
     def __init__(self, parent, title):
@@ -24,8 +25,9 @@ class RollbackDiffDialog(A2ConfirmDialog):
         self.ui.horizontalLayout.insertWidget(1, self.ui.diff_button)
         self.ui.diff_button.clicked.connect(self.diff.emit)
 
-
+# pylint: disable=too-many-instance-attributes
 class DevSettings:
+    """Developer settings holder."""
     def __init__(self, a2):
         self._enabled = False
         self.author_name = ''

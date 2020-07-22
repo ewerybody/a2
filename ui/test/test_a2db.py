@@ -98,7 +98,7 @@ class Test(unittest.TestCase):
         self.assertFalse(table in db.tables())
 
     def test4_shutdown(self):
-        db.all()
+        db.log_all()
         db._con.close()
         os.remove(temp_db_path)
         self.assertFalse(os.path.exists(temp_db_path))
