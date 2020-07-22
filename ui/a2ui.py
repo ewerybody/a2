@@ -24,8 +24,6 @@ class A2Window(QtWidgets.QMainWindow):
 
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
-        # Disabling disabled as long as qt.accessibility.core is throwing these
-        # "Cannot create accessible child interface for object:"-warnings
         self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
@@ -57,12 +55,22 @@ class A2Window(QtWidgets.QMainWindow):
 
         self._initial_activation_tries = 0
         self._initial_draw_finished = False
+        self._win_title = None
 
     def runtime_watcher_message(self, message):
+        """Update the window title on messages."""
+        if self._win_title is None:
+            if os.path.isdir(self.a2.paths.git):
+                import a2ahk
+                self._win_title = a2ahk.get_variables(
+                    self.a2.paths.a2_config).get('a2_title', a2core.NAME)
+            else:
+                self._win_title = a2core.NAME
+
         if not message:
-            self.setWindowTitle('a2')
+            self.setWindowTitle(self._win_title)
         else:
-            self.setWindowTitle('a2 - %s' % message)
+            self.setWindowTitle(f'{self._win_title} - {message}')
 
     def _module_selected(self, module_list):
         self.selected = module_list
@@ -167,10 +175,10 @@ class A2Window(QtWidgets.QMainWindow):
             self.module_view.edit_mod()
 
     def check_main_menu_bar(self):
-        dev_mode = self.a2.dev_mode
-        if dev_mode:
-            self.ui.menubar.insertAction(self.ui.menuHelp.menuAction(),
-                                         self.ui.menuDev.menuAction())
+        """Handle main menu item visibility."""
+        if self.a2.dev_mode:
+            self.ui.menubar.insertAction(
+                self.ui.menuHelp.menuAction(), self.ui.menuDev.menuAction())
             module_menu_before_action = self.ui.menuDev.menuAction()
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
@@ -179,8 +187,8 @@ class A2Window(QtWidgets.QMainWindow):
         if self.mod is None:
             self.ui.menubar.removeAction(self.ui.menuModule.menuAction())
         else:
-            self.ui.menubar.insertAction(module_menu_before_action,
-                                         self.ui.menuModule.menuAction())
+            self.ui.menubar.insertAction(
+                module_menu_before_action, self.ui.menuModule.menuAction())
 
     def edit_submit(self):
         """
@@ -547,7 +555,7 @@ class A2Window(QtWidgets.QMainWindow):
     def showEvent(self, event):
         """Override Qt showEvent with window initialization."""
         if not self._initial_draw_finished:
-            self.setWindowTitle('a2')
+            self.setWindowTitle(a2core.NAME)
             self.setWindowIcon(a2ctrl.Icons.inst().a2)
             widget = QtWidgets.QWidget(self)
             layout = QtWidgets.QVBoxLayout(widget)
