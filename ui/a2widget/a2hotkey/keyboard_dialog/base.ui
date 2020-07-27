@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Keyboard</class>
  <widget class="QWidget" name="Keyboard">
@@ -5,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>744</width>
-    <height>332</height>
+    <width>975</width>
+    <height>366</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Hotkey Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="dialog_layout" stretch="0,1,0">
+  <layout class="QVBoxLayout" name="dialog_layout" stretch="0,1,0,0">
    <property name="sizeConstraint">
     <enum>QLayout::SetFixedSize</enum>
    </property>
@@ -27,7 +28,7 @@
      <item>
       <widget class="QLineEdit" name="key_field">
        <property name="text">
-        <string notr="true" />
+        <string notr="true"/>
        </property>
        <property name="readOnly">
         <bool>true</bool>
@@ -88,7 +89,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QWidget" name="f_spacer" native="true" />
+          <widget class="QWidget" name="f_spacer" native="true"/>
          </item>
          <item>
           <layout class="QHBoxLayout" name="enter_key_rows">
@@ -290,6 +291,13 @@
      </item>
     </layout>
    </item>
+   <item alignment="Qt::AlignVCenter">
+    <widget class="QCheckBox" name="i_know_checkbox">
+     <property name="text">
+      <string notr="true">I know what I'm doing!</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -299,6 +307,6 @@
    <header>a2widget.a2more_button</header>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

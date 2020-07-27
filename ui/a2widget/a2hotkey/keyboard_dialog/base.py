@@ -44,6 +44,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self._original_modifier = []
 
         from . import base_ui
+        a2ctrl.check_ui_module(base_ui)
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
 
@@ -121,6 +122,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self.ui.a2ok_button.clicked.connect(self.ok)
         self.ui.a2cancel_button.clicked.connect(self.close)
         self.ui.option_button.menu_called.connect(self.build_option_menu)
+
+        self.ui.i_know_checkbox.hide()
+        self.ui.i_know_checkbox.clicked.connect(self.update_ui)
 
         self.refresh_style()
 
@@ -225,10 +229,16 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         if self.scope.is_global:
             win_globals = win_standard_keys()
+            button_text = 'OK'
+            button_enable = True
             if not self.checked_modifier:
                 win_shortcuts, a2_shortcuts = win_globals.get('', {}), global_hks.get('', {})
-                self.ui.a2ok_button.setText(GLOBAL_NO_MOD_WARNING)
-                self.ui.a2ok_button.setEnabled(False)
+                if self.user_knows_what_he_is_doing:
+                    button_text = 'OK (%s)' % GLOBAL_NO_MOD_WARNING
+                else:
+                    button_enable = False
+                    button_text = GLOBAL_NO_MOD_WARNING
+                    self.ui.i_know_checkbox.setVisible(True)
             else:
                 if parent_modifier != modifier_string:
                     if parent_modifier in win_globals:
@@ -241,8 +251,8 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 if modifier_string in global_hks:
                     a2_shortcuts.update(global_hks[modifier_string])
 
-                self.ui.a2ok_button.setText('OK')
-                self.ui.a2ok_button.setEnabled(True)
+            self.ui.a2ok_button.setText(button_text)
+            self.ui.a2ok_button.setEnabled(button_enable)
         else:
             self.scope._scope_data
 
@@ -432,6 +442,10 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def goto_help(self):
         a2util.surf_to(self.a2.urls.wiki + HOTKEY_HELP_PAGE)
+
+    @property
+    def user_knows_what_he_is_doing(self):
+        return self.ui.i_know_checkbox.isChecked()
 
 
 class Scope(object):

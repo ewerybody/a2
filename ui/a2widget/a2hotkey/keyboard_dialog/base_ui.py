@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui' applies.
+# Form implementation generated from reading ui file:
+#   'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui'
+# licensing of that file applies.
 #
-# Created: Tue Jan 28 21:59:38 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
+# Created: Mon Jul 27 23:50:41 2020
+#      by: pyside2-uic  running on PySide2 5.15.0
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_Keyboard(object):
+
+class Ui_Keyboard:
     def setupUi(self, Keyboard):
         Keyboard.setObjectName("Keyboard")
-        Keyboard.resize(744, 332)
+        Keyboard.resize(975, 366)
         self.dialog_layout = QtWidgets.QVBoxLayout(Keyboard)
         self.dialog_layout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
         self.dialog_layout.setObjectName("dialog_layout")
@@ -183,6 +185,10 @@ class Ui_Keyboard(object):
         self.bottom_layout.addWidget(self.a2cancel_button)
         self.bottom_layout.setStretch(0, 1)
         self.dialog_layout.addLayout(self.bottom_layout)
+        self.i_know_checkbox = QtWidgets.QCheckBox(Keyboard)
+        self.i_know_checkbox.setText("I know what I\'m doing!")
+        self.i_know_checkbox.setObjectName("i_know_checkbox")
+        self.dialog_layout.addWidget(self.i_know_checkbox)
         self.dialog_layout.setStretch(1, 1)
 
         self.retranslateUi(Keyboard)
