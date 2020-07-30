@@ -288,21 +288,31 @@ class A2Window(QtWidgets.QMainWindow):
         win_prefs = self.a2.db.get('windowprefs') or {}
         geometry = win_prefs.get('geometry')
         if geometry is None:
-            scale = self.style.get('scale', 1)
-            geometry = self.geometry()
-            geometry.setSize(QtCore.QSize(
-                DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
-            center = QtWidgets.QApplication.instance().desktop().size() / 2
-            geometry.moveCenter(QtCore.QPoint(*center.toTuple()))
-            log.info('Initializing window position & size: %s', geometry)
-            self.setGeometry(geometry)
+            self.reset_window_geometry()
         else:
             try:
-                self.restoreGeometry(
+                success = self.restoreGeometry(
                     QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8')))
+                if not success:
+                    self.reset_window_geometry()
             except Exception as error:
                 log.debug('Could not restore the ui geometry with stored data!')
                 log.debug(error)
+
+    def reset_window_geometry(self):
+        """Initialize window position & size."""
+        # create a default geometry
+        scale = self.style.get('scale', 1)
+        geometry = self.geometry()
+        geometry.setSize(QtCore.QSize(
+            DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
+        # set to center of active screen
+        desktop = QtWidgets.QApplication.instance().desktop()
+        current_screen = desktop.screen(desktop.screenNumber(QtGui.QCursor.pos()))
+        geometry.moveCenter(current_screen.geometry().center())
+        log.info('Initializing window position & size: %s', geometry)
+        self.setGeometry(geometry)
+
 
     def show_raise(self):
         """
