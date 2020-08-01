@@ -11,15 +11,17 @@ window_is_resizable(win_id="") {
 
 window_toggle_maximize(win_id="") {
     win_id := _ensure_win_active(win_id)
-    
+
 	If !window_is_resizable(win_id)
 		Return
 
-	If (WinGetMinMax("A") == 1)
-		WinRestore("A")
+	ahk_id := "ahk_id " win_id
+
+	If (WinGetMinMax(ahk_id) == 1)
+		WinRestore(ahk_id)
 	Else
 	{
-		WinMaximize("A")
+		WinMaximize(ahk_id)
         ; I don't know why that was implemented. seems unnecessary.
         ; workarea := new Screen_WorkArea(screen_get_index(win_id))
         ; x := workarea.left
