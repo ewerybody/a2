@@ -193,10 +193,13 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def add_item(self):
         """Add empty entry to the list and enable edit mode for user to type."""
-        new_item_name = ''
-        item = self._add_and_setup_item(new_item_name)
-        self.ui.item_list.editItem(item)
+        self.ui.item_list.editItem(self.add_named_item())
+
+    def add_named_item(self, name=''):
+        """Add and select a new item with a given or empty string name."""
+        item = self._add_and_setup_item(name)
         self.ui.item_list.select_items([item])
+        return item
 
     def _on_items_removed(self, item_objs):
         for item in item_objs:
