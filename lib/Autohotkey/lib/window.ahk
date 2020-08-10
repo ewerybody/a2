@@ -40,32 +40,25 @@ window_toggle_maximize_width(win_id="") {
 		Return
 
     workarea := new Screen_WorkArea(screen_get_index(win_id))
-	WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
-	WinGet, wc_Max, MinMax, ahk_id %win_id%
+	; WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
+	window_get_rect(wc_X, wc_Y, wc_Width, wc_Height, win_id)
+	; WinGet, wc_Max, MinMax, ahk_id %win_id%
 	; maximize
 	If (wc_Width <> workarea.width)
 	{
-        left := workarea.left
-        right := workarea.width
-		WinMove, ahk_id %win_id%,, %left%, %wc_Y%, % %right%, %wc_Height%
+        ; left := workarea.left
+        ; right := workarea.width
+		; WinMove, ahk_id %win_id%,, %left%, %wc_Y%, % %right%, %wc_Height%
+		window_set_rect(workarea.left, wc_Y, workarea.width, wc_Height, win_id)
 		; remember values for back toggling
 		If (memory[win_id]["lastw"] <> wc_Width OR memory[win_id]["lasth"] <> wc_Height)
             memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
         memory[win_id]["lastw"] := workarea.width
         memory[win_id]["lasth"] := wc_Height
-	}
-    ; resest if remembered
-	Else If (memory[win_id]["h"] <> "" AND memory[win_id]["w"] <> "")
-	{
-		If memory[win_id]["minmax"] = 1
-			WinMaximize, ahk_id %win_id%
-		Else
-		{
-			WinMove, A, , memory[win_id]["x"], memory[win_id]["y"], memory[win_id]["w"], memory[win_id]["h"]
-            memory.Delete(win_id)
-		}
-	}
+	} Else
+		_window_toggle_maximize_reset(win_id, memory)
 }
+
 
 window_toggle_maximize_height(win_id="") {
     win_id := _ensure_win_active(win_id)
@@ -75,32 +68,39 @@ window_toggle_maximize_height(win_id="") {
 		Return
 
     workarea := new Screen_WorkArea(screen_get_index(win_id))
-	WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
-	WinGet, wc_Max, MinMax, ahk_id %win_id%
+	; WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
+	window_get_rect(wc_X, wc_Y, wc_Width, wc_Height, win_id)
+	; WinGet, wc_Max, MinMax, ahk_id %win_id%
 	; maximize
 	If (wc_Height <> workarea.height)
 	{
         top := workarea.top
         bottom := workarea.height
-		WinMove, ahk_id %win_id%,, %wc_X%, %top%, % %wc_Width%, %bottom%
+		; WinMove, ahk_id %win_id%,, %wc_X%, %top%, % %wc_Width%, %bottom%
+		window_set_rect(wc_X, top, wc_Width, bottom, win_id)
 		; remember values for back toggling
 		If (memory[win_id]["lastw"] <> wc_Width OR memory[win_id]["lasth"] <> wc_Height)
             memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
         memory[win_id]["lastw"] := wc_Width
         memory[win_id]["lasth"] := workarea.height
-	}
-    ; resest if remembered
-	Else If (memory[win_id]["h"] <> "" AND memory[win_id]["w"] <> "")
+	} Else
+		_window_toggle_maximize_reset(win_id, memory)
+}
+
+
+_window_toggle_maximize_reset(byref win_id, byref memory) {
+ 	If (memory[win_id]["h"] <> "" AND memory[win_id]["w"] <> "")
 	{
 		If memory[win_id]["minmax"] = 1
 			WinMaximize, ahk_id %win_id%
 		Else
 		{
-			WinMove, A, , memory[win_id]["x"], memory[win_id]["y"], memory[win_id]["w"], memory[win_id]["h"]
+			window_set_rect(memory[win_id]["x"], memory[win_id]["y"], memory[win_id]["w"], memory[win_id]["h"], win_id)
             memory.Delete(win_id)
 		}
 	}
 }
+
 
 window_activate(win_id) {
     IfWinNotActive, ahk_id %win_id%
@@ -129,4 +129,32 @@ _ensure_win_active(win_id) {
     else
         window_activate(win_id)
     return win_id
+}
+
+window_get_rect(byref x, byref y, byref width, byref height, win_id="") {
+	if (!win_id)
+		win_id := WinExist("A")
+	WinGetPos, _x, _y, _w, _h, ahk_id %win_id%
+	x := _x + WIN_FRAME_WIDTH - 1
+	y := _y
+	width := _w - (WIN_FRAME_WIDTH - 1) * 2
+	height := _h - (WIN_FRAME_HEIGHT - 1)
+
+	; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%, WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
+	; ; tt(txt, 1)
+	; MsgBox, window_get_rect`n%txt%
+}
+
+
+window_set_rect(byref x, byref y, byref width, byref height, win_id="") {
+	if (!win_id)
+		win_id := WinExist("A")
+	_x := x - WIN_FRAME_WIDTH + 1
+	_w := width + (WIN_FRAME_WIDTH - 1) * 2
+	_h := height + (WIN_FRAME_HEIGHT - 1)
+
+	; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%, WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
+	; ; tt(txt, 1)
+	; MsgBox, window_set_rect`n%txt%`nwin_id: %win_id%
+	WinMove, ahk_id %win_id%,, %_x%, %y%, %_w%, %_h%
 }

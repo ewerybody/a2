@@ -41,3 +41,9 @@ global IDC_SIZEWE := 32644
 global IDC_UPARROW := 32516
 global IDC_WAIT := 32514
 global IDC_HELP := 32651
+
+;Invisible border size. Usually Autohotkey methods apply to the inner size
+SysGet, WIN_FRAME_WIDTH, 32
+SysGet, WIN_FRAME_HEIGHT, 33
+global WIN_FRAME_WIDTH
+global WIN_FRAME_HEIGHT
