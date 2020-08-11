@@ -84,7 +84,8 @@ class A2ItemEditor(QtWidgets.QWidget):
         :param str label: Optional string to put into the Label Field of a FormLayout.
         """
         label = label if label is not None else value_name.title()
-        self.ui.config_layout.addRow(label, widget)
+        # self.ui.config_layout.addRow(label, widget)
+        self.add_row(label, widget)
         self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
 
     def add_data_widget(self, value_name, widget, set_function, change_signal=None,
@@ -98,8 +99,11 @@ class A2ItemEditor(QtWidgets.QWidget):
         :param QtCore.Signal change_signal: Optional signal to use for data change notification.
         :param * default_value: Fallback and reference value to check against.
         """
-        self.ui.config_layout.addRow(widget)
+        self.add_row(widget)
         self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
+
+    def add_row(self, *args):
+        self.ui.config_layout.addRow(*args)
 
     def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
         self._drawing = True

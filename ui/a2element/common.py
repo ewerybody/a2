@@ -13,7 +13,7 @@ LOCAL_MENU_PREFIX = 'local: '
 DELAYED_CHECK_DELAY = 250
 
 
-class DrawCtrlMixin(object):
+class DrawCtrlMixin:
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
