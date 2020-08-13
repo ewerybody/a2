@@ -1,5 +1,7 @@
+"""
+Finally an own little module all things icons.
+"""
 import os
-import time
 import a2core
 import a2path
 
@@ -14,9 +16,17 @@ DEFAULT_NAME = f'{a2core.NAME}icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [DEFAULT_NAME + ext for ext in ICON_FORMATS]
 ICON_OBJ_INST_ERROR = 'Icons() has already been instanciated!\nGet it with .inst()'
+_FULL_COLOR_ICONS = ('a2*', 'autohotkey', 'github')
+_IGNORE_ICONS = ('telegram_join', 'css_*', 'logo_*')
 
 
 class Ico(QtGui.QIcon):
+    """
+    Handy QIcon that:
+    * regognizes names in our resources dir,
+    * can directly render from svg,
+    * have a tinted version if needed.
+    """
     ico_path = None
 
     def __init__(self, ico_name, px=512, alpha=None):
@@ -105,10 +115,15 @@ class LibIco(Ico):
         super(LibIco, self).__init__(name, 512, DEFAULT_ALPHA)
 
 
-class Icons(object):
+class Icons:
+    """
+    Our load-only-once icon library object.
+
+    For convenience this already lists all usable icons and for speed it
+    just loads them up when actually needed.
+    """
     # This is supposed to have many!
     # pylint: disable=too-many-instance-attributes
-    """Our load-only-once icon library object."""
     _instance = None
 
     @staticmethod
@@ -121,71 +136,72 @@ class Icons(object):
         return Icons._instance
 
     def __getattribute__(self, name):
-        try:
-            obj = super(Icons, self).__getattribute__(name)
-        except AttributeError:
-            obj, name
+        obj = super(Icons, self).__getattribute__(name)
         if not name.startswith('_'):
             if isinstance(obj, bool):
-                obj, name
-            return obj
+                if obj is True:
+                    icon = Ico(name)
+                else:
+                    icon = LibIco(name)
+                setattr(self, name, icon)
+                return icon
+            else:
+                return obj
         else:
             return obj
 
     def __init__(self):
         if self._instance:
             raise RuntimeError(ICON_OBJ_INST_ERROR)
-        t0 = time.time()
 
         # Icons start
-        self.a2 = Ico('a2')
-        self.a2help = Ico('a2help')
-        self.a2reload = Ico('a2reload')
-        self.a2tinted = Ico('a2tinted')
-        self.a2x = Ico('a2x')
-        self.autohotkey = Ico('autohotkey')
-        self.github = Ico('github')
+        self.a2 = True
+        self.a2help = True
+        self.a2reload = True
+        self.a2tinted = True
+        self.a2x = True
+        self.autohotkey = True
+        self.github = True
 
-        self.button = LibIco('button')
-        self.check = LibIco('check')
-        self.check_circle = LibIco('check_circle')
-        self.clear = LibIco('clear')
-        self.cloud_download = LibIco('cloud_download')
-        self.code = LibIco('code')
-        self.combo = LibIco('combo')
-        self.copy = LibIco('copy')
-        self.cut = LibIco('cut')
-        self.delete = LibIco('delete')
-        self.down = LibIco('down')
-        self.down_align = LibIco('down_align')
-        self.down_circle = LibIco('down_circle')
-        self.edit = LibIco('edit')
-        self.error = LibIco('error')
-        self.file_download = LibIco('file_download')
-        self.folder = LibIco('folder')
-        self.folder2 = LibIco('folder2')
-        self.folder_add = LibIco('folder_add')
-        self.group = LibIco('group')
-        self.help = LibIco('help')
-        self.keyboard = LibIco('keyboard')
-        self.label = LibIco('label')
-        self.label_plus = LibIco('label_plus')
-        self.list_add = LibIco('list_add')
-        self.locate = LibIco('locate')
-        self.more = LibIco('more')
-        self.number = LibIco('number')
-        self.paste = LibIco('paste')
-        self.reload = LibIco('reload')
-        self.rollback = LibIco('rollback')
-        self.scope = LibIco('scope')
-        self.scope_exclude = LibIco('scope_exclude')
-        self.scope_global = LibIco('scope_global')
-        self.string = LibIco('string')
-        self.text = LibIco('text')
-        self.up = LibIco('up')
-        self.up_align = LibIco('up_align')
+        self.button = False
+        self.check = False
+        self.check_circle = False
+        self.clear = False
+        self.cloud_download = False
+        self.code = False
+        self.combo = False
+        self.copy = False
+        self.cut = False
+        self.delete = False
+        self.down = False
+        self.down_align = False
+        self.down_circle = False
+        self.edit = False
+        self.error = False
+        self.file_download = False
+        self.folder = False
+        self.folder2 = False
+        self.folder_add = False
+        self.group = False
+        self.help = False
+        self.keyboard = False
+        self.label = False
+        self.label_plus = False
+        self.list_add = False
+        self.locate = False
+        self.more = False
+        self.number = False
+        self.paste = False
+        self.reload = False
+        self.rollback = False
+        self.scope = False
+        self.scope_exclude = False
+        self.scope_global = False
+        self.string = False
+        self.text = False
+        self.up = False
+        self.up_align = False
         # Icons end
-        print('%s took %.3fs' % ('Icons', time.time() - t0))
 
 
 def get(current_icon, folder, fallback=None):
@@ -208,13 +224,12 @@ def get(current_icon, folder, fallback=None):
 
 
 def _update_icon_stub():
+    """Browse the resource dir for icons and add it to this file."""
     from fnmatch import fnmatch
     with open(__file__) as file_obj:
         content = file_obj.read()
 
     lines = []
-    full_color_names = ('a2*', 'autohotkey', 'github')
-    ignore_these = ('telegram_join', 'css_*', 'logo_*')
     full_color = set()
     lib_icons = set()
     in_icons = False
@@ -226,20 +241,22 @@ def _update_icon_stub():
             in_icons = True
             res_path = os.path.abspath(os.path.join(__file__, '..', '..', 'res'))
             for icon_item in a2path.iter_types(res_path, ICON_FORMATS):
-                if any(fnmatch(icon_item.base, name) for name in ignore_these):
+                if any(fnmatch(icon_item.base, name) for name in _IGNORE_ICONS):
                     continue
 
-                if any(fnmatch(icon_item.base, name) for name in full_color_names):
+                if any(fnmatch(icon_item.base, name) for name in _FULL_COLOR_ICONS):
                     full_color.add(icon_item.base)
                 else:
                     lib_icons.add(icon_item.base)
 
             indent = ' ' * 8
             for name in sorted(full_color):
-                lines.append(f"{indent}self.{name} = Ico('{name}')")
+                # lines.append(f"{indent}self.{name} = Ico('{name}')")
+                lines.append(f"{indent}self.{name} = True")
             lines.append('')
             for name in sorted(lib_icons):
-                lines.append(f"{indent}self.{name} = LibIco('{name}')")
+                # lines.append(f"{indent}self.{name} = LibIco('{name}')")
+                lines.append(f"{indent}self.{name} = False")
 
         if line.endswith('# Icons end'):
             in_icons = False
