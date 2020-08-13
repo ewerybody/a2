@@ -24,7 +24,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
-        self.setEnabled(False)
+        # self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
         self._restart_thread = None
@@ -137,7 +137,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
-        self.ui.actionUnload_a2_Runtime.setIcon(icons.a2close)
+        self.ui.actionUnload_a2_Runtime.setIcon(icons.a2x)
         self.ui.actionReload_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
         self.ui.actionReload_a2_Runtime.setIcon(icons.a2reload)
         self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
@@ -150,7 +150,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
-        self.ui.actionUninstall_a2.setIcon(icons.a2close)
+        self.ui.actionUninstall_a2.setIcon(icons.a2x)
         self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
 
     def _setup_shortcuts(self):
@@ -571,7 +571,7 @@ class A2Window(QtWidgets.QMainWindow):
             layout = QtWidgets.QVBoxLayout(widget)
             label = QtWidgets.QLabel()
             label.setAlignment(QtCore.Qt.AlignCenter)
-            label.setPixmap(a2ctrl.Icons.inst().a2.pixmap(256))
+            label.setPixmap(a2ctrl.Icons.inst().a2tinted.pixmap(256))
             layout.addWidget(label)
             self.setCentralWidget(widget)
             self.restore_ui()
