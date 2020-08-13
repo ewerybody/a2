@@ -153,7 +153,7 @@ class FileObj(_PathObj):
         return self._ext
 
     def _set_base_ext(self):
-        self._base, self._ext = os.path.splitext(self._name)
+        self._base, self._ext = os.path.splitext(self.name)
         self._ext = self._ext.lower()
 
     def is_type(self, type_list):
