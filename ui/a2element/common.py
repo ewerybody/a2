@@ -1,3 +1,6 @@
+"""
+The a2 element foundations.
+"""
 import os
 from functools import partial
 
@@ -242,9 +245,9 @@ class EditCtrl(QtWidgets.QGroupBox):
     def _setup_ui(self, add_layout):
         # self.setTitle(self.cfg['typ'])
         self.setTitle(self.element_name())
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Maximum)
-        self.setSizePolicy(sizePolicy)
+        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                            QtWidgets.QSizePolicy.Maximum)
+        self.setSizePolicy(size_policy)
 
         self._ctrl_layout = QtWidgets.QGridLayout(self)
         self._ctrl_layout.setContentsMargins(0, 0, 0, 0)
@@ -438,7 +441,8 @@ class EditAddElem(QtWidgets.QWidget):
             display_name = edit_class.element_name()
             icon = edit_class.element_icon()
             name = base[len(a2ctrl.LOCAL_ELEMENT_ID) + 1:]
-            action = self.menu.addAction(LOCAL_MENU_PREFIX + display_name, self._on_add_element_action)
+            action = self.menu.addAction(
+                LOCAL_MENU_PREFIX + display_name, self._on_add_element_action)
             action.setData((a2ctrl.LOCAL_ELEMENT_ID, name))
             if icon:
                 action.setIcon(icon)
@@ -466,5 +470,5 @@ class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
                      if name.lower() not in scripts_used]
         return available
 
-    def create_script(self, name):
-        self.main.mod.create_script(name, self.main.devset.author_name)
+    def create_script(self, file_name):
+        self.main.mod.create_script(file_name, self.main.devset.author_name)

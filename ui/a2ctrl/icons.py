@@ -2,10 +2,9 @@
 Finally an own little module all things icons.
 """
 import os
+from PySide2 import QtGui, QtCore, QtSvg
 import a2core
 import a2path
-
-from PySide2 import QtGui, QtCore, QtSvg
 
 
 log = a2core.get_logger(__name__)
@@ -29,17 +28,17 @@ class Ico(QtGui.QIcon):
     """
     ico_path = None
 
-    def __init__(self, ico_name, px=512, alpha=None):
+    def __init__(self, ico_name, size=512, alpha=None):
         """
         :param str ico_name: Name of the icon. If present in icon library the path is
             build there. Otherwise ico_name has to be a path to the image file.
-        :param int px: Pre-render size of the icon image. Lower values than 512 might
+        :param int size: Pre-render size of the icon image. Lower values than 512 might
             cause artifacts but might be more memory and loading speed friendly.
         :param float alpha: 0.0 to 1.0 transparency value for the icon image.
         """
         super(Ico, self).__init__()
 
-        self.px = px
+        self.size = size
 
         self._tinted = None
         self._alpha = alpha
@@ -69,7 +68,7 @@ class Ico(QtGui.QIcon):
 
     def _render_svg(self):
         renderer = QtSvg.QSvgRenderer(self.path)
-        self._image = QtGui.QImage(QtCore.QSize(self.px, self.px), QtGui.QImage.Format_ARGB32)
+        self._image = QtGui.QImage(QtCore.QSize(self.size, self.size), QtGui.QImage.Format_ARGB32)
         self._painter = QtGui.QPainter(self._image)
 
         if self._alpha is not None:
@@ -78,11 +77,11 @@ class Ico(QtGui.QIcon):
         renderer.render(self._painter)
 
     def _render(self):
-        self._image = QtGui.QImage(QtCore.QSize(self.px, self.px), QtGui.QImage.Format_ARGB32)
+        self._image = QtGui.QImage(QtCore.QSize(self.size, self.size), QtGui.QImage.Format_ARGB32)
 
         if self._alpha is not None:
             self._painter = QtGui.QPainter(self._image)
-            image = QtGui.QImage(QtCore.QSize(self.px, self.px), QtGui.QImage.Format_ARGB32)
+            image = QtGui.QImage(QtCore.QSize(self.size, self.size), QtGui.QImage.Format_ARGB32)
             image = self._load_path_to_image(image)
             self._painter.setOpacity(self._alpha)
             self._painter.drawImage(self._image.rect(), image)
@@ -105,7 +104,7 @@ class Ico(QtGui.QIcon):
     def tinted(self):
         """Pass a tinted version of the same icon."""
         if self._tinted is None:
-            self._tinted = Ico(self.path, self.px, alpha=LOW_ALPHA)
+            self._tinted = Ico(self.path, self.size, alpha=LOW_ALPHA)
         return self._tinted
 
 

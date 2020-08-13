@@ -1,9 +1,13 @@
+"""
+Ui for various module-local scripts.
+"""
+
 import os
+from PySide2 import QtWidgets, QtCore
 
 import a2ctrl
 import a2util
 
-from PySide2 import QtWidgets, QtCore
 
 DEFAULT_EXT = '.py'
 DEFAULT_SCRIPT_NAME = 'awesome_script'
@@ -99,12 +103,12 @@ class ScriptSelector(QtWidgets.QWidget):
         self._setup_ui()
         self._script_file = ''
         self.main = main
+        self.button_menu = None
 
     def _setup_ui(self):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.button = QtWidgets.QPushButton(self, 'None')
-        self.button_menu = None
         layout.addWidget(self.button)
 
         self.edit_button = QtWidgets.QPushButton('edit script')
@@ -114,7 +118,6 @@ class ScriptSelector(QtWidgets.QWidget):
         layout.setStretch(0, 1)
 
     def set_config(self, prefix, cfg, main, menu):
-        self.prefix = prefix
         name = cfg.get('script_name')
         self.set_selection(build_file_name(name, prefix), name)
 

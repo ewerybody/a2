@@ -1,13 +1,17 @@
+"""
+Home of the Scope Dialog ui.
+"""
+from PySide2 import QtCore, QtWidgets
+
 import a2core
 import a2ctrl
-from PySide2 import QtCore, QtWidgets
 
 from . import scope_dialog_ui
 from .hotkey_widget import Vars
 
 
+
 log = a2core.get_logger(__name__)
-SCOPE_ITEMS = ['titles', 'classes', 'processes']
 INCLUDE_MSG = 'Include "nothing" Deactivates the scope!'
 EXCLUDE_MSG = 'Exclude "nothing" makes it global!'
 
@@ -39,7 +43,7 @@ class ScopeDialog(QtWidgets.QDialog):
                 self.ui.a2ok_button.setEnabled(False)
                 self.ui.a2ok_button.setText(INCLUDE_MSG)
                 return
-            elif cfg[Vars.scope_mode] == 2:
+            if cfg[Vars.scope_mode] == 2:
                 self.ui.a2ok_button.setEnabled(False)
                 self.ui.a2ok_button.setText(EXCLUDE_MSG)
                 return

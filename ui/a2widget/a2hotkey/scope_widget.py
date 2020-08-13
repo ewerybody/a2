@@ -26,6 +26,7 @@ class ScopeWidget(QtWidgets.QWidget):
         self._cfg = None
         self.help_map = None
         self.help_menu = None
+        self._add_menu = None
         self._setup_ui()
         self.system_scope_data = {}
         self.get_scope_data()
@@ -57,6 +58,9 @@ class ScopeWidget(QtWidgets.QWidget):
             self.on_scope_mode_change()
 
     def get_config(self):
+        """
+        :rtype: dict
+        """
         return self._cfg
 
     def on_selection_change(self, scope_string):
@@ -100,31 +104,31 @@ class ScopeWidget(QtWidgets.QWidget):
         self.input_fields[sender.data()].setText(sender.text())
 
     def build_add_scope_menu(self):
-        if self.add_menu is None:
-            self.add_menu = QtWidgets.QMenu(self)
+        if self._add_menu is None:
+            self._add_menu = QtWidgets.QMenu(self)
 
             icons = a2ctrl.Icons.inst()
-            self.add_menu.addAction(icons.list_add, 'Add New Empty', self.add_scope)
-            self.add_menu.addAction(icons.locate, 'Pick from Window', self.pick_scope_info)
+            self._add_menu.addAction(icons.list_add, 'Add New Empty', self.add_scope)
+            self._add_menu.addAction(icons.locate, 'Pick from Window', self.pick_scope_info)
 
-            submenu = QtWidgets.QMenu(self.add_menu)
+            submenu = QtWidgets.QMenu(self._add_menu)
             submenu.setTitle('All in use...')
             submenu.aboutToShow.connect(self._build_in_use_menu)
-            self.add_menu.addMenu(submenu)
+            self._add_menu.addMenu(submenu)
 
-            submenu = QtWidgets.QMenu(self.add_menu)
+            submenu = QtWidgets.QMenu(self._add_menu)
             submenu.setTitle('All available ...')
             submenu.aboutToShow.connect(self._build_available_menu)
-            self.add_menu.addMenu(submenu)
+            self._add_menu.addMenu(submenu)
 
-            self.add_menu.addSeparator()
+            self._add_menu.addSeparator()
 
             help_menu = self.build_help_menu()
             help_menu.setTitle('Help ...')
             help_menu.setIcon(icons.help)
-            self.add_menu.addMenu(help_menu)
+            self._add_menu.addMenu(help_menu)
 
-        self.add_menu.popup(QtGui.QCursor.pos())
+        self._add_menu.popup(QtGui.QCursor.pos())
 
     def _build_available_menu(self):
         menu = self.sender()
@@ -165,7 +169,7 @@ class ScopeWidget(QtWidgets.QWidget):
         scope_nfo = a2ahk.call_lib_cmd('get_scope_nfo')
         scope_nfo = scope_nfo.split('\n')
         if not scope_nfo:
-            log.error('Error getting scope_nfo!! scope_nfo: %s' % scope_nfo)
+            log.error('Error getting scope_nfo!! scope_nfo: %s', scope_nfo)
             return
         # sort found items into dictionary of sets
         self.system_scope_data = dict([(n, set()) for n in SCOPE_ITEMS])
@@ -186,7 +190,8 @@ class ScopeWidget(QtWidgets.QWidget):
 
         self.input_fields = OrderedDict()
         i = 0
-        for name, ctrl in zip(SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]):
+        for name, ctrl in zip(
+                SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]):
             self.input_fields[name] = ctrl
             ctrl.textChanged.connect(self._scope_text_changed.emit)
             ctrl.menu_called.connect(partial(self.build_button_field_menu, i))
@@ -200,7 +205,7 @@ class ScopeWidget(QtWidgets.QWidget):
         self.ui.scope_pick.setIcon(icons.locate)
 
         self.ui.cfg_scope.single_name_selected.connect(self.on_selection_change)
-        self.ui.cfg_scope.selection_cleared.connect(self.on_selection_clear)
+        self.ui.cfg_scope.selection_cleared.connect(self._on_selection_clear)
 
         self.ui.cfg_scope.changed.connect(self.scope_update)
 
@@ -212,7 +217,6 @@ class ScopeWidget(QtWidgets.QWidget):
         self._scope_mode_changed.connect(self.on_scope_mode_change)
         self._scope_text_changed.connect(self.on_text_change)
 
-        self.add_menu = None
         self.ui.scope_add.clicked.connect(self.build_add_scope_menu)
 
         self.ui.scope_help.setIcon(icons.help)
@@ -227,7 +231,7 @@ class ScopeWidget(QtWidgets.QWidget):
                              'Help on AHK WinActive': a2.urls.ahkWinActive,
                              'Help on AHK WinTitle': a2.urls.ahkWinTitle}
             for title in self.help_map:
-                self.help_menu.addAction(icons.help, title, self.goto_help)
+                self.help_menu.addAction(icons.help, title, self._goto_help)
 
         return self.help_menu
 
@@ -235,13 +239,13 @@ class ScopeWidget(QtWidgets.QWidget):
         menu = self.build_help_menu()
         menu.popup(QtGui.QCursor.pos())
 
-    def goto_help(self):
+    def _goto_help(self):
         a2util.surf_to(self.help_map[self.sender().text()])
 
-    def on_selection_clear(self):
+    def _on_selection_clear(self):
         self.blockSignals(True)
-        for f in self.input_fields.values():
-            f.setText('')
+        for value in self.input_fields.values():
+            value.setText('')
         self.blockSignals(False)
 
     def hide_global_button(self):

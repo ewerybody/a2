@@ -1,6 +1,7 @@
+from PySide2 import QtCore, QtWidgets
+
 import a2ctrl
 import a2util
-from PySide2 import QtCore, QtWidgets
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 

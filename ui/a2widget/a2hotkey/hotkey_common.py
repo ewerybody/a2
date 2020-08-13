@@ -20,7 +20,8 @@ DISPLAY_MODIFIERS = {
 }
 
 
-class Vars(object):
+class Vars:
+    """Stub for these hotkey strings."""
     key_change = 'keyChange'
 
     scope = 'scope'
@@ -37,7 +38,7 @@ class Vars(object):
 
 def get_keys_list(in_keys):
     """
-    Returns a verified keys list given a string or list of shortcut+keys.
+    Return a verified keys list given a string or list of shortcut+keys.
 
     :param (str, list) in_keys: String or list of shortcut+keys.
     :rtype: list
@@ -65,6 +66,7 @@ def get_keys_list(in_keys):
 
 def get_parts_from_list(key_list):
     """
+    Disassemble modifier and trigger keys and format them nicely.
     """
     trigger_key = key_list.pop(-1)
     modifiers = key_list
@@ -85,15 +87,15 @@ def get_parts_from_list(key_list):
             low_mods = map(str.lower, new_mods)
             raise ValueError('Some modifiers could not be identified!:\n  %s' %
                              set(modifiers).difference(low_mods))
-        else:
-            mod_string = '+'.join(new_mods)
-            return mod_string, trigger_key
-    else:
-        return '', trigger_key
+        mod_string = '+'.join(new_mods)
+        return mod_string, trigger_key
+
+    return '', trigger_key
 
 
 def get_sorted_parts(key_string):
     """
+    From key string find proper formatted modifier string and trigger key tuple.
     """
     key_list = key_string.lower().split('+')
     mod_string, trigger_key = get_parts_from_list(key_list)
@@ -113,10 +115,10 @@ def sort_modifiers(key_string):
 
 
 def build_string(modifier_string, trigger_key):
+    """Put together modifier and trigger keys via + if needed."""
     if modifier_string:
         return modifier_string + '+' + trigger_key
-    else:
-        return trigger_key
+    return trigger_key
 
 
 def parent_modifier_string(modifier_string):
@@ -148,7 +150,7 @@ if __name__ == '__main__':
         except ValueError as error:
             print(error, '\n')
 
-    key_list = 'shift+Alt+d'
-    new_list = get_keys_list(key_list)
-    print(new_list)
-    print(new_list == get_keys_list(new_list))
+    _key_list = 'shift+Alt+d'
+    _new_list = get_keys_list(_key_list)
+    print(_new_list)
+    print(_new_list == get_keys_list(_new_list))
