@@ -189,24 +189,24 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().hotkey
+        return a2ctrl.Icons.inst().keyboard
 
 
 def build_hotkey_menu(menu, button, help_func):
-        icons = a2ctrl.Icons.inst()
-        if not button.has_empty:
-            menu.addAction(icons.list_add, 'Add another Hotkey', button.add_hotkey)
-        if button.has_multiple:
-            del_menu = menu.addMenu(icons.delete, 'Remove Hotkey')
-            for key in button.get_keys_list():
-                name = key if key != '' else '"" (Empty)'
-                action = del_menu.addAction(icons.delete, name, button.on_remove_key_action)
-                action.setData(key)
-        else:
-            if not button.is_clear:
-                menu.addAction(icons.clear, 'Clear Hotkey', button.clear)
+    icons = a2ctrl.Icons.inst()
+    if not button.has_empty:
+        menu.addAction(icons.list_add, 'Add another Hotkey', button.add_hotkey)
+    if button.has_multiple:
+        del_menu = menu.addMenu(icons.delete, 'Remove Hotkey')
+        for key in button.get_keys_list():
+            name = key if key != '' else '"" (Empty)'
+            action = del_menu.addAction(icons.delete, name, button.on_remove_key_action)
+            action.setData(key)
+    else:
+        if not button.is_clear:
+            menu.addAction(icons.clear, 'Clear Hotkey', button.clear)
 
-        menu.addAction(icons.help, 'Help on Hotkey Setup', help_func)
+    menu.addAction(icons.help, 'Help on Hotkey Setup', help_func)
 
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
