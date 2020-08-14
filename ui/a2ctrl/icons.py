@@ -16,7 +16,8 @@ ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [DEFAULT_NAME + ext for ext in ICON_FORMATS]
 ICON_OBJ_INST_ERROR = 'Icons() has already been instanciated!\nGet it with .inst()'
 _FULL_COLOR_ICONS = ('a2*', 'autohotkey', 'github')
-_IGNORE_ICONS = ('telegram_join', 'css_*', 'logo_*')
+_PLACEHOLDER_ICON = 'placeholder'
+_IGNORE_ICONS = ('_ *', 'telegram_join', 'css_*', 'logo_*', _PLACEHOLDER_ICON)
 
 
 class Ico(QtGui.QIcon):
@@ -51,7 +52,7 @@ class Ico(QtGui.QIcon):
         else:
             if Ico.ico_path is None:
                 Ico.ico_path = os.path.join(a2core.A2Obj.inst().paths.a2, 'ui', 'res', '%s.svg')
-                log.info('getting Ico.ico_path: %s', Ico.ico_path)
+                # log.info('getting Ico.ico_path: %s', Ico.ico_path)
 
             self.path = Ico.ico_path % ico_name
             if not os.path.isfile(self.path):
@@ -135,7 +136,12 @@ class Icons:
         return Icons._instance
 
     def __getattribute__(self, name):
-        obj = super(Icons, self).__getattribute__(name)
+        try:
+            obj = super(Icons, self).__getattribute__(name)
+        except AttributeError:
+            log.error('Icons lib got request for inexistent icon:\n  "%s"!', name)
+            return Ico(_PLACEHOLDER_ICON)
+
         if not name.startswith('_'):
             if isinstance(obj, bool):
                 if obj is True:
@@ -144,10 +150,8 @@ class Icons:
                     icon = LibIco(name)
                 setattr(self, name, icon)
                 return icon
-            else:
-                return obj
-        else:
-            return obj
+
+        return obj
 
     def __init__(self):
         if self._instance:
