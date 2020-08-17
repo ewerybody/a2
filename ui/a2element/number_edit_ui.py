@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\number_edit.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\number_edit.ui' applies.
+# Form implementation generated from reading ui file:
+#   'c:\Users\eric\io\code\a2\ui\a2element\number_edit.ui'
+# licensing of that file applies.
 #
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
+# Created: Mon Aug 17 09:55:27 2020
+#      by: pyside2-uic  running on PySide2 5.15.0
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_edit(object):
+
+class Ui_edit:
     def setupUi(self, edit):
         edit.setObjectName("edit")
-        edit.resize(468, 234)
+        edit.resize(468, 255)
         self.edit_layout = QtWidgets.QFormLayout(edit)
         self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
         self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
@@ -52,6 +54,7 @@ class Ui_edit(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.cfg_min = QtWidgets.QDoubleSpinBox(edit)
         self.cfg_min.setMinimum(-16777215.0)
+        self.cfg_min.setMaximum(16777215.0)
         self.cfg_min.setProperty("value", 0.0)
         self.cfg_min.setObjectName("cfg_min")
         self.horizontalLayout.addWidget(self.cfg_min)
