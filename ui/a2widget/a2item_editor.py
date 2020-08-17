@@ -14,7 +14,8 @@ from a2widget import a2item_editor_ui
 log = a2core.get_logger(__name__)
 #: Minimum number of to automatically show the search field.
 SEARCH_FIELD_MIN_ITEMS = 10
-
+DEFAULT_ITEM_FLAGS = (QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
+                      QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
 
 class A2ItemEditor(QtWidgets.QWidget):
     """A lister widget for editing complex data dictionaries."""
@@ -41,6 +42,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         self._data_widgets = OrderedDict()
 
         self.search_field_min_items = SEARCH_FIELD_MIN_ITEMS
+        self.item_flags = DEFAULT_ITEM_FLAGS
         self.fill_item_list()
 
         self._selected_name = None
@@ -190,8 +192,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def _add_and_setup_item(self, name):
         item = QtWidgets.QListWidgetItem(name)
-        item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
-                      QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+        item.setFlags(self.item_flags)
         self.ui.item_list.addItem(item)
         return item
 
