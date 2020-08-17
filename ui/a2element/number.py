@@ -90,17 +90,18 @@ class Edit(EditCtrl):
         else:
             self.set_value()
 
-        for ctrl, set_func in [(self.ui.cfg_min, self.ui.value.setMinimum),
+        for ctrl, set_func in ((self.ui.cfg_min, self.ui.value.setMinimum),
                                (self.ui.cfg_max, self.ui.value.setMaximum),
                                (self.ui.cfg_decimals, self.ui.value.setDecimals),
-                               (self.ui.cfg_step_len, self.ui.value.setSingleStep)]:
+                               (self.ui.cfg_step_len, self.ui.value.setSingleStep)):
+            if ctrl.objectName().startswith('cfg_'):
+                set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))
             ctrl.valueChanged.connect(set_func)
         self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
 
     def set_value(self, value=None, *_args):
         if value is None:
             value = self.ui.value.value()
-
         self.cfg['value'] = _toggle_type(self.cfg['decimals'], value)
 
     @staticmethod
