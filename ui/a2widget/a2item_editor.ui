@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
+    <width>1069</width>
     <height>653</height>
    </rect>
   </property>
@@ -16,68 +16,82 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
-  <layout class="QHBoxLayout" name="item_editor_layout" stretch="1,3">
+  <layout class="QHBoxLayout" name="item_editor_layout" stretch="0,5">
    <item>
-    <layout class="QVBoxLayout" name="list_layout">
-     <item>
-      <layout class="QHBoxLayout" name="search_field_layout">
-       <item>
-        <widget class="QLineEdit" name="search_field">
-         <property name="placeholderText">
-          <string>search</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="a2search_x_button">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="flat">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="buttons_layout" stretch="1,0">
-       <item>
-        <widget class="QPushButton" name="a2item_editor_add_button">
-         <property name="text">
-          <string>Add</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="a2item_editor_remove_button">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="A2List" name="item_list">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="list_layout_widget" native="true">
+     <layout class="QVBoxLayout" name="list_layout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="search_field_layout">
+        <item>
+         <widget class="QLineEdit" name="search_field">
+          <property name="inputMask">
+           <string notr="true"/>
+          </property>
+          <property name="placeholderText">
+           <string>search</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="a2search_x_button">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="buttons_layout" stretch="1,0">
+        <item>
+         <widget class="QPushButton" name="a2item_editor_add_button">
+          <property name="text">
+           <string notr="true">Add</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="a2item_editor_remove_button">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string notr="true">Remove</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="A2List" name="item_list">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QWidget" name="config_widget" native="true">
