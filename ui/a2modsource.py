@@ -250,15 +250,17 @@ class ModSourceCheckThread(QtCore.QThread):
     def run(self):
         if self.mod_source is not None:
             update_url = self.mod_source.config.get('update_url', '')
+            main_branch = self.mod_source.config.get('main_branch')
         elif self.check_url is not None:
             update_url = self.check_url
+            main_branch = 'master'
 
         if not update_url:
             self._error(MSG_NO_UPDATE_URL)
             return
 
         try:
-            remote_data = _get_remote_data(update_url, self.mod_source.config.get('main_branch'))
+            remote_data = _get_remote_data(update_url, main_branch)
         except FileNotFoundError:
             self._error(MSG_UPDATE_URL_INVALID % update_url)
             return
