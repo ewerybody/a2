@@ -28,6 +28,7 @@ class A2StyleBuilder(object):
         physical_dpi = QtWidgets.QApplication.instance().desktop().physicalDpiX()
         local_scale = physical_dpi / BASE_DPI
         self._css_values['local_scale'] = local_scale
+        return local_scale
 
     def load_style(self, style_name):
         template_path = os.path.join(STYLE_PATH, style_name, DEFAULTS_NAME)
@@ -74,3 +75,11 @@ class A2StyleBuilder(object):
             self._css_values[name] = value
 
         return self.template % self._css_values
+
+    def scale(self, value):
+        """
+        Multiply a value by resulting scale.
+
+        Which is calculated from local physical ui scale and user set scale factor.
+        """
+        return self.get('scale', 1) * value
