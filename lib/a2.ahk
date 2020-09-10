@@ -10,6 +10,7 @@
 #include lib\a2_globals.ahk
 #include lib\a2_urls.ahk
 #include *i %A_AppData%\..\Local\a2\data\a2_data_path.ahk
+#include *i lib\a2_portable.ahk
 
 ; build essential paths
 a2dir := A_ScriptDir "\..\"
