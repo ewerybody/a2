@@ -313,7 +313,6 @@ class A2Window(QtWidgets.QMainWindow):
         log.info('Initializing window position & size: %s', geometry)
         self.setGeometry(geometry)
 
-
     def show_raise(self):
         """
         Call the window to show as currently active window.
@@ -428,23 +427,10 @@ class A2Window(QtWidgets.QMainWindow):
         self.refresh_ui()
 
     def edit_code(self, file_path):
-        if os.path.isfile(self.devset.code_editor):
-            _result, _pid = a2util.start_process_detached(self.devset.code_editor, file_path)
-
-        else:
-            _TASK_MSG = 'browse for a code editor executable'
-            _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
-
-            reply = QtWidgets.QMessageBox.question(
-                self, 'No Valid Code Editor Set!', _QUEST_MSG,
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
-
-            if reply == QtWidgets.QMessageBox.Yes:
-                exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
-                    self, _TASK_MSG.title(), self.devset.code_editor, 'Executable (*.exe)')
-                if exepath:
-                    self.devset.set_var('code_editor', exepath)
-                    self.edit_code(file_path)
+        app_path = self.devset.get_editor()
+        if not app_path:
+            return
+        _result, _pid = a2util.start_process_detached(app_path, file_path)
 
     def build_module_menu(self):
         menu = self.sender()
@@ -457,22 +443,10 @@ class A2Window(QtWidgets.QMainWindow):
                 menu.addAction(action)
 
     def diff_files(self, file1, file2):
-        if os.path.isfile(self.devset.diff_app):
-            _result, _pid = a2util.start_process_detached(self.devset.diff_app, [file1, file2])
-        else:
-            _TASK_MSG = 'browse for a Diff executable'
-            _QUEST_MSG = 'Do you want to %s now?' % _TASK_MSG
-
-            reply = QtWidgets.QMessageBox.question(
-                self, 'No Diff application set!', _QUEST_MSG,
-                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
-
-            if reply == QtWidgets.QMessageBox.Yes:
-                exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
-                    self, _TASK_MSG.title(), self.devset.diff_app, 'Executable (*.exe)')
-                if exepath:
-                    self.devset.set_var('diff_app', exepath)
-                    self.diff_files(file1, file2)
+        app_path = self.devset.get_differ()
+        if not app_path:
+            return
+        _result, _pid = a2util.start_process_detached(app_path, [file1, file2])
 
     def on_dev_menu_build(self):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
@@ -604,7 +578,7 @@ class ShutdownThread(QtCore.QThread):
     def run(self):
         pid = a2runtime.kill_a2_process()
         if pid:
-            log.info('Shut down process with PID: %s' % pid)
+            log.info('Shut down process with PID: %s', pid)
             self.success.emit(not a2runtime.is_runtime_live())
 
 

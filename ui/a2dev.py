@@ -7,7 +7,8 @@ import a2util
 
 from a2widget.a2input_dialog import A2ConfirmDialog
 
-
+_TASK_MSG = 'browse for a %s executable'
+_QUEST_MSG = 'Do you want to %s now?'
 log = a2core.get_logger(__name__)
 
 
@@ -74,3 +75,36 @@ class DevSettings:
         settings = self._get_from_db()
         settings[key] = value
         self.set(settings)
+
+    def get_editor(self):
+        return self._get_app('code_editor', 'Code Editor')
+
+    def get_differ(self):
+        return self._get_app('diff_app', 'Diff Application')
+
+    def _get_app(self, var_name, display_name):
+        variable = getattr(self, var_name)
+        if os.path.isfile(variable):
+            return variable
+
+        task_msg = _TASK_MSG % display_name
+        question = _QUEST_MSG % task_msg
+        parent = self._a2.win
+        reply = QtWidgets.QMessageBox.question(
+            parent,
+            'No Valid %s Set!' % display_name,
+            question,
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel
+        )
+
+        if reply == QtWidgets.QMessageBox.Yes:
+            exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
+                parent,
+                task_msg.title(),
+                variable, 'Executable (*.exe)'
+            )
+            if exepath:
+                self.set_var(var_name, exepath)
+                return exepath
+
+        return ''
