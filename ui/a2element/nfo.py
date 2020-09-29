@@ -28,7 +28,7 @@ class Draw(QtWidgets.QWidget):
 
 
 class Edit(QtWidgets.QGroupBox):
-    def __init__(self, cfg, *args):
+    def __init__(self, cfg, *_args):
         super(Edit, self).__init__()
         self.cfg = cfg
         self.typ = cfg['typ']

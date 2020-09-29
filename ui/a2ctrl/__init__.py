@@ -40,15 +40,7 @@ def check_ui_module(module, force=False):
     if uiname.endswith(UI_FILE_SUFFIX):
         uibase = uiname[:-len(UI_FILE_SUFFIX)] + '.ui'
     else:
-        with open(pyfile, 'r') as fobj:
-            line = fobj.readline()
-            while line and uibase is not None:
-                line = line.strip()
-                if line.startswith('# Form implementation '):
-                    uibase = line[line.rfind("'", 0, -1) + 1:-1]
-                    uibase = os.path.basename(uibase.strip())
-                    log.debug('checkUiModule from read: %s', uibase)
-                line = fobj.readline()
+        uibase = _get_ui_basename_from_header(pyfile)
 
     if uibase is None:
         raise RuntimeError('Could not get source ui file from module:\n %s\n  '
@@ -58,38 +50,71 @@ def check_ui_module(module, force=False):
     if not uibase or not os.path.isfile(uifile):
         return
 
-    py_time = os.path.getmtime(pyfile)
-    ui_time = os.path.getmtime(uifile)
-    diff = py_time - ui_time
-    if diff < 0 or force:
-        log.debug('%s needs compile! (age: %is)', uibase, diff)
+    diff = os.path.getmtime(pyfile) - os.path.getmtime(uifile)
+    if not force and diff > 0:
+        return
 
-        try:
-            from pyside2uic import compileUi
-            with open(pyfile, 'w') as pyfobj:
-                compileUi(uifile, pyfobj)
-        except ModuleNotFoundError:
-            import subprocess
-            import PySide2
-            uic_path = os.path.join(PySide2.__path__[0], 'uic.exe')
-            subprocess.call([uic_path, '-g', 'python', uifile, '-o', pyfile])
+    log.debug('%s needs compile! (age: %is)', uibase, diff)
 
-        # patch compiled main ui file to have resizing handled by settings.
-        # Could be useful for ANY compiled UI:
-        #     main sizes are usually related to parent arrangement!?
-        if uiname == 'a2design_ui':
-            with open(pyfile) as pyfobj:
-                lines = pyfobj.readlines()
+    # Make paths in compiled files project related, not from current user.
+    parent_path = os.path.abspath(os.path.join(a2core.__file__, '..', '..', '..'))
+    ui_relative = os.path.relpath(uifile, parent_path)
+    curr_cwd = os.getcwd()
+    os.chdir(parent_path)
 
-            skip_lines = 12
-            for i, line in enumerate(lines[12:]):
-                if line.startswith('        a2MainWindow.resize('):
-                    with open(pyfile, 'w') as pyfobj:
-                        pyfobj.write(''.join(lines[:i + skip_lines]) +
-                                     ''.join(lines[i + skip_lines + 1:]))
-                        break
+    try:
+        from pyside2uic import compileUi
+        with open(pyfile, 'w') as pyfobj:
+            with open(ui_relative) as uifobj:
+                compileUi(uifobj, pyfobj)
 
-        reload(module)
+    except ModuleNotFoundError:
+        # Newer uic seems to just put the basename in the header... however.
+        import subprocess
+        import PySide2
+        uic_path = os.path.join(PySide2.__path__[0], 'uic.exe')
+        subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', pyfile])
+
+    os.chdir(curr_cwd)
+
+    _patch_main_ui(uiname, pyfile)
+
+    reload(module)
+
+
+def _patch_main_ui(uiname, pyfile):
+    """
+    Patch compiled main ui file to have resizing handled by settings.
+    Could be useful for ANY compiled UI:
+        main sizes are usually related to parent arrangement!?
+    """
+    if uiname == 'a2design_ui':
+        with open(pyfile) as pyfobj:
+            lines = pyfobj.readlines()
+
+        skip_lines = 12
+        for i, line in enumerate(lines[12:]):
+            if line.startswith('        a2MainWindow.resize('):
+                with open(pyfile, 'w') as pyfobj:
+                    pyfobj.write(''.join(lines[:i + skip_lines]) +
+                                    ''.join(lines[i + skip_lines + 1:]))
+                    break
+
+
+def _get_ui_basename_from_header(py_ui_path):
+    """TODO: This is kinda ugly I don't think we need it."""
+    uibase = None
+    with open(py_ui_path) as fobj:
+        line = fobj.readline()
+        while line and uibase is not None:
+            line = line.strip()
+            if line.startswith('# Form implementation '):
+                uibase = line[line.rfind("'", 0, -1) + 1:-1]
+                uibase = os.path.basename(uibase.strip())
+                log.error('checkUiModule from read: %s', uibase)
+                break
+            line = fobj.readline()
+    return uibase
 
 
 def draw(main, element_cfg, mod, user_cfg):
