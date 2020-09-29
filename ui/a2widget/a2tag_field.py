@@ -164,5 +164,5 @@ class A2Tag(QtWidgets.QPushButton):
 
 
 if __name__ == '__main__':
-    import a2widget.demo.a2tag_field
-    a2widget.demo.a2tag_field.show()
+    from a2widget.demo import a2tag_field_demo
+    a2tag_field_demo.show()

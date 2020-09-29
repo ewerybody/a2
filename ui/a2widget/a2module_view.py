@@ -20,6 +20,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.main = None
         self.editing = False
         self.controls = []
+        self.menu_items = []
         self.a2 = a2core.A2Obj.inst()
 
     def setup_ui(self, main):
@@ -55,7 +56,7 @@ class A2ModuleView(QtWidgets.QWidget):
         if self.main.mod is None:
             if not self.main.num_selected:
                 from a2widget import a2settings_view
-                self.controls = [a2settings_view.A2Settings(self.main)]
+                self.controls[:] = [a2settings_view.A2Settings(self.main)]
                 self.update_header()
                 self.draw_ui()
                 return
@@ -70,7 +71,7 @@ class A2ModuleView(QtWidgets.QWidget):
             module_user_cfg = self.main.mod.get_user_cfg()
             self.main.temp_config = None
 
-        if len(config):
+        if config:
             if config[0].get('typ') != 'nfo':
                 log.error('First element of config is not typ nfo! %s' % self.main.mod.name)
         else:
@@ -80,8 +81,8 @@ class A2ModuleView(QtWidgets.QWidget):
         nfo = config[0]
         self.update_header(nfo.get('author', ''), nfo.get('version', ''))
 
-        self.controls = []
-        self.menu_items = []
+        self.controls.clear()
+        self.menu_items.clear()
 
         for element_cfg in config:
             cfg_name = a2util.get_cfg_default_name(element_cfg)
@@ -148,12 +149,12 @@ class A2ModuleView(QtWidgets.QWidget):
         import a2element.common
         from copy import deepcopy
 
-        self.controls = []
-        self.menu_items = []
+        self.controls.clear()
+        self.menu_items.clear()
         if self.main.temp_config is None:
             self.main.temp_config = deepcopy(self.main.mod.config)
 
-        if not len(self.main.temp_config):
+        if not self.main.temp_config:
             new_cfg = deepcopy(NEW_MODULE_CFG)
             new_cfg.update({
                 'description': NEW_MODULE_DESC % self.main.mod.name,
@@ -169,13 +170,13 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.draw_ui()
 
-#         new_widget = EditView(self, self.controls, self.main.temp_config)
-#
-#         # turn scroll layout content to new host widget
-#         _current_widget = self.ui.a2scroll_area.takeWidget()
-#         _current_widget.deleteLater()
-#         self.ui.a2scroll_area.setWidget(new_widget)
-#         self.settings_widget = new_widget
+        # new_widget = EditView(self, self.controls, self.main.temp_config)
+
+        # # turn scroll layout content to new host widget
+        # _current_widget = self.ui.a2scroll_area.takeWidget()
+        # _current_widget.deleteLater()
+        # self.ui.a2scroll_area.setWidget(new_widget)
+        # self.settings_widget = new_widget
 
         self.toggle_edit(True)
         self.settings_widget.setFocus()
@@ -217,7 +218,7 @@ class A2ModuleView(QtWidgets.QWidget):
                 log.error(traceback.format_exc().strip())
                 raise error
             except AttributeError as error:
-                log.debug('Error drawing widget: %s' % ctrl)
+                log.debug('Error drawing widget: %s', ctrl)
                 log.error(traceback.format_exc().strip())
                 raise error
 

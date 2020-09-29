@@ -47,7 +47,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
         self._selected_name = None
 
-        icons = a2ctrl.Icons.inst()
+        icons = a2ctrl.icons.Icons.inst()
         self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.context_menu_requested.connect(self.list_menu_called.emit)
         self.ui.item_list.items_removed.connect(self._on_items_removed)
