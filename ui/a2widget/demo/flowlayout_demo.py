@@ -14,28 +14,28 @@ class Window(QtWidgets.QWidget):
         spacing = 5
         margin = 5
 
-        flowLayout = FlowLayout(margin=margin, spacing=spacing)
-        flowLayout.addWidget(QtWidgets.QPushButton("Short"))
-        flowLayout.addWidget(QtWidgets.QPushButton("Longer"))
-        flowLayout.addWidget(QtWidgets.QPushButton("Different text"))
-        flowLayout.addWidget(QtWidgets.QPushButton("More text"))
-        flowLayout.addWidget(QtWidgets.QPushButton("Even longer button text"))
+        flow = FlowLayout(margin=margin, spacing=spacing)
+        flow.addWidget(QtWidgets.QPushButton("Short"))
+        flow.addWidget(QtWidgets.QPushButton("Longer"))
+        flow.addWidget(QtWidgets.QPushButton("Different text"))
+        flow.addWidget(QtWidgets.QPushButton("More text"))
+        flow.addWidget(QtWidgets.QPushButton("Even longer button text"))
 
         margin_slider = A2Slider(self, value=margin, mini=0, maxi=50, decimals=0)
-        margin_slider.value_changed.connect(flowLayout.set_marging)
+        margin_slider.value_changed.connect(flow.set_marging)
         margin_slider.value_changed.connect(self._refresh_window)
         main_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel('margin:'))
         main_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, margin_slider)
 
         spacing_slider = A2Slider(self, value=spacing, mini=0, maxi=50, decimals=0)
-        spacing_slider.value_changed.connect(flowLayout.set_spacing)
+        spacing_slider.value_changed.connect(flow.set_spacing)
         spacing_slider.value_changed.connect(self._refresh_window)
         main_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, QtWidgets.QLabel('spacing:'))
         main_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, spacing_slider)
 
-        main_layout.setLayout(2, QtWidgets.QFormLayout.SpanningRole, flowLayout)
+        main_layout.setLayout(2, QtWidgets.QFormLayout.SpanningRole, flow)
 
-    def _refresh_window(self, *args):
+    def _refresh_window(self, *_args):
         self.width()
         geo = self.geometry()
         sze = self.sizeHint()
@@ -56,8 +56,8 @@ class Window(QtWidgets.QWidget):
 def show():
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    mainWin = Window()
-    mainWin.show()
+    win = Window()
+    win.show()
     sys.exit(app.exec_())
 
 
