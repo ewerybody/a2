@@ -180,12 +180,17 @@ class DataPathUiHandler(QtCore.QObject):
         self.a2 = a2
         self.ui.data_folder.setText(self.a2.paths.data)
 
-        self.ui.button_set_user_dir_standard.clicked.connect(self.set_standard)
-        self.ui.button_set_user_dir_custom.clicked.connect(self.build_custom_data_menu)
-        self.ui.button_set_user_dir_custom.setIcon(a2ctrl.Icons.inst().more)
-        self.menu = QtWidgets.QMenu(self.ui.button_set_user_dir_custom)
+        if self.a2.is_portable():
+            self.ui.button_set_user_dir_standard.hide()
+            self.ui.button_set_user_dir_custom.hide()
+        else:
+            self.ui.portable_label.hide()
+            self.ui.button_set_user_dir_standard.clicked.connect(self.set_standard)
+            self.ui.button_set_user_dir_custom.clicked.connect(self.build_custom_data_menu)
+            self.ui.button_set_user_dir_custom.setIcon(a2ctrl.Icons.inst().more)
+            self.menu = QtWidgets.QMenu(self.ui.button_set_user_dir_custom)
 
-        self.ui.button_set_user_dir_standard.setEnabled(self.a2.paths.has_data_override())
+            self.ui.button_set_user_dir_standard.setEnabled(self.a2.paths.has_data_override())
 
     def set_standard(self):
         self._set_path(None)
@@ -253,45 +258,74 @@ class IntegrationUIHandler(QtCore.QObject):
         super(IntegrationUIHandler, self).__init__(parent)
         self.ui = ui
         self.a2 = a2
+
+        self.commands = {
+            'Load a2 on Windows Start': {
+                'get': 'get_win_startup_path',
+                'set': 'set_windows_startup',
+                'path_name': 'a2exe'
+            },
+            'Add Shortcut to Desktop': {
+                'get': 'get_desktop_link_path',
+                'set': 'set_desktop_link',
+                'path_name': 'a2uiexe'
+            },
+            'Add to Start Menu': {
+                'get': 'get_startmenu_link_paths',
+                'set': 'set_startmenu_links',
+                'path_name': 'a2'
+            }
+        }
+
+        if self.a2.is_portable():
+            portable_widget = _IntegrationCheckBox(self.parent(), 'Portable Mode', a2)
+            portable_widget.check.setEnabled(False)
+            portable_widget.check.setChecked(True)
+            self.ui.integrations_layout.addWidget(portable_widget)
+        else:
+            for label, data in self.commands.items():
+                widget = _IntegrationCheckBox(self.parent(), label, a2, data)
+                self.ui.integrations_layout.addWidget(widget)
+
+
+class _IntegrationCheckBox(QtWidgets.QWidget):
+    def __init__(self, parent, label, a2, data=None):
+        super(_IntegrationCheckBox, self).__init__(parent)
+
+        self.a2 = a2
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.setContentsMargins(0,0,0,0)
+        self.check = QtWidgets.QCheckBox(label, self)
+        self.check.clicked[bool].connect(self._set)
+        layout.addWidget(self.check)
+
         icon_size = self.a2.win.style.get('icon_size_small')
         pixmap = a2ctrl.Icons.inst().help.pixmap(icon_size)
-        for alert_label in (self.ui.load_on_win_start_alert, self.ui.add_desktop_shortcut_alert, self.ui.add_startmenu_shortcuts_alert):
-            alert_label.setPixmap(pixmap)
+        self.alert_label = QtWidgets.QLabel('')
+        self.alert_label.setPixmap(pixmap)
+        layout.addWidget(self.alert_label)
 
-        self.ui.load_on_win_start.clicked[bool].connect(self._set_windows_startup)
-        self._check_win_startup()
-        self.ui.add_desktop_shortcut.clicked[bool].connect(self._set_desktop_link)
-        self._check_desktop_link()
-        self.ui.add_startmenu_shortcuts.clicked[bool].connect(self._set_startmenu_links)
-        self._check_startmenu_links()
+        if data is None:
+            self.get_cmd = None
+            self.set_cmd = None
+            self.path_name = None
+        else:
+            self.get_cmd = data['get']
+            self.set_cmd = data['set']
+            self.path_name = data['path_name']
+        self._update_checkbox()
 
-    def _check_win_startup(self):
-        self._update_checkbox('get_win_startup_path', self.a2.paths.a2exe,
-                              self.ui.load_on_win_start, self.ui.load_on_win_start_alert)
+    def _set(self, state):
+        import a2ahk
+        a2ahk.call_lib_cmd(self.set_cmd, self.a2.paths.a2, int(state))
+        self._update_checkbox()
 
-    def _check_desktop_link(self):
-        self._update_checkbox('get_desktop_link_path', self.a2.paths.a2uiexe,
-                              self.ui.add_desktop_shortcut, self.ui.add_desktop_shortcut_alert)
+    def _update_checkbox(self):
+        if self.get_cmd is None:
+            return
 
-    def _check_startmenu_links(self):
-        self._update_checkbox('get_startmenu_link_paths', self.a2.paths.a2,
-                              self.ui.add_startmenu_shortcuts, self.ui.add_startmenu_shortcuts_alert)
-
-    def _set_windows_startup(self, state):
-        a2ahk.call_lib_cmd('set_windows_startup', self.a2.paths.a2, int(state))
-        self._check_win_startup()
-
-    def _set_desktop_link(self, state):
-        a2ahk.call_lib_cmd('set_desktop_link', self.a2.paths.a2, int(state))
-        self._check_desktop_link()
-
-    def _set_startmenu_links(self, state):
-        a2ahk.call_lib_cmd('set_startmenu_links', self.a2.paths.a2, int(state))
-        self._check_startmenu_links()
-
-    def _update_checkbox(self, cmd, target_path, checkbox, alert_label):
         try:
-            current_path = a2ahk.call_lib_cmd(cmd)
+            current_path = a2ahk.call_lib_cmd(self.get_cmd)
             tooltip = None
         except RuntimeError as error:
             current_path = ''
@@ -299,16 +333,16 @@ class IntegrationUIHandler(QtCore.QObject):
 
         checked = False
         if current_path:
+            target_path = getattr(self.a2.paths, self.path_name)
             checked = a2path.is_same(current_path, target_path)
             if not checked:
                 if tooltip is None:
                     tooltip = f'Currently set to: {current_path}'
 
-        # alert_label.setVisible(current_path != '' and not checked)
-        alert_label.setVisible(tooltip is not None)
-        for wgt in (checkbox, alert_label):
+        self.alert_label.setVisible(tooltip is not None)
+        for wgt in (self, self.check, self.alert_label):
             wgt.setToolTip(tooltip)
-        checkbox.setChecked(checked)
+        self.check.setChecked(checked)
 
 
 class AdvancedSettingsUiHandler(QtCore.QObject):

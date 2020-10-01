@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>229</height>
+    <width>839</width>
+    <height>768</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -21,8 +21,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>627</width>
-        <height>640</height>
+        <width>815</width>
+        <height>744</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout_3">
@@ -240,14 +240,14 @@
                </property>
               </widget>
              </item>
-             <item row="12" column="0">
+             <item row="13" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
                 <string notr="true">Python Executable:</string>
                </property>
               </widget>
              </item>
-             <item row="12" column="1">
+             <item row="13" column="1">
               <widget class="A2PathField" name="python_executable">
                <property name="enabled">
                 <bool>false</bool>
@@ -275,6 +275,16 @@
                </item>
               </layout>
              </item>
+             <item row="12" column="1">
+              <widget class="QLabel" name="portable_label">
+               <property name="text">
+                <string>a2 runs in portable mode! The data path is in the main directory and cannot be changed!</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -300,7 +310,7 @@
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QComboBox" name="proxy_http">
-              <property name="currentText">
+              <property name="currentText" stdset="0">
                <string notr="true">http://</string>
               </property>
               <item>

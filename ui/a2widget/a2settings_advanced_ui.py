@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # Form implementation generated from reading ui file:
-#   'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_advanced.ui'
+#   'a2\ui\a2widget\a2settings_advanced.ui'
 # licensing of that file applies.
 #
-# Created: Wed Jul  8 14:36:33 2020
-#      by: pyside2-uic  running on PySide2 5.15.0
+# Created: Fri Oct  2 01:54:44 2020
+#      by: pyside2-uic  running on PySide2 5.15.1
 #
 # pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
@@ -14,12 +14,15 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_Form:
     def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.resize(839, 768)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
         self.scrollArea = QtWidgets.QScrollArea(Form)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.a2scroll_area_background = QtWidgets.QWidget()
+        self.a2scroll_area_background.setGeometry(QtCore.QRect(0, 0, 815, 744))
         self.a2scroll_area_background.setObjectName("a2scroll_area_background")
         self.formLayout_3 = QtWidgets.QFormLayout(self.a2scroll_area_background)
         self.formLayout_3.setObjectName("formLayout_3")
@@ -145,12 +148,12 @@ class Ui_Form:
         self.label_10 = QtWidgets.QLabel(self.dev_widget)
         self.label_10.setText("Python Executable:")
         self.label_10.setObjectName("label_10")
-        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.LabelRole, self.label_10)
+        self.formLayout_2.setWidget(13, QtWidgets.QFormLayout.LabelRole, self.label_10)
         self.python_executable = A2PathField(self.dev_widget)
         self.python_executable.setEnabled(False)
         self.python_executable.setText("")
         self.python_executable.setObjectName("python_executable")
-        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.FieldRole, self.python_executable)
+        self.formLayout_2.setWidget(13, QtWidgets.QFormLayout.FieldRole, self.python_executable)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.button_set_user_dir_standard = QtWidgets.QPushButton(self.dev_widget)
@@ -162,6 +165,10 @@ class Ui_Form:
         self.button_set_user_dir_custom.setObjectName("button_set_user_dir_custom")
         self.horizontalLayout_4.addWidget(self.button_set_user_dir_custom)
         self.formLayout_2.setLayout(11, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_4)
+        self.portable_label = QtWidgets.QLabel(self.dev_widget)
+        self.portable_label.setWordWrap(True)
+        self.portable_label.setObjectName("portable_label")
+        self.formLayout_2.setWidget(12, QtWidgets.QFormLayout.FieldRole, self.portable_label)
         self.verticalLayout_3.addWidget(self.dev_widget)
         self.formLayout_3.setWidget(2, QtWidgets.QFormLayout.SpanningRole, self.dev_box)
         self.proxy_box = QtWidgets.QGroupBox(self.a2scroll_area_background)
@@ -175,7 +182,7 @@ class Ui_Form:
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.proxy_http = QtWidgets.QComboBox(self.proxy_box)
-        self.proxy_http.setCurrentText("http://")
+        self.proxy_http.setProperty("currentText", "http://")
         self.proxy_http.setObjectName("proxy_http")
         self.proxy_http.addItem("")
         self.proxy_http.setItemText(0, "http://")
@@ -216,7 +223,12 @@ class Ui_Form:
         self.formLayout_3.setWidget(3, QtWidgets.QFormLayout.SpanningRole, self.proxy_box)
         self.scrollArea.setWidget(self.a2scroll_area_background)
         self.verticalLayout.addWidget(self.scrollArea)
+
+        self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
-from a2widget.a2path_field import A2PathField
+    def retranslateUi(self, Form):
+        self.portable_label.setText(QtWidgets.QApplication.translate("Form", "a2 runs in portable mode! The data path is in the main directory and cannot be changed!", None, -1))
+
 from a2widget.a2slider import A2Slider
+from a2widget.a2path_field import A2PathField

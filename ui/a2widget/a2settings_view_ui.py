@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2settings_view.ui' applies.
+# Form implementation generated from reading ui file:
+#   'a2\ui\a2widget\a2settings_view.ui'
+# licensing of that file applies.
 #
-# Created: Fri Jul 17 16:35:22 2020
-#      by: pyside2-uic  running on PySide2 5.15.0
+# Created: Fri Oct  2 01:47:43 2020
+#      by: pyside2-uic  running on PySide2 5.15.1
 #
+# pylint: disable=W0201,C0103,C0111
 # WARNING! All changes made in this file will be lost!
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_a2settings(object):
+
+class Ui_a2settings:
     def setupUi(self, a2settings):
         a2settings.setObjectName("a2settings")
-        a2settings.resize(794, 380)
+        a2settings.resize(685, 650)
         self.a2settings_view_layout = QtWidgets.QVBoxLayout(a2settings)
         self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
         self.a2settings_view_layout.setObjectName("a2settings_view_layout")
@@ -36,44 +38,13 @@ class Ui_a2settings(object):
         self.a2hotkey.setText("Win+Shift+A")
         self.a2hotkey.setObjectName("a2hotkey")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.a2hotkey)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.load_on_win_start = QtWidgets.QCheckBox(self.main_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.load_on_win_start.sizePolicy().hasHeightForWidth())
-        self.load_on_win_start.setSizePolicy(sizePolicy)
-        self.load_on_win_start.setText("Load a2 on Windows Start")
-        self.load_on_win_start.setObjectName("load_on_win_start")
-        self.horizontalLayout_3.addWidget(self.load_on_win_start)
-        self.load_on_win_start_alert = QtWidgets.QLabel(self.main_tab)
-        self.load_on_win_start_alert.setMinimumSize(QtCore.QSize(16, 16))
-        self.load_on_win_start_alert.setText("")
-        self.load_on_win_start_alert.setObjectName("load_on_win_start_alert")
-        self.horizontalLayout_3.addWidget(self.load_on_win_start_alert)
-        self.formLayout.setLayout(1, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_3)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.add_desktop_shortcut = QtWidgets.QCheckBox(self.main_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.add_desktop_shortcut.sizePolicy().hasHeightForWidth())
-        self.add_desktop_shortcut.setSizePolicy(sizePolicy)
-        self.add_desktop_shortcut.setText("Add Shortcut to Desktop")
-        self.add_desktop_shortcut.setObjectName("add_desktop_shortcut")
-        self.horizontalLayout_5.addWidget(self.add_desktop_shortcut)
-        self.add_desktop_shortcut_alert = QtWidgets.QLabel(self.main_tab)
-        self.add_desktop_shortcut_alert.setMinimumSize(QtCore.QSize(16, 16))
-        self.add_desktop_shortcut_alert.setText("")
-        self.add_desktop_shortcut_alert.setObjectName("add_desktop_shortcut_alert")
-        self.horizontalLayout_5.addWidget(self.add_desktop_shortcut_alert)
-        self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_5)
+        self.integrations_layout = QtWidgets.QVBoxLayout()
+        self.integrations_layout.setObjectName("integrations_layout")
+        self.formLayout.setLayout(1, QtWidgets.QFormLayout.FieldRole, self.integrations_layout)
         self.remember_selection = QtWidgets.QCheckBox(self.main_tab)
         self.remember_selection.setText("Remember last selected Module")
         self.remember_selection.setObjectName("remember_selection")
-        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.remember_selection)
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.remember_selection)
         self.module_source_box = QtWidgets.QGroupBox(self.main_tab)
         self.module_source_box.setTitle("Module Sources")
         self.module_source_box.setObjectName("module_source_box")
@@ -105,24 +76,7 @@ class Ui_a2settings(object):
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
-        self.formLayout.setWidget(5, QtWidgets.QFormLayout.SpanningRole, self.module_source_box)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.add_startmenu_shortcuts = QtWidgets.QCheckBox(self.main_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.add_startmenu_shortcuts.sizePolicy().hasHeightForWidth())
-        self.add_startmenu_shortcuts.setSizePolicy(sizePolicy)
-        self.add_startmenu_shortcuts.setText("Add to Start Menu")
-        self.add_startmenu_shortcuts.setObjectName("add_startmenu_shortcuts")
-        self.horizontalLayout_6.addWidget(self.add_startmenu_shortcuts)
-        self.add_startmenu_shortcuts_alert = QtWidgets.QLabel(self.main_tab)
-        self.add_startmenu_shortcuts_alert.setMinimumSize(QtCore.QSize(16, 16))
-        self.add_startmenu_shortcuts_alert.setText("")
-        self.add_startmenu_shortcuts_alert.setObjectName("add_startmenu_shortcuts_alert")
-        self.horizontalLayout_6.addWidget(self.add_startmenu_shortcuts_alert)
-        self.formLayout.setLayout(3, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_6)
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.SpanningRole, self.module_source_box)
         self.verticalLayout.addLayout(self.formLayout)
         self.a2settings_tab.addTab(self.main_tab, "a2 Settings")
         self.advanced_tab = QtWidgets.QWidget()
