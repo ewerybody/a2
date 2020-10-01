@@ -179,9 +179,14 @@ class A2Obj:
 
     @property
     def db(self):
+        """Return the database instance. Make sure to start up if None yet."""
         if self._db is None:
             self.start_up()
         return self._db
+
+    def is_portable(self):
+        """Tell if we're in portable mode."""
+        return os.path.isfile(self.paths.a2_portable)
 
 
 class URLs:
@@ -216,34 +221,39 @@ class URLs:
 class Paths:
     """Aquires and hosts common paths around a2."""
     def __init__(self):
+        join = os.path.join
         self.ui = os.path.dirname(os.path.abspath(__file__))
         self.a2 = os.path.dirname(self.ui)
-        self.a2exe = os.path.join(self.a2, 'a2.exe')
-        self.a2uiexe = os.path.join(self.a2, 'a2ui.exe')
-        self.widgets = os.path.join(self.ui, 'a2widget')
-        self.elements = os.path.join(self.ui, 'a2element')
+        self.a2exe = join(self.a2, 'a2.exe')
+        self.a2uiexe = join(self.a2, 'a2ui.exe')
+        self.widgets = join(self.ui, 'a2widget')
+        self.elements = join(self.ui, 'a2element')
 
-        self.lib = os.path.join(self.a2, 'lib')
-        self.defaults = os.path.join(self.lib, '_defaults')
-        self.a2_script = os.path.join(self.lib, 'a2.ahk')
-        self.a2_urls = os.path.join(self.lib, 'a2_urls.ahk')
-        self.a2_config = os.path.join(self.lib, 'a2_config.ahk')
-        self.autohotkey = os.path.join(self.lib, 'Autohotkey', 'Autohotkey.exe')
+        self.lib = join(self.a2, 'lib')
+        self.defaults = join(self.lib, '_defaults')
+        self.a2_script = join(self.lib, 'a2.ahk')
+        self.a2_urls = join(self.lib, 'a2_urls.ahk')
+        self.a2_config = join(self.lib, 'a2_config.ahk')
+        self.autohotkey = join(self.lib, 'Autohotkey', 'Autohotkey.exe')
         self.python = sys.executable
-        self.git = os.path.join(self.a2, '.git')
+        self.git = join(self.a2, '.git')
+        self.a2_portable = join(self.lib, 'a2_portable.ahk')
 
         # get data dir from config override or the default appdata dir.
-        self.default_data = os.path.join(os.getenv('LOCALAPPDATA'), NAME, 'data')
-        self.data_override_file = os.path.join(self.default_data, 'a2_data_path.ahk')
+        self.default_data = join(os.getenv('LOCALAPPDATA'), NAME, 'data')
+        self.data_override_file = join(self.default_data, 'a2_data_path.ahk')
         self.data = None
         self._build_data_paths()
         self._test_dirs()
 
     def _build_data_paths(self):
-        try:
-            self.data = self.get_data_override_path()
-        except FileNotFoundError:
-            self.data = self.default_data
+        if os.path.isfile(self.a2_portable):
+            self.data = os.path.join(self.a2, 'data')
+        else:
+            try:
+                self.data = self.get_data_override_path()
+            except FileNotFoundError:
+                self.data = self.default_data
         os.makedirs(self.data, exist_ok=True)
 
         self.modules = os.path.join(self.data, 'modules')
@@ -264,6 +274,9 @@ class Paths:
                 'a2ui start interrupted! %s inaccessable!' % self.data)
 
     def set_data_override(self, path):
+        if os.path.isfile(self.a2_portable):
+            raise RuntimeError('Data path cannot be overridden when portable!')
+
         if not path:
             if os.path.isfile(self.data_override_file):
                 os.remove(self.data_override_file)
