@@ -16,6 +16,7 @@ from singlesiding import QSingleApplication
 
 class A2Main(QSingleApplication):
     """The a2 app foundation object."""
+
     def __init__(self):
         super(A2Main, self).__init__(sys.argv)
         # self._app = None
@@ -61,10 +62,12 @@ class A2Main(QSingleApplication):
 
         try:
             import a2core
+
             self._core = a2core.A2Obj.inst()
             self._core.start_up()
 
             import a2ui
+
             self._win = a2ui.A2Window(self)
             self._core.win = self._win
             self._core.app = self
@@ -74,11 +77,14 @@ class A2Main(QSingleApplication):
             # TODO: provide more detailed startup error report
             # error_class, error_msg, trace_back = sys.exc_info()
             title = 'a2app: Error on "init_a2_win()"!'
-            msg = ('Could not call A2Window! Error:\n%s\n'
-                   'Traceback:%s' % (error, traceback.format_exc().strip()))
+            msg = 'Could not call A2Window! Error:\n%s\n' 'Traceback:%s' % (
+                error,
+                traceback.format_exc().strip(),
+            )
 
             QtWidgets.QMessageBox.critical(
-                None, title, msg + '\n\nPress Ctrl+C to copy this message.')
+                None, title, msg + '\n\nPress Ctrl+C to copy this message.'
+            )
             raise RuntimeError(msg)
 
     def app_msg_get(self, msg):
@@ -111,6 +117,7 @@ def main():
     """The main entrypoint for the whole thing."""
     try:
         import a2output
+
         a2output.get_logwriter()
         app = A2Main()
         app.exec_()
