@@ -54,6 +54,11 @@ QCheckBox::indicator:indeterminate:hover {
 	image: url(res/css_check_off.svg);
 }
 
+QCheckBox::indicator:disabled {image: url(res/css_check_off_disabled.svg);}
+QCheckBox::indicator:checked:disabled {image: url(res/css_check_on_disabled.svg);}
+QCheckBox::indicator:indeterminate:disabled {image: url(res/css_check_int_disabled.svg);}
+
+
 QLabel#a2mod_view_source_label {
 	color: "%(color_pressed)s";
 }
