@@ -1,8 +1,13 @@
 # a2 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0bc56698a44144e68ff191105f97215d)](https://app.codacy.com/app/ewerybody/a2?utm_source=github.com&utm_medium=referral&utm_content=ewerybody/a2&utm_campaign=badger) [![Join the chat at https://gitter.im/ewerybody/a2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ewerybody/a2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Join the chat on Telegram](ui/res/telegram_join.svg)](https://t.me/a2script_de)
 
-Script managing and developing framework for [Autohotkey](http://ahkscript.org/) (currently **Autohotkey_L**)<br>
-with [Qt for Python](https://wiki.qt.io/Qt_for_Python) (PySide2) frontend.<br>
-See [wiki](https://github.com/ewerybody/a2/wiki) for more information especially the page about [setting you up](https://github.com/ewerybody/a2/wiki/setting-you-up).
+Script managing and developing framework for [Autohotkey](http://ahkscript.org/) (currently **Autohotkey_L**) with [Qt for Python](https://wiki.qt.io/Qt_for_Python) (PySide2) frontend.<br>
+See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especially:
+* [How to use a2](../../wiki/How-to-use-a2).
+* [How to develop a2](../../wiki/How-to-develop-a2).
+
+Basically a2 is an **Autohotkey runtime** that you can configure with a **UI**.
+
+The features in this runtime are introduced via **modules** bundled in **packages**. Each module can have various script files and is presented with its own configuration frontend to setup Hotkey shortcuts, Variables ect. These frontends are comprised of reusable elements that a developer can easily arrange.
 
 ## news:
 * Thanks to [rcedit](https://github.com/electron/rcedit) from the **electron** project we now have fully automated package building, zipping and versioning. 🚀 Before I actually opened up Visual Studio 2017 and hacked in the updated version numbers into the sfx file for building the installer executable...
