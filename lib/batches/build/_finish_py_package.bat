@@ -17,9 +17,6 @@ set /p pypath= < "%tmp_txt%"
 del "%tmp_txt%"
 echo pypath: %pypath%
 
-echo running py build script ...
-%pypath%\python.exe %here%finish_package.py
-
 echo building root a2ui executable ...
 %Ahk2Exe% /in "%source_path%\a2ui_starter.ahk" /out "%distpath%\a2ui.exe" /icon "%a2icon%" /mpress 0
 
@@ -28,5 +25,8 @@ echo building root a2 executable ...
 
 echo building root a2 Uninstaller executable ...
 %Ahk2Exe% /in "%source_path%\a2_uninstaller.ahk" /out "%distpath%\Uninstall a2.exe" /icon "%a2xicon%" /mpress 0
+
+echo running py build script ...
+%pypath%\python.exe %here%finish_package.py
 
 echo ######## Finish Py Package Done! ########

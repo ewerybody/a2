@@ -13,15 +13,16 @@ import _build_package_init
 import a2ahk
 import a2util
 
-A2PATH = _build_package_init.a2path
-A2UIPATH = _build_package_init.uipath
+Paths = _build_package_init.Paths
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
                     DESKTOP_ICO_FILE)
 ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
-LIB_EXCLUDES = ('batches', '_source', 'a2ui', 'a2ui dev', 'ahklib',
-                'a2init_check', 'a2dev_find_py', 'a2init_check')
+LIB_EXCLUDES = (
+    'batches', '_source', 'a2ui', 'a2ui dev', 'ahklib', 'a2init_check',
+    'a2dev_find_py', 'a2init_check', '_a2_portable'
+)
 UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
 UI_REMOVE_FILES = ('d3dcompiler_47.dll', 'Qt5VirtualKeyboard.dll', 'libGLESv2.dll',
                    'Qt5Quick.dll', 'opengl32sw.dll', 'Qt5QmlModels.dll', 'Qt5DBus.dll',
@@ -30,40 +31,36 @@ UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', r'PySide2\translations'
 
 
 def main():
-    package_cfg = a2util.json_read(os.path.join(A2PATH, 'package.json'))
+    package_cfg = a2util.json_read(os.path.join(Paths.a2, 'package.json'))
     package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
     print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
 
-    distroot = os.path.join(A2PATH, '_ package')
-    distpath = os.path.join(distroot, 'a2')
-    distlib = os.path.join(distpath, 'lib')
-    distui = os.path.join(distpath, 'ui')
-    a2lib = os.path.join(A2PATH, 'lib')
+    if not os.path.isdir(Paths.dist):
+        raise FileNotFoundError('No Package found at "%s"!' % Paths.dist)
 
-    if not os.path.isdir(distpath):
-        raise FileNotFoundError('No Package found at "%s"!' % distpath)
+    update_readme()
 
-    update_readme(a2lib)
+    copy_files()
+    cleanup()
 
-    copy_files(distpath, distlib, a2lib, distui)
-    cleanup(distui)
-
-    config_file = os.path.join(distlib, 'a2_config.ahk')
+    config_file = os.path.join(Paths.distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
-    with open(os.path.join(distpath, 'desktop.ini'), 'w') as file_obj:
+    with open(os.path.join(Paths.dist, 'desktop.ini'), 'w') as file_obj:
         file_obj.write(DESKTOP_INI_CODE)
+
+    make_portable()
 
     print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
 
 
-def update_readme(a2lib):
+def update_readme():
     # get currently used versions
-    ahk_exe = os.path.join(a2lib, 'Autohotkey', 'Autohotkey.exe')
-    batches_dir = os.path.join(a2lib, 'batches')
+    ahk_exe = os.path.join(Paths.lib, 'Autohotkey', 'Autohotkey.exe')
+    batches_dir = os.path.join(Paths.lib, 'batches')
     pattern = 'get_%s_version.ahk'
     names = 'AutoHotkey', 'PySide2', 'Python'
-    scripts = (os.path.join(a2lib, 'cmds', pattern % names[0]),
+    scripts = (os.path.join(Paths.lib, 'cmds', pattern % names[0]),
                os.path.join(batches_dir, 'versions', pattern % names[1]),
                os.path.join(batches_dir, 'versions', pattern % names[2]))
     versions = {}
@@ -73,7 +70,7 @@ def update_readme(a2lib):
         versions[name] = version_str
 
     # get versions in readme:
-    readme_path = os.path.join(A2PATH, 'README.md')
+    readme_path = os.path.join(Paths.a2, 'README.md')
     lines = []
     linebreak = ''
     with codecs.open(readme_path, encoding='utf8') as fileobj:
@@ -111,29 +108,28 @@ def update_readme(a2lib):
         print('Versions unchanged!')
 
 
-def copy_files(distpath, distlib, a2lib, distui):
-    print('distpath: %s' % distpath)
-    app_path = os.path.join(distpath, 'a2app')
+def copy_files():
+    app_path = os.path.join(Paths.dist, 'a2app')
     if not os.path.isdir(app_path):
         # raise FileNotFoundError(
         print(
             f'App Path was not found!\n  {app_path}\n'
             'Package already handled?')
     else:
-        os.rename(app_path, distui)
-    print('distui: %s' % distui)
+        os.rename(app_path, Paths.distui)
+    print('distui: %s' % Paths.distui)
 
     print('copying root files ...')
 
-    for item in os.scandir(A2PATH):
+    for item in os.scandir(Paths.a2):
         if item.is_file() and item.name in ROOT_FILES:
-            shutil.copy2(item.path, distpath)
+            shutil.copy2(item.path, Paths.dist)
 
     print('copying lib files ...')
-    if not os.path.isdir(distlib):
-        os.mkdir(distlib)
+    if not os.path.isdir(Paths.distlib):
+        os.mkdir(Paths.distlib)
 
-    for item in os.scandir(a2lib):
+    for item in os.scandir(Paths.lib):
         if item.name.startswith('_ '):
             continue
 
@@ -142,14 +138,14 @@ def copy_files(distpath, distlib, a2lib, distui):
             continue
 
         if item.name == 'a2ui release.ahk':
-            shutil.copy2(item.path, os.path.join(distlib, 'a2ui.ahk'))
+            shutil.copy2(item.path, os.path.join(Paths.distlib, 'a2ui.ahk'))
             continue
 
         if item.is_file():
             if ext == a2ahk.EXTENSION:
-                shutil.copy2(item.path, distlib)
+                shutil.copy2(item.path, Paths.distlib)
         else:
-            this_dest = os.path.join(distlib, item.name)
+            this_dest = os.path.join(Paths.distlib, item.name)
             if os.path.isdir(this_dest):
                 print(f'  dir already copied: {this_dest}')
             else:
@@ -157,20 +153,25 @@ def copy_files(distpath, distlib, a2lib, distui):
 
     print('copying ui files ...')
     for folder in UI_FOLDERS:
-        this_dest = os.path.join(distui, folder)
+        this_dest = os.path.join(Paths.distui, folder)
         if os.path.isdir(this_dest):
             print(f'  dir already copied: {this_dest}')
             continue
-        shutil.copytree(os.path.join(A2UIPATH, folder), this_dest, ignore=_ignore_items)
+        shutil.copytree(
+            os.path.join(Paths.ui, folder),
+            this_dest,
+            ignore=_ignore_items,
+            copy_function=shutil.copyfile
+        )
 
 
-def cleanup(distui):
+def cleanup():
     print('cleaning up package ...')
     for dirname in UI_REMOVE_DIRS:
-        path = os.path.join(distui, dirname)
+        path = os.path.join(Paths.distui, dirname)
         shutil.rmtree(path, ignore_errors=True)
     for filename in UI_REMOVE_FILES:
-        path = os.path.join(distui, filename)
+        path = os.path.join(Paths.distui, filename)
         if os.path.isfile(path):
             os.remove(path)
 
@@ -208,6 +209,36 @@ def _ignore_items(path, items):
         print('IGNORING: %s' % result)
 
     return result
+
+
+def make_portable():
+    print('making portable package ...')
+    if os.path.exists(Paths.dist_portable):
+        shutil.rmtree(Paths.dist_portable, ignore_errors=True)
+
+    print('  copying ...')
+    shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
+
+    shutil.copyfile(
+        os.path.join(Paths.lib, '_a2_portable.ahk'),
+        os.path.join(Paths.dist_portable, 'lib', 'a2_portable.ahk')
+    )
+    # remove unwanted files if present
+    for name in 'setup', 'Uninstall a2':
+        path = os.path.join(Paths.dist_portable, name + '.exe')
+        if os.path.isfile(path):
+            os.unlink(path)
+
+    print('  zipping ...')
+    name = 'a2_portable'
+    package_cfg = a2util.json_read(Paths.package_config)
+    portable_name = f'{name}_{package_cfg["version"]}_{_build_package_init.PACKAGE_SUB_NAME}.zip'
+    tar = os.path.join(os.getenv('WINDIR'), 'System32', 'tar.exe')
+    subprocess.call(
+        [tar, '-a', '-c', '-f',
+         os.path.join(Paths.distroot, portable_name),
+         '*'], cwd=Paths.dist_portable,
+    )
 
 
 if __name__ == '__main__':
