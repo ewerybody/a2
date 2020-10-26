@@ -180,6 +180,7 @@ def unroll_seconds(value, decimals=2):
     :rtype: str
     """
     current = float(value)
+    name = 'seconds'
     if value > 60:
         d = [(60, 'minutes'), (60, 'hours'), (24, 'days'),
              (7, 'weeks'), (4, 'months'), (12, 'years')]
@@ -194,8 +195,6 @@ def unroll_seconds(value, decimals=2):
                 current = last
                 break
             last = current
-    else:
-        name = 'seconds'
 
     v = round(current, decimals)
     if decimals == 0:

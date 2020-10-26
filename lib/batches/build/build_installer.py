@@ -12,74 +12,14 @@ from shutil import copy2
 import _build_package_init
 import a2util
 
-PACKAGE_SUB_NAME = 'alpha'
-NAME = 'a2_installer'
-MANIFEST_NAME = NAME + '_manifest.xml'
-SRC_SFX = NAME + '.sfx.exe'
-RCEDIT_EXE = 'rcedit-x64.exe'
-SEVENZ_EXE = '7zr\\7zr.exe'
+Paths = _build_package_init.Paths
+PACKAGE_SUB_NAME = _build_package_init.PACKAGE_SUB_NAME
 TMP_NAME = 'a2_temp_buildpath'
 INSTALLER_CFG = (
     ';!@Install@!UTF-8!\n'
     'RunProgram="a2\\setup.exe"\n'
     ';!@InstallEnd@!')
 ERROR_NO_PACKAGE = 'No package? No need to build an installer :/ build a package first!'
-
-class Paths:
-    """Path holder obj."""
-    a2 = _build_package_init.a2path
-    ahk2exe = os.path.join(os.environ['PROGRAMFILES'], 'AutoHotkey', 'Compiler', 'Ahk2Exe.exe')
-    package_config = os.path.join(a2, 'package.json')
-
-    source = os.path.join(a2, 'lib', '_source')
-    sfx = os.path.join(source, SRC_SFX)
-    rcedit = os.path.join(source, RCEDIT_EXE)
-    manifest = os.path.join(source, MANIFEST_NAME)
-    sevenz_exe = os.path.join(source, SEVENZ_EXE)
-    installer_script = os.path.join(source, NAME + '.ahk')
-
-    distroot = os.path.join(a2, '_ package')
-    dist = os.path.join(distroot, 'a2')
-    sfx_target = os.path.join(distroot, SRC_SFX)
-    manifest_target = os.path.join(distroot, MANIFEST_NAME)
-    archive_target = os.path.join(distroot, 'archive.7z')
-    config_target = os.path.join(distroot, 'config.txt')
-
-    @classmethod
-    def check(cls):
-        """Test all the needed paths."""
-        whats_missing = {}
-        for name, path in cls.iter():
-            if not os.path.exists(path):
-                print(f'Does NOT exist: {path}!!!')
-                whats_missing[name] = path
-
-        if whats_missing:
-            raise FileNotFoundError(
-                'There are some paths missing!\n  %s\nPlease resolve before continuing!' %
-                '\n  '.join(f'{k}: {p}' for k, p in whats_missing.items()))
-
-        print('All paths checked! Nice! Let\'s go!')
-
-    @staticmethod
-    def _ignore_name(name):
-        if name.startswith('_'):
-            return True
-        if name in ('check', 'iter'):
-            return True
-        if name.endswith('_target'):
-            return True
-        if name.startswith('dist'):
-            return True
-        return False
-
-    @classmethod
-    def iter(cls):
-        """Loop over the objs paths."""
-        for name in cls.__dict__:
-            if cls._ignore_name(name):
-                continue
-            yield name, cls.__dict__[name]
 
 
 def main():
@@ -302,7 +242,7 @@ def _copy_together_installer_binary(version_label):
         set installerx=%distroot%\\a2_installer.exe
         copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
     """
-    installer_name = f'{NAME}_{version_label}_{PACKAGE_SUB_NAME}.exe'
+    installer_name = f'{_build_package_init.NAME}_{version_label}_{PACKAGE_SUB_NAME}.exe'
     installer_target = os.path.join(Paths.distroot, installer_name)
     print('installer_target: %s' % installer_target)
     if os.path.isfile(installer_target):
