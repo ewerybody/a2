@@ -1,0 +1,17 @@
+﻿{
+  "Add Shortcut to Desktop": {
+    "get": "get_desktop_link_path",
+    "path_name": "a2uiexe",
+    "set": "set_desktop_link"
+  },
+  "Add to Start Menu": {
+    "get": "get_startmenu_link_paths",
+    "path_name": "a2",
+    "set": "set_startmenu_links"
+  },
+  "Load a2 on Windows Start": {
+    "get": "get_win_startup_path",
+    "path_name": "a2exe",
+    "set": "set_windows_startup"
+  }
+}

@@ -258,34 +258,35 @@ class IntegrationUIHandler(QtCore.QObject):
         super(IntegrationUIHandler, self).__init__(parent)
         self.ui = ui
         self.a2 = a2
-
-        self.commands = {
-            'Load a2 on Windows Start': {
-                'get': 'get_win_startup_path',
-                'set': 'set_windows_startup',
-                'path_name': 'a2exe'
-            },
-            'Add Shortcut to Desktop': {
-                'get': 'get_desktop_link_path',
-                'set': 'set_desktop_link',
-                'path_name': 'a2uiexe'
-            },
-            'Add to Start Menu': {
-                'get': 'get_startmenu_link_paths',
-                'set': 'set_startmenu_links',
-                'path_name': 'a2'
-            }
-        }
+        self._cmds = None
 
         if self.a2.is_portable():
             portable_widget = _IntegrationCheckBox(self.parent(), 'Portable Mode', a2)
             portable_widget.check.setEnabled(False)
             portable_widget.check.setChecked(True)
             self.ui.integrations_layout.addWidget(portable_widget)
+            # TBD: finish portable checker
+            # button = QtWidgets.QPushButton('check')
+            # button.clicked.connect(self._check_portable)
+            # portable_widget.layout().insertWidget(1, button)
         else:
-            for label, data in self.commands.items():
+            for label, data in self.cmds.items():
                 widget = _IntegrationCheckBox(self.parent(), label, a2, data)
                 self.ui.integrations_layout.addWidget(widget)
+
+    @property
+    def cmds(self):
+        if self._cmds is None:
+            self._cmds = a2util.json_read(os.path.join(
+                self.a2.paths.ui, 'a2widget', 'integration_ui.json')
+            )
+        return self._cmds
+
+    def _check_portable(self):
+        for label, data in self.cmds.items():
+            current_path = a2ahk.call_lib_cmd(data['get'])
+            if current_path:
+                log.warn(f'{label} is set! ({current_path})')
 
 
 class _IntegrationCheckBox(QtWidgets.QWidget):
@@ -322,6 +323,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
     def _update_checkbox(self):
         if self.get_cmd is None:
+            self.alert_label.setVisible(False)
             return
 
         try:
