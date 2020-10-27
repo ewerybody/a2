@@ -494,12 +494,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.mod.rollback(file_name)
         self.settings_changed()
 
-    def on_help_action(self):
-        text = self.sender().text()
-        print('text: %s' % text)
-        print('self.a2.urls.help: %s' % self.a2.urls.help)
-        a2util.surf_to(self.a2.urls.help)
-
     def on_revert_settings(self):
         if self.mod is None:
             return
