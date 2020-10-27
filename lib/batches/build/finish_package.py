@@ -24,9 +24,12 @@ LIB_EXCLUDES = (
     'a2dev_find_py', 'a2init_check', '_a2_portable'
 )
 UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
-UI_REMOVE_FILES = ('d3dcompiler_47.dll', 'Qt5VirtualKeyboard.dll', 'libGLESv2.dll',
-                   'Qt5Quick.dll', 'opengl32sw.dll', 'Qt5QmlModels.dll', 'Qt5DBus.dll',
-                   r'PySide2\plugins\platforms\qwebgl.dll')
+UI_REMOVE_FILES = (
+    'd3dcompiler_47.dll', 'Qt5VirtualKeyboard.dll', 'libGLESv2.dll', 'Qt5Quick.dll',
+    'opengl32sw.dll', 'Qt5QmlModels.dll', 'Qt5DBus.dll', 'Qt5Pdf.dll',
+    r'PySide2\plugins\platforms\qwebgl.dll', r'PySide2\plugins\imageformats\qtiff.dll',
+    r'PySide2\plugins\imageformats\qpdf.dll', r'PySide2\plugins\imageformats\qtga.dll'
+)
 UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', r'PySide2\translations'
 
 
