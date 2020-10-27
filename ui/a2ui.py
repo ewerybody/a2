@@ -127,7 +127,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExit_a2ui.setIcon(icons.clear)
         self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
 
-        self.ui.actionReport_Issue.triggered.connect(partial(a2util.surf_to, self.a2.urls.help_report_issue))
+        self.ui.actionReport_Issue.triggered.connect(
+            partial(a2util.surf_to, self.a2.urls.help_report_issue)
+        )
         self.ui.actionReport_Issue.setIcon(icons.github)
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
@@ -150,8 +152,12 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
-        self.ui.actionUninstall_a2.setIcon(icons.a2x)
-        self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
+        if self.a2.is_portable():
+            self.ui.actionUninstall_a2.deleteLater()
+            self.on_uninstall_a2 = None
+        else:
+            self.ui.actionUninstall_a2.setIcon(icons.a2x)
+            self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
 
     def _setup_shortcuts(self):
         QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
@@ -292,7 +298,8 @@ class A2Window(QtWidgets.QMainWindow):
         else:
             try:
                 success = self.restoreGeometry(
-                    QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8')))
+                    QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8'))
+                )
                 if not success:
                     self.reset_window_geometry()
             except Exception as error:
