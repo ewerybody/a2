@@ -21,7 +21,7 @@ DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
 ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
 LIB_EXCLUDES = (
     'batches', '_source', 'a2ui', 'a2ui dev', 'ahklib', 'a2init_check',
-    'a2dev_find_py', 'a2init_check', '_a2_portable'
+    'a2dev_find_py', 'a2init_check', '_a2_portable', 'a2_portable',
 )
 UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
 UI_REMOVE_FILES = (
