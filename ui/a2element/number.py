@@ -84,20 +84,25 @@ class Edit(EditCtrl):
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
-        self.ui.value.valueChanged.connect(self.set_value)
+        # Make value widget adapt to changes of other settings.
+        for ctrl, set_func in (
+            (self.ui.cfg_min, self.ui.value.setMinimum),
+            (self.ui.cfg_max, self.ui.value.setMaximum),
+            (self.ui.cfg_decimals, self.ui.value.setDecimals),
+            (self.ui.cfg_step_len, self.ui.value.setSingleStep)
+        ):
+            if ctrl.objectName().startswith('cfg_'):
+                set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))
+            ctrl.valueChanged.connect(set_func)
+        # Make sure valueChanged signal does not pass a value into set_value
+        self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
+
+        # Setting actual value widget just after all specs have been set.
         if 'value' in self.cfg:
             self.ui.value.setValue(self.cfg['value'])
         else:
             self.set_value()
-
-        for ctrl, set_func in ((self.ui.cfg_min, self.ui.value.setMinimum),
-                               (self.ui.cfg_max, self.ui.value.setMaximum),
-                               (self.ui.cfg_decimals, self.ui.value.setDecimals),
-                               (self.ui.cfg_step_len, self.ui.value.setSingleStep)):
-            if ctrl.objectName().startswith('cfg_'):
-                set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))
-            ctrl.valueChanged.connect(set_func)
-        self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
+        self.ui.value.valueChanged.connect(self.set_value)
 
     def set_value(self, value=None, *_args):
         if value is None:
