@@ -91,8 +91,8 @@ class Edit(EditCtrl):
             (self.ui.cfg_decimals, self.ui.value.setDecimals),
             (self.ui.cfg_step_len, self.ui.value.setSingleStep)
         ):
-            if ctrl.objectName().startswith('cfg_'):
-                set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))
+            # value from dict, backup value from ctrl
+            set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))
             ctrl.valueChanged.connect(set_func)
         # Make sure valueChanged signal does not pass a value into set_value
         self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
