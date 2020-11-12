@@ -72,9 +72,11 @@ class A2Settings(QtWidgets.QWidget):
     def build_add_source_menu(self):
         icons = a2ctrl.Icons.inst()
         menu = self.add_source_menu
-
         menu.clear()
-        menu.addAction(icons.folder_add, 'Create Local', self.main.create_local_source)
+
+        if self.a2.dev_mode:
+            menu.addAction(icons.folder_add, 'Create Local', self.main.create_local_source)
+
         menu.addAction(icons.cloud_download, 'Add From URL', self.add_source_url)
 
         featured_path = os.path.join(self.a2.paths.defaults, 'featured_packages.json')
