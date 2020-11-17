@@ -394,30 +394,3 @@ BitBlt(ddc, dx, dy, dw, dh, sdc, sx, sy, Raster:="") {
         , "int", sx, "int", sy
         , "uint", Raster ? Raster : 0x00CC0020)
 }
-
-
-Gdip_Startup(multipleInstances:=0) {
-    Static Ptr := "UPtr"
-    pToken := 0
-    If (multipleInstances=0) {
-        If !DllCall("GetModuleHandle", "str", "gdiplus", Ptr)
-            DllCall("LoadLibrary", "str", "gdiplus")
-    } Else {
-        DllCall("LoadLibrary", "str", "gdiplus")
-    }
-
-    VarSetCapacity(si, A_PtrSize = 8 ? 24 : 16, 0)
-    si := Chr(1)
-    DllCall("gdiplus\GdiplusStartup", "UPtr*", pToken, Ptr, &si, Ptr, 0)
-    return pToken
-}
-
-Gdip_Shutdown(pToken) {
-   Static Ptr := "UPtr"
-
-   DllCall("gdiplus\GdiplusShutdown", Ptr, pToken)
-   hModule := DllCall("GetModuleHandle", "str", "gdiplus", Ptr)
-   if hModule
-      DllCall("FreeLibrary", Ptr, hModule)
-   return 0
-}
