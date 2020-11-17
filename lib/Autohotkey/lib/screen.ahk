@@ -1,29 +1,23 @@
-; Gets width of all screens combined. NOTE: Single screens may have different vertical resolutions so some parts of the area returned here might not belong to any screens!
-screen_get_virtual_size(ByRef x, ByRef y, ByRef w, ByRef h)
-{
-    SysGet, x, 76 ;Get virtual screen coordinates of all monitors
+screen_get_virtual_size(ByRef x, ByRef y, ByRef w, ByRef h) {
+    ; Get width of all screens combined.
+    ; NOTE: Single screens may have different vertical resolutions so some parts of
+    ; the area returned here might not belong to any screens!
+    SysGet, x, 76
     SysGet, y, 77
     SysGet, w, 78
     SysGet, h, 79
 }
 
 
- /*
- * Helper Function
- *     Returns the MonitorID where the specified window is located on
- *     By shnywong
- *
- * @sample
- *     screen_get_index(WinExist("A"))
- *
- * @param   HWND     hwnd     Handler of the window to be found
- * @return  integer
- *
- * @docu    https://autohotkey.com/board/topic/69464-how-to-determine-a-window-is-in-which-monitor/#entry440355
- */
-
-screen_get_index(hwnd)
-{
+screen_get_index(hwnd) {
+    ; Return the MonitorID where the specified window is located on
+    ; @author shnywong
+    ; @docu
+    ;     https://autohotkey.com/board/topic/69464-how-to-determine-a-window-is-in-which-monitor/#entry440355
+    ; @sample
+    ;     screen_get_index(WinExist("A"))
+    ; @param   HWND     hwnd     Handler of the window to be found
+    ; @return  integer
     ; Starts with 1.
     monitorIndex := 1
 
@@ -57,8 +51,8 @@ screen_get_index(hwnd)
     return %monitorIndex%
 }
 
-class Screen_Workarea
-{
+
+class Screen_Workarea {
 	__new(index=1) {
 		SysGet, WorkArea, MonitorWorkArea, %index%
 		this.left := WorkAreaLeft

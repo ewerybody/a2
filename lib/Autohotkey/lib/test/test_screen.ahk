@@ -7,4 +7,9 @@ msgbox screen_index: %screen_index%
 
 workarea := new Screen_Workarea()
 top := workarea.top
-msgbox top1: %top%
+bottom := workarea.bottom
+left := workarea.left
+right := workarea.right
+width := workarea.width
+height := workarea.height
+msgbox top: %top% bottom: %bottom%`nleft: %left% right: %right%`nwidth: %width% height: %height%

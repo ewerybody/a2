@@ -141,7 +141,7 @@ window_get_rect(byref x, byref y, byref width, byref height, win_id="") {
 	height := _h - (WIN_FRAME_HEIGHT - 1)
 
 	; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%, WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
-	; ; tt(txt, 1)
+	; tt(txt, 1)
 	; MsgBox, window_get_rect`n%txt%
 }
 
@@ -157,4 +157,34 @@ window_set_rect(byref x, byref y, byref width, byref height, win_id="") {
 	; ; tt(txt, 1)
 	; MsgBox, window_set_rect`n%txt%`nwin_id: %win_id%
 	WinMove, ahk_id %win_id%,, %_x%, %y%, %_w%, %_h%
+}
+
+
+window_get_geometry(hwnd) {
+   ; GeekDude:
+   ; https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
+   ; Find a window's visible boundaries W10 compatible.
+   ; Modified by Marius Șucan to return an array where:
+   ; geo := window_get_geometry(handle)
+   ; geo.x, geo.y   : Top-left corner of the window
+   ; geo.w, geo.h   : Extends of the window in width & height
+   ; geo.x2, geo.y2   : Bottom-right corner of the window
+   size := VarSetCapacity(rect, 16, 0)
+   error := DllCall("dwmapi\DwmGetWindowAttribute"
+      , "UPtr", hWnd  ; HWND  hwnd
+      , "UInt", 9     ; DWORD dwAttribute (DWMWA_EXTENDED_FRAME_BOUNDS)
+      , "UPtr", &rect ; PVOID pvAttribute
+      , "UInt", size  ; DWORD cbAttribute
+      , "UInt")       ; HRESULT
+
+   If error {
+       DllCall("GetWindowRect", "UPtr", hwnd, "UPtr", &rect, "UInt")
+   }
+
+   r := []
+   r.x := NumGet(rect, 0, "Int"), r.y := NumGet(rect, 4, "Int")
+   r.x2 := NumGet(rect, 8, "Int"), r.y2 := NumGet(rect, 12, "Int")
+   r.w := Abs(max(r.x, r.x2) - min(r.x, r.x2))
+   r.h := Abs(max(r.y, r.y2) - min(r.y, r.y2))
+   Return r
 }
