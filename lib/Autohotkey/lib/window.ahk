@@ -161,9 +161,9 @@ window_set_rect(byref x, byref y, byref width, byref height, win_id="") {
 
 
 window_get_geometry(hwnd) {
-   ; GeekDude:
-   ; https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
    ; Find a window's visible boundaries W10 compatible.
+   ; From GeekDude:
+   ; https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
    ; Modified by Marius Șucan to return an array where:
    ; geo := window_get_geometry(handle)
    ; geo.x, geo.y   : Top-left corner of the window
