@@ -40,7 +40,8 @@ class A2Main(QSingleApplication):
         self.addLibraryPath(pyside_plugin_path)
 
         winfo = platform.uname()
-        self.info('initialised!\n  python: %s\n  windows: %s', sys.version, str(winfo)[31:-1])
+        self.info('initialised!\n  Python: %s\n  Windows: %s\n  Qt: %s',
+                  sys.version, str(winfo)[31:-1], sys.modules['PySide2'].__version__)
 
         # this is to set the actual taskbar icon
         windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
