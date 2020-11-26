@@ -22,8 +22,8 @@
 	2011-04-27, 16:12
 */
 
-explorer_get_selected(hwnd="")
-{
+
+explorer_get_selected(hwnd="") {
 	return explorer_get(hwnd, true)
 }
 
@@ -115,4 +115,15 @@ explorer_select(basename) {
             window.document.SelectItem(item, 0)
     }
     return file_found
+}
+
+
+explorer_show(path) {
+    ; Open an Explorer with the given directory or file selected.
+    path := StrReplace(path, "\\", "\")
+    if path_is_file(path)
+        cmd = explorer.exe /select,"%path%"
+    else
+        cmd = explorer.exe "%path%"
+    Run, %cmd%
 }
