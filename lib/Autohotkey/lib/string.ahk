@@ -1,6 +1,6 @@
-﻿; Assembles a single string from a given array of strings.
-
+﻿
 string_join(byref array_of_strings, byref separator=", ") {
+    ; Assemble a single string from a given array of strings.
     result := ""
     Loop, % array_of_strings.MaxIndex() - 1
     {
@@ -9,14 +9,14 @@ string_join(byref array_of_strings, byref separator=", ") {
     }
     last_item := array_of_strings[array_of_strings.MaxIndex()]
     result = %result%%last_item%
-    Return, result
+    Return result
 }
 
 
-; looks up the items of an array object
-; returns index of search string if found
-; returns 0 otherwise
 string_is_in_array(byref search, byref array) {
+    ; look up the items of an array object
+    ; returns index of search string if found
+    ; returns 0 otherwise
     ;for i, value in array {
     Loop % array.MaxIndex() {
         if (search == array[A_Index])
@@ -26,8 +26,8 @@ string_is_in_array(byref search, byref array) {
 }
 
 
-; Returns true if given string looks like an URL
 string_is_web_address(string) {
+    ; Return true if given string looks like an URL
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
     else {
@@ -40,16 +40,14 @@ string_is_web_address(string) {
     }
 }
 
-; Determines if a string starts with another string.
-; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
-string_startswith(byref string, byref startstr)
-{
+string_startswith(byref string, byref startstr) {
+    ; Determines if a string starts with another string.
+    ; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
     return InStr(string, startstr) = 1
 }
 
-; Determines if a string ends with another string
-string_endswith(byref string, byref end)
-{
+string_endswith(byref string, byref end) {
+    ; Determine if a string ends with another string
     return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
 }
 
@@ -62,8 +60,7 @@ is_whitespace(byref string) {
 }
 
 
-string_trim(byref string, byref trim)
-{
+string_trim(byref string, byref trim) {
     return string_trimLeft(string_trimRight(string, trim), trim)
 }
 
@@ -100,8 +97,7 @@ string_trimRight(string, trim)
 
 ; WIP: Which version do you like more?!?!
 ; strips whitespace from start and end of a string:
-string_strip(byref inputString)
-{
+string_strip(byref inputString) {
     ; if first char is space, tab or linefeed, remove it and look again:
     c := SubStr(inputString, 1, 1)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
@@ -120,24 +116,22 @@ string_strip(byref inputString)
     return inputString
 }
 
-; Remove quotes from a string if necessary
-string_unquote(string)
-{
-    if (InStr(string, """") = 1 && string_endsWith(string, """"))
-        return string_trim(string, """")
+string_unquote(string, quote = """") {
+    ; Remove quotes from a string if necessary
+    if (InStr(string, quote) = 1 && string_endsWith(string, quote))
+        return string_trim(string, quote)
     return string
 }
 
-; Add quotes to a string only if necessary
-string_quote(string, once = 1)
-{
-    if (once)
+string_quote(string, once = 1, quote = """") {
+    ; Add quotes to a string only if necessary
+    if once
     {
-        if (InStr(string, """") != 1)
-            string := """" string
-        if (!string_endsWith(string, """"))
-            string := string """"
+        if (InStr(string, quote) != 1)
+            string := quote string
+        if (!string_endsWith(string, quote))
+            string := string quote
         return string
     }
-    return """" string """"
+    return quote string quote
 }

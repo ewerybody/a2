@@ -1,11 +1,5 @@
-﻿#Include  %A_ScriptDir%\..\path.ahk
-
-
-assert(things) {
-    if things
-        return "✔"
-    Return "❌"
-}
+﻿#Include %A_ScriptDir%\..\path.ahk
+#Include a2test.ahk
 
 p := A_ScriptFullPath
 x := path_dirname(p)
@@ -13,29 +7,29 @@ y := path_dirname(x)
 z := path_join(y, ["somedir", "readme.txt"])
 sub_dir := "\..\..\ASD"
 n := path_normalize(y sub_dir)
-a1 := assert(!path_is_absolute(sub_dir))
-a2 := assert(path_is_absolute(n))
-f1 := assert(path_is_file(p))
-f2 := assert(!path_is_file(z))
-f3 := assert(!path_is_file(x))
+a1 := assertmsg(!path_is_absolute(sub_dir))
+a2 := assertmsg(path_is_absolute(n))
+f1 := assertmsg(path_is_file(p))
+f2 := assertmsg(!path_is_file(z))
+f3 := assertmsg(!path_is_file(x))
 
-d1 := assert(path_is_dir(x))
-d2 := assert(!path_is_dir(n))
+d1 := assertmsg(path_is_dir(x))
+d2 := assertmsg(!path_is_dir(n))
 b1 := path_basename(p)
 
-e0 := assert(!path_is_empty(A_ScriptDir))
+e0 := assertmsg(!path_is_empty(A_ScriptDir))
 test_dir := A_ScriptDir "\_ emptytest39yfh32oufh"
 FileCreateDir, %test_dir%
-e1 := assert(path_is_empty(test_dir))
+e1 := assertmsg(path_is_empty(test_dir))
 FileRemoveDir, %test_dir%
 
 write_test_file := path_join(A_ScriptDir, ["write_test_file"])
 path_set_writable(write_test_file)
 FileAppend, write_test_file, %write_test_file%
 path_set_readonly(write_test_file)
-w1 := assert(!path_is_writeable(write_test_file))
+w1 := assertmsg(!path_is_writeable(write_test_file))
 path_set_writable(write_test_file)
-w2 := assert(path_is_writeable(write_test_file))
+w2 := assertmsg(path_is_writeable(write_test_file))
 FileDelete, %write_test_file%
 
 msg = a path: %p%`npath_dirname: %x%`npath_dirname: %y%`npath_join: %z%`n`n
