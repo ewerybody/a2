@@ -139,6 +139,10 @@ class ModSourceWidget(QtWidgets.QWidget):
     def _on_update_button(self):
         self.set_busy(MSG_FETCHING)
         if self._update_to_version is None:
+            # debug:
+            # remote_data = a2modsource.get_remote_cfg(self.mod_source.config.get('update_url'))
+            # self._show_check_result(remote_data)
+            # threaded:
             update_check_thread = self.mod_source.get_update_checker(self.main)
             update_check_thread.data_fetched.connect(self._show_check_result)
             update_check_thread.update_error.connect(self._show_update_error)
@@ -229,6 +233,9 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def _change_version(self, version):
         self.set_busy()
+        # debug
+        # TODO
+        # threaded
         update_thread = self.mod_source.get_updater(self.main, version, self._remote_data)
         update_thread.fetched.connect(self._show_update_finished)
         update_thread.failed.connect(self._show_update_error)
