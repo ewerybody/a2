@@ -35,7 +35,7 @@ UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', r'PySide2\translations'
 
 def main():
     package_cfg = a2util.json_read(os.path.join(Paths.a2, 'package.json'))
-    package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
+    package_name = f'a2 {package_cfg["version"]} {PACKAGE_SUB_NAME}'
     print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
 
     if not os.path.isdir(Paths.dist):
@@ -185,11 +185,6 @@ def _ignore_items(path, items):
     for item in items:
         # ignore temp stuff
         if item.startswith('_ '):
-            result.append(item)
-            continue
-
-        # ignore ahk lib tests
-        if path_low.endswith('\\a2\\lib\\autohotkey\\lib\\test'):
             result.append(item)
             continue
 

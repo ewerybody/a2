@@ -1,10 +1,11 @@
 # adding a2 paths for imports
 import os
 import sys
+from os.path import join
 
 THIS_PATH = os.path.dirname(__file__)
-A2PATH = os.path.abspath(os.path.join(THIS_PATH, '..', '..', '..'))
-UIPATH = os.path.join(A2PATH, 'ui')
+A2PATH = os.path.abspath(join(THIS_PATH, '..', '..', '..'))
+UIPATH = join(A2PATH, 'ui')
 sys.path.append(UIPATH)
 
 NAME = 'a2_installer'
@@ -18,28 +19,29 @@ SEVENZ_EXE = '7zr\\7zr.exe'
 class Paths:
     """Path holder object."""
     a2 = A2PATH
-    lib = os.path.join(a2, 'lib')
+    lib = join(a2, 'lib')
     ui = UIPATH
-    ahk2exe = os.path.join(os.environ['PROGRAMFILES'], 'AutoHotkey', 'Compiler', 'Ahk2Exe.exe')
-    package_config = os.path.join(a2, 'package.json')
+    ahk2exe = join(os.environ['PROGRAMFILES'], 'AutoHotkey', 'Compiler', 'Ahk2Exe.exe')
+    package_config = join(a2, 'package.json')
 
-    source = os.path.join(lib, '_source')
-    sfx = os.path.join(source, SRC_SFX)
-    rcedit = os.path.join(source, RCEDIT_EXE)
-    manifest = os.path.join(source, MANIFEST_NAME)
-    sevenz_exe = os.path.join(source, SEVENZ_EXE)
-    installer_script = os.path.join(source, NAME + '.ahk')
+    source = join(lib, '_source')
+    sfx = join(source, SRC_SFX)
+    rcedit = join(source, RCEDIT_EXE)
+    manifest = join(source, MANIFEST_NAME)
+    sevenz_exe = join(source, SEVENZ_EXE)
+    installer_script = join(source, NAME + '.ahk')
 
-    distroot = os.path.join(a2, '_ package')
-    sfx_target = os.path.join(distroot, SRC_SFX)
-    manifest_target = os.path.join(distroot, MANIFEST_NAME)
-    archive_target = os.path.join(distroot, 'archive.7z')
-    config_target = os.path.join(distroot, 'config.txt')
+    distroot = join(a2, '_ package')
+    sfx_target = join(distroot, SRC_SFX)
+    manifest_target = join(distroot, MANIFEST_NAME)
+    archive_target = join(distroot, 'archive.7z')
+    config_target = join(distroot, 'config.txt')
 
-    dist = os.path.join(distroot, 'a2')
-    dist_portable = os.path.join(distroot, 'a2_portable')
-    distlib = os.path.join(dist, 'lib')
-    distui = os.path.join(dist, 'ui')
+    dist = join(distroot, 'a2')
+    dist_portable = join(distroot, 'a2_portable')
+    distlib = join(dist, 'lib')
+    distui = join(dist, 'ui')
+    distlib_test = join(distlib, 'AutoHotkey', 'lib', 'test')
 
     @classmethod
     def check(cls):
