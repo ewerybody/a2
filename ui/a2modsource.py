@@ -14,6 +14,7 @@ import a2path
 import a2core
 import a2util
 import a2ctrl.icons
+import a2download
 
 
 CONFIG_FILENAME = 'a2modsource.json'
@@ -250,17 +251,20 @@ class ModSourceCheckThread(QtCore.QThread):
     def run(self):
         if self.mod_source is not None:
             update_url = self.mod_source.config.get('update_url', '')
-            main_branch = self.mod_source.config.get('main_branch')
+            main_branch = self.mod_source.config.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
         elif self.check_url is not None:
             update_url = self.check_url
-            main_branch = 'master'
+            main_branch = a2download.DEFAULT_MAIN_BRANCH
+        else:
+            update_url = None
+            main_branch = a2download.DEFAULT_MAIN_BRANCH
 
         if not update_url:
             self._error(MSG_NO_UPDATE_URL)
             return
 
         try:
-            remote_data = _get_remote_data(update_url, main_branch)
+            remote_data = get_remote_cfg(update_url, main_branch)
         except FileNotFoundError:
             self._error(MSG_UPDATE_URL_INVALID % update_url)
             return
@@ -271,11 +275,16 @@ class ModSourceCheckThread(QtCore.QThread):
         self.data_fetched.emit(remote_data)
 
 
-def _get_remote_data(url, main_branch=None):
-    url = url.lower().strip()
+def get_remote_cfg(update_url, main_branch=None):
+    """
+    Get the latest config from the given update_url.
+    """
+    url = update_url.lower().strip()
+
     if url.startswith('http') or 'github.com/' in url:
-        import a2download
         if 'github.com/' in url:
+            if remote_data := get_github_cfg(url):
+                return remote_data
             owner, repo = a2download.get_github_owner_repo(url)
             download_url = '/'.join(
                 [a2download.GITHUB_RAW_URL, owner, repo, main_branch or a2download.DEFAULT_MAIN_BRANCH])
@@ -286,17 +295,50 @@ def _get_remote_data(url, main_branch=None):
             download_url = a2path.add_slash(download_url)
             download_url += CONFIG_FILENAME
 
-        remote_data = a2download.get_remote_data(download_url)
+        return a2download.get_remote_data(download_url)
 
     else:
         if os.path.exists(url):
             _, base = os.path.split(url)
             if base.lower() != CONFIG_FILENAME:
                 url = os.path.join(url, CONFIG_FILENAME)
-            remote_data = a2util.json_read(url)
+            return a2util.json_read(url)
         else:
             raise FileNotFoundError()
-    return remote_data
+
+
+def get_github_cfg(url):
+    """
+    For githup we should look at the "latest" release first.
+    Then all the releases.
+    And only then at the raw main branch settings file.^
+    """
+    owner, repo = a2download.get_github_owner_repo(url)
+    latest_url = a2download.GITHUB_LATEST.format(owner=owner, repo=repo)
+    try:
+        remote_data = a2download.get_remote_data(latest_url)
+    except RuntimeError:
+        releases_url = a2download.GITHUB_RELEASE.format(owner=owner, repo=repo)
+        try:
+            all_releases = a2download.get_remote_data(releases_url)
+            remote_data = all_releases[0]
+        except RuntimeError:
+            return False
+
+    if assets := remote_data.get('assets'):
+        size = assets[0]['size']
+    else:
+        size = 0
+
+    cfg = {
+        'maintainer': owner,
+        'name': repo,
+        'news': remote_data['body'],
+        'version': remote_data['tag_name'],
+        'prerelease': remote_data.get('prerelease', False),
+        'zip_size': size
+    }
+    return cfg
 
 
 class ModSourceFetchThread(QtCore.QThread):
@@ -443,7 +485,6 @@ class ModSourceFetchThread(QtCore.QThread):
         return True
 
     def _handle_url_download(self, update_url, pack_basename, temp_packpath):
-        import a2download
         import traceback
         if 'github.com/' in update_url:
             owner, repo = a2download.get_github_owner_repo(update_url)
