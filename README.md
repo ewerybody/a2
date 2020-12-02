@@ -35,4 +35,4 @@ The features in this runtime are introduced via **modules** bundled in **package
 ## versions in latest build package:
 * AutoHotkey: 1.1.33.02
 * Python: 3.9.150.1013
-* PySide2: 5.15.1.0
+* PySide2: 5.15.2.0
