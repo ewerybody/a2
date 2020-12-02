@@ -15,7 +15,7 @@ gdipbitmap_from_area(x, y, w, h, Raster:="") {
     BitBlt(chdc, 0, 0, w, h, hhdc, x, y, Raster)
     ReleaseDC(hhdc)
 
-    pBitmap := gdipbitmap_CreateFromHBITMAP(hbm)
+    pBitmap := gdipbitmap_from_HBITMAP(hbm)
     SelectObject(chdc, obm)
     DeleteObject(hbm)
     DeleteDC(hhdc)
@@ -50,7 +50,7 @@ gdipbitmap_from_handle(hwnd) {
 }
 
 
-gdipbitmap_CreateFromHBITMAP(hBitmap, Palette:=0) {
+gdipbitmap_from_HBITMAP(hBitmap, Palette:=0) {
     Ptr := A_PtrSize ? "UPtr" : "UInt"
     pBitmap := 0
     DllCall("gdiplus\GdipCreateBitmapFromHBITMAP"
@@ -59,6 +59,17 @@ gdipbitmap_CreateFromHBITMAP(hBitmap, Palette:=0) {
         , A_PtrSize ? "UPtr*" : "uint*"
         , pBitmap)
     return pBitmap
+}
+
+
+gdipbitmap_to_HBITMAP(pBitmap, Background:=0xffffffff) {
+    ; background should be zero, to not alter alpha channel of the image
+    hBitmap := 0
+    DllCall("gdiplus\GdipCreateHBITMAPFromBitmap"
+        , "UPtr", pBitmap
+        , "UPtr*", hBitmap
+        , "int", Background)
+    return hBitmap
 }
 
 
@@ -164,6 +175,296 @@ gdipbitmap_to_file(pBitmap, sOutput, Quality:=75) {
 	else
 		_E := DllCall("gdiplus\GdipSaveImageToFile", Ptr, pBitmap, Ptr, &sOutput, Ptr, pCodec, "uint", _p ? _p : 0)
 	return _E ? -5 : 0
+}
+
+
+gdipbitmap_set_clipboard(pBitmap) {
+    ; Put a given bitmap to the clipboard.
+    ; modified by Marius Șucan to have this function report errors
+    Static Ptr := "UPtr"
+    off1 := A_PtrSize = 8 ? 52 : 44
+    off2 := A_PtrSize = 8 ? 32 : 24
+
+    pid := DllCall("GetCurrentProcessId","uint")
+    hwnd := WinExist("ahk_pid " . pid)
+    r1 := DllCall("OpenClipboard", Ptr, hwnd)
+    If !r1
+        Return -1
+
+    hBitmap := gdipbitmap_to_HBITMAP(pBitmap, 0)
+    If !hBitmap
+    {
+        DllCall("CloseClipboard")
+        Return -3
+    }
+
+    r2 := DllCall("EmptyClipboard")
+    If !r2
+    {
+        DeleteObject(hBitmap)
+        DllCall("CloseClipboard")
+        Return -2
+    }
+
+    DllCall("GetObject"
+        , Ptr, hBitmap, "int"
+        , VarSetCapacity(oi, A_PtrSize = 8 ? 104 : 84, 0)
+        , Ptr, &oi)
+    hdib := DllCall("GlobalAlloc", "uint", 2, Ptr, 40+NumGet(oi, off1, "UInt"), Ptr)
+    pdib := DllCall("GlobalLock", Ptr, hdib, Ptr)
+
+    DllCall("RtlMoveMemory", Ptr, pdib, Ptr, &oi+off2, Ptr, 40)
+    DllCall("RtlMoveMemory", Ptr, pdib+40, Ptr, NumGet(oi, off2 - A_PtrSize, Ptr), Ptr, NumGet(oi, off1, "UInt"))
+    DllCall("GlobalUnlock", Ptr, hdib)
+
+    DeleteObject(hBitmap)
+    r3 := DllCall("SetClipboardData", "uint", 8, Ptr, hdib) ; CF_DIB = 8
+    DllCall("CloseClipboard")
+    DllCall("GlobalFree", Ptr, hdib)
+    E := r3 ? 0 : -4    ; 0 - success
+    Return E
+}
+
+
+gdipbitmap_from_clipboard() {
+    ; Try to get bitmap data from the clipboard.
+    ; modified by Marius Șucan
+
+    Static Ptr := "UPtr"
+    pid := DllCall("GetCurrentProcessId","uint")
+    hwnd := WinExist("ahk_pid " . pid)
+    ; CF_DIB = 8
+    if !DllCall("IsClipboardFormatAvailable", "uint", 8) {
+        ; CF_BITMAP = 2
+        if DllCall("IsClipboardFormatAvailable", "uint", 2) {
+            if !DllCall("OpenClipboard", Ptr, hwnd)
+                return -1
+
+            hData := DllCall("User32.dll\GetClipboardData", "UInt", 0x0002, "UPtr")
+            hBitmap := DllCall("User32.dll\CopyImage", "UPtr", hData, "UInt", 0, "Int", 0, "Int", 0, "UInt", 0x2004, "Ptr")
+            DllCall("CloseClipboard")
+            pBitmap := gdipbitmap_from_HBITMAP(hBitmap)
+            DeleteObject(hBitmap)
+            return pBitmap
+        }
+        return -2
+    }
+
+    if !DllCall("OpenClipboard", Ptr, hwnd)
+        return -1
+
+    hBitmap := DllCall("GetClipboardData", "uint", 2, Ptr)
+    if !hBitmap
+    {
+        DllCall("CloseClipboard")
+        return -3
+    }
+
+    DllCall("CloseClipboard")
+    If hBitmap
+    {
+        ; This function can return a completely empty/transparent bitmap
+        pBitmap := gdipbitmap_CreateARGBFromHBITMAP(hBitmap)
+        If pBitmap
+            isUniform := gdipbitmap_TestUniformity(pBitmap, 7, maxLevelIndex)
+
+        If (pBitmap && isUniform=1 && maxLevelIndex<=2)
+        {
+            gdip_disposeimage(pBitmap)
+            pBitmap := gdipbitmap_from_HBITMAP(hBitmap)
+        }
+        DeleteObject(hBitmap)
+    }
+
+    if !pBitmap
+        return -4
+
+    return pBitmap
+}
+
+
+gdipbitmap_TestUniformity(pBitmap, HistogramFormat:=3, ByRef maxLevelIndex:=0, ByRef maxLevelPixels:=0) {
+    ; Tests if the given pBitmap is in a single shade [color] or not.
+    ;
+    ; If HistogramFormat parameter is set to 3, the function
+    ; retrieves the intensity/gray histogram and checks
+    ; how many pixels are for each level [0, 255].
+    ;
+    ; If all pixels are found at a single level,
+    ; the return value is 1, because the pBitmap is considered
+    ; uniform, in a single shade.
+    ;
+    ; One can set the HistogramFormat to 4 [R], 5 [G], 6 [B] or 7 [A]
+    ; to test for the uniformity of a specific channel.
+    ;
+    ; A threshold value of 0.0005% of all the pixels, is used.
+    ; This is to ensure that a few pixels do not change the status.
+   LevelsArray := []
+   maxLevelIndex := maxLevelPixels := nrPixels := 9
+   gdip_get_image_dimensions(pBitmap, Width, Height)
+   gdip_get_histogram(pBitmap, HistogramFormat, LevelsArray, 0, 0)
+   Loop 256
+   {
+       nrPixels := Round(LevelsArray[A_Index - 1])
+       If (nrPixels>0)
+          histoList .= nrPixels "." A_Index - 1 "|"
+   }
+   Sort histoList, NURD|
+   histoList := Trim(histoList, "|")
+   histoListSortedArray := StrSplit(histoList, "|")
+   maxLevel := StrSplit(histoListSortedArray[1], ".")
+   maxLevelIndex := maxLevel[2]
+   maxLevelPixels := maxLevel[1]
+   ; ToolTip, % maxLevelIndex " -- " maxLevelPixels " | " histoListSortedArray[1] "`n" histoList, , , 3
+   pixelsThreshold := Round((Width * Height) * 0.0005) + 1
+   If (Floor(histoListSortedArray[2])<pixelsThreshold)
+      Return 1
+   Else
+      Return 0
+}
+
+
+gdipbitmap_CreateARGBFromHBITMAP(hImage) {
+    ; Create bitmap with transparency. By iseahound found on:
+    ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=63345
+    ; part of https://github.com/iseahound/Graphics/blob/master/lib/Graphics.ahk
+
+    ; struct BITMAP - https://docs.microsoft.com/en-us/windows/desktop/api/wingdi/ns-wingdi-tagbitmap
+    DllCall("GetObject"
+        , "ptr", hImage
+        , "int", VarSetCapacity(dib, 76+2*(A_PtrSize=8?4:0)+2*A_PtrSize)
+        , "ptr", &dib) ; sizeof(DIBSECTION) = x86:84, x64:104
+    width  := NumGet(dib, 4, "uint")
+    height := NumGet(dib, 8, "uint")
+    bpp    := NumGet(dib, 18, "ushort")
+
+    ; Fallback to built-in method if pixels are not ARGB.
+    if (bpp!=32)
+        return gdipbitmap_from_HBITMAP(hImage)
+
+    ; Create a handle to a device context and associate the hImage.
+    hdc := CreateCompatibleDC()
+    obm := SelectObject(hdc, hImage)
+
+    ; Buffer the hImage with a top-down device independent bitmap via negative height.
+    ; Note that a DIB is an hBitmap, pixels are formatted as pARGB, and has a pointer to the bits.
+    cdc := CreateCompatibleDC(hdc)
+    hbm := CreateDIBSection(width, -height, hdc, 32, pBits)
+    ob2 := SelectObject(cdc, hbm)
+
+    ; Create a new Bitmap (different from an hBitmap) which holds ARGB pixel values.
+    pBitmap := gdipbitmap_create(width, height)
+
+    ; Create a Scan0 buffer pointing to pBits. The buffer has pixel format pARGB.
+    CreateRect(Rect, 0, 0, width, height)
+    VarSetCapacity(BitmapData, 16+2*A_PtrSize, 0)
+        , NumPut(       width, BitmapData,  0,  "uint") ; Width
+        , NumPut(      height, BitmapData,  4,  "uint") ; Height
+        , NumPut(   4 * width, BitmapData,  8,   "int") ; Stride
+        , NumPut(     0xE200B, BitmapData, 12,   "int") ; PixelFormat
+        , NumPut(       pBits, BitmapData, 16,   "ptr") ; Scan0
+    DllCall("gdiplus\GdipBitmapLockBits"
+        ,   "ptr", pBitmap
+        ,   "ptr", &Rect
+        ,  "uint", 6            ; ImageLockMode.UserInputBuffer | ImageLockMode.WriteOnly
+        ,   "int", 0xE200B      ; Format32bppPArgb
+        ,   "ptr", &BitmapData)
+
+    ; Ensure that our hBitmap (hImage) is top-down by copying it to a top-down bitmap.
+    BitBlt(cdc, 0, 0, width, height, hdc, 0, 0)
+
+    ; Convert the pARGB pixels copied into the device independent bitmap (hbm) to ARGB.
+    DllCall("gdiplus\GdipBitmapUnlockBits", "ptr",pBitmap, "ptr",&BitmapData)
+
+    ; Cleanup the buffer and device contexts.
+    SelectObject(cdc, ob2)
+    DeleteObject(hbm)
+    DeleteDC(cdc)
+    SelectObject(hdc, obm)
+    DeleteDC(hdc)
+
+    return pBitmap
+}
+
+
+gdip_get_histogram(pBitmap, whichFormat, ByRef newArrayA, ByRef newArrayB, ByRef newArrayC) {
+    ; by swagfag in July 2019
+    ; source https://www.autohotkey.com/boards/viewtopic.php?f=6&t=62550
+    ; modified by Marius Șucan
+    ; whichFormat = 2;  histogram for each channel: R, G, B
+    ; whichFormat = 3;  histogram of the luminance/brightness of the image
+    ; Return: Status enumerated return type; 0 = OK/Success
+    Static sizeofUInt := 4
+
+    ; HistogramFormats := {ARGB: 0, PARGB: 1, RGB: 2, Gray: 3, B: 4, G: 5, R: 6, A: 7}
+    z := DllCall("gdiplus\GdipBitmapGetHistogramSize", "UInt", whichFormat, "UInt*", numEntries)
+
+    newArrayA := [], newArrayB := [], newArrayC := []
+    VarSetCapacity(ch0, numEntries * sizeofUInt, 0)
+    VarSetCapacity(ch1, numEntries * sizeofUInt, 0)
+    VarSetCapacity(ch2, numEntries * sizeofUInt, 0)
+    If (whichFormat=2)
+        r := DllCall("gdiplus\GdipBitmapGetHistogram", "Ptr", pBitmap, "UInt", whichFormat, "UInt", numEntries, "Ptr", &ch0, "Ptr", &ch1, "Ptr", &ch2, "Ptr", 0)
+    Else If (whichFormat>2)
+        r := DllCall("gdiplus\GdipBitmapGetHistogram", "Ptr", pBitmap, "UInt", whichFormat, "UInt", numEntries, "Ptr", &ch0, "Ptr", 0, "Ptr", 0, "Ptr", 0)
+
+    Loop %numEntries%
+    {
+        i := A_Index - 1
+        r := NumGet(&ch0+0, i * sizeofUInt, "UInt")
+        newArrayA[i] := r
+
+        If (whichFormat=2)
+        {
+            g := NumGet(&ch1+0, i * sizeofUInt, "UInt")
+            b := NumGet(&ch2+0, i * sizeofUInt, "UInt")
+            newArrayB[i] := g
+            newArrayC[i] := b
+        }
+    }
+    Return r
+}
+
+
+gdip_get_image_dimensions(pBitmap, ByRef Width, ByRef Height) {
+    ; Give the width and height of a bitmap
+    ;
+    ; pBitmap            Pointer to a bitmap
+    ; Width              ByRef variable. This variable will be set to the width of the bitmap
+    ; Height             ByRef variable. This variable will be set to the height of the bitmap
+    ;
+    ; return             GDI+ status enumeration return value
+    If StrLen(pBitmap)<3
+        Return -1
+
+    Width := 0, Height := 0
+    E := gdip_get_image_dimension(pBitmap, Width, Height)
+    Width := Round(Width)
+    Height := Round(Height)
+    return E
+}
+
+gdip_get_image_dimension(pBitmap, ByRef w, ByRef h) {
+    Static Ptr := "UPtr"
+    return DllCall("gdiplus\GdipGetImageDimension", Ptr, pBitmap, "float*", w, "float*", h)
+}
+
+
+gdipbitmap_create(Width, Height, PixelFormat:=0, Stride:=0, Scan0:=0) {
+    ; Create a new 32-ARGB bitmap.
+    ; modified by Marius Șucan
+    pBitmap := 0
+    If !PixelFormat
+        PixelFormat := 0x26200A  ; 32-ARGB
+
+    DllCall("gdiplus\GdipCreateBitmapFromScan0"
+        , "int", Width
+        , "int", Height
+        , "int", Stride
+        , "int", PixelFormat
+        , "UPtr", Scan0
+        , "UPtr*", pBitmap)
+    Return pBitmap
 }
 
 
