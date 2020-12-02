@@ -13,7 +13,6 @@ Loop, % arr.MaxIndex() {
 j1 := assertmsg(sabc = res)
 msg = string_join:%j1% test:>%sabc%< control:>%res%<`n
 
-
 s := "'XfgfsgsdfgX'"
 un := string_unquote(s, "'")
 q1 := string_quote(un,,quote:="'")
@@ -22,9 +21,13 @@ q3 := string_quote(un,once:=1,quote:="'")
 q4 := assertmsg(s == q3)
 u1 := assertmsg(string_startswith(un, "X"))
 u2 := assertmsg(string_endswith(un, "X"))
-msg = %msg%string_unquote:%u1%%u2%`n
+p := "C:\Users\eric\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
+pq := """" . p . """"
+up := string_unquote(p)
+ups := assertmsg(p == up)
+msg = %msg%string_unquote ' :%u1%%u2%`n
+msg = %msg%string_unquote " :%ups%`n
 msg = %msg%string_quote:%q2% %q4%`n
-
 
 i1 := assertmsg(string_is_in_array("b", aabc))
 i2 := assertmsg(!string_is_in_array("B", aabc))
