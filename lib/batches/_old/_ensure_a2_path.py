@@ -1,10 +1,11 @@
 import os
 import sys
 
-this_dir = os.path.dirname(__file__)
-while 'a2.exe' not in [i.name for i in os.scandir(this_dir)]:
-    this_dir = os.path.dirname(this_dir)
-ui_path = os.path.join(this_dir, 'ui')
-if ui_path not in sys.path:
-    print(f'adding path: {ui_path} ...')
-    sys.path.insert(0, ui_path)
+_this_dir = os.path.dirname(__file__)
+while 'a2.exe' not in [i.name for i in os.scandir(_this_dir)]:
+    _this_dir = os.path.dirname(_this_dir)
+A2_PATH = _this_dir
+A2UI_PATH = os.path.join(A2_PATH, 'ui')
+if A2UI_PATH not in sys.path:
+    print(f'adding path: {A2UI_PATH} ...')
+    sys.path.insert(0, A2UI_PATH)

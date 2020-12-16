@@ -9,10 +9,11 @@ import importlib
 from pprint import pprint
 
 # rename to unique `pyside_package`
-import PySide2 as pyside_package
+import PySide6 as pyside_package
 
+OLD_PACK = 'PySide'
 IMPORT_STR = ' import '
-FROM_IMPORT = 'from PySide2 import '
+FROM_IMPORT = 'from PySide6 import '
 PYPAKS = pyside_package.__all__
 PAK_MEMBERS = {}
 MEMBER_PAKS = {}
@@ -32,7 +33,8 @@ def main():
         'py_dirs': 0,
         'num_py_files': 0,
         'changed_files': 0,
-        'change_count': 0}
+        'change_count': 0,
+    }
 
     ui_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'ui'))
     check_files(ui_path, stats)
@@ -95,8 +97,15 @@ def check_files(path, stats):
 
             if import_lines:
                 if len(import_lines) > 1:
-                    raise RuntimeError('Multiple import lines?!?!', import_lines, this_path)
-                current_paks = [p.strip() for p in lines[import_lines[0]][len(FROM_IMPORT):].split(',')]
+                    raise RuntimeError(
+                        'Multiple import lines?!?!', import_lines, this_path
+                    )
+                current_paks = [
+                    p.strip()
+                    for p in lines[import_lines[0]][len(FROM_IMPORT) :].split(
+                        ','
+                    )
+                ]
                 new_paks = set(qpacks)
                 if new_paks != set(current_paks):
                     lines[import_lines[0]] = FROM_IMPORT + ', '.join(new_paks)
@@ -105,7 +114,9 @@ def check_files(path, stats):
 
             if change_file:
                 if needs_unicode:
-                    with codecs.open(this_path, 'w', encoding='utf-8-sig') as fob:
+                    with codecs.open(
+                        this_path, 'w', encoding='utf-8-sig'
+                    ) as fob:
                         fob.write('\n'.join(lines))
                 else:
                     with open(this_path, 'w') as fob:
@@ -121,7 +132,7 @@ def check_files(path, stats):
 def check_line(line):
     any_changed = False
 
-    if 'PySide' in line:
+    if OLD_PACK in line:
         pos0 = 0
         changed = True
         while changed:
@@ -144,7 +155,9 @@ def check_line(line):
         while changed:
             if num_tries > 23:
                 break
-            changed, line, pos0, changed_packs = fix_moved_members(pak, line, pos0)
+            changed, line, pos0, changed_packs = fix_moved_members(
+                pak, line, pos0
+            )
             if changed:
                 qpacks.extend(changed_packs)
                 num_tries += 1
@@ -156,13 +169,12 @@ def check_line(line):
 
 
 def fix_pyside1(line, pos0):
-    pyside1 = 'PySide'
-    pos1 = line.find(pyside1, pos0)
+    pos1 = line.find(OLD_PACK, pos0)
     if pos1 == -1:
         return False, line, pos0
 
     changed = False
-    pos0 = pos1 + len(pyside1)
+    pos0 = pos1 + len(OLD_PACK)
     if len(line) == pos0 or line[pos0] != '2':
         line = line[:pos0] + '2' + line[pos0:]
         changed = True
@@ -183,13 +195,15 @@ def fix_moved_members(pak, line, pos0):
     qpacks = []
 
     if line[pos2] == '.':
-        rest_of_line = line[pos2 + 1:]
+        rest_of_line = line[pos2 + 1 :]
         member_name = get_member(rest_of_line)
         if member_name not in PAK_MEMBERS[pak]:
             try:
                 new_pak = MEMBER_PAKS[member_name]
             except KeyError:
-                raise RuntimeError(f'Name "{member_name}" not under any of the paks!')
+                raise RuntimeError(
+                    f'Name "{member_name}" not under any of the paks!'
+                )
 
             line = line[:pos1] + new_pak + line[pos2:]
             changed = True
@@ -209,7 +223,9 @@ def fix_moved_members(pak, line, pos0):
                     lines.setdefault(MEMBER_PAKS[m], []).append(m)
                 new_lines = []
                 for new_pak, members in lines.items():
-                    new_lines.append(line[:pos1] + new_pak + IMPORT_STR + ', '.join(members))
+                    new_lines.append(
+                        line[:pos1] + new_pak + IMPORT_STR + ', '.join(members)
+                    )
                     qpacks.append(new_pak)
                 line = '\n'.join(new_lines)
                 changed = True
