@@ -1,151 +1,210 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\scope_widget.ui' applies.
-#
-# Created: Tue Jan 28 21:59:38 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'scope_widget.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
+from a2widget.a2button_field import A2ButtonField
+from a2widget.a2list import A2ListCompact
+
 
 class Ui_ScopeWidget(object):
     def setupUi(self, ScopeWidget):
-        ScopeWidget.setObjectName("ScopeWidget")
+        if not ScopeWidget.objectName():
+            ScopeWidget.setObjectName(u"ScopeWidget")
         ScopeWidget.resize(500, 146)
-        ScopeWidget.setWindowTitle("Form")
-        ScopeWidget.setToolTip("")
-        self.verticalLayout = QtWidgets.QVBoxLayout(ScopeWidget)
+        ScopeWidget.setWindowTitle(u"Form")
+#if QT_CONFIG(tooltip)
+        ScopeWidget.setToolTip(u"")
+#endif // QT_CONFIG(tooltip)
+        self.verticalLayout = QVBoxLayout(ScopeWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.type_radio_widget = QtWidgets.QWidget(ScopeWidget)
-        self.type_radio_widget.setObjectName("type_radio_widget")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.type_radio_widget)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.type_radio_widget = QWidget(ScopeWidget)
+        self.type_radio_widget.setObjectName(u"type_radio_widget")
+        self.horizontalLayout = QHBoxLayout(self.type_radio_widget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.scopeMode_0 = QtWidgets.QRadioButton(self.type_radio_widget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.scopeMode_0 = QRadioButton(self.type_radio_widget)
+        self.scopeMode_0.setObjectName(u"scopeMode_0")
         self.scopeMode_0.setChecked(True)
-        self.scopeMode_0.setObjectName("scopeMode_0")
+
         self.horizontalLayout.addWidget(self.scopeMode_0)
-        self.scopeMode_1 = QtWidgets.QRadioButton(self.type_radio_widget)
+
+        self.scopeMode_1 = QRadioButton(self.type_radio_widget)
+        self.scopeMode_1.setObjectName(u"scopeMode_1")
         self.scopeMode_1.setChecked(False)
-        self.scopeMode_1.setObjectName("scopeMode_1")
+
         self.horizontalLayout.addWidget(self.scopeMode_1)
-        self.scopeMode_2 = QtWidgets.QRadioButton(self.type_radio_widget)
+
+        self.scopeMode_2 = QRadioButton(self.type_radio_widget)
+        self.scopeMode_2.setObjectName(u"scopeMode_2")
         self.scopeMode_2.setChecked(False)
-        self.scopeMode_2.setObjectName("scopeMode_2")
+
         self.horizontalLayout.addWidget(self.scopeMode_2)
-        self.horizontalLayout_2.addWidget(self.type_radio_widget)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
-        self.scope_help = QtWidgets.QToolButton(ScopeWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+
+
+        self.horizontalLayout_2.addWidget(self.type_radio_widget, 0, Qt.AlignLeft)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+        self.scope_help = QToolButton(ScopeWidget)
+        self.scope_help.setObjectName(u"scope_help")
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.scope_help.sizePolicy().hasHeightForWidth())
         self.scope_help.setSizePolicy(sizePolicy)
-        self.scope_help.setMaximumSize(QtCore.QSize(50, 35))
-        self.scope_help.setToolTip("Help on Scopes")
-        self.scope_help.setText("h")
+        self.scope_help.setMaximumSize(QSize(50, 35))
+#if QT_CONFIG(tooltip)
+        self.scope_help.setToolTip(u"Help on Scopes")
+#endif // QT_CONFIG(tooltip)
+        self.scope_help.setText(u"h")
         self.scope_help.setAutoRaise(True)
-        self.scope_help.setObjectName("scope_help")
+
         self.horizontalLayout_2.addWidget(self.scope_help)
-        self.tool_buttons_widget = QtWidgets.QWidget(ScopeWidget)
-        self.tool_buttons_widget.setObjectName("tool_buttons_widget")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.tool_buttons_widget)
+
+        self.tool_buttons_widget = QWidget(ScopeWidget)
+        self.tool_buttons_widget.setObjectName(u"tool_buttons_widget")
+        self.horizontalLayout_3 = QHBoxLayout(self.tool_buttons_widget)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.scope_pick = QtWidgets.QToolButton(self.tool_buttons_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.scope_pick = QToolButton(self.tool_buttons_widget)
+        self.scope_pick.setObjectName(u"scope_pick")
         sizePolicy.setHeightForWidth(self.scope_pick.sizePolicy().hasHeightForWidth())
         self.scope_pick.setSizePolicy(sizePolicy)
-        self.scope_pick.setMaximumSize(QtCore.QSize(50, 35))
-        self.scope_pick.setToolTip("Pick from a Window")
-        self.scope_pick.setText("p")
+        self.scope_pick.setMaximumSize(QSize(50, 35))
+#if QT_CONFIG(tooltip)
+        self.scope_pick.setToolTip(u"Pick from a Window")
+#endif // QT_CONFIG(tooltip)
+        self.scope_pick.setText(u"p")
         self.scope_pick.setAutoRaise(True)
-        self.scope_pick.setObjectName("scope_pick")
+
         self.horizontalLayout_3.addWidget(self.scope_pick)
-        self.scope_delete = QtWidgets.QToolButton(self.tool_buttons_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+
+        self.scope_delete = QToolButton(self.tool_buttons_widget)
+        self.scope_delete.setObjectName(u"scope_delete")
         sizePolicy.setHeightForWidth(self.scope_delete.sizePolicy().hasHeightForWidth())
         self.scope_delete.setSizePolicy(sizePolicy)
-        self.scope_delete.setMaximumSize(QtCore.QSize(50, 35))
-        self.scope_delete.setToolTip("Delete Selected Scope")
-        self.scope_delete.setText("-")
+        self.scope_delete.setMaximumSize(QSize(50, 35))
+#if QT_CONFIG(tooltip)
+        self.scope_delete.setToolTip(u"Delete Selected Scope")
+#endif // QT_CONFIG(tooltip)
+        self.scope_delete.setText(u"-")
         self.scope_delete.setAutoRaise(True)
-        self.scope_delete.setObjectName("scope_delete")
+
         self.horizontalLayout_3.addWidget(self.scope_delete)
-        self.scope_add = QtWidgets.QToolButton(self.tool_buttons_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.scope_add.sizePolicy().hasHeightForWidth())
-        self.scope_add.setSizePolicy(sizePolicy)
-        self.scope_add.setMaximumSize(QtCore.QSize(50, 35))
-        self.scope_add.setToolTip("Add a Scope")
-        self.scope_add.setText("+")
+
+        self.scope_add = QToolButton(self.tool_buttons_widget)
+        self.scope_add.setObjectName(u"scope_add")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.scope_add.sizePolicy().hasHeightForWidth())
+        self.scope_add.setSizePolicy(sizePolicy1)
+        self.scope_add.setMaximumSize(QSize(50, 35))
+#if QT_CONFIG(tooltip)
+        self.scope_add.setToolTip(u"Add a Scope")
+#endif // QT_CONFIG(tooltip)
+        self.scope_add.setText(u"+")
         self.scope_add.setAutoRaise(True)
-        self.scope_add.setObjectName("scope_add")
+
         self.horizontalLayout_3.addWidget(self.scope_add)
-        self.horizontalLayout_2.addWidget(self.tool_buttons_widget)
+
+
+        self.horizontalLayout_2.addWidget(self.tool_buttons_widget, 0, Qt.AlignRight)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout_2)
+
         self.cfg_scope = A2ListCompact(ScopeWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.cfg_scope.sizePolicy().hasHeightForWidth())
-        self.cfg_scope.setSizePolicy(sizePolicy)
-        self.cfg_scope.setMinimumSize(QtCore.QSize(500, 40))
-        self.cfg_scope.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.cfg_scope.setToolTip("")
-        self.cfg_scope.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.cfg_scope.setObjectName("cfg_scope")
+        self.cfg_scope.setObjectName(u"cfg_scope")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.cfg_scope.sizePolicy().hasHeightForWidth())
+        self.cfg_scope.setSizePolicy(sizePolicy2)
+        self.cfg_scope.setMinimumSize(QSize(500, 40))
+        self.cfg_scope.setMaximumSize(QSize(16777215, 16777215))
+#if QT_CONFIG(tooltip)
+        self.cfg_scope.setToolTip(u"")
+#endif // QT_CONFIG(tooltip)
+        self.cfg_scope.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
         self.verticalLayout.addWidget(self.cfg_scope)
-        self.fields_widget = QtWidgets.QWidget(ScopeWidget)
-        self.fields_widget.setObjectName("fields_widget")
-        self.formLayout_2 = QtWidgets.QFormLayout(self.fields_widget)
+
+        self.fields_widget = QWidget(ScopeWidget)
+        self.fields_widget.setObjectName(u"fields_widget")
+        self.formLayout_2 = QFormLayout(self.fields_widget)
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.formLayout_2.setObjectName("formLayout_2")
-        self.label_2 = QtWidgets.QLabel(self.fields_widget)
-        self.label_2.setObjectName("label_2")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_2)
+        self.formLayout_2.setObjectName(u"formLayout_2")
+        self.label_2 = QLabel(self.fields_widget)
+        self.label_2.setObjectName(u"label_2")
+
+        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_2)
+
         self.scope_title = A2ButtonField(self.fields_widget)
-        self.scope_title.setObjectName("scope_title")
-        self.formLayout_2.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.scope_title)
-        self.label_3 = QtWidgets.QLabel(self.fields_widget)
-        self.label_3.setObjectName("label_3")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_3)
+        self.scope_title.setObjectName(u"scope_title")
+
+        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.scope_title)
+
+        self.label_3 = QLabel(self.fields_widget)
+        self.label_3.setObjectName(u"label_3")
+
+        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_3)
+
         self.scope_class = A2ButtonField(self.fields_widget)
-        self.scope_class.setObjectName("scope_class")
-        self.formLayout_2.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.scope_class)
-        self.label_4 = QtWidgets.QLabel(self.fields_widget)
-        self.label_4.setObjectName("label_4")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_4)
+        self.scope_class.setObjectName(u"scope_class")
+
+        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.scope_class)
+
+        self.label_4 = QLabel(self.fields_widget)
+        self.label_4.setObjectName(u"label_4")
+
+        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_4)
+
         self.scope_exe = A2ButtonField(self.fields_widget)
-        self.scope_exe.setObjectName("scope_exe")
-        self.formLayout_2.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.scope_exe)
+        self.scope_exe.setObjectName(u"scope_exe")
+
+        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.scope_exe)
+
+
         self.verticalLayout.addWidget(self.fields_widget)
 
+
         self.retranslateUi(ScopeWidget)
-        QtCore.QMetaObject.connectSlotsByName(ScopeWidget)
+
+        QMetaObject.connectSlotsByName(ScopeWidget)
+    # setupUi
 
     def retranslateUi(self, ScopeWidget):
-        self.scopeMode_0.setToolTip(QtWidgets.QApplication.translate("ScopeWidget", "global - Makes it work anywhere in the system.", None, -1))
-        self.scopeMode_0.setText(QtWidgets.QApplication.translate("ScopeWidget", "golbal", None, -1))
-        self.scopeMode_1.setToolTip(QtWidgets.QApplication.translate("ScopeWidget", "include - To make it work ONLY in certain windows.", None, -1))
-        self.scopeMode_1.setText(QtWidgets.QApplication.translate("ScopeWidget", "include:", None, -1))
-        self.scopeMode_2.setToolTip(QtWidgets.QApplication.translate("ScopeWidget", "exclude - To make it work anywhere BUT not in given windows.", None, -1))
-        self.scopeMode_2.setText(QtWidgets.QApplication.translate("ScopeWidget", "exclude:", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("ScopeWidget", "title", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("ScopeWidget", "window class", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("ScopeWidget", "executable", None, -1))
+#if QT_CONFIG(tooltip)
+        self.scopeMode_0.setToolTip(QCoreApplication.translate("ScopeWidget", u"global - Makes it work anywhere in the system.", None))
+#endif // QT_CONFIG(tooltip)
+        self.scopeMode_0.setText(QCoreApplication.translate("ScopeWidget", u"golbal", None))
+#if QT_CONFIG(tooltip)
+        self.scopeMode_1.setToolTip(QCoreApplication.translate("ScopeWidget", u"include - To make it work ONLY in certain windows.", None))
+#endif // QT_CONFIG(tooltip)
+        self.scopeMode_1.setText(QCoreApplication.translate("ScopeWidget", u"include:", None))
+#if QT_CONFIG(tooltip)
+        self.scopeMode_2.setToolTip(QCoreApplication.translate("ScopeWidget", u"exclude - To make it work anywhere BUT not in given windows.", None))
+#endif // QT_CONFIG(tooltip)
+        self.scopeMode_2.setText(QCoreApplication.translate("ScopeWidget", u"exclude:", None))
+        self.label_2.setText(QCoreApplication.translate("ScopeWidget", u"title", None))
+        self.label_3.setText(QCoreApplication.translate("ScopeWidget", u"window class", None))
+        self.label_4.setText(QCoreApplication.translate("ScopeWidget", u"executable", None))
+        pass
+    # retranslateUi
 
-from a2widget.a2button_field import A2ButtonField
-from a2widget.a2list import A2ListCompact

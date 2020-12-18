@@ -1,6 +1,6 @@
 from functools import partial
 
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2ctrl
 from a2widget.flowlayout import FlowLayout
@@ -123,7 +123,9 @@ class A2TagField(QtWidgets.QWidget):
         Connects the tag field to an iterable object
         """
         if not isinstance(these, (tuple, list, set, dict)):
-            raise AttributeError('Available tags need to be set with an iterable! (list, tuple, set, dict)')
+            raise AttributeError(
+                'Available tags need to be set with an iterable! (list, tuple, set, dict)'
+            )
 
         self._available_tags = these
 
@@ -156,7 +158,8 @@ class A2Tag(QtWidgets.QPushButton):
         if self.button_menu is None:
             self.button_menu = QtWidgets.QMenu()
             self.button_menu.addAction(
-                a2ctrl.Icons.inst().delete, 'Delete "%s"' % self.name, self.delete)
+                a2ctrl.Icons.inst().delete, 'Delete "%s"' % self.name, self.delete
+            )
         self.button_menu.popup(self.cursor().pos())
 
     def delete(self):
@@ -165,4 +168,5 @@ class A2Tag(QtWidgets.QPushButton):
 
 if __name__ == '__main__':
     from a2widget.demo import a2tag_field_demo
+
     a2tag_field_demo.show()

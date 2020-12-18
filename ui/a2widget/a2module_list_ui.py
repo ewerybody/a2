@@ -1,52 +1,70 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2module_list.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2module_list.ui' applies.
-#
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'a2module_list.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
+from a2widget.a2more_button import A2MoreButton
+from a2widget.a2list import A2List
+
 
 class Ui_ModuleList(object):
     def setupUi(self, ModuleList):
-        ModuleList.setObjectName("ModuleList")
+        if not ModuleList.objectName():
+            ModuleList.setObjectName(u"ModuleList")
         ModuleList.resize(296, 759)
-        self.module_list_layout = QtWidgets.QVBoxLayout(ModuleList)
+        self.module_list_layout = QVBoxLayout(ModuleList)
         self.module_list_layout.setSpacing(5)
+        self.module_list_layout.setObjectName(u"module_list_layout")
         self.module_list_layout.setContentsMargins(0, 5, 0, 0)
-        self.module_list_layout.setObjectName("module_list_layout")
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setSpacing(5)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.search_field = QtWidgets.QLineEdit(ModuleList)
-        self.search_field.setObjectName("search_field")
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.search_field = QLineEdit(ModuleList)
+        self.search_field.setObjectName(u"search_field")
+
         self.horizontalLayout.addWidget(self.search_field)
-        self.a2search_x_button = QtWidgets.QPushButton(ModuleList)
-        self.a2search_x_button.setText("")
+
+        self.a2search_x_button = QPushButton(ModuleList)
+        self.a2search_x_button.setObjectName(u"a2search_x_button")
         self.a2search_x_button.setFlat(True)
-        self.a2search_x_button.setObjectName("a2search_x_button")
+
         self.horizontalLayout.addWidget(self.a2search_x_button)
+
         self.filter_menu_button = A2MoreButton(ModuleList)
-        self.filter_menu_button.setObjectName("filter_menu_button")
+        self.filter_menu_button.setObjectName(u"filter_menu_button")
+
         self.horizontalLayout.addWidget(self.filter_menu_button)
+
+
         self.module_list_layout.addLayout(self.horizontalLayout)
+
         self.a2module_list_widget = A2List(ModuleList)
-        self.a2module_list_widget.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.a2module_list_widget.setObjectName(u"a2module_list_widget")
+        self.a2module_list_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.a2module_list_widget.setAlternatingRowColors(True)
-        self.a2module_list_widget.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.a2module_list_widget.setObjectName("a2module_list_widget")
-        self.module_list_layout.addWidget(self.a2module_list_widget)
-
-        self.retranslateUi(ModuleList)
-        QtCore.QMetaObject.connectSlotsByName(ModuleList)
-
-    def retranslateUi(self, ModuleList):
-        ModuleList.setWindowTitle(QtWidgets.QApplication.translate("ModuleList", "Form", None, -1))
-        self.filter_menu_button.setText(QtWidgets.QApplication.translate("ModuleList", "...", None, -1))
+        self.a2module_list_widget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.a2module_list_widget.setSortingEnabled(True)
 
-from a2widget.a2list import A2List
-from a2widget.a2more_button import A2MoreButton
+        self.module_list_layout.addWidget(self.a2module_list_widget)
+
+
+        self.retranslateUi(ModuleList)
+
+        QMetaObject.connectSlotsByName(ModuleList)
+    # setupUi
+
+    def retranslateUi(self, ModuleList):
+        ModuleList.setWindowTitle(QCoreApplication.translate("ModuleList", u"Form", None))
+        self.a2search_x_button.setText("")
+        self.filter_menu_button.setText(QCoreApplication.translate("ModuleList", u"...", None))
+    # retranslateUi
+

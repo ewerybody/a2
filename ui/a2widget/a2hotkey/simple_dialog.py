@@ -1,5 +1,5 @@
 import a2ahk
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 from .dialogs import _HotkeyDialogBase
 import a2core
 
@@ -44,11 +44,11 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
         self.text_edit.returnPressed.connect(self.ok)
 
         self.button_layout = QtWidgets.QHBoxLayout()
-        self.ok_button = QtWidgets.QPushButton("OK")
+        self.ok_button = QtWidgets.QPushButton('OK')
         self.ok_button.clicked.connect(self.ok)
         self.button_layout.addWidget(self.ok_button)
 
-        self.close_button = QtWidgets.QPushButton("&Cancel")
+        self.close_button = QtWidgets.QPushButton('&Cancel')
         self.close_button.clicked.connect(self.close)
         self.button_layout.addWidget(self.close_button)
 
@@ -86,7 +86,7 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
                 modifier[0] = modifier[0][1:]
             bad_modifier = [k for k in modifier if k not in a2ahk.MODIFIERS]
             if bad_modifier:
-                msg = ('Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(bad_modifier))
+                msg = 'Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(bad_modifier)
             else:
                 okay_state = True
 

@@ -5,7 +5,7 @@ Text field that automatically gets bigger the more lines you add.
 @author: eric
 """
 import pprint
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 DEFAULT_MAX_LINES = 20
 DEFAULT_MIN_LINES = 1
@@ -19,6 +19,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
     similar to the one on the Line edit. The difference is: The trigger here
     is timed and on focus loss. Enter adds a new line as expected.
     """
+
     editing_finished = QtCore.Signal()
 
     def __init__(self, parent=None):
@@ -79,9 +80,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
         if block_count is None:
             block_count = self.blockCount()
         if self.maximum_blocks is not None:
-            block_count = min(
-                max(block_count, self.minimum_blocks),
-                max(1, self.maximum_blocks))
+            block_count = min(max(block_count, self.minimum_blocks), max(1, self.maximum_blocks))
 
         cursor_height = self.cursorRect().height()
         if cursor_height:
@@ -112,5 +111,6 @@ class A2CodeField(A2TextField):
     """
     Just subclassed to be identifiable via CSS to apply a monospaced font.
     """
+
     def __init__(self, parent=None):
         A2TextField.__init__(self, parent)

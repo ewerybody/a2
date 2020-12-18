@@ -4,7 +4,7 @@ Objects for the the a2 settings tabs.
 import os
 import sys
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2core
@@ -31,8 +31,8 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for module_source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
             widget = a2module_source.ModSourceWidget(
-                self.main, module_source,
-                show_enabled=module_source.name in enabled_list)
+                self.main, module_source, show_enabled=module_source.name in enabled_list
+            )
             widget.toggled.connect(self.main.load_runtime_and_ui)
             widget.changed.connect(self.main.load_runtime_and_ui)
             self.ui.mod_source_layout.addWidget(widget)
@@ -40,6 +40,7 @@ class A2Settings(QtWidgets.QWidget):
 
     def _setup_ui(self):
         from a2widget import a2settings_view_ui
+
         a2ctrl.check_ui_module(a2settings_view_ui)
         self.ui = a2settings_view_ui.Ui_a2settings()
         self.ui.setupUi(self)
@@ -118,13 +119,16 @@ class A2Settings(QtWidgets.QWidget):
     def _build_licenses_tab(self, widget):
         """Build the licenses tab on demand."""
         from a2widget import a2licenses_widget_ui
+
         a2ctrl.check_ui_module(a2licenses_widget_ui)
         ui = a2licenses_widget_ui.Ui_Form()
         ui.setupUi(self.ui.a2settings_tab)
         text = ui.a2license_text.text()
-        for tag, version in (('{ahk_version}', a2ahk.call_lib_cmd('get_AutoHotkey_version')),
-                             ('{py_version}', sys.version.split(' ', 1)[0]),
-                             ('{qt_version}', sys.modules[QtWidgets.__package__].__version__)):
+        for tag, version in (
+            ('{ahk_version}', a2ahk.call_lib_cmd('get_AutoHotkey_version')),
+            ('{py_version}', sys.version.split(' ', 1)[0]),
+            ('{qt_version}', sys.modules[QtWidgets.__package__].__version__),
+        ):
             if tag in text:
                 text = text.replace(tag, version)
         ui.a2license_text.setText(text)
@@ -150,10 +154,13 @@ class ProxyUiHandler:
         # filling proxy ui
         self.ui.proxy_box.setChecked(self.a2.db.get('proxy_enabled') or False)
         settings = self.a2.db.get('proxy_settings') or {}
-        self.ui.proxy_http.setCurrentIndex(
-            ('http', 'https').index(settings.get('http') or 'http'))
-        proxy_line_widgets = (self.ui.proxy_user, self.ui.proxy_pass,
-                              self.ui.proxy_server, self.ui.proxy_port)
+        self.ui.proxy_http.setCurrentIndex(('http', 'https').index(settings.get('http') or 'http'))
+        proxy_line_widgets = (
+            self.ui.proxy_user,
+            self.ui.proxy_pass,
+            self.ui.proxy_server,
+            self.ui.proxy_port,
+        )
         for i, name in enumerate(self.proxy_items):
             value = settings.get(name) or ''
             proxy_line_widgets[i].setText(value)
@@ -206,7 +213,11 @@ class DataPathUiHandler(QtCore.QObject):
             action.setData(path)
 
         self.menu.addAction(icons.folder2, 'Browse ...', self.browse)
-        if self.is_dev and os.path.isdir(self.dev_data_path) and self.dev_data_path != self.a2.paths.data:
+        if (
+            self.is_dev
+            and os.path.isdir(self.dev_data_path)
+            and self.dev_data_path != self.a2.paths.data
+        ):
             self.menu.addAction(icons.folder2, 'Use Dev Location', self.use_dev)
 
         self.menu.popup(QtGui.QCursor.pos())
@@ -229,7 +240,8 @@ class DataPathUiHandler(QtCore.QObject):
 
     def browse(self):
         file_path = QtWidgets.QFileDialog.getExistingDirectory(
-            self.a2.win, caption='Select a Custom Data path', dir=self.a2.paths.data)
+            self.a2.win, caption='Select a Custom Data path', dir=self.a2.paths.data
+        )
         if file_path:
             self._set_path(file_path)
 
@@ -256,6 +268,7 @@ class IntegrationUIHandler(QtCore.QObject):
       . Uninstall a2
       . Goto a2 Directory
     """
+
     def __init__(self, parent, ui, a2):
         super(IntegrationUIHandler, self).__init__(parent)
         self.ui = ui
@@ -279,8 +292,8 @@ class IntegrationUIHandler(QtCore.QObject):
     @property
     def cmds(self):
         if self._cmds is None:
-            self._cmds = a2util.json_read(os.path.join(
-                self.a2.paths.ui, 'a2widget', 'integration_ui.json')
+            self._cmds = a2util.json_read(
+                os.path.join(self.a2.paths.ui, 'a2widget', 'integration_ui.json')
             )
         return self._cmds
 
@@ -297,7 +310,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
         self.a2 = a2
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(0,0,0,0)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.check = QtWidgets.QCheckBox(label, self)
         self.check.clicked[bool].connect(self._set)
         layout.addWidget(self.check)
@@ -320,6 +333,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
     def _set(self, state):
         import a2ahk
+
         a2ahk.call_lib_cmd(self.set_cmd, self.a2.paths.a2, int(state))
         self._update_checkbox()
 
@@ -363,6 +377,7 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
 
     def _setup_ui(self):
         from a2widget import a2settings_advanced_ui
+
         a2ctrl.check_ui_module(a2settings_advanced_ui)
         self.ui = a2settings_advanced_ui.Ui_Form()
         self.ui.setupUi(self.tab_widget)
@@ -370,14 +385,16 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.dev_box.setChecked(self.a2.dev_mode)
         self.ui.dev_box.clicked[bool].connect(self.dev_mode_toggle)
         self.ui.dev_widget.setVisible(self.a2.dev_mode)
-        self.ui.code_editor.file_types = "Executables (*.exe)"
+        self.ui.code_editor.file_types = 'Executables (*.exe)'
         self.ui.code_editor.writable = False
         # self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
 
         self.dev_set_dict = self.main.devset.get()
         a2ctrl.connect.control_list(
             [self.ui.author_name, self.ui.author_url, self.ui.code_editor, self.ui.json_indent],
-            self.dev_set_dict, self.dev_setting_changed)
+            self.dev_set_dict,
+            self.dev_setting_changed,
+        )
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
         DataPathUiHandler(self, self.ui, self.a2)
@@ -412,6 +429,7 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.hk_dialog_style.currentTextChanged.connect(a2hotkey.set_dialog_style)
 
         from a2widget.a2hotkey.keyboard_dialog import layouts
+
         current_layout = layouts.get_current()
         index = 0
         for i, (keyboard_id, label) in enumerate(layouts.iterate()):
@@ -450,10 +468,11 @@ class ConsoleUiHandler(QtCore.QObject):
 
     def _setup_ui(self):
         layout = QtWidgets.QVBoxLayout(self.tab_widget)
-        self.a2console.setObjectName("a2console")
+        self.a2console.setObjectName('a2console')
         layout.addWidget(self.a2console)
 
         import a2output
+
         logger = a2output.get_logwriter()
         self._sep = a2output.SEP
 

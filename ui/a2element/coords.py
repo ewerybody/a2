@@ -2,7 +2,7 @@
 import a2ctrl
 import a2core
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from a2element import coords_edit_ui, DrawCtrl, EditCtrl
 from a2widget.a2coords_field import A2CoordsField
 
@@ -15,6 +15,7 @@ class Draw(DrawCtrl):
     The frontend widget visible to the user with options
     to change the default behavior of the element.
     """
+
     def __init__(self, *args):
         super(Draw, self).__init__(*args)
         self.main_layout = QtWidgets.QHBoxLayout(self)
@@ -29,8 +30,9 @@ class Draw(DrawCtrl):
         try:
             self.value_ctrl.value = self.value
         except ValueError:
-            log.error('Coords Element incoming value broken "%s"\n'
-                      '  Defaulting to (0, 0)' % self.value)
+            log.error(
+                'Coords Element incoming value broken "%s"\n' '  Defaulting to (0, 0)' % self.value
+            )
 
         self.main_layout.addWidget(self.value_ctrl)
         self.value_ctrl.changed.connect(self.delayed_check)
@@ -44,6 +46,7 @@ class Edit(EditCtrl):
     The background widget that sets up how the user can edit the element,
     visible when editing the module.
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         a2ctrl.check_ui_module(coords_edit_ui)

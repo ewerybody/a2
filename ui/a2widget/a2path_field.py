@@ -13,7 +13,7 @@ TODO: add recent paths?
 @author: eRiC
 """
 import os
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2ctrl
 import a2util
@@ -28,8 +28,16 @@ class BrowseType(object):
 class A2PathField(QtWidgets.QWidget):
     changed = QtCore.Signal(str)
 
-    def __init__(self, parent, value='', file_types='', writable=True,
-                 label_text=None, save_mode=False, changable=True):
+    def __init__(
+        self,
+        parent,
+        value='',
+        file_types='',
+        writable=True,
+        label_text=None,
+        save_mode=False,
+        changable=True,
+    ):
         super(A2PathField, self).__init__(parent)
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -70,7 +78,9 @@ class A2PathField(QtWidgets.QWidget):
             return
 
         if state and not self.changable:
-            raise RuntimeError('PathField cannot be set writable while not being changable at the same time!')
+            raise RuntimeError(
+                'PathField cannot be set writable while not being changable at the same time!'
+            )
 
         self._writable = state
         self.line_field.setReadOnly(not state)
@@ -100,11 +110,17 @@ class A2PathField(QtWidgets.QWidget):
         if self.browse_type == BrowseType.file:
             file_types = 'All Files (*)' if not self.file_types else self.file_types
             if self.save_mode:
-                file_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.label_text, self._value, file_types)
+                file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                    self, self.label_text, self._value, file_types
+                )
             else:
-                file_path, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.label_text, self._value, file_types)
+                file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                    self, self.label_text, self._value, file_types
+                )
         else:
-            file_path = QtWidgets.QFileDialog.getExistingDirectory(self, caption=self.label_text, dir=self._value)
+            file_path = QtWidgets.QFileDialog.getExistingDirectory(
+                self, caption=self.label_text, dir=self._value
+            )
 
         if file_path:
             self.value = file_path

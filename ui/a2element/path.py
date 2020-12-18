@@ -1,6 +1,6 @@
 import a2ctrl
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 from a2widget import a2path_field
 from a2element import path_edit_ui, DrawCtrl, EditCtrl
@@ -46,8 +46,12 @@ class Edit(EditCtrl):
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         self._adjust_path_field()
-        for ctrl in [self.ui.cfg_writable, self.ui.cfg_browse_type_0,
-                     self.ui.cfg_browse_type_1, self.ui.cfg_save_mode]:
+        for ctrl in [
+            self.ui.cfg_writable,
+            self.ui.cfg_browse_type_0,
+            self.ui.cfg_browse_type_1,
+            self.ui.cfg_save_mode,
+        ]:
             ctrl.clicked.connect(self._adjust_path_field)
         self.ui.cfg_file_types.editingFinished.connect(self._adjust_path_field)
 

@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 import a2core
 from a2widget.a2button_field import A2ButtonField
@@ -21,9 +21,11 @@ def cfg_controls(cfg, ui_object, prefix='cfg_'):
 
     This way prefixed controls will create data in given cfg dictionary if there was none yet.
     """
-    for name, ctrl in [(objname[len(prefix):], ctrl) for objname, ctrl
-                       in inspect.getmembers(ui_object)
-                       if objname.startswith(prefix)]:
+    for name, ctrl in [
+        (objname[len(prefix) :], ctrl)
+        for objname, ctrl in inspect.getmembers(ui_object)
+        if objname.startswith(prefix)
+    ]:
         control(ctrl, name, cfg)
 
 
@@ -48,8 +50,10 @@ def control_list(controls, cfg, change_signal=None):
         if object_name := ctrl.objectName():
             name_list.append((object_name, ctrl))
         else:
-            raise RuntimeError('Cannot connect widget without objectName!\n  '
-                               'Please do "widget.setObjectName(\'attribname\')"')
+            raise RuntimeError(
+                'Cannot connect widget without objectName!\n  '
+                'Please do "widget.setObjectName(\'attribname\')"'
+            )
     control_name_list(name_list, cfg, change_signal)
 
 

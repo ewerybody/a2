@@ -1,4 +1,4 @@
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from a2widget.flowlayout import FlowLayout
 from a2widget.a2slider import A2Slider
 
@@ -6,7 +6,7 @@ from a2widget.a2slider import A2Slider
 class Window(QtWidgets.QWidget):
     def __init__(self):
         super(Window, self).__init__()
-        self.setWindowTitle("Flow Layout")
+        self.setWindowTitle('Flow Layout')
 
         main_layout = QtWidgets.QFormLayout(self)
         self.setLayout(main_layout)
@@ -15,11 +15,11 @@ class Window(QtWidgets.QWidget):
         margin = 5
 
         flow = FlowLayout(margin=margin, spacing=spacing)
-        flow.addWidget(QtWidgets.QPushButton("Short"))
-        flow.addWidget(QtWidgets.QPushButton("Longer"))
-        flow.addWidget(QtWidgets.QPushButton("Different text"))
-        flow.addWidget(QtWidgets.QPushButton("More text"))
-        flow.addWidget(QtWidgets.QPushButton("Even longer button text"))
+        flow.addWidget(QtWidgets.QPushButton('Short'))
+        flow.addWidget(QtWidgets.QPushButton('Longer'))
+        flow.addWidget(QtWidgets.QPushButton('Different text'))
+        flow.addWidget(QtWidgets.QPushButton('More text'))
+        flow.addWidget(QtWidgets.QPushButton('Even longer button text'))
 
         margin_slider = A2Slider(self, value=margin, mini=0, maxi=50, decimals=0)
         margin_slider.value_changed.connect(flow.set_marging)
@@ -55,6 +55,7 @@ class Window(QtWidgets.QWidget):
 
 def show():
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     win = Window()
     win.show()

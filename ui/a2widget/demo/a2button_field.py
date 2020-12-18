@@ -1,5 +1,5 @@
 import uuid
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from a2widget.a2button_field import A2ButtonField
 
 
@@ -14,7 +14,6 @@ class Demo(QtWidgets.QMainWindow):
         lyt.addWidget(QtWidgets.QLabel('with some static actions:'))
         self.bf1 = A2ButtonField()
         lyt.addWidget(self.bf1)
-        self.bf1.add_action(QtWidgets.QAction('Hello', self, triggered=self.bla))
         self.bf1.add_action('Hallo', self.bla)
         self.bf1.add_action('nix')
 

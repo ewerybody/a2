@@ -1,9 +1,10 @@
 """X"""
-from PySide2 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 
 
 class KeyValueTable(QtWidgets.QTableWidget):
     """Custom Table widget to handle simple key, value dictionaries."""
+
     changed = QtCore.Signal()
 
     def __init__(self, parent):
@@ -40,7 +41,7 @@ class KeyValueTable(QtWidgets.QTableWidget):
             row = self.rowCount() - 1
         else:
             row = item.row()
-            is_last_row = row == self.rowCount() -1
+            is_last_row = row == self.rowCount() - 1
 
         if is_last_row:
             # look at last row
@@ -82,8 +83,9 @@ class KeyValueTable(QtWidgets.QTableWidget):
     def set_data(self, data):
         """From a key:value dictionary set rows & columns of the table."""
         if not isinstance(data, dict):
-            raise TypeError('Cannot set data of type "%s" to %s' %
-                            (type(data), self.__class__.__name__))
+            raise TypeError(
+                'Cannot set data of type "%s" to %s' % (type(data), self.__class__.__name__)
+            )
 
         self.blockSignals(True)
         self.clearContents()
@@ -99,4 +101,5 @@ class KeyValueTable(QtWidgets.QTableWidget):
 
 if __name__ == '__main__':
     from a2widget.demo import key_value_table_demo
+
     key_value_table_demo.show()

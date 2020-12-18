@@ -1,10 +1,11 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 
 class A2List(QtWidgets.QListWidget):
     """
     A simple list widget.
     """
+
     names_selected = QtCore.Signal(list)
     items_selected = QtCore.Signal(list)
     single_name_selected = QtCore.Signal(str)
@@ -18,9 +19,6 @@ class A2List(QtWidgets.QListWidget):
     context_menu_requested = QtCore.Signal(QtWidgets.QMenu)
 
     def __init__(self, parent=None, names=None):
-        """
-
-        """
         super(A2List, self).__init__(parent)
         self._unique = True
         self._menu = None
@@ -32,9 +30,11 @@ class A2List(QtWidgets.QListWidget):
 
         self.itemSelectionChanged.connect(self._on_selection_change)
 
-        shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Delete),
-                                       self, self.remove_selected)
+        shortcut = QtGui.QShortcut(self)
+        shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.Key_Delete))
+        shortcut.activated.connect(self.remove_selected)
         shortcut.setContext(QtCore.Qt.WidgetShortcut)
+
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self._on_context_menu_requested)
 
@@ -110,8 +110,7 @@ class A2List(QtWidgets.QListWidget):
         if item is None:
             selected = self.get_selected_items()
             if len(selected) != 1:
-                raise RuntimeError('Cannot set name! No single selection '
-                                   'and No item given!')
+                raise RuntimeError('Cannot set name! No single selection ' 'and No item given!')
             item = selected[0]
 
         item.setText(new_name)
@@ -251,4 +250,5 @@ def ensure_list(strings):
 
 if __name__ == '__main__':
     import a2widget.demo.a2list_demo
+
     a2widget.demo.a2list_demo.show()

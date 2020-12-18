@@ -4,7 +4,7 @@ The a2 element foundations.
 import os
 from functools import partial
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 import a2core
 import a2ctrl
@@ -21,8 +21,9 @@ class DrawCtrlMixin:
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
     """
+
     def __init__(self, main, cfg, mod, user_cfg=None):
-        """"
+        """ "
         :param bool _init_ctrl: Set False when using multiple inheritance
         to keep it from calling super() again.
         """
@@ -140,6 +141,7 @@ class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
     """
+
     def __init__(self, main, cfg, mod, user_cfg=None):
         super(DrawCtrl, self).__init__(parent=main)
         DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
@@ -162,6 +164,7 @@ class EditCtrl(QtWidgets.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
+
     delete_requested = QtCore.Signal()
     move_rel_requested = QtCore.Signal(int)
     move_abs_requested = QtCore.Signal(bool)
@@ -228,6 +231,7 @@ class EditCtrl(QtWidgets.QGroupBox):
 
     def duplicate(self):
         from copy import deepcopy
+
         new_cfg = deepcopy(self.cfg)
         if 'name' in new_cfg:
             new_cfg['name'] = self.increase_name_number(new_cfg['name'])
@@ -236,6 +240,7 @@ class EditCtrl(QtWidgets.QGroupBox):
 
     def cut(self):
         from copy import deepcopy
+
         self.main.edit_clipboard.append(deepcopy(self.cfg))
         self.delete()
 
@@ -245,8 +250,9 @@ class EditCtrl(QtWidgets.QGroupBox):
     def _setup_ui(self, add_layout):
         # self.setTitle(self.cfg['typ'])
         self.setTitle(self.element_name())
-        size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                            QtWidgets.QSizePolicy.Maximum)
+        size_policy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum
+        )
         self.setSizePolicy(size_policy)
 
         self._ctrl_layout = QtWidgets.QGridLayout(self)
@@ -282,7 +288,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         self._ctrl_button_layout.addWidget(self._ctrl_button)
 
         self._ctrl_button_layout.setAlignment(
-            self._ctrl_button, QtCore.Qt.AlignTop | QtCore.Qt.AlignRight)
+            self._ctrl_button, QtCore.Qt.AlignTop | QtCore.Qt.AlignRight
+        )
 
         self._ctrl_layout.addLayout(self._ctrl_button_layout, 0, 0, 1, 1)
 
@@ -296,13 +303,15 @@ class EditCtrl(QtWidgets.QGroupBox):
         """
         self._ctrl_menu.clear()
         icons = Icons.inst()
-        menu_items = [('Up', partial(self.move, -1), icons.up),
-                      ('Down', partial(self.move, 1), icons.down),
-                      ('To Top', partial(self.move, True), icons.up_align),
-                      ('To Bottom', partial(self.move, False), icons.down_align),
-                      ('Delete', self.delete, icons.delete),
-                      ('Duplicate', self.duplicate, icons.copy),
-                      ('Help on %s' % self.element_name(), self.help, icons.help)]
+        menu_items = [
+            ('Up', partial(self.move, -1), icons.up),
+            ('Down', partial(self.move, 1), icons.down),
+            ('To Top', partial(self.move, True), icons.up_align),
+            ('To Bottom', partial(self.move, False), icons.down_align),
+            ('Delete', self.delete, icons.delete),
+            ('Duplicate', self.duplicate, icons.copy),
+            ('Help on %s' % self.element_name(), self.help, icons.help),
+        ]
 
         clipboard_count = ''
         if self.main.edit_clipboard:
@@ -362,6 +371,7 @@ class EditAddElem(QtWidgets.QWidget):
     TIL: if you don't make this a widget and just a object Qt will forget about
     any connections you make!
     """
+
     def __init__(self, main, config, name=None):
         super(EditAddElem, self).__init__()
         self.main = main
@@ -389,6 +399,7 @@ class EditAddElem(QtWidgets.QWidget):
         self.menu.addMenu(self.menu_include)
 
         import a2element
+
         for name, display_name, icon in a2element.get_list():
             action = self.menu.addAction(display_name, self._on_add_element_action)
             action.setData((name, None))
@@ -440,9 +451,10 @@ class EditAddElem(QtWidgets.QWidget):
             edit_class = getattr(element_module, 'Edit')
             display_name = edit_class.element_name()
             icon = edit_class.element_icon()
-            name = base[len(a2ctrl.LOCAL_ELEMENT_ID) + 1:]
+            name = base[len(a2ctrl.LOCAL_ELEMENT_ID) + 1 :]
             action = self.menu.addAction(
-                LOCAL_MENU_PREFIX + display_name, self._on_add_element_action)
+                LOCAL_MENU_PREFIX + display_name, self._on_add_element_action
+            )
             action.setData((a2ctrl.LOCAL_ELEMENT_ID, name))
             if icon:
                 action.setIcon(icon)
@@ -450,11 +462,13 @@ class EditAddElem(QtWidgets.QWidget):
 
 class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
     """Selection menu for module-local Autohotkey scripts."""
+
     # script_selected = QtCore.Signal(tuple)
 
     def __init__(self, parent, main):
         super(LocalAHKScriptsMenu, self).__init__(parent, main)
         import a2ahk
+
         self.setTitle('Include Script')
         self.dialog_title = 'New Autohotkey Script'
         self.dialog_msg = 'Give a name for the new Autohotkety script:'
@@ -466,8 +480,7 @@ class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
         for cfg in a2ctrl.iter_element_cfg_type(self.main.temp_config, 'include'):
             scripts_used.add(cfg['file'].lower())
 
-        available = [name for name in self.main.mod.scripts
-                     if name.lower() not in scripts_used]
+        available = [name for name in self.main.mod.scripts if name.lower() not in scripts_used]
         return available
 
     def create_script(self, file_name):

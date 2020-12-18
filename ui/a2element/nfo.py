@@ -4,7 +4,7 @@ a2element.nfo
 @created: Sep 3, 2016
 @author: eRiC
 """
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 import a2core
 import a2ctrl.connect
@@ -33,8 +33,9 @@ class Edit(QtWidgets.QGroupBox):
         self.cfg = cfg
         self.typ = cfg['typ']
         self.setTitle('module information:')
-        self.setSizePolicy(QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum))
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
+        )
         self.boxlayout = QtWidgets.QVBoxLayout(self)
         self.boxlayout.setSpacing(5)
         self.boxlayout.setContentsMargins(5, 5, 5, 10)

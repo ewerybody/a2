@@ -1,63 +1,85 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\group_edit.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\group_edit.ui' applies.
-#
-# Created: Tue Jan 28 21:59:36 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'group_edit.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
 
 class Ui_edit(object):
     def setupUi(self, edit):
-        edit.setObjectName("edit")
+        if not edit.objectName():
+            edit.setObjectName(u"edit")
         edit.resize(822, 130)
-        self.edit_layout = QtWidgets.QVBoxLayout(edit)
+        self.edit_layout = QVBoxLayout(edit)
+        self.edit_layout.setObjectName(u"edit_layout")
         self.edit_layout.setContentsMargins(-1, -1, 0, -1)
-        self.edit_layout.setObjectName("edit_layout")
-        self.formLayout = QtWidgets.QFormLayout()
-        self.formLayout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setSpacing(5)
-        self.formLayout.setObjectName("formLayout")
-        self.internalNameLabel = QtWidgets.QLabel(edit)
-        self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.internalNameLabel.setObjectName("internalNameLabel")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QtWidgets.QLineEdit(edit)
-        self.cfg_name.setObjectName("cfg_name")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
-        self.displayLabelLabel = QtWidgets.QLabel(edit)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
-        self.cfg_label = QtWidgets.QLineEdit(edit)
-        self.cfg_label.setObjectName("cfg_label")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
-        self.cfg_disablable = QtWidgets.QCheckBox(edit)
+        self.formLayout = QFormLayout()
+        self.formLayout.setObjectName(u"formLayout")
+        self.formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout.setHorizontalSpacing(5)
+        self.formLayout.setVerticalSpacing(5)
+        self.internalNameLabel = QLabel(edit)
+        self.internalNameLabel.setObjectName(u"internalNameLabel")
+        self.internalNameLabel.setMinimumSize(QSize(100, 0))
+        self.internalNameLabel.setMaximumSize(QSize(16777215, 16777215))
+        self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
+
+        self.cfg_name = QLineEdit(edit)
+        self.cfg_name.setObjectName(u"cfg_name")
+
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
+
+        self.displayLabelLabel = QLabel(edit)
+        self.displayLabelLabel.setObjectName(u"displayLabelLabel")
+        self.displayLabelLabel.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel.setMaximumSize(QSize(16777215, 16777215))
+        self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.displayLabelLabel)
+
+        self.cfg_label = QLineEdit(edit)
+        self.cfg_label.setObjectName(u"cfg_label")
+
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.cfg_label)
+
+        self.cfg_disablable = QCheckBox(edit)
+        self.cfg_disablable.setObjectName(u"cfg_disablable")
         self.cfg_disablable.setChecked(True)
-        self.cfg_disablable.setObjectName("cfg_disablable")
-        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.cfg_disablable)
-        self.cfg_enabled = QtWidgets.QCheckBox(edit)
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.cfg_disablable)
+
+        self.cfg_enabled = QCheckBox(edit)
+        self.cfg_enabled.setObjectName(u"cfg_enabled")
         self.cfg_enabled.setChecked(True)
-        self.cfg_enabled.setObjectName("cfg_enabled")
-        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.cfg_enabled)
+
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.cfg_enabled)
+
+
         self.edit_layout.addLayout(self.formLayout)
 
+
         self.retranslateUi(edit)
-        QtCore.QMetaObject.connectSlotsByName(edit)
+
+        QMetaObject.connectSlotsByName(edit)
+    # setupUi
 
     def retranslateUi(self, edit):
-        edit.setWindowTitle(QtWidgets.QApplication.translate("edit", "Form", None, -1))
-        self.internalNameLabel.setText(QtWidgets.QApplication.translate("edit", "internal name:", None, -1))
-        self.cfg_name.setText(QtWidgets.QApplication.translate("edit", "extensionX_group1", None, -1))
-        self.displayLabelLabel.setText(QtWidgets.QApplication.translate("edit", "display label:", None, -1))
-        self.cfg_label.setText(QtWidgets.QApplication.translate("edit", "some group name", None, -1))
-        self.cfg_disablable.setText(QtWidgets.QApplication.translate("edit", "checkable", None, -1))
-        self.cfg_enabled.setText(QtWidgets.QApplication.translate("edit", "enabled by default", None, -1))
+        edit.setWindowTitle(QCoreApplication.translate("edit", u"Form", None))
+        self.internalNameLabel.setText(QCoreApplication.translate("edit", u"internal name:", None))
+        self.cfg_name.setText(QCoreApplication.translate("edit", u"extensionX_group1", None))
+        self.displayLabelLabel.setText(QCoreApplication.translate("edit", u"display label:", None))
+        self.cfg_label.setText(QCoreApplication.translate("edit", u"some group name", None))
+        self.cfg_disablable.setText(QCoreApplication.translate("edit", u"checkable", None))
+        self.cfg_enabled.setText(QCoreApplication.translate("edit", u"enabled by default", None))
+    # retranslateUi
 

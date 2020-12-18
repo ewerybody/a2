@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import a2ctrl
 
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 from a2widget.a2path_field import A2PathField
 from a2element import pathlist_edit_ui, DrawCtrlMixin, EditCtrl
@@ -23,8 +23,9 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
 
     def add_path(self, path=''):
         """Adds a path to the list."""
-        path_widget = PathEntry(self, self.a2_group_layout.count(),
-                                self.cfg.get('browse_type', 0), path)
+        path_widget = PathEntry(
+            self, self.a2_group_layout.count(), self.cfg.get('browse_type', 0), path
+        )
         path_widget.changed.connect(self.check)
         path_widget.add_path.connect(self.add_path)
         path_widget.delete_me.connect(self._path_removed)
@@ -90,6 +91,7 @@ class Edit(EditCtrl):
 
 class PathEntry(QtWidgets.QWidget):
     """A single line widget for each entry in the ui"""
+
     changed = QtCore.Signal(str)
     delete_me = QtCore.Signal(int)
     add_path = QtCore.Signal()

@@ -1,12 +1,16 @@
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2ctrl
 import a2util
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 
-_FLAGS = (QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
-          QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+_FLAGS = (
+    QtCore.Qt.ItemIsSelectable
+    | QtCore.Qt.ItemIsEditable
+    | QtCore.Qt.ItemIsDragEnabled
+    | QtCore.Qt.ItemIsEnabled
+)
 _NEW_ITEM_NAME = 'new_item'
 
 

@@ -1,70 +1,96 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_func_widget.ui' applies.
-#
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'edit_func_widget.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
+from a2widget.a2more_button import A2MoreButton
+
 
 class Ui_FuncWidget(object):
     def setupUi(self, FuncWidget):
-        FuncWidget.setObjectName("FuncWidget")
+        if not FuncWidget.objectName():
+            FuncWidget.setObjectName(u"FuncWidget")
         FuncWidget.resize(553, 83)
-        self.verticalLayout = QtWidgets.QVBoxLayout(FuncWidget)
+        self.verticalLayout = QVBoxLayout(FuncWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.function_row_layout = QtWidgets.QHBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.function_row_layout = QHBoxLayout()
+        self.function_row_layout.setObjectName(u"function_row_layout")
         self.function_row_layout.setContentsMargins(-1, 0, -1, -1)
-        self.function_row_layout.setObjectName("function_row_layout")
-        self.cfg_functionMode = QtWidgets.QComboBox(FuncWidget)
-        self.cfg_functionMode.setObjectName("cfg_functionMode")
+        self.cfg_functionMode = QComboBox(FuncWidget)
         self.cfg_functionMode.addItem("")
         self.cfg_functionMode.addItem("")
         self.cfg_functionMode.addItem("")
+        self.cfg_functionMode.setObjectName(u"cfg_functionMode")
+
         self.function_row_layout.addWidget(self.cfg_functionMode)
+
         self.a2option_button = A2MoreButton(FuncWidget)
+        self.a2option_button.setObjectName(u"a2option_button")
         self.a2option_button.setAutoRaise(True)
-        self.a2option_button.setObjectName("a2option_button")
+
         self.function_row_layout.addWidget(self.a2option_button)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.function_row_layout.addItem(spacerItem)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.function_row_layout.addItem(self.horizontalSpacer_3)
+
+
         self.verticalLayout.addLayout(self.function_row_layout)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.function_send_mode = QtWidgets.QComboBox(FuncWidget)
-        self.function_send_mode.setObjectName("function_send_mode")
+        self.function_send_mode = QComboBox(FuncWidget)
         self.function_send_mode.addItem("")
         self.function_send_mode.addItem("")
         self.function_send_mode.addItem("")
         self.function_send_mode.addItem("")
         self.function_send_mode.addItem("")
+        self.function_send_mode.setObjectName(u"function_send_mode")
+
         self.horizontalLayout.addWidget(self.function_send_mode)
-        self.run_label = QtWidgets.QLabel(FuncWidget)
-        self.run_label.setObjectName("run_label")
+
+        self.run_label = QLabel(FuncWidget)
+        self.run_label.setObjectName(u"run_label")
+
         self.horizontalLayout.addWidget(self.run_label)
-        self.function_text = QtWidgets.QLineEdit(FuncWidget)
-        self.function_text.setObjectName("function_text")
+
+        self.function_text = QLineEdit(FuncWidget)
+        self.function_text.setObjectName(u"function_text")
+
         self.horizontalLayout.addWidget(self.function_text)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout)
 
+
         self.retranslateUi(FuncWidget)
-        QtCore.QMetaObject.connectSlotsByName(FuncWidget)
+
+        QMetaObject.connectSlotsByName(FuncWidget)
+    # setupUi
 
     def retranslateUi(self, FuncWidget):
-        FuncWidget.setWindowTitle(QtWidgets.QApplication.translate("FuncWidget", "Form", None, -1))
-        self.cfg_functionMode.setItemText(0, QtWidgets.QApplication.translate("FuncWidget", "Run code", None, -1))
-        self.cfg_functionMode.setItemText(1, QtWidgets.QApplication.translate("FuncWidget", "Open file/url", None, -1))
-        self.cfg_functionMode.setItemText(2, QtWidgets.QApplication.translate("FuncWidget", "Send keystroke", None, -1))
-        self.function_send_mode.setItemText(0, QtWidgets.QApplication.translate("FuncWidget", "Send", None, -1))
-        self.function_send_mode.setItemText(1, QtWidgets.QApplication.translate("FuncWidget", "SendRaw", None, -1))
-        self.function_send_mode.setItemText(2, QtWidgets.QApplication.translate("FuncWidget", "SendInput", None, -1))
-        self.function_send_mode.setItemText(3, QtWidgets.QApplication.translate("FuncWidget", "SendPlay", None, -1))
-        self.function_send_mode.setItemText(4, QtWidgets.QApplication.translate("FuncWidget", "SendEvent", None, -1))
-        self.run_label.setText(QtWidgets.QApplication.translate("FuncWidget", "Run, ", None, -1))
+        FuncWidget.setWindowTitle(QCoreApplication.translate("FuncWidget", u"Form", None))
+        self.cfg_functionMode.setItemText(0, QCoreApplication.translate("FuncWidget", u"Run code", None))
+        self.cfg_functionMode.setItemText(1, QCoreApplication.translate("FuncWidget", u"Open file/url", None))
+        self.cfg_functionMode.setItemText(2, QCoreApplication.translate("FuncWidget", u"Send keystroke", None))
 
-from a2widget.a2more_button import A2MoreButton
+        self.function_send_mode.setItemText(0, QCoreApplication.translate("FuncWidget", u"Send", None))
+        self.function_send_mode.setItemText(1, QCoreApplication.translate("FuncWidget", u"SendRaw", None))
+        self.function_send_mode.setItemText(2, QCoreApplication.translate("FuncWidget", u"SendInput", None))
+        self.function_send_mode.setItemText(3, QCoreApplication.translate("FuncWidget", u"SendPlay", None))
+        self.function_send_mode.setItemText(4, QCoreApplication.translate("FuncWidget", u"SendEvent", None))
+
+        self.run_label.setText(QCoreApplication.translate("FuncWidget", u"Run, ", None))
+    # retranslateUi
+

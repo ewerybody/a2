@@ -1,7 +1,7 @@
 import a2ctrl
 import a2core
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 from a2element import EditCtrl
 from a2widget.local_script import ScriptSelector
@@ -17,6 +17,7 @@ class Edit(EditCtrl):
     unconditional autohotkey script include. If the parent element is
     enabled: it gets included in (enabled group or module).
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.base_layout = QtWidgets.QHBoxLayout(self.mainWidget)

@@ -1,5 +1,5 @@
 import a2ctrl
-from PySide2 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 from a2element import string_edit_ui, DrawCtrl, EditCtrl
 from a2widget.a2text_field import A2TextField
 
@@ -30,7 +30,8 @@ class Draw(DrawCtrl):
             layout = QtWidgets.QHBoxLayout(self)
             layout.addWidget(self.label)
             self.label.setAlignment(
-                QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+                QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop
+            )
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.value_ctrl)
 
@@ -47,6 +48,7 @@ class Edit(EditCtrl):
     We might put them to the db and get and fetch from there or first: just write them into
     code directly and start with the variables include.
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_string

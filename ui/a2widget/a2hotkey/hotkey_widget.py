@@ -1,7 +1,7 @@
 """Home of the mighty a2Hotkey widget."""
 # pylint: disable=C0103,C0111
 
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2core
 import a2ctrl
@@ -131,11 +131,14 @@ class A2Hotkey(QtWidgets.QWidget):
         scope_change = self._cfg.get(Vars.scope_change, False)
         if not self.is_edit_mode and not scope_change and is_global:
             from a2widget.a2input_dialog import A2ConfirmDialog
+
             dialog = A2ConfirmDialog(
-                self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE)
+                self, SCOPE_GLOBAL_NOCHANGE, SCOPE_TOOLTIP_GLOBAL + SCOPE_CANNOT_CHANGE
+            )
             dialog.show()
         else:
             from a2widget.a2hotkey import scope_dialog
+
             dialog = scope_dialog.ScopeDialog(self, self.get_scope_cfg_copy())
             dialog.okayed.connect(self.on_scope_edit)
             dialog.show()
@@ -162,8 +165,10 @@ class A2Hotkey(QtWidgets.QWidget):
         self._edit_mode = state
 
     def get_scope_cfg_copy(self):
-        current_cfg = {Vars.scope: self._cfg.get(Vars.scope, []),
-                       Vars.scope_mode: self._cfg.get(Vars.scope_mode, 0)}
+        current_cfg = {
+            Vars.scope: self._cfg.get(Vars.scope, []),
+            Vars.scope_mode: self._cfg.get(Vars.scope_mode, 0),
+        }
         if self.is_edit_mode:
             current_cfg[Vars.scope_change] = True
         else:
@@ -186,7 +191,8 @@ class A2Hotkey(QtWidgets.QWidget):
         scope_ui_map = (
             (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
             (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
-            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude))
+            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude),
+        )
         tooltip, icon = scope_ui_map[self._cfg.get(Vars.scope_mode, 0)]
 
         if not self._cfg.get(Vars.scope_change, False):
@@ -226,4 +232,5 @@ class A2Hotkey(QtWidgets.QWidget):
 
 if __name__ == '__main__':
     import a2widget.demo.hotkey_demo
+
     a2widget.demo.hotkey_demo.show()

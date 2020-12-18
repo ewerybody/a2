@@ -9,15 +9,17 @@ import stat
 import string
 import codecs
 
-from PySide2 import QtCore
+from PySide6 import QtCore
 
 import a2core
 
 
 UTF8_CODEC = 'utf-8-sig'
 JSON_INDENT = 2
-ILLEGAL_NAMES = ('con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 '
-                 'com9 lpt1 lpt2 lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split())
+ILLEGAL_NAMES = (
+    'con prn aux nul com1 com2 com3 com4 com5 com6 com7 com8 '
+    'com9 lpt1 lpt2 lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split()
+)
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
 EXPLORER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
 DEFAULT_NAME_MSG = 'Name "%s" already in use!'
@@ -66,8 +68,10 @@ def get_cfg_default_name(cfg):
     """
     cfg_name = cfg.get('name', cfg.get('typ'))
     if cfg_name is None:
-        raise RuntimeError('Could not find name for config piece!\n'
-                           'Make sure "name" or "typ" is given in the config dict!')
+        raise RuntimeError(
+            'Could not find name for config piece!\n'
+            'Make sure "name" or "typ" is given in the config dict!'
+        )
     return cfg_name
 
 
@@ -108,12 +112,14 @@ def get_next_free_number(name, name_list, separator=''):
 
 def json_read(path):
     import json
+
     with codecs.open(path, encoding=UTF8_CODEC) as fobj:
         return json.load(fobj)
 
 
 def json_write(path, data):
     import json
+
     with codecs.open(path, 'w', encoding=UTF8_CODEC) as fobj:
         json.dump(data, fobj, indent=JSON_INDENT, sort_keys=True)
 
@@ -125,6 +131,7 @@ def get_date():
 
 def surf_to(url):
     import webbrowser
+
     if url:
         webbrowser.get().open(url)
 
@@ -182,8 +189,14 @@ def unroll_seconds(value, decimals=2):
     current = float(value)
     name = 'seconds'
     if value > 60:
-        d = [(60, 'minutes'), (60, 'hours'), (24, 'days'),
-             (7, 'weeks'), (4, 'months'), (12, 'years')]
+        d = [
+            (60, 'minutes'),
+            (60, 'hours'),
+            (24, 'days'),
+            (7, 'weeks'),
+            (4, 'months'),
+            (12, 'years'),
+        ]
         last = current
         for i, (divider, name) in enumerate(d):
             current = current / divider

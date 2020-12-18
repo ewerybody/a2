@@ -1,45 +1,61 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\menu_item_edit.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\menu_item_edit.ui' applies.
-#
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'menu_item_edit.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
+from a2widget.local_script import ScriptSelector
+
 
 class Ui_edit(object):
     def setupUi(self, edit):
-        edit.setObjectName("edit")
+        if not edit.objectName():
+            edit.setObjectName(u"edit")
         edit.resize(549, 86)
-        self.edit_layout = QtWidgets.QFormLayout(edit)
-        self.edit_layout.setObjectName("edit_layout")
-        self.displayLabelLabel = QtWidgets.QLabel(edit)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
-        self.cfg_label = QtWidgets.QLineEdit(edit)
-        self.cfg_label.setText("")
-        self.cfg_label.setObjectName("cfg_label")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
-        self.displayLabelLabel_3 = QtWidgets.QLabel(edit)
-        self.displayLabelLabel_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel_3.setObjectName("displayLabelLabel_3")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel_3)
+        self.edit_layout = QFormLayout(edit)
+        self.edit_layout.setObjectName(u"edit_layout")
+        self.displayLabelLabel = QLabel(edit)
+        self.displayLabelLabel.setObjectName(u"displayLabelLabel")
+        self.displayLabelLabel.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.displayLabelLabel)
+
+        self.cfg_label = QLineEdit(edit)
+        self.cfg_label.setObjectName(u"cfg_label")
+        self.cfg_label.setText(u"")
+
+        self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_label)
+
+        self.displayLabelLabel_3 = QLabel(edit)
+        self.displayLabelLabel_3.setObjectName(u"displayLabelLabel_3")
+        self.displayLabelLabel_3.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel_3.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.displayLabelLabel_3)
+
         self.script_selector = ScriptSelector(edit)
-        self.script_selector.setObjectName("script_selector")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.script_selector)
+        self.script_selector.setObjectName(u"script_selector")
+
+        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.script_selector)
+
 
         self.retranslateUi(edit)
-        QtCore.QMetaObject.connectSlotsByName(edit)
+
+        QMetaObject.connectSlotsByName(edit)
+    # setupUi
 
     def retranslateUi(self, edit):
-        edit.setWindowTitle(QtWidgets.QApplication.translate("edit", "Form", None, -1))
-        self.displayLabelLabel.setText(QtWidgets.QApplication.translate("edit", "display label", None, -1))
-        self.displayLabelLabel_3.setText(QtWidgets.QApplication.translate("edit", "python script", None, -1))
+        edit.setWindowTitle(QCoreApplication.translate("edit", u"Form", None))
+        self.displayLabelLabel.setText(QCoreApplication.translate("edit", u"display label", None))
+        self.displayLabelLabel_3.setText(QCoreApplication.translate("edit", u"python script", None))
+    # retranslateUi
 
-from a2widget.local_script import ScriptSelector

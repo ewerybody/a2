@@ -8,13 +8,14 @@ import os
 import inspect
 
 import a2ahk
+import a2ctrl
 import a2core
 import a2util
 import a2runtime
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger('keyboard_base')
@@ -31,7 +32,6 @@ GLOBAL_NO_MOD_WARNING = 'Global Hotkeys should have a modifier!'
 
 
 class KeyboardDialogBase(QtWidgets.QDialog):
-
     def __init__(self, parent):
         super(KeyboardDialogBase, self).__init__(parent)
         self.setModal(True)
@@ -44,6 +44,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self._original_modifier = []
 
         from . import base_ui
+
         a2ctrl.check_ui_module(base_ui)
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
@@ -99,8 +100,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def _setup_ui(self):
         # css debug shortcut
-        QtWidgets.QShortcut(QtGui.QKeySequence(
-            QtCore.Qt.ALT + QtCore.Qt.Key_R), self, self.refresh_style)
+        shortcut = QtGui.QShortcut(self)
+        shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.ALT + QtCore.Qt.Key_R))
+        shortcut.activated.connect(self.refresh_style)
 
         self.ui.keys_layout.addWidget(self.cursor_block_widget)
         self.ui.keys_layout.addWidget(self.numpad_block_widget)
@@ -176,8 +178,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
     def _check_modifier(self, button):
         # modifiers can be toggled however you like
         checked = button.isChecked()
-        ctrl_modifier = (QtWidgets.QApplication.keyboardModifiers() ==
-                         QtCore.Qt.ControlModifier)
+        ctrl_modifier = QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
 
         if checked:
             if button.a2key not in self.checked_modifier:
@@ -289,8 +290,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def _tmp_log_collisions(self, win_shortcuts, a2_shortcuts, trigger_key):
         """TODO: remove after verifying everything is covered in UI for reals"""
-        for name, collection in (('Windows Shortcut', win_shortcuts),
-                                 ('a2 Hotkeys', a2_shortcuts)):
+        for name, collection in (('Windows Shortcut', win_shortcuts), ('a2 Hotkeys', a2_shortcuts)):
             if collection:
                 log.info(f'Possible collisions with {name}:')
                 for key, ops in collection.items():
@@ -299,8 +299,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                     else:
                         log.info('  %s: %s' % (key, ops))
                 if trigger_key in collection:
-                    log.info(f'Actual collisions with {name}:\n'
-                             '  %s' % collection[trigger_key])
+                    log.info(f'Actual collisions with {name}:\n' '  %s' % collection[trigger_key])
 
     def _fill_key_dict(self):
         for modkeyname in BASE_MODIFIERS:
@@ -319,8 +318,12 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         # rather than browsing all the ahk keys
         # we crawl through the ui objects for QPushButtons:
-        for ui_obj in [self.ui, self.cursor_block_widget.ui,
-                       self.numpad_block_widget.ui, self.mouse_block_widget.ui]:
+        for ui_obj in [
+            self.ui,
+            self.cursor_block_widget.ui,
+            self.numpad_block_widget.ui,
+            self.mouse_block_widget.ui,
+        ]:
             for key_name, button in inspect.getmembers(ui_obj, _is_pushbutton):
                 if key_name in _IGNORE_BUTTONS:
                     continue
@@ -351,6 +354,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
     def build_keyboard(self, keyboard_id):
         from . import layouts
+
         keyboard_module = layouts.get_module(keyboard_id)
         keyboard_module.main(self)
 
@@ -359,6 +363,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             css_values = self.a2.win.style.get_value_dict()
         except AttributeError:
             import a2style
+
             style = a2style.A2StyleBuilder()
             style.get_style()
             css_values = style.get_value_dict()
@@ -422,8 +427,12 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         try:
             dpi = QtGui.qApp.desktop().physicalDpiX()
             scale = self.a2.win.css_values['scale']
-            msg = ('hotkey dialog stats:\n   dpi: %i\n scale: %f\n   w/h: %i/%i'
-                   % (dpi, scale, self.width(), self.height()))
+            msg = 'hotkey dialog stats:\n   dpi: %i\n scale: %f\n   w/h: %i/%i' % (
+                dpi,
+                scale,
+                self.width(),
+                self.height(),
+            )
             log.info(msg)
         except AttributeError:
             pass
@@ -463,6 +472,7 @@ class CursorBlockWidget(QtWidgets.QWidget):
         super(CursorBlockWidget, self).__init__(parent)
 
         from . import cursor_block_ui
+
         a2ctrl.check_ui_module(cursor_block_ui)
         self.ui = cursor_block_ui.Ui_CursorBlock()
         self.ui.setupUi(self)
@@ -482,6 +492,7 @@ class NumpadWidget(QtWidgets.QWidget):
         self.a2 = parent.a2
 
         from . import numpad_ui
+
         a2ctrl.check_ui_module(numpad_ui)
         self.ui = numpad_ui.Ui_Numpad()
         self.ui.setupUi(self)
@@ -495,6 +506,7 @@ class MouseWidget(QtWidgets.QWidget):
         self.a2 = parent.a2
 
         from . import mouse_ui
+
         a2ctrl.check_ui_module(mouse_ui)
         self.ui = mouse_ui.Ui_Mouse()
         self.ui.setupUi(self)
@@ -520,8 +532,7 @@ def load_css(name):
 def win_standard_keys():
     global _WIN_STANDARD_KEYS
     if not _WIN_STANDARD_KEYS:
-        _WIN_STANDARD_KEYS = a2util.json_read(
-            os.path.join(_HERE, WIN_STANDARD_FILE))
+        _WIN_STANDARD_KEYS = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
     return _WIN_STANDARD_KEYS
 
 
@@ -530,8 +541,7 @@ def get_current_hotkeys():
     modifiers_global = _sort_hotkey_modifiers(global_hks)
 
     modifiers_include, modifiers_exclude = {}, {}
-    for from_dict, to_dict in [(include_hks, modifiers_include),
-                               (exclude_hks, modifiers_exclude)]:
+    for from_dict, to_dict in [(include_hks, modifiers_include), (exclude_hks, modifiers_exclude)]:
         for scope, hotkey_dict in from_dict.items():
             to_dict[scope] = _sort_hotkey_modifiers(hotkey_dict)
 
@@ -542,6 +552,5 @@ def _sort_hotkey_modifiers(hotkey_dict):
     modifier_dict = {}
     for key, call in hotkey_dict.items():
         mod_string, trigger_key = hotkey_common.get_sorted_parts(key)
-        modifier_dict.setdefault(mod_string, {}).setdefault(
-            trigger_key, []).extend(call)
+        modifier_dict.setdefault(mod_string, {}).setdefault(trigger_key, []).extend(call)
     return modifier_dict

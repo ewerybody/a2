@@ -1,6 +1,6 @@
 """Stuff for downloads from the internets."""
 import json
-from PySide2 import QtCore
+from PySide6 import QtCore
 
 import a2core
 
@@ -10,7 +10,9 @@ log = a2core.get_logger(__name__)
 
 # ERROR_FILE_NOT_FOUND = 'File not found (%s)'
 GITHUB_URL = 'github.com'
-GITHUB_COMPARE_TEMPLATE = 'https://api.github.com/repos/{owner}/{repo}/compare/{from_tag}...{to_tag}'
+GITHUB_COMPARE_TEMPLATE = (
+    'https://api.github.com/repos/{owner}/{repo}/compare/{from_tag}...{to_tag}'
+)
 GITHUB_RELEASE = 'https://api.github.com/repos/{owner}/{repo}/releases'
 GITHUB_LATEST = GITHUB_RELEASE + '/latest'
 GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
@@ -27,6 +29,7 @@ class GetJSONThread(QtCore.QThread):
 
     and kick it off by .start()-ing it.
     """
+
     data_fetched = QtCore.Signal(dict)
     error = QtCore.Signal(str)
 
@@ -57,6 +60,7 @@ def get_remote_data(url):
     """
     url = url.lower().strip()
     from urllib import request
+
     try:
         data = request.urlopen(url).read()
     except request.HTTPError as error:
@@ -85,5 +89,5 @@ def get_github_owner_repo(url):
     """
     parts = url.split('/')
     i = parts.index(GITHUB_URL)
-    owner, repo = parts[i + 1: i + 3]
+    owner, repo = parts[i + 1 : i + 3]
     return owner, repo

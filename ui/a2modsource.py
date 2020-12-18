@@ -10,7 +10,7 @@ import time
 import shutil
 import traceback
 
-from PySide2 import QtCore
+from PySide6 import QtCore
 
 import a2path
 import a2core
@@ -48,8 +48,12 @@ def get(main, modules_path):
         this_source.fetch_modules()
         modsource_dict[item.name.lower()] = this_source
 
-    log.info('Gathered %i sources with %i modules in total. (%s)',
-             len(modsource_dict), sum(s.mod_count for s in modsource_dict.values()), modules_path)
+    log.info(
+        'Gathered %i sources with %i modules in total. (%s)',
+        len(modsource_dict),
+        sum(s.mod_count for s in modsource_dict.values()),
+        modules_path,
+    )
     return modsource_dict
 
 
@@ -88,6 +92,7 @@ class ModSource(object):
                 self.mods.pop(mod_name)
 
         import a2mod
+
         # add new one
         for mod_name in mods_in_path:
             if mod_name not in self.mods:
@@ -108,8 +113,11 @@ class ModSource(object):
             self._config_load_error = MSG_NO_CFG_FILE
 
         except Exception as error:
-            msg = ('Error loading config file for "%s" (%s)\n'
-                   '  %s' % (self.name, self.config_file, error))
+            msg = 'Error loading config file for "%s" (%s)\n' '  %s' % (
+                self.name,
+                self.config_file,
+                error,
+            )
             self._config_load_error = msg
             log.error(msg)
         return {}
@@ -201,8 +209,7 @@ class ModSource(object):
 
         # if backed up: remove the current package
         else:
-            log.info('backed up already!\n'
-                     '    removing: %s %s', self.name, this_version)
+            log.info('backed up already!\n' '    removing: %s %s', self.name, this_version)
             self.remove()
 
         return not os.path.isdir(self.path)
@@ -239,6 +246,7 @@ class ModSourceCheckThread(QtCore.QThread):
 
     and kick it off by .start()-ing it.
     """
+
     data_fetched = QtCore.Signal(dict)
     update_error = QtCore.Signal(str)
 
@@ -290,7 +298,13 @@ def get_remote_cfg(update_url, main_branch=None):
                 return remote_data
             owner, repo = a2download.get_github_owner_repo(url)
             download_url = '/'.join(
-                [a2download.GITHUB_RAW_URL, owner, repo, main_branch or a2download.DEFAULT_MAIN_BRANCH])
+                [
+                    a2download.GITHUB_RAW_URL,
+                    owner,
+                    repo,
+                    main_branch or a2download.DEFAULT_MAIN_BRANCH,
+                ]
+            )
         else:
             download_url = url
 
@@ -339,7 +353,7 @@ def get_github_cfg(url):
         'news': remote_data['body'],
         'version': remote_data['tag_name'],
         'prerelease': remote_data.get('prerelease', False),
-        'zip_size': size
+        'zip_size': size,
     }
     return cfg
 
@@ -364,6 +378,7 @@ class ModSourceFetchThread(QtCore.QThread):
 
     and kick it off by .start()-ing it.
     """
+
     fetched = QtCore.Signal()
     failed = QtCore.Signal(str)
     status = QtCore.Signal(str)
@@ -397,11 +412,13 @@ class ModSourceFetchThread(QtCore.QThread):
 
         if self._download_size:
             percentage = 100 * float(self._downloaded_blocks) / self._download_size
-            msg = MSG_DOWNLOAD % (self.mod_source.name, self.version,
-                                  '%i%%' % min(100, percentage))
+            msg = MSG_DOWNLOAD % (self.mod_source.name, self.version, '%i%%' % min(100, percentage))
         else:
-            msg = MSG_DOWNLOAD % (self.mod_source.name, self.version,
-                                  '%i kb' % (self._downloaded_blocks * 1024))
+            msg = MSG_DOWNLOAD % (
+                self.mod_source.name,
+                self.version,
+                '%i kb' % (self._downloaded_blocks * 1024),
+            )
         log.info(msg)
         self.status.emit(msg)
 
@@ -498,6 +515,7 @@ def download_update(update_url, pack_basename, temp_packpath, callback=None):
     update_url += pack_basename
 
     from urllib import request
+
     try:
         request.FancyURLopener().retrieve(update_url, temp_packpath, callback)
 
@@ -520,6 +538,7 @@ def copy_update(update_path, pack_basename, temp_packpath):
 
 def unpack_update(temp_packpath, temp_new_version):
     import zipfile
+
     try:
         with zipfile.ZipFile(temp_packpath) as tmp_zip:
             for filename in tmp_zip.namelist():

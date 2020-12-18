@@ -3,7 +3,7 @@ Ui for various module-local scripts.
 """
 
 import os
-from PySide2 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 
 import a2ctrl
 import a2util
@@ -45,7 +45,7 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
             if item.is_file():
                 base, ext = os.path.splitext(item.name)
                 if base.startswith(self.file_prefix) and ext.lower() == self.extension:
-                    menu_script_files.add(base[len(self.file_prefix):])
+                    menu_script_files.add(base[len(self.file_prefix) :])
         return menu_script_files
 
     def _on_script_selected_action(self):
@@ -54,11 +54,14 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
 
     def _on_create_script(self):
         from a2widget.a2input_dialog import A2InputDialog
+
         dialog = A2InputDialog(
-            self.main, self.dialog_title,
+            self.main,
+            self.dialog_title,
             self.on_create_name_check,
             text=self._script_default_name,
-            msg=self.dialog_msg)
+            msg=self.dialog_msg,
+        )
 
         dialog.exec_()
         if not dialog.output:
@@ -88,8 +91,9 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         available = self.get_available_scripts()
 
         for script_name in available:
-            action = self.addAction(a2ctrl.Icons.inst().code, script_name,
-                                    self._on_script_selected_action)
+            action = self.addAction(
+                a2ctrl.Icons.inst().code, script_name, self._on_script_selected_action
+            )
             action.setData(script_name)
         if available:
             self.addSeparator()

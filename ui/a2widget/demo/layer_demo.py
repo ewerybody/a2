@@ -1,4 +1,4 @@
-from PySide2 import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from a2widget.demo import layer_demo_ui
 import a2ctrl
 
@@ -26,7 +26,8 @@ class Demo(QtWidgets.QMainWindow):
         self.ui.gridLayout.addLayout(self.ui.layout_0, 0, 0)
         self.ui.gridLayout.addLayout(self.ui.layout_1, 0, 0)
         self.ui.layout_1.setAlignment(
-            self.ui.toolButton, QtCore.Qt.AlignBottom|QtCore.Qt.AlignRight)
+            self.ui.toolButton, QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight
+        )
 
         lyt.addRow(self.lw)
 

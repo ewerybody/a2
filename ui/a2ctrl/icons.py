@@ -2,7 +2,7 @@
 Finally an own little module all things icons.
 """
 import os
-from PySide2 import QtGui, QtCore, QtSvg
+from PySide6 import QtGui, QtCore, QtSvg
 import a2core
 import a2path
 
@@ -27,6 +27,7 @@ class Ico(QtGui.QIcon):
     * can directly render from svg,
     * have a tinted version if needed.
     """
+
     ico_path = None
 
     def __init__(self, ico_name, size=512, alpha=None):
@@ -111,6 +112,7 @@ class Ico(QtGui.QIcon):
 
 class LibIco(Ico):
     """Ico variant with hardcoded specs."""
+
     def __init__(self, name):
         super(LibIco, self).__init__(name, 512, DEFAULT_ALPHA)
 
@@ -122,6 +124,7 @@ class Icons:
     For convenience this already lists all usable icons and for speed it
     just loads them up when actually needed.
     """
+
     # This is supposed to have many!
     # pylint: disable=too-many-instance-attributes
     _instance = None
@@ -229,6 +232,7 @@ def get(current_icon, folder, fallback=None):
 def _update_icon_stub():
     """Browse the resource dir for icons and add it to this file."""
     from fnmatch import fnmatch
+
     with open(__file__) as file_obj:
         content = file_obj.read()
 
@@ -255,11 +259,11 @@ def _update_icon_stub():
             indent = ' ' * 8
             for name in sorted(full_color):
                 # lines.append(f"{indent}self.{name} = Ico('{name}')")
-                lines.append(f"{indent}self.{name} = True")
+                lines.append(f'{indent}self.{name} = True')
             lines.append('')
             for name in sorted(lib_icons):
                 # lines.append(f"{indent}self.{name} = LibIco('{name}')")
-                lines.append(f"{indent}self.{name} = False")
+                lines.append(f'{indent}self.{name} = False')
 
         if line.endswith('# Icons end'):
             in_icons = False
@@ -273,11 +277,13 @@ def _update_icon_stub():
         new_name = __file__ + ' _ changed'
         with open(new_name, 'w') as file_obj:
             file_obj.write(new_content)
-        print(f'Total of {num_icons} icons written into the code.'
-              f'look into {new_name} to see the changes!')
+        print(
+            f'Total of {num_icons} icons written into the code.'
+            f'look into {new_name} to see the changes!'
+        )
     else:
         print(f'Nothing changed! All {num_icons} icons already listed!')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     _update_icon_stub()

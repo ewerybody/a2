@@ -1,7 +1,7 @@
 import a2ctrl
 import a2util
 
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from a2element import group_edit_ui, DrawCtrlMixin, EditCtrl
 from a2element.common import EditAddElem
 
@@ -11,6 +11,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
     Group box to bundle multiple other controls or includes that can be
     enabled/disables all at once.
     """
+
     def __init__(self, main, cfg, mod, user_cfg):
         self.is_expandable_widget = False
         super(Draw, self).__init__(parent=main)
@@ -61,6 +62,7 @@ class Edit(EditCtrl):
         properly implemented it would probably work very well, we will
         not go deeper than this to keep complexity under the lid)
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         if 'children' not in self.cfg:
@@ -74,8 +76,7 @@ class Edit(EditCtrl):
         for child in self.cfg['children']:
             controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
 
-        controls.append(EditAddElem(self.main, self.cfg['children'],
-                                    'Add Group Element'))
+        controls.append(EditAddElem(self.main, self.cfg['children'], 'Add Group Element'))
         for ctrl in controls:
             self.ui.edit_layout.addWidget(ctrl)
 

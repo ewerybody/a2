@@ -2,23 +2,23 @@ import os
 import json
 import pprint
 
-from PySide2 import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 
 from a2widget.key_value_table import KeyValueTable
 from a2widget.a2text_field import A2CodeField
 
 
 _DEMO_DATA = {
-    "Name": "Some Body",
-    "Surname": "Body",
-    "Street. Nr": "Thingstreet 8",
-    "Street": "Thingstreet",
-    "Nr": "8",
-    "PLZ": "12354",
-    "City": "Frankfurt am Main",
-    "Phone+": "+1232222222",
-    "Phone": "2222222",
-    "Country": "Germany"
+    'Name': 'Some Body',
+    'Surname': 'Body',
+    'Street. Nr': 'Thingstreet 8',
+    'Street': 'Thingstreet',
+    'Nr': '8',
+    'PLZ': '12354',
+    'City': 'Frankfurt am Main',
+    'Phone+': '+1232222222',
+    'Phone': '2222222',
+    'Country': 'Germany',
 }
 
 
@@ -51,6 +51,7 @@ class Demo(QtWidgets.QMainWindow):
     def set_data(self):
         data = json.loads(self.text_field.text())
         self.key_value_table.set_data(data)
+
 
 def show():
     app = QtWidgets.QApplication([])

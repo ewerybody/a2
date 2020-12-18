@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 import a2ctrl
 from a2widget.a2more_button import A2MoreButton
@@ -19,15 +19,20 @@ class Demo(QtWidgets.QMainWindow):
         button1 = A2MoreButton(self)
         button1.menu_called.connect(self.build_a_menu)
         self.menu_called_count = 0
-        lyt.addRow('<b>A2MoreButton</b> with menu_called Signal:<br>'
-                   'So the menu is always rebuilt', button1)
+        lyt.addRow(
+            '<b>A2MoreButton</b> with menu_called Signal:<br>' 'So the menu is always rebuilt',
+            button1,
+        )
 
         button2 = A2MoreButton(self)
         button2.add_note('A disabled action')
         action = button2.add_action('An enabled one')
         action.triggered.connect(self.print_something)
-        lyt.addRow('<b>A2MoreButton</b> with directly added actions:<br>'
-                   'The menu is built once and just popps up', button2)
+        lyt.addRow(
+            '<b>A2MoreButton</b> with directly added actions:<br>'
+            'The menu is built once and just popps up',
+            button2,
+        )
         button2.menu_called.connect(self.never_called_function)
 
         path_field = A2PathField(self)
@@ -42,8 +47,11 @@ class Demo(QtWidgets.QMainWindow):
 
     def build_a_menu(self, menu):
         self.menu_called_count += 1
-        menu.addAction(a2ctrl.Icons.inst().a2,
-                       'Some Menu action (call count: %i)' % self.menu_called_count, self.some_function)
+        menu.addAction(
+            a2ctrl.Icons.inst().a2,
+            'Some Menu action (call count: %i)' % self.menu_called_count,
+            self.some_function,
+        )
 
     def some_function(self):
         print('Action triggered: %s' % self.sender().text())

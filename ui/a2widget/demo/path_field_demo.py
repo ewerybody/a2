@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 from a2widget.a2path_field import A2PathField
 
 

@@ -1,7 +1,7 @@
 from functools import partial
 from collections import OrderedDict
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2util
@@ -46,13 +46,20 @@ class ScopeWidget(QtWidgets.QWidget):
         if self._cfg is None:
             return
 
-        a2ctrl.connect.control_list([self.ui.scopeMode_0, self.ui.scopeMode_1, self.ui.scopeMode_2],
-                                    self._cfg, self._scope_mode_changed)
+        a2ctrl.connect.control_list(
+            [self.ui.scopeMode_0, self.ui.scopeMode_1, self.ui.scopeMode_2],
+            self._cfg,
+            self._scope_mode_changed,
+        )
         self.ui.cfg_scope.add(self._cfg.get(Vars.scope, []))
 
         if not self._cfg.get(Vars.scope_change, False):
-            for widget in [self.ui.type_radio_widget, self.ui.fields_widget,
-                           self.ui.tool_buttons_widget, self.ui.cfg_scope]:
+            for widget in [
+                self.ui.type_radio_widget,
+                self.ui.fields_widget,
+                self.ui.tool_buttons_widget,
+                self.ui.cfg_scope,
+            ]:
                 widget.setEnabled(False)
         else:
             self.on_scope_mode_change()
@@ -69,7 +76,7 @@ class ScopeWidget(QtWidgets.QWidget):
         for i, typ in [(2, AHK_TYPES[1]), (1, AHK_TYPES[0])]:
             found = scope_string.find(typ)
             if found != -1:
-                texts[i] = (scope_string[found + len(typ):].strip())
+                texts[i] = scope_string[found + len(typ) :].strip()
                 scope_string = scope_string[:found]
         texts[0] = scope_string.strip()
         for i, ctrl in enumerate(self.input_fields.values()):
@@ -142,6 +149,7 @@ class ScopeWidget(QtWidgets.QWidget):
         menu = self.sender()
         menu.clear()
         import a2runtime
+
         collector = a2runtime.collect_includes(a2runtime.IncludeType.hotkeys)
         scopes = list(collector.hotkeys.hotkeys_scope_incl.keys())
         scopes.extend(collector.hotkeys.hotkeys_scope_excl.keys())
@@ -191,7 +199,8 @@ class ScopeWidget(QtWidgets.QWidget):
         self.input_fields = OrderedDict()
         i = 0
         for name, ctrl in zip(
-                SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]):
+            SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]
+        ):
             self.input_fields[name] = ctrl
             ctrl.textChanged.connect(self._scope_text_changed.emit)
             ctrl.menu_called.connect(partial(self.build_button_field_menu, i))
@@ -210,8 +219,9 @@ class ScopeWidget(QtWidgets.QWidget):
         self.ui.cfg_scope.changed.connect(self.scope_update)
 
         self.context_menu = QtWidgets.QMenu(self)
-        self.context_menu.addAction(icons.delete, 'Delete scope item',
-                                    self.ui.cfg_scope.remove_selected)
+        self.context_menu.addAction(
+            icons.delete, 'Delete scope item', self.ui.cfg_scope.remove_selected
+        )
         self.ui.cfg_scope.set_context_menu(self.context_menu)
 
         self._scope_mode_changed.connect(self.on_scope_mode_change)
@@ -227,9 +237,11 @@ class ScopeWidget(QtWidgets.QWidget):
             self.help_menu = QtWidgets.QMenu(self)
             a2 = a2core.A2Obj.inst()
             icons = a2ctrl.Icons.inst()
-            self.help_map = {'Help on Scope Setup': a2.urls.help_scopes,
-                             'Help on AHK WinActive': a2.urls.ahkWinActive,
-                             'Help on AHK WinTitle': a2.urls.ahkWinTitle}
+            self.help_map = {
+                'Help on Scope Setup': a2.urls.help_scopes,
+                'Help on AHK WinActive': a2.urls.ahkWinActive,
+                'Help on AHK WinTitle': a2.urls.ahkWinTitle,
+            }
             for title in self.help_map:
                 self.help_menu.addAction(icons.help, title, self._goto_help)
 
@@ -266,4 +278,5 @@ def get_scope_string(title, class_name, process):
 
 if __name__ == '__main__':
     import a2widget.demo.hotkey_demo
+
     a2widget.demo.hotkey_demo.show()
