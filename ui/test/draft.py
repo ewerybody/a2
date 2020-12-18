@@ -5,7 +5,7 @@ This was a super early layoyt draft for the a2 UI!
 @author: eric
 """
 import test.draft_ui
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets
 
 
 class Draft(QtWidgets.QMainWindow):

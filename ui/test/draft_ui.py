@@ -1,318 +1,414 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\eric\io\code\a2\ui\test\draft.ui',
-# licensing of 'C:\Users\eric\io\code\a2\ui\test\draft.ui' applies.
-#
-# Created: Sun Jun 17 23:09:57 2018
-#      by: pyside2-uic  running on PySide2 5.11.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'draft.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(1333, 1158)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
-        self.splitter = QtWidgets.QSplitter(self.centralwidget)
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.gridLayout = QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName(u"gridLayout")
+        self.splitter = QSplitter(self.centralwidget)
+        self.splitter.setObjectName(u"splitter")
         self.splitter.setAutoFillBackground(False)
-        self.splitter.setFrameShape(QtWidgets.QFrame.Box)
-        self.splitter.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.splitter.setFrameShape(QFrame.Box)
+        self.splitter.setFrameShadow(QFrame.Plain)
         self.splitter.setLineWidth(0)
         self.splitter.setMidLineWidth(1)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setOrientation(Qt.Horizontal)
         self.splitter.setOpaqueResize(False)
         self.splitter.setHandleWidth(15)
         self.splitter.setChildrenCollapsible(False)
-        self.splitter.setObjectName("splitter")
-        self.groupBox = QtWidgets.QGroupBox(self.splitter)
-        self.groupBox.setMinimumSize(QtCore.QSize(150, 0))
-        self.groupBox.setMaximumSize(QtCore.QSize(400, 16777215))
-        self.groupBox.setObjectName("groupBox")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.listView2 = QtWidgets.QListView(self.groupBox)
-        self.listView2.setObjectName("listView2")
+        self.groupBox = QGroupBox(self.splitter)
+        self.groupBox.setObjectName(u"groupBox")
+        self.groupBox.setMinimumSize(QSize(150, 0))
+        self.groupBox.setMaximumSize(QSize(400, 16777215))
+        self.verticalLayout = QVBoxLayout(self.groupBox)
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.listView2 = QListView(self.groupBox)
+        self.listView2.setObjectName(u"listView2")
+
         self.verticalLayout.addWidget(self.listView2)
-        self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
+
+        self.splitter.addWidget(self.groupBox)
+        self.groupBox_2 = QGroupBox(self.splitter)
+        self.groupBox_2.setObjectName(u"groupBox_2")
         self.groupBox_2.setEnabled(True)
         self.groupBox_2.setAutoFillBackground(False)
         self.groupBox_2.setFlat(True)
         self.groupBox_2.setCheckable(True)
-        self.groupBox_2.setObjectName("groupBox_2")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.groupBox_2)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.tabWidget = QtWidgets.QTabWidget(self.groupBox_2)
-        self.tabWidget.setObjectName("tabWidget")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.tab)
-        self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.scrollArea = QtWidgets.QScrollArea(self.tab)
-        self.scrollArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.verticalLayout_2 = QVBoxLayout(self.groupBox_2)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.tabWidget = QTabWidget(self.groupBox_2)
+        self.tabWidget.setObjectName(u"tabWidget")
+        self.tab = QWidget()
+        self.tab.setObjectName(u"tab")
+        self.verticalLayout_7 = QVBoxLayout(self.tab)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.scrollArea = QScrollArea(self.tab)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.scrollArea.setWidgetResizable(True)
-        self.scrollArea.setObjectName("scrollArea")
-        self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 802, 906))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.label = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 802, 906))
+        self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.label = QLabel(self.scrollAreaWidgetContents)
+        self.label.setObjectName(u"label")
         self.label.setWordWrap(True)
-        self.label.setObjectName("label")
+
         self.verticalLayout_4.addWidget(self.label)
-        self.checkBox_4 = QtWidgets.QCheckBox(self.scrollAreaWidgetContents)
-        self.checkBox_4.setObjectName("checkBox_4")
+
+        self.checkBox_4 = QCheckBox(self.scrollAreaWidgetContents)
+        self.checkBox_4.setObjectName(u"checkBox_4")
+
         self.verticalLayout_4.addWidget(self.checkBox_4)
-        self.pushButton = QtWidgets.QPushButton(self.scrollAreaWidgetContents)
-        self.pushButton.setObjectName("pushButton")
+
+        self.pushButton = QPushButton(self.scrollAreaWidgetContents)
+        self.pushButton.setObjectName(u"pushButton")
+
         self.verticalLayout_4.addWidget(self.pushButton)
-        self.groupBox_3 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents)
+
+        self.groupBox_3 = QGroupBox(self.scrollAreaWidgetContents)
+        self.groupBox_3.setObjectName(u"groupBox_3")
         self.groupBox_3.setFlat(False)
         self.groupBox_3.setCheckable(True)
-        self.groupBox_3.setObjectName("groupBox_3")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox_3)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.checkBox_5 = QtWidgets.QCheckBox(self.groupBox_3)
-        self.checkBox_5.setObjectName("checkBox_5")
+        self.verticalLayout_3 = QVBoxLayout(self.groupBox_3)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.checkBox_5 = QCheckBox(self.groupBox_3)
+        self.checkBox_5.setObjectName(u"checkBox_5")
+
         self.verticalLayout_3.addWidget(self.checkBox_5)
-        self.checkBox_6 = QtWidgets.QCheckBox(self.groupBox_3)
-        self.checkBox_6.setObjectName("checkBox_6")
+
+        self.checkBox_6 = QCheckBox(self.groupBox_3)
+        self.checkBox_6.setObjectName(u"checkBox_6")
+
         self.verticalLayout_3.addWidget(self.checkBox_6)
+
+
         self.verticalLayout_4.addWidget(self.groupBox_3)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_4.addItem(spacerItem)
+
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_4.addItem(self.verticalSpacer_2)
+
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
         self.verticalLayout_7.addWidget(self.scrollArea)
+
         self.tabWidget.addTab(self.tab, "")
-        self.tab_2 = QtWidgets.QWidget()
-        self.tab_2.setObjectName("tab_2")
-        self.verticalLayout_12 = QtWidgets.QVBoxLayout(self.tab_2)
-        self.verticalLayout_12.setObjectName("verticalLayout_12")
-        self.scrollArea_2 = QtWidgets.QScrollArea(self.tab_2)
-        self.scrollArea_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.scrollArea_2.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.tab_2 = QWidget()
+        self.tab_2.setObjectName(u"tab_2")
+        self.verticalLayout_12 = QVBoxLayout(self.tab_2)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.scrollArea_2 = QScrollArea(self.tab_2)
+        self.scrollArea_2.setObjectName(u"scrollArea_2")
+        self.scrollArea_2.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scrollArea_2.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.scrollArea_2.setWidgetResizable(True)
-        self.scrollArea_2.setObjectName("scrollArea_2")
-        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, -478, 768, 1628))
-        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
-        self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
-        self.verticalLayout_8.setObjectName("verticalLayout_8")
-        self.groupBox_4 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents_2)
-        font = QtGui.QFont()
-        font.setWeight(50)
-        font.setStrikeOut(False)
+        self.scrollAreaWidgetContents_2 = QWidget()
+        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, -478, 768, 1628))
+        self.verticalLayout_8 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.groupBox_4 = QGroupBox(self.scrollAreaWidgetContents_2)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+        font = QFont()
         font.setBold(False)
+        font.setStrikeOut(False)
         self.groupBox_4.setFont(font)
         self.groupBox_4.setFlat(False)
-        self.groupBox_4.setObjectName("groupBox_4")
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.groupBox_4)
+        self.verticalLayout_6 = QVBoxLayout(self.groupBox_4)
         self.verticalLayout_6.setSpacing(5)
         self.verticalLayout_6.setContentsMargins(1, 1, 1, 1)
-        self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.label_3 = QtWidgets.QLabel(self.groupBox_4)
-        self.label_3.setObjectName("label_3")
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.label_3 = QLabel(self.groupBox_4)
+        self.label_3.setObjectName(u"label_3")
+
         self.verticalLayout_6.addWidget(self.label_3)
-        self.lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
-        self.lineEdit.setObjectName("lineEdit")
+
+        self.lineEdit = QLineEdit(self.groupBox_4)
+        self.lineEdit.setObjectName(u"lineEdit")
+
         self.verticalLayout_6.addWidget(self.lineEdit)
-        self.label_2 = QtWidgets.QLabel(self.groupBox_4)
-        self.label_2.setObjectName("label_2")
+
+        self.label_2 = QLabel(self.groupBox_4)
+        self.label_2.setObjectName(u"label_2")
+
         self.verticalLayout_6.addWidget(self.label_2)
-        self.textEdit = QtWidgets.QTextEdit(self.groupBox_4)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+
+        self.textEdit = QTextEdit(self.groupBox_4)
+        self.textEdit.setObjectName(u"textEdit")
+        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.textEdit.sizePolicy().hasHeightForWidth())
         self.textEdit.setSizePolicy(sizePolicy)
-        self.textEdit.setObjectName("textEdit")
+
         self.verticalLayout_6.addWidget(self.textEdit)
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.groupBox_4)
-        self.plainTextEdit.setMaximumSize(QtCore.QSize(16777215, 100))
+
+        self.plainTextEdit = QPlainTextEdit(self.groupBox_4)
+        self.plainTextEdit.setObjectName(u"plainTextEdit")
+        self.plainTextEdit.setMaximumSize(QSize(16777215, 100))
         self.plainTextEdit.setTabChangesFocus(True)
-        self.plainTextEdit.setObjectName("plainTextEdit")
+
         self.verticalLayout_6.addWidget(self.plainTextEdit)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+
+        self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setContentsMargins(10, 10, 10, 10)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label_7 = QtWidgets.QLabel(self.groupBox_4)
-        self.label_7.setObjectName("label_7")
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.label_7 = QLabel(self.groupBox_4)
+        self.label_7.setObjectName(u"label_7")
+
         self.horizontalLayout.addWidget(self.label_7)
-        self.lineEdit_5 = QtWidgets.QLineEdit(self.groupBox_4)
-        self.lineEdit_5.setObjectName("lineEdit_5")
+
+        self.lineEdit_5 = QLineEdit(self.groupBox_4)
+        self.lineEdit_5.setObjectName(u"lineEdit_5")
+
         self.horizontalLayout.addWidget(self.lineEdit_5)
+
+
         self.verticalLayout_6.addLayout(self.horizontalLayout)
-        self.label_5 = QtWidgets.QLabel(self.groupBox_4)
-        self.label_5.setObjectName("label_5")
+
+        self.label_5 = QLabel(self.groupBox_4)
+        self.label_5.setObjectName(u"label_5")
+
         self.verticalLayout_6.addWidget(self.label_5)
-        self.lineEdit_3 = QtWidgets.QLineEdit(self.groupBox_4)
-        self.lineEdit_3.setObjectName("lineEdit_3")
+
+        self.lineEdit_3 = QLineEdit(self.groupBox_4)
+        self.lineEdit_3.setObjectName(u"lineEdit_3")
+
         self.verticalLayout_6.addWidget(self.lineEdit_3)
-        self.label_6 = QtWidgets.QLabel(self.groupBox_4)
-        self.label_6.setObjectName("label_6")
+
+        self.label_6 = QLabel(self.groupBox_4)
+        self.label_6.setObjectName(u"label_6")
+
         self.verticalLayout_6.addWidget(self.label_6)
-        self.lineEdit_4 = QtWidgets.QLineEdit(self.groupBox_4)
-        self.lineEdit_4.setObjectName("lineEdit_4")
+
+        self.lineEdit_4 = QLineEdit(self.groupBox_4)
+        self.lineEdit_4.setObjectName(u"lineEdit_4")
+
         self.verticalLayout_6.addWidget(self.lineEdit_4)
+
+
         self.verticalLayout_8.addWidget(self.groupBox_4)
-        self.checkBox_7 = QtWidgets.QCheckBox(self.scrollAreaWidgetContents_2)
-        self.checkBox_7.setObjectName("checkBox_7")
+
+        self.checkBox_7 = QCheckBox(self.scrollAreaWidgetContents_2)
+        self.checkBox_7.setObjectName(u"checkBox_7")
+
         self.verticalLayout_8.addWidget(self.checkBox_7)
-        self.pushButton_3 = QtWidgets.QPushButton(self.scrollAreaWidgetContents_2)
-        self.pushButton_3.setObjectName("pushButton_3")
+
+        self.pushButton_3 = QPushButton(self.scrollAreaWidgetContents_2)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+
         self.verticalLayout_8.addWidget(self.pushButton_3)
-        self.groupBox_6 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents_2)
+
+        self.groupBox_6 = QGroupBox(self.scrollAreaWidgetContents_2)
+        self.groupBox_6.setObjectName(u"groupBox_6")
         self.groupBox_6.setFlat(False)
         self.groupBox_6.setCheckable(True)
-        self.groupBox_6.setObjectName("groupBox_6")
-        self.verticalLayout_9 = QtWidgets.QVBoxLayout(self.groupBox_6)
-        self.verticalLayout_9.setObjectName("verticalLayout_9")
-        self.checkBox_8 = QtWidgets.QCheckBox(self.groupBox_6)
-        self.checkBox_8.setObjectName("checkBox_8")
+        self.verticalLayout_9 = QVBoxLayout(self.groupBox_6)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.checkBox_8 = QCheckBox(self.groupBox_6)
+        self.checkBox_8.setObjectName(u"checkBox_8")
+
         self.verticalLayout_9.addWidget(self.checkBox_8)
-        self.checkBox_9 = QtWidgets.QCheckBox(self.groupBox_6)
-        self.checkBox_9.setObjectName("checkBox_9")
+
+        self.checkBox_9 = QCheckBox(self.groupBox_6)
+        self.checkBox_9.setObjectName(u"checkBox_9")
+
         self.verticalLayout_9.addWidget(self.checkBox_9)
+
+
         self.verticalLayout_8.addWidget(self.groupBox_6)
-        self.line = QtWidgets.QFrame(self.scrollAreaWidgetContents_2)
-        self.line.setMinimumSize(QtCore.QSize(0, 20))
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+
+        self.line = QFrame(self.scrollAreaWidgetContents_2)
+        self.line.setObjectName(u"line")
+        self.line.setMinimumSize(QSize(0, 20))
+        self.line.setFrameShadow(QFrame.Sunken)
         self.line.setLineWidth(3)
         self.line.setMidLineWidth(1)
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
+        self.line.setFrameShape(QFrame.HLine)
+
         self.verticalLayout_8.addWidget(self.line)
-        self.groupBox_7 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents_2)
-        self.groupBox_7.setObjectName("groupBox_7")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.groupBox_7)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.comboBox_2 = QtWidgets.QComboBox(self.groupBox_7)
-        self.comboBox_2.setMinimumSize(QtCore.QSize(0, 40))
-        self.comboBox_2.setObjectName("comboBox_2")
+
+        self.groupBox_7 = QGroupBox(self.scrollAreaWidgetContents_2)
+        self.groupBox_7.setObjectName(u"groupBox_7")
+        self.horizontalLayout_2 = QHBoxLayout(self.groupBox_7)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.comboBox_2 = QComboBox(self.groupBox_7)
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
+        self.comboBox_2.setObjectName(u"comboBox_2")
+        self.comboBox_2.setMinimumSize(QSize(0, 40))
+
         self.horizontalLayout_2.addWidget(self.comboBox_2)
-        self.commandLinkButton_2 = QtWidgets.QCommandLinkButton(self.groupBox_7)
-        self.commandLinkButton_2.setMaximumSize(QtCore.QSize(100, 60))
-        font = QtGui.QFont()
-        font.setFamily("Segoe UI")
-        font.setPointSize(6)
-        self.commandLinkButton_2.setFont(font)
+
+        self.commandLinkButton_2 = QCommandLinkButton(self.groupBox_7)
+        self.commandLinkButton_2.setObjectName(u"commandLinkButton_2")
+        self.commandLinkButton_2.setMaximumSize(QSize(100, 60))
+        font1 = QFont()
+        font1.setFamily(u"Segoe UI")
+        font1.setPointSize(6)
+        self.commandLinkButton_2.setFont(font1)
         self.commandLinkButton_2.setCheckable(True)
         self.commandLinkButton_2.setChecked(False)
-        self.commandLinkButton_2.setObjectName("commandLinkButton_2")
+
         self.horizontalLayout_2.addWidget(self.commandLinkButton_2)
+
+
         self.verticalLayout_8.addWidget(self.groupBox_7)
-        self.label_4 = QtWidgets.QLabel(self.scrollAreaWidgetContents_2)
-        self.label_4.setObjectName("label_4")
+
+        self.label_4 = QLabel(self.scrollAreaWidgetContents_2)
+        self.label_4.setObjectName(u"label_4")
+
         self.verticalLayout_8.addWidget(self.label_4)
-        self.frame_2 = QtWidgets.QFrame(self.scrollAreaWidgetContents_2)
-        self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_2.setObjectName("frame_2")
-        self.verticalLayout_10 = QtWidgets.QVBoxLayout(self.frame_2)
-        self.verticalLayout_10.setObjectName("verticalLayout_10")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.frame_2)
-        self.checkBox_2.setObjectName("checkBox_2")
+
+        self.frame_2 = QFrame(self.scrollAreaWidgetContents_2)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setFrameShape(QFrame.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_10 = QVBoxLayout(self.frame_2)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.checkBox_2 = QCheckBox(self.frame_2)
+        self.checkBox_2.setObjectName(u"checkBox_2")
+
         self.verticalLayout_10.addWidget(self.checkBox_2)
+
+
         self.verticalLayout_8.addWidget(self.frame_2)
-        self.groupBox_8 = QtWidgets.QGroupBox(self.scrollAreaWidgetContents_2)
-        self.groupBox_8.setObjectName("groupBox_8")
-        self.verticalLayout_11 = QtWidgets.QVBoxLayout(self.groupBox_8)
-        self.verticalLayout_11.setObjectName("verticalLayout_11")
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.groupBox_8)
-        self.lineEdit_2.setObjectName("lineEdit_2")
+
+        self.groupBox_8 = QGroupBox(self.scrollAreaWidgetContents_2)
+        self.groupBox_8.setObjectName(u"groupBox_8")
+        self.verticalLayout_11 = QVBoxLayout(self.groupBox_8)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.lineEdit_2 = QLineEdit(self.groupBox_8)
+        self.lineEdit_2.setObjectName(u"lineEdit_2")
+
         self.verticalLayout_11.addWidget(self.lineEdit_2)
-        self.textEdit_2 = QtWidgets.QTextEdit(self.groupBox_8)
+
+        self.textEdit_2 = QTextEdit(self.groupBox_8)
+        self.textEdit_2.setObjectName(u"textEdit_2")
         self.textEdit_2.setEnabled(True)
-        self.textEdit_2.setMaximumSize(QtCore.QSize(16777215, 200))
-        self.textEdit_2.setBaseSize(QtCore.QSize(0, 200))
-        self.textEdit_2.setObjectName("textEdit_2")
+        self.textEdit_2.setMaximumSize(QSize(16777215, 200))
+        self.textEdit_2.setBaseSize(QSize(0, 200))
+
         self.verticalLayout_11.addWidget(self.textEdit_2)
+
+
         self.verticalLayout_8.addWidget(self.groupBox_8)
-        self.pushButton_5 = QtWidgets.QPushButton(self.scrollAreaWidgetContents_2)
-        self.pushButton_5.setObjectName("pushButton_5")
+
+        self.pushButton_5 = QPushButton(self.scrollAreaWidgetContents_2)
+        self.pushButton_5.setObjectName(u"pushButton_5")
+
         self.verticalLayout_8.addWidget(self.pushButton_5)
-        self.pushButton_6 = QtWidgets.QPushButton(self.scrollAreaWidgetContents_2)
-        self.pushButton_6.setObjectName("pushButton_6")
+
+        self.pushButton_6 = QPushButton(self.scrollAreaWidgetContents_2)
+        self.pushButton_6.setObjectName(u"pushButton_6")
+
         self.verticalLayout_8.addWidget(self.pushButton_6)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_8.addItem(spacerItem1)
+
+        self.verticalSpacer_3 = QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_8.addItem(self.verticalSpacer_3)
+
         self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+
         self.verticalLayout_12.addWidget(self.scrollArea_2)
+
         self.tabWidget.addTab(self.tab_2, "")
+
         self.verticalLayout_2.addWidget(self.tabWidget)
+
+        self.splitter.addWidget(self.groupBox_2)
+
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
+
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1333, 38))
-        self.menubar.setObjectName("menubar")
+        self.menubar = QMenuBar(MainWindow)
+        self.menubar.setObjectName(u"menubar")
+        self.menubar.setGeometry(QRect(0, 0, 1333, 38))
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
+
         self.tabWidget.setCurrentIndex(1)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
-        self.groupBox.setTitle(QtWidgets.QApplication.translate("MainWindow", "modules", None, -1))
-        self.groupBox_2.setTitle(QtWidgets.QApplication.translate("MainWindow", "Module XY", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("MainWindow", "A Text: A description text that mumbles across the window with so called words compromised of \"letters\" and punctuation. Sometimes it even has a meaning!", None, -1))
-        self.checkBox_4.setText(QtWidgets.QApplication.translate("MainWindow", "a checkbox that does something", None, -1))
-        self.pushButton.setText(QtWidgets.QApplication.translate("MainWindow", "A Button that calls some action", None, -1))
-        self.groupBox_3.setTitle(QtWidgets.QApplication.translate("MainWindow", "GroupBox enablable", None, -1))
-        self.checkBox_5.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.checkBox_6.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QtWidgets.QApplication.translate("MainWindow", "normal mode", None, -1))
-        self.groupBox_4.setTitle(QtWidgets.QApplication.translate("MainWindow", "module information:", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("MainWindow", "display name:", None, -1))
-        self.lineEdit.setText(QtWidgets.QApplication.translate("MainWindow", "module name", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "description:", None, -1))
-        self.textEdit.setHtml(QtWidgets.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"modules", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Module XY", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"A Text: A description text that mumbles across the window with so called words compromised of \"letters\" and punctuation. Sometimes it even has a meaning!", None))
+        self.checkBox_4.setText(QCoreApplication.translate("MainWindow", u"a checkbox that does something", None))
+        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"A Button that calls some action", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"GroupBox enablable", None))
+        self.checkBox_5.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        self.checkBox_6.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"normal mode", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"module information:", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"display name:", None))
+        self.lineEdit.setText(QCoreApplication.translate("MainWindow", u"module name", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"description:", None))
+        self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">A Text: A description text that mumbles across the window with so called words compromised of &quot;letters&quot; and punctuation. Sometimes it even has a meaning!</span></p></body></html>", None, -1))
-        self.plainTextEdit.setPlainText(QtWidgets.QApplication.translate("MainWindow", "asdasdf\n"
-"", None, -1))
-        self.label_7.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("MainWindow", "author:", None, -1))
-        self.lineEdit_3.setText(QtWidgets.QApplication.translate("MainWindow", "my name", None, -1))
-        self.label_6.setText(QtWidgets.QApplication.translate("MainWindow", "version:", None, -1))
-        self.lineEdit_4.setText(QtWidgets.QApplication.translate("MainWindow", "0.0.1", None, -1))
-        self.checkBox_7.setText(QtWidgets.QApplication.translate("MainWindow", "a checkbox that does something", None, -1))
-        self.pushButton_3.setText(QtWidgets.QApplication.translate("MainWindow", "A Button that calls some action", None, -1))
-        self.groupBox_6.setTitle(QtWidgets.QApplication.translate("MainWindow", "GroupBox enablable", None, -1))
-        self.checkBox_8.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.checkBox_9.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.groupBox_7.setTitle(QtWidgets.QApplication.translate("MainWindow", "new element", None, -1))
-        self.comboBox_2.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "Text", None, -1))
-        self.comboBox_2.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.comboBox_2.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "Include", None, -1))
-        self.comboBox_2.setItemText(3, QtWidgets.QApplication.translate("MainWindow", "GroupBox", None, -1))
-        self.commandLinkButton_2.setText(QtWidgets.QApplication.translate("MainWindow", "Add", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("MainWindow", "This is something for a Text Label", None, -1))
-        self.checkBox_2.setText(QtWidgets.QApplication.translate("MainWindow", "CheckBox", None, -1))
-        self.groupBox_8.setTitle(QtWidgets.QApplication.translate("MainWindow", "Edit Text:", None, -1))
-        self.lineEdit_2.setText(QtWidgets.QApplication.translate("MainWindow", "Module1_Text", None, -1))
-        self.textEdit_2.setHtml(QtWidgets.QApplication.translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">A Text: A description text that mumbles across the window with so called words compromised of &quot;letters&quot; and punctuation. Sometimes it even has a meaning!</span></p></body></html>", None))
+        self.plainTextEdit.setPlainText(QCoreApplication.translate("MainWindow", u"asdasdf\n"
+"", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"TextLabel", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"author:", None))
+        self.lineEdit_3.setText(QCoreApplication.translate("MainWindow", u"my name", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"version:", None))
+        self.lineEdit_4.setText(QCoreApplication.translate("MainWindow", u"0.0.1", None))
+        self.checkBox_7.setText(QCoreApplication.translate("MainWindow", u"a checkbox that does something", None))
+        self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"A Button that calls some action", None))
+        self.groupBox_6.setTitle(QCoreApplication.translate("MainWindow", u"GroupBox enablable", None))
+        self.checkBox_8.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        self.checkBox_9.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"new element", None))
+        self.comboBox_2.setItemText(0, QCoreApplication.translate("MainWindow", u"Text", None))
+        self.comboBox_2.setItemText(1, QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        self.comboBox_2.setItemText(2, QCoreApplication.translate("MainWindow", u"Include", None))
+        self.comboBox_2.setItemText(3, QCoreApplication.translate("MainWindow", u"GroupBox", None))
+
+        self.commandLinkButton_2.setText(QCoreApplication.translate("MainWindow", u"Add", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"This is something for a Text Label", None))
+        self.checkBox_2.setText(QCoreApplication.translate("MainWindow", u"CheckBox", None))
+        self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"Edit Text:", None))
+        self.lineEdit_2.setText(QCoreApplication.translate("MainWindow", u"Module1_Text", None))
+        self.textEdit_2.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">This is something for a Text Label</span></p></body></html>", None, -1))
-        self.pushButton_5.setText(QtWidgets.QApplication.translate("MainWindow", "OK", None, -1))
-        self.pushButton_6.setText(QtWidgets.QApplication.translate("MainWindow", "Cancel", None, -1))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtWidgets.QApplication.translate("MainWindow", "edit mode", None, -1))
+"</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">This is something for a Text Label</span></p></body></html>", None))
+        self.pushButton_5.setText(QCoreApplication.translate("MainWindow", u"OK", None))
+        self.pushButton_6.setText(QCoreApplication.translate("MainWindow", u"Cancel", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"edit mode", None))
+    # retranslateUi
 
