@@ -2,7 +2,7 @@
 a2element.menu_item - To create module-custom menu entries
 in the main menu bar under module.
 """
-from PySide6 import QtWidgets
+from PySide6 import QtWidgets, QtGui
 
 import a2ctrl
 import a2core
@@ -23,7 +23,7 @@ def main(a2, mod):
 '''
 
 
-class Draw(QtWidgets.QAction):
+class Draw(QtGui.QAction):
     def __init__(self, main, cfg, mod, *_args):
         super(Draw, self).__init__(main)
         self.main = main
