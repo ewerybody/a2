@@ -11,7 +11,7 @@ import a2ctrl
 import a2util
 import a2runtime
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger(__name__)
@@ -21,7 +21,6 @@ DEFAULT_WIN_SIZE = (700, 480)
 
 
 class A2Window(QtWidgets.QMainWindow):
-
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
         # self.setEnabled(False)
@@ -62,8 +61,10 @@ class A2Window(QtWidgets.QMainWindow):
         if self._win_title is None:
             if os.path.isdir(self.a2.paths.git):
                 import a2ahk
-                self._win_title = a2ahk.get_variables(
-                    self.a2.paths.a2_config).get('a2_title', a2core.NAME)
+
+                self._win_title = a2ahk.get_variables(self.a2.paths.a2_config).get(
+                    'a2_title', a2core.NAME
+                )
             else:
                 self._win_title = a2core.NAME
 
@@ -85,6 +86,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def _setup_ui(self):
         from a2widget import a2design_ui
+
         a2ctrl.check_ui_module(a2design_ui)
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
@@ -92,7 +94,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_list = self.ui.module_list
         self.module_list.set_item_colors(
             default=self.style.get('font_color'),
-            tinted=self.style.get('font_color_tinted'))
+            tinted=self.style.get('font_color_tinted'),
+        )
         self.module_list.selection_changed.connect(self._module_selected)
 
         self.module_view = self.ui.module_view
@@ -100,6 +103,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         self._setup_actions()
         self._setup_shortcuts()
+        # return
 
         self.check_main_menu_bar()
 
@@ -160,21 +164,21 @@ class A2Window(QtWidgets.QMainWindow):
             self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
 
     def _setup_shortcuts(self):
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape),
-                            self, self.escape)
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Enter),
-                            self, self.edit_submit)
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_Return),
-                            self, self.edit_submit)
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.CTRL + QtCore.Qt.Key_S),
-                            self, self.edit_submit)
+        Qt = QtCore.Qt
+        scroll_area = self.module_view.ui.a2scroll_area
 
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Home),
-                            self.module_view.ui.a2scroll_area, self.scroll_to_start)
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_End),
-                            self.module_view.ui.a2scroll_area, self.scroll_to_end)
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F1),
-                            self, self.module_view.help)
+        for keys, parent, func in (
+            (Qt.Key_Escape, self, self.escape),
+            (Qt.CTRL + Qt.Key_Enter, self, self.edit_submit),
+            (Qt.CTRL + Qt.Key_Return, self, self.edit_submit),
+            (Qt.CTRL + Qt.Key_S, self, self.edit_submit),
+            (Qt.Key_Home, scroll_area, self.scroll_to_start),
+            (Qt.Key_End, scroll_area, self.scroll_to_end),
+            (Qt.Key_F1, self, self.module_view.help),
+        ):
+            shortcut = QtGui.QShortcut(parent)
+            shortcut.setKey(QtGui.QKeySequence(keys))
+            shortcut.activated.connect(func)
 
     def edit_mod(self):
         if self.num_selected == 1:
@@ -184,7 +188,8 @@ class A2Window(QtWidgets.QMainWindow):
         """Handle main menu item visibility."""
         if self.a2.dev_mode:
             self.ui.menubar.insertAction(
-                self.ui.menuHelp.menuAction(), self.ui.menuDev.menuAction())
+                self.ui.menuHelp.menuAction(), self.ui.menuDev.menuAction()
+            )
             module_menu_before_action = self.ui.menuDev.menuAction()
         else:
             self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
@@ -193,8 +198,7 @@ class A2Window(QtWidgets.QMainWindow):
         if self.mod is None:
             self.ui.menubar.removeAction(self.ui.menuModule.menuAction())
         else:
-            self.ui.menubar.insertAction(
-                module_menu_before_action, self.ui.menuModule.menuAction())
+            self.ui.menubar.insertAction(module_menu_before_action, self.ui.menuModule.menuAction())
 
     def edit_submit(self):
         """
@@ -205,6 +209,7 @@ class A2Window(QtWidgets.QMainWindow):
         if not self.module_view.editing:
             return
         from copy import deepcopy
+
         self.mod.config = deepcopy(self.temp_config)
         if self.mod.enabled:
             self.mod.change()
@@ -270,11 +275,17 @@ class A2Window(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         win_geom_str = self.saveGeometry().toBase64().data().decode()
-        self.a2.db.set('windowprefs', {'splitter': self.ui.splitter.sizes(),
-                                       'geometry': win_geom_str})
+        self.a2.db.set(
+            'windowprefs',
+            {'splitter': self.ui.splitter.sizes(), 'geometry': win_geom_str},
+        )
         self.a2.db.set('last_selected', [m.key for m in self.selected])
 
-        for thread in [self._restart_thread, self.runtime_watcher, self._shutdown_thread]:
+        for thread in [
+            self._restart_thread,
+            self.runtime_watcher,
+            self._shutdown_thread,
+        ]:
             if thread is not None:
                 try:
                     thread.quit()
@@ -311,8 +322,7 @@ class A2Window(QtWidgets.QMainWindow):
         # create a default geometry
         scale = self.style.get('scale', 1)
         geometry = self.geometry()
-        geometry.setSize(QtCore.QSize(
-            DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
+        geometry.setSize(QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
         # set to center of active screen
         desktop = QtWidgets.QApplication.instance().desktop()
         current_screen = desktop.screen(desktop.screenNumber(QtGui.QCursor.pos()))
@@ -380,20 +390,24 @@ class A2Window(QtWidgets.QMainWindow):
 
     def create_new_element(self):
         from a2widget import new_element_tool
+
         new_element_tool.NewElementDialog(self).show()
 
     def create_new_module(self):
         from a2widget import new_module_tool
+
         new_module_tool.NewModulueTool(self).show()
 
     def create_local_source(self):
         from a2widget import new_module_source_tool
+
         dialog = new_module_source_tool.NewModuleSourceTool(self)
         dialog.okayed.connect(self._create_local_source)
         dialog.show()
 
     def _create_local_source(self, name):
         import a2modsource
+
         a2modsource.create(name, self.devset.author_name, self.devset.author_url)
         # update the ui without runtime reload
         self.a2.fetch_modules()
@@ -407,6 +421,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         if self.style is None:
             import a2style
+
             self.style = a2style.A2StyleBuilder(self.a2.db.get('ui_theme'))
 
         css_template = self.style.get_style(user_scale)
@@ -416,7 +431,8 @@ class A2Window(QtWidgets.QMainWindow):
         batch_path = os.path.join(self.a2.paths.lib, 'batches')
         batch_name = 'build_py_package.bat'
         _result, _pid = a2util.start_process_detached(
-            os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path)
+            os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path
+        )
 
     def _set_runtime_actions_vis(self):
         live = self.runtime_watcher.is_live
@@ -471,7 +487,10 @@ class A2Window(QtWidgets.QMainWindow):
             for this_time, backup_name in backups_sorted[:15]:
                 try:
                     label = a2util.unroll_seconds(now - this_time, 2)
-                    label = 'version %s - %s ago' % (int(backup_name[-1]), label)
+                    label = 'version %s - %s ago' % (
+                        int(backup_name[-1]),
+                        label,
+                    )
                 except ValueError:
                     continue
                 action = menu.addAction(icons.rollback, label, self.module_rollback_to)
@@ -485,6 +504,7 @@ class A2Window(QtWidgets.QMainWindow):
         file_path = os.path.join(self.mod.backup_path, file_name)
 
         from a2dev import RollbackDiffDialog
+
         dialog = RollbackDiffDialog(self, title)
         dialog.diff.connect(partial(self.diff_files, self.mod.config_file, file_path))
         dialog.okayed.connect(partial(self.on_rollback, file_name))
@@ -501,13 +521,19 @@ class A2Window(QtWidgets.QMainWindow):
 
         module_user_cfg = self.mod.get_user_cfg()
         if module_user_cfg:
-            dialog = A2ConfirmDialog(self, 'Revert User Settings',
-                                     msg='This will throw away any user changes!')
+            dialog = A2ConfirmDialog(
+                self,
+                'Revert User Settings',
+                msg='This will throw away any user changes!',
+            )
             dialog.okayed.connect(self._on_revert_settings)
             dialog.show()
         else:
-            dialog = A2ConfirmDialog(self, 'Nothing to Revert!',
-                                     msg='Appears everything is on "factory settings"!')
+            dialog = A2ConfirmDialog(
+                self,
+                'Nothing to Revert!',
+                msg='Appears everything is on "factory settings"!',
+            )
             dialog.show()
 
     def _on_revert_settings(self):
@@ -530,6 +556,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def _finish_initial_draw(self):
         self._setup_ui()
+        # return
         self.module_list.draw_modules(self._init_selection)
         if not self._init_selection:
             self.module_view.draw_mod()
@@ -555,8 +582,7 @@ class A2Window(QtWidgets.QMainWindow):
         return super(A2Window, self).showEvent(event)
 
     def on_uninstall_a2(self):
-        a2util.start_process_detached(
-            os.path.join(self.a2.paths.a2, 'Uninstall a2.exe'))
+        a2util.start_process_detached(os.path.join(self.a2.paths.a2, 'Uninstall a2.exe'))
 
 
 class RestartThread(QtCore.QThread):
@@ -567,7 +593,10 @@ class RestartThread(QtCore.QThread):
     def run(self):
         self.msleep(RESTART_DELAY)
         _retval, _pid = a2util.start_process_detached(
-            self.a2.paths.autohotkey, [self.a2.paths.a2_script], self.a2.paths.a2)
+            self.a2.paths.autohotkey,
+            [self.a2.paths.a2_script],
+            self.a2.paths.a2,
+        )
 
 
 class ShutdownThread(QtCore.QThread):
@@ -614,4 +643,5 @@ class RuntimeWatcher(QtCore.QThread):
 
 if __name__ == '__main__':
     import a2app
+
     a2app.main()
