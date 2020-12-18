@@ -35,7 +35,7 @@ class Draw(DrawCtrl):
         else:
             items = self.cfg.get('items', [])
         self.value_ctrl.addItems(items)
-        self.value_ctrl.currentIndexChanged.connect(self.delayed_check)
+        self.value_ctrl.currentTextChanged.connect(self.delayed_check)
         self.layout.addWidget(self.value_ctrl)
 
         if self.value in items:
