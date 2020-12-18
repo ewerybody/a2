@@ -73,6 +73,8 @@ class A2CoordsField(QtWidgets.QWidget):
             values = values.x(), values.y()
         elif isinstance(values, QtCore.QSize):
             values = values.width(), values.height()
+        else:
+            return
 
         self.x_field.blockSignals(True)
         self.y_field.blockSignals(True)
@@ -130,6 +132,15 @@ class A2CoordsField(QtWidgets.QWidget):
             return
 
         self.value = (ints[0], ints[1])
+
+    def setValue(self, value):
+        """In Designer this might be set so we need to handle ints not to break it."""
+        if isinstance(value, int):
+            return
+        elif isinstance(value, str):
+            self.set_string_value(value)
+        else:
+            self.set_value(value)
 
 
 if __name__ == '__main__':

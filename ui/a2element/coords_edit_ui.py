@@ -55,7 +55,6 @@ class Ui_edit(object):
 
         self.cfg_value = A2CoordsField(edit)
         self.cfg_value.setObjectName(u"cfg_value")
-        self.cfg_value.setValue(1)
 
         self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_value)
 
