@@ -11,7 +11,7 @@ import a2ctrl
 import a2util
 import a2runtime
 
-from PySide6 import QtGui, QtCore, QtWidgets
+from PySide2 import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger(__name__)
