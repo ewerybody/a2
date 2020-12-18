@@ -1,6 +1,6 @@
 import os
 import a2util
-from PySide2 import QtWidgets
+from PySide6 import QtWidgets, QtGui, QtCore
 
 
 BASE_DPI = 96.0
@@ -10,8 +10,9 @@ DEFAULTS_NAME = 'css_defaults.json'
 STYLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'style')
 
 
-class A2StyleBuilder(object):
+class A2StyleBuilder(QtCore.QObject):
     def __init__(self, style_name=None):
+        super(A2StyleBuilder, self).__init__()
         if style_name is None:
             style_name = DEFAULT_STYLE
 
@@ -25,7 +26,7 @@ class A2StyleBuilder(object):
         self.load_style(style_name)
 
     def get_local_scale(self):
-        physical_dpi = QtWidgets.QApplication.instance().desktop().physicalDpiX()
+        physical_dpi = QtWidgets.QApplication.primaryScreen().physicalDotsPerInchY()
         local_scale = physical_dpi / BASE_DPI
         self._css_values['local_scale'] = local_scale
         return local_scale
@@ -51,6 +52,7 @@ class A2StyleBuilder(object):
         :rtype: dict
         """
         from copy import deepcopy
+
         return deepcopy(self._css_values)
 
     def get_style(self, user_scale=1.0):
