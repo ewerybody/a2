@@ -5,7 +5,7 @@ it can be made browsing for folders or files
 
 At files it can be set to save-mode where inexistent paths can be selected
 and filtered file types can be set. See:
-http://pyside.github.io/docs/pyside/PySide2/QtGui/QFileDialog.html?highlight=qfiledialog#detailed-description
+https://doc.qt.io/qtforpython/PySide6/QtWidgets/QFileDialog.html?highlight=qfiledialog#detailed-description
 
 TODO: add recent paths?
 

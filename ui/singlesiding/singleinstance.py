@@ -42,7 +42,7 @@ else:
 
 class QSingleApplication(QtWidgets.QApplication):
     """
-    This subclass of :class:`~PySide2.QtWidgets.QApplication` ensures that only a
+    This subclass of :class:`~.QtWidgets.QApplication` ensures that only a
     single instance of an application will be run simultaneously, and provides
     a mechanism for new instances to send commands to the previously existing
     instance before the new instance closes.

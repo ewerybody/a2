@@ -44,8 +44,7 @@ def check_ui_module(module, force=False):
 
     if uibase is None:
         raise RuntimeError(
-            'Could not get source ui file from module:\n %s\n  '
-            'Not a ui file module??!' % module
+            'Could not get source ui file from module:\n %s\n  ' 'Not a ui file module??!' % module
         )
 
     uifile = os.path.join(folder, uibase)
@@ -59,27 +58,18 @@ def check_ui_module(module, force=False):
     log.debug('%s needs compile! (age: %is)', uibase, diff)
 
     # Make paths in compiled files project related, not from current user.
-    parent_path = os.path.abspath(
-        os.path.join(a2core.__file__, '..', '..', '..')
-    )
+    parent_path = os.path.abspath(os.path.join(a2core.__file__, '..', '..', '..'))
+
+    # Newer uic seems to just put the basename in the header... however.
     ui_relative = os.path.relpath(uifile, parent_path)
     curr_cwd = os.getcwd()
     os.chdir(parent_path)
 
-    try:
-        from pyside2uic import compileUi
+    import subprocess
+    import PySide6
 
-        with open(pyfile, 'w') as pyfobj:
-            with open(ui_relative) as uifobj:
-                compileUi(uifobj, pyfobj)
-
-    except ModuleNotFoundError:
-        # Newer uic seems to just put the basename in the header... however.
-        import subprocess
-        import PySide6
-
-        uic_path = os.path.join(PySide6.__path__[0], 'uic.exe')
-        subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', pyfile])
+    uic_path = os.path.join(PySide6.__path__[0], 'uic.exe')
+    subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', pyfile])
 
     os.chdir(curr_cwd)
 
@@ -103,8 +93,7 @@ def _patch_main_ui(uiname, pyfile):
             if line.startswith('        a2MainWindow.resize('):
                 with open(pyfile, 'w') as pyfobj:
                     pyfobj.write(
-                        ''.join(lines[: i + skip_lines])
-                        + ''.join(lines[i + skip_lines + 1 :])
+                        ''.join(lines[: i + skip_lines]) + ''.join(lines[i + skip_lines + 1 :])
                     )
                     break
 
@@ -134,9 +123,7 @@ def draw(main, element_cfg, mod, user_cfg):
         return None
 
     if element_typ == LOCAL_ELEMENT_ID:
-        element_path = os.path.join(
-            mod.path, '%s_%s.py' % (LOCAL_ELEMENT_ID, element_cfg['name'])
-        )
+        element_path = os.path.join(mod.path, '%s_%s.py' % (LOCAL_ELEMENT_ID, element_cfg['name']))
         element_module = get_local_element(element_path)
     else:
         element_module = get_a2element_module(element_typ)
@@ -145,18 +132,14 @@ def draw(main, element_cfg, mod, user_cfg):
         return element_module.Draw(main, element_cfg, mod, user_cfg)
     except Exception:
         mod_path = None if mod is None else mod.path
-        element_draw_class = get_a2element_object(
-            'Draw', element_cfg, mod_path
-        )
+        element_draw_class = get_a2element_object('Draw', element_cfg, mod_path)
 
         if element_draw_class is not None:
             try:
                 return element_draw_class(main, element_cfg, mod, user_cfg)
             except Exception:
                 log.error(traceback.format_exc().strip())
-        log.error(
-            'Draw type "%s" not supported (yet)! Module: %s', element_typ, mod
-        )
+        log.error('Draw type "%s" not supported (yet)! Module: %s', element_typ, mod)
 
 
 def edit(element_cfg, main, parent_cfg):
@@ -179,8 +162,7 @@ def edit(element_cfg, main, parent_cfg):
         except Exception:
             log.error(traceback.format_exc().strip())
             log.error(
-                'Error getting Edit class for type "%s"!'
-                ' Type not supported (yet)?!',
+                'Error getting Edit class for type "%s"!' ' Type not supported (yet)?!',
                 element_cfg.get('typ'),
             )
     return None
@@ -208,10 +190,7 @@ def get_a2element_object(obj_name, element_cfg, module_path=None):
             return getattr(element_mod, obj_name)
         except Exception as error:
             log.error(error)
-            raise RuntimeError(
-                'Local Element "%s" has no object "%s"!!'
-                % (element_path, obj_name)
-            )
+            raise RuntimeError('Local Element "%s" has no object "%s"!!' % (element_path, obj_name))
     else:
         element_mod = get_a2element_module(element_typ)
         if element_mod is not None:
@@ -267,14 +246,10 @@ def get_local_element(item_path):
 
         return element_module
     else:
-        raise RuntimeError(
-            'Cannot load local element! File does not exist! (%s)' % item_path
-        )
+        raise RuntimeError('Cannot load local element! File does not exist! (%s)' % item_path)
 
 
-def get_cfg_value(
-    element_cfg, user_cfg, attr_name=None, typ=None, default=None
-):
+def get_cfg_value(element_cfg, user_cfg, attr_name=None, typ=None, default=None):
     """
     unified call to get a value no matter if its set by user already
     or still default from the module config.
@@ -295,9 +270,7 @@ def get_cfg_value(
             if default is None:
                 value = typ()
             else:
-                log.error(
-                    'Fetched wrong type for attr_name %s: %s', attr_name, value
-                )
+                log.error('Fetched wrong type for attr_name %s: %s', attr_name, value)
                 value = default
 
     return value
@@ -322,9 +295,7 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
         if module_path is None and element_cfg['typ'] == LOCAL_ELEMENT_ID:
             module_path = _get_module_path(module_key, a2obj)
 
-        element_get_settings_func = get_a2element_object(
-            'get_settings', element_cfg, module_path
-        )
+        element_get_settings_func = get_a2element_object('get_settings', element_cfg, module_path)
 
         # no result try again with getting the module path:
         if element_get_settings_func is None and module_path is None:
@@ -335,9 +306,7 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
 
         if element_get_settings_func is not None:
             try:
-                element_get_settings_func(
-                    module_key, element_cfg, db_dict, user_cfg
-                )
+                element_get_settings_func(module_key, element_cfg, db_dict, user_cfg)
             except Exception:
                 log.error(traceback.format_exc().strip())
                 log.error(

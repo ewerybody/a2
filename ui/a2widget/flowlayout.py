@@ -1,5 +1,5 @@
 """
-So far just the bugged flow layout example from the PySide2 demos.
+So far just the bugged flow layout example from the PySide demos.
 """
 
 from PySide6 import QtCore, QtWidgets
