@@ -1,5 +1,5 @@
 """
-Script to pyside2uic-recompile All found .ui files in the repository.
+Recompile All found .ui files in the repository.
 """
 import os
 import sys
@@ -9,7 +9,6 @@ from pprint import pprint
 from importlib import import_module
 from xml.etree import ElementTree
 
-# from pyside2uic import compileUi
 import _ensure_a2_path
 import a2widget
 from PySide6 import QtWidgets
