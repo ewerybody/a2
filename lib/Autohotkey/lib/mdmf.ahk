@@ -23,29 +23,29 @@
 ; Enumerates display monitors and returns an object containing the properties of all monitors or the specified monitor.
 ; ======================================================================================================================
 MDMF_Enum(HMON := "") {
-	Static CallbackFunc := Func(A_AhkVersion < "2" ? "RegisterCallback" : "CallbackCreate")
-	Static EnumProc := CallbackFunc.Call("MDMF_EnumProc")
-	Static Obj := (A_AhkVersion < "2") ? "Object" : "Map"
-	Static Monitors := {}
-	If (HMON = "") ; new enumeration
-	{
-		Monitors := %Obj%("TotalCount", 0)
-		If !DllCall("User32.dll\EnumDisplayMonitors", "Ptr", 0, "Ptr", 0, "Ptr", EnumProc, "Ptr", &Monitors, "Int")
-			Return False
-	}
-	Return (HMON = "") ? Monitors : Monitors.HasKey(HMON) ? Monitors[HMON] : False
+    Static CallbackFunc := Func(A_AhkVersion < "2" ? "RegisterCallback" : "CallbackCreate")
+    Static EnumProc := CallbackFunc.Call("MDMF_EnumProc")
+    Static Obj := (A_AhkVersion < "2") ? "Object" : "Map" ;
+    Static Monitors := {}
+    If (HMON = "") ; new enumeration
+    {
+        Monitors := %Obj%("TotalCount", 0)
+        If !DllCall("User32.dll\EnumDisplayMonitors", "Ptr", 0, "Ptr", 0, "Ptr", EnumProc, "Ptr", &Monitors, "Int")
+            Return False
+    }
+    Return (HMON = "") ? Monitors : Monitors.HasKey(HMON) ? Monitors[HMON] : False
 }
 
 ; ==============================================================================
 ;  Callback function that is called by the MDMF_Enum function.
 ; ==============================================================================
 MDMF_EnumProc(HMON, HDC, PRECT, ObjectAddr) {
-	Monitors := Object(ObjectAddr)
-	Monitors[HMON] := MDMF_GetInfo(HMON)
-	Monitors["TotalCount"]++
-	If (Monitors[HMON].Primary)
-		Monitors["Primary"] := HMON
-	Return True
+    Monitors := Object(ObjectAddr)
+    Monitors[HMON] := MDMF_GetInfo(HMON)
+    Monitors["TotalCount"]++
+    If (Monitors[HMON].Primary)
+        Monitors["Primary"] := HMON
+    Return True
 }
 
 ; ======================================================================================================================
@@ -56,7 +56,7 @@ MDMF_EnumProc(HMON, HDC, PRECT, ObjectAddr) {
 ;    MONITOR_DEFAULTTONEAREST = 2 - Returns a handle to the display monitor that is nearest to the window.
 ; ======================================================================================================================
 MDMF_FromHWND(HWND, Flag := 0) {
-	Return DllCall("User32.dll\MonitorFromWindow", "Ptr", HWND, "UInt", Flag, "Ptr")
+    Return DllCall("User32.dll\MonitorFromWindow", "Ptr", HWND, "UInt", Flag, "Ptr")
 }
 
 ; ======================================================================================================================
@@ -69,18 +69,18 @@ MDMF_FromHWND(HWND, Flag := 0) {
 ;    MONITOR_DEFAULTTONEAREST = 2 - Returns a handle to the display monitor that is nearest to the point.
 ; ======================================================================================================================
 MDMF_FromPoint(ByRef X := "", ByRef Y := "", Flag := 0) {
-	If (X = "") || (Y = "") {
-		VarSetCapacity(PT, 8, 0)
-		DllCall("User32.dll\GetCursorPos", "Ptr", &PT, "Int")
-		If (X = "")
-			X := NumGet(PT, 0, "Int")
-		If (Y = "")
-			Y := NumGet(PT, 4, "Int")
-	}
-	Return DllCall("User32.dll\MonitorFromPoint"
-        , "Int64"
-        , (X & 0xFFFFFFFF) | (Y << 32)
-        , "UInt", Flag, "Ptr")
+    If (X = "") || (Y = "") {
+        VarSetCapacity(PT, 8, 0)
+        DllCall("User32.dll\GetCursorPos", "Ptr", &PT, "Int")
+        If (X = "")
+            X := NumGet(PT, 0, "Int")
+        If (Y = "")
+            Y := NumGet(PT, 4, "Int")
+    }
+    Return DllCall("User32.dll\MonitorFromPoint"
+    , "Int64"
+    , (X & 0xFFFFFFFF) | (Y << 32)
+    , "UInt", Flag, "Ptr")
 }
 
 ; ==============================================================================
@@ -95,27 +95,27 @@ MDMF_FromPoint(ByRef X := "", ByRef Y := "", Flag := 0) {
 ;    MONITOR_DEFAULTTONEAREST = 2 - Return handle to monitor nearest to rect.
 ; ==============================================================================
 MDMF_FromRect(X, Y, W, H, Flag := 0) {
-	VarSetCapacity(RC, 16, 0)
-	NumPut(X, RC, 0, "Int"), NumPut(Y, RC, 4, "Int"), NumPut(X + W, RC, 8, "Int"), NumPut(Y + H, RC, 12, "Int")
-	Return DllCall("User32.dll\MonitorFromRect", "Ptr", &RC, "UInt", Flag, "Ptr")
+    VarSetCapacity(RC, 16, 0)
+    NumPut(X, RC, 0, "Int"), NumPut(Y, RC, 4, "Int"), NumPut(X + W, RC, 8, "Int"), NumPut(Y + H, RC, 12, "Int")
+    Return DllCall("User32.dll\MonitorFromRect", "Ptr", &RC, "UInt", Flag, "Ptr")
 }
 
 ; ==============================================================================
 ; Retrieves information about a display monitor.
 ; ==============================================================================
 MDMF_GetInfo(HMON) {
-	NumPut(VarSetCapacity(MIEX, 40 + (32 << !!A_IsUnicode)), MIEX, 0, "UInt")
-	If DllCall("User32.dll\GetMonitorInfo", "Ptr", HMON, "Ptr", &MIEX, "Int")
-		Return {Name:      (Name := StrGet(&MIEX + 40, 32))  ; CCHDEVICENAME = 32
-		      , Num:       RegExReplace(Name, ".*(\d+)$", "$1")
-		      , Left:      NumGet(MIEX, 4, "Int")    ; display rectangle
-		      , Top:       NumGet(MIEX, 8, "Int")    ; "
-		      , Right:     NumGet(MIEX, 12, "Int")   ; "
-		      , Bottom:    NumGet(MIEX, 16, "Int")   ; "
-		      , WALeft:    NumGet(MIEX, 20, "Int")   ; work area
-		      , WATop:     NumGet(MIEX, 24, "Int")   ; "
-		      , WARight:   NumGet(MIEX, 28, "Int")   ; "
-		      , WABottom:  NumGet(MIEX, 32, "Int")   ; "
-		      , Primary:   NumGet(MIEX, 36, "UInt")} ; contains a non-zero value for the primary monitor.
-	Return False
+    NumPut(VarSetCapacity(MIEX, 40 + (32 << !!A_IsUnicode)), MIEX, 0, "UInt")
+    If DllCall("User32.dll\GetMonitorInfo", "Ptr", HMON, "Ptr", &MIEX, "Int")
+    Return {Name: (Name := StrGet(&MIEX + 40, 32)) ; CCHDEVICENAME = 32
+        , Num: RegExReplace(Name, ".*(\d+)$", "$1")
+        , Left: NumGet(MIEX, 4, "Int") ; display rectangle
+        , Top: NumGet(MIEX, 8, "Int") ; "
+        , Right: NumGet(MIEX, 12, "Int") ; "
+        , Bottom: NumGet(MIEX, 16, "Int") ; "
+        , WALeft: NumGet(MIEX, 20, "Int") ; work area
+        , WATop: NumGet(MIEX, 24, "Int") ; "
+        , WARight: NumGet(MIEX, 28, "Int") ; "
+        , WABottom: NumGet(MIEX, 32, "Int") ; "
+    , Primary: NumGet(MIEX, 36, "UInt")} ; contains a non-zero value for the primary monitor.
+    Return False
 }
