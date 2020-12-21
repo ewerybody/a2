@@ -43,6 +43,12 @@ IfIsNot(ByRef var, type) {
     If var is not %type%
         Return, true
 }
+IsNumber(InputObject) {
+    ; future AHK2 function
+    If InputObject is number
+        Return 1
+    Return 0
+}
 
 ControlGet(Cmd, Value = "", Control = "", WinTitle = "", WinText = "", ExcludeTitle = "", ExcludeText = "") {
     ControlGet, v, %Cmd%, %Value%, %Control%, %WinTitle%, %WinText%, %ExcludeTitle%, %ExcludeText%
@@ -258,8 +264,9 @@ DetectHiddenWindows(state=-1) {
             return true
         else
             return false
-    } else if (state = 1)
+    } else if (state = 1) {
         DetectHiddenWindows, On
-    else
+    } else {
         DetectHiddenWindows, Off
+    }
 }
