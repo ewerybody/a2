@@ -1,19 +1,18 @@
 """
 For historic reasons ...
 This was a super early layoyt draft for the a2 UI!
-
-@author: eric
 """
 import test.draft_ui
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 
 class Draft(QtWidgets.QMainWindow):
     def __init__(self):
         super(Draft, self).__init__()
+        self.setWindowTitle(str(QtWidgets))
         self.ui = test.draft_ui.Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.statusbar.showMessage('asdfas')
+        # self.ui.statusbar.showMessage('asdfas')
 
 
 if __name__ == '__main__':
