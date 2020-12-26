@@ -1,0 +1,7 @@
+"""
+a2qt Qt for Python wrapper.
+"""
+try:
+{pyside2}
+except ImportError:
+{pyside1}
