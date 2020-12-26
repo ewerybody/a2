@@ -1,5 +1,5 @@
 """
-A cross-platform implementation of a :class:`PySide.QtGui.QApplication`
+A cross-platform implementation of a :class:`PySide.QtWidgets.QApplication`
 subclass with the ability to determine if it's the only running instance of
 an application, and if not, send a message to the previous instance before
 closing.
@@ -11,7 +11,10 @@ import uuid
 import struct
 from functools import partial
 
-from PySide6 import QtCore, QtWidgets, QtNetwork
+try:
+    from PySide6 import QtCore, QtWidgets, QtNetwork
+except ImportError:
+    from PySide2 import QtCore, QtWidgets, QtNetwork
 
 if os.name == 'nt':
     import ctypes.wintypes
