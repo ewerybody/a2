@@ -16,6 +16,7 @@ NEW_PACK = 'a2qt'
 IMPORT_STR = ' import '
 FROM_IMPORT = 'from a2qt import '
 IGNORE_MEMBERS = ('qApp', '__package__', '__path__')
+IGNORE_DIRS = (NEW_PACK, 'singlesiding')
 PYPAKS = pyside_package.__all__
 PAK_MEMBERS = {}
 MEMBER_PAKS = {}
@@ -52,7 +53,7 @@ def check_files(path, stats):
     pyfiles = []
     for item in os.listdir(path):
         item_path = os.path.join(path, item)
-        if os.path.isdir(item_path) and not item.startswith('_') and item != 'a2qt':
+        if os.path.isdir(item_path) and not item.startswith('_') and item not in IGNORE_DIRS:
             check_files(item_path, stats)
         elif os.path.isfile(item_path) and os.path.splitext(item)[1] == '.py':
             pyfiles.append(item_path)

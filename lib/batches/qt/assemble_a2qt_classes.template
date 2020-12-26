@@ -1,7 +1,8 @@
 """
 a2qt Qt for Python wrapper.
 """
-try:
+import a2qt
+if a2qt.QT_VERSION == 6:
 {pyside2}
-except ImportError:
+else:
 {pyside1}

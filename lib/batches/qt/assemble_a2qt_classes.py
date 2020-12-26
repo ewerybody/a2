@@ -12,9 +12,9 @@ SIDES = [P1, P2]
 IND = '    '
 IMPORT_LINE = IND + 'from {side}.{pack} import {mod}\n'
 THIS_DIR, THISBASE = os.path.split(os.path.abspath(__file__))
-RENAMES_NAME = 'members_renamed.json'
+RENAMES_NAME = '_ members_renamed.json'
 FUNC_RENAME_TMP = '{i}{member}.{new_name} = {member}.{old_name}\n'
-CHANGES_NAME = 'member_changes.json'
+CHANGES_NAME = '_ member_changes.json'
 WRAPPER_DIR = os.path.abspath(os.path.join(THIS_DIR, *['..'] * 3, 'ui', 'a2qt'))
 
 
@@ -77,15 +77,13 @@ def get_file_contents(packs):
                 print('  %s: * everything' % (subpack))
                 p1code += IMPORT_LINE.format(side=P1, pack=subpack, mod='*')
 
-                if qpack == 'QtCore':
-                    p2code += IMPORT_LINE.format(side=P2, pack=qpack, mod='__version__')
-                    p2code += IMPORT_LINE.format(side=P2, pack=qpack, mod='__version_info__')
-                    p1code += IMPORT_LINE.format(side=P1, pack=qpack, mod='__version__')
-                    p1code += IMPORT_LINE.format(side=P1, pack=qpack, mod='__version_info__')
-
             else:
                 p1code += IMPORT_LINE.format(side=P1, pack=subpack, mod=get_wrapped_string(items))
                 print('  %s: %i' % (subpack, len(items)))
+
+        if qpack == 'QtCore':
+            p2code += IMPORT_LINE.format(side=P2, pack=qpack, mod='__version__, __version_info__')
+            p1code += IMPORT_LINE.format(side=P1, pack=qpack, mod='__version__, __version_info__')
 
         files[pack_path] = template.format(pyside2=p2code, pyside1=p1code)
     print('... Assembling finished!\n')
