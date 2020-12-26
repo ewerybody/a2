@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Created on 11.09.2017
 
@@ -15,7 +15,7 @@ import a2runtime
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
 
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger('keyboard_base')

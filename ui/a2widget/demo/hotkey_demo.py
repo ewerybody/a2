@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ctrl
 import a2element.hotkey

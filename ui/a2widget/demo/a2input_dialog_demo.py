@@ -1,6 +1,6 @@
 # import _demo_env
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 
 class InputDialogDemo(QtWidgets.QMainWindow):

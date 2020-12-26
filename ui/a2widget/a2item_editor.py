@@ -3,7 +3,7 @@ Home of the A2ItemEditor Lister widget.
 """
 from collections import OrderedDict
 
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2core
 import a2ctrl.connect

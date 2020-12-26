@@ -1,6 +1,6 @@
 import a2ctrl
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 from a2widget import a2path_field
 from a2element import path_edit_ui, DrawCtrl, EditCtrl

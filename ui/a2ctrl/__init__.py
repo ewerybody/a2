@@ -66,9 +66,9 @@ def check_ui_module(module, force=False):
     os.chdir(parent_path)
 
     import subprocess
-    import PySide6
+    import a2qt
 
-    uic_path = os.path.join(PySide6.__path__[0], 'uic.exe')
+    uic_path = os.path.join(a2qt.__path__[0], 'uic.exe')
     subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', pyfile])
 
     os.chdir(curr_cwd)

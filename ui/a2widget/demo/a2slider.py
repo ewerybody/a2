@@ -5,7 +5,7 @@ a2widget.demo.a2slider
 @author: eric
 """
 from a2widget import a2slider
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 
 class SliderDemo(QtWidgets.QMainWindow):

@@ -1,5 +1,5 @@
 from pprint import pprint
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 import a2ctrl.connect
 from a2widget.a2coords_field import A2CoordsField
 

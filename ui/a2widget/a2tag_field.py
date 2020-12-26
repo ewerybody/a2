@@ -1,6 +1,6 @@
 from functools import partial
 
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ctrl
 from a2widget.flowlayout import FlowLayout

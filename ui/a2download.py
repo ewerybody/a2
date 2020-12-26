@@ -1,6 +1,6 @@
 """Stuff for downloads from the internets."""
 import json
-from PySide6 import QtCore
+from a2qt import QtCore
 
 import a2core
 

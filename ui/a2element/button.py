@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 import a2ctrl
 from a2element import DrawCtrl, EditCtrl, button_edit_ui

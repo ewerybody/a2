@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 from a2widget.a2tag_field import A2TagField
 
 

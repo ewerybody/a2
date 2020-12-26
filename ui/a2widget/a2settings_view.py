@@ -4,7 +4,7 @@ Objects for the the a2 settings tabs.
 import os
 import sys
 
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2core
@@ -127,7 +127,7 @@ class A2Settings(QtWidgets.QWidget):
         for tag, version in (
             ('{ahk_version}', a2ahk.call_lib_cmd('get_AutoHotkey_version')),
             ('{py_version}', sys.version.split(' ', 1)[0]),
-            ('{qt_version}', sys.modules[QtWidgets.__package__].__version__),
+            ('{qt_version}', QtCore.__version__),
         ):
             if tag in text:
                 text = text.replace(tag, version)

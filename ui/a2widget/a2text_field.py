@@ -5,7 +5,7 @@ Text field that automatically gets bigger the more lines you add.
 @author: eric
 """
 import pprint
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 DEFAULT_MAX_LINES = 20
 DEFAULT_MIN_LINES = 1

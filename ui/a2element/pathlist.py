@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import a2ctrl
 
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 from a2widget.a2path_field import A2PathField
 from a2element import pathlist_edit_ui, DrawCtrlMixin, EditCtrl

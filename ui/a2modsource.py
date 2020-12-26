@@ -10,7 +10,7 @@ import time
 import shutil
 import traceback
 
-from PySide6 import QtCore
+from a2qt import QtCore
 
 import a2path
 import a2core

@@ -10,7 +10,7 @@ import platform
 import traceback
 from ctypes import windll
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets, QtCore
 from singlesiding import QSingleApplication
 
 
@@ -36,7 +36,7 @@ class A2Main(QSingleApplication):
         self.lastWindowClosed.connect(self.last_window_closed)
 
         # adding PySide plugin paths. e.g. to make all the imageformats available
-        pyside_plugin_path = os.path.join(sys.modules['PySide6'].__path__[0], 'plugins')
+        pyside_plugin_path = os.path.join(sys.modules['a2qt'].QT_PATH, 'plugins')
         self.addLibraryPath(pyside_plugin_path)
 
         winfo = platform.uname()
@@ -44,7 +44,7 @@ class A2Main(QSingleApplication):
             'initialised!\n  Python: %s\n  Windows: %s\n  Qt: %s',
             sys.version,
             str(winfo)[31:-1],
-            sys.modules['PySide6'].__version__,
+            QtCore.__version__,
         )
 
         # this is to set the actual taskbar icon

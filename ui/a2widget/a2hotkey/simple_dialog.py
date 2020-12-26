@@ -1,5 +1,5 @@
 import a2ahk
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 from .dialogs import _HotkeyDialogBase
 import a2core
 
@@ -21,8 +21,8 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
 
         self.setup_ui()
 
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
-        QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
 
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
 

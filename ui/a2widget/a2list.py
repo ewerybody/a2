@@ -1,4 +1,4 @@
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 
 class A2List(QtWidgets.QListWidget):

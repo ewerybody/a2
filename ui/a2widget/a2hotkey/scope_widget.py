@@ -1,7 +1,7 @@
 from functools import partial
 from collections import OrderedDict
 
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2util

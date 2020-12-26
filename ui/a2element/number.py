@@ -2,7 +2,7 @@ from functools import partial
 
 import a2ctrl
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 from a2widget.a2slider import A2Slider
 from a2element import number_edit_ui, DrawCtrl, EditCtrl

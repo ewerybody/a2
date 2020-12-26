@@ -1,7 +1,7 @@
 """
 Stuff for the module source widget in main settings.
 """
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 import a2core
 import a2ctrl

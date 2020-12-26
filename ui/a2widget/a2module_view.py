@@ -1,6 +1,6 @@
 import traceback
 
-from PySide6 import QtCore, QtWidgets, QtGui
+from a2qt import QtCore, QtWidgets, QtGui
 
 import a2core
 import a2ctrl

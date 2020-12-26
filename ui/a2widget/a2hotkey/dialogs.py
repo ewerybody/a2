@@ -1,5 +1,5 @@
 import a2core
-from PySide6 import QtCore
+from a2qt import QtCore
 from .keyboard_dialog.base import KeyboardDialogBase
 
 

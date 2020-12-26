@@ -4,7 +4,7 @@ The a2 element foundations.
 import os
 from functools import partial
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from a2qt import QtCore, QtGui, QtWidgets
 
 import a2core
 import a2ctrl

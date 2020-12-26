@@ -1,7 +1,7 @@
 import a2ctrl
 import a2core
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 from a2element import EditCtrl
 from a2widget.local_script import ScriptSelector

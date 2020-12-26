@@ -4,7 +4,7 @@ Editor stuff for module source package meta data.
 import os
 from copy import deepcopy
 
-from PySide6 import QtWidgets, QtCore
+from a2qt import QtWidgets, QtCore
 
 import a2core
 import a2ctrl

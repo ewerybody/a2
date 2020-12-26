@@ -1,5 +1,5 @@
 import a2ctrl
-from PySide6 import QtWidgets, QtCore
+from a2qt import QtWidgets, QtCore
 from a2element import string_edit_ui, DrawCtrl, EditCtrl
 from a2widget.a2text_field import A2TextField
 

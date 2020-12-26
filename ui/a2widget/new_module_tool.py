@@ -1,6 +1,6 @@
 import os
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 
 import a2path
 import a2core

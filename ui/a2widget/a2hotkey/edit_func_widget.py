@@ -1,7 +1,7 @@
 import os
 import a2core
 import a2util
-from PySide6 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 from a2widget.a2hotkey import edit_func_widget_ui
 from a2widget.a2hotkey.hotkey_common import Vars
 

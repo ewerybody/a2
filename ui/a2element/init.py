@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import a2ctrl.connect
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 from a2element import EditCtrl
 from a2widget.a2text_field import A2CodeField
 

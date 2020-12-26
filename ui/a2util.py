@@ -9,7 +9,7 @@ import stat
 import string
 import codecs
 
-from PySide6 import QtCore
+from a2qt import QtCore
 
 import a2core
 

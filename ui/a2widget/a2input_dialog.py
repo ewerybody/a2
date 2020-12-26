@@ -4,7 +4,7 @@ a2widget.a2input_dialog
 @created: Sep 3, 2016
 @author: eRiC
 """
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ctrl
 from a2widget import a2input_dialog_ui

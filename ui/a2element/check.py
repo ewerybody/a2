@@ -1,6 +1,6 @@
 import a2ctrl
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
 
 

@@ -3,7 +3,7 @@ Created on 08.03.2017
 
 @author: eric
 """
-from PySide6 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ahk
 import a2ctrl

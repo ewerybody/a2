@@ -1,6 +1,6 @@
 import os
 import a2util
-from PySide6 import QtWidgets, QtGui, QtCore
+from a2qt import QtWidgets, QtGui, QtCore
 
 
 BASE_DPI = 96.0

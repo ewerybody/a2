@@ -1,7 +1,7 @@
 import a2ctrl
 import a2util
 
-from PySide6 import QtWidgets
+from a2qt import QtWidgets
 from a2element import group_edit_ui, DrawCtrlMixin, EditCtrl
 from a2element.common import EditAddElem
 

@@ -11,8 +11,7 @@ import a2ctrl
 import a2util
 import a2runtime
 
-from PySide6 import QtGui, QtCore, QtWidgets
-
+from a2qt import QtGui, QtCore, QtWidgets
 
 log = a2core.get_logger(__name__)
 RESTART_DELAY = 300
