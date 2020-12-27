@@ -1,20 +1,20 @@
 ﻿; get_coordinates
 #Persistent
-;MsgBox A_ScriptDir: %A_ScriptDir%
-tt("Left Mouse Button To Pick")
-
+msg := "`nLeft Mouse Button To Pick`nEscape To Cancel"
+tt(msg)
+cursor_set_cross()
 ;CoordMode, Mouse, Screen|Window|Client]
 CoordMode, Mouse, Screen
 
 SetTimer, WatchCursor, 50
 
-Escape::ExitApp
+Escape::Gosub, Exit
 LButton::Gosub, PickCoordinates
 
 return
 
 WatchCursor:
-    text := get_coords_str() "`nLeft Mouse Button To Pick`nEscape To Cancel"
+    text := get_coords_str() . msg
     ;ToolTip, %text%
     global eZttText
     eZttText := text
@@ -28,9 +28,15 @@ get_coords_str() {
 
 PickCoordinates:
     SetTimer, WatchCursor, Off
+    cursor_reset()
     global eZttText
     data := get_coords_str()
     FileAppend, %data%, *
     eZttText := data
     tt(data, 0.5,, 1)
+Return
+
+Exit:
+    cursor_reset()
+    ExitApp
 Return
