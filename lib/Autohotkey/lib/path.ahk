@@ -63,8 +63,7 @@ path_is_empty(byref path) {
 
 
 path_is_writeable(byref path) {
-    FileGetAttrib, attr , %path%
-    if InStr(attr, "R")
+    if InStr(FileGetAttrib(path), "R")
         return false
     return true
 }

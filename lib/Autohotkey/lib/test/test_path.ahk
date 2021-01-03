@@ -1,4 +1,5 @@
-﻿#Include %A_ScriptDir%\..\path.ahk
+﻿#Include %A_ScriptDir%\..\ahk_functions.ahk
+#Include %A_ScriptDir%\..\path.ahk
 #Include a2test.ahk
 
 p := A_ScriptFullPath
