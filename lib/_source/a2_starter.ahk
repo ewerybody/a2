@@ -6,7 +6,7 @@ If (!A_IsCompiled)
 }
 
 _init_has_config_test() {
-    user_data_include_path = %A_ScriptDir%\lib\_ user_data_includes.ahk
+    user_data_include_path = %A_ScriptDir%\_ user_data_include.cfg
     IfExist, %user_data_include_path%
         value := true
     Else
