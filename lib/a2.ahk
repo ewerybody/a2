@@ -48,7 +48,7 @@ global a2cfg := _a2_get_user_config()
 if !a2cfg.no_startup_tooltip
     tt(a2_title, 1)
 
-if a2cfg.dev_mode
+if a2cfg.auto_reload
     SetTimer, a2_check_changes, 1000
 
 ; Finally the user data includes happening in the end so the top of this main script
@@ -120,10 +120,11 @@ _a2_get_user_config() {
         varname := Trim(parts[1])
         op := Trim(parts[2])
         value := Trim(parts[3])
+        _value := StringLower(value)
         if (op == ":=") {
-            if (value == "true")
+            if (_value == "true")
                 a2cfg[varname] := true
-            else if (value == "false")
+            else if (_value == "false")
                 a2cfg[varname] := false
             else
                 a2cfg[varname] := value

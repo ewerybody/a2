@@ -352,7 +352,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 class AdvancedSettingsUiHandler(QtCore.QObject):
     dev_setting_changed = QtCore.Signal(str)
 
-    def __init__(self, parent, widget, ui, a2):
+    def __init__(self, parent, widget, ui, a2: a2core.A2Obj):
         super(AdvancedSettingsUiHandler, self).__init__(parent)
         self.main = parent.main
         self.tab_widget = widget
@@ -384,17 +384,15 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.python_executable.setText(self.a2.paths.python)
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
 
-        # self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
-        # self.ui.show_console.clicked[bool].connect(self.toggle_console)
-
-        # TODO: #182
-        # ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
-        # self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
-        # self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
-
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.setPageStep(0.1)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
+
+        ahk_vars = a2ahk.get_variables(self.a2.paths.user_cfg)
+        self.ui.startup_tooltips.setChecked(not ahk_vars['no_startup_tooltip'])
+        self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
+        self.ui.auto_reload.setChecked(ahk_vars['auto_reload'])
+        self.ui.auto_reload.clicked[bool].connect(self.toggle_auto_reload)
 
         ProxyUiHandler(self.ui, self.a2)
 
@@ -421,8 +419,11 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.hk_dialog_layout.setCurrentIndex(index)
         self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
-    # def toggle_startup_tooltips(self, state):
-    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
+    def toggle_startup_tooltips(self, state):
+        a2ahk.set_variable(self.a2.paths.user_cfg, 'no_startup_tooltip', not state)
+
+    def toggle_auto_reload(self, state):
+        a2ahk.set_variable(self.a2.paths.user_cfg, 'auto_reload', state)
 
     def on_dev_setting_changed(self, *_args):
         self.main.devset.set(self.dev_set_dict)
