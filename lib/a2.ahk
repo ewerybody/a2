@@ -53,8 +53,7 @@ if a2cfg.dev_mode
 
 ; Finally the user data includes happening in the end so the top of this main script
 ; is executed before the first Return.
-#include *i _ user_data_include.cfg
-; #include *i lib/_ user_data_includes.ahk
+#include *i _ user_data_include
 Return ; -----------------------------------------------------------------------------
 
 a2ui() {
@@ -98,7 +97,7 @@ a2_check_changes() {
 _a2_get_data_path() {
     ; Get the user data directory from cfg file or:
     ; Set it as "data", right in the the a2 root.
-    user_include := "_ user_data_include.cfg"
+    user_include := "_ user_data_include"
     if !FileExist(user_include)
         return "data"
 

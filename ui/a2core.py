@@ -239,19 +239,19 @@ class Paths:
         self.git = join(self.a2, '.git')
         self.a2_portable = join(self.lib, 'a2_portable.ahk')
 
-        # get data dir from config override or the default appdata dir.
-        self.default_data = join(os.getenv('LOCALAPPDATA'), NAME, 'data')
-        self.data_override_file = join(self.default_data, 'a2_data_path.ahk')
+        # get data dir from user include file in a2 root
+        self.default_data = join(self.a2, 'data')
+        self.user_includes = join(self.a2, '_ user_data_include')
         self.data = None
         self._build_data_paths()
         self._test_dirs()
 
     def _build_data_paths(self):
         if os.path.isfile(self.a2_portable):
-            self.data = os.path.join(self.a2, 'data')
+            self.data = self.default_data
         else:
             try:
-                self.data = self.get_data_override_path()
+                self.data = self.get_data_path()
             except FileNotFoundError:
                 self.data = self.default_data
         os.makedirs(self.data, exist_ok=True)
@@ -286,8 +286,17 @@ class Paths:
             self.data = path
         self._build_data_paths()
 
-    def get_data_override_path(self):
-        return a2ahk.get_variables(self.data_override_file).get('a2data')
+    def get_data_path(self):
+        if os.path.isfile(self.user_includes):
+            with open(self.user_includes) as file_obj:
+                line = file_obj.readline().strip()
+            include_key = '#include '
+            if not line.startswith(include_key):
+                return self.default_data
+            path = line[len(include_key):]
+            if os.path.isabs(path):
+                return path
+            return os.path.abspath(os.path.join(self.a2, path))
 
     def has_data_override(self):
         return self.data != self.default_data
