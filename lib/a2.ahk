@@ -38,7 +38,7 @@ Gui, 1:Destroy
 Menu, Tray, NoStandard
 Menu, Tray, DeleteAll
 Menu, Tray, Tip, %a2_title%
-Menu, Tray, Click, %a2_tray_click_button%
+Menu, Tray, Click, 1
 Menu, Tray, add, Open a2 User Interface, a2ui
 Menu, Tray, icon, Open a2 User Interface, %a2ui_res%a2.ico
 Menu, Tray, default, Open a2 User Interface
