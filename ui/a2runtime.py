@@ -13,8 +13,6 @@ EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated autom
 log = a2core.get_logger(__name__)
 
 A2_DATA = '%a2data%'
-ENTRYPOINT_FILENAME = 'user_data_include'
-USER_INCLUDES_NAME = 'a2_user_includes.ahk'
 
 
 class Scope:
@@ -41,8 +39,6 @@ class IncludeDataCollector(object):
         self.hotkeys = None
         self.init = None
         self.source_libs = None
-
-        self._entrypoint_script = None
 
     def collect(self):
         mod_settings = self.a2.db.tables()
@@ -79,33 +75,7 @@ class IncludeDataCollector(object):
                 collection.write()
         if self.source_libs:
             self.source_libs.write()
-        self._check_entrypoint_script()
-
-    def _check_entrypoint_script(self):
-        """
-        Make sure currently set user data path can be included by runtime.
-        """
-        if self._entrypoint_script is None:
-            template_path = os.path.join(self.a2.paths.defaults, ENTRYPOINT_FILENAME + '.template')
-            template = a2util.load_utf8(template_path)
-
-            data_path = os.path.relpath(self.a2.paths.data, self.a2.paths.a2)
-            if data_path.startswith('.'):
-                data_path = self.a2.paths.data
-            self._entrypoint_script = template.format(data_path=data_path)
-
-            script_path = os.path.join(
-                self.a2.paths.lib, '_ ' + ENTRYPOINT_FILENAME + a2ahk.EXTENSION
-            )
-
-            if a2util.load_utf8(script_path) != self._entrypoint_script:
-                a2util.write_utf8(script_path, self._entrypoint_script)
-
-            includes_path = os.path.join(self.a2.paths.data, USER_INCLUDES_NAME)
-            if not os.path.isfile(includes_path):
-                import shutil
-                includes_src = os.path.join(self.a2.paths.defaults, USER_INCLUDES_NAME)
-                shutil.copyfile(includes_src, includes_path)
+        self.a2.paths.set_data_path(self.a2.paths.data)
 
     @property
     def collections(self):

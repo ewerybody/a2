@@ -31,6 +31,9 @@ A2TAGS = {
     'wip': 'Experimental'}
 _IS_DEV = None
 NAME = 'a2'
+ENTRYPOINT_FILENAME = 'user_data_include'
+USER_INCLUDES_NAME = 'a2_user_includes.ahk'
+
 
 # pylint: disable=too-many-instance-attributes
 class A2Obj:
@@ -241,6 +244,7 @@ class Paths:
 
         # get data dir from user include file in a2 root
         self.default_data = join(self.a2, 'data')
+        self.local_user_data = join(os.getenv('LOCALAPPDATA'), NAME, 'data')
         self.user_includes = join(self.a2, '_ user_data_include')
         self.data = None
         self._build_data_paths()
@@ -256,11 +260,13 @@ class Paths:
                 self.data = self.default_data
         os.makedirs(self.data, exist_ok=True)
 
-        self.modules = os.path.join(self.data, 'modules')
-        self.module_data = os.path.join(self.data, 'module_data')
-        self.includes = os.path.join(self.data, 'includes')
-        self.temp = os.path.join(self.data, 'temp')
-        self.db = os.path.join(self.data, 'a2.db')
+        join = os.path.join
+        self.modules = join(self.data, 'modules')
+        self.module_data = join(self.data, 'module_data')
+        self.includes = join(self.data, 'includes')
+        self.temp = join(self.data, 'temp')
+        self.db = join(self.data, NAME + '.db')
+        self.user_cfg = join(self.data, NAME + '.cfg')
 
     def _test_dirs(self):
         # test if all necessary directories are present:
@@ -273,18 +279,35 @@ class Paths:
             raise RuntimeError(
                 'a2ui start interrupted! %s inaccessable!' % self.data)
 
-    def set_data_override(self, path):
+    def set_data_path(self, path):
+        """
+        Make sure currently set user data path can be included by runtime.
+        """
         if os.path.isfile(self.a2_portable):
             raise RuntimeError('Data path cannot be overridden when portable!')
 
-        if not path:
-            if os.path.isfile(self.data_override_file):
-                os.remove(self.data_override_file)
-                self.data = self.default_data
-        else:
-            a2ahk.set_variable(self.data_override_file, 'a2data', path)
-            self.data = path
+        tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
+        with open(tmpl8_path) as file_obj:
+            tmpl8 = file_obj.read()
+
+        data_path = os.path.relpath(path, self.a2)
+        if data_path.startswith('.'):
+            data_path = path
+
+        entrypoint_script = tmpl8.format(data_path=data_path)
+
+        script_path = os.path.join(self.lib, '_ ' + ENTRYPOINT_FILENAME + a2ahk.EXTENSION)
+        with open(script_path, 'w') as file_obj:
+            file_obj.write(entrypoint_script)
+
         self._build_data_paths()
+
+        # make sure the user data dir forwards the includes accordingly
+        includes_path = os.path.join(self.data, USER_INCLUDES_NAME)
+        if not os.path.isfile(includes_path):
+            import shutil
+            includes_src = os.path.join(self.defaults, USER_INCLUDES_NAME)
+            shutil.copyfile(includes_src, includes_path)
 
     def get_data_path(self):
         if os.path.isfile(self.user_includes):
@@ -293,10 +316,14 @@ class Paths:
             include_key = '#include '
             if not line.startswith(include_key):
                 return self.default_data
+
             path = line[len(include_key):]
             if os.path.isabs(path):
                 return path
+
             return os.path.abspath(os.path.join(self.a2, path))
+
+        return self.default_data
 
     def has_data_override(self):
         return self.data != self.default_data
