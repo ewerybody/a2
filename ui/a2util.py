@@ -136,8 +136,7 @@ def load_utf8(path):
     :rtype: str
     """
     with codecs.open(path, encoding=UTF8_CODEC) as fobj:
-        content = fobj.read()
-    return content
+        return fobj.read()
 
 
 def write_utf8(path, content):

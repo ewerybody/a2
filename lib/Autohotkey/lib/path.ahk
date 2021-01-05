@@ -1,4 +1,5 @@
 ﻿;a2 Autohotkey path library.
+#include ahk_functions.ahk
 
 path_is_absolute(byref path) {
     ; Return true/false according to if given path is absolute or relative.
