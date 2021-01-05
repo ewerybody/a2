@@ -96,6 +96,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_list.selection_changed.connect(self._module_selected)
 
         self.module_view = self.ui.module_view
+        self.module_view.reload_requested.connect(self.load_runtime_and_ui)
         self.module_view.setup_ui(self)
 
         self._setup_actions()

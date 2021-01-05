@@ -18,6 +18,8 @@ EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout he
 
 
 class A2ModuleView(QtWidgets.QWidget):
+    reload_requested = QtCore.Signal()
+
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
         self.main = None

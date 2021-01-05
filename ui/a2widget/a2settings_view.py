@@ -18,6 +18,8 @@ log = a2core.get_logger(__name__)
 
 class A2Settings(QtWidgets.QWidget):
     def __init__(self, main):
+    reload_requested = QtCore.Signal()
+
         super(A2Settings, self).__init__(parent=main)
         self.a2 = a2core.A2Obj.inst()
         self.main = main
@@ -33,8 +35,8 @@ class A2Settings(QtWidgets.QWidget):
             widget = a2module_source.ModSourceWidget(
                 self.main, module_source,
                 show_enabled=module_source.name in enabled_list)
-            widget.toggled.connect(self.main.load_runtime_and_ui)
-            widget.changed.connect(self.main.load_runtime_and_ui)
+            widget.toggled.connect(self.reload_requested.emit)
+            widget.changed.connect(self.reload_requested.emit)
             self.ui.mod_source_layout.addWidget(widget)
             self._source_widgets[module_source] = widget
 
@@ -98,7 +100,7 @@ class A2Settings(QtWidgets.QWidget):
 
     def add_source_url(self, url=None):
         dialog = a2module_source.AddSourceDialog(self.main, url)
-        dialog.okayed.connect(self.main.load_runtime_and_ui)
+        dialog.okayed.connect(self.reload_requested.emit)
         dialog.show()
 
     def on_tab_changed(self, tab_index):
@@ -134,7 +136,8 @@ class A2Settings(QtWidgets.QWidget):
         ConsoleUiHandler(self, widget, self.ui, self.a2)
 
     def _build_advanced_tab(self, widget):
-        AdvancedSettingsUiHandler(self, widget, self.ui, self.a2)
+        advanced_obj = AdvancedSettingsUiHandler(self, widget, self.ui, self.a2)
+        advanced_obj.reload_requested.connect(self.reload_requested.emit)
 
     def _size_hint(self):
         """For building the tab widgets dynamically. Default sizeHint is WAY too big!"""
@@ -176,6 +179,8 @@ class ProxyUiHandler:
 
 
 class DataPathUiHandler(QtCore.QObject):
+    reload_requested = QtCore.Signal()
+
     def __init__(self, parent, ui, a2: a2core.A2Obj):
         super(DataPathUiHandler, self).__init__(parent)
         self.ui = ui
@@ -222,7 +227,7 @@ class DataPathUiHandler(QtCore.QObject):
                 self.a2.db.set('recent_override_paths', recent_override_paths)
 
         self.a2.start_up()
-        self.main.load_runtime_and_ui()
+        self.reload_requested.emit()
 
     def _on_set_path_action(self):
         self._set_path(self.sender().data())
@@ -351,6 +356,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
 class AdvancedSettingsUiHandler(QtCore.QObject):
     dev_setting_changed = QtCore.Signal(str)
+    reload_requested = QtCore.Signal()
 
     def __init__(self, parent, widget, ui, a2: a2core.A2Obj):
         super(AdvancedSettingsUiHandler, self).__init__(parent)
@@ -379,7 +385,9 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
             self.dev_set_dict, self.dev_setting_changed)
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
-        DataPathUiHandler(self, self.ui, self.a2)
+        data_obj = DataPathUiHandler(self, self.ui, self.a2)
+        data_obj.reload_requested.connect(self.reload_requested.emit)
+
         self.ui.python_executable.setText(self.a2.paths.python)
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
 
@@ -426,8 +434,7 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
 
     def _set_variable(self, name, value):
         a2ahk.set_variable(self.a2.paths.user_cfg, name, value)
-        self.a2.start_up()
-        self.main.load_runtime_and_ui()
+        self.reload_requested.emit()
 
     def on_dev_setting_changed(self, *_args):
         self.main.devset.set(self.dev_set_dict)
