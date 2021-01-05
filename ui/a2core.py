@@ -28,7 +28,8 @@ A2TAGS = {
     'code': 'Programming',
     'lookup': 'Searching things',
     'web': 'Internet related',
-    'wip': 'Experimental'}
+    'wip': 'Experimental',
+}
 _IS_DEV = None
 NAME = 'a2'
 ENTRYPOINT_FILENAME = 'user_data_include'
@@ -38,6 +39,7 @@ USER_INCLUDES_NAME = 'a2_user_includes.ahk'
 # pylint: disable=too-many-instance-attributes
 class A2Obj:
     """Non-Ui a2 backend object."""
+
     _instance = None
 
     @classmethod
@@ -53,14 +55,16 @@ class A2Obj:
 
     def __init__(self):
         if A2Obj._instance is not None:
-            raise RuntimeError('Singleton A2Obj has already been initialized!\n'
-                               '  Use A2Obj.inst() to get the instance!')
+            raise RuntimeError(
+                'Singleton A2Obj has already been initialized!\n'
+                '  Use A2Obj.inst() to get the instance!'
+            )
 
         # lazy import so importing a2core does not depend on other a2 module
         # pylint: disable=invalid-name,global-statement,redefined-outer-name,multiple-imports
         global a2ahk, a2db, a2mod, a2modsource
-        import a2ahk, a2db, a2mod, a2modsource
-        import a2output
+        import a2ahk, a2db, a2mod, a2modsource, a2output
+
         self.app = None
         self.win = None
         self.module_sources = {}
@@ -136,8 +140,8 @@ class A2Obj:
 
     def setup_proxy(self):
         """
-        Looks up a2.db "proxy_enabled" and "proxy_settings".
-        Configures urllib.request accordingly.
+        Look up a2.db "proxy_enabled" and "proxy_settings".
+        Configure urllib.request accordingly.
 
         If set a2.db.get('proxy_settings') will give a dictionary::
 
@@ -177,6 +181,7 @@ class A2Obj:
 
         if 'urllib.request' in sys.modules:
             from urllib import request
+
             log.info('disabling proxy ...')
             request.install_opener(None)
 
@@ -194,6 +199,7 @@ class A2Obj:
 
 class URLs:
     """Internet adresses for various things."""
+
     def __init__(self, a2_urls_ahk):
         """
         Common a2 & ahk related web links.
@@ -223,6 +229,7 @@ class URLs:
 
 class Paths:
     """Aquires and hosts common paths around a2."""
+
     def __init__(self):
         join = os.path.join
         self.ui = os.path.dirname(os.path.abspath(__file__))
@@ -273,27 +280,27 @@ class Paths:
         main_items = [self.a2_script, self.lib, self.ui]
         missing = [p for p in main_items if not os.path.exists(p)]
         if missing:
-            raise RuntimeError(
-                'a2ui start interrupted! %s Not found in main dir!' % missing)
+            raise RuntimeError('a2ui start interrupted! %s Not found in main dir!' % missing)
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
-            raise RuntimeError(
-                'a2ui start interrupted! %s inaccessable!' % self.data)
+            raise RuntimeError('a2ui start interrupted! %s inaccessable!' % self.data)
 
-    def set_data_path(self, path):
+    def set_data_path(self, path=None):
         """
         Make sure currently set user data path can be included by runtime.
         """
         if os.path.isfile(self.a2_portable):
             raise RuntimeError('Data path cannot be overridden when portable!')
 
+        if path is None:
+            data_path = self.default_data
+        else:
+            data_path = os.path.relpath(path, self.a2)
+            if data_path.startswith('.'):
+                data_path = path
+
         tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
         with open(tmpl8_path) as file_obj:
             tmpl8 = file_obj.read()
-
-        data_path = os.path.relpath(path, self.a2)
-        if data_path.startswith('.'):
-            data_path = path
-
         entrypoint_script = tmpl8.format(data_path=data_path)
 
         script_path = os.path.join(self.lib, '_ ' + ENTRYPOINT_FILENAME + a2ahk.EXTENSION)
@@ -306,6 +313,7 @@ class Paths:
         includes_path = os.path.join(self.data, USER_INCLUDES_NAME)
         if not os.path.isfile(includes_path):
             import shutil
+
             includes_src = os.path.join(self.defaults, USER_INCLUDES_NAME)
             shutil.copyfile(includes_src, includes_path)
 
@@ -317,7 +325,7 @@ class Paths:
             if not line.startswith(include_key):
                 return self.default_data
 
-            path = line[len(include_key):]
+            path = line[len(include_key) :]
             if os.path.isabs(path):
                 return path
 
@@ -372,4 +380,5 @@ def set_dev_mode(state):
 
 if __name__ == '__main__':
     import a2app
+
     a2app.main()
