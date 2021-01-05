@@ -69,7 +69,8 @@ a2_check_changes() {
     ; Removes the attribute from all files and returns true if any was found
     do_reload := false
     for _, libdir in [a2lib, path_join(a2lib, ["Autohotkey", "lib"])] {
-        Loop, Files, %libdir%\*.ahk
+        pattern := string_suffix(libdir, "\") "*.ahk"
+        Loop, Files, %pattern%
         {
             If InStr(A_LoopFileAttrib, "A") {
                 do_reload := true
@@ -79,14 +80,15 @@ a2_check_changes() {
     }
 
     includes_path := path_join(a2data, ["includes", "includes.ahk"])
-    Loop, read, %includes%
+    Loop, read, %includes_path%
     {
         if !string_startswith(A_LoopReadLine, "#include ")
             Continue
+
         path := path_join(a2data, [SubStr(A_LoopReadLine, 10)])
-        if InStr(FileGetAttrib(), "A") {
+        if InStr(FileGetAttrib(path), "A") {
             do_reload := true
-            FileSetAttrib, -A, %A_LoopFileFullpath%
+            FileSetAttrib, -A, %path%
         }
     }
 
