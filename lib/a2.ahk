@@ -99,15 +99,15 @@ _a2_get_data_path() {
     ; Set it as "data", right in the the a2 root.
     user_include := "_ user_data_include"
     if !FileExist(user_include)
-        return "data"
+        return "data\"
 
     line := FileReadLine(user_include, 1)
     include_key := "#include "
     key_len := StringLen(include_key)
     if SubStr(line, 1, key_len) == include_key
-        Return SubStr(line, key_len + 1)
+        Return string_suffix(SubStr(line, key_len + 1), "\")
 
-    Return "data"
+    Return "data\"
 }
 
 _a2_get_user_config() {
