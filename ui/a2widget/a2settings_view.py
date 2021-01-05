@@ -17,13 +17,13 @@ log = a2core.get_logger(__name__)
 
 
 class A2Settings(QtWidgets.QWidget):
-    def __init__(self, main):
     reload_requested = QtCore.Signal()
 
+    def __init__(self, main, show_tab=None):
         super(A2Settings, self).__init__(parent=main)
         self.a2 = a2core.A2Obj.inst()
         self.main = main
-        self._setup_ui()
+        self._setup_ui(show_tab)
         self._source_widgets = {}
         self._draw_module_sources()
         self.is_expandable_widget = True
@@ -40,7 +40,7 @@ class A2Settings(QtWidgets.QWidget):
             self.ui.mod_source_layout.addWidget(widget)
             self._source_widgets[module_source] = widget
 
-    def _setup_ui(self):
+    def _setup_ui(self, show_tab):
         from a2widget import a2settings_view_ui
         a2ctrl.check_ui_module(a2settings_view_ui)
         self.ui = a2settings_view_ui.Ui_a2settings()
@@ -59,8 +59,11 @@ class A2Settings(QtWidgets.QWidget):
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
-        self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
+        if show_tab is None:
+            self.ui.a2settings_tab.setCurrentIndex(0)
+        else:
+            self.ui.a2settings_tab.setCurrentIndex(show_tab)
 
         IntegrationUIHandler(self, self.ui, self.a2)
 
@@ -142,6 +145,10 @@ class A2Settings(QtWidgets.QWidget):
     def _size_hint(self):
         """For building the tab widgets dynamically. Default sizeHint is WAY too big!"""
         return QtCore.QSize(0, 0)
+
+    @property
+    def tab_index(self):
+        return self.ui.a2settings_tab.currentIndex()
 
 
 class ProxyUiHandler:
