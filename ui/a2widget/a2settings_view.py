@@ -318,6 +318,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         pixmap = a2ctrl.Icons.inst().help.pixmap(icon_size)
         self.alert_label = QtWidgets.QLabel('')
         self.alert_label.setPixmap(pixmap)
+        self.alert_label.hide()
         layout.addWidget(self.alert_label)
 
         if data is None:
@@ -340,20 +341,24 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
             self.alert_label.setVisible(False)
             return
 
-        try:
-            current_path = a2ahk.call_lib_cmd(self.get_cmd)
-            tooltip = None
-        except RuntimeError as error:
-            current_path = ''
-            tooltip = str(error)
+        thread = _CmdCheckThread(self, self.get_cmd)
+        thread.finished.connect(self._on_check_finished)
+        thread.finished.connect(thread.deleteLater)
+        thread.start()
 
+    def _on_check_finished(self):
+        thread = self.sender()
+        thread
+        self._set_path(thread.result, thread.error)
+
+    def _set_path(self, path, tooltip):
         checked = False
-        if current_path:
+        if path:
             target_path = getattr(self.a2.paths, self.path_name)
-            checked = a2path.is_same(current_path, target_path)
+            checked = a2path.is_same(path, target_path)
             if not checked:
                 if tooltip is None:
-                    tooltip = f'Currently set to: {current_path}'
+                    tooltip = f'Currently set to: {path}'
 
         self.alert_label.setVisible(tooltip is not None)
         for wgt in (self, self.check, self.alert_label):
@@ -533,3 +538,17 @@ class ConsoleUiHandler(QtCore.QObject):
         content = '\n'.join('%.2f - %s' % (ftime, txt) for ftime, txt in self._lines[start:end])
         self.a2console.appendPlainText(content)
         self._lines_shown = end
+
+
+class _CmdCheckThread(QtCore.QThread):
+    def __init__(self, parent, cmd):
+        super(_CmdCheckThread, self).__init__(parent)
+        self.cmd = cmd
+        self.result = ''
+        self.error = None
+
+    def run(self):
+        try:
+            self.result = a2ahk.call_lib_cmd(self.cmd)
+        except RuntimeError as error:
+            self.error = str(error)
