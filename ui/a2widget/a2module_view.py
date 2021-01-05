@@ -61,13 +61,8 @@ class A2ModuleView(QtWidgets.QWidget):
 
         if self.main.mod is None:
             if not self.main.num_selected:
-                from a2widget import a2settings_view
-
-                self.controls[:] = [a2settings_view.A2Settings(self.main)]
-                self.update_header()
-                self.draw_ui()
+                self.draw_settings()
                 return
-
             else:
                 config = [NEW_MODULE_CFG.copy()]
                 config[0]['description'] = MULTI_MODULE_DESC
@@ -272,6 +267,20 @@ class A2ModuleView(QtWidgets.QWidget):
                     return
             except (AttributeError, KeyError):
                 pass
+
+    def draw_settings(self):
+        from a2widget import a2settings_view
+
+        # remember tab if already a settings tab
+        if len(self.controls) == 1 and isinstance(self.controls[0], a2settings_view.A2Settings):
+            settings_widget = a2settings_view.A2Settings(self.main, self.controls[0].tab_index)
+        else:
+            settings_widget = a2settings_view.A2Settings(self.main)
+
+        settings_widget.reload_requested.connect(self.reload_requested.emit)
+        self.controls[:] = [settings_widget]
+        self.update_header()
+        self.draw_ui()
 
 
 class EditView(QtWidgets.QWidget):
