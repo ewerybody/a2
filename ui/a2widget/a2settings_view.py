@@ -142,7 +142,7 @@ class A2Settings(QtWidgets.QWidget):
 
 
 class ProxyUiHandler:
-    def __init__(self, ui, a2):
+    def __init__(self, ui, a2: a2core.A2Obj):
         self.ui = ui
         self.a2 = a2
         self.proxy_items = 'user', 'pass', 'server', 'port'
@@ -176,7 +176,7 @@ class ProxyUiHandler:
 
 
 class DataPathUiHandler(QtCore.QObject):
-    def __init__(self, parent, ui, a2):
+    def __init__(self, parent, ui, a2: a2core.A2Obj):
         super(DataPathUiHandler, self).__init__(parent)
         self.ui = ui
         self.a2 = a2
@@ -213,7 +213,7 @@ class DataPathUiHandler(QtCore.QObject):
 
     def _set_path(self, path):
         """Set the data path and deal with restarts and all."""
-        self.a2.paths.set_data_override(path)
+        self.a2.paths.set_data_path(path)
 
         # enlist to recent paths list
         if path and path not in (self.a2.paths.default_data, self.dev_data_path):
@@ -222,7 +222,7 @@ class DataPathUiHandler(QtCore.QObject):
                 self.a2.db.set('recent_override_paths', recent_override_paths)
 
         self.a2.start_up()
-        self.a2.win.load_runtime_and_ui()
+        self.main.load_runtime_and_ui()
 
     def _on_set_path_action(self):
         self._set_path(self.sender().data())
@@ -372,7 +372,6 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.dev_widget.setVisible(self.a2.dev_mode)
         self.ui.code_editor.file_types = "Executables (*.exe)"
         self.ui.code_editor.writable = False
-        # self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
 
         self.dev_set_dict = self.main.devset.get()
         a2ctrl.connect.control_list(
@@ -390,9 +389,9 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
 
         ahk_vars = a2ahk.get_variables(self.a2.paths.user_cfg)
         self.ui.startup_tooltips.setChecked(not ahk_vars['no_startup_tooltip'])
-        self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
+        self.ui.startup_tooltips.clicked[bool].connect(self.set_startup_tooltips)
         self.ui.auto_reload.setChecked(ahk_vars['auto_reload'])
-        self.ui.auto_reload.clicked[bool].connect(self.toggle_auto_reload)
+        self.ui.auto_reload.clicked[bool].connect(self.set_auto_reload)
 
         ProxyUiHandler(self.ui, self.a2)
 
@@ -419,11 +418,16 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.hk_dialog_layout.setCurrentIndex(index)
         self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
-    def toggle_startup_tooltips(self, state):
-        a2ahk.set_variable(self.a2.paths.user_cfg, 'no_startup_tooltip', not state)
+    def set_startup_tooltips(self, state):
+        self._set_variable('no_startup_tooltip', not state)
 
-    def toggle_auto_reload(self, state):
-        a2ahk.set_variable(self.a2.paths.user_cfg, 'auto_reload', state)
+    def set_auto_reload(self, state):
+        self._set_variable('auto_reload', state)
+
+    def _set_variable(self, name, value):
+        a2ahk.set_variable(self.a2.paths.user_cfg, name, value)
+        self.a2.start_up()
+        self.main.load_runtime_and_ui()
 
     def on_dev_setting_changed(self, *_args):
         self.main.devset.set(self.dev_set_dict)
