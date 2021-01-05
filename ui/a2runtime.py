@@ -9,7 +9,6 @@ import a2ahk
 import a2core
 import a2util
 
-EDIT_DISCLAIMER = "; a2 %s.ahk - Don't bother editing! - File is generated automatically!"
 log = a2core.get_logger(__name__)
 
 A2_DATA = '%a2data%'
@@ -134,7 +133,7 @@ class _Collection(object):
         raise NotImplementedError
 
     def _get_final_content(self):
-        return EDIT_DISCLAIMER % self.name + '\n' + self.get_content()
+        return a2core.EDIT_DISCLAIMER % self.name + self.get_content()
 
 
 class VariablesCollection(_Collection):

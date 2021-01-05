@@ -34,6 +34,7 @@ _IS_DEV = None
 NAME = 'a2'
 ENTRYPOINT_FILENAME = 'user_data_include'
 USER_INCLUDES_NAME = 'a2_user_includes.ahk'
+EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatically!\n"
 
 
 # pylint: disable=too-many-instance-attributes
@@ -300,10 +301,10 @@ class Paths:
 
         tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
         with open(tmpl8_path) as file_obj:
-            tmpl8 = file_obj.read()
+            tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
         entrypoint_script = tmpl8.format(data_path=data_path)
 
-        script_path = os.path.join(self.lib, '_ ' + ENTRYPOINT_FILENAME + a2ahk.EXTENSION)
+        script_path = os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME)
         with open(script_path, 'w') as file_obj:
             file_obj.write(entrypoint_script)
 
