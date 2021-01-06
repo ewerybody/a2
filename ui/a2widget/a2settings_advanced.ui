@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>839</width>
-    <height>768</height>
+    <height>793</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -22,7 +22,7 @@
         <x>0</x>
         <y>0</y>
         <width>815</width>
-        <height>744</height>
+        <height>769</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout_3">
@@ -52,7 +52,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2">
+       <item row="2" column="0" colspan="2">
         <widget class="QGroupBox" name="hotkey_box">
          <property name="title">
           <string notr="true">Hotkey Dialog</string>
@@ -84,7 +84,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <widget class="QGroupBox" name="dev_box">
          <property name="title">
           <string notr="true">a2 dev mode</string>
@@ -167,44 +167,7 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_12">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true">a2 runtime:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="startup_tooltips">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true">Enable Startup Tooltips</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string notr="true">JSON Indent:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QSpinBox" name="json_indent">
-               <property name="maximumSize">
-                <size>
-                 <width>70</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="0" colspan="2">
+             <item row="10" column="0" colspan="2">
               <widget class="Line" name="line">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -223,14 +186,14 @@
                </property>
               </widget>
              </item>
-             <item row="10" column="0">
+             <item row="11" column="0">
               <widget class="QLabel" name="label_2">
                <property name="text">
                 <string notr="true">User Data:</string>
                </property>
               </widget>
              </item>
-             <item row="10" column="1">
+             <item row="11" column="1">
               <widget class="A2PathField" name="data_folder">
                <property name="enabled">
                 <bool>false</bool>
@@ -240,14 +203,14 @@
                </property>
               </widget>
              </item>
-             <item row="13" column="0">
+             <item row="14" column="0">
               <widget class="QLabel" name="label_10">
                <property name="text">
                 <string notr="true">Python Executable:</string>
                </property>
               </widget>
              </item>
-             <item row="13" column="1">
+             <item row="14" column="1">
               <widget class="A2PathField" name="python_executable">
                <property name="enabled">
                 <bool>false</bool>
@@ -257,12 +220,12 @@
                </property>
               </widget>
              </item>
-             <item row="11" column="1">
+             <item row="12" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
                 <widget class="QPushButton" name="button_set_user_dir_standard">
                  <property name="text">
-                  <string notr="true">Set User Dir Standard </string>
+                  <string notr="true">Set Standard Dir</string>
                  </property>
                 </widget>
                </item>
@@ -275,7 +238,7 @@
                </item>
               </layout>
              </item>
-             <item row="12" column="1">
+             <item row="13" column="1">
               <widget class="QLabel" name="portable_label">
                <property name="text">
                 <string>a2 runs in portable mode! The data path is in the main directory and cannot be changed!</string>
@@ -285,13 +248,37 @@
                </property>
               </widget>
              </item>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="json_indent">
+               <property name="maximumSize">
+                <size>
+                 <width>70</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string notr="true">JSON Indent:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QCheckBox" name="auto_reload">
+               <property name="text">
+                <string notr="true">Auto-Reload Runtime On Script Changes</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="3" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QGroupBox" name="proxy_box">
          <property name="title">
           <string notr="true">Use a Proxy</string>
@@ -383,6 +370,13 @@
            </layout>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="startup_tooltips">
+         <property name="text">
+          <string notr="true">Enable Startup Tooltips</string>
+         </property>
         </widget>
        </item>
       </layout>

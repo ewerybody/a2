@@ -1,5 +1,4 @@
-﻿#include {data_path}
-#include includes\variables.ahk
+﻿#include includes\variables.ahk
 initFunc := "a2_init_calls"
 if IsFunc(initFunc)
     %initFunc%()

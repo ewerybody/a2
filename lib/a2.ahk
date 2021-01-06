@@ -5,25 +5,17 @@
 #NoTrayIcon
 
 #include <ahk_functions>
-; #include <a2functions>
 #include lib\a2_config.ahk
 #include lib\a2_globals.ahk
 #include lib\a2_urls.ahk
-#include *i %A_AppData%\..\Local\a2\data\a2_data_path.ahk
-#include *i lib\a2_portable.ahk
 
 ; build essential paths
-a2dir := A_ScriptDir "\..\"
+global a2dir := A_ScriptDir "\..\"
 SetWorkingDir %a2dir%
-a2ui_res := a2dir "ui\res\"
+global a2ui_res := a2dir "ui\res\"
+global a2lib := A_ScriptDir "\"
 
-If !a2data {
-    EnvGet, a2data, LOCALAPPDATA
-    a2data := a2data "\a2\data\"
-}
-If !string_endswith(a2data, "\")
-    a2data := a2data "\"
-
+global a2data := _a2_get_data_path()
 global a2modules := a2data "modules\"
 global a2module_data := a2data "module_data\"
 global a2includes := a2data "includes\"
@@ -51,34 +43,116 @@ Menu, Tray, icon, Help on a2, %a2ui_res%a2help.ico
 Menu, Tray, add, Quit a2 Runtime, a2ui_exit
 Menu, Tray, icon, Quit a2 Runtime, %a2ui_res%a2x.ico
 
-if a2_startup_tool_tips
+global a2cfg := _a2_get_user_config()
+
+if !a2cfg.no_startup_tooltip
     tt(a2_title, 1)
+
+if a2cfg.auto_reload
+    SetTimer, a2_check_changes, 1000
 
 ; Finally the user data includes happening in the end so the top of this main script
 ; is executed before the first Return.
-#include *i lib\_ user_data_includes.ahk
+#include *i _ user_data_include
 Return ; -----------------------------------------------------------------------------
 
 a2ui() {
     tt("Calling a2 ui ...")
-    a2_ahk = %A_ScriptDir%\Autohotkey\Autohotkey.exe
+    a2_ahk := A_ScriptDir "\Autohotkey\Autohotkey.exe"
     Run, "%a2_ahk%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
     WinWait, a2,, 5
     tt("Calling a2 ui ...", 1)
 }
 
-a2ui_help:
+a2_check_changes() {
+    ; Check library & module scripts for changes via archive file attribute.
+    ; Removes the attribute from all files and returns true if any was found
+    do_reload := false
+    for _, libdir in [a2lib, path_join(a2lib, ["Autohotkey", "lib"])] {
+        pattern := string_suffix(libdir, "\") "*.ahk"
+        Loop, Files, %pattern%
+        {
+            If InStr(A_LoopFileAttrib, "A") {
+                do_reload := true
+                FileSetAttrib, -A, %A_LoopFileFullpath%
+            }
+        }
+    }
+
+    includes_path := path_join(a2data, ["includes", "includes.ahk"])
+    Loop, read, %includes_path%
+    {
+        if !string_startswith(A_LoopReadLine, "#include ")
+            Continue
+
+        path := path_join(a2data, [SubStr(A_LoopReadLine, 10)])
+        if InStr(FileGetAttrib(path), "A") {
+            do_reload := true
+            FileSetAttrib, -A, %path%
+        }
+    }
+
+    if do_reload
+        a2ui_reload()
+}
+
+_a2_get_data_path() {
+    ; Get the user data directory from cfg file or:
+    ; Set it as "data", right in the the a2 root.
+    user_include := "_ user_data_include"
+    if !FileExist(user_include)
+        return path_join(a2dir, ["data\"])
+
+    line := FileReadLine(user_include, 2)
+    include_key := "#include "
+    key_len := StringLen(include_key)
+    if SubStr(line, 1, key_len) == include_key {
+        path := string_suffix(SubStr(line, key_len + 1), "\")
+        SplitPath, path,,,,, drive_str
+        if (!drive_str)
+            path := string_suffix(path_join(a2dir, [path]), "\")
+
+        Return path
+    }
+
+    return path_join(a2dir, ["data\"])
+}
+
+_a2_get_user_config() {
+    ; Parse the a2.cfg in the user data dir and equip global a2cfg with values
+    a2cfg := {}
+    config_path := path_join(a2data, ["a2.cfg"])
+    Loop, Read, %config_path%
+    {
+        parts := StrSplit(A_LoopReadLine, " ",,3)
+        varname := Trim(parts[1])
+        op := Trim(parts[2])
+        value := Trim(parts[3])
+        _value := StringLower(value)
+        if (op == ":=") {
+            if (_value == "true")
+                a2cfg[varname] := true
+            else if (_value == "false")
+                a2cfg[varname] := false
+            else
+                a2cfg[varname] := value
+        }
+    }
+    Return a2cfg
+}
+
+a2ui_help() {
     Run, %a2_help%
-Return
+}
 
-a2ui_reload:
+a2ui_reload() {
     Reload
-Return
+}
 
-a2ui_exit:
+a2ui_exit() {
     ExitApp
-Return
+}
 
-a2_explore:
+a2_explore() {
     Run, %A_WinDir%\explorer.exe %a2dir%
-Return
+}

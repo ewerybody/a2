@@ -3,11 +3,11 @@
 
 path_is_absolute(byref path) {
     ; Return true/false according to if given path is absolute or relative.
-	SplitPath, path ,,,,, OutDrive
-	if (OutDrive == "")
-		return false
-	else
-		return true
+    SplitPath, path ,,,,, OutDrive
+    if (OutDrive == "")
+        return false
+    else
+        return true
 }
 
 path_dirname(byref path) {
@@ -43,7 +43,7 @@ path_join(byref base_path, byref items) {
     ; Append two paths together and treat possibly double or missing backslashes
     path := RTrim(base_path, "\")
     Loop % items.Length()
-        path := path "\" Trim(items[A_Index], "\")
+        path .= "\" Trim(items[A_Index], "\")
     return path
 }
 
@@ -61,7 +61,6 @@ path_is_empty(byref path) {
         return false
     return true
 }
-
 
 path_is_writeable(byref path) {
     if InStr(FileGetAttrib(path), "R")

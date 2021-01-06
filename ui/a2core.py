@@ -28,13 +28,19 @@ A2TAGS = {
     'code': 'Programming',
     'lookup': 'Searching things',
     'web': 'Internet related',
-    'wip': 'Experimental'}
+    'wip': 'Experimental',
+}
 _IS_DEV = None
 NAME = 'a2'
+ENTRYPOINT_FILENAME = 'user_data_include'
+USER_INCLUDES_NAME = 'a2_user_includes.ahk'
+EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatically!\n"
+
 
 # pylint: disable=too-many-instance-attributes
 class A2Obj:
     """Non-Ui a2 backend object."""
+
     _instance = None
 
     @classmethod
@@ -50,14 +56,16 @@ class A2Obj:
 
     def __init__(self):
         if A2Obj._instance is not None:
-            raise RuntimeError('Singleton A2Obj has already been initialized!\n'
-                               '  Use A2Obj.inst() to get the instance!')
+            raise RuntimeError(
+                'Singleton A2Obj has already been initialized!\n'
+                '  Use A2Obj.inst() to get the instance!'
+            )
 
         # lazy import so importing a2core does not depend on other a2 module
         # pylint: disable=invalid-name,global-statement,redefined-outer-name,multiple-imports
         global a2ahk, a2db, a2mod, a2modsource
-        import a2ahk, a2db, a2mod, a2modsource
-        import a2output
+        import a2ahk, a2db, a2mod, a2modsource, a2output
+
         self.app = None
         self.win = None
         self.module_sources = {}
@@ -133,8 +141,8 @@ class A2Obj:
 
     def setup_proxy(self):
         """
-        Looks up a2.db "proxy_enabled" and "proxy_settings".
-        Configures urllib.request accordingly.
+        Look up a2.db "proxy_enabled" and "proxy_settings".
+        Configure urllib.request accordingly.
 
         If set a2.db.get('proxy_settings') will give a dictionary::
 
@@ -174,6 +182,7 @@ class A2Obj:
 
         if 'urllib.request' in sys.modules:
             from urllib import request
+
             log.info('disabling proxy ...')
             request.install_opener(None)
 
@@ -191,6 +200,7 @@ class A2Obj:
 
 class URLs:
     """Internet adresses for various things."""
+
     def __init__(self, a2_urls_ahk):
         """
         Common a2 & ahk related web links.
@@ -220,6 +230,7 @@ class URLs:
 
 class Paths:
     """Aquires and hosts common paths around a2."""
+
     def __init__(self):
         join = os.path.join
         self.ui = os.path.dirname(os.path.abspath(__file__))
@@ -239,55 +250,89 @@ class Paths:
         self.git = join(self.a2, '.git')
         self.a2_portable = join(self.lib, 'a2_portable.ahk')
 
-        # get data dir from config override or the default appdata dir.
-        self.default_data = join(os.getenv('LOCALAPPDATA'), NAME, 'data')
-        self.data_override_file = join(self.default_data, 'a2_data_path.ahk')
+        # get data dir from user include file in a2 root
+        self.default_data = join(self.a2, 'data')
+        self.local_user_data = join(os.getenv('LOCALAPPDATA'), NAME, 'data')
+        self.user_includes = join(self.a2, '_ user_data_include')
         self.data = None
         self._build_data_paths()
         self._test_dirs()
 
     def _build_data_paths(self):
         if os.path.isfile(self.a2_portable):
-            self.data = os.path.join(self.a2, 'data')
+            self.data = self.default_data
         else:
             try:
-                self.data = self.get_data_override_path()
+                self.data = self.get_data_path()
             except FileNotFoundError:
                 self.data = self.default_data
         os.makedirs(self.data, exist_ok=True)
 
-        self.modules = os.path.join(self.data, 'modules')
-        self.module_data = os.path.join(self.data, 'module_data')
-        self.includes = os.path.join(self.data, 'includes')
-        self.temp = os.path.join(self.data, 'temp')
-        self.db = os.path.join(self.data, 'a2.db')
+        join = os.path.join
+        self.modules = join(self.data, 'modules')
+        self.module_data = join(self.data, 'module_data')
+        self.includes = join(self.data, 'includes')
+        self.temp = join(self.data, 'temp')
+        self.db = join(self.data, NAME + '.db')
+        self.user_cfg = join(self.data, NAME + '.cfg')
 
     def _test_dirs(self):
         # test if all necessary directories are present:
         main_items = [self.a2_script, self.lib, self.ui]
         missing = [p for p in main_items if not os.path.exists(p)]
         if missing:
-            raise RuntimeError(
-                'a2ui start interrupted! %s Not found in main dir!' % missing)
+            raise RuntimeError('a2ui start interrupted! %s Not found in main dir!' % missing)
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
-            raise RuntimeError(
-                'a2ui start interrupted! %s inaccessable!' % self.data)
+            raise RuntimeError('a2ui start interrupted! %s inaccessable!' % self.data)
 
-    def set_data_override(self, path):
+    def set_data_path(self, path=None):
+        """
+        Make sure currently set user data path can be included by runtime.
+        """
         if os.path.isfile(self.a2_portable):
             raise RuntimeError('Data path cannot be overridden when portable!')
 
-        if not path:
-            if os.path.isfile(self.data_override_file):
-                os.remove(self.data_override_file)
-                self.data = self.default_data
+        if path is None:
+            data_path = self.default_data
         else:
-            a2ahk.set_variable(self.data_override_file, 'a2data', path)
-            self.data = path
+            data_path = os.path.relpath(path, self.a2)
+            if data_path.startswith('.'):
+                data_path = path
+
+        tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
+        with open(tmpl8_path) as file_obj:
+            tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
+        entrypoint_script = tmpl8.format(data_path=data_path)
+
+        script_path = os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME)
+        with open(script_path, 'w') as file_obj:
+            file_obj.write(entrypoint_script)
+
         self._build_data_paths()
 
-    def get_data_override_path(self):
-        return a2ahk.get_variables(self.data_override_file).get('a2data')
+        # make sure the user data dir forwards the includes accordingly
+        includes_path = os.path.join(self.data, USER_INCLUDES_NAME)
+        if not os.path.isfile(includes_path):
+            import shutil
+
+            includes_src = os.path.join(self.defaults, USER_INCLUDES_NAME)
+            shutil.copyfile(includes_src, includes_path)
+
+    def get_data_path(self):
+        if os.path.isfile(self.user_includes):
+            with open(self.user_includes) as file_obj:
+                line = file_obj.readline().strip()
+            include_key = '#include '
+            if not line.startswith(include_key):
+                return self.default_data
+
+            path = line[len(include_key) :]
+            if os.path.isabs(path):
+                return path
+
+            return os.path.abspath(os.path.join(self.a2, path))
+
+        return self.default_data
 
     def has_data_override(self):
         return self.data != self.default_data
@@ -336,4 +381,5 @@ def set_dev_mode(state):
 
 if __name__ == '__main__':
     import a2app
+
     a2app.main()

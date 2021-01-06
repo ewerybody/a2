@@ -117,7 +117,7 @@ install(backup_dir) {
     }
 
     ;recover _ user include file
-    rel_path = \lib\_ user_data_includes.ahk
+    rel_path = \_ user_data_include.cfg
     IfExist, %backup_dir%%rel_path%
         FileCopy, %backup_dir%%rel_path%, %A2DIR%%rel_path%
 }
