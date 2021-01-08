@@ -4,7 +4,7 @@ Editor stuff for module source package meta data.
 import os
 from copy import deepcopy
 
-from PySide2 import QtWidgets, QtCore
+from a2qt import QtWidgets, QtCore
 
 import a2core
 import a2ctrl
@@ -21,8 +21,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         """
         :param a2mod.ModSource mod_source: Module source package to work on.
         """
-        super(ModuleSourceEditor, self).__init__(
-            main, f'Make a "{mod_source.name}" Release')
+        super(ModuleSourceEditor, self).__init__(main, f'Make a "{mod_source.name}" Release')
         self.ui.label.hide()
         self.a2 = a2core.A2Obj.inst()
         self.main = main
@@ -51,6 +50,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
 
         if not os.access(self.mod_source.config_file, os.W_OK):
             import a2modsource
+
             self.ui.a2ok_button.setEnabled(False)
             self.ui.a2ok_button.setText(f'"{a2modsource.CONFIG_FILENAME}" is READ ONLY!')
 
@@ -104,7 +104,8 @@ class GithubCommitsChecker(QtCore.QObject):
         owner, repo = a2download.get_github_owner_repo(result['update_url'])
         main_branch = self.parent().source_cfg.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
         compare_url = a2download.GITHUB_COMPARE_TEMPLATE.format(
-            owner=owner, repo=repo, from_tag=result['version'], to_tag=main_branch)
+            owner=owner, repo=repo, from_tag=result['version'], to_tag=main_branch
+        )
         thread = a2download.GetJSONThread(self, compare_url)
         thread.data_fetched.connect(self._show_check_result2)
         thread.error.connect(self._show_error)

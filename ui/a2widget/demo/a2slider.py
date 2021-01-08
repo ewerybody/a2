@@ -5,7 +5,7 @@ a2widget.demo.a2slider
 @author: eric
 """
 from a2widget import a2slider
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 
 class SliderDemo(QtWidgets.QMainWindow):
@@ -27,7 +27,9 @@ class SliderDemo(QtWidgets.QMainWindow):
         vlayout.addWidget(QtWidgets.QLabel('Slider with all connections and a field:'))
         vlayout.addWidget(slider)
 
-        vlayout.addWidget(QtWidgets.QLabel('Slider without field and only finished connected but a custom label:'))
+        vlayout.addWidget(
+            QtWidgets.QLabel('Slider without field and only finished connected but a custom label:')
+        )
         hlayout = QtWidgets.QHBoxLayout()
         self.label = QtWidgets.QLabel('1.0')
         self.label.setMinimumWidth(50)

@@ -1,7 +1,7 @@
 """
 Stuff for the module source widget in main settings.
 """
-from PySide2 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 import a2core
 import a2ctrl
@@ -18,10 +18,12 @@ MSG_FETCHING = 'Fetching data ...'
 MSG_UPDATE_AVAILABLE = 'Update to version %s'
 MSG_INSTALL_DISCLAIMER = (
     'Know about the risks of downloading and executing stuff! '
-    'Install only from trusted sources! <a href="%s">read more</a>')
+    'Install only from trusted sources! <a href="%s">read more</a>'
+)
 MSG_INSTALL_CHECK = 'I understand!'
-MSG_ADD_DIALOG = ('Please provide a URL to a network location\n'
-                  'or internet address to get an a2 package from:')
+MSG_ADD_DIALOG = (
+    'Please provide a URL to a network location\n' 'or internet address to get an a2 package from:'
+)
 
 
 class ModSourceWidget(QtWidgets.QWidget):
@@ -45,7 +47,8 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def set_labels(self):
         self.ui.mod_count.setText(
-            MOD_COUNT_TEXT % (self.mod_source.mod_count, self.mod_source.enabled_count))
+            MOD_COUNT_TEXT % (self.mod_source.mod_count, self.mod_source.enabled_count)
+        )
         self._set_body_labels()
 
         if self.mod_source.has_problem:
@@ -56,6 +59,7 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def _setup_ui(self, show_enabled):
         from a2widget import a2module_source_ui
+
         a2ctrl.check_ui_module(a2module_source_ui)
         self.ui = a2module_source_ui.Ui_Form()
         self.ui.setupUi(self)
@@ -97,7 +101,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             url_label = url
             for url_sceme in ['http://', 'https://']:
                 if url_label.startswith(url_sceme):
-                    url_label = url_label[len(url_sceme):]
+                    url_label = url_label[len(url_sceme) :]
                     break
             if url_label.startswith('www.'):
                 url_label = url_label[4:]
@@ -106,6 +110,7 @@ class ModSourceWidget(QtWidgets.QWidget):
     def _toggle_details(self, *_args):
         if self.ui_body is None:
             from a2widget import a2module_source_body_ui
+
             a2ctrl.check_ui_module(a2module_source_body_ui)
             self.ui_body = a2module_source_body_ui.Ui_Form()
             self.ui_body.setupUi(self.ui.details_widget)
@@ -204,28 +209,26 @@ class ModSourceWidget(QtWidgets.QWidget):
             backup_menu = menu.addMenu('Backed up versions')
             for version in backup_versions:
                 if version != self.mod_source.config.get('version'):
-                    action = backup_menu.addAction(icons.rollback,
-                                                   version, self.rollback)
+                    action = backup_menu.addAction(icons.rollback, version, self.rollback)
                     action.setData(version)
 
             backup_menu.addSeparator()
-            backup_menu.addAction(icons.delete, 'Remove backups',
-                                  self.mod_source.remove_backups)
+            backup_menu.addAction(icons.delete, 'Remove backups', self.mod_source.remove_backups)
         else:
             action = menu.addAction('No backed up verions!')
             action.setEnabled(False)
         menu.addSeparator()
-        menu.addAction(icons.delete, 'Uninstall "%s"' % self.mod_source.name,
-                       self.uninstall)
+        menu.addAction(icons.delete, 'Uninstall "%s"' % self.mod_source.name, self.uninstall)
         if self.main.a2.dev_mode:
             menu.addAction(icons.edit, 'Edit Meta Data', self._on_edit_meta_data)
 
     def uninstall(self):
         dialog = A2ConfirmDialog(
-            self.main, 'Uninstall "%s"' % self.mod_source.name,
+            self.main,
+            'Uninstall "%s"' % self.mod_source.name,
             'This will delete the package "%s" from the module\n'
-            'storage. There is NO UNDO! Beware with your own creations!' %
-            self.mod_source.name)
+            'storage. There is NO UNDO! Beware with your own creations!' % self.mod_source.name,
+        )
         dialog.exec_()
         if dialog.result:
             self.mod_source.remove()
@@ -249,6 +252,7 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def _on_edit_meta_data(self):
         from a2widget import modsource_editor
+
         dialog = modsource_editor.ModuleSourceEditor(self.mod_source, self.main)
         dialog.okayed.connect(self._set_body_labels)
         dialog.exec_()
@@ -282,8 +286,9 @@ class BusyIcon(QtWidgets.QLabel):
     def update_rotation(self):
         self._rotation = self._rotation + self.rotation_speed % 360
         pixmap = self.icon.pixmap(self.icon_size, self.icon_size)
-        pixmap = pixmap.transformed(QtGui.QTransform().rotate(self._rotation),
-                                    QtCore.Qt.SmoothTransformation)
+        pixmap = pixmap.transformed(
+            QtGui.QTransform().rotate(self._rotation), QtCore.Qt.SmoothTransformation
+        )
         xoff = (pixmap.width() - self.icon_size) / 2
         yoff = (pixmap.height() - self.icon_size) / 2
         self.setPixmap(pixmap.copy(xoff, yoff, self.icon_size, self.icon_size))
@@ -294,7 +299,8 @@ class AddSourceDialog(A2InputDialog):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         super(AddSourceDialog, self).__init__(
-            self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG)
+            self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG
+        )
 
         self.ui.main_layout.setSpacing(self.main.style.get('spacing') * 3)
         self.h_layout = QtWidgets.QHBoxLayout()
@@ -389,8 +395,7 @@ class AddSourceDialog(A2InputDialog):
             self.show_error('Error reading the fetched data!:\n%s' % error)
             return
 
-        self.clickable_label = QtWidgets.QLabel(
-            MSG_INSTALL_DISCLAIMER % self.a2.urls.security)
+        self.clickable_label = QtWidgets.QLabel(MSG_INSTALL_DISCLAIMER % self.a2.urls.security)
         self.clickable_label.setWordWrap(True)
         self.clickable_label.setOpenExternalLinks(True)
         self.ui.main_layout.insertWidget(1, self.clickable_label)
@@ -410,8 +415,8 @@ class AddSourceDialog(A2InputDialog):
         a2modsource.create_dir(name)
         mod_source = a2modsource.ModSource(self.a2, name)
         thread = a2modsource.ModSourceFetchThread(
-            mod_source, self.main, self.remote_data['version'],
-            self.remote_data, self.repo_url)
+            mod_source, self.main, self.remote_data['version'], self.remote_data, self.repo_url
+        )
 
         thread.fetched.connect(self.on_install_finished)
         thread.failed.connect(self.show_error)

@@ -1,14 +1,13 @@
 """
 Home of the Scope Dialog ui.
 """
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2core
 import a2ctrl
 
 from . import scope_dialog_ui
 from .hotkey_widget import Vars
-
 
 
 log = a2core.get_logger(__name__)

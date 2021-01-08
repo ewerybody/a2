@@ -1,202 +1,256 @@
 # -*- coding: utf-8 -*-
-# Form implementation generated from reading ui file:
-#   'C:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\keyboard_dialog\base.ui'
-# licensing of that file applies.
-#
-# Created: Mon Jul 27 23:50:41 2020
-#      by: pyside2-uic  running on PySide2 5.15.0
-#
-# pylint: disable=W0201,C0103,C0111
-# WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtGui, QtWidgets
+################################################################################
+## Form generated from reading UI file 'base.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from a2qt.QtCore import *
+from a2qt.QtGui import *
+from a2qt.QtWidgets import *
+
+from a2widget.a2more_button import A2MoreButton
 
 
-class Ui_Keyboard:
+class Ui_Keyboard(object):
     def setupUi(self, Keyboard):
-        Keyboard.setObjectName("Keyboard")
-        Keyboard.resize(975, 366)
-        self.dialog_layout = QtWidgets.QVBoxLayout(Keyboard)
-        self.dialog_layout.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
-        self.dialog_layout.setObjectName("dialog_layout")
-        self.top_layout = QtWidgets.QHBoxLayout()
+        if not Keyboard.objectName():
+            Keyboard.setObjectName(u"Keyboard")
+        Keyboard.resize(1037, 387)
+        self.dialog_layout = QVBoxLayout(Keyboard)
+        self.dialog_layout.setObjectName(u"dialog_layout")
+        self.dialog_layout.setSizeConstraint(QLayout.SetFixedSize)
+        self.top_layout = QHBoxLayout()
+        self.top_layout.setObjectName(u"top_layout")
         self.top_layout.setContentsMargins(-1, 10, -1, 10)
-        self.top_layout.setObjectName("top_layout")
-        self.key_field = QtWidgets.QLineEdit(Keyboard)
-        self.key_field.setText("")
+        self.key_field = QLineEdit(Keyboard)
+        self.key_field.setObjectName(u"key_field")
+        self.key_field.setText(u"")
         self.key_field.setReadOnly(True)
-        self.key_field.setObjectName("key_field")
+
         self.top_layout.addWidget(self.key_field)
+
         self.option_button = A2MoreButton(Keyboard)
-        self.option_button.setObjectName("option_button")
+        self.option_button.setObjectName(u"option_button")
+
         self.top_layout.addWidget(self.option_button)
-        self.label_2 = QtWidgets.QLabel(Keyboard)
-        self.label_2.setObjectName("label_2")
+
+        self.label_2 = QLabel(Keyboard)
+        self.label_2.setObjectName(u"label_2")
+
         self.top_layout.addWidget(self.label_2)
-        self.check_numpad = QtWidgets.QCheckBox(Keyboard)
-        self.check_numpad.setText("Num Pad")
-        self.check_numpad.setObjectName("check_numpad")
+
+        self.check_numpad = QCheckBox(Keyboard)
+        self.check_numpad.setObjectName(u"check_numpad")
+        self.check_numpad.setText(u"Num Pad")
+
         self.top_layout.addWidget(self.check_numpad)
-        self.check_mouse = QtWidgets.QCheckBox(Keyboard)
-        self.check_mouse.setText("Mouse")
-        self.check_mouse.setObjectName("check_mouse")
+
+        self.check_mouse = QCheckBox(Keyboard)
+        self.check_mouse.setObjectName(u"check_mouse")
+        self.check_mouse.setText(u"Mouse")
+
         self.top_layout.addWidget(self.check_mouse)
+
+
         self.dialog_layout.addLayout(self.top_layout)
-        self.keys_widget = QtWidgets.QWidget(Keyboard)
-        self.keys_widget.setObjectName("keys_widget")
-        self.keys_layout = QtWidgets.QHBoxLayout(self.keys_widget)
+
+        self.keys_widget = QWidget(Keyboard)
+        self.keys_widget.setObjectName(u"keys_widget")
+        self.keys_layout = QHBoxLayout(self.keys_widget)
         self.keys_layout.setContentsMargins(0, 0, 0, 0)
-        self.keys_layout.setObjectName("keys_layout")
-        self.main_widget = QtWidgets.QWidget(self.keys_widget)
-        self.main_widget.setObjectName("main_widget")
-        self.main_layout = QtWidgets.QVBoxLayout(self.main_widget)
+        self.keys_layout.setObjectName(u"keys_layout")
+        self.main_widget = QWidget(self.keys_widget)
+        self.main_widget.setObjectName(u"main_widget")
+        self.main_layout = QVBoxLayout(self.main_widget)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
-        self.main_layout.setObjectName("main_layout")
-        self.f_row = QtWidgets.QHBoxLayout()
-        self.f_row.setObjectName("f_row")
-        self.escape = QtWidgets.QPushButton(self.main_widget)
-        self.escape.setText("Esc")
-        self.escape.setObjectName("escape")
+        self.main_layout.setObjectName(u"main_layout")
+        self.f_row = QHBoxLayout()
+        self.f_row.setObjectName(u"f_row")
+        self.escape = QPushButton(self.main_widget)
+        self.escape.setObjectName(u"escape")
+        self.escape.setText(u"Esc")
+
         self.f_row.addWidget(self.escape)
+
+
         self.main_layout.addLayout(self.f_row)
-        self.f_spacer = QtWidgets.QWidget(self.main_widget)
-        self.f_spacer.setObjectName("f_spacer")
+
+        self.f_spacer = QWidget(self.main_widget)
+        self.f_spacer.setObjectName(u"f_spacer")
+
         self.main_layout.addWidget(self.f_spacer)
-        self.enter_key_rows = QtWidgets.QHBoxLayout()
-        self.enter_key_rows.setObjectName("enter_key_rows")
-        self.top_letter_rows = QtWidgets.QVBoxLayout()
-        self.top_letter_rows.setObjectName("top_letter_rows")
-        self.number_row = QtWidgets.QHBoxLayout()
-        self.number_row.setObjectName("number_row")
-        self.backspace = QtWidgets.QPushButton(self.main_widget)
-        self.backspace.setText("Backspace")
-        self.backspace.setObjectName("backspace")
+
+        self.enter_key_rows = QHBoxLayout()
+        self.enter_key_rows.setObjectName(u"enter_key_rows")
+        self.top_letter_rows = QVBoxLayout()
+        self.top_letter_rows.setObjectName(u"top_letter_rows")
+        self.number_row = QHBoxLayout()
+        self.number_row.setObjectName(u"number_row")
+        self.backspace = QPushButton(self.main_widget)
+        self.backspace.setObjectName(u"backspace")
+        self.backspace.setText(u"Backspace")
+
         self.number_row.addWidget(self.backspace)
+
+
         self.top_letter_rows.addLayout(self.number_row)
-        self.letter_row_top = QtWidgets.QHBoxLayout()
-        self.letter_row_top.setObjectName("letter_row_top")
-        self.tab = QtWidgets.QPushButton(self.main_widget)
-        self.tab.setText("Tab")
-        self.tab.setObjectName("tab")
+
+        self.letter_row_top = QHBoxLayout()
+        self.letter_row_top.setObjectName(u"letter_row_top")
+        self.tab = QPushButton(self.main_widget)
+        self.tab.setObjectName(u"tab")
+        self.tab.setText(u"Tab")
+
         self.letter_row_top.addWidget(self.tab)
+
+
         self.top_letter_rows.addLayout(self.letter_row_top)
+
+
         self.enter_key_rows.addLayout(self.top_letter_rows)
+
+
         self.main_layout.addLayout(self.enter_key_rows)
-        self.letter_row_middle = QtWidgets.QHBoxLayout()
-        self.letter_row_middle.setObjectName("letter_row_middle")
-        self.capslock = QtWidgets.QPushButton(self.main_widget)
-        self.capslock.setText("Caps Lock")
-        self.capslock.setObjectName("capslock")
+
+        self.letter_row_middle = QHBoxLayout()
+        self.letter_row_middle.setObjectName(u"letter_row_middle")
+        self.capslock = QPushButton(self.main_widget)
+        self.capslock.setObjectName(u"capslock")
+        self.capslock.setText(u"Caps Lock")
+
         self.letter_row_middle.addWidget(self.capslock)
+
+
         self.main_layout.addLayout(self.letter_row_middle)
-        self.letter_row_bottom = QtWidgets.QHBoxLayout()
-        self.letter_row_bottom.setObjectName("letter_row_bottom")
-        self.lshift = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
+
+        self.letter_row_bottom = QHBoxLayout()
+        self.letter_row_bottom.setObjectName(u"letter_row_bottom")
+        self.lshift = QPushButton(self.main_widget)
+        self.lshift.setObjectName(u"lshift")
+        font = QFont()
         font.setBold(True)
         self.lshift.setFont(font)
-        self.lshift.setText("Shift")
-        self.lshift.setObjectName("lshift")
+        self.lshift.setText(u"Shift")
+
         self.letter_row_bottom.addWidget(self.lshift)
-        self.rshift = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.rshift = QPushButton(self.main_widget)
+        self.rshift.setObjectName(u"rshift")
         self.rshift.setFont(font)
-        self.rshift.setText("Shift")
-        self.rshift.setObjectName("rshift")
+        self.rshift.setText(u"Shift")
+
         self.letter_row_bottom.addWidget(self.rshift)
+
+
         self.main_layout.addLayout(self.letter_row_bottom)
-        self.bottom_row = QtWidgets.QHBoxLayout()
-        self.bottom_row.setObjectName("bottom_row")
-        self.lctrl = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.bottom_row = QHBoxLayout()
+        self.bottom_row.setObjectName(u"bottom_row")
+        self.lctrl = QPushButton(self.main_widget)
+        self.lctrl.setObjectName(u"lctrl")
         self.lctrl.setFont(font)
-        self.lctrl.setText("Ctrl")
-        self.lctrl.setObjectName("lctrl")
+        self.lctrl.setText(u"Ctrl")
+
         self.bottom_row.addWidget(self.lctrl)
-        self.lwin = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.lwin = QPushButton(self.main_widget)
+        self.lwin.setObjectName(u"lwin")
         self.lwin.setFont(font)
-        self.lwin.setText("Win")
-        self.lwin.setObjectName("lwin")
+        self.lwin.setText(u"Win")
+
         self.bottom_row.addWidget(self.lwin)
-        self.lalt = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.lalt = QPushButton(self.main_widget)
+        self.lalt.setObjectName(u"lalt")
         self.lalt.setFont(font)
-        self.lalt.setText("Alt")
-        self.lalt.setObjectName("lalt")
+        self.lalt.setText(u"Alt")
+
         self.bottom_row.addWidget(self.lalt)
-        self.space = QtWidgets.QPushButton(self.main_widget)
-        self.space.setText("Space")
+
+        self.space = QPushButton(self.main_widget)
+        self.space.setObjectName(u"space")
+        self.space.setText(u"Space")
         self.space.setCheckable(True)
-        self.space.setObjectName("space")
+
         self.bottom_row.addWidget(self.space)
-        self.ralt = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.ralt = QPushButton(self.main_widget)
+        self.ralt.setObjectName(u"ralt")
         self.ralt.setFont(font)
-        self.ralt.setText("Alt")
-        self.ralt.setObjectName("ralt")
+        self.ralt.setText(u"Alt")
+
         self.bottom_row.addWidget(self.ralt)
-        self.rwin = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.rwin = QPushButton(self.main_widget)
+        self.rwin.setObjectName(u"rwin")
         self.rwin.setFont(font)
-        self.rwin.setText("Win")
-        self.rwin.setObjectName("rwin")
+        self.rwin.setText(u"Win")
+
         self.bottom_row.addWidget(self.rwin)
-        self.appskey = QtWidgets.QPushButton(self.main_widget)
-        self.appskey.setText("AppsKey")
-        self.appskey.setObjectName("appskey")
+
+        self.appskey = QPushButton(self.main_widget)
+        self.appskey.setObjectName(u"appskey")
+        self.appskey.setText(u"AppsKey")
+
         self.bottom_row.addWidget(self.appskey)
-        self.rctrl = QtWidgets.QPushButton(self.main_widget)
-        font = QtGui.QFont()
-        font.setWeight(75)
-        font.setBold(True)
+
+        self.rctrl = QPushButton(self.main_widget)
+        self.rctrl.setObjectName(u"rctrl")
         self.rctrl.setFont(font)
-        self.rctrl.setText("Ctrl")
-        self.rctrl.setObjectName("rctrl")
+        self.rctrl.setText(u"Ctrl")
+
         self.bottom_row.addWidget(self.rctrl)
+
         self.bottom_row.setStretch(3, 1)
+
         self.main_layout.addLayout(self.bottom_row)
+
+
         self.keys_layout.addWidget(self.main_widget)
+
+
         self.dialog_layout.addWidget(self.keys_widget)
-        self.bottom_layout = QtWidgets.QHBoxLayout()
+
+        self.bottom_layout = QHBoxLayout()
+        self.bottom_layout.setObjectName(u"bottom_layout")
         self.bottom_layout.setContentsMargins(-1, 15, -1, -1)
-        self.bottom_layout.setObjectName("bottom_layout")
-        self.a2ok_button = QtWidgets.QPushButton(Keyboard)
-        self.a2ok_button.setText("OK")
-        self.a2ok_button.setObjectName("a2ok_button")
+        self.a2ok_button = QPushButton(Keyboard)
+        self.a2ok_button.setObjectName(u"a2ok_button")
+        self.a2ok_button.setText(u"OK")
+
         self.bottom_layout.addWidget(self.a2ok_button)
-        self.a2cancel_button = QtWidgets.QPushButton(Keyboard)
-        self.a2cancel_button.setText("Cancel")
+
+        self.a2cancel_button = QPushButton(Keyboard)
+        self.a2cancel_button.setObjectName(u"a2cancel_button")
+        self.a2cancel_button.setText(u"Cancel")
         self.a2cancel_button.setFlat(True)
-        self.a2cancel_button.setObjectName("a2cancel_button")
+
         self.bottom_layout.addWidget(self.a2cancel_button)
+
         self.bottom_layout.setStretch(0, 1)
+
         self.dialog_layout.addLayout(self.bottom_layout)
-        self.i_know_checkbox = QtWidgets.QCheckBox(Keyboard)
-        self.i_know_checkbox.setText("I know what I\'m doing!")
-        self.i_know_checkbox.setObjectName("i_know_checkbox")
-        self.dialog_layout.addWidget(self.i_know_checkbox)
+
+        self.i_know_checkbox = QCheckBox(Keyboard)
+        self.i_know_checkbox.setObjectName(u"i_know_checkbox")
+        self.i_know_checkbox.setText(u"I know what I'm doing!")
+
+        self.dialog_layout.addWidget(self.i_know_checkbox, 0, Qt.AlignVCenter)
+
         self.dialog_layout.setStretch(1, 1)
 
         self.retranslateUi(Keyboard)
-        QtCore.QMetaObject.connectSlotsByName(Keyboard)
+
+        QMetaObject.connectSlotsByName(Keyboard)
+    # setupUi
 
     def retranslateUi(self, Keyboard):
-        Keyboard.setWindowTitle(QtWidgets.QApplication.translate("Keyboard", "Hotkey Dialog", None, -1))
-        self.option_button.setText(QtWidgets.QApplication.translate("Keyboard", "...", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("Keyboard", "Show:", None, -1))
+        Keyboard.setWindowTitle(QCoreApplication.translate("Keyboard", u"Hotkey Dialog", None))
+        self.option_button.setText(QCoreApplication.translate("Keyboard", u"...", None))
+        self.label_2.setText(QCoreApplication.translate("Keyboard", u"Show:", None))
+    # retranslateUi
 
-from a2widget.a2more_button import A2MoreButton

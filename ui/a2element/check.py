@@ -1,6 +1,6 @@
 import a2ctrl
 
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
 
 
@@ -30,6 +30,7 @@ class Edit(EditCtrl):
     We might put them to the db and get and fetch from there or first: just write them into
     code directly and start with the variables include.
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.helpCheckbox

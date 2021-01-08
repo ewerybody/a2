@@ -1,12 +1,16 @@
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ctrl
 import a2util
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 
 
-_FLAGS = (QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
-          QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+_FLAGS = (
+    QtCore.Qt.ItemIsSelectable
+    | QtCore.Qt.ItemIsEditable
+    | QtCore.Qt.ItemIsDragEnabled
+    | QtCore.Qt.ItemIsEnabled
+)
 _NEW_ITEM_NAME = 'new_item'
 
 
@@ -31,7 +35,7 @@ class Draw(DrawCtrl):
         else:
             items = self.cfg.get('items', [])
         self.value_ctrl.addItems(items)
-        self.value_ctrl.currentIndexChanged[str].connect(self.delayed_check)
+        self.value_ctrl.currentTextChanged.connect(self.delayed_check)
         self.layout.addWidget(self.value_ctrl)
 
         if self.value in items:

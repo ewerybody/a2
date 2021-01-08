@@ -3,7 +3,7 @@ Created on 08.03.2017
 
 @author: eric
 """
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ahk
 import a2ctrl
@@ -65,12 +65,16 @@ class A2CoordsField(QtWidgets.QWidget):
 
     def set_value(self, values, y=None):
         if isinstance(values, (tuple, list)) and len(values) < 2:
-            raise ValueError('A2CoordsField.set_value needs tuple or list '
-                             'of 2 integers!\n  received: %s' % str(values))
+            raise ValueError(
+                'A2CoordsField.set_value needs tuple or list '
+                'of 2 integers!\n  received: %s' % str(values)
+            )
         elif isinstance(values, QtCore.QPoint):
             values = values.x(), values.y()
         elif isinstance(values, QtCore.QSize):
             values = values.width(), values.height()
+        else:
+            return
 
         self.x_field.blockSignals(True)
         self.y_field.blockSignals(True)
@@ -82,9 +86,11 @@ class A2CoordsField(QtWidgets.QWidget):
 
     def show_menu(self, menu):
         icons = a2ctrl.Icons.inst()
-        for func, icon in [(self.copy, icons.copy),
-                           (self.paste, icons.paste),
-                           (self.pick, icons.number)]:
+        for func, icon in [
+            (self.copy, icons.copy),
+            (self.paste, icons.paste),
+            (self.pick, icons.number),
+        ]:
             menu.addAction(icon, '%s Coordinates' % func.__name__.title(), func)
 
     def change_triggered(self):
@@ -127,7 +133,17 @@ class A2CoordsField(QtWidgets.QWidget):
 
         self.value = (ints[0], ints[1])
 
+    def setValue(self, value):
+        """In Designer this might be set so we need to handle ints not to break it."""
+        if isinstance(value, int):
+            return
+        elif isinstance(value, str):
+            self.set_string_value(value)
+        else:
+            self.set_value(value)
+
 
 if __name__ == '__main__':
     import a2widget.demo.a2coords_field
+
     a2widget.demo.a2coords_field.show()

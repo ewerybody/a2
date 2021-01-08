@@ -9,18 +9,18 @@ rem get the version of our Autohotkey.exe
 set /p ahk_version= < "%tmp_txt%"
 del "%tmp_txt%"
 
-echo ahk_version: %ahk_version%
+echo Autohotkey: %ahk_version%
 
 "%ahk_exe%" versions\get_Python_version.ahk > "%tmp_txt%"
 set /p python= < "%tmp_txt%"
 del "%tmp_txt%"
 
-echo python: %python%
+echo Python: %python%
 
-"%ahk_exe%" versions\get_PySide2_version.ahk > "%tmp_txt%"
+"%ahk_exe%" versions\get_PySide_version.ahk > "%tmp_txt%"
 set /p pyside_version= < "%tmp_txt%"
 del "%tmp_txt%"
 
-echo pyside_version: %pyside_version%
+echo Qt for Python: %pyside_version%
 
 pause

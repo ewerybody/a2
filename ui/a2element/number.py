@@ -2,7 +2,7 @@ from functools import partial
 
 import a2ctrl
 
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 
 from a2widget.a2slider import A2Slider
 from a2element import number_edit_ui, DrawCtrl, EditCtrl
@@ -73,6 +73,7 @@ class Edit(EditCtrl):
     The actual 'value' field is not covered by cfg_controls because
     we want to change the int/float type according to the decimals value.
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number
@@ -89,7 +90,7 @@ class Edit(EditCtrl):
             (self.ui.cfg_min, self.ui.value.setMinimum),
             (self.ui.cfg_max, self.ui.value.setMaximum),
             (self.ui.cfg_decimals, self.ui.value.setDecimals),
-            (self.ui.cfg_step_len, self.ui.value.setSingleStep)
+            (self.ui.cfg_step_len, self.ui.value.setSingleStep),
         ):
             # value from dict, backup value from ctrl
             set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))

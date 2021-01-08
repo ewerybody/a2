@@ -1,4 +1,4 @@
-from PySide2 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 
 import a2ctrl
 
@@ -75,4 +75,5 @@ class A2MoreButton(QtWidgets.QToolButton, MenuMixin):
 
 if __name__ == '__main__':
     import a2widget.demo.a2more_button_demo
+
     a2widget.demo.a2more_button_demo.show()

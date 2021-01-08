@@ -1,8 +1,8 @@
 """
-So far just the bugged flow layout example from the PySide2 demos.
+So far just the bugged flow layout example from the PySide demos.
 """
 
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 
 class FlowLayout(QtWidgets.QLayout):
@@ -58,8 +58,10 @@ class FlowLayout(QtWidgets.QLayout):
         for item in self.item_list:
             size = size.expandedTo(item.minimumSize())
 
-        size += QtCore.QSize(self.contentsMargins().top() + self.contentsMargins().bottom(),
-                             self.contentsMargins().left() + self.contentsMargins().right())
+        size += QtCore.QSize(
+            self.contentsMargins().top() + self.contentsMargins().bottom(),
+            self.contentsMargins().left() + self.contentsMargins().right(),
+        )
         return size
 
     def do_layout(self, rect=None, test_only=False):
@@ -73,8 +75,16 @@ class FlowLayout(QtWidgets.QLayout):
 
         for item in self.item_list:
             wid = item.widget()
-            spaceX = self.spacing() + wid.style().layoutSpacing(QtWidgets.QSizePolicy.PushButton, QtWidgets.QSizePolicy.PushButton, QtCore.Qt.Horizontal)
-            spaceY = self.spacing() + wid.style().layoutSpacing(QtWidgets.QSizePolicy.PushButton, QtWidgets.QSizePolicy.PushButton, QtCore.Qt.Vertical)
+            spaceX = self.spacing() + wid.style().layoutSpacing(
+                QtWidgets.QSizePolicy.PushButton,
+                QtWidgets.QSizePolicy.PushButton,
+                QtCore.Qt.Horizontal,
+            )
+            spaceY = self.spacing() + wid.style().layoutSpacing(
+                QtWidgets.QSizePolicy.PushButton,
+                QtWidgets.QSizePolicy.PushButton,
+                QtCore.Qt.Vertical,
+            )
             nextX = x + item.sizeHint().width() + spaceX
             if nextX - spaceX > rect.right() - self.contentsMargins().right() and lineHeight > 0:
                 x = rect.x() + self.contentsMargins().left()
@@ -99,4 +109,5 @@ class FlowLayout(QtWidgets.QLayout):
 
 if __name__ == '__main__':
     from a2widget.demo import flowlayout_demo
+
     flowlayout_demo.show()

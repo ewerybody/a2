@@ -1,6 +1,6 @@
 import os
 
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 
 import a2path
 import a2core
@@ -17,10 +17,13 @@ class NewModulueTool(A2InputDialog):
 
         if not self.a2.module_sources:
             title = 'No Module Source!'
-            msg = ('There is no <b>module source</b> to create a module in!\n'
-                   'Would you like to create a local one?')
+            msg = (
+                'There is no <b>module source</b> to create a module in!\n'
+                'Would you like to create a local one?'
+            )
             reply = QtWidgets.QMessageBox.question(
-                None, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                None, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+            )
 
             if reply is QtWidgets.QMessageBox.Yes:
                 self.main.create_local_source()
@@ -29,8 +32,12 @@ class NewModulueTool(A2InputDialog):
         self.source_dict = self._init_source_dict(module_source)
 
         super(NewModulueTool, self).__init__(
-            self.main, 'New Module', check_func=self.check_name,
-            msg='Name the new module:', text='my_module')
+            self.main,
+            'New Module',
+            check_func=self.check_name,
+            msg='Name the new module:',
+            text='my_module',
+        )
 
         self.okayed.connect(self.create_module)
         self.ui.main_layout.insertWidget(0, QtWidgets.QLabel('Module Source:'))

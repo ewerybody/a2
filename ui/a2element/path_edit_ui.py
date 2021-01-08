@@ -1,96 +1,132 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\path_edit.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\path_edit.ui' applies.
-#
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'path_edit.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from a2qt.QtCore import *
+from a2qt.QtGui import *
+from a2qt.QtWidgets import *
+
+from a2widget.a2path_field import A2PathField
+
 
 class Ui_edit(object):
     def setupUi(self, edit):
-        edit.setObjectName("edit")
+        if not edit.objectName():
+            edit.setObjectName(u"edit")
         edit.resize(488, 240)
-        self.edit_layout = QtWidgets.QFormLayout(edit)
-        self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.edit_layout = QFormLayout(edit)
+        self.edit_layout.setObjectName(u"edit_layout")
+        self.edit_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.edit_layout.setContentsMargins(10, 5, 0, 5)
-        self.edit_layout.setObjectName("edit_layout")
-        self.internalNameLabel = QtWidgets.QLabel(edit)
-        self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.internalNameLabel.setObjectName("internalNameLabel")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QtWidgets.QLineEdit(edit)
-        self.cfg_name.setObjectName("cfg_name")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
-        self.displayLabelLabel = QtWidgets.QLabel(edit)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
-        self.cfg_label = QtWidgets.QLineEdit(edit)
-        self.cfg_label.setObjectName("cfg_label")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
+        self.internalNameLabel = QLabel(edit)
+        self.internalNameLabel.setObjectName(u"internalNameLabel")
+        self.internalNameLabel.setMinimumSize(QSize(100, 0))
+        self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
+
+        self.cfg_name = QLineEdit(edit)
+        self.cfg_name.setObjectName(u"cfg_name")
+
+        self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
+
+        self.displayLabelLabel = QLabel(edit)
+        self.displayLabelLabel.setObjectName(u"displayLabelLabel")
+        self.displayLabelLabel.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.displayLabelLabel)
+
+        self.cfg_label = QLineEdit(edit)
+        self.cfg_label.setObjectName(u"cfg_label")
+
+        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_label)
+
         self.cfg_value = A2PathField(edit)
-        self.cfg_value.setText("")
-        self.cfg_value.setObjectName("cfg_value")
-        self.edit_layout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.cfg_value)
-        self.defaultPathLabel = QtWidgets.QLabel(edit)
-        self.defaultPathLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.defaultPathLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.defaultPathLabel.setObjectName("defaultPathLabel")
-        self.edit_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.defaultPathLabel)
-        self.cfg_writable = QtWidgets.QCheckBox(edit)
-        self.cfg_writable.setObjectName("cfg_writable")
-        self.edit_layout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.cfg_writable)
-        self.browse_type_layout = QtWidgets.QHBoxLayout()
-        self.browse_type_layout.setObjectName("browse_type_layout")
-        self.cfg_browse_type_0 = QtWidgets.QRadioButton(edit)
-        self.cfg_browse_type_0.setObjectName("cfg_browse_type_0")
+        self.cfg_value.setObjectName(u"cfg_value")
+
+        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_value)
+
+        self.defaultPathLabel = QLabel(edit)
+        self.defaultPathLabel.setObjectName(u"defaultPathLabel")
+        self.defaultPathLabel.setMinimumSize(QSize(100, 0))
+        self.defaultPathLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(2, QFormLayout.LabelRole, self.defaultPathLabel)
+
+        self.cfg_writable = QCheckBox(edit)
+        self.cfg_writable.setObjectName(u"cfg_writable")
+
+        self.edit_layout.setWidget(3, QFormLayout.FieldRole, self.cfg_writable)
+
+        self.browse_type_layout = QHBoxLayout()
+        self.browse_type_layout.setObjectName(u"browse_type_layout")
+        self.cfg_browse_type_0 = QRadioButton(edit)
+        self.cfg_browse_type_0.setObjectName(u"cfg_browse_type_0")
+
         self.browse_type_layout.addWidget(self.cfg_browse_type_0)
-        self.cfg_browse_type_1 = QtWidgets.QRadioButton(edit)
+
+        self.cfg_browse_type_1 = QRadioButton(edit)
+        self.cfg_browse_type_1.setObjectName(u"cfg_browse_type_1")
         self.cfg_browse_type_1.setChecked(True)
-        self.cfg_browse_type_1.setObjectName("cfg_browse_type_1")
+
         self.browse_type_layout.addWidget(self.cfg_browse_type_1)
-        self.cfg_save_mode = QtWidgets.QCheckBox(edit)
-        self.cfg_save_mode.setObjectName("cfg_save_mode")
+
+        self.cfg_save_mode = QCheckBox(edit)
+        self.cfg_save_mode.setObjectName(u"cfg_save_mode")
+
         self.browse_type_layout.addWidget(self.cfg_save_mode)
-        self.edit_layout.setLayout(4, QtWidgets.QFormLayout.FieldRole, self.browse_type_layout)
-        self.label_3 = QtWidgets.QLabel(edit)
-        self.label_3.setMinimumSize(QtCore.QSize(100, 0))
-        self.label_3.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_3.setObjectName("label_3")
-        self.edit_layout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_3)
-        self.file_types_label = QtWidgets.QLabel(edit)
+
+
+        self.edit_layout.setLayout(4, QFormLayout.FieldRole, self.browse_type_layout)
+
+        self.label_3 = QLabel(edit)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setMinimumSize(QSize(100, 0))
+        self.label_3.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(4, QFormLayout.LabelRole, self.label_3)
+
+        self.file_types_label = QLabel(edit)
+        self.file_types_label.setObjectName(u"file_types_label")
         self.file_types_label.setEnabled(True)
-        self.file_types_label.setMinimumSize(QtCore.QSize(100, 0))
-        self.file_types_label.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.file_types_label.setObjectName("file_types_label")
-        self.edit_layout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.file_types_label)
-        self.cfg_file_types = QtWidgets.QLineEdit(edit)
-        self.cfg_file_types.setText("")
-        self.cfg_file_types.setObjectName("cfg_file_types")
-        self.edit_layout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.cfg_file_types)
+        self.file_types_label.setMinimumSize(QSize(100, 0))
+        self.file_types_label.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(5, QFormLayout.LabelRole, self.file_types_label)
+
+        self.cfg_file_types = QLineEdit(edit)
+        self.cfg_file_types.setObjectName(u"cfg_file_types")
+
+        self.edit_layout.setWidget(5, QFormLayout.FieldRole, self.cfg_file_types)
+
 
         self.retranslateUi(edit)
-        QtCore.QMetaObject.connectSlotsByName(edit)
+
+        QMetaObject.connectSlotsByName(edit)
+    # setupUi
 
     def retranslateUi(self, edit):
-        edit.setWindowTitle(QtWidgets.QApplication.translate("edit", "Form", None, -1))
-        self.internalNameLabel.setText(QtWidgets.QApplication.translate("edit", "internal name:", None, -1))
-        self.cfg_name.setText(QtWidgets.QApplication.translate("edit", "extensionX_path1", None, -1))
-        self.displayLabelLabel.setText(QtWidgets.QApplication.translate("edit", "display label:", None, -1))
-        self.cfg_label.setText(QtWidgets.QApplication.translate("edit", "some path bla", None, -1))
-        self.defaultPathLabel.setText(QtWidgets.QApplication.translate("edit", "default path:", None, -1))
-        self.cfg_writable.setText(QtWidgets.QApplication.translate("edit", "writable field", None, -1))
-        self.cfg_browse_type_0.setText(QtWidgets.QApplication.translate("edit", "folder", None, -1))
-        self.cfg_browse_type_1.setText(QtWidgets.QApplication.translate("edit", "file", None, -1))
-        self.cfg_save_mode.setText(QtWidgets.QApplication.translate("edit", "save mode", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("edit", "browse mode:", None, -1))
-        self.file_types_label.setText(QtWidgets.QApplication.translate("edit", "file types:", None, -1))
+        edit.setWindowTitle(QCoreApplication.translate("edit", u"Form", None))
+        self.internalNameLabel.setText(QCoreApplication.translate("edit", u"internal name:", None))
+        self.cfg_name.setText(QCoreApplication.translate("edit", u"extensionX_path1", None))
+        self.displayLabelLabel.setText(QCoreApplication.translate("edit", u"display label:", None))
+        self.cfg_label.setText(QCoreApplication.translate("edit", u"some path bla", None))
+        self.cfg_value.setText("")
+        self.defaultPathLabel.setText(QCoreApplication.translate("edit", u"default path:", None))
+        self.cfg_writable.setText(QCoreApplication.translate("edit", u"writable field", None))
+        self.cfg_browse_type_0.setText(QCoreApplication.translate("edit", u"folder", None))
+        self.cfg_browse_type_1.setText(QCoreApplication.translate("edit", u"file", None))
+        self.cfg_save_mode.setText(QCoreApplication.translate("edit", u"save mode", None))
+        self.label_3.setText(QCoreApplication.translate("edit", u"browse mode:", None))
+        self.file_types_label.setText(QCoreApplication.translate("edit", u"file types:", None))
+        self.cfg_file_types.setText("")
+    # retranslateUi
 
-from a2widget.a2path_field import A2PathField

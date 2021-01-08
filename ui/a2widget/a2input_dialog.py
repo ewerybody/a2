@@ -4,7 +4,7 @@ a2widget.a2input_dialog
 @created: Sep 3, 2016
 @author: eRiC
 """
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2ctrl
 from a2widget import a2input_dialog_ui
@@ -16,8 +16,11 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
-        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint |
-                            QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(
+            QtCore.Qt.Window
+            | QtCore.Qt.WindowCloseButtonHint
+            | QtCore.Qt.MSWindowsFixedSizeDialogHint
+        )
         a2ctrl.check_ui_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
@@ -56,8 +59,7 @@ class A2InputDialog(A2ConfirmDialog):
     okayed = QtCore.Signal(str)
     field_changed = QtCore.Signal(str)
 
-    def __init__(self, parent, title, check_func=None, text='', msg='',
-                 ok_func=None):
+    def __init__(self, parent, title, check_func=None, text='', msg='', ok_func=None):
         """
         :param QWidget parent: The parent widget to pass.
         :param str title: String for the dialogs title bar.
@@ -117,4 +119,5 @@ class A2InputDialog(A2ConfirmDialog):
 
 if __name__ == '__main__':
     import a2widget.demo.a2input_dialog_demo
+
     a2widget.demo.a2input_dialog_demo.show()

@@ -1,5 +1,5 @@
 """
-A cross-platform implementation of a :class:`PySide.QtGui.QApplication`
+A cross-platform implementation of a :class:`PySide.QtWidgets.QApplication`
 subclass with the ability to determine if it's the only running instance of
 an application, and if not, send a message to the previous instance before
 closing.
@@ -11,7 +11,10 @@ import uuid
 import struct
 from functools import partial
 
-from PySide2 import QtCore, QtWidgets, QtNetwork
+try:
+    from PySide6 import QtCore, QtWidgets, QtNetwork
+except ImportError:
+    from PySide2 import QtCore, QtWidgets, QtNetwork
 
 if os.name == 'nt':
     import ctypes.wintypes
@@ -24,21 +27,25 @@ WM_DWMCOMPOSITIONCHANGED = 0x31E
 
 # Session ID for Windows
 if os.name == 'nt':
+
     def getsid(pid):
         """ Returns the session ID for the process with the given ID. """
         sid = ctypes.wintypes.DWORD()
         result = ctypes.windll.kernel32.ProcessIdToSessionId(
-            ctypes.wintypes.DWORD(pid), ctypes.byref(sid))
+            ctypes.wintypes.DWORD(pid), ctypes.byref(sid)
+        )
         if not result:
             raise OSError(3, 'No such process')
         return sid.value
+
+
 else:
     getsid = os.getsid
 
 
 class QSingleApplication(QtWidgets.QApplication):
     """
-    This subclass of :class:`~PySide2.QtWidgets.QApplication` ensures that only a
+    This subclass of :class:`~.QtWidgets.QApplication` ensures that only a
     single instance of an application will be run simultaneously, and provides
     a mechanism for new instances to send commands to the previously existing
     instance before the new instance closes.
@@ -82,7 +89,7 @@ class QSingleApplication(QtWidgets.QApplication):
         QtWidgets.QApplication.__init__(self, *args, **kwargs)
 
         # During shutdown, we can't rely on globals like os being still available.
-        if os.name == "nt":
+        if os.name == 'nt':
             self._close_lock = self._close_mutex
         else:
             self._close_lock = self._close_lockfile
@@ -187,9 +194,8 @@ class QSingleApplication(QtWidgets.QApplication):
         Attempt to create a new mutex. Returns True if the mutex was acquired
         successfully, or False if the mutex is already in use.
         """
-        mutex_name = ctypes.c_wchar_p(self._app_id[:ctypes.wintypes.MAX_PATH])
-        handle = ctypes.windll.kernel32.CreateMutexW(
-            None, ctypes.c_bool(False), mutex_name)
+        mutex_name = ctypes.c_wchar_p(self._app_id[: ctypes.wintypes.MAX_PATH])
+        handle = ctypes.windll.kernel32.CreateMutexW(None, ctypes.c_bool(False), mutex_name)
         self._mutex = handle
 
         return not (not handle or ctypes.GetLastError() == ERROR_ALREADY_EXISTS)
@@ -209,13 +215,12 @@ class QSingleApplication(QtWidgets.QApplication):
         Attempt to create a lockfile in the user's temporary directory. This is
         one of the few things that doesn't obey the path functions of profile.
         """
-        lockfile = os.path.abspath(os.path.join(
-            QtCore.QDir.tempPath(), u'%s.lock' % self._app_id))
+        lockfile = os.path.abspath(os.path.join(QtCore.QDir.tempPath(), u'%s.lock' % self._app_id))
 
         try:
             fd = os.open(lockfile, os.O_TRUNC | os.O_CREAT | os.O_RDWR)
             fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            os.write(fd, "%d\n" % os.getpid())
+            os.write(fd, '%d\n' % os.getpid())
 
         except (OSError, IOError) as error:
             if error.errno in (errno.EACCES, errno.EAGAIN):
@@ -262,7 +267,7 @@ class QSingleApplication(QtWidgets.QApplication):
             return
 
         # Read the length.
-        length = struct.unpack("!I", sock.read(4).data())[0]
+        length = struct.unpack('!I', sock.read(4).data())[0]
 
         # If we don't have a length, just end now.
         if not length:
@@ -304,7 +309,7 @@ class QSingleApplication(QtWidgets.QApplication):
         immediately and the boolean will be sent to the callback instead.
         """
         message = json.dumps(message)
-        message = struct.pack("!I", len(message)).decode() + message
+        message = struct.pack('!I', len(message)).decode() + message
 
         # Create a socket.
         sock = QtNetwork.QLocalSocket(self)

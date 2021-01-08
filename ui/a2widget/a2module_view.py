@@ -1,6 +1,6 @@
 import traceback
 
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets, QtGui
 
 import a2core
 import a2ctrl
@@ -94,7 +94,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
             if isinstance(element_widget, QtWidgets.QWidget):
                 self.controls.append(element_widget)
-            elif isinstance(element_widget, QtWidgets.QAction):
+            elif isinstance(element_widget, QtGui.QAction):
                 self.menu_items.append(element_widget)
             elif element_widget is not None:
                 log.error('What is element "%s"?!' % element_widget)

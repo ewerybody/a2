@@ -5,7 +5,7 @@
 import os
 import json
 import importlib
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2core
 import a2util
@@ -26,9 +26,12 @@ class NewElementDialog(A2InputDialog):
     def __init__(self, main):
         self.main = main
         self.a2 = a2core.A2Obj.inst()
-        self._current_elements = [os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)]
+        self._current_elements = [
+            os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)
+        ]
         super(NewElementDialog, self).__init__(
-            self.main, 'New Element Dialog', msg='Name the new element:', text='name')
+            self.main, 'New Element Dialog', msg='Name the new element:', text='name'
+        )
         self.element_cfg = {'target': 'global', 'enlist': True}
         self.setup_ui()
         self.check_func = self.check_element_name
@@ -84,7 +87,8 @@ class NewElementDialog(A2InputDialog):
                 description='Some element description ...',
                 creation_date=a2util.get_date(),
                 author_name=self.main.devset.author_name,
-                element_name=name.title())
+                element_name=name.title(),
+            )
 
         if self.element_cfg['target'] == 'global':
             new_path = os.path.join(self.a2.paths.elements, name + '.py')
@@ -97,16 +101,21 @@ class NewElementDialog(A2InputDialog):
                     if line.startswith(DISPLAY_ELEMENTS_LABEL):
                         values = json.loads(line.split(' = ', 1)[1].replace("'", '"'))
                         values.append(name)
-                        lines[i] = '%s = %s' % (DISPLAY_ELEMENTS_LABEL, str(sorted(values)).replace("u'", "'"))
+                        lines[i] = '%s = %s' % (
+                            DISPLAY_ELEMENTS_LABEL,
+                            str(sorted(values)).replace("u'", "'"),
+                        )
                 with open(a2element_init, 'w') as fobj:
                     fobj.write('\n'.join(lines))
 
                 import a2element
+
                 importlib.reload(a2element)
                 a2element.get_list(force=True)
         else:
-            new_path = os.path.join(self.main.mod.path, '%s_%s.py' %
-                                    (a2ctrl.LOCAL_ELEMENT_ID, name))
+            new_path = os.path.join(
+                self.main.mod.path, '%s_%s.py' % (a2ctrl.LOCAL_ELEMENT_ID, name)
+            )
 
         with open(new_path, 'w') as fobj:
             fobj.write(new_element_code)

@@ -3,7 +3,7 @@ Home of the A2ItemEditor Lister widget.
 """
 from collections import OrderedDict
 
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2core
 import a2ctrl.connect
@@ -14,11 +14,17 @@ from a2widget import a2item_editor_ui
 log = a2core.get_logger(__name__)
 #: Minimum number of to automatically show the search field.
 SEARCH_FIELD_MIN_ITEMS = 10
-DEFAULT_ITEM_FLAGS = (QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable |
-                      QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+DEFAULT_ITEM_FLAGS = (
+    QtCore.Qt.ItemIsSelectable
+    | QtCore.Qt.ItemIsEditable
+    | QtCore.Qt.ItemIsDragEnabled
+    | QtCore.Qt.ItemIsEnabled
+)
+
 
 class A2ItemEditor(QtWidgets.QWidget):
     """A lister widget for editing complex data dictionaries."""
+
     selected_name_changed = QtCore.Signal(str)
     selection_changed = QtCore.Signal(list)
     item_changed = QtCore.Signal(tuple)
@@ -75,8 +81,9 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.data = data
         self.fill_item_list()
 
-    def add_data_label_widget(self, value_name, widget, set_function, change_signal=None,
-                              default_value=None, label=None):
+    def add_data_label_widget(
+        self, value_name, widget, set_function, change_signal=None, default_value=None, label=None
+    ):
         """
         :param str value_name: Name of the data item to control.
         :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
@@ -90,8 +97,9 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.add_row(label, widget)
         self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
 
-    def add_data_widget(self, value_name, widget, set_function, change_signal=None,
-                        default_value=None):
+    def add_data_widget(
+        self, value_name, widget, set_function, change_signal=None, default_value=None
+    ):
         """
         Fills the config_layout with a control and connects it to the data.
 
@@ -109,13 +117,16 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
         self._drawing = True
-        self._data_widgets[value_name] = {'widget': widget,
-                                          'set_function': set_function,
-                                          'change_signal': change_signal,
-                                          'default_value': default_value}
+        self._data_widgets[value_name] = {
+            'widget': widget,
+            'set_function': set_function,
+            'change_signal': change_signal,
+            'default_value': default_value,
+        }
 
         a2ctrl.connect.control(
-            widget, value_name, self._current_data, self._value_changed, change_signal)
+            widget, value_name, self._current_data, self._value_changed, change_signal
+        )
 
         self._drawing = False
 

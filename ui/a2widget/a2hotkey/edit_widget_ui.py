@@ -1,113 +1,155 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2widget\a2hotkey\edit_widget.ui' applies.
-#
-# Created: Tue Jan 28 21:59:37 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'edit_widget.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from a2qt.QtCore import *
+from a2qt.QtGui import *
+from a2qt.QtWidgets import *
+
+from a2widget.a2hotkey import A2Hotkey
+from a2widget.a2hotkey.edit_func_widget import FuncWidget
+from a2widget.a2more_button import A2MoreButton
+
 
 class Ui_edit(object):
     def setupUi(self, edit):
-        edit.setObjectName("edit")
+        if not edit.objectName():
+            edit.setObjectName(u"edit")
         edit.resize(543, 288)
-        self.edit_layout = QtWidgets.QFormLayout(edit)
-        self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop|QtCore.Qt.AlignTrailing)
-        self.edit_layout.setObjectName("edit_layout")
-        self.internalNameLabel = QtWidgets.QLabel(edit)
-        self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.internalNameLabel.setObjectName("internalNameLabel")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QtWidgets.QLineEdit(edit)
-        self.cfg_name.setObjectName("cfg_name")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
-        self.displayLabelLabel = QtWidgets.QLabel(edit)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
-        self.cfg_label = QtWidgets.QLineEdit(edit)
-        self.cfg_label.setObjectName("cfg_label")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
-        self.hotkeyLabel = QtWidgets.QLabel(edit)
-        self.hotkeyLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.hotkeyLabel.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.hotkeyLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.hotkeyLabel.setObjectName("hotkeyLabel")
-        self.edit_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.hotkeyLabel)
-        self.hotkey_layout = QtWidgets.QVBoxLayout()
-        self.hotkey_layout.setObjectName("hotkey_layout")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.edit_layout = QFormLayout(edit)
+        self.edit_layout.setObjectName(u"edit_layout")
+        self.edit_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
+        self.internalNameLabel = QLabel(edit)
+        self.internalNameLabel.setObjectName(u"internalNameLabel")
+        self.internalNameLabel.setMinimumSize(QSize(100, 0))
+        self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
+
+        self.cfg_name = QLineEdit(edit)
+        self.cfg_name.setObjectName(u"cfg_name")
+
+        self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
+
+        self.displayLabelLabel = QLabel(edit)
+        self.displayLabelLabel.setObjectName(u"displayLabelLabel")
+        self.displayLabelLabel.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.displayLabelLabel)
+
+        self.cfg_label = QLineEdit(edit)
+        self.cfg_label.setObjectName(u"cfg_label")
+
+        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_label)
+
+        self.hotkeyLabel = QLabel(edit)
+        self.hotkeyLabel.setObjectName(u"hotkeyLabel")
+        self.hotkeyLabel.setMinimumSize(QSize(100, 0))
+        self.hotkeyLabel.setMaximumSize(QSize(200, 16777215))
+        self.hotkeyLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(2, QFormLayout.LabelRole, self.hotkeyLabel)
+
+        self.hotkey_layout = QVBoxLayout()
+        self.hotkey_layout.setObjectName(u"hotkey_layout")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.hotkey_button = A2Hotkey(edit)
+        self.hotkey_button.setObjectName(u"hotkey_button")
         self.hotkey_button.setEnabled(True)
-        self.hotkey_button.setText("")
-        self.hotkey_button.setObjectName("hotkey_button")
+        self.hotkey_button.setText(u"")
+
         self.horizontalLayout_2.addWidget(self.hotkey_button)
+
         self.a2option_button = A2MoreButton(edit)
+        self.a2option_button.setObjectName(u"a2option_button")
         self.a2option_button.setAutoRaise(True)
-        self.a2option_button.setObjectName("a2option_button")
+
         self.horizontalLayout_2.addWidget(self.a2option_button)
+
+
         self.hotkey_layout.addLayout(self.horizontalLayout_2)
-        self.gridLayout = QtWidgets.QGridLayout()
+
+        self.gridLayout = QGridLayout()
+        self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setHorizontalSpacing(15)
         self.gridLayout.setVerticalSpacing(5)
-        self.gridLayout.setObjectName("gridLayout")
-        self.cfg_disablable = QtWidgets.QCheckBox(edit)
+        self.cfg_disablable = QCheckBox(edit)
+        self.cfg_disablable.setObjectName(u"cfg_disablable")
         self.cfg_disablable.setChecked(True)
-        self.cfg_disablable.setObjectName("cfg_disablable")
+
         self.gridLayout.addWidget(self.cfg_disablable, 1, 0, 1, 1)
-        self.cfg_scopeChange = QtWidgets.QCheckBox(edit)
+
+        self.cfg_scopeChange = QCheckBox(edit)
+        self.cfg_scopeChange.setObjectName(u"cfg_scopeChange")
         self.cfg_scopeChange.setChecked(True)
-        self.cfg_scopeChange.setObjectName("cfg_scopeChange")
+
         self.gridLayout.addWidget(self.cfg_scopeChange, 1, 1, 1, 1)
-        self.cfg_enabled = QtWidgets.QCheckBox(edit)
+
+        self.cfg_enabled = QCheckBox(edit)
+        self.cfg_enabled.setObjectName(u"cfg_enabled")
         self.cfg_enabled.setChecked(True)
-        self.cfg_enabled.setObjectName("cfg_enabled")
+
         self.gridLayout.addWidget(self.cfg_enabled, 0, 0, 1, 1)
-        self.cfg_keyChange = QtWidgets.QCheckBox(edit)
+
+        self.cfg_keyChange = QCheckBox(edit)
+        self.cfg_keyChange.setObjectName(u"cfg_keyChange")
         self.cfg_keyChange.setChecked(True)
-        self.cfg_keyChange.setObjectName("cfg_keyChange")
+
         self.gridLayout.addWidget(self.cfg_keyChange, 0, 1, 1, 1)
-        self.cfg_multiple = QtWidgets.QCheckBox(edit)
+
+        self.cfg_multiple = QCheckBox(edit)
+        self.cfg_multiple.setObjectName(u"cfg_multiple")
         self.cfg_multiple.setChecked(True)
-        self.cfg_multiple.setObjectName("cfg_multiple")
+
         self.gridLayout.addWidget(self.cfg_multiple, 2, 0, 1, 1)
+
         self.gridLayout.setColumnStretch(1, 1)
+
         self.hotkey_layout.addLayout(self.gridLayout)
-        self.edit_layout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.hotkey_layout)
-        self.functionLabel = QtWidgets.QLabel(edit)
-        self.functionLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.functionLabel.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.functionLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.functionLabel.setObjectName("functionLabel")
-        self.edit_layout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.functionLabel)
+
+
+        self.edit_layout.setLayout(2, QFormLayout.FieldRole, self.hotkey_layout)
+
+        self.functionLabel = QLabel(edit)
+        self.functionLabel.setObjectName(u"functionLabel")
+        self.functionLabel.setMinimumSize(QSize(100, 0))
+        self.functionLabel.setMaximumSize(QSize(200, 16777215))
+        self.functionLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(3, QFormLayout.LabelRole, self.functionLabel)
+
         self.func_widget = FuncWidget(edit)
-        self.func_widget.setObjectName("func_widget")
-        self.edit_layout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.func_widget)
+        self.func_widget.setObjectName(u"func_widget")
+
+        self.edit_layout.setWidget(3, QFormLayout.FieldRole, self.func_widget)
+
 
         self.retranslateUi(edit)
-        QtCore.QMetaObject.connectSlotsByName(edit)
+
+        QMetaObject.connectSlotsByName(edit)
+    # setupUi
 
     def retranslateUi(self, edit):
-        edit.setWindowTitle(QtWidgets.QApplication.translate("edit", "Form", None, -1))
-        self.internalNameLabel.setText(QtWidgets.QApplication.translate("edit", "internal name:", None, -1))
-        self.cfg_name.setText(QtWidgets.QApplication.translate("edit", "extensionX_hotkey1", None, -1))
-        self.displayLabelLabel.setText(QtWidgets.QApplication.translate("edit", "display label:", None, -1))
-        self.cfg_label.setText(QtWidgets.QApplication.translate("edit", "make some awesome stuff", None, -1))
-        self.hotkeyLabel.setText(QtWidgets.QApplication.translate("edit", "hotkey:", None, -1))
-        self.cfg_disablable.setText(QtWidgets.QApplication.translate("edit", "can be disabled", None, -1))
-        self.cfg_scopeChange.setText(QtWidgets.QApplication.translate("edit", "allow scope change", None, -1))
-        self.cfg_enabled.setText(QtWidgets.QApplication.translate("edit", "enabled by default", None, -1))
-        self.cfg_keyChange.setText(QtWidgets.QApplication.translate("edit", "allow key change", None, -1))
-        self.cfg_multiple.setText(QtWidgets.QApplication.translate("edit", "allow multiple hotkeys", None, -1))
-        self.functionLabel.setText(QtWidgets.QApplication.translate("edit", "function:", None, -1))
+        edit.setWindowTitle(QCoreApplication.translate("edit", u"Form", None))
+        self.internalNameLabel.setText(QCoreApplication.translate("edit", u"internal name:", None))
+        self.cfg_name.setText(QCoreApplication.translate("edit", u"extensionX_hotkey1", None))
+        self.displayLabelLabel.setText(QCoreApplication.translate("edit", u"display label:", None))
+        self.cfg_label.setText(QCoreApplication.translate("edit", u"make some awesome stuff", None))
+        self.hotkeyLabel.setText(QCoreApplication.translate("edit", u"hotkey:", None))
+        self.cfg_disablable.setText(QCoreApplication.translate("edit", u"can be disabled", None))
+        self.cfg_scopeChange.setText(QCoreApplication.translate("edit", u"allow scope change", None))
+        self.cfg_enabled.setText(QCoreApplication.translate("edit", u"enabled by default", None))
+        self.cfg_keyChange.setText(QCoreApplication.translate("edit", u"allow key change", None))
+        self.cfg_multiple.setText(QCoreApplication.translate("edit", u"allow multiple hotkeys", None))
+        self.functionLabel.setText(QCoreApplication.translate("edit", u"function:", None))
+    # retranslateUi
 
-from a2widget.a2more_button import A2MoreButton
-from a2widget.a2hotkey.edit_func_widget import FuncWidget
-from a2widget.a2hotkey import A2Hotkey

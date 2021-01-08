@@ -1,6 +1,6 @@
 """a2 Developer stuff."""
 import os
-from PySide2 import QtWidgets, QtCore
+from a2qt import QtWidgets, QtCore
 
 import a2core
 import a2util
@@ -14,6 +14,7 @@ log = a2core.get_logger(__name__)
 
 class RollbackDiffDialog(A2ConfirmDialog):
     """Dialog to ask user for rollback confirmation and offer diffing."""
+
     diff = QtCore.Signal()
 
     def __init__(self, parent, title):
@@ -22,13 +23,15 @@ class RollbackDiffDialog(A2ConfirmDialog):
         super(RollbackDiffDialog, self).__init__(parent, title, msg)
 
         self.ui.diff_button = QtWidgets.QPushButton('Diff', self)
-        self.ui.diff_button.setObjectName("a2ok_button")
+        self.ui.diff_button.setObjectName('a2ok_button')
         self.ui.horizontalLayout.insertWidget(1, self.ui.diff_button)
         self.ui.diff_button.clicked.connect(self.diff.emit)
+
 
 # pylint: disable=too-many-instance-attributes
 class DevSettings:
     """Developer settings holder."""
+
     def __init__(self, a2):
         self._enabled = False
         self.author_name = ''
@@ -45,7 +48,8 @@ class DevSettings:
             'code_editor': '',
             'diff_app': '',
             'json_indent': 2,
-            'loglevel_debug': False}
+            'loglevel_debug': False,
+        }
         self.get()
 
         log.info('loglevel_debug: %s', self.loglevel_debug)
@@ -94,14 +98,12 @@ class DevSettings:
             parent,
             'No Valid %s Set!' % display_name,
             question,
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel
+            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel,
         )
 
         if reply == QtWidgets.QMessageBox.Yes:
             exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
-                parent,
-                task_msg.title(),
-                variable, 'Executable (*.exe)'
+                parent, task_msg.title(), variable, 'Executable (*.exe)'
             )
             if exepath:
                 self.set_var(var_name, exepath)

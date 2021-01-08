@@ -10,15 +10,15 @@ import platform
 import traceback
 from ctypes import windll
 
-from PySide2 import QtWidgets
+from a2qt import QtWidgets, QtCore
 from singlesiding import QSingleApplication
 
 
 class A2Main(QSingleApplication):
     """The a2 app foundation object."""
+
     def __init__(self):
         super(A2Main, self).__init__(sys.argv)
-        # self._app = None
         self._core = None
         self._win = None
 
@@ -36,12 +36,16 @@ class A2Main(QSingleApplication):
         self.lastWindowClosed.connect(self.last_window_closed)
 
         # adding PySide plugin paths. e.g. to make all the imageformats available
-        pyside_plugin_path = os.path.join(sys.modules['PySide2'].__path__[0], 'plugins')
+        pyside_plugin_path = os.path.join(sys.modules['a2qt'].QT_PATH, 'plugins')
         self.addLibraryPath(pyside_plugin_path)
 
         winfo = platform.uname()
-        self.info('initialised!\n  Python: %s\n  Windows: %s\n  Qt: %s',
-                  sys.version, str(winfo)[31:-1], sys.modules['PySide2'].__version__)
+        self.info(
+            'initialised!\n  Python: %s\n  Windows: %s\n  Qt: %s',
+            sys.version,
+            str(winfo)[31:-1],
+            QtCore.__version__,
+        )
 
         # this is to set the actual taskbar icon
         windll.shell32.SetCurrentProcessExplicitAppUserModelID('ewerybody.a2.0.1')
@@ -62,10 +66,12 @@ class A2Main(QSingleApplication):
 
         try:
             import a2core
+
             self._core = a2core.A2Obj.inst()
             self._core.start_up()
 
             import a2ui
+
             self._win = a2ui.A2Window(self)
             self._core.win = self._win
             self._core.app = self
@@ -75,8 +81,9 @@ class A2Main(QSingleApplication):
             # TODO: provide more detailed startup error report
             # error_class, error_msg, trace_back = sys.exc_info()
             title = 'a2app: Error on "init_a2_win()"!'
-            msg = ('Could not call A2Window! Error:\n%s\n'
-                   'Traceback:%s' % (error, traceback.format_exc().strip())
+            msg = 'Could not call A2Window! Error:\n%s\n' 'Traceback:%s' % (
+                error,
+                traceback.format_exc().strip(),
             )
             QtWidgets.QMessageBox.critical(
                 None, title, msg + '\n\nPress Ctrl+C to copy this message.'
@@ -113,6 +120,7 @@ def main():
     """The main entrypoint for the whole thing."""
     try:
         import a2output
+
         a2output.get_logwriter()
         app = A2Main()
         app.exec_()

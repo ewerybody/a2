@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 
 import a2ctrl
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
@@ -24,6 +24,7 @@ class Draw(DrawCtrl):
     The frontend widget visible to the user with options
     to change the default behavior of the element.
     """
+
     def __init__(self, *args):
         super(Draw, self).__init__(*args)
 
@@ -39,8 +40,7 @@ class Draw(DrawCtrl):
         self.button_layout.addWidget(self.button)
 
     def call_code(self):
-        file_name = local_script.build_file_name(
-            self.cfg.get('script_name'), BUTTON_SCRIPT_PREFIX)
+        file_name = local_script.build_file_name(self.cfg.get('script_name'), BUTTON_SCRIPT_PREFIX)
         self.mod.call_python_script(file_name)
 
 
@@ -49,6 +49,7 @@ class Edit(EditCtrl):
     The background widget that sets up how the user can edit the element,
     visible when editing the module.
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = 'https://github.com/ewerybody/a2/wiki/Button-element'

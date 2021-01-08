@@ -1,7 +1,7 @@
 import os
 import a2core
 import a2util
-from PySide2 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 from a2widget.a2hotkey import edit_func_widget_ui
 from a2widget.a2hotkey.hotkey_common import Vars
 
@@ -50,9 +50,11 @@ class FuncWidget(QtWidgets.QWidget):
             menu.addAction(HelpLabels.cmds, self.surf_to_help)
 
         elif index == 1:
-            for label, func in [('Insert directory...', self.insert_dir),
-                                ('Insert file...', self.insert_file),
-                                (HelpLabels.run, self.surf_to_help)]:
+            for label, func in [
+                ('Insert directory...', self.insert_dir),
+                ('Insert file...', self.insert_file),
+                (HelpLabels.run, self.surf_to_help),
+            ]:
                 menu.addAction(label, func)
 
         else:
@@ -65,8 +67,10 @@ class FuncWidget(QtWidgets.QWidget):
                 # for var in []:
                 #    action = QtGui.QAction(var, fsubmenu2, triggered=partial(self.set_sendmode, var))
                 #    fsubmenu2.addAction(action)
-            for label, func in [(HelpLabels.send, self.surf_to_help),
-                                (HelpLabels.vars, self.surf_to_help)]:
+            for label, func in [
+                (HelpLabels.send, self.surf_to_help),
+                (HelpLabels.vars, self.surf_to_help),
+            ]:
                 menu.addAction(label, func)
 
         menu.popup(QtGui.QCursor.pos())
@@ -79,10 +83,12 @@ class FuncWidget(QtWidgets.QWidget):
         if self.help_map is None:
             self.a2 = a2core.A2Obj.inst()
             urls = self.a2.urls
-            self.help_map = {HelpLabels.cmds: urls.ahk_commands,
-                             HelpLabels.run: urls.ahk_run,
-                             HelpLabels.send: urls.ahk_send,
-                             HelpLabels.vars: urls.ahk_builtin_vars}
+            self.help_map = {
+                HelpLabels.cmds: urls.ahk_commands,
+                HelpLabels.run: urls.ahk_run,
+                HelpLabels.send: urls.ahk_send,
+                HelpLabels.vars: urls.ahk_builtin_vars,
+            }
 
     def surf_to_help(self):
         label = self.sender().text()
@@ -90,13 +96,13 @@ class FuncWidget(QtWidgets.QWidget):
         a2util.surf_to(url)
 
     def insert_dir(self):
-        directory = QtWidgets.QFileDialog.getExistingDirectory(self, "Browsing for a directory ...")
+        directory = QtWidgets.QFileDialog.getExistingDirectory(self, 'Browsing for a directory ...')
         if directory:
             self.ui.function_text.insert(directory)
 
     def insert_file(self):
         # options = QtGui.QFileDialog.Options() | QtGui.QFileDialog.DontConfirmOverwrite
-        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Browsing for a file ...")
+        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Browsing for a file ...')
         if file_name:
             self.ui.function_text.insert(os.path.normpath(file_name))
 
@@ -134,7 +140,7 @@ class FuncWidget(QtWidgets.QWidget):
         if index in [1, 2]:
             for mode in modes[index]:
                 if text.lower().startswith(mode):
-                    text = text[len(mode):]
+                    text = text[len(mode) :]
                     if text.startswith(','):
                         text = text[1:]
                     text = text.strip()
@@ -157,4 +163,5 @@ class FuncWidget(QtWidgets.QWidget):
 
 if __name__ == '__main__':
     import a2widget.demo.hotkey_func_demo
+
     a2widget.demo.hotkey_func_demo.show()

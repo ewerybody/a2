@@ -1,7 +1,8 @@
 from pprint import pprint
-from PySide2 import QtGui, QtCore, QtWidgets
+from a2qt import QtGui, QtCore, QtWidgets
 import a2ctrl.connect
 from a2widget.a2coords_field import A2CoordsField
+
 
 class CoordsFieldDemo(QtWidgets.QMainWindow):
     dict_changed = QtCore.Signal(tuple)
@@ -27,8 +28,11 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
         a2ctrl.connect.control(self.c3, 'some_coords', self.some_dict, self.dict_changed)
         self.dict_changed.connect(self.show_dict_change)
 
-        for l, w in [('Simple field:', self.c), ('Constantly updated:', self.c2),
-                     ('Dictionary connected:', self.c3)]:
+        for l, w in [
+            ('Simple field:', self.c),
+            ('Constantly updated:', self.c2),
+            ('Dictionary connected:', self.c3),
+        ]:
             vlay.addWidget(QtWidgets.QLabel(l))
             vlay.addWidget(w)
 

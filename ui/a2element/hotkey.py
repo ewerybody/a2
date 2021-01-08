@@ -17,7 +17,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 """
 
-from PySide2 import QtCore, QtWidgets
+from a2qt import QtCore, QtWidgets
 
 import a2core
 import a2ctrl.connect
@@ -36,6 +36,7 @@ class Draw(DrawCtrl):
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
         additional shortcuts, controls to change scope if that's enabled...
     """
+
     def __init__(self, *args):
         super(Draw, self).__init__(*args)
         self._setup_ui()
@@ -138,11 +139,13 @@ class Edit(EditCtrl):
     config change is about to be committed. The change will not be able to be OKed as long
     as there are conflicts with hotkeys, or missing includes or ...
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
 
         # deferred because pretty huge & not needed by non dev users
         from a2widget.a2hotkey import edit_widget_ui, edit_func_widget_ui
+
         for module in [edit_func_widget_ui, edit_widget_ui]:
             a2ctrl.check_ui_module(module)
 
@@ -214,9 +217,9 @@ def get_settings(_module_key, cfg, db_dict, user_cfg):
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope, list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope_mode, int)
     func = cfg.get(
-        [Vars.function_code, Vars.function_url, Vars.function_send]
-        [cfg.get(Vars.function_mode, 0)],
-        '')
+        [Vars.function_code, Vars.function_url, Vars.function_send][cfg.get(Vars.function_mode, 0)],
+        '',
+    )
 
     db_dict.setdefault('hotkeys', {})
     db_dict['hotkeys'].setdefault(scope_mode, [])

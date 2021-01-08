@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import a2ctrl.connect
 
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 from a2element import EditCtrl
 from a2widget.a2text_field import A2CodeField
 
@@ -11,6 +11,7 @@ class Edit(EditCtrl):
     The background widget that sets up how the user can edit the element,
     visible when editing the module.
     """
+
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg)
 

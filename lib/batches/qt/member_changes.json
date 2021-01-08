@@ -1,0 +1,5572 @@
+{
+  "QtConcurrent": {
+    "QFutureQString": {
+      "added": [
+        "toggleSuspended",
+        "isSuspending",
+        "isSuspended",
+        "suspend",
+        "isValid",
+        "setSuspended"
+      ],
+      "removed": [
+        "results",
+        "isResultReadyAt",
+        "result",
+        "resultAt"
+      ]
+    },
+    "QFutureVoid": {
+      "added": [
+        "toggleSuspended",
+        "isSuspending",
+        "isSuspended",
+        "suspend",
+        "isValid",
+        "setSuspended"
+      ]
+    },
+    "QFutureWatcherQString": {
+      "added": [
+        "suspended",
+        "suspending"
+      ],
+      "removed": [
+        "registerUserData",
+        "result",
+        "resultAt"
+      ]
+    },
+    "QFutureWatcherVoid": {
+      "added": [
+        "suspended",
+        "suspending"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    }
+  },
+  "QtCore": {
+    "QAbstractAnimation": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAbstractEventDispatcher": {
+      "removed": [
+        "registerUserData",
+        "hasPendingEvents",
+        "unregisterEventNotifier",
+        "flush",
+        "registerEventNotifier"
+      ]
+    },
+    "QAbstractItemModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAbstractListModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAbstractProxyModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAbstractTableModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAnimationGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QBasicMutex": {
+      "removed": [
+        "isRecursive"
+      ]
+    },
+    "QBitArray": {
+      "added": [
+        "toUInt32"
+      ]
+    },
+    "QBuffer": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QByteArray": {
+      "added": [
+        "sliced",
+        "last",
+        "push_back",
+        "first",
+        "push_front"
+      ]
+    },
+    "QCalendar": {
+      "added": [
+        "dateTimeToString"
+      ]
+    },
+    "QChildEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QCommandLineOption": {
+      "removed": [
+        "isHidden",
+        "setHidden"
+      ]
+    },
+    "QConcatenateTablesProxyModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QCoreApplication": {
+      "removed": [
+        "registerUserData",
+        "hasPendingEvents",
+        "flush"
+      ]
+    },
+    "QCryptographicHash": {
+      "added": [
+        "Blake2s_128",
+        "Blake2s_160",
+        "Blake2b_256",
+        "Blake2b_384",
+        "Blake2b_160",
+        "Blake2b_512",
+        "Blake2s_256",
+        "Blake2s_224"
+      ]
+    },
+    "QDataStream": {
+      "added": [
+        "WriteOnly",
+        "Append",
+        "Truncate",
+        "Text",
+        "OpenMode",
+        "NotOpen",
+        "__copy__",
+        "OpenModeFlag",
+        "isDeviceTransactionStarted",
+        "NewOnly",
+        "Unbuffered",
+        "Qt_6_0",
+        "ReadOnly",
+        "ReadWrite",
+        "ExistingOnly"
+      ],
+      "removed": [
+        "unsetDevice"
+      ]
+    },
+    "QDate": {
+      "removed": [
+        "longMonthName",
+        "shortDayName",
+        "shortMonthName",
+        "DateFormat",
+        "MonthNameType",
+        "longDayName",
+        "StandaloneFormat"
+      ]
+    },
+    "QDateTime": {
+      "removed": [
+        "toTime_t",
+        "fromTime_t",
+        "setTime_t",
+        "setUtcOffset",
+        "utcOffset"
+      ]
+    },
+    "QDeadlineTimer": {
+      "added": [
+        "__add__",
+        "__rsub__",
+        "__radd__",
+        "__sub__"
+      ]
+    },
+    "QDir": {
+      "removed": [
+        "addResourceSearchPath"
+      ]
+    },
+    "QDynamicPropertyChangeEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QEventLoop": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QFile": {
+      "added": [
+        "skipData",
+        "__copy__",
+        "MemoryMapFlag"
+      ],
+      "removed": [
+        "registerUserData",
+        "readLink"
+      ]
+    },
+    "QFileDevice": {
+      "added": [
+        "skipData",
+        "__copy__",
+        "MemoryMapFlag"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QFileInfo": {
+      "added": [
+        "stat"
+      ],
+      "removed": [
+        "created",
+        "readLink"
+      ]
+    },
+    "QFileSelector": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QFileSystemWatcher": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QFutureInterfaceBase": {
+      "added": [
+        "reset",
+        "loadState",
+        "Pending",
+        "reportSuspended",
+        "swap",
+        "Suspended",
+        "runContinuation",
+        "toggleSuspended",
+        "setSuspended",
+        "isRunningOrPending",
+        "isSuspending",
+        "Suspending",
+        "isSuspended",
+        "setLaunchAsync",
+        "suspendIfRequested",
+        "threadPool",
+        "launchAsync",
+        "isValid"
+      ],
+      "removed": [
+        "Paused"
+      ]
+    },
+    "QIODevice": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QIdentityProxyModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QItemSelection": {
+      "added": [
+        "shrink_to_fit",
+        "toList",
+        "squeeze",
+        "sliced",
+        "resize",
+        "data",
+        "constData",
+        "capacity",
+        "fromList",
+        "remove"
+      ],
+      "removed": [
+        "startsWith",
+        "takeFirst",
+        "indexOf",
+        "fromSet",
+        "endsWith",
+        "lastIndexOf",
+        "setSharable",
+        "detachShared",
+        "takeLast",
+        "toSet",
+        "replace"
+      ]
+    },
+    "QItemSelectionModel": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QJsonDocument": {
+      "removed": [
+        "fromRawData",
+        "DataValidation",
+        "Validate",
+        "rawData",
+        "BypassValidation",
+        "fromBinaryData",
+        "toBinaryData"
+      ]
+    },
+    "QJsonValue": {
+      "added": [
+        "toInteger"
+      ]
+    },
+    "QLibraryInfo": {
+      "added": [
+        "LibraryPath",
+        "path"
+      ],
+      "removed": [
+        "licensee",
+        "ImportsPath",
+        "LibraryLocation",
+        "licensedProducts",
+        "buildDate"
+      ]
+    },
+    "QLineF": {
+      "added": [
+        "IntersectionType"
+      ],
+      "removed": [
+        "intersect",
+        "IntersectType"
+      ]
+    },
+    "QLocale": {
+      "added": [
+        "Curacao",
+        "CaribbeanNetherlands",
+        "Uyghur",
+        "Wolaytta",
+        "Kuanyama",
+        "VaticanCity",
+        "BanglaScript",
+        "MendeScript",
+        "Kalaallisut",
+        "Czechia",
+        "CentralAtlasTamazight",
+        "SaintVincentAndGrenadines",
+        "SouthGeorgiaAndSouthSandwichIslands",
+        "Kyrgyz",
+        "Odia",
+        "Eswatini",
+        "Navajo",
+        "TimorLeste",
+        "WallisAndFutuna",
+        "Bangla",
+        "BosniaAndHerzegovina",
+        "Macao",
+        "SvalbardAndJanMayen",
+        "OdiaScript",
+        "UnitedStatesOutlyingIslands",
+        "Inupiaq"
+      ],
+      "removed": [
+        "LinearA",
+        "Tokelau",
+        "Norwegian",
+        "Moldavian",
+        "ArdhamagadhiPrakrit",
+        "TaiNua",
+        "CongoSwahili",
+        "EasternCham",
+        "Meroitic",
+        "Sora",
+        "Carian",
+        "Hanunoo",
+        "AncientNorthArabian",
+        "PrakritLanguage",
+        "Twi",
+        "NorthernThai",
+        "Rejang",
+        "Mono",
+        "Lepcha",
+        "Lydian",
+        "Lycian",
+        "Lu",
+        "TedimChin",
+        "LargeFloweryMiao",
+        "Limbu",
+        "Samaritan",
+        "Sylheti",
+        "Ho",
+        "Bihari",
+        "HmongNjua",
+        "Tuvalu",
+        "Etruscan",
+        "Sabaean",
+        "EasternKayah",
+        "Saraiki",
+        "Buhid",
+        "Tagbanwa",
+        "HieroglyphicLuwian",
+        "Ahom",
+        "Tagalog",
+        "Bassa",
+        "ManichaeanMiddlePersian",
+        "Parthian",
+        "SerboCroatian",
+        "OldTurkish",
+        "UncodedLanguages",
+        "ClassicalMandaic",
+        "Mru",
+        "Lisu",
+        "Tangut"
+      ]
+    },
+    "QLockFile": {
+      "added": [
+        "fileName"
+      ]
+    },
+    "QMargins": {
+      "added": [
+        "__ror__",
+        "__or__"
+      ]
+    },
+    "QMarginsF": {
+      "added": [
+        "__ror__",
+        "__or__"
+      ]
+    },
+    "QMetaMethod": {
+      "added": [
+        "parameterTypeName",
+        "parameterMetaType",
+        "relativeMethodIndex",
+        "returnMetaType"
+      ]
+    },
+    "QMetaObject": {
+      "added": [
+        "BindableProperty"
+      ],
+      "removed": [
+        "QueryPropertyUser",
+        "QueryPropertyScriptable",
+        "QueryPropertyStored",
+        "QueryPropertyDesignable",
+        "QueryPropertyEditable"
+      ]
+    },
+    "QMetaProperty": {
+      "added": [
+        "typeId",
+        "isAlias",
+        "metaType",
+        "isBindable"
+      ],
+      "removed": [
+        "isEditable",
+        "type"
+      ]
+    },
+    "QMimeData": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QModelIndex": {
+      "added": [
+        "constInternalPointer"
+      ],
+      "removed": [
+        "child"
+      ]
+    },
+    "QMutex": {
+      "removed": [
+        "Recursive",
+        "isRecursive",
+        "NonRecursive",
+        "RecursionMode"
+      ]
+    },
+    "QMutexLocker": {
+      "added": [
+        "recursiveMutex"
+      ]
+    },
+    "QObject": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QParallelAnimationGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPauseAnimation": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPersistentModelIndex": {
+      "added": [
+        "constInternalPointer"
+      ],
+      "removed": [
+        "child"
+      ]
+    },
+    "QPluginLoader": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QProcess": {
+      "added": [
+        "skipData",
+        "__copy__",
+        "splitCommand",
+        "startCommand"
+      ],
+      "removed": [
+        "setupChildProcess",
+        "registerUserData",
+        "error.overload",
+        "pid"
+      ]
+    },
+    "QPropertyAnimation": {
+      "removed": [
+        "keyValues",
+        "registerUserData",
+        "setKeyValues"
+      ]
+    },
+    "QRect": {
+      "added": [
+        "span"
+      ]
+    },
+    "QRecursiveMutex": {
+      "added": [
+        "unlock",
+        "tryLock",
+        "lock",
+        "try_lock"
+      ]
+    },
+    "QRegularExpression": {
+      "added": [
+        "UnanchoredWildcardConversion",
+        "DefaultWildcardConversion",
+        "AnchorAtOffsetMatchOption",
+        "WildcardConversionOptions",
+        "WildcardConversionOption",
+        "fromWildcard"
+      ],
+      "removed": [
+        "DontAutomaticallyOptimizeOption",
+        "OptimizeOnFirstUsageOption"
+      ]
+    },
+    "QRegularExpressionMatch": {
+      "added": [
+        "capturedView"
+      ],
+      "removed": [
+        "capturedRef"
+      ]
+    },
+    "QResource": {
+      "removed": [
+        "addSearchPath",
+        "searchPaths",
+        "isCompressed"
+      ]
+    },
+    "QSaveFile": {
+      "added": [
+        "skipData",
+        "__copy__",
+        "MemoryMapFlag"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSequentialAnimationGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSettings": {
+      "removed": [
+        "iniCodec",
+        "registerUserData",
+        "setIniCodec"
+      ]
+    },
+    "QSignalMapper": {
+      "removed": [
+        "registerUserData",
+        "mapped",
+        "mappedWidget"
+      ]
+    },
+    "QSocketNotifier": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSortFilterProxyModel": {
+      "added": [
+        "autoAcceptChildRowsChanged",
+        "setAutoAcceptChildRows",
+        "invalidateColumnsFilter",
+        "autoAcceptChildRows",
+        "invalidateRowsFilter",
+        "clearItemData"
+      ],
+      "removed": [
+        "setFilterRegExp",
+        "registerUserData",
+        "filterRegExp"
+      ]
+    },
+    "QStandardPaths": {
+      "removed": [
+        "DataLocation",
+        "enableTestMode"
+      ]
+    },
+    "QStringListModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSysInfo": {
+      "removed": [
+        "WV_WINDOWS10",
+        "WV_98",
+        "WV_Me",
+        "WindowsVersion",
+        "WV_6_2",
+        "WV_6_3",
+        "WV_CENET",
+        "WV_2000",
+        "WV_95",
+        "WV_WINDOWS7",
+        "WV_6_0",
+        "WV_NT",
+        "WV_None",
+        "WinVersion",
+        "WV_4_0",
+        "WV_WINDOWS8_1",
+        "windowsVersion",
+        "WV_2003",
+        "WV_10_0",
+        "WV_DOS_based",
+        "WV_5_0",
+        "WV_5_2",
+        "WV_CE_6",
+        "WV_6_1",
+        "WV_WINDOWS8",
+        "WV_CE_based",
+        "WV_VISTA",
+        "WV_NT_based",
+        "WV_CE",
+        "WV_CE_5",
+        "WV_XP",
+        "WV_32s",
+        "WV_5_1"
+      ]
+    },
+    "QTemporaryFile": {
+      "added": [
+        "skipData",
+        "__copy__",
+        "MemoryMapFlag"
+      ],
+      "removed": [
+        "createLocalFile",
+        "registerUserData",
+        "readLink"
+      ]
+    },
+    "QTextStream": {
+      "added": [
+        "ReadWrite",
+        "Text",
+        "OpenMode",
+        "NotOpen",
+        "__copy__",
+        "OpenModeFlag",
+        "WriteOnly",
+        "ExistingOnly",
+        "Truncate",
+        "ReadOnly",
+        "Append",
+        "NewOnly",
+        "Unbuffered"
+      ],
+      "removed": [
+        "codec",
+        "setCodec"
+      ]
+    },
+    "QThread": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QThreadPool": {
+      "removed": [
+        "registerUserData",
+        "cancel"
+      ]
+    },
+    "QTime": {
+      "removed": [
+        "restart",
+        "elapsed",
+        "start"
+      ]
+    },
+    "QTimeLine": {
+      "removed": [
+        "EaseInCurve",
+        "registerUserData",
+        "setCurveShape",
+        "CosineCurve",
+        "EaseInOutCurve",
+        "curveShape",
+        "EaseOutCurve",
+        "LinearCurve",
+        "CurveShape",
+        "SineCurve"
+      ]
+    },
+    "QTimer": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTimerEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QTranslator": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTransposeProxyModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QUrl": {
+      "removed": [
+        "topLevelDomain"
+      ]
+    },
+    "QUrlQuery": {
+      "removed": [
+        "defaultQueryPairDelimiter",
+        "defaultQueryValueDelimiter"
+      ]
+    },
+    "QUuid": {
+      "added": [
+        "fromString"
+      ]
+    },
+    "QVariantAnimation": {
+      "removed": [
+        "keyValues",
+        "registerUserData",
+        "setKeyValues"
+      ]
+    },
+    "QWinEventNotifier": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QXmlStreamAttributes": {
+      "added": [
+        "sliced",
+        "fromVector",
+        "push_back",
+        "toVector",
+        "push_front"
+      ],
+      "removed": [
+        "startsWith",
+        "takeFirst",
+        "contains",
+        "fill",
+        "indexOf",
+        "endsWith",
+        "lastIndexOf",
+        "setSharable",
+        "__iadd__",
+        "takeLast",
+        "replace"
+      ]
+    },
+    "QXmlStreamWriter": {
+      "removed": [
+        "codec",
+        "setCodec"
+      ]
+    }
+  },
+  "QtGui": {
+    "QAbstractTextDocumentLayout": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAction": {
+      "added": [
+        "enabledChanged",
+        "resetEnabled",
+        "checkableChanged",
+        "associatedObjects",
+        "visibleChanged"
+      ],
+      "removed": [
+        "registerUserData",
+        "setMenu",
+        "parentWidget",
+        "menu",
+        "associatedGraphicsWidgets",
+        "associatedWidgets"
+      ]
+    },
+    "QActionEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "action",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent",
+        "before"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QActionGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QBitmap": {
+      "added": [
+        "fromPixmap"
+      ],
+      "removed": [
+        "grabWidget",
+        "grabWindow"
+      ]
+    },
+    "QBrush": {
+      "removed": [
+        "setMatrix",
+        "matrix"
+      ]
+    },
+    "QClipboard": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QCloseEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QColor": {
+      "removed": [
+        "dark",
+        "light"
+      ]
+    },
+    "QColorConstants": {
+      "added": [
+        "Color0",
+        "DarkRed",
+        "Yellow",
+        "Blue",
+        "Cyan",
+        "DarkMagenta",
+        "DarkBlue",
+        "LightGray",
+        "Gray",
+        "DarkYellow",
+        "DarkGreen",
+        "Red",
+        "Transparent",
+        "White",
+        "Magenta",
+        "Color1",
+        "DarkCyan",
+        "DarkGray",
+        "Black",
+        "Green"
+      ]
+    },
+    "QConicalGradient": {
+      "removed": [
+        "stops",
+        "setStops"
+      ]
+    },
+    "QContextMenuEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "deviceType",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent",
+        "device"
+      ],
+      "removed": [
+        "ts",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QDoubleValidator": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QDrag": {
+      "removed": [
+        "registerUserData",
+        "start"
+      ]
+    },
+    "QDragEnterEvent": {
+      "added": [
+        "GraphicsSceneLeave",
+        "modifiers",
+        "position",
+        "isPointerEvent",
+        "isInputEvent",
+        "clone",
+        "buttons",
+        "isSinglePointEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QDragLeaveEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QDragMoveEvent": {
+      "added": [
+        "GraphicsSceneLeave",
+        "modifiers",
+        "position",
+        "isPointerEvent",
+        "isInputEvent",
+        "clone",
+        "buttons",
+        "isSinglePointEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QDropEvent": {
+      "added": [
+        "GraphicsSceneLeave",
+        "modifiers",
+        "position",
+        "isPointerEvent",
+        "isInputEvent",
+        "clone",
+        "buttons",
+        "isSinglePointEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QEnterEvent": {
+      "added": [
+        "point",
+        "pointerType",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "pointById",
+        "buttons",
+        "points",
+        "setExclusivePointGrabber",
+        "setExclusiveGrabber",
+        "GraphicsSceneLeave",
+        "exclusivePointGrabber",
+        "setTimestamp",
+        "isPointerEvent",
+        "isBeginEvent",
+        "clone",
+        "button",
+        "pointingDevice",
+        "setModifiers",
+        "isEndEvent",
+        "removePassiveGrabber",
+        "allPointsAccepted",
+        "modifiers",
+        "pointCount",
+        "position",
+        "exclusiveGrabber",
+        "timestamp",
+        "deviceType",
+        "isSinglePointEvent",
+        "globalPosition",
+        "device",
+        "addPassiveGrabber",
+        "isUpdateEvent",
+        "scenePosition",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QExposeEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "rgn",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QFileOpenEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "openFile",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QFocusEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QFont": {
+      "added": [
+        "legacyWeight",
+        "setResolveMask",
+        "setLegacyWeight",
+        "resolveMask"
+      ],
+      "removed": [
+        "setRawName",
+        "lastResortFamily",
+        "setRawMode",
+        "ForceIntegerMetrics",
+        "rawMode",
+        "OpenGLCompatible",
+        "lastResortFont",
+        "rawName"
+      ]
+    },
+    "QFontDatabase": {
+      "removed": [
+        "supportsThreadedFontRendering"
+      ]
+    },
+    "QFontInfo": {
+      "added": [
+        "legacyWeight"
+      ],
+      "removed": [
+        "rawMode"
+      ]
+    },
+    "QFontMetrics": {
+      "added": [
+        "horizontalAdvanceChar"
+      ],
+      "removed": [
+        "width",
+        "widthChar",
+        "charWidth"
+      ]
+    },
+    "QFontMetricsF": {
+      "added": [
+        "horizontalAdvanceChar"
+      ],
+      "removed": [
+        "width",
+        "widthChar"
+      ]
+    },
+    "QGradient": {
+      "removed": [
+        "stops",
+        "setStops"
+      ]
+    },
+    "QGuiApplication": {
+      "removed": [
+        "setFallbackSessionManagementEnabled",
+        "registerUserData",
+        "hasPendingEvents",
+        "flush",
+        "isFallbackSessionManagementEnabled"
+      ]
+    },
+    "QHelpEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QHideEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QHoverEvent": {
+      "added": [
+        "isEndEvent",
+        "point",
+        "removePassiveGrabber",
+        "pointerType",
+        "allPointsAccepted",
+        "pointCount",
+        "position",
+        "exclusiveGrabber",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "deviceType",
+        "pointById",
+        "buttons",
+        "points",
+        "isSinglePointEvent",
+        "setExclusivePointGrabber",
+        "setExclusiveGrabber",
+        "globalPosition",
+        "GraphicsSceneLeave",
+        "exclusivePointGrabber",
+        "device",
+        "isPointerEvent",
+        "addPassiveGrabber",
+        "isBeginEvent",
+        "clone",
+        "button",
+        "isUpdateEvent",
+        "pointingDevice",
+        "scenePosition",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "ts",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QIconDragEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QIconEngine": {
+      "added": [
+        "ScaledPixmapArgument"
+      ],
+      "removed": [
+        "__bool__",
+        "AvailableSizesHook",
+        "AvailableSizesArgument",
+        "IconNameHook"
+      ]
+    },
+    "QImage": {
+      "added": [
+        "convertedTo",
+        "rgbSwap",
+        "mirror"
+      ],
+      "removed": [
+        "byteCount",
+        "alphaChannel"
+      ]
+    },
+    "QImageIOHandler": {
+      "added": [
+        "allocateImage"
+      ],
+      "removed": [
+        "name",
+        "TransformedByDefault"
+      ]
+    },
+    "QImageReader": {
+      "added": [
+        "allocationLimit",
+        "setAllocationLimit"
+      ],
+      "removed": [
+        "gamma",
+        "setGamma"
+      ]
+    },
+    "QImageWriter": {
+      "removed": [
+        "gamma",
+        "description",
+        "setDescription",
+        "setGamma"
+      ]
+    },
+    "QInputEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "deviceType",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent",
+        "device"
+      ],
+      "removed": [
+        "ts",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QInputMethod": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QInputMethodEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QInputMethodQueryEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QIntValidator": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QKeyEvent": {
+      "added": [
+        "GraphicsSceneLeave",
+        "isPointerEvent",
+        "isInputEvent",
+        "clone",
+        "keyCombination",
+        "deviceType",
+        "isSinglePointEvent",
+        "device"
+      ],
+      "removed": [
+        "nScanCode",
+        "nVirtualKey",
+        "ts",
+        "MacGLClearDrawable",
+        "nModifiers",
+        "autor"
+      ]
+    },
+    "QLinearGradient": {
+      "removed": [
+        "stops",
+        "setStops"
+      ]
+    },
+    "QMatrix2x2": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix2x3": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix2x4": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix3x2": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix3x3": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix3x4": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix4x2": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix4x3": {
+      "removed": [
+        "constData"
+      ]
+    },
+    "QMatrix4x4": {
+      "added": [
+        "flags",
+        "Identity",
+        "Flag",
+        "General",
+        "Translation",
+        "Flags",
+        "Rotation2D",
+        "Perspective",
+        "Rotation",
+        "projectedRotate",
+        "Scale"
+      ],
+      "removed": [
+        "toAffine",
+        "constData"
+      ]
+    },
+    "QMouseEvent": {
+      "added": [
+        "isEndEvent",
+        "point",
+        "removePassiveGrabber",
+        "pointerType",
+        "allPointsAccepted",
+        "pointCount",
+        "position",
+        "exclusiveGrabber",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "deviceType",
+        "pointById",
+        "points",
+        "isSinglePointEvent",
+        "setExclusivePointGrabber",
+        "setExclusiveGrabber",
+        "globalPosition",
+        "GraphicsSceneLeave",
+        "exclusivePointGrabber",
+        "device",
+        "isPointerEvent",
+        "addPassiveGrabber",
+        "isBeginEvent",
+        "clone",
+        "isUpdateEvent",
+        "pointingDevice",
+        "scenePosition",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "ts",
+        "caps",
+        "setLocalPos",
+        "l",
+        "w",
+        "velocity",
+        "s",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QMoveEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QMovie": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QNativeGestureEvent": {
+      "added": [
+        "isEndEvent",
+        "point",
+        "removePassiveGrabber",
+        "pointerType",
+        "allPointsAccepted",
+        "pointCount",
+        "position",
+        "exclusiveGrabber",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "deviceType",
+        "pointById",
+        "buttons",
+        "points",
+        "isSinglePointEvent",
+        "setExclusivePointGrabber",
+        "setExclusiveGrabber",
+        "globalPosition",
+        "GraphicsSceneLeave",
+        "exclusivePointGrabber",
+        "isPointerEvent",
+        "addPassiveGrabber",
+        "isBeginEvent",
+        "clone",
+        "button",
+        "isUpdateEvent",
+        "pointingDevice",
+        "scenePosition",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "ts",
+        "MacGLClearDrawable"
+      ]
+    },
+    "QOffscreenSurface": {
+      "removed": [
+        "setNativeHandle",
+        "registerUserData",
+        "nativeHandle"
+      ]
+    },
+    "QOpenGLContext": {
+      "removed": [
+        "registerUserData",
+        "nativeHandle",
+        "setNativeHandle",
+        "versionFunctions",
+        "openGLModuleHandle"
+      ]
+    },
+    "QOpenGLContextGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPageSize": {
+      "removed": [
+        "NPaperSize",
+        "NPageSize"
+      ]
+    },
+    "QPagedPaintDevice": {
+      "removed": [
+        "B9",
+        "A3Extra",
+        "ArchE",
+        "Envelope14",
+        "JisB10",
+        "PageSize",
+        "A2",
+        "AnsiC",
+        "NPageSize",
+        "Envelope10",
+        "ArchA",
+        "NPaperSize",
+        "Legal",
+        "LastPageSize",
+        "Imperial10x13",
+        "EnvelopeKaku2",
+        "JisB5",
+        "EnvelopeYou4",
+        "EnvelopeChou3",
+        "EnvelopePrc9",
+        "EnvelopeDL",
+        "Ledger",
+        "AnsiA",
+        "EnvelopeC6",
+        "EnvelopeKaku3",
+        "Envelope12",
+        "EnvelopeInvite",
+        "pageSizeMM",
+        "Envelope11",
+        "EnvelopePersonal",
+        "ArchC",
+        "Note",
+        "FanFoldUS",
+        "Quarto",
+        "TabloidExtra",
+        "A5Extra",
+        "EnvelopePrc5",
+        "EnvelopeC3",
+        "A6",
+        "JisB1",
+        "EnvelopeC7",
+        "A10",
+        "JisB2",
+        "B4",
+        "EnvelopeMonarch",
+        "Imperial8x10",
+        "EnvelopePrc2",
+        "A5",
+        "EnvelopeC0",
+        "SuperA",
+        "A9",
+        "Imperial15x11",
+        "EnvelopeC2",
+        "EnvelopeItalian",
+        "Postcard",
+        "FanFoldGermanLegal",
+        "margins",
+        "Folio",
+        "Letter",
+        "EnvelopePrc1",
+        "AnsiB",
+        "A8",
+        "Custom",
+        "JisB7",
+        "A4Small",
+        "EnvelopeC65",
+        "Tabloid",
+        "EnvelopePrc4",
+        "B10",
+        "Imperial9x12",
+        "A4Extra",
+        "LegalExtra",
+        "Imperial9x11",
+        "EnvelopePrc8",
+        "AnsiE",
+        "Prc32KBig",
+        "JisB9",
+        "B8",
+        "JisB3",
+        "Envelope9",
+        "A0",
+        "Comm10E",
+        "B7",
+        "B5",
+        "A3",
+        "Prc16K",
+        "setMargins",
+        "JisB4",
+        "devicePageLayout",
+        "EnvelopePrc10",
+        "B6",
+        "A4Plus",
+        "EnvelopeC4",
+        "B2",
+        "AnsiD",
+        "ExecutiveStandard",
+        "B0",
+        "Imperial7x9",
+        "LetterSmall",
+        "LetterPlus",
+        "Margins",
+        "pageSize",
+        "Prc32K",
+        "A7",
+        "B1",
+        "DoublePostcard",
+        "EnvelopeC1",
+        "C5E",
+        "EnvelopePrc3",
+        "B3",
+        "A4",
+        "B5Extra",
+        "EnvelopePrc6",
+        "ArchD",
+        "FanFoldGerman",
+        "setPageSizeMM",
+        "JisB0",
+        "Imperial10x11",
+        "EnvelopeC5",
+        "Imperial12x11",
+        "A1",
+        "LetterExtra",
+        "JisB8",
+        "EnvelopeB6",
+        "JisB6",
+        "Statement",
+        "ArchB",
+        "EnvelopeB4",
+        "EnvelopePrc7",
+        "Imperial10x14",
+        "Executive",
+        "DLE",
+        "SuperB",
+        "EnvelopeChou4",
+        "EnvelopeB5"
+      ]
+    },
+    "QPaintDeviceWindow": {
+      "added": [
+        "closeEvent"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPaintEngine": {
+      "added": [
+        "createPixmapFromImage",
+        "createPixmap"
+      ],
+      "removed": [
+        "PostScript"
+      ]
+    },
+    "QPaintEngineState": {
+      "removed": [
+        "matrix"
+      ]
+    },
+    "QPaintEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QPainter": {
+      "removed": [
+        "setMatrix",
+        "resetMatrix",
+        "drawRoundRect",
+        "NonCosmeticDefaultPen",
+        "deviceMatrix",
+        "HighQualityAntialiasing",
+        "restoreRedirected",
+        "setWorldMatrix",
+        "matrixEnabled",
+        "matrix",
+        "Qt4CompatiblePainting",
+        "combinedMatrix",
+        "setMatrixEnabled",
+        "redirected",
+        "setRedirected",
+        "worldMatrix",
+        "initFrom"
+      ]
+    },
+    "QPainterPath": {
+      "removed": [
+        "addRoundRect",
+        "subtractedInverted"
+      ]
+    },
+    "QPalette": {
+      "added": [
+        "setResolveMask",
+        "resolveMask"
+      ],
+      "removed": [
+        "Foreground",
+        "background",
+        "Background",
+        "foreground"
+      ]
+    },
+    "QPdfWriter": {
+      "removed": [
+        "A3Extra",
+        "Envelope14",
+        "PageSize",
+        "AnsiC",
+        "ArchA",
+        "Legal",
+        "LastPageSize",
+        "JisB5",
+        "EnvelopeYou4",
+        "EnvelopeChou3",
+        "EnvelopeDL",
+        "AnsiA",
+        "EnvelopeC6",
+        "Envelope11",
+        "EnvelopePersonal",
+        "Note",
+        "FanFoldUS",
+        "Quarto",
+        "TabloidExtra",
+        "JisB1",
+        "EnvelopeC7",
+        "EnvelopeMonarch",
+        "Imperial8x10",
+        "A5",
+        "EnvelopeC0",
+        "SuperA",
+        "A9",
+        "Imperial15x11",
+        "Postcard",
+        "Letter",
+        "A4Small",
+        "EnvelopeC65",
+        "registerUserData",
+        "EnvelopePrc4",
+        "Imperial9x12",
+        "A4Extra",
+        "Imperial9x11",
+        "JisB9",
+        "Envelope9",
+        "Comm10E",
+        "B7",
+        "A3",
+        "setMargins",
+        "JisB4",
+        "EnvelopePrc10",
+        "EnvelopeC4",
+        "ExecutiveStandard",
+        "LetterSmall",
+        "Prc32K",
+        "A7",
+        "DoublePostcard",
+        "EnvelopeC1",
+        "C5E",
+        "B5Extra",
+        "EnvelopePrc6",
+        "setPageSizeMM",
+        "Imperial12x11",
+        "A1",
+        "LetterExtra",
+        "JisB8",
+        "JisB6",
+        "Executive",
+        "DLE",
+        "EnvelopeChou4",
+        "B9",
+        "ArchE",
+        "JisB10",
+        "A2",
+        "NPageSize",
+        "Envelope10",
+        "NPaperSize",
+        "Imperial10x13",
+        "EnvelopeKaku2",
+        "EnvelopePrc9",
+        "Ledger",
+        "EnvelopeKaku3",
+        "Envelope12",
+        "EnvelopeInvite",
+        "pageSizeMM",
+        "ArchC",
+        "A5Extra",
+        "EnvelopePrc5",
+        "EnvelopeC3",
+        "A6",
+        "A10",
+        "JisB2",
+        "B4",
+        "EnvelopePrc2",
+        "EnvelopeC2",
+        "EnvelopeItalian",
+        "FanFoldGermanLegal",
+        "margins",
+        "Folio",
+        "EnvelopePrc1",
+        "AnsiB",
+        "A8",
+        "Custom",
+        "JisB7",
+        "Tabloid",
+        "B10",
+        "LegalExtra",
+        "EnvelopePrc8",
+        "AnsiE",
+        "Prc32KBig",
+        "B8",
+        "JisB3",
+        "A0",
+        "B5",
+        "Prc16K",
+        "devicePageLayout",
+        "B6",
+        "A4Plus",
+        "B2",
+        "AnsiD",
+        "B0",
+        "Imperial7x9",
+        "LetterPlus",
+        "Margins",
+        "pageSize",
+        "B1",
+        "EnvelopePrc3",
+        "B3",
+        "A4",
+        "FanFoldGerman",
+        "ArchD",
+        "JisB0",
+        "Imperial10x11",
+        "EnvelopeC5",
+        "EnvelopeB6",
+        "Statement",
+        "ArchB",
+        "EnvelopeB4",
+        "EnvelopePrc7",
+        "Imperial10x14",
+        "SuperB",
+        "EnvelopeB5"
+      ]
+    },
+    "QPicture": {
+      "removed": [
+        "outputFormatList",
+        "pictureFormat",
+        "inputFormats",
+        "inputFormatList",
+        "outputFormats"
+      ]
+    },
+    "QPixmap": {
+      "removed": [
+        "grabWidget",
+        "grabWindow"
+      ]
+    },
+    "QPolygon": {
+      "added": [
+        "toVector",
+        "sliced",
+        "fromVector"
+      ],
+      "removed": [
+        "startsWith",
+        "takeFirst",
+        "contains",
+        "fill",
+        "indexOf",
+        "endsWith",
+        "lastIndexOf",
+        "setSharable",
+        "__iadd__",
+        "takeLast",
+        "replace"
+      ]
+    },
+    "QPolygonF": {
+      "added": [
+        "toVector",
+        "sliced",
+        "fromVector"
+      ],
+      "removed": [
+        "startsWith",
+        "takeFirst",
+        "contains",
+        "fill",
+        "indexOf",
+        "endsWith",
+        "lastIndexOf",
+        "setSharable",
+        "__iadd__",
+        "takeLast",
+        "replace"
+      ]
+    },
+    "QPyTextObject": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQuaternion": {
+      "removed": [
+        "conjugate"
+      ]
+    },
+    "QRadialGradient": {
+      "removed": [
+        "stops",
+        "setStops"
+      ]
+    },
+    "QRasterWindow": {
+      "added": [
+        "closeEvent"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QRegion": {
+      "removed": [
+        "rects"
+      ]
+    },
+    "QRegularExpressionValidator": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QResizeEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QScreen": {
+      "removed": [
+        "registerUserData",
+        "orientationUpdateMask",
+        "setOrientationUpdateMask"
+      ]
+    },
+    "QScrollEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QScrollPrepareEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QSessionManager": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QShortcut": {
+      "added": [
+        "keys",
+        "setKeys"
+      ],
+      "removed": [
+        "registerUserData",
+        "parentWidget"
+      ]
+    },
+    "QShortcutEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QShowEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QStandardItem": {
+      "removed": [
+        "isTristate",
+        "setTristate"
+      ]
+    },
+    "QStandardItemModel": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QStatusTipEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QStyleHints": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSyntaxHighlighter": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTabletEvent": {
+      "added": [
+        "isEndEvent",
+        "point",
+        "removePassiveGrabber",
+        "allPointsAccepted",
+        "pointCount",
+        "position",
+        "exclusiveGrabber",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "pointById",
+        "points",
+        "isSinglePointEvent",
+        "setExclusivePointGrabber",
+        "setExclusiveGrabber",
+        "globalPosition",
+        "GraphicsSceneLeave",
+        "exclusivePointGrabber",
+        "isPointerEvent",
+        "addPassiveGrabber",
+        "isBeginEvent",
+        "clone",
+        "isUpdateEvent",
+        "pointingDevice",
+        "scenePosition",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "PointerType",
+        "ts",
+        "Puck",
+        "TabletDevice",
+        "Pen",
+        "Cursor",
+        "Stylus",
+        "Airbrush",
+        "RotationStylus",
+        "Eraser",
+        "XFreeEraser",
+        "MacGLClearDrawable",
+        "UnknownPointer",
+        "FourDMouse",
+        "NoDevice"
+      ]
+    },
+    "QTextBlockFormat": {
+      "added": [
+        "TextSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "OldFontStretch",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor"
+      ],
+      "removed": [
+        "TableFormat"
+      ]
+    },
+    "QTextBlockGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextCharFormat": {
+      "added": [
+        "setSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "baselineOffset",
+        "subScriptBaseline",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor",
+        "TextSubScriptBaseline",
+        "superScriptBaseline",
+        "setSuperScriptBaseline",
+        "setBaselineOffset",
+        "OldFontStretch"
+      ],
+      "removed": [
+        "TableFormat",
+        "setAnchorName",
+        "anchorName"
+      ]
+    },
+    "QTextDocument": {
+      "added": [
+        "setSubScriptBaseline",
+        "superScriptBaseline",
+        "setSuperScriptBaseline",
+        "setBaselineOffset",
+        "baselineOffset",
+        "subScriptBaseline"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextDocumentWriter": {
+      "removed": [
+        "codec",
+        "setCodec"
+      ]
+    },
+    "QTextFormat": {
+      "added": [
+        "TextSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "OldFontStretch",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor"
+      ],
+      "removed": [
+        "TableFormat"
+      ]
+    },
+    "QTextFrame": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextFrameFormat": {
+      "added": [
+        "TextSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "OldFontStretch",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor"
+      ],
+      "removed": [
+        "TableFormat"
+      ]
+    },
+    "QTextImageFormat": {
+      "added": [
+        "setSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "baselineOffset",
+        "subScriptBaseline",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor",
+        "TextSubScriptBaseline",
+        "superScriptBaseline",
+        "setSuperScriptBaseline",
+        "setBaselineOffset",
+        "OldFontStretch"
+      ],
+      "removed": [
+        "TableFormat",
+        "setAnchorName",
+        "anchorName"
+      ]
+    },
+    "QTextLayout": {
+      "removed": [
+        "additionalFormats",
+        "clearAdditionalFormats",
+        "setAdditionalFormats"
+      ]
+    },
+    "QTextList": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextListFormat": {
+      "added": [
+        "TextSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "OldFontStretch",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor"
+      ],
+      "removed": [
+        "TableFormat"
+      ]
+    },
+    "QTextObject": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextOption": {
+      "removed": [
+        "tabStop",
+        "setTabStop"
+      ]
+    },
+    "QTextTable": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextTableCellFormat": {
+      "added": [
+        "setSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "baselineOffset",
+        "subScriptBaseline",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor",
+        "TextSubScriptBaseline",
+        "superScriptBaseline",
+        "setSuperScriptBaseline",
+        "setBaselineOffset",
+        "OldFontStretch"
+      ],
+      "removed": [
+        "TableFormat",
+        "setAnchorName",
+        "anchorName"
+      ]
+    },
+    "QTextTableFormat": {
+      "added": [
+        "TextSubScriptBaseline",
+        "TextBaselineOffset",
+        "OldFontLetterSpacingType",
+        "OldFontStretch",
+        "TextSuperScriptBaseline",
+        "OldTextUnderlineColor"
+      ],
+      "removed": [
+        "TableFormat"
+      ]
+    },
+    "QToolBarChangeEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QTouchEvent": {
+      "added": [
+        "isEndEvent",
+        "point",
+        "removePassiveGrabber",
+        "pointerType",
+        "allPointsAccepted",
+        "pointCount",
+        "exclusiveGrabber",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "deviceType",
+        "pointById",
+        "points",
+        "isSinglePointEvent",
+        "setExclusiveGrabber",
+        "GraphicsSceneLeave",
+        "isPointerEvent",
+        "addPassiveGrabber",
+        "isBeginEvent",
+        "clone",
+        "isUpdateEvent",
+        "pointingDevice",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "setTouchPoints",
+        "ts",
+        "window",
+        "setTarget",
+        "touchPointStates",
+        "TouchPoint",
+        "setWindow",
+        "setTouchPointStates",
+        "MacGLClearDrawable",
+        "setDevice",
+        "_target"
+      ]
+    },
+    "QTransform": {
+      "removed": [
+        "toAffine",
+        "det"
+      ]
+    },
+    "QUndoGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QUndoStack": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QValidator": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QWhatsThisClickedEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QWheelEvent": {
+      "added": [
+        "isEndEvent",
+        "point",
+        "removePassiveGrabber",
+        "pointerType",
+        "allPointsAccepted",
+        "pointCount",
+        "exclusiveGrabber",
+        "isInputEvent",
+        "clearPassiveGrabbers",
+        "deviceType",
+        "isInverted",
+        "pointById",
+        "points",
+        "isSinglePointEvent",
+        "setExclusivePointGrabber",
+        "setExclusiveGrabber",
+        "GraphicsSceneLeave",
+        "exclusivePointGrabber",
+        "device",
+        "isPointerEvent",
+        "addPassiveGrabber",
+        "isBeginEvent",
+        "clone",
+        "button",
+        "isUpdateEvent",
+        "pointingDevice",
+        "hasPixelDelta",
+        "scenePosition",
+        "allPointsGrabbed"
+      ],
+      "removed": [
+        "ph",
+        "_unused_",
+        "globalY",
+        "angleD",
+        "globalPos",
+        "invertedScrolling",
+        "globalX",
+        "y",
+        "posF",
+        "ts",
+        "pixelD",
+        "qt4O",
+        "reserved",
+        "orientation",
+        "x",
+        "qt4D",
+        "pos",
+        "MacGLClearDrawable",
+        "src",
+        "globalPosF",
+        "delta"
+      ]
+    },
+    "QWindow": {
+      "added": [
+        "closeEvent",
+        "paintEvent"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QWindowStateChangeEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "Qt": {
+      "added": [
+        "NoMouseEventFlag",
+        "ReturnByValue",
+        "SingleShotConnection",
+        "ReturnByValueConstant",
+        "TouchPointUnknownState"
+      ],
+      "removed": [
+        "AA_DisableWindowContextHelpButton",
+        "WA_MacMetalStyle",
+        "UNICODE_ACCEL",
+        "TextBypassShaping",
+        "WA_MacBrushedMetal",
+        "WA_MacFrameworkScaled",
+        "WA_MSWindowsUseDirect3D",
+        "WA_MacNoShadow",
+        "MidButton",
+        "codecForHtml",
+        "WA_GroupLeader",
+        "ImMicroFocus",
+        "WA_WState_DND",
+        "WA_NoBackground",
+        "WA_MacNoClickThrough",
+        "MatchRegExp",
+        "LocaleDate",
+        "AA_X11InitThreads",
+        "WA_ContentsPropagated",
+        "AA_MacPluginApplication",
+        "ItemIsTristate",
+        "WA_ForceAcceptDrops",
+        "SystemLocaleDate",
+        "SystemLocaleShortDate",
+        "DefaultLocaleLongDate",
+        "AA_ImmediateWidgetCreation",
+        "DefaultLocaleShortDate",
+        "LocalDate",
+        "SystemLocaleLongDate",
+        "WA_MacVariableSize",
+        "AA_MSWindowsUseDirect3DByDefault",
+        "TextColorRole",
+        "BackgroundColorRole"
+      ]
+    }
+  },
+  "QtHelp": {
+    "QHelpContentModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QHelpContentWidget": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QHelpEngine": {
+      "added": [
+        "isReadOnly",
+        "setReadOnly"
+      ],
+      "removed": [
+        "registerUserData",
+        "linksForKeyword",
+        "linksForIdentifier"
+      ]
+    },
+    "QHelpEngineCore": {
+      "added": [
+        "isReadOnly",
+        "setReadOnly"
+      ],
+      "removed": [
+        "registerUserData",
+        "linksForKeyword",
+        "linksForIdentifier"
+      ]
+    },
+    "QHelpFilterEngine": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QHelpFilterSettingsWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QHelpIndexModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData",
+        "linksForKeyword"
+      ]
+    },
+    "QHelpIndexWidget": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QHelpSearchEngine": {
+      "removed": [
+        "registerUserData",
+        "hits"
+      ]
+    },
+    "QHelpSearchQueryWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QHelpSearchResultWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    }
+  },
+  "QtNetwork": {
+    "QAbstractNetworkCache": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QAbstractSocket": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "registerUserData",
+        "error.overload"
+      ]
+    },
+    "QDnsLookup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QDtls": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QHttpMultiPart": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QLocalServer": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QLocalSocket": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "registerUserData",
+        "error.overload"
+      ]
+    },
+    "QNetworkAccessManager": {
+      "removed": [
+        "NotAccessible",
+        "registerUserData",
+        "setConfiguration",
+        "setNetworkAccessible",
+        "networkAccessible",
+        "networkAccessibleChanged",
+        "activeConfiguration",
+        "networkSessionConnected",
+        "NetworkAccessibility",
+        "configuration",
+        "Accessible",
+        "UnknownAccessibility"
+      ]
+    },
+    "QNetworkCacheMetaData": {
+      "removed": [
+        "rawHeaders",
+        "setRawHeaders"
+      ]
+    },
+    "QNetworkCookieJar": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QNetworkDiskCache": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QNetworkProxyQuery": {
+      "removed": [
+        "setNetworkConfiguration",
+        "networkConfiguration"
+      ]
+    },
+    "QNetworkReply": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "rawHeaderPairs",
+        "registerUserData",
+        "error.overload"
+      ]
+    },
+    "QNetworkRequest": {
+      "removed": [
+        "HTTP2AllowedAttribute",
+        "SpdyWasUsedAttribute",
+        "HTTP2WasUsedAttribute",
+        "FollowRedirectsAttribute",
+        "SpdyAllowedAttribute"
+      ]
+    },
+    "QSsl": {
+      "added": [
+        "AlertLevel",
+        "AlertType"
+      ],
+      "removed": [
+        "SslV3",
+        "SslV2",
+        "TlsV1SslV3"
+      ]
+    },
+    "QSslConfiguration": {
+      "added": [
+        "handshakeMustInterruptOnError",
+        "setMissingCertificateIsFatal",
+        "setHandshakeMustInterruptOnError",
+        "missingCertificateIsFatal"
+      ],
+      "removed": [
+        "NextProtocolSpdy3_0"
+      ]
+    },
+    "QSslSocket": {
+      "added": [
+        "skipData",
+        "__copy__",
+        "alertSent",
+        "handshakeInterruptedOnError",
+        "alertReceived",
+        "continueInterruptedHandshake"
+      ],
+      "removed": [
+        "registerUserData",
+        "caCertificates",
+        "addCaCertificate",
+        "supportedCiphers",
+        "ciphers",
+        "setCiphers",
+        "sslErrors.overload",
+        "defaultCiphers",
+        "defaultCaCertificates",
+        "addDefaultCaCertificates",
+        "addDefaultCaCertificate",
+        "setDefaultCaCertificates",
+        "addCaCertificates",
+        "setCaCertificates",
+        "setDefaultCiphers",
+        "error.overload",
+        "systemCaCertificates"
+      ]
+    },
+    "QTcpServer": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTcpSocket": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "registerUserData",
+        "error.overload"
+      ]
+    },
+    "QUdpSocket": {
+      "added": [
+        "skipData",
+        "__copy__"
+      ],
+      "removed": [
+        "registerUserData",
+        "error.overload"
+      ]
+    }
+  },
+  "QtOpenGL": {
+    "QOpenGLDebugLogger": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QOpenGLShader": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QOpenGLShaderProgram": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QOpenGLTimeMonitor": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QOpenGLTimerQuery": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QOpenGLVertexArrayObject": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QOpenGLWindow": {
+      "added": [
+        "closeEvent"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    }
+  },
+  "QtOpenGLFunctions": {
+    "QOpenGLFunctions_3_1": {
+      "removed": [
+        "glIndexub",
+        "glIndexubv"
+      ]
+    },
+    "QOpenGLFunctions_3_2_Core": {
+      "removed": [
+        "glIndexub",
+        "glIndexubv"
+      ]
+    },
+    "QOpenGLFunctions_3_3_Core": {
+      "removed": [
+        "glIndexubv",
+        "glVertexP4ui",
+        "glSecondaryColorP3ui",
+        "glVertexP2ui",
+        "glTexCoordP4uiv",
+        "glVertexP2uiv",
+        "glMultiTexCoordP2ui",
+        "glVertexP3uiv",
+        "glMultiTexCoordP4uiv",
+        "glTexCoordP3uiv",
+        "glColorP3uiv",
+        "glIndexub",
+        "glSecondaryColorP3uiv",
+        "glColorP3ui",
+        "glMultiTexCoordP3ui",
+        "glMultiTexCoordP2uiv",
+        "glNormalP3ui",
+        "glTexCoordP4ui",
+        "glTexCoordP2ui",
+        "glNormalP3uiv",
+        "glColorP4ui",
+        "glTexCoordP1uiv",
+        "glVertexP3ui",
+        "glMultiTexCoordP3uiv",
+        "glMultiTexCoordP1ui",
+        "glVertexP4uiv",
+        "glTexCoordP3ui",
+        "glColorP4uiv",
+        "glTexCoordP1ui",
+        "glTexCoordP2uiv",
+        "glMultiTexCoordP1uiv",
+        "glMultiTexCoordP4ui"
+      ]
+    },
+    "QOpenGLFunctions_4_0_Core": {
+      "removed": [
+        "glIndexubv",
+        "glVertexP3uiv",
+        "glMultiTexCoordP2ui",
+        "glVertexP4uiv",
+        "glVertexP4ui",
+        "glTexCoordP3ui",
+        "glMultiTexCoordP2uiv",
+        "glNormalP3ui",
+        "glMultiTexCoordP4uiv",
+        "glTexCoordP4ui",
+        "glSecondaryColorP3ui",
+        "glTexCoordP2ui",
+        "glNormalP3uiv",
+        "glColorP4uiv",
+        "glColorP4ui",
+        "glVertexP2ui",
+        "glTexCoordP3uiv",
+        "glTexCoordP1ui",
+        "glTexCoordP2uiv",
+        "glMultiTexCoordP1uiv",
+        "glTexCoordP1uiv",
+        "glColorP3uiv",
+        "glIndexub",
+        "glMultiTexCoordP4ui",
+        "glSecondaryColorP3uiv",
+        "glColorP3ui",
+        "glTexCoordP4uiv",
+        "glVertexP3ui",
+        "glMultiTexCoordP3ui",
+        "glVertexP2uiv",
+        "glMultiTexCoordP3uiv",
+        "glMultiTexCoordP1ui"
+      ]
+    },
+    "QOpenGLFunctions_4_1_Core": {
+      "removed": [
+        "glIndexubv",
+        "glVertexP3uiv",
+        "glMultiTexCoordP2ui",
+        "glVertexP4uiv",
+        "glVertexP4ui",
+        "glTexCoordP3ui",
+        "glMultiTexCoordP2uiv",
+        "glNormalP3ui",
+        "glMultiTexCoordP4uiv",
+        "glTexCoordP4ui",
+        "glSecondaryColorP3ui",
+        "glTexCoordP2ui",
+        "glNormalP3uiv",
+        "glColorP4uiv",
+        "glColorP4ui",
+        "glVertexP2ui",
+        "glTexCoordP3uiv",
+        "glTexCoordP1ui",
+        "glTexCoordP2uiv",
+        "glMultiTexCoordP1uiv",
+        "glTexCoordP1uiv",
+        "glColorP3uiv",
+        "glIndexub",
+        "glMultiTexCoordP4ui",
+        "glSecondaryColorP3uiv",
+        "glColorP3ui",
+        "glTexCoordP4uiv",
+        "glVertexP3ui",
+        "glMultiTexCoordP3ui",
+        "glVertexP2uiv",
+        "glMultiTexCoordP3uiv",
+        "glMultiTexCoordP1ui"
+      ]
+    },
+    "QOpenGLFunctions_4_2_Core": {
+      "removed": [
+        "glIndexubv",
+        "glVertexP3uiv",
+        "glMultiTexCoordP2ui",
+        "glVertexP4uiv",
+        "glVertexP4ui",
+        "glTexCoordP3ui",
+        "glMultiTexCoordP2uiv",
+        "glNormalP3ui",
+        "glMultiTexCoordP4uiv",
+        "glTexCoordP4ui",
+        "glSecondaryColorP3ui",
+        "glTexCoordP2ui",
+        "glNormalP3uiv",
+        "glColorP4uiv",
+        "glColorP4ui",
+        "glVertexP2ui",
+        "glTexCoordP3uiv",
+        "glTexCoordP1ui",
+        "glTexCoordP2uiv",
+        "glMultiTexCoordP1uiv",
+        "glTexCoordP1uiv",
+        "glColorP3uiv",
+        "glIndexub",
+        "glMultiTexCoordP4ui",
+        "glSecondaryColorP3uiv",
+        "glColorP3ui",
+        "glTexCoordP4uiv",
+        "glVertexP3ui",
+        "glMultiTexCoordP3ui",
+        "glVertexP2uiv",
+        "glMultiTexCoordP3uiv",
+        "glMultiTexCoordP1ui"
+      ]
+    },
+    "QOpenGLFunctions_4_3_Core": {
+      "removed": [
+        "glIndexubv",
+        "glVertexP3uiv",
+        "glMultiTexCoordP2ui",
+        "glVertexP4uiv",
+        "glVertexP4ui",
+        "glTexCoordP3ui",
+        "glMultiTexCoordP2uiv",
+        "glNormalP3ui",
+        "glMultiTexCoordP4uiv",
+        "glTexCoordP4ui",
+        "glSecondaryColorP3ui",
+        "glTexCoordP2ui",
+        "glNormalP3uiv",
+        "glColorP4uiv",
+        "glColorP4ui",
+        "glVertexP2ui",
+        "glTexCoordP3uiv",
+        "glTexCoordP1ui",
+        "glTexCoordP2uiv",
+        "glMultiTexCoordP1uiv",
+        "glTexCoordP1uiv",
+        "glColorP3uiv",
+        "glIndexub",
+        "glMultiTexCoordP4ui",
+        "glSecondaryColorP3uiv",
+        "glColorP3ui",
+        "glTexCoordP4uiv",
+        "glVertexP3ui",
+        "glMultiTexCoordP3ui",
+        "glVertexP2uiv",
+        "glMultiTexCoordP3uiv",
+        "glMultiTexCoordP1ui"
+      ]
+    }
+  },
+  "QtOpenGLWidgets": {
+    "QOpenGLWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    }
+  },
+  "QtPrintSupport": {
+    "QAbstractPrintDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "DontUseSheet",
+        "isEnabledToTLW",
+        "setEnabledOptions",
+        "getContentsMargins",
+        "extension",
+        "addEnabledOption",
+        "orientation",
+        "setOrientation",
+        "None_",
+        "isOptionEnabled",
+        "setExtension",
+        "showExtension",
+        "enabledOptions"
+      ]
+    },
+    "QPageSetupDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QPrintDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "DontUseSheet",
+        "isEnabledToTLW",
+        "setEnabledOptions",
+        "getContentsMargins",
+        "extension",
+        "addEnabledOption",
+        "orientation",
+        "setOrientation",
+        "None_",
+        "isOptionEnabled",
+        "setExtension",
+        "showExtension",
+        "enabledOptions"
+      ]
+    },
+    "QPrintPreviewDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QPrintPreviewWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QPrinter": {
+      "removed": [
+        "A3Extra",
+        "Envelope14",
+        "PageSize",
+        "AnsiC",
+        "ArchA",
+        "Legal",
+        "LastPageSize",
+        "JisB5",
+        "EnvelopeYou4",
+        "setNumCopies",
+        "EnvelopeChou3",
+        "EnvelopeDL",
+        "AnsiA",
+        "EnvelopeC6",
+        "Envelope11",
+        "EnvelopePersonal",
+        "Note",
+        "FanFoldUS",
+        "Quarto",
+        "TabloidExtra",
+        "JisB1",
+        "EnvelopeC7",
+        "EnvelopeMonarch",
+        "Imperial8x10",
+        "A5",
+        "EnvelopeC0",
+        "SuperA",
+        "A9",
+        "Imperial15x11",
+        "Postcard",
+        "setPaperName",
+        "Letter",
+        "A4Small",
+        "EnvelopeC65",
+        "EnvelopePrc4",
+        "Imperial9x12",
+        "A4Extra",
+        "Imperial9x11",
+        "JisB9",
+        "Envelope9",
+        "Comm10E",
+        "B7",
+        "A3",
+        "setMargins",
+        "JisB4",
+        "EnvelopePrc10",
+        "Orientation",
+        "EnvelopeC4",
+        "ExecutiveStandard",
+        "setDoubleSidedPrinting",
+        "LetterSmall",
+        "paperSize",
+        "Prc32K",
+        "A7",
+        "DoublePostcard",
+        "EnvelopeC1",
+        "C5E",
+        "B5Extra",
+        "EnvelopePrc6",
+        "getPageMargins",
+        "setPageSizeMM",
+        "Imperial12x11",
+        "A1",
+        "LetterExtra",
+        "JisB8",
+        "JisB6",
+        "Executive",
+        "DLE",
+        "EnvelopeChou4",
+        "B9",
+        "ArchE",
+        "JisB10",
+        "A2",
+        "NPageSize",
+        "Envelope10",
+        "numCopies",
+        "NPaperSize",
+        "Imperial10x13",
+        "EnvelopeKaku2",
+        "setWinPageSize",
+        "EnvelopePrc9",
+        "Ledger",
+        "EnvelopeKaku3",
+        "Envelope12",
+        "pageSizeMM",
+        "EnvelopeInvite",
+        "Portrait",
+        "ArchC",
+        "A5Extra",
+        "EnvelopePrc5",
+        "doubleSidedPrinting",
+        "A6",
+        "EnvelopeC3",
+        "A10",
+        "setOrientation",
+        "JisB2",
+        "B4",
+        "EnvelopePrc2",
+        "EnvelopeC2",
+        "EnvelopeItalian",
+        "FanFoldGermanLegal",
+        "margins",
+        "Folio",
+        "EnvelopePrc1",
+        "AnsiB",
+        "A8",
+        "Custom",
+        "JisB7",
+        "Tabloid",
+        "B10",
+        "LegalExtra",
+        "EnvelopePrc8",
+        "AnsiE",
+        "Landscape",
+        "Prc32KBig",
+        "B8",
+        "setPaperSize",
+        "JisB3",
+        "A0",
+        "B5",
+        "Prc16K",
+        "devicePageLayout",
+        "paperName",
+        "B6",
+        "A4Plus",
+        "B2",
+        "AnsiD",
+        "B0",
+        "Imperial7x9",
+        "LetterPlus",
+        "actualNumCopies",
+        "Margins",
+        "pageSize",
+        "B1",
+        "EnvelopePrc3",
+        "B3",
+        "A4",
+        "FanFoldGerman",
+        "ArchD",
+        "JisB0",
+        "Imperial10x11",
+        "EnvelopeC5",
+        "Statement",
+        "EnvelopeB6",
+        "orientation",
+        "ArchB",
+        "EnvelopeB4",
+        "EnvelopePrc7",
+        "Imperial10x14",
+        "SuperB",
+        "winPageSize",
+        "EnvelopeB5"
+      ]
+    },
+    "QPrinterInfo": {
+      "removed": [
+        "supportedPaperSizes",
+        "supportedSizesWithNames"
+      ]
+    }
+  },
+  "QtQml": {
+    "QJSEngine": {
+      "added": [
+        "objectOwnership",
+        "JavaScriptOwnership",
+        "setObjectOwnership",
+        "CppOwnership",
+        "ObjectOwnership"
+      ],
+      "removed": [
+        "registerUserData",
+        "installTranslatorFunctions"
+      ]
+    },
+    "QJSValue": {
+      "added": [
+        "__rshift__",
+        "__rrshift__",
+        "__rlshift__",
+        "__lshift__"
+      ],
+      "removed": [
+        "engine"
+      ]
+    },
+    "QQmlApplicationEngine": {
+      "added": [
+        "captureProperty",
+        "interceptUrl",
+        "addUrlInterceptor",
+        "setExtraFileSelectors",
+        "removeUrlInterceptor"
+      ],
+      "removed": [
+        "registerUserData",
+        "installTranslatorFunctions"
+      ]
+    },
+    "QQmlComponent": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQmlContext": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQmlEngine": {
+      "added": [
+        "captureProperty",
+        "interceptUrl",
+        "addUrlInterceptor",
+        "removeUrlInterceptor"
+      ],
+      "removed": [
+        "registerUserData",
+        "installTranslatorFunctions"
+      ]
+    },
+    "QQmlExpression": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQmlExtensionPlugin": {
+      "added": [
+        "unregisterTypes"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQmlFileSelector": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQmlImageProviderBase": {
+      "added": [
+        "isSignalConnected",
+        "startTimer",
+        "timerEvent",
+        "staticMetaObject",
+        "connectNotify",
+        "findChild",
+        "killTimer",
+        "thread",
+        "blockSignals",
+        "isWidgetType",
+        "disconnect",
+        "deleteLater",
+        "removeEventFilter",
+        "senderSignalIndex",
+        "metaObject",
+        "setParent",
+        "objectName",
+        "event",
+        "dumpObjectInfo",
+        "childEvent",
+        "parent",
+        "eventFilter",
+        "findChildren",
+        "receivers",
+        "connect",
+        "objectNameChanged",
+        "dumpObjectTree",
+        "inherits",
+        "customEvent",
+        "emit",
+        "property",
+        "sender",
+        "setObjectName",
+        "installEventFilter",
+        "signalsBlocked",
+        "disconnectNotify",
+        "dynamicPropertyNames",
+        "children",
+        "isWindowType",
+        "tr",
+        "setProperty",
+        "destroyed",
+        "moveToThread"
+      ]
+    },
+    "QQmlPropertyMap": {
+      "removed": [
+        "registerUserData"
+      ]
+    }
+  },
+  "QtQuick": {
+    "QQuickAsyncImageProvider": {
+      "added": [
+        "isSignalConnected",
+        "startTimer",
+        "timerEvent",
+        "staticMetaObject",
+        "connectNotify",
+        "findChild",
+        "killTimer",
+        "thread",
+        "blockSignals",
+        "isWidgetType",
+        "disconnect",
+        "deleteLater",
+        "removeEventFilter",
+        "senderSignalIndex",
+        "metaObject",
+        "setParent",
+        "objectName",
+        "event",
+        "dumpObjectInfo",
+        "childEvent",
+        "parent",
+        "eventFilter",
+        "findChildren",
+        "receivers",
+        "connect",
+        "objectNameChanged",
+        "dumpObjectTree",
+        "inherits",
+        "customEvent",
+        "emit",
+        "property",
+        "sender",
+        "setObjectName",
+        "installEventFilter",
+        "signalsBlocked",
+        "disconnectNotify",
+        "dynamicPropertyNames",
+        "children",
+        "isWindowType",
+        "tr",
+        "setProperty",
+        "destroyed",
+        "moveToThread"
+      ]
+    },
+    "QQuickFramebufferObject": {
+      "added": [
+        "paletteChanged",
+        "geometryChange",
+        "paletteCreated"
+      ],
+      "removed": [
+        "geometryChanged",
+        "registerUserData",
+        "windowDeactivateEvent"
+      ]
+    },
+    "QQuickImageProvider": {
+      "added": [
+        "isSignalConnected",
+        "startTimer",
+        "timerEvent",
+        "staticMetaObject",
+        "connectNotify",
+        "findChild",
+        "killTimer",
+        "thread",
+        "blockSignals",
+        "isWidgetType",
+        "disconnect",
+        "deleteLater",
+        "removeEventFilter",
+        "senderSignalIndex",
+        "metaObject",
+        "setParent",
+        "objectName",
+        "event",
+        "dumpObjectInfo",
+        "childEvent",
+        "parent",
+        "eventFilter",
+        "findChildren",
+        "receivers",
+        "connect",
+        "objectNameChanged",
+        "dumpObjectTree",
+        "inherits",
+        "customEvent",
+        "emit",
+        "property",
+        "sender",
+        "setObjectName",
+        "installEventFilter",
+        "signalsBlocked",
+        "disconnectNotify",
+        "dynamicPropertyNames",
+        "children",
+        "isWindowType",
+        "tr",
+        "setProperty",
+        "destroyed",
+        "moveToThread"
+      ]
+    },
+    "QQuickImageResponse": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQuickItem": {
+      "added": [
+        "paletteChanged",
+        "geometryChange",
+        "paletteCreated"
+      ],
+      "removed": [
+        "geometryChanged",
+        "registerUserData",
+        "windowDeactivateEvent"
+      ]
+    },
+    "QQuickItemGrabResult": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQuickPaintedItem": {
+      "added": [
+        "paletteChanged",
+        "geometryChange",
+        "paletteCreated"
+      ],
+      "removed": [
+        "geometryChanged",
+        "registerUserData",
+        "windowDeactivateEvent"
+      ]
+    },
+    "QQuickRenderControl": {
+      "added": [
+        "endFrame",
+        "window",
+        "setSamples",
+        "beginFrame",
+        "samples"
+      ],
+      "removed": [
+        "registerUserData",
+        "grab"
+      ]
+    },
+    "QQuickTextDocument": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQuickTextureFactory": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQuickTransform": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QQuickView": {
+      "added": [
+        "paletteCreated",
+        "beforeFrameBegin",
+        "setPersistentGraphics",
+        "paintEvent",
+        "closeEvent",
+        "afterFrameEnd",
+        "paletteChanged",
+        "isPersistentGraphics"
+      ],
+      "removed": [
+        "NativeObjectTexture",
+        "registerUserData",
+        "createTextureFromId",
+        "renderTarget",
+        "clearBeforeRendering",
+        "renderTargetId",
+        "resetOpenGLState",
+        "createTextureFromNativeObject",
+        "renderTargetSize",
+        "setClearBeforeRendering",
+        "NativeObjectType",
+        "setPersistentOpenGLContext",
+        "openglContextCreated",
+        "sendEvent",
+        "setRenderTarget",
+        "isPersistentOpenGLContext",
+        "openglContext"
+      ]
+    },
+    "QQuickWindow": {
+      "added": [
+        "paletteCreated",
+        "beforeFrameBegin",
+        "setPersistentGraphics",
+        "paintEvent",
+        "closeEvent",
+        "afterFrameEnd",
+        "paletteChanged",
+        "isPersistentGraphics"
+      ],
+      "removed": [
+        "NativeObjectTexture",
+        "registerUserData",
+        "createTextureFromId",
+        "renderTarget",
+        "clearBeforeRendering",
+        "renderTargetId",
+        "resetOpenGLState",
+        "createTextureFromNativeObject",
+        "renderTargetSize",
+        "setClearBeforeRendering",
+        "NativeObjectType",
+        "setPersistentOpenGLContext",
+        "openglContextCreated",
+        "sendEvent",
+        "setRenderTarget",
+        "isPersistentOpenGLContext",
+        "openglContext"
+      ]
+    },
+    "QSGDynamicTexture": {
+      "removed": [
+        "updateBindOptions",
+        "registerUserData",
+        "textureId",
+        "bind",
+        "removedFromAtlas"
+      ]
+    },
+    "QSGTexture": {
+      "removed": [
+        "updateBindOptions",
+        "registerUserData",
+        "textureId",
+        "bind",
+        "removedFromAtlas"
+      ]
+    },
+    "QSGTextureProvider": {
+      "removed": [
+        "registerUserData"
+      ]
+    }
+  },
+  "QtQuickControls2": {
+    "QQuickStyle": {
+      "removed": [
+        "path",
+        "stylePathList",
+        "availableStyles",
+        "addStylePath"
+      ]
+    }
+  },
+  "QtQuickWidgets": {
+    "QQuickWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    }
+  },
+  "QtSql": {
+    "QSqlDriver": {
+      "added": [
+        "maximumIdentifierLength"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSqlError": {
+      "removed": [
+        "setDatabaseText",
+        "setType",
+        "setDriverText",
+        "number",
+        "setNumber"
+      ]
+    },
+    "QSqlField": {
+      "added": [
+        "metaType",
+        "setMetaType"
+      ],
+      "removed": [
+        "setType",
+        "type"
+      ]
+    },
+    "QSqlQueryModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSqlRelationalDelegate": {
+      "added": [
+        "initStyleOption",
+        "displayText"
+      ],
+      "removed": [
+        "hasClipping",
+        "registerUserData",
+        "doCheck",
+        "drawFocus",
+        "textRectangle",
+        "setClipping",
+        "drawDisplay",
+        "selectedPixmap",
+        "elidedText",
+        "drawCheck",
+        "setOptions",
+        "drawDecoration",
+        "rect",
+        "decoration",
+        "drawBackground"
+      ]
+    },
+    "QSqlRelationalTableModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSqlTableModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    }
+  },
+  "QtSvg": {
+    "QSvgRenderer": {
+      "removed": [
+        "registerUserData",
+        "matrixForElement"
+      ]
+    }
+  },
+  "QtSvgWidgets": {
+    "QGraphicsSvgItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "registerUserData",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QSvgWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    }
+  },
+  "QtTest": {
+    "QTest": {
+      "added": [
+        "formatString"
+      ]
+    }
+  },
+  "QtUiTools": {
+    "QUiLoader": {
+      "removed": [
+        "registerUserData"
+      ]
+    }
+  },
+  "QtWidgets": {
+    "QAbstractButton": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QAbstractGraphicsShapeItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QAbstractItemDelegate": {
+      "removed": [
+        "registerUserData",
+        "elidedText"
+      ]
+    },
+    "QAbstractItemView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QAbstractScrollArea": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QAbstractSlider": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QAbstractSpinBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QApplication": {
+      "removed": [
+        "NormalColor",
+        "setFallbackSessionManagementEnabled",
+        "registerUserData",
+        "hasPendingEvents",
+        "ManyColor",
+        "globalStrut",
+        "flush",
+        "ColorSpec",
+        "desktop",
+        "setColorSpec",
+        "colorSpec",
+        "CustomColor",
+        "isFallbackSessionManagementEnabled",
+        "setGlobalStrut"
+      ]
+    },
+    "QBoxLayout": {
+      "removed": [
+        "registerUserData",
+        "margin",
+        "setMargin"
+      ]
+    },
+    "QButtonGroup": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QCalendarWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QCheckBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QColorDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QColumnView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QComboBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "setAutoCompletionCaseSensitivity",
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "autoCompletion",
+        "setAutoCompletion",
+        "autoCompletionCaseSensitivity",
+        "AdjustToMinimumContentsLength"
+      ]
+    },
+    "QCommandLinkButton": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QCommonStyle": {
+      "removed": [
+        "registerUserData",
+        "SH_SpellCheckUnderlineStyle",
+        "PE_FrameStatusBar",
+        "PM_MDIFrameWidth",
+        "SH_ScrollBar_StopMouseOverSlider",
+        "PM_DefaultChildMargin",
+        "SE_ViewItemCheckIndicator",
+        "SE_DialogButtonBoxLayoutItem",
+        "PM_MDIMinimizedWidth",
+        "PM_DefaultTopLevelMargin",
+        "PE_IndicatorViewItemCheck",
+        "PM_DefaultLayoutSpacing"
+      ]
+    },
+    "QCompleter": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QDataWidgetMapper": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QDateEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QDateTimeEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QDial": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QDialogButtonBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QDockWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "AllDockWidgetFeatures"
+      ]
+    },
+    "QDoubleSpinBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QErrorMessage": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QFileDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "DirectoryOnly",
+        "setOrientation",
+        "setExtension",
+        "setNameFilterDetailsVisible",
+        "setReadOnly",
+        "resolveSymlinks",
+        "DontUseSheet",
+        "setConfirmOverwrite",
+        "setResolveSymlinks",
+        "getContentsMargins",
+        "isNameFilterDetailsVisible",
+        "extension",
+        "orientation",
+        "confirmOverwrite",
+        "isReadOnly",
+        "showExtension"
+      ]
+    },
+    "QFileSystemModel": {
+      "added": [
+        "clearItemData"
+      ],
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QFocusFrame": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QFontComboBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "setAutoCompletionCaseSensitivity",
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "autoCompletion",
+        "setAutoCompletion",
+        "autoCompletionCaseSensitivity",
+        "AdjustToMinimumContentsLength"
+      ]
+    },
+    "QFontDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QFormLayout": {
+      "removed": [
+        "registerUserData",
+        "margin",
+        "setMargin"
+      ]
+    },
+    "QFrame": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QGesture": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGestureEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsAnchor": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsAnchorLayout": {
+      "added": [
+        "isEmpty"
+      ]
+    },
+    "QGraphicsBlurEffect": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsColorizeEffect": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsDropShadowEffect": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsEffect": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsEllipseItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsGridLayout": {
+      "added": [
+        "isEmpty"
+      ]
+    },
+    "QGraphicsItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsItemAnimation": {
+      "removed": [
+        "registerUserData",
+        "reset",
+        "matrixAt"
+      ]
+    },
+    "QGraphicsItemGroup": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsLayout": {
+      "added": [
+        "isEmpty"
+      ]
+    },
+    "QGraphicsLayoutItem": {
+      "added": [
+        "isEmpty"
+      ]
+    },
+    "QGraphicsLineItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsLinearLayout": {
+      "added": [
+        "isEmpty"
+      ]
+    },
+    "QGraphicsObject": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "registerUserData",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsOpacityEffect": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsPathItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsPixmapItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsPolygonItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsProxyWidget": {
+      "added": [
+        "isEmpty"
+      ],
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "registerUserData",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsRectItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsRotation": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsScale": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsScene": {
+      "removed": [
+        "isSortCacheEnabled",
+        "registerUserData",
+        "setSortCacheEnabled"
+      ]
+    },
+    "QGraphicsSceneContextMenuEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneDragDropEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneHelpEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneHoverEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneMouseEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneMoveEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneResizeEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSceneWheelEvent": {
+      "added": [
+        "clone",
+        "GraphicsSceneLeave",
+        "isSinglePointEvent",
+        "isPointerEvent",
+        "isInputEvent"
+      ],
+      "removed": [
+        "MacGLClearDrawable"
+      ]
+    },
+    "QGraphicsSimpleTextItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsTextItem": {
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "registerUserData",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGraphicsTransform": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QGraphicsView": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "setMatrix",
+        "registerUserData",
+        "isEnabledToTLW",
+        "matrix",
+        "getContentsMargins",
+        "resetMatrix",
+        "DontClipPainter"
+      ]
+    },
+    "QGraphicsWidget": {
+      "added": [
+        "isEmpty"
+      ],
+      "removed": [
+        "setMatrix",
+        "ItemMatrixChange",
+        "registerUserData",
+        "matrix",
+        "sceneMatrix",
+        "resetMatrix"
+      ]
+    },
+    "QGridLayout": {
+      "removed": [
+        "registerUserData",
+        "margin",
+        "setMargin"
+      ]
+    },
+    "QGroupBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QHBoxLayout": {
+      "removed": [
+        "registerUserData",
+        "margin",
+        "setMargin"
+      ]
+    },
+    "QHeaderView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initStyleOptionForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QInputDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QItemDelegate": {
+      "removed": [
+        "registerUserData",
+        "elidedText"
+      ]
+    },
+    "QKeySequenceEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QLCDNumber": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QLabel": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QLayout": {
+      "removed": [
+        "margin",
+        "registerUserData",
+        "setMargin"
+      ]
+    },
+    "QLineEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getTextMargins",
+        "getContentsMargins"
+      ]
+    },
+    "QListView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QListWidget": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setItemSelected",
+        "setHorizontalStepsPerItem",
+        "isItemHidden",
+        "isItemSelected",
+        "viewOptions",
+        "setItemHidden",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QListWidgetItem": {
+      "removed": [
+        "textColor",
+        "setBackgroundColor",
+        "setTextColor",
+        "backgroundColor"
+      ]
+    },
+    "QMainWindow": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QMdiArea": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QMdiSubWindow": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QMenu": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QMenuBar": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QMessageBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QPanGesture": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPinchGesture": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPlainTextDocumentLayout": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QPlainTextEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "tabStopWidth",
+        "setTabStopWidth"
+      ]
+    },
+    "QProgressBar": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QProgressDialog": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QProxyStyle": {
+      "removed": [
+        "registerUserData",
+        "SH_SpellCheckUnderlineStyle",
+        "PE_FrameStatusBar",
+        "PM_MDIFrameWidth",
+        "SH_ScrollBar_StopMouseOverSlider",
+        "PM_DefaultChildMargin",
+        "SE_ViewItemCheckIndicator",
+        "SE_DialogButtonBoxLayoutItem",
+        "PM_MDIMinimizedWidth",
+        "PM_DefaultTopLevelMargin",
+        "PE_IndicatorViewItemCheck",
+        "PM_DefaultLayoutSpacing"
+      ]
+    },
+    "QPushButton": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QRadioButton": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QRubberBand": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QScrollArea": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QScrollBar": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QScroller": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSizeGrip": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QSlider": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QSpinBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QSplashScreen": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QSplitter": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "__rshift__",
+        "getContentsMargins",
+        "__rrshift__",
+        "__rlshift__",
+        "__lshift__"
+      ]
+    },
+    "QSplitterHandle": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QStackedLayout": {
+      "removed": [
+        "registerUserData",
+        "margin",
+        "setMargin"
+      ]
+    },
+    "QStackedWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QStatusBar": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QStyle": {
+      "removed": [
+        "registerUserData",
+        "SH_SpellCheckUnderlineStyle",
+        "PE_FrameStatusBar",
+        "PM_MDIFrameWidth",
+        "SH_ScrollBar_StopMouseOverSlider",
+        "PM_DefaultChildMargin",
+        "SE_ViewItemCheckIndicator",
+        "SE_DialogButtonBoxLayoutItem",
+        "PM_MDIMinimizedWidth",
+        "PM_DefaultTopLevelMargin",
+        "PE_IndicatorViewItemCheck",
+        "PM_DefaultLayoutSpacing"
+      ]
+    },
+    "QStyleOption": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionButton": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionComboBox": {
+      "added": [
+        "textAlignment"
+      ],
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionComplex": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionDockWidget": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionFocusRect": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionFrame": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionGraphicsItem": {
+      "removed": [
+        "init",
+        "matrix",
+        "levelOfDetail"
+      ]
+    },
+    "QStyleOptionGroupBox": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionHeader": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionMenuItem": {
+      "added": [
+        "reservedShortcutWidth"
+      ],
+      "removed": [
+        "init",
+        "tabWidth"
+      ]
+    },
+    "QStyleOptionProgressBar": {
+      "removed": [
+        "init",
+        "orientation"
+      ]
+    },
+    "QStyleOptionRubberBand": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionSizeGrip": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionSlider": {
+      "added": [
+        "keyboardModifiers"
+      ],
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionSpinBox": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionTab": {
+      "added": [
+        "tabIndex"
+      ],
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionTabBarBase": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionTabWidgetFrame": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionTitleBar": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionToolBar": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionToolBox": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionToolButton": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStyleOptionViewItem": {
+      "removed": [
+        "init"
+      ]
+    },
+    "QStylePainter": {
+      "removed": [
+        "setMatrix",
+        "resetMatrix",
+        "drawRoundRect",
+        "NonCosmeticDefaultPen",
+        "deviceMatrix",
+        "HighQualityAntialiasing",
+        "restoreRedirected",
+        "setWorldMatrix",
+        "matrixEnabled",
+        "matrix",
+        "Qt4CompatiblePainting",
+        "combinedMatrix",
+        "setMatrixEnabled",
+        "redirected",
+        "setRedirected",
+        "worldMatrix",
+        "initFrom"
+      ]
+    },
+    "QStyledItemDelegate": {
+      "removed": [
+        "registerUserData",
+        "elidedText"
+      ]
+    },
+    "QSwipeGesture": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QSystemTrayIcon": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTabBar": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QTabWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QTableView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QTableWidget": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setItemSelected",
+        "setHorizontalStepsPerItem",
+        "isItemSelected",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QTableWidgetItem": {
+      "removed": [
+        "textColor",
+        "setBackgroundColor",
+        "setTextColor",
+        "backgroundColor"
+      ]
+    },
+    "QTapAndHoldGesture": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTapGesture": {
+      "removed": [
+        "registerUserData"
+      ]
+    },
+    "QTextBrowser": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "tabStopWidth",
+        "setTabStopWidth"
+      ]
+    },
+    "QTextEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "tabStopWidth",
+        "setTabStopWidth"
+      ]
+    },
+    "QTimeEdit": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QToolBar": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QToolBox": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QToolButton": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QTreeView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QTreeWidget": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "setItemExpanded",
+        "isItemExpanded",
+        "isItemHidden",
+        "setFirstItemColumnSpanned",
+        "viewOptions",
+        "setItemHidden",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setItemSelected",
+        "isFirstItemColumnSpanned",
+        "setHorizontalStepsPerItem",
+        "items",
+        "isItemSelected",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QTreeWidgetItem": {
+      "removed": [
+        "textColor",
+        "setBackgroundColor",
+        "setTextColor",
+        "backgroundColor"
+      ]
+    },
+    "QUndoView": {
+      "added": [
+        "setScreen",
+        "itemDelegateForIndex",
+        "initViewItemOption"
+      ],
+      "removed": [
+        "setVerticalStepsPerItem",
+        "registerUserData",
+        "isEnabledToTLW",
+        "verticalStepsPerItem",
+        "getContentsMargins",
+        "setHorizontalStepsPerItem",
+        "viewOptions",
+        "horizontalStepsPerItem"
+      ]
+    },
+    "QVBoxLayout": {
+      "removed": [
+        "registerUserData",
+        "margin",
+        "setMargin"
+      ]
+    },
+    "QWidget": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    },
+    "QWidgetAction": {
+      "added": [
+        "enabledChanged",
+        "resetEnabled",
+        "checkableChanged",
+        "associatedObjects",
+        "visibleChanged"
+      ],
+      "removed": [
+        "registerUserData",
+        "setMenu",
+        "parentWidget",
+        "menu",
+        "associatedGraphicsWidgets",
+        "associatedWidgets"
+      ]
+    },
+    "QWizard": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "visitedPages",
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins",
+        "extension",
+        "orientation",
+        "setOrientation",
+        "setExtension",
+        "showExtension"
+      ]
+    },
+    "QWizardPage": {
+      "added": [
+        "setScreen"
+      ],
+      "removed": [
+        "registerUserData",
+        "isEnabledToTLW",
+        "getContentsMargins"
+      ]
+    }
+  }
+}

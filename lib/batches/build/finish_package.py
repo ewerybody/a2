@@ -14,23 +14,39 @@ import a2ahk
 import a2util
 
 Paths = _build_package_init.Paths
+PYSIDE = 'PySide6'
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
-DESKTOP_INI_CODE = ('[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' %
-                    DESKTOP_ICO_FILE)
+DESKTOP_INI_CODE = '[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' % DESKTOP_ICO_FILE
 ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
 LIB_EXCLUDES = (
-    'batches', '_source', 'a2ui', 'a2ui dev', 'ahklib', 'a2init_check',
-    'a2dev_find_py', 'a2init_check', '_a2_portable', 'a2_portable',
+    'batches',
+    '_source',
+    'a2ui',
+    'a2ui dev',
+    'ahklib',
+    'a2init_check',
+    'a2dev_find_py',
+    'a2init_check',
+    '_a2_portable',
+    'a2_portable',
 )
 UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
 UI_REMOVE_FILES = (
-    'd3dcompiler_47.dll', 'Qt5VirtualKeyboard.dll', 'libGLESv2.dll', 'Qt5Quick.dll',
-    'opengl32sw.dll', 'Qt5QmlModels.dll', 'Qt5DBus.dll', 'Qt5Pdf.dll',
-    r'PySide2\plugins\platforms\qwebgl.dll', r'PySide2\plugins\imageformats\qtiff.dll',
-    r'PySide2\plugins\imageformats\qpdf.dll', r'PySide2\plugins\imageformats\qtga.dll'
+    'd3dcompiler_47.dll',
+    'Qt5VirtualKeyboard.dll',
+    'libGLESv2.dll',
+    'Qt5Quick.dll',
+    'opengl32sw.dll',
+    'Qt5QmlModels.dll',
+    'Qt5DBus.dll',
+    'Qt5Pdf.dll',
+    fr'{PYSIDE}\plugins\platforms\qwebgl.dll',
+    fr'{PYSIDE}\plugins\imageformats\qtiff.dll',
+    fr'{PYSIDE}\plugins\imageformats\qpdf.dll',
+    fr'{PYSIDE}\plugins\imageformats\qtga.dll',
 )
-UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', r'PySide2\translations'
+UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', fr'{PYSIDE}\translations'
 
 
 def main():
@@ -62,10 +78,12 @@ def update_readme():
     ahk_exe = os.path.join(Paths.lib, 'Autohotkey', 'Autohotkey.exe')
     batches_dir = os.path.join(Paths.lib, 'batches')
     pattern = 'get_%s_version.ahk'
-    names = 'AutoHotkey', 'PySide2', 'Python'
-    scripts = (os.path.join(Paths.lib, 'cmds', pattern % names[0]),
-               os.path.join(batches_dir, 'versions', pattern % names[1]),
-               os.path.join(batches_dir, 'versions', pattern % names[2]))
+    names = 'AutoHotkey', 'PySide', 'Python'
+    scripts = (
+        os.path.join(Paths.lib, 'cmds', pattern % names[0]),
+        os.path.join(batches_dir, 'versions', pattern % names[1]),
+        os.path.join(batches_dir, 'versions', pattern % names[2]),
+    )
     versions = {}
     for name, script in zip(names, scripts):
         cwd = os.path.dirname(os.path.dirname(script))
@@ -115,9 +133,7 @@ def copy_files():
     app_path = os.path.join(Paths.dist, 'a2app')
     if not os.path.isdir(app_path):
         # raise FileNotFoundError(
-        print(
-            f'App Path was not found!\n  {app_path}\n'
-            'Package already handled?')
+        print(f'App Path was not found!\n  {app_path}\n' 'Package already handled?')
     else:
         os.rename(app_path, Paths.distui)
     print('distui: %s' % Paths.distui)
@@ -164,7 +180,7 @@ def copy_files():
             os.path.join(Paths.ui, folder),
             this_dest,
             ignore=_ignore_items,
-            copy_function=shutil.copyfile
+            copy_function=shutil.copyfile,
         )
 
 
@@ -219,7 +235,7 @@ def make_portable():
 
     shutil.copyfile(
         os.path.join(Paths.lib, '_a2_portable.ahk'),
-        os.path.join(Paths.dist_portable, 'lib', 'a2_portable.ahk')
+        os.path.join(Paths.dist_portable, 'lib', 'a2_portable.ahk'),
     )
     # remove unwanted files if present
     for name in 'setup', 'Uninstall a2':
@@ -233,9 +249,8 @@ def make_portable():
     portable_name = f'{name}_{package_cfg["version"]}_{_build_package_init.PACKAGE_SUB_NAME}.zip'
     tar = os.path.join(os.getenv('WINDIR'), 'System32', 'tar.exe')
     subprocess.call(
-        [tar, '-a', '-c', '-f',
-         os.path.join(Paths.distroot, portable_name),
-         '*'], cwd=Paths.dist_portable,
+        [tar, '-a', '-c', '-f', os.path.join(Paths.distroot, portable_name), '*'],
+        cwd=Paths.dist_portable,
     )
 
 

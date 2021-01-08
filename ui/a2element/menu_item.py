@@ -2,7 +2,7 @@
 a2element.menu_item - To create module-custom menu entries
 in the main menu bar under module.
 """
-from PySide2 import QtWidgets
+from a2qt import QtWidgets, QtGui
 
 import a2ctrl
 import a2core
@@ -23,7 +23,7 @@ def main(a2, mod):
 '''
 
 
-class Draw(QtWidgets.QAction):
+class Draw(QtGui.QAction):
     def __init__(self, main, cfg, mod, *_args):
         super(Draw, self).__init__(main)
         self.main = main
@@ -38,8 +38,7 @@ class Draw(QtWidgets.QAction):
         self.triggered.connect(self.call_code)
 
     def call_code(self):
-        file_name = local_script.build_file_name(
-            self.cfg.get('script_name'), MENU_ITEM_PREFIX)
+        file_name = local_script.build_file_name(self.cfg.get('script_name'), MENU_ITEM_PREFIX)
         self.mod.call_python_script(file_name)
 
 
@@ -48,6 +47,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
 
         from a2element import menu_item_edit_ui
+
         a2ctrl.check_ui_module(menu_item_edit_ui)
         self.ui = menu_item_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)

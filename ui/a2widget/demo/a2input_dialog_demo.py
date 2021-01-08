@@ -1,6 +1,6 @@
 # import _demo_env
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 
 
 class InputDialogDemo(QtWidgets.QMainWindow):
@@ -13,9 +13,13 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         button = QtWidgets.QPushButton('Call a A2InputDialog')
         layout.addWidget(button)
 
-        self.c = A2InputDialog(self, 'a title', text='predefined text',
-                               msg='some text bla blaaa',
-                               check_func=self.check_func)
+        self.c = A2InputDialog(
+            self,
+            'a title',
+            text='predefined text',
+            msg='some text bla blaaa',
+            check_func=self.check_func,
+        )
         self.c.okayed.connect(self.ok_func)
         self.c.canceled.connect(self.cancel_func)
         self.c.field_changed.connect(self.field_changed)
@@ -45,9 +49,12 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         print('dialog canceled!')
 
     def call_confirm_dialog(self):
-        dialog = A2ConfirmDialog(self, 'A title',
-                                 msg="Some <b>more</b> text bla blaaa with extra formatting and stuff.\n"
-                                     "We wouldn't want it to be <i>too</i> boring, right? 😉")
+        dialog = A2ConfirmDialog(
+            self,
+            'A title',
+            msg='Some <b>more</b> text bla blaaa with extra formatting and stuff.\n'
+            "We wouldn't want it to be <i>too</i> boring, right? 😉",
+        )
         dialog.okayed.connect(self.confirm_dialog_okayed)
         dialog.canceled.connect(self.confirm_dialog_canceled)
         dialog.show()

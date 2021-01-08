@@ -1,108 +1,147 @@
 # -*- coding: utf-8 -*-
-# Form implementation generated from reading ui file:
-#   'c:\Users\eric\io\code\a2\ui\a2element\number_edit.ui'
-# licensing of that file applies.
-#
-# Created: Mon Aug 17 09:55:27 2020
-#      by: pyside2-uic  running on PySide2 5.15.0
-#
-# pylint: disable=W0201,C0103,C0111
-# WARNING! All changes made in this file will be lost!
 
-from PySide2 import QtCore, QtGui, QtWidgets
+################################################################################
+## Form generated from reading UI file 'number_edit.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from a2qt.QtCore import *
+from a2qt.QtGui import *
+from a2qt.QtWidgets import *
 
 
-class Ui_edit:
+class Ui_edit(object):
     def setupUi(self, edit):
-        edit.setObjectName("edit")
+        if not edit.objectName():
+            edit.setObjectName(u"edit")
         edit.resize(468, 255)
-        self.edit_layout = QtWidgets.QFormLayout(edit)
-        self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.edit_layout.setObjectName("edit_layout")
-        self.internalNameLabel = QtWidgets.QLabel(edit)
-        self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.internalNameLabel.setObjectName("internalNameLabel")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QtWidgets.QLineEdit(edit)
-        self.cfg_name.setObjectName("cfg_name")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
-        self.displayLabelLabel = QtWidgets.QLabel(edit)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
-        self.cfg_label = QtWidgets.QLineEdit(edit)
-        self.cfg_label.setObjectName("cfg_label")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
-        self.label = QtWidgets.QLabel(edit)
-        self.label.setObjectName("label")
-        self.edit_layout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label)
-        self.value = QtWidgets.QDoubleSpinBox(edit)
-        self.value.setSuffix("")
+        self.edit_layout = QFormLayout(edit)
+        self.edit_layout.setObjectName(u"edit_layout")
+        self.edit_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.internalNameLabel = QLabel(edit)
+        self.internalNameLabel.setObjectName(u"internalNameLabel")
+        self.internalNameLabel.setMinimumSize(QSize(100, 0))
+        self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
+
+        self.cfg_name = QLineEdit(edit)
+        self.cfg_name.setObjectName(u"cfg_name")
+
+        self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
+
+        self.displayLabelLabel = QLabel(edit)
+        self.displayLabelLabel.setObjectName(u"displayLabelLabel")
+        self.displayLabelLabel.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.displayLabelLabel)
+
+        self.cfg_label = QLineEdit(edit)
+        self.cfg_label.setObjectName(u"cfg_label")
+
+        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_label)
+
+        self.label = QLabel(edit)
+        self.label.setObjectName(u"label")
+
+        self.edit_layout.setWidget(2, QFormLayout.LabelRole, self.label)
+
+        self.value = QDoubleSpinBox(edit)
+        self.value.setObjectName(u"value")
+        self.value.setSuffix(u"")
         self.value.setDecimals(0)
-        self.value.setSingleStep(1.0)
-        self.value.setProperty("value", 0.0)
-        self.value.setObjectName("value")
-        self.edit_layout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.value)
-        self.label_2 = QtWidgets.QLabel(edit)
-        self.label_2.setObjectName("label_2")
-        self.edit_layout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_2)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.value.setSingleStep(1.000000000000000)
+        self.value.setValue(0.000000000000000)
+
+        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.value)
+
+        self.label_2 = QLabel(edit)
+        self.label_2.setObjectName(u"label_2")
+
+        self.edit_layout.setWidget(3, QFormLayout.LabelRole, self.label_2)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.cfg_min = QtWidgets.QDoubleSpinBox(edit)
-        self.cfg_min.setMinimum(-16777215.0)
-        self.cfg_min.setMaximum(16777215.0)
-        self.cfg_min.setProperty("value", 0.0)
-        self.cfg_min.setObjectName("cfg_min")
+        self.cfg_min = QDoubleSpinBox(edit)
+        self.cfg_min.setObjectName(u"cfg_min")
+        self.cfg_min.setMinimum(-16777215.000000000000000)
+        self.cfg_min.setMaximum(16777215.000000000000000)
+        self.cfg_min.setValue(0.000000000000000)
+
         self.horizontalLayout.addWidget(self.cfg_min)
-        self.cfg_max = QtWidgets.QDoubleSpinBox(edit)
-        self.cfg_max.setMinimum(-16777215.0)
-        self.cfg_max.setMaximum(16777215.0)
-        self.cfg_max.setProperty("value", 100.0)
-        self.cfg_max.setObjectName("cfg_max")
+
+        self.cfg_max = QDoubleSpinBox(edit)
+        self.cfg_max.setObjectName(u"cfg_max")
+        self.cfg_max.setMinimum(-16777215.000000000000000)
+        self.cfg_max.setMaximum(16777215.000000000000000)
+        self.cfg_max.setValue(100.000000000000000)
+
         self.horizontalLayout.addWidget(self.cfg_max)
-        self.edit_layout.setLayout(3, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout)
-        self.label_3 = QtWidgets.QLabel(edit)
-        self.label_3.setObjectName("label_3")
-        self.edit_layout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_3)
-        self.cfg_decimals = QtWidgets.QSpinBox(edit)
-        self.cfg_decimals.setProperty("value", 1)
-        self.cfg_decimals.setObjectName("cfg_decimals")
-        self.edit_layout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.cfg_decimals)
-        self.label_4 = QtWidgets.QLabel(edit)
-        self.label_4.setObjectName("label_4")
-        self.edit_layout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_4)
-        self.cfg_step_len = QtWidgets.QDoubleSpinBox(edit)
-        self.cfg_step_len.setMaximum(16777215.0)
-        self.cfg_step_len.setProperty("value", 1.0)
-        self.cfg_step_len.setObjectName("cfg_step_len")
-        self.edit_layout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.cfg_step_len)
-        self.label_5 = QtWidgets.QLabel(edit)
-        self.label_5.setObjectName("label_5")
-        self.edit_layout.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.label_5)
-        self.cfg_suffix = QtWidgets.QLineEdit(edit)
-        self.cfg_suffix.setObjectName("cfg_suffix")
-        self.edit_layout.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.cfg_suffix)
-        self.cfg_slider = QtWidgets.QCheckBox(edit)
-        self.cfg_slider.setObjectName("cfg_slider")
-        self.edit_layout.setWidget(7, QtWidgets.QFormLayout.FieldRole, self.cfg_slider)
+
+
+        self.edit_layout.setLayout(3, QFormLayout.FieldRole, self.horizontalLayout)
+
+        self.label_3 = QLabel(edit)
+        self.label_3.setObjectName(u"label_3")
+
+        self.edit_layout.setWidget(4, QFormLayout.LabelRole, self.label_3)
+
+        self.cfg_decimals = QSpinBox(edit)
+        self.cfg_decimals.setObjectName(u"cfg_decimals")
+        self.cfg_decimals.setValue(1)
+
+        self.edit_layout.setWidget(4, QFormLayout.FieldRole, self.cfg_decimals)
+
+        self.label_4 = QLabel(edit)
+        self.label_4.setObjectName(u"label_4")
+
+        self.edit_layout.setWidget(5, QFormLayout.LabelRole, self.label_4)
+
+        self.cfg_step_len = QDoubleSpinBox(edit)
+        self.cfg_step_len.setObjectName(u"cfg_step_len")
+        self.cfg_step_len.setMaximum(16777215.000000000000000)
+        self.cfg_step_len.setValue(1.000000000000000)
+
+        self.edit_layout.setWidget(5, QFormLayout.FieldRole, self.cfg_step_len)
+
+        self.label_5 = QLabel(edit)
+        self.label_5.setObjectName(u"label_5")
+
+        self.edit_layout.setWidget(6, QFormLayout.LabelRole, self.label_5)
+
+        self.cfg_suffix = QLineEdit(edit)
+        self.cfg_suffix.setObjectName(u"cfg_suffix")
+
+        self.edit_layout.setWidget(6, QFormLayout.FieldRole, self.cfg_suffix)
+
+        self.cfg_slider = QCheckBox(edit)
+        self.cfg_slider.setObjectName(u"cfg_slider")
+
+        self.edit_layout.setWidget(7, QFormLayout.FieldRole, self.cfg_slider)
+
 
         self.retranslateUi(edit)
-        QtCore.QMetaObject.connectSlotsByName(edit)
+
+        QMetaObject.connectSlotsByName(edit)
+    # setupUi
 
     def retranslateUi(self, edit):
-        edit.setWindowTitle(QtWidgets.QApplication.translate("edit", "Form", None, -1))
-        self.internalNameLabel.setText(QtWidgets.QApplication.translate("edit", "internal name:", None, -1))
-        self.cfg_name.setText(QtWidgets.QApplication.translate("edit", "extensionX_number1", None, -1))
-        self.displayLabelLabel.setText(QtWidgets.QApplication.translate("edit", "display label:", None, -1))
-        self.cfg_label.setText(QtWidgets.QApplication.translate("edit", "some number", None, -1))
-        self.label.setText(QtWidgets.QApplication.translate("edit", "default value:", None, -1))
-        self.label_2.setText(QtWidgets.QApplication.translate("edit", "min/max:", None, -1))
-        self.label_3.setText(QtWidgets.QApplication.translate("edit", "decimals:", None, -1))
-        self.label_4.setText(QtWidgets.QApplication.translate("edit", "step length:", None, -1))
-        self.label_5.setText(QtWidgets.QApplication.translate("edit", "suffix label:", None, -1))
-        self.cfg_slider.setText(QtWidgets.QApplication.translate("edit", "show slider", None, -1))
+        edit.setWindowTitle(QCoreApplication.translate("edit", u"Form", None))
+        self.internalNameLabel.setText(QCoreApplication.translate("edit", u"internal name:", None))
+        self.cfg_name.setText(QCoreApplication.translate("edit", u"extensionX_number1", None))
+        self.displayLabelLabel.setText(QCoreApplication.translate("edit", u"display label:", None))
+        self.cfg_label.setText(QCoreApplication.translate("edit", u"some number", None))
+        self.label.setText(QCoreApplication.translate("edit", u"default value:", None))
+        self.label_2.setText(QCoreApplication.translate("edit", u"min/max:", None))
+        self.label_3.setText(QCoreApplication.translate("edit", u"decimals:", None))
+        self.label_4.setText(QCoreApplication.translate("edit", u"step length:", None))
+        self.label_5.setText(QCoreApplication.translate("edit", u"suffix label:", None))
+        self.cfg_slider.setText(QCoreApplication.translate("edit", u"show slider", None))
+    # retranslateUi
 

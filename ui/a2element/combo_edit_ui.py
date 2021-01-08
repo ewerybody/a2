@@ -1,85 +1,117 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\eric\io\code\a2\ui\a2element\combo_edit.ui',
-# licensing of 'c:\Users\eric\io\code\a2\ui\a2element\combo_edit.ui' applies.
-#
-# Created: Tue Jan 28 21:59:36 2020
-#      by: pyside2-uic  running on PySide2 5.14.0
-#
-# WARNING! All changes made in this file will be lost!
+################################################################################
+## Form generated from reading UI file 'combo_edit.ui'
+##
+## Created by: Qt User Interface Compiler version 6.0.0
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from a2qt.QtCore import *
+from a2qt.QtGui import *
+from a2qt.QtWidgets import *
+
+from a2widget.a2list import A2List
+
 
 class Ui_edit(object):
     def setupUi(self, edit):
-        edit.setObjectName("edit")
+        if not edit.objectName():
+            edit.setObjectName(u"edit")
         edit.resize(407, 309)
-        self.edit_layout = QtWidgets.QFormLayout(edit)
-        self.edit_layout.setFieldGrowthPolicy(QtWidgets.QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.edit_layout.setObjectName("edit_layout")
-        self.internalNameLabel = QtWidgets.QLabel(edit)
-        self.internalNameLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.internalNameLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.internalNameLabel.setObjectName("internalNameLabel")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QtWidgets.QLineEdit(edit)
-        self.cfg_name.setObjectName("cfg_name")
-        self.edit_layout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.cfg_name)
-        self.displayLabelLabel = QtWidgets.QLabel(edit)
-        self.displayLabelLabel.setMinimumSize(QtCore.QSize(100, 0))
-        self.displayLabelLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.displayLabelLabel.setObjectName("displayLabelLabel")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.displayLabelLabel)
-        self.cfg_label = QtWidgets.QLineEdit(edit)
-        self.cfg_label.setObjectName("cfg_label")
-        self.edit_layout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.cfg_label)
+        self.edit_layout = QFormLayout(edit)
+        self.edit_layout.setObjectName(u"edit_layout")
+        self.edit_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.internalNameLabel = QLabel(edit)
+        self.internalNameLabel.setObjectName(u"internalNameLabel")
+        self.internalNameLabel.setMinimumSize(QSize(100, 0))
+        self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
+
+        self.cfg_name = QLineEdit(edit)
+        self.cfg_name.setObjectName(u"cfg_name")
+
+        self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
+
+        self.displayLabelLabel = QLabel(edit)
+        self.displayLabelLabel.setObjectName(u"displayLabelLabel")
+        self.displayLabelLabel.setMinimumSize(QSize(100, 0))
+        self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.displayLabelLabel)
+
+        self.cfg_label = QLineEdit(edit)
+        self.cfg_label.setObjectName(u"cfg_label")
+
+        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_label)
+
         self.cfg_items = A2List(edit)
-        self.cfg_items.setMaximumSize(QtCore.QSize(16777215, 145))
+        self.cfg_items.setObjectName(u"cfg_items")
+        self.cfg_items.setMaximumSize(QSize(16777215, 145))
         self.cfg_items.setAlternatingRowColors(True)
-        self.cfg_items.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.cfg_items.setObjectName("cfg_items")
-        self.edit_layout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.cfg_items)
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.label_6 = QtWidgets.QLabel(edit)
-        self.label_6.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
-        self.label_6.setObjectName("label_6")
+        self.cfg_items.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_items)
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.label_6 = QLabel(edit)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
         self.verticalLayout.addWidget(self.label_6)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(40, 0, -1, -1)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(-1, 0, -1, -1)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.plus_button = QtWidgets.QPushButton(edit)
-        self.plus_button.setMaximumSize(QtCore.QSize(50, 50))
-        self.plus_button.setObjectName("plus_button")
+        self.plus_button = QPushButton(edit)
+        self.plus_button.setObjectName(u"plus_button")
+        self.plus_button.setMaximumSize(QSize(50, 50))
+
         self.verticalLayout_2.addWidget(self.plus_button)
-        self.minus_button = QtWidgets.QPushButton(edit)
-        self.minus_button.setMaximumSize(QtCore.QSize(50, 50))
+
+        self.minus_button = QPushButton(edit)
+        self.minus_button.setObjectName(u"minus_button")
+        self.minus_button.setMaximumSize(QSize(50, 50))
         self.minus_button.setAutoDefault(True)
-        self.minus_button.setObjectName("minus_button")
+
         self.verticalLayout_2.addWidget(self.minus_button)
+
+
         self.horizontalLayout.addLayout(self.verticalLayout_2)
+
+
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.edit_layout.setLayout(2, QtWidgets.QFormLayout.LabelRole, self.verticalLayout)
-        self.cfg_user_edit = QtWidgets.QCheckBox(edit)
-        self.cfg_user_edit.setObjectName("cfg_user_edit")
-        self.edit_layout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.cfg_user_edit)
+
+
+        self.edit_layout.setLayout(2, QFormLayout.LabelRole, self.verticalLayout)
+
+        self.cfg_user_edit = QCheckBox(edit)
+        self.cfg_user_edit.setObjectName(u"cfg_user_edit")
+
+        self.edit_layout.setWidget(3, QFormLayout.FieldRole, self.cfg_user_edit)
+
 
         self.retranslateUi(edit)
-        QtCore.QMetaObject.connectSlotsByName(edit)
+
+        QMetaObject.connectSlotsByName(edit)
+    # setupUi
 
     def retranslateUi(self, edit):
-        edit.setWindowTitle(QtWidgets.QApplication.translate("edit", "Form", None, -1))
-        self.internalNameLabel.setText(QtWidgets.QApplication.translate("edit", "internal name:", None, -1))
-        self.cfg_name.setText(QtWidgets.QApplication.translate("edit", "extensionX_combobox1", None, -1))
-        self.displayLabelLabel.setText(QtWidgets.QApplication.translate("edit", "display label:", None, -1))
-        self.cfg_label.setText(QtWidgets.QApplication.translate("edit", "some values", None, -1))
-        self.label_6.setText(QtWidgets.QApplication.translate("edit", "items:", None, -1))
-        self.plus_button.setText(QtWidgets.QApplication.translate("edit", "+", None, -1))
-        self.minus_button.setText(QtWidgets.QApplication.translate("edit", "-", None, -1))
-        self.cfg_user_edit.setText(QtWidgets.QApplication.translate("edit", "allow user edit", None, -1))
+        edit.setWindowTitle(QCoreApplication.translate("edit", u"Form", None))
+        self.internalNameLabel.setText(QCoreApplication.translate("edit", u"internal name:", None))
+        self.cfg_name.setText(QCoreApplication.translate("edit", u"extensionX_combobox1", None))
+        self.displayLabelLabel.setText(QCoreApplication.translate("edit", u"display label:", None))
+        self.cfg_label.setText(QCoreApplication.translate("edit", u"some values", None))
+        self.label_6.setText(QCoreApplication.translate("edit", u"items:", None))
+        self.plus_button.setText(QCoreApplication.translate("edit", u"+", None))
+        self.minus_button.setText(QCoreApplication.translate("edit", u"-", None))
+        self.cfg_user_edit.setText(QCoreApplication.translate("edit", u"allow user edit", None))
+    # retranslateUi
 
-from a2widget.a2list import A2List

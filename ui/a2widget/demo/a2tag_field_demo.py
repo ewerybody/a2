@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from a2qt import QtWidgets
 from a2widget.a2tag_field import A2TagField
 
 
@@ -30,6 +30,7 @@ def show():
     win = TagFieldDemo()
     win.show()
     app.exec_()
+
 
 if __name__ == '__main__':
     show()
