@@ -20,7 +20,6 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(839, 768)
         self.verticalLayout = QVBoxLayout(Form)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.scrollArea = QScrollArea(Form)
@@ -28,7 +27,6 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.a2scroll_area_background = QWidget()
         self.a2scroll_area_background.setObjectName(u"a2scroll_area_background")
-        self.a2scroll_area_background.setGeometry(QRect(0, 0, 815, 744))
         self.formLayout_3 = QFormLayout(self.a2scroll_area_background)
         self.formLayout_3.setObjectName(u"formLayout_3")
         self.ui_scale_label = QLabel(self.a2scroll_area_background)
@@ -74,8 +72,6 @@ class Ui_Form(object):
         self.hk_dialog_layout.setObjectName(u"hk_dialog_layout")
 
         self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.hk_dialog_layout)
-
-
         self.formLayout_3.setWidget(1, QFormLayout.SpanningRole, self.hotkey_box)
 
         self.dev_box = QGroupBox(self.a2scroll_area_background)
@@ -222,18 +218,33 @@ class Ui_Form(object):
 
         self.horizontalLayout_4.addWidget(self.button_set_user_dir_custom)
 
-
         self.formLayout_2.setLayout(11, QFormLayout.FieldRole, self.horizontalLayout_4)
 
         self.portable_label = QLabel(self.dev_widget)
         self.portable_label.setObjectName(u"portable_label")
         self.portable_label.setWordWrap(True)
 
-        self.formLayout_2.setWidget(12, QFormLayout.FieldRole, self.portable_label)
+        self.formLayout_2.setWidget(13, QFormLayout.FieldRole, self.portable_label)
 
+        self.json_indent = QSpinBox(self.dev_widget)
+        self.json_indent.setObjectName(u"json_indent")
+        self.json_indent.setMaximumSize(QSize(70, 16777215))
+
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.json_indent)
+
+        self.label_9 = QLabel(self.dev_widget)
+        self.label_9.setObjectName(u"label_9")
+        self.label_9.setText(u"JSON Indent:")
+
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_9)
+
+        self.auto_reload = QCheckBox(self.dev_widget)
+        self.auto_reload.setObjectName(u"auto_reload")
+        self.auto_reload.setText(u"Auto-Reload Runtime On Script Changes")
+
+        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.auto_reload)
 
         self.verticalLayout_3.addWidget(self.dev_widget)
-
 
         self.formLayout_3.setWidget(2, QFormLayout.SpanningRole, self.dev_box)
 
@@ -301,8 +312,13 @@ class Ui_Form(object):
 
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
 
+        self.formLayout_3.setWidget(6, QFormLayout.SpanningRole, self.proxy_box)
 
-        self.formLayout_3.setWidget(3, QFormLayout.SpanningRole, self.proxy_box)
+        self.startup_tooltips = QCheckBox(self.a2scroll_area_background)
+        self.startup_tooltips.setObjectName(u"startup_tooltips")
+        self.startup_tooltips.setText(u"Enable Startup Tooltips")
+
+        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.startup_tooltips)
 
         self.scrollArea.setWidget(self.a2scroll_area_background)
 

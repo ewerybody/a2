@@ -12,10 +12,14 @@ NEW_MODULE_DESC = (
     'Because none existed before this temporary description was created '
     'for "%s". Change it to describe what it does with a couple of words.'
 )
-NEW_MODULE_CFG = {'typ': 'nfo', 'version': '0.1'}
+NEW_MODULE_CFG = {'typ': 'nfo', 'version': '0.1', 'author': ''}
+MULTI_MODULE_DESC = 'Multiple modules selected. Here goes some useful info in the future...'
+EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout here ...'
 
 
 class A2ModuleView(QtWidgets.QWidget):
+    reload_requested = QtCore.Signal()
+
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
         self.main = None
@@ -57,24 +61,14 @@ class A2ModuleView(QtWidgets.QWidget):
 
         if self.main.mod is None:
             if not self.main.num_selected:
-                from a2widget import a2settings_view
-
-                self.controls[:] = [a2settings_view.A2Settings(self.main)]
-                self.update_header()
-                self.draw_ui()
+                self.draw_settings()
                 return
-
             else:
-                config = [
-                    {
-                        'typ': 'nfo',
-                        'author': '',
-                        'version': '',
-                        'description': 'Multiple modules selected. Here goes some '
-                        'useful info in the future...',
-                    }
-                ]
+                config = [NEW_MODULE_CFG.copy()]
+                config[0]['description'] = MULTI_MODULE_DESC
+
             module_user_cfg = {}
+
         else:
             config = self.main.mod.config
             module_user_cfg = self.main.mod.get_user_cfg()
@@ -84,14 +78,8 @@ class A2ModuleView(QtWidgets.QWidget):
             if config[0].get('typ') != 'nfo':
                 log.error('First element of config is not typ nfo! %s' % self.main.mod.name)
         else:
-            config = [
-                {
-                    'typ': 'nfo',
-                    'author': '',
-                    'version': '',
-                    'description': 'Module Config is currently empty! imagine awesome layout here ...',
-                }
-            ]
+            config = [NEW_MODULE_CFG.copy()]
+            config[0]['description'] = EMPTY_MODULE_DESC
 
         nfo = config[0]
         self.update_header(nfo.get('author', ''), nfo.get('version', ''))
@@ -169,7 +157,7 @@ class A2ModuleView(QtWidgets.QWidget):
             self.main.temp_config = deepcopy(self.main.mod.config)
 
         if not self.main.temp_config:
-            new_cfg = deepcopy(NEW_MODULE_CFG)
+            new_cfg = NEW_MODULE_CFG.copy()
             new_cfg.update(
                 {
                     'description': NEW_MODULE_DESC % self.main.mod.name,
@@ -279,6 +267,20 @@ class A2ModuleView(QtWidgets.QWidget):
                     return
             except (AttributeError, KeyError):
                 pass
+
+    def draw_settings(self):
+        from a2widget import a2settings_view
+
+        # remember tab if already a settings tab
+        if len(self.controls) == 1 and isinstance(self.controls[0], a2settings_view.A2Settings):
+            settings_widget = a2settings_view.A2Settings(self.main, self.controls[0].tab_index)
+        else:
+            settings_widget = a2settings_view.A2Settings(self.main)
+
+        settings_widget.reload_requested.connect(self.reload_requested.emit)
+        self.controls[:] = [settings_widget]
+        self.update_header()
+        self.draw_ui()
 
 
 class EditView(QtWidgets.QWidget):

@@ -1,5 +1,6 @@
-﻿#Include %A_ScriptDir%\..\path.ahk
-#Include a2test.ahk
+﻿#Include a2test.ahk
+#Include %A_ScriptDir%\..\
+#Include path.ahk
 
 p := A_ScriptFullPath
 x := path_dirname(p)

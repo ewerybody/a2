@@ -74,7 +74,7 @@ EnvGet(EnvVarName) {
     EnvGet, v, %EnvVarName%
     Return, v
 }
-FileGetAttrib(Filename = "") {
+FileGetAttrib(ByRef Filename = "") {
     FileGetAttrib, v, %Filename%
     Return, v
 }

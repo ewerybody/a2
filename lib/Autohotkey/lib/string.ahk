@@ -17,7 +17,6 @@ string_is_in_array(byref search, byref array) {
     ; look up the items of an array object
     ; returns index of search string if found
     ; returns 0 otherwise
-    ;for i, value in array {
     Loop % array.MaxIndex() {
         if (search == array[A_Index])
             Return A_Index
@@ -134,4 +133,11 @@ string_quote(string, once = 1, quote = """") {
         return string
     }
     return quote string quote
+}
+
+string_suffix(string, suffix) {
+    ; Ensure a string to have a given suffix
+    if !string_endswith(string, suffix)
+        return string suffix
+    return string
 }

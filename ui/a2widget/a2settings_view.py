@@ -17,11 +17,13 @@ log = a2core.get_logger(__name__)
 
 
 class A2Settings(QtWidgets.QWidget):
-    def __init__(self, main):
+    reload_requested = QtCore.Signal()
+
+    def __init__(self, main, show_tab=None):
         super(A2Settings, self).__init__(parent=main)
         self.a2 = a2core.A2Obj.inst()
         self.main = main
-        self._setup_ui()
+        self._setup_ui(show_tab)
         self._source_widgets = {}
         self._draw_module_sources()
         self.is_expandable_widget = True
@@ -31,14 +33,15 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for module_source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
             widget = a2module_source.ModSourceWidget(
-                self.main, module_source, show_enabled=module_source.name in enabled_list
+                self.main, module_source,
+                show_enabled=module_source.name in enabled_list
             )
-            widget.toggled.connect(self.main.load_runtime_and_ui)
-            widget.changed.connect(self.main.load_runtime_and_ui)
+            widget.toggled.connect(self.reload_requested.emit)
+            widget.changed.connect(self.reload_requested.emit)
             self.ui.mod_source_layout.addWidget(widget)
             self._source_widgets[module_source] = widget
 
-    def _setup_ui(self):
+    def _setup_ui(self, show_tab):
         from a2widget import a2settings_view_ui
 
         a2ctrl.check_ui_module(a2settings_view_ui)
@@ -58,8 +61,11 @@ class A2Settings(QtWidgets.QWidget):
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
-        self.ui.a2settings_tab.setCurrentIndex(0)
         self.ui.a2settings_tab.currentChanged.connect(self.on_tab_changed)
+        if show_tab is None:
+            self.ui.a2settings_tab.setCurrentIndex(0)
+        else:
+            self.ui.a2settings_tab.setCurrentIndex(show_tab)
 
         IntegrationUIHandler(self, self.ui, self.a2)
 
@@ -99,7 +105,7 @@ class A2Settings(QtWidgets.QWidget):
 
     def add_source_url(self, url=None):
         dialog = a2module_source.AddSourceDialog(self.main, url)
-        dialog.okayed.connect(self.main.load_runtime_and_ui)
+        dialog.okayed.connect(self.reload_requested.emit)
         dialog.show()
 
     def on_tab_changed(self, tab_index):
@@ -138,15 +144,20 @@ class A2Settings(QtWidgets.QWidget):
         ConsoleUiHandler(self, widget, self.ui, self.a2)
 
     def _build_advanced_tab(self, widget):
-        AdvancedSettingsUiHandler(self, widget, self.ui, self.a2)
+        advanced_obj = AdvancedSettingsUiHandler(self, widget, self.ui, self.a2)
+        advanced_obj.reload_requested.connect(self.reload_requested.emit)
 
     def _size_hint(self):
         """For building the tab widgets dynamically. Default sizeHint is WAY too big!"""
         return QtCore.QSize(0, 0)
 
+    @property
+    def tab_index(self):
+        return self.ui.a2settings_tab.currentIndex()
+
 
 class ProxyUiHandler:
-    def __init__(self, ui, a2):
+    def __init__(self, ui, a2: a2core.A2Obj):
         self.ui = ui
         self.a2 = a2
         self.proxy_items = 'user', 'pass', 'server', 'port'
@@ -183,7 +194,9 @@ class ProxyUiHandler:
 
 
 class DataPathUiHandler(QtCore.QObject):
-    def __init__(self, parent, ui, a2):
+    reload_requested = QtCore.Signal()
+
+    def __init__(self, parent, ui, a2: a2core.A2Obj):
         super(DataPathUiHandler, self).__init__(parent)
         self.ui = ui
         self.a2 = a2
@@ -224,7 +237,7 @@ class DataPathUiHandler(QtCore.QObject):
 
     def _set_path(self, path):
         """Set the data path and deal with restarts and all."""
-        self.a2.paths.set_data_override(path)
+        self.a2.paths.set_data_path(path)
 
         # enlist to recent paths list
         if path and path not in (self.a2.paths.default_data, self.dev_data_path):
@@ -233,7 +246,7 @@ class DataPathUiHandler(QtCore.QObject):
                 self.a2.db.set('recent_override_paths', recent_override_paths)
 
         self.a2.start_up()
-        self.a2.win.load_runtime_and_ui()
+        self.reload_requested.emit()
 
     def _on_set_path_action(self):
         self._set_path(self.sender().data())
@@ -319,6 +332,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         pixmap = a2ctrl.Icons.inst().help.pixmap(icon_size)
         self.alert_label = QtWidgets.QLabel('')
         self.alert_label.setPixmap(pixmap)
+        self.alert_label.hide()
         layout.addWidget(self.alert_label)
 
         if data is None:
@@ -342,20 +356,24 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
             self.alert_label.setVisible(False)
             return
 
-        try:
-            current_path = a2ahk.call_lib_cmd(self.get_cmd)
-            tooltip = None
-        except RuntimeError as error:
-            current_path = ''
-            tooltip = str(error)
+        thread = _CmdCheckThread(self, self.get_cmd)
+        thread.finished.connect(self._on_check_finished)
+        thread.finished.connect(thread.deleteLater)
+        thread.start()
 
+    def _on_check_finished(self):
+        thread = self.sender()
+        thread
+        self._set_path(thread.result, thread.error)
+
+    def _set_path(self, path, tooltip):
         checked = False
-        if current_path:
+        if path:
             target_path = getattr(self.a2.paths, self.path_name)
-            checked = a2path.is_same(current_path, target_path)
+            checked = a2path.is_same(path, target_path)
             if not checked:
                 if tooltip is None:
-                    tooltip = f'Currently set to: {current_path}'
+                    tooltip = f'Currently set to: {path}'
 
         self.alert_label.setVisible(tooltip is not None)
         for wgt in (self, self.check, self.alert_label):
@@ -365,8 +383,9 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
 class AdvancedSettingsUiHandler(QtCore.QObject):
     dev_setting_changed = QtCore.Signal(str)
+    reload_requested = QtCore.Signal()
 
-    def __init__(self, parent, widget, ui, a2):
+    def __init__(self, parent, widget, ui, a2: a2core.A2Obj):
         super(AdvancedSettingsUiHandler, self).__init__(parent)
         self.main = parent.main
         self.tab_widget = widget
@@ -387,7 +406,6 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.dev_widget.setVisible(self.a2.dev_mode)
         self.ui.code_editor.file_types = 'Executables (*.exe)'
         self.ui.code_editor.writable = False
-        # self.ui.loglevel_debug.clicked[bool].connect(a2core.set_loglevel)
 
         self.dev_set_dict = self.main.devset.get()
         a2ctrl.connect.control_list(
@@ -397,21 +415,21 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         )
         self.dev_setting_changed.connect(self.on_dev_setting_changed)
 
-        DataPathUiHandler(self, self.ui, self.a2)
+        data_obj = DataPathUiHandler(self, self.ui, self.a2)
+        data_obj.reload_requested.connect(self.reload_requested.emit)
+
         self.ui.python_executable.setText(self.a2.paths.python)
         self.ui.autohotkey.setText(self.a2.paths.autohotkey)
-
-        # self.ui.show_console.setChecked(os.path.basename(self.a2.paths.python).lower() == 'python.exe')
-        # self.ui.show_console.clicked[bool].connect(self.toggle_console)
-
-        # TODO: #182
-        # ahk_vars = a2ahk.get_variables(self.a2.paths.settings_ahk)
-        # self.ui.startup_tooltips.setChecked(ahk_vars['a2_startup_tool_tips'])
-        # self.ui.startup_tooltips.clicked[bool].connect(self.toggle_startup_tooltips)
 
         self.ui.ui_scale_slider.setValue(self.a2.db.get('ui_scale') or 1.0)
         self.ui.ui_scale_slider.setPageStep(0.1)
         self.ui.ui_scale_slider.editing_finished.connect(self.main.rebuild_css)
+
+        ahk_vars = a2ahk.get_variables(self.a2.paths.user_cfg)
+        self.ui.startup_tooltips.setChecked(not ahk_vars['no_startup_tooltip'])
+        self.ui.startup_tooltips.clicked[bool].connect(self.set_startup_tooltips)
+        self.ui.auto_reload.setChecked(ahk_vars['auto_reload'])
+        self.ui.auto_reload.clicked[bool].connect(self.set_auto_reload)
 
         ProxyUiHandler(self.ui, self.a2)
 
@@ -439,8 +457,15 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.hk_dialog_layout.setCurrentIndex(index)
         self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
-    # def toggle_startup_tooltips(self, state):
-    #     a2ahk.set_variable(self.a2.paths.settings_ahk, 'a2_startup_tool_tips', state)
+    def set_startup_tooltips(self, state):
+        self._set_variable('no_startup_tooltip', not state)
+
+    def set_auto_reload(self, state):
+        self._set_variable('auto_reload', state)
+
+    def _set_variable(self, name, value):
+        a2ahk.set_variable(self.a2.paths.user_cfg, name, value)
+        self.reload_requested.emit()
 
     def on_dev_setting_changed(self, *_args):
         self.main.devset.set(self.dev_set_dict)
@@ -533,3 +558,17 @@ class ConsoleUiHandler(QtCore.QObject):
         content = '\n'.join('%.2f - %s' % (ftime, txt) for ftime, txt in self._lines[start:end])
         self.a2console.appendPlainText(content)
         self._lines_shown = end
+
+
+class _CmdCheckThread(QtCore.QThread):
+    def __init__(self, parent, cmd):
+        super(_CmdCheckThread, self).__init__(parent)
+        self.cmd = cmd
+        self.result = ''
+        self.error = None
+
+    def run(self):
+        try:
+            self.result = a2ahk.call_lib_cmd(self.cmd)
+        except RuntimeError as error:
+            self.error = str(error)
