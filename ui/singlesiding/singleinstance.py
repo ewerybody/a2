@@ -10,11 +10,7 @@ import json
 import uuid
 import struct
 from functools import partial
-
-try:
-    from PySide6 import QtCore, QtWidgets, QtNetwork
-except ImportError:
-    from PySide2 import QtCore, QtWidgets, QtNetwork
+from singlesiding.pyside import QtCore, QtWidgets, QtNetwork
 
 if os.name == 'nt':
     import ctypes.wintypes
