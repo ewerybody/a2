@@ -1,5 +1,5 @@
 """
-A cross-platform implementation of a :class:`PySide.QtWidgets.QApplication`
+A cross-platform implementation of a :class:`QtWidgets.QApplication`
 subclass with the ability to determine if it's the only running instance of
 an application, and if not, send a message to the previous instance before
 closing.
