@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2design.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,7 +20,7 @@ class Ui_a2MainWindow(object):
     def setupUi(self, a2MainWindow):
         if not a2MainWindow.objectName():
             a2MainWindow.setObjectName(u"a2MainWindow")
-        a2MainWindow.resize(755, 527)
+        a2MainWindow.resize(753, 543)
         font = QFont()
         font.setPointSize(10)
         a2MainWindow.setFont(font)
@@ -37,9 +37,6 @@ class Ui_a2MainWindow(object):
         self.actionDisable_all_modules = QAction(a2MainWindow)
         self.actionDisable_all_modules.setObjectName(u"actionDisable_all_modules")
         self.actionDisable_all_modules.setText(u"Disable All Modules")
-#if QT_CONFIG(shortcut)
-        self.actionDisable_all_modules.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionExplore_to = QAction(a2MainWindow)
         self.actionExplore_to.setObjectName(u"actionExplore_to")
         self.actionExplore_to.setText(u"Explore to Module ...")
@@ -52,9 +49,6 @@ class Ui_a2MainWindow(object):
         self.actionExplore_to_a2_dir = QAction(a2MainWindow)
         self.actionExplore_to_a2_dir.setObjectName(u"actionExplore_to_a2_dir")
         self.actionExplore_to_a2_dir.setText(u"Explore to a2 ...")
-#if QT_CONFIG(shortcut)
-        self.actionExplore_to_a2_dir.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionA2_settings = QAction(a2MainWindow)
         self.actionA2_settings.setObjectName(u"actionA2_settings")
         self.actionA2_settings.setText(u"a2 Settings")
@@ -125,8 +119,8 @@ class Ui_a2MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Horizontal)
@@ -142,7 +136,7 @@ class Ui_a2MainWindow(object):
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(a2MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 755, 29))
+        self.menubar.setGeometry(QRect(0, 0, 753, 27))
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
         self.menuHelp.setTitle(u"&Help")

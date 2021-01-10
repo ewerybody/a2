@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
-    <height>527</height>
+    <width>753</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="font">
@@ -23,16 +23,7 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
+    <property name="margin">
      <number>0</number>
     </property>
     <item>
@@ -51,8 +42,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>755</width>
-     <height>29</height>
+     <width>753</width>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -128,9 +119,6 @@
    <property name="text">
     <string notr="true">Disable All Modules</string>
    </property>
-   <property name="shortcut">
-    <string notr="true"/>
-   </property>
   </action>
   <action name="actionExplore_to">
    <property name="text">
@@ -148,9 +136,6 @@
   <action name="actionExplore_to_a2_dir">
    <property name="text">
     <string notr="true">Explore to a2 ...</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true"/>
    </property>
   </action>
   <action name="actionA2_settings">

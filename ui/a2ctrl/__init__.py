@@ -17,6 +17,7 @@ NO_DRAW_TYPES = ['include', 'init']
 ELEMENTS_PACKAGE = 'a2element'
 LOCAL_ELEMENT_ID = 'a2_local_element'
 _element_map = {}
+PYSIDE_REPLACE = 'a2qt'
 
 
 def check_ui_module(module, force=False):
@@ -58,7 +59,7 @@ def check_ui_module(module, force=False):
     log.debug('%s needs compile! (age: %is)', uibase, diff)
 
     # Make paths in compiled files project related, not from current user.
-    parent_path = os.path.abspath(os.path.join(a2core.__file__, '..', '..', '..'))
+    parent_path = os.path.abspath(os.path.join(a2core.__file__, '..', '..'))
 
     # Newer uic seems to just put the basename in the header... however.
     ui_relative = os.path.relpath(uifile, parent_path)
@@ -73,29 +74,59 @@ def check_ui_module(module, force=False):
 
     os.chdir(curr_cwd)
 
-    _patch_main_ui(uiname, pyfile)
+    _patch_ui(uiname, pyfile)
 
     reload(module)
 
 
-def _patch_main_ui(uiname, pyfile):
+def _patch_ui(uiname, pyfile):
     """
-    Patch compiled main ui file to have resizing handled by settings.
-    Could be useful for ANY compiled UI:
-        main sizes are usually related to parent arrangement!?
+    Patch compiled ui file to fix a couple of problems there are with
+    the default uic executable. See #219. TODO:
+    [ ] make use of a2qt wrapper instead of PySideX
+    [ ] remove main-obj resizes (!!!!!)
+    [ ] get rid of broad * imports
+    [ ] make a proper doc-string instead of comments block
+    [ ] remove #if/#endif comments
+    [ ] remove # setupUi and # retranslateUi comments
+    [ ] remove retranslateUi and its call if empty
+    [ ] remove unneeded empty lines
+    [ ] make it class Name: instead of oldschool class Name(object):
+    [ ] make it black/brunette compliant
     """
-    if uiname == 'a2design_ui':
-        with open(pyfile) as pyfobj:
-            lines = pyfobj.readlines()
+    with open(pyfile) as pyfobj:
+        lines = pyfobj.readlines()
 
-        skip_lines = 12
-        for i, line in enumerate(lines[12:]):
-            if line.startswith('        a2MainWindow.resize('):
-                with open(pyfile, 'w') as pyfobj:
-                    pyfobj.write(
-                        ''.join(lines[: i + skip_lines]) + ''.join(lines[i + skip_lines + 1 :])
-                    )
-                    break
+    # find the module doc string
+    mod_doc_block = None
+    for i, line in enumerate(lines):
+        if mod_doc_block is not None and not line.strip():
+            mod_doc_block.append(i)
+            break
+        if line.startswith('##') and mod_doc_block is None:
+            mod_doc_block = [i]
+
+    # find the imports block
+    pyside_wrapped_line = None
+    for i, line in enumerate(lines[mod_doc_block[1] :], mod_doc_block[1]):
+        if pyside_wrapped_line and not line.strip():
+            break
+
+        if line.startswith('from PySide'):
+            parts = line.split()
+            dot_pos = parts[1].find('.')
+            if dot_pos == -1:
+                raise RuntimeError('Patching compiled ui failed on line %i:\n  %s' % (i, line))
+            parts[1] = PYSIDE_REPLACE + parts[1][dot_pos:]
+            lines[i] = ' '.join(parts) + '\n'
+            pyside_wrapped_line = i
+
+    # find class block TODO
+    # for i, line in enumerate(lines[pyside_wrapped_line:], pyside_wrapped_line):
+    #     line
+
+    with open(pyfile, 'w') as pyfobj:
+        pyfobj.write(''.join(lines))
 
 
 def _get_ui_basename_from_header(py_ui_path):
