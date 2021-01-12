@@ -20,7 +20,7 @@ class Ui_a2MainWindow(object):
     def setupUi(self, a2MainWindow):
         if not a2MainWindow.objectName():
             a2MainWindow.setObjectName(u"a2MainWindow")
-        a2MainWindow.resize(753, 543)
+
         font = QFont()
         font.setPointSize(10)
         a2MainWindow.setFont(font)

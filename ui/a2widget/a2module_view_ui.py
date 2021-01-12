@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2module_view.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,7 @@ class Ui_A2ModuleView(object):
     def setupUi(self, A2ModuleView):
         if not A2ModuleView.objectName():
             A2ModuleView.setObjectName(u"A2ModuleView")
-        A2ModuleView.resize(616, 578)
+
         self.A2ModuleViewLayout = QVBoxLayout(A2ModuleView)
         self.A2ModuleViewLayout.setSpacing(0)
         self.A2ModuleViewLayout.setContentsMargins(0, 0, 0, 0)
@@ -38,6 +38,7 @@ class Ui_A2ModuleView(object):
         font.setFamily(u"Segoe UI")
         font.setPointSize(11)
         font.setBold(True)
+        font.setWeight(75)
         self.a2_mod_name.setFont(font)
 #if QT_CONFIG(statustip)
         self.a2_mod_name.setStatusTip(u"")

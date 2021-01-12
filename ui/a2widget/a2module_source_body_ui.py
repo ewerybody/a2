@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2module_source_body.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,7 +20,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(646, 180)
+
         self.modsource_layout = QVBoxLayout(Form)
         self.modsource_layout.setObjectName(u"modsource_layout")
         self.frame = QFrame(Form)

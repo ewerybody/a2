@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2settings_view.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ class Ui_a2settings(object):
     def setupUi(self, a2settings):
         if not a2settings.objectName():
             a2settings.setObjectName(u"a2settings")
-        a2settings.resize(685, 650)
+
         self.a2settings_view_layout = QVBoxLayout(a2settings)
         self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
         self.a2settings_view_layout.setObjectName(u"a2settings_view_layout")

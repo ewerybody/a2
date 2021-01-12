@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2module_list.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,7 +20,7 @@ class Ui_ModuleList(object):
     def setupUi(self, ModuleList):
         if not ModuleList.objectName():
             ModuleList.setObjectName(u"ModuleList")
-        ModuleList.resize(296, 759)
+
         self.module_list_layout = QVBoxLayout(ModuleList)
         self.module_list_layout.setSpacing(5)
         self.module_list_layout.setObjectName(u"module_list_layout")
