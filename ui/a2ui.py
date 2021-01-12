@@ -10,7 +10,6 @@ import a2dev
 import a2core
 import a2ctrl
 import a2util
-import a2runtime
 
 from a2qt import QtGui, QtCore, QtWidgets
 
@@ -18,6 +17,8 @@ log = a2core.get_logger(__name__)
 RESTART_DELAY = 300
 RUNTIME_WATCH_INTERVAL = 1000
 DEFAULT_WIN_SIZE = (700, 480)
+TITLE_ONLINE = 'Runtime is Live!'
+TITLE_OFFLINE = 'Runtime is Offline!'
 
 
 class A2Window(QtWidgets.QMainWindow):
@@ -26,8 +27,7 @@ class A2Window(QtWidgets.QMainWindow):
         # self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
-        self._restart_thread = None
-        self._shutdown_thread = None
+        self._threads = {}
         self._scroll_anim = None
 
         self.edit_clipboard = []
@@ -48,30 +48,8 @@ class A2Window(QtWidgets.QMainWindow):
         if self.a2.db.get('remember_last') or False:
             self._init_selection = self.a2.db.get('last_selected') or []
 
-        self.runtime_watcher = RuntimeWatcher(self)
-        self.runtime_watcher.message.connect(self.runtime_watcher_message)
-        self.runtime_watcher.start()
-
         self._initial_activation_tries = 0
         self._initial_draw_finished = False
-        self._win_title = None
-
-    def runtime_watcher_message(self, message):
-        """Update the window title on messages."""
-        if self._win_title is None:
-            if os.path.isdir(self.a2.paths.git):
-                import a2ahk
-
-                self._win_title = a2ahk.get_variables(self.a2.paths.a2_config).get(
-                    'a2_title', a2core.NAME
-                )
-            else:
-                self._win_title = a2core.NAME
-
-        if not message:
-            self.setWindowTitle(self._win_title)
-        else:
-            self.setWindowTitle(f'{self._win_title} - {message}')
 
     def _module_selected(self, module_list):
         self.selected = module_list
@@ -241,12 +219,11 @@ class A2Window(QtWidgets.QMainWindow):
         self.a2.fetch_modules_if_stale()
 
         log.info('  Writing includes ...')
+        import a2runtime
         a2runtime.write_includes(specific)
 
         log.info('  Restarting runtime ...')
-        self._restart_thread = RestartThread(self.a2, self)
-        self._restart_thread.finished.connect(self._restart_thread.deleteLater)
-        self._restart_thread.start()
+        self._run_thread('restart', RestartThread)
 
     def refresh_ui(self):
         log.info('  Refreshing Ui ...')
@@ -282,18 +259,22 @@ class A2Window(QtWidgets.QMainWindow):
         )
         self.a2.db.set('last_selected', [m.key for m in self.selected])
 
-        for thread in [
-            self._restart_thread,
-            self.runtime_watcher,
-            self._shutdown_thread,
-        ]:
-            if thread is not None:
-                try:
-                    thread.quit()
-                    if thread.isRunning():
-                        log.error('thread NOT stopped: %s', thread)
-                except RuntimeError:
-                    pass
+        from a2qt import shiboken
+        for thread in self._threads.values():
+            if thread is None:
+                continue
+            if not shiboken.isValid(thread):
+                continue
+            thread.requestInterruption()
+            tries = 10
+            while thread.isRunning():
+                if tries < 5:
+                    log.info(f'Wating for thread: {thread}')
+                tries -= 1
+                if not tries:
+                    log.error(f'Thread NOT stopped: {thread}')
+                    break
+                time.sleep(0.1)
 
         QtWidgets.QMainWindow.closeEvent(self, event)
 
@@ -436,15 +417,13 @@ class A2Window(QtWidgets.QMainWindow):
         )
 
     def _set_runtime_actions_vis(self):
-        live = self.runtime_watcher.is_live
+        live = self._threads['runtime'].is_live
         self.ui.actionUnload_a2_Runtime.setVisible(live)
         self.ui.actionReload_a2_Runtime.setVisible(live)
         self.ui.actionLoad_a2_Runtime.setVisible(not live)
 
     def shut_down_runtime(self):
-        self._shutdown_thread = ShutdownThread(self)
-        self._shutdown_thread.finished.connect(self._shutdown_thread.deleteLater)
-        self._shutdown_thread.start()
+        self._run_thread('shutdown', ShutdownThread)
 
     def load_runtime_and_ui(self):
         self.settings_changed()
@@ -563,6 +542,10 @@ class A2Window(QtWidgets.QMainWindow):
             self.module_view.draw_mod()
         self._restore_splitter()
         self.setEnabled(True)
+
+        thread = self._run_thread('runtime', RuntimeWatcher)
+        thread.change.connect(self.setWindowTitle)
+
         log.info('A2Window initialised! (%.3fs)', time.process_time())
 
     def showEvent(self, event):
@@ -585,18 +568,25 @@ class A2Window(QtWidgets.QMainWindow):
     def on_uninstall_a2(self):
         a2util.start_process_detached(os.path.join(self.a2.paths.a2, 'Uninstall a2.exe'))
 
+    def _run_thread(self, name, thread_class):
+        thread = thread_class(self)
+        self._threads[name] = thread
+        thread.finished.connect(thread.deleteLater)
+        thread.start()
+        return thread
+
 
 class RestartThread(QtCore.QThread):
-    def __init__(self, a2, parent):
+    def __init__(self, parent):
         super(RestartThread, self).__init__(parent)
-        self.a2 = a2
 
     def run(self):
         self.msleep(RESTART_DELAY)
+        a2 = a2core.A2Obj.inst()
         _retval, _pid = a2util.start_process_detached(
-            self.a2.paths.autohotkey,
-            [self.a2.paths.a2_script],
-            self.a2.paths.a2,
+            a2.paths.autohotkey,
+            [a2.paths.a2_script],
+            a2.paths.a2,
         )
 
 
@@ -607,6 +597,7 @@ class ShutdownThread(QtCore.QThread):
         super(ShutdownThread, self).__init__(parent)
 
     def run(self):
+        import a2runtime
         pid = a2runtime.kill_a2_process()
         if pid:
             log.info('Shut down process with PID: %s', pid)
@@ -614,32 +605,57 @@ class ShutdownThread(QtCore.QThread):
 
 
 class RuntimeWatcher(QtCore.QThread):
-    message = QtCore.Signal(str)
+    change = QtCore.Signal(str)
 
     def __init__(self, parent):
         super(RuntimeWatcher, self).__init__(parent)
-        self.lifetime = 0
         self.is_live = False
-        self.stopped = False
+        self._lifetime = 0
+        self._slept = 0
+        self._win_title = None
 
-    def quit(self):
-        self.stopped = True
-        self.terminate()
+    def _build_win_title(self, state=None):
+        """Update the window title on messages."""
+        if state is None:
+            self.change.emit(self._win_title)
+            return
+
+        if state is True:
+            self.change.emit(f'{self._win_title} - {TITLE_ONLINE}')
+        else:
+            self.change.emit(f'{self._win_title} - {TITLE_OFFLINE}')
+
+    def _build_title_base(self):
+        a2 = a2core.A2Obj.inst()
+        if os.path.isdir(a2.paths.git):
+            import a2ahk
+            self._win_title = a2ahk.get_variables(a2.paths.a2_config).get('a2_title', a2core.NAME)
+        else:
+            self._win_title = a2core.NAME
 
     def run(self):
-        while not self.stopped:
-            self.msleep(RUNTIME_WATCH_INTERVAL)
+        self._build_title_base()
+        import a2runtime
+
+        while not self.isInterruptionRequested():
+            # take more shorter naps
+            if self._slept < RUNTIME_WATCH_INTERVAL:
+                self.msleep(50)
+                self._slept += 50
+                continue
+            self._slept = 0
+
             self.is_live = a2runtime.is_runtime_live()
 
             if self.is_live:
-                self.lifetime += 1
-                if self.lifetime < 5:
-                    self.message.emit('Runtime is Live!')
+                self._lifetime += 1
+                if self._lifetime < 5:
+                    self._build_win_title(True)
                 else:
-                    self.message.emit('')
+                    self._build_win_title()
             else:
-                self.lifetime = 0
-                self.message.emit('Runtime is Offline!')
+                self._lifetime = 0
+                self._build_win_title(False)
 
 
 if __name__ == '__main__':

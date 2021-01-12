@@ -11,7 +11,6 @@ import a2uic
 import a2core
 import a2util
 import a2ctrl.connect
-import a2path
 from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
