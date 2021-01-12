@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from a2qt import QtCore, QtWidgets
 
-import a2ctrl
+import a2uic
 import a2element.hotkey
 from a2widget.a2text_field import A2CodeField
 from a2widget.a2hotkey import scope_widget_ui, edit_widget_ui
@@ -31,8 +31,8 @@ class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
-        a2ctrl.check_ui_module(edit_widget_ui)
-        a2ctrl.check_ui_module(scope_widget_ui)
+        a2uic.check_module(edit_widget_ui)
+        a2uic.check_module(scope_widget_ui)
 
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)

@@ -1,13 +1,13 @@
 from a2qt import QtCore, QtWidgets
 from a2widget.demo import layer_demo_ui
-import a2ctrl
+import a2uic
 
 
 class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
-        a2ctrl.check_ui_module(layer_demo_ui)
+        a2uic.check_module(layer_demo_ui)
 
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)

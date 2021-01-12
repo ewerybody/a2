@@ -19,6 +19,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 from a2qt import QtCore, QtWidgets
 
+import a2uic
 import a2core
 import a2ctrl.connect
 import a2util
@@ -147,7 +148,7 @@ class Edit(EditCtrl):
         from a2widget.a2hotkey import edit_widget_ui, edit_func_widget_ui
 
         for module in [edit_func_widget_ui, edit_widget_ui]:
-            a2ctrl.check_ui_module(module)
+            a2uic.check_module(module)
 
         self.ui = edit_widget_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)

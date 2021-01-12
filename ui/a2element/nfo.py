@@ -1,11 +1,6 @@
-"""
-a2element.nfo
-
-@created: Sep 3, 2016
-@author: eRiC
-"""
 from a2qt import QtWidgets
 
+import a2uic
 import a2core
 import a2ctrl.connect
 from a2element import nfo_edit_ui
@@ -43,7 +38,7 @@ class Edit(QtWidgets.QGroupBox):
         self.main_widget = QtWidgets.QWidget(self)
         self.boxlayout.addWidget(self.main_widget)
 
-        a2ctrl.check_ui_module(nfo_edit_ui)
+        a2uic.check_module(nfo_edit_ui)
         self.ui = nfo_edit_ui.Ui_edit()
         self.ui.setupUi(self.main_widget)
         self.ui.cfg_tags.set_available_tags(a2core.A2TAGS)

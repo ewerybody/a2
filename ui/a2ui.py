@@ -5,6 +5,7 @@ import os
 import time
 from functools import partial
 
+import a2uic
 import a2dev
 import a2core
 import a2ctrl
@@ -86,7 +87,7 @@ class A2Window(QtWidgets.QMainWindow):
     def _setup_ui(self):
         from a2widget import a2design_ui
 
-        a2ctrl.check_ui_module(a2design_ui)
+        a2uic.check_module(a2design_ui)
         self.ui = a2design_ui.Ui_a2MainWindow()
         self.ui.setupUi(self)
 

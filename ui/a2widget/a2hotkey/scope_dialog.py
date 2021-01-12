@@ -1,10 +1,7 @@
-"""
-Home of the Scope Dialog ui.
-"""
 from a2qt import QtCore, QtWidgets
 
+import a2uic
 import a2core
-import a2ctrl
 
 from . import scope_dialog_ui
 from .hotkey_widget import Vars
@@ -20,7 +17,7 @@ class ScopeDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, config):
         super(ScopeDialog, self).__init__(parent)
-        a2ctrl.check_ui_module(scope_dialog_ui)
+        a2uic.check_module(scope_dialog_ui)
         self.ui = scope_dialog_ui.Ui_ScopeDialog()
         self.ui.setupUi(self)
         self.setWindowTitle('Setup Scope')

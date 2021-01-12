@@ -1,17 +1,11 @@
-﻿# -*- coding: utf-8 -*-
-"""
-Created on 11.09.2017
-
-@author: eric
-"""
-import os
+﻿import os
 import inspect
 
+import a2uic
 import a2ahk
 import a2ctrl
 import a2core
 import a2util
-import a2runtime
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
 
@@ -45,7 +39,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
         from . import base_ui
 
-        a2ctrl.check_ui_module(base_ui)
+        a2uic.check_module(base_ui)
         self.ui = base_ui.Ui_Keyboard()
         self.ui.setupUi(self)
 
@@ -473,7 +467,7 @@ class CursorBlockWidget(QtWidgets.QWidget):
 
         from . import cursor_block_ui
 
-        a2ctrl.check_ui_module(cursor_block_ui)
+        a2uic.check_module(cursor_block_ui)
         self.ui = cursor_block_ui.Ui_CursorBlock()
         self.ui.setupUi(self)
 
@@ -493,7 +487,7 @@ class NumpadWidget(QtWidgets.QWidget):
 
         from . import numpad_ui
 
-        a2ctrl.check_ui_module(numpad_ui)
+        a2uic.check_module(numpad_ui)
         self.ui = numpad_ui.Ui_Numpad()
         self.ui.setupUi(self)
 
@@ -507,7 +501,7 @@ class MouseWidget(QtWidgets.QWidget):
 
         from . import mouse_ui
 
-        a2ctrl.check_ui_module(mouse_ui)
+        a2uic.check_module(mouse_ui)
         self.ui = mouse_ui.Ui_Mouse()
         self.ui.setupUi(self)
 
@@ -537,6 +531,7 @@ def win_standard_keys():
 
 
 def get_current_hotkeys():
+    import a2runtime
     global_hks, include_hks, exclude_hks = a2runtime.collect_hotkeys()
     modifiers_global = _sort_hotkey_modifiers(global_hks)
 

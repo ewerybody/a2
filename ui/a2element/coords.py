@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+import a2uic
 import a2ctrl
 import a2core
 
@@ -49,8 +49,7 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        a2ctrl.check_ui_module(coords_edit_ui)
-
+        a2uic.check_module(coords_edit_ui)
         self.ui = coords_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
         self.check_new_name()

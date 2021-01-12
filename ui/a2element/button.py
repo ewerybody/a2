@@ -1,5 +1,6 @@
 from a2qt import QtWidgets
 
+import a2uic
 import a2ctrl
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
@@ -53,7 +54,7 @@ class Edit(EditCtrl):
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = 'https://github.com/ewerybody/a2/wiki/Button-element'
-        a2ctrl.check_ui_module(button_edit_ui)
+        a2uic.check_module(button_edit_ui)
         self.ui = button_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)

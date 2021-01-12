@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+import a2uic
 import a2ctrl
 
 from a2qt import QtCore, QtWidgets
@@ -74,7 +74,7 @@ class Edit(EditCtrl):
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
 
-        a2ctrl.check_ui_module(pathlist_edit_ui)
+        a2uic.check_module(pathlist_edit_ui)
         self.ui = pathlist_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)

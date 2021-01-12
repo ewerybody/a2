@@ -7,6 +7,7 @@ import sys
 from a2qt import QtGui, QtCore, QtWidgets
 
 import a2ahk
+import a2uic
 import a2core
 import a2util
 import a2ctrl.connect
@@ -44,7 +45,7 @@ class A2Settings(QtWidgets.QWidget):
     def _setup_ui(self, show_tab):
         from a2widget import a2settings_view_ui
 
-        a2ctrl.check_ui_module(a2settings_view_ui)
+        a2uic.check_module(a2settings_view_ui)
         self.ui = a2settings_view_ui.Ui_a2settings()
         self.ui.setupUi(self)
 
@@ -126,7 +127,7 @@ class A2Settings(QtWidgets.QWidget):
         """Build the licenses tab on demand."""
         from a2widget import a2licenses_widget_ui
 
-        a2ctrl.check_ui_module(a2licenses_widget_ui)
+        a2uic.check_module(a2licenses_widget_ui)
         ui = a2licenses_widget_ui.Ui_Form()
         ui.setupUi(self.ui.a2settings_tab)
         text = ui.a2license_text.text()
@@ -369,6 +370,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
     def _set_path(self, path, tooltip):
         checked = False
         if path:
+            import a2path
             target_path = getattr(self.a2.paths, self.path_name)
             checked = a2path.is_same(path, target_path)
             if not checked:
@@ -397,7 +399,7 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
     def _setup_ui(self):
         from a2widget import a2settings_advanced_ui
 
-        a2ctrl.check_ui_module(a2settings_advanced_ui)
+        a2uic.check_module(a2settings_advanced_ui)
         self.ui = a2settings_advanced_ui.Ui_Form()
         self.ui.setupUi(self.tab_widget)
 

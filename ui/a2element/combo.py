@@ -1,5 +1,6 @@
 from a2qt import QtCore, QtWidgets
 
+import a2uic
 import a2ctrl
 import a2util
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
@@ -66,7 +67,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number
 
-        a2ctrl.check_ui_module(combo_edit_ui)
+        a2uic.check_module(combo_edit_ui)
         self.ui = combo_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 

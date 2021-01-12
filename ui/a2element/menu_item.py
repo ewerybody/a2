@@ -4,6 +4,7 @@ in the main menu bar under module.
 """
 from a2qt import QtWidgets, QtGui
 
+import a2uic
 import a2ctrl
 import a2core
 from a2element import EditCtrl
@@ -48,7 +49,7 @@ class Edit(EditCtrl):
 
         from a2element import menu_item_edit_ui
 
-        a2ctrl.check_ui_module(menu_item_edit_ui)
+        a2uic.check_module(menu_item_edit_ui)
         self.ui = menu_item_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)

@@ -6,6 +6,7 @@ from copy import deepcopy
 
 from a2qt import QtWidgets, QtCore
 
+import a2uic
 import a2core
 import a2ctrl
 import a2download
@@ -28,7 +29,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         self.mod_source = mod_source
         self.source_cfg = deepcopy(mod_source.config)
 
-        a2ctrl.check_ui_module(modsource_editor_ui)
+        a2uic.check_module(modsource_editor_ui)
         self.ui.attributes_widget = QtWidgets.QWidget(self)
         self.ui.main_layout.insertWidget(1, self.ui.attributes_widget)
         self.source_ui = modsource_editor_ui.Ui_ModSourceUi()

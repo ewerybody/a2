@@ -1,3 +1,4 @@
+import a2uic
 import a2ctrl
 from a2qt import QtWidgets, QtCore
 from a2element import string_edit_ui, DrawCtrl, EditCtrl
@@ -53,7 +54,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_string
 
-        a2ctrl.check_ui_module(string_edit_ui)
+        a2uic.check_module(string_edit_ui)
         self.ui = string_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 

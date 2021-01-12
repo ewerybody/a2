@@ -1,3 +1,4 @@
+import a2uic
 import a2ctrl
 import a2util
 
@@ -68,7 +69,7 @@ class Edit(EditCtrl):
         if 'children' not in self.cfg:
             self.cfg['children'] = []
 
-        a2ctrl.check_ui_module(group_edit_ui)
+        a2uic.check_module(group_edit_ui)
         self.ui = group_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 

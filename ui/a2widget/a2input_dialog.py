@@ -1,12 +1,6 @@
-"""
-a2widget.a2input_dialog
-
-@created: Sep 3, 2016
-@author: eRiC
-"""
 from a2qt import QtCore, QtWidgets
 
-import a2ctrl
+import a2uic
 from a2widget import a2input_dialog_ui
 
 
@@ -21,7 +15,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
             | QtCore.Qt.WindowCloseButtonHint
             | QtCore.Qt.MSWindowsFixedSizeDialogHint
         )
-        a2ctrl.check_ui_module(a2input_dialog_ui)
+        a2uic.check_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
         self.setModal(True)

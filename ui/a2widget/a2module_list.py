@@ -1,6 +1,7 @@
 from a2qt import QtGui, QtCore, QtWidgets
 
 import a2mod
+import a2uic
 import a2ctrl
 import a2core
 
@@ -126,7 +127,7 @@ class A2ModuleList(QtWidgets.QWidget):
     def setup_ui(self):
         from a2widget import a2module_list_ui
 
-        a2ctrl.check_ui_module(a2module_list_ui)
+        a2uic.check_module(a2module_list_ui)
         self.ui = a2module_list_ui.Ui_ModuleList()
         self.ui.setupUi(self)
 

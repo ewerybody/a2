@@ -2,6 +2,7 @@ import traceback
 
 from a2qt import QtCore, QtWidgets, QtGui
 
+import a2uic
 import a2core
 import a2ctrl
 import a2util
@@ -32,7 +33,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.main = main
         from a2widget import a2module_view_ui
 
-        a2ctrl.check_ui_module(a2module_view_ui)
+        a2uic.check_module(a2module_view_ui)
         self.ui = a2module_view_ui.Ui_A2ModuleView()
         self.ui.setupUi(self)
         self.update_header()

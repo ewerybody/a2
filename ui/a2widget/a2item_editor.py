@@ -5,6 +5,7 @@ from collections import OrderedDict
 
 from a2qt import QtCore, QtWidgets
 
+import a2uic
 import a2core
 import a2ctrl.connect
 import a2ctrl.icons
@@ -37,7 +38,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def __init__(self, *args, **kwargs):
         super(A2ItemEditor, self).__init__(*args, **kwargs)
-        a2ctrl.check_ui_module(a2item_editor_ui)
+        a2uic.check_module(a2item_editor_ui)
         self._drawing = True
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)

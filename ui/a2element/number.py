@@ -1,5 +1,4 @@
-from functools import partial
-
+import a2uic
 import a2ctrl
 
 from a2qt import QtWidgets
@@ -78,7 +77,7 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.helpUrl = self.a2.urls.help_number
 
-        a2ctrl.check_ui_module(number_edit_ui)
+        a2uic.check_module(number_edit_ui)
         self.ui = number_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
@@ -95,8 +94,7 @@ class Edit(EditCtrl):
             # value from dict, backup value from ctrl
             set_func(self.cfg.get(ctrl.objectName()[4:], ctrl.value()))
             ctrl.valueChanged.connect(set_func)
-        # Make sure valueChanged signal does not pass a value into set_value
-        self.ui.cfg_decimals.valueChanged.connect(partial(self.set_value, None))
+        self.ui.cfg_decimals.valueChanged.connect(self.on_cfg_decimals_value_changed)
 
         # Setting actual value widget just after all specs have been set.
         if 'value' in self.cfg:
@@ -104,6 +102,10 @@ class Edit(EditCtrl):
         else:
             self.set_value()
         self.ui.value.valueChanged.connect(self.set_value)
+
+    def on_cfg_decimals_value_changed(self):
+        # Make sure valueChanged signal does not pass a value into set_value.
+        self.set_value(None)
 
     def set_value(self, value=None, *_args):
         if value is None:

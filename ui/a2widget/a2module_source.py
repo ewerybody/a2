@@ -3,6 +3,7 @@ Stuff for the module source widget in main settings.
 """
 from a2qt import QtGui, QtCore, QtWidgets
 
+import a2uic
 import a2core
 import a2ctrl
 import a2modsource
@@ -60,7 +61,7 @@ class ModSourceWidget(QtWidgets.QWidget):
     def _setup_ui(self, show_enabled):
         from a2widget import a2module_source_ui
 
-        a2ctrl.check_ui_module(a2module_source_ui)
+        a2uic.check_module(a2module_source_ui)
         self.ui = a2module_source_ui.Ui_Form()
         self.ui.setupUi(self)
 
@@ -111,7 +112,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         if self.ui_body is None:
             from a2widget import a2module_source_body_ui
 
-            a2ctrl.check_ui_module(a2module_source_body_ui)
+            a2uic.check_module(a2module_source_body_ui)
             self.ui_body = a2module_source_body_ui.Ui_Form()
             self.ui_body.setupUi(self.ui.details_widget)
             self.ui_body.local_path.changable = False

@@ -2,6 +2,7 @@ from pprint import pprint
 
 from a2qt import QtWidgets
 
+import a2uic
 import a2ctrl
 from a2widget.a2hotkey import edit_func_widget, edit_func_widget_ui
 
@@ -10,7 +11,7 @@ class Demo(QtWidgets.QMainWindow):
     def __init__(self):
         super(Demo, self).__init__()
 
-        a2ctrl.check_ui_module(edit_func_widget_ui)
+        a2uic.check_module(edit_func_widget_ui)
 
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
