@@ -18,7 +18,8 @@ outro(items)
 ; --------------------------------------------------------
 Return
 #Include, _installib.ahk
-#Include ..\Autohotkey\lib\path.ahk
+#Include, ..\Autohotkey\lib
+#Include, path.ahk
 
 
 outro(items) {
