@@ -105,7 +105,7 @@ class A2Settings(QtWidgets.QWidget):
 
     def add_source_url(self, url=None):
         dialog = a2module_source.AddSourceDialog(self.main, url)
-        dialog.okayed.connect(self.reload_requested.emit)
+        dialog.accepted.connect(self.reload_requested.emit)
         dialog.show()
 
     def on_tab_changed(self, tab_index):
