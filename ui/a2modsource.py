@@ -291,11 +291,11 @@ def get_remote_cfg(update_url, main_branch=None):
     Get the latest config from the given update_url.
     """
     url = update_url.lower().strip()
-
     if url.startswith('http') or 'github.com/' in url:
         if 'github.com/' in url:
             if remote_data := get_github_cfg(url):
                 return remote_data
+
             owner, repo = a2download.get_github_owner_repo(url)
             download_url = '/'.join(
                 [
@@ -354,6 +354,7 @@ def get_github_cfg(url):
         'version': remote_data['tag_name'],
         'prerelease': remote_data.get('prerelease', False),
         'zip_size': size,
+        'update_url': url,
     }
     return cfg
 
@@ -419,7 +420,7 @@ class ModSourceFetchThread(QtCore.QThread):
                 self.version,
                 '%i kb' % (self._downloaded_blocks * 1024),
             )
-        log.info(msg)
+        # log.info(msg)
         self.status.emit(msg)
 
     def run(self):
