@@ -292,37 +292,26 @@ class Paths:
         if os.path.isfile(self.a2_portable):
             raise RuntimeError('Data path cannot be overridden when portable!')
 
-        if path is None:
-            data_path = self.default_data
-        else:
-            data_path = os.path.relpath(path, self.a2)
-            if data_path.startswith('.'):
-                data_path = path
-
-        tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
-        with open(tmpl8_path) as file_obj:
-            tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
-        entrypoint_script = tmpl8.format(data_path=data_path)
-
-        script_path = os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME)
-        with open(script_path, 'w') as file_obj:
-            file_obj.write(entrypoint_script)
-
+        self.data = self.default_data if path is None else path
+        self._write_entrypoint()
         self._build_data_paths()
 
-        # make sure the user data dir forwards the includes accordingly
+        # make sure standard files are available
         includes_path = os.path.join(self.data, USER_INCLUDES_NAME)
-        if not os.path.isfile(includes_path):
-            import shutil
+        for std_file_path in includes_path, self.user_cfg:
+            if not os.path.isfile(std_file_path):
+                import shutil
 
-            includes_src = os.path.join(self.defaults, USER_INCLUDES_NAME)
-            shutil.copyfile(includes_src, includes_path)
+                includes_src = os.path.join(self.defaults, os.path.basename(std_file_path))
+                shutil.copyfile(includes_src, std_file_path)
 
     def get_data_path(self):
         if os.path.isfile(self.user_includes):
+            include_key = '#include '
             with open(self.user_includes) as file_obj:
                 line = file_obj.readline().strip()
-            include_key = '#include '
+                while line and not line.startswith(include_key):
+                    line = file_obj.readline().strip()
             if not line.startswith(include_key):
                 return self.default_data
 
@@ -336,6 +325,23 @@ class Paths:
 
     def has_data_override(self):
         return self.data != self.default_data
+
+    def _write_entrypoint(self):
+        try:
+            data_path = os.path.relpath(self.data, self.a2)
+            if data_path.startswith('.'):
+                data_path = self.data
+        except ValueError:
+            data_path = self.data
+
+        tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
+        with open(tmpl8_path) as file_obj:
+            tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
+        entrypoint_script = tmpl8.format(data_path=data_path)
+
+        script_path = os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME)
+        with open(script_path, 'w') as file_obj:
+            file_obj.write(entrypoint_script)
 
 
 def get_logger(name):

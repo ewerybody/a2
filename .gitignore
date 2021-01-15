@@ -1,7 +1,7 @@
 # a2 userfiles
 settings/
 modules/
-data/
+data*/
 a2_init.ahk
 a2_settings.ahk
 
