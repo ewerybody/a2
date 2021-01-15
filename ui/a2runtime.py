@@ -325,6 +325,7 @@ class SourceLibsCollection(_Collection):
     libraries shipped and its modules don't need to care for dedicated includes
     as well.
     """
+
     def __init__(self, a2obj_instance=None):
         super(SourceLibsCollection, self).__init__(a2obj_instance)
         self.name = 'source_libs'
@@ -431,8 +432,11 @@ def get_a2_runtime_pid():
     :return: PID string of an Autohotkey process running a2.
     :rtype: str
     """
-    wmicall = f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" ' 'get ProcessID,CommandLine'
-    wmicout = subprocess.check_output(wmicall, startupinfo=_get_hidden_process_startup_nfo())
+    wmicout = subprocess.check_output(
+        f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" ' 'get ProcessID,CommandLine',
+        startupinfo=_get_hidden_process_startup_nfo(),
+        stderr=subprocess.STDOUT
+    )
     wmicout = str(wmicout).split('\\r\\r\\n')
 
     for line in wmicout[1:-1]:
