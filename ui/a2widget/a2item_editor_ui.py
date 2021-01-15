@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2item_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ class Ui_A2ItemEditor(object):
     def setupUi(self, A2ItemEditor):
         if not A2ItemEditor.objectName():
             A2ItemEditor.setObjectName(u"A2ItemEditor")
-        A2ItemEditor.resize(1069, 653)
+
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

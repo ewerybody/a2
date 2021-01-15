@@ -17,7 +17,7 @@ class Ui_A2InputDialog(object):
     def setupUi(self, A2InputDialog):
         if not A2InputDialog.objectName():
             A2InputDialog.setObjectName(u"A2InputDialog")
-        A2InputDialog.resize(368, 68)
+
         self.main_layout = QVBoxLayout(A2InputDialog)
         self.main_layout.setObjectName(u"main_layout")
         self.label = QLabel(A2InputDialog)

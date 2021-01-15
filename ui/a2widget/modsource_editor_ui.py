@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'modsource_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,7 +20,7 @@ class Ui_ModSourceUi(object):
     def setupUi(self, ModSourceUi):
         if not ModSourceUi.objectName():
             ModSourceUi.setObjectName(u"ModSourceUi")
-        ModSourceUi.resize(747, 336)
+
         self.formLayout = QFormLayout(ModSourceUi)
         self.formLayout.setObjectName(u"formLayout")
         self.formLayout.setLabelAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
