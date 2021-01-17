@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'nfo_edit.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ class Ui_edit(object):
     def setupUi(self, edit):
         if not edit.objectName():
             edit.setObjectName(u"edit")
-        edit.resize(1059, 287)
+
         edit.setWindowTitle(u"Form")
         self.edit_layout = QFormLayout(edit)
         self.edit_layout.setObjectName(u"edit_layout")

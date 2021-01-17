@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'edit_func_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ class Ui_FuncWidget(object):
     def setupUi(self, FuncWidget):
         if not FuncWidget.objectName():
             FuncWidget.setObjectName(u"FuncWidget")
-        FuncWidget.resize(553, 83)
+
         self.verticalLayout = QVBoxLayout(FuncWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName(u"verticalLayout")

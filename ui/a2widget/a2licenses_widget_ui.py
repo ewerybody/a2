@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'a2licenses_widget.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-        Form.resize(677, 213)
+
         Form.setWindowTitle(u"")
         self.license_layout = QVBoxLayout(Form)
         self.license_layout.setObjectName(u"license_layout")
