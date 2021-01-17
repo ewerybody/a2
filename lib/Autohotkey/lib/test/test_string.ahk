@@ -3,16 +3,15 @@
 
 ; test join
 aabc := ["a", "b", "c"]
+abcs := "abc"
 joint := string_join(aabc, "||")
 sabc := string_join(aabc, "")
 arr := StrSplit(joint, "||")
 res := ""
-Loop, % arr.MaxIndex() {
-    this := arr[A_Index]
-    res = %res%%this%
-}
-j1 := assertmsg(sabc = res)
-msg = string_join:%j1% test:>%sabc%< control:>%res%<`n
+Loop, % arr.MaxIndex()
+    res .= arr[A_Index]
+j1 := assertmsg(sabc == abcs)
+msg = string_join:%j1% test:>%sabc%< control:>%abcs%<`n
 
 ; Test quote/unquote
 s := "'XfgfsgsdfgX'"
