@@ -1,10 +1,11 @@
 """
-a2 package assembly script to prepare deployment.
+a2 package assembly script to prepare deployment after pyinstaller.
 
 Whow! Batch files are such a pain!
 Better keep them as short as possible.
 """
 import os
+from os.path import join
 import shutil
 import codecs
 import subprocess
@@ -14,7 +15,7 @@ import a2ahk
 import a2util
 
 Paths = _build_package_init.Paths
-PYSIDE = 'PySide6'
+
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = '[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' % DESKTOP_ICO_FILE
@@ -34,19 +35,19 @@ LIB_EXCLUDES = (
 UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
 UI_REMOVE_FILES = (
     'd3dcompiler_47.dll',
-    'Qt5VirtualKeyboard.dll',
     'libGLESv2.dll',
-    'Qt5Quick.dll',
     'opengl32sw.dll',
-    'Qt5QmlModels.dll',
-    'Qt5DBus.dll',
-    'Qt5Pdf.dll',
-    fr'{PYSIDE}\plugins\platforms\qwebgl.dll',
-    fr'{PYSIDE}\plugins\imageformats\qtiff.dll',
-    fr'{PYSIDE}\plugins\imageformats\qpdf.dll',
-    fr'{PYSIDE}\plugins\imageformats\qtga.dll',
 )
-UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy', fr'{PYSIDE}\translations'
+UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy'
+
+PYSIDE = 'PySide'
+PYSIDE_VERSION = 2
+QT_VERSION = 5
+# The dlls we want to KEEP! For some reason Qml is indispensable :/
+QT_HAVE_DLLS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg', 'Qml'
+QT_DLL = 'Qt%i%s.dll'
+SHIBOKEN = 'shiboken'
+RM_IMG_FORMATS = ('tiff', 'pdf', 'tga')
 
 
 def main():
@@ -61,6 +62,7 @@ def main():
 
     copy_files()
     cleanup()
+    fix_qt()
 
     config_file = os.path.join(Paths.distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
@@ -252,6 +254,73 @@ def make_portable():
         [tar, '-a', '-c', '-f', os.path.join(Paths.distroot, portable_name), '*'],
         cwd=Paths.dist_portable,
     )
+
+
+def fix_qt():
+    """
+    Deal with the preferred Qt for Python version.
+    Remove others and unwanted stuff from it.
+
+
+    """
+    wanted_dlls = [QT_DLL % (QT_VERSION, base) for base in QT_HAVE_DLLS]
+    wanted_dlls
+    for item in os.scandir(Paths.distui):
+        if item.is_file():
+            if not item.name.endswith('.dll'):
+                continue
+
+            if item.name.startswith(SHIBOKEN):
+                if item.name.startswith(f'{SHIBOKEN}{PYSIDE_VERSION}'):
+                    continue
+                print('removing %s' % item.name)
+                os.unlink(item.path)
+                continue
+
+            if not item.name.startswith('Qt'):
+                continue
+            if item.name in wanted_dlls:
+                continue
+            print('removing %s' % item.name)
+            os.unlink(item.path)
+
+        elif item.is_dir():
+            for name in PYSIDE, SHIBOKEN:
+                if item.name.startswith(name):
+                    if item.name == f'{name}{PYSIDE_VERSION}':
+                        continue
+                    else:
+                        shutil.rmtree(item.path)
+                        assert not os.path.isdir(item.path)
+
+    # throw away the translations dir
+    trans_path = os.path.join(Paths.distui, f'{PYSIDE}{PYSIDE_VERSION}', 'translations')
+    if os.path.isdir(trans_path):
+        shutil.rmtree(trans_path)
+        assert not os.path.isdir(trans_path)
+
+    # ensure the plugins dir is available at all
+    plugins_rel = os.path.join(f'{PYSIDE}{PYSIDE_VERSION}', 'plugins')
+    plugins_path = os.path.join(Paths.distui, plugins_rel)
+    if not os.path.isdir(plugins_path):
+        import sysconfig
+
+        plugins_source = os.path.join(sysconfig.get_paths()['purelib'], plugins_rel)
+        shutil.copytree(plugins_source, plugins_path)
+
+    # cherry pick the plugins
+    rm_plugins = [os.path.join('imageformats', 'q%s.dll' % n) for n in RM_IMG_FORMATS]
+    rm_plugins.append(os.path.join('platforms', 'qwebgl.dll'))
+    # rm_plugins.append(os.path.join('styles', 'qwindowsvistastyle.dll'))
+    for plug_name in rm_plugins:
+        full_path = os.path.join(plugins_path, plug_name)
+        if os.path.isfile(full_path):
+            print(f'removing: {plug_name}')
+            os.unlink(full_path)
+        # remove empty dirs
+        dir_path = os.path.dirname(full_path)
+        if not os.listdir(dir_path):
+            shutil.rmtree(dir_path)
 
 
 if __name__ == '__main__':
