@@ -1,9 +1,23 @@
 #include ..\a2dev_find_py.ahk
 pydir := path_dirname(a2dev_get_py())
-qtdll_path := pydir "\Lib\site-packages\PySide6\Qt6Core.dll"
-if (!FileExist(qtdll_path))
-    MsgBox, No Qt DLL Found here`n%qtdll%`nIs PySide6 installed?!?!
-FileGetVersion, version, %qtdll_path%
-if (!version)
-    MsgBox, No Qt DLL Version found!`n%qtdll_path%
-FileAppend, %version%, *
+; Lists all compatible versions, prefered verison top.
+cores := ["PySide2\Qt5Core.dll", "PySide6\Qt6Core.dll"]
+
+for _, rel_path in cores
+{
+    qtdll_path := pydir . "\Lib\site-packages\" . rel_path
+    if (!FileExist(qtdll_path))
+        Continue
+
+    FileGetVersion, version, %qtdll_path%
+    if version
+        Break
+}
+
+if (!version) {
+    msg := "Unable to find any of those:`n  "
+    msg .= string_join(cores, "`n  ") . "`n"
+    msg .= "Make sure at least one is installed!"
+    MsgBox, 16, No PySide Found!, %msg%
+} else
+    FileAppend, %version%, *
