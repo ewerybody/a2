@@ -2,8 +2,6 @@
 All things file system.
 """
 import os
-import shutil
-import fnmatch
 
 
 def iter_dirs(path):
@@ -36,6 +34,7 @@ def get_dir_names_except(path, pattern):
     if not os.path.isdir(path):
         return []
     from fnmatch import fnmatch
+
     return [i.name for i in os.scandir(path) if i.is_dir() and not fnmatch(i.name, pattern)]
 
 
@@ -49,6 +48,8 @@ def remove_dir(path):
     So there is no other safeguard needed.
     """
     import uuid
+    import shutil
+
     trash_path = os.path.join(os.getenv('TEMP'), str(uuid.uuid4()))
     os.rename(path, trash_path)
     shutil.rmtree(trash_path)

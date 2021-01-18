@@ -47,7 +47,7 @@ QT_VERSION = 5
 QT_HAVE_DLLS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg', 'Qml'
 QT_DLL = 'Qt%i%s.dll'
 SHIBOKEN = 'shiboken'
-RM_IMG_FORMATS = ('tiff', 'pdf', 'tga')
+RM_IMG_FORMATS = ('tiff', 'pdf', 'tga', 'icns')
 
 
 def main():

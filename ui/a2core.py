@@ -289,19 +289,16 @@ class Paths:
         """
         Make sure currently set user data path can be included by runtime.
         """
-        if os.path.isfile(self.a2_portable):
-            raise RuntimeError('Data path cannot be overridden when portable!')
-
         self.data = self.default_data if path is None else path
         self._write_entrypoint()
         self._build_data_paths()
 
         # make sure standard files are available
         includes_path = os.path.join(self.data, USER_INCLUDES_NAME)
+        import shutil
+
         for std_file_path in includes_path, self.user_cfg:
             if not os.path.isfile(std_file_path):
-                import shutil
-
                 includes_src = os.path.join(self.defaults, os.path.basename(std_file_path))
                 shutil.copyfile(includes_src, std_file_path)
 
