@@ -259,12 +259,15 @@ def make_portable():
 def fix_qt():
     """
     Deal with the preferred Qt for Python version.
-    Remove others and unwanted stuff from it.
+    Remove others and unwanted stuff from the package.
 
-
+    * handle shiboken dll
+    * handle selected Qt dlls
+    * handle shiboken and PySide dirs
+    * remove translation
+    * make sure the right plugin dir is present/remove other
     """
     wanted_dlls = [QT_DLL % (QT_VERSION, base) for base in QT_HAVE_DLLS]
-    wanted_dlls
     for item in os.scandir(Paths.distui):
         if item.is_file():
             if not item.name.endswith('.dll'):
