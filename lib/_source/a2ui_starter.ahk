@@ -1,4 +1,6 @@
 ; this is the script that becomes the a2ui.exe in root!
+;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
+
 #Persistent
 If (!A_IsCompiled)
 {
