@@ -118,9 +118,14 @@ explorer_select(basename) {
 explorer_show(path) {
     ; Open an Explorer with the given directory or file selected.
     path := StrReplace(path, "\\", "\")
+
+    explorer_path := path_join(A_WinDir, ["explorer.exe"])
     if path_is_file(path)
-        cmd = explorer.exe /select,"%path%"
+        cmd := """" . explorer_path . """ /select, """ . path . """"
+    else if path_is_dir(path)
+        cmd := """" . explorer_path . """ """ . path . """"
     else
-        cmd = explorer.exe "%path%"
+        MsgBox, No such path to explorer to!`n %path%
+
     Run, %cmd%
 }
