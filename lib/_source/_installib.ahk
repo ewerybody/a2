@@ -1,15 +1,32 @@
 ; Things we need for both the un- and installer!
-#Include ..\Autohotkey\lib\string.ahk
+#Include, ..\Autohotkey\lib
+#Include, ahk_functions.ahk
+#Include, string.ahk
+#Include, path.ahk
 
+logmsg(msg) {
+    FileAppend, %msg%`n, *
+}
+
+log_info(title, msg, timeout := 2147483) {
+    if check_silent()
+        logmsg(title . " " . msg), *
+    else
+        MsgBox, 0, %title%, %msg%, %timeout%
+}
+
+log_error(title, msg) {
+    if check_silent()
+        logmsg("ERROR: " . title . " " . msg)
+    else
+        MsgBox, 16, %title%, %msg%
+    ExitApp
+}
 
 complain_if_uncompiled() {
     If (!A_IsCompiled)
-    {
-        MsgBox, 16, ERROR, "%A_ScriptName%" should ONLY be run compiled!
-        ExitApp
-    }
+        log_error("Not Compiled!", "'" . A_ScriptName . "'' should ONLY be run compiled!")
 }
-
 
 get_a2dir() {
     ;builds default a2 dir in User\AppData\Local
@@ -19,7 +36,6 @@ get_a2dir() {
     return a2dir
 }
 
-
 find_processes_running_under(path) {
     attr_list := ["ExecutablePath", "ProcessId", "CommandLine", "Name"]
     attr_ex_path := attr_list[1]
@@ -27,7 +43,7 @@ find_processes_running_under(path) {
     path_len := StrLen(path)
 
     ; command =  where name='Autohotkey.exe' get %attrs% /format:list
-    command =  get %attrs% /format:list
+    command = get %attrs% /format:list
     result := _find_processes_get_wmic_output(command)
 
     processes := []
@@ -78,4 +94,31 @@ _find_processes_get_key_values(string_block) {
         results[key] := value
     }
     return results
+}
+
+check_silent() {
+    ; look into the commandline arguments for a --silent flag
+    for _, arg in A_Args
+    {
+        if (arg == "--silent")
+            Return true
+    }
+    return false
+}
+
+check_execution_dir() {
+    runsilent := check_silent()
+    dir_name := path_basename(A_ScriptDir)
+    parent_dir := path_join(A_ScriptDir, ["a2"])
+    msg := "This could mess things up!`nAborting ..."
+
+    if (dir_name == "_ source") {
+        msg := "Running from source dir!? " . msg
+        log_error("Wrong dir?!?!", msg)
+    }
+
+    if (!FileExist(parent_dir)) {
+        msg := "Not running from 'a2' tmp installation dir!? " . msg
+        log_error("Wrong dir?!?!", msg)
+    }
 }
