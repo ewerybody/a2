@@ -7,6 +7,8 @@ set a2path=%this_path%..\..\
 set icon=%a2path%ui\res\a2x.ico
 
 set a2data=%LOCALAPPDATA%\a2
+echo a2data: %a2data%
+
 set a2backup=%a2data% - Backup
 if not exist "%a2backup%" (
     echo creating backup ... %a2backup%
@@ -19,7 +21,8 @@ if not exist "%a2data%" (
     ROBOCOPY "%a2backup%" "%a2data%" /E > nul
     REM XCOPY "%a2backup%\*" "%a2data%\*" /E
 )
-echo creating executable ...
-%Ahk2Exe% /in "%script%" /out "%executable%" /icon %icon% /mpress 0
-echo copy executable ...
+echo creating executable %executable%...
+%Ahk2Exe% /in "%script%" /out "%executable%" /mpress 0
+echo copy executable to a2data ...
 copy "%executable%" "%a2data%"
+pause
