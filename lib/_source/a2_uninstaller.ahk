@@ -8,23 +8,34 @@
 ; * write uninstall deleter batch file
 ; * run uninstall deleter batch
 ; * exit
+;@Ahk2Exe-ConsoleApp
+;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2x.ico
 
 complain_if_uncompiled()
 
+run_silent := check_silent()
 A2DIR := get_a2dir()
+NAME := "a2 Uninstaller"
 items := gather_items()
 outro(items)
+ask_for_user_data_deletion(items)
+delete_items(items)
+
+batch_path := create_deleter_batch(A2DIR)
+logmsg(" calling installer deleter...")
+Run, %batch_path%
+ExitApp
 
 ; --------------------------------------------------------
 Return
 #Include, _installib.ahk
-#Include, ..\Autohotkey\lib
-#Include, path.ahk
-
 
 outro(items) {
+    global run_silent, NAME
+
     if (!items.Length()) {
-        msgbox, 64, a2 Uninstaller, There is nothing to Uninstall!
+        msg := "There is nothing to Uninstall!"
+        log_info(NAME, msg)
         ExitApp
     }
 
@@ -34,27 +45,24 @@ outro(items) {
         process_msg .= processes.Length() . ").`n"
         process_msg .= "Either you shut them down yourself or they'd be terminated.`n"
     }
-
     uninstall_msg := "This will Uninstall a2 for user """ . A_UserName . """.`n"
     continue_msg := "`nDo you want to continue?"
-    title := "a2 Uninstaller"
-    MsgBox, 33, %title%, %uninstall_msg%%process_msg%%continue_msg%
-    IfMsgBox Cancel
-        ExitApp
+    if (!run_silent) {
+        MsgBox, 33, %NAME%, %uninstall_msg%%process_msg%%continue_msg%
+        IfMsgBox, Cancel
+        {
+            ExitApp
+        }
+    } else {
+        logmsg(uninstall_msg)
+    }
 
     ; shut down processes
-    for i, proc in processes
+    for i, proc in processes {
+        logmsg(" closing process: " . proc.ProcessId . "...")
         Process, Close, % proc.ProcessId
-
-    ask_for_user_data_deletion(items)
-
-    delete_items(items)
-
-    batch_path := create_deleter_batch()
-    Run, %batch_path%
-    ExitApp
+    }
 }
-
 
 gather_items() {
     global A2DIR
@@ -64,6 +72,12 @@ gather_items() {
         {
             ; Skip Uninstaller executable for now (cannot delete itself while running)
             if (A_LoopFileName == A_ScriptName)
+                continue
+            ; do not touch the users data include file
+            if (A_LoopFileName == "_ user_data_include")
+                continue
+            ; Skip the user data, add it only on demand.
+            if (A_LoopFileName == "data" AND path_is_dir(A_LoopFileFullPath))
                 continue
             items.push(A_LoopFileFullPath)
         }
@@ -105,39 +119,31 @@ gather_items() {
 }
 
 ask_for_user_data_deletion(ByRef items) {
-    global A2DIR
-    del_user_data := false
-    for i, path in items {
-        if (path == A2DIR "\data") {
-            MsgBox, 36, Delete User data?, Do you also want to delete the user data?
-            IfMsgBox Yes
-                del_user_data := true
-            Break
-        }
-    }
-    if (!del_user_data) {
-        path_at_i := items[i]
-        num_items := items.Length()
-        msgbox i: %i%`npath_at_i: %path_at_i%`nnum_items: %num_items%
-        items.RemoveAt(i)
-        num_items := items.Length()
-        msgbox num_items now: %num_items%
+    global A2DIR, run_silent
+    if run_silent
+        return
+    user_data_path := path_join(A2DIR, ["data"])
+
+    if FileExist(user_data_path) {
+        MsgBox, 36, Delete User data?, Do you also want to delete the user data?
+        IfMsgBox Yes
+        items.push(user_data_path)
     }
 }
 
-
 delete_items(items) {
-    global A2DIR
+    global A2DIR, run_silent
 
     num_items := items.Length()
-    ; Progress, r%num_items%-0 w500 cb37ED95, ..., a2 Uninstaller ...,
-    ; Progress, r%num_items%-0 w500, ..., a2 Uninstaller ...,
-    Progress, r0-%num_items% w500 cb37ED95, ...,, a2 Uninstaller, Small Fonts
-    ; Sleep, 1000
+    if (!run_silent)
+        Progress, r0-%num_items% w500 cb37ED95, ...,, %NAME%, Small Fonts
 
     for i, path in items {
-        Progress, %i%, %path%
+        if (!run_silent)
+            Progress, %i%, %path%
+
         if path_is_dir(path) {
+            logmsg(" deleting dir: " . path)
             FileRemoveDir, %path%, 1
         } else if path_is_file(path) {
             FileDelete, %path%
@@ -145,26 +151,31 @@ delete_items(items) {
         Sleep, 50
     }
 
-    Progress, %num_items%, Okithxbye!
-    Sleep, 500
-    Progress, Off
+    if (!run_silent) {
+        Progress, %num_items%, Okithxbye!
+        Sleep, 500
+        Progress, Off
+    }
 
-    for i, path in items
+    for i, path in items {
         if FileExist(path)
-            MsgBox Could not delete: %path%
+            log_info(NAME, "Could not delete: " . path)
+    }
 }
 
-
-create_deleter_batch() {
+create_deleter_batch(path) {
     ; - Assemble simple windows batch code
     ;   * cd into Temp dir
-    ;   * delete uninstaller executable
-    ;   * delete the Local\a2 dir (IF Empty!)
+    ;   * delete running executable (If compiled)
+    ;   * try a couple times
+    ;   * delete given path (IF Empty!)
     ;   * delete itself
     ; - Write to Temp
     ; - return file path
 
-    global A2DIR
+    if (!path)
+        log_error("create_deleter_batch", "No path given!")
+
     batch_path := path_join(A_Temp, ["_ a2_uninstaller_deleter.bat"])
     batch_sleep := "ping 127.0.0.1 -n 1 > nul`n"
 
@@ -172,18 +183,28 @@ create_deleter_batch() {
     content .= "cd """ . A_Temp . """`n"
     ; wait for the Uninstaller executable to shut down before deleting it
     content .= batch_sleep
+    content .= "set trg_dir=" . path . "`n"
+
     If (A_IsCompiled) {
-        content .= "DEL """ . A_ScriptFullPath . """`n"
+        if (path_join(path, [A_ScriptName]) == A_ScriptFullPath)
+            content .= "set trg_exe=%trg_dir%\" . A_ScriptName . "`n"
+        else
+            content .= "set trg_exe=" . A_ScriptFullPath . "`n"
+        content .= "for /L %%A IN (1,1,500) do (`n"
+        content .= " if not exist ""%trg_exe%"" (goto deleted)`n"
+        content .= " DEL ""%trg_exe%"" /f /q > nul 2> nul`n"
         content .= batch_sleep
+        content .= ")`n"
     }
+    content .= ":deleted`n"
     ; skip deleting the folder if not empty
-    content .= "for /F %%i in ('dir /b /a """ . A2DIR . "\*""') do (`n"
+    content .= "for /F %%i in ('dir /b /a ""%trg_dir%\*""') do (`n"
     ; content .= "  echo Not Empty!`n"
-    content .= "  goto finalize`n"
+    content .= " goto finalize`n"
     content .= ")`n"
     ; content .= "echo IS Empty!`n"
     content .= batch_sleep
-    content .= "RMDIR /Q """ . A2DIR . """`n"
+    content .= "RMDIR /Q ""%trg_dir%""`n"
     content .= ":finalize`n"
     content .= batch_sleep
     ; content .= "pause`n"
@@ -200,6 +221,6 @@ check_processes() {
     resulting_procs := []
     for i, proc in all_processes
         if (proc.ExecutablePath != A_ScriptFullPath)
-            resulting_procs.push(proc)
+        resulting_procs.push(proc)
     return resulting_procs
 }
