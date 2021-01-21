@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'cursor_block.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,7 @@ class Ui_CursorBlock(object):
     def setupUi(self, CursorBlock):
         if not CursorBlock.objectName():
             CursorBlock.setObjectName(u"CursorBlock")
-        CursorBlock.resize(368, 234)
+
         self.verticalLayout = QVBoxLayout(CursorBlock)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -74,6 +74,7 @@ class Ui_CursorBlock(object):
         self.down.setObjectName(u"down")
         font = QFont()
         font.setBold(True)
+        font.setWeight(75)
         self.down.setFont(font)
         self.down.setText(u"d")
 

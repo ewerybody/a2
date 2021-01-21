@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'numpad.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,7 @@ class Ui_Numpad(object):
     def setupUi(self, Numpad):
         if not Numpad.objectName():
             Numpad.setObjectName(u"Numpad")
-        Numpad.resize(726, 550)
+
         self.gridLayout = QGridLayout(Numpad)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName(u"gridLayout")

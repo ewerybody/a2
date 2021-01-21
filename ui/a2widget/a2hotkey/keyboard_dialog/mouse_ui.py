@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'mouse.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,7 +17,7 @@ class Ui_Mouse(object):
     def setupUi(self, Mouse):
         if not Mouse.objectName():
             Mouse.setObjectName(u"Mouse")
-        Mouse.resize(420, 380)
+
         self.verticalLayout = QVBoxLayout(Mouse)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName(u"verticalLayout")

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'scope_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ class Ui_ScopeDialog(object):
     def setupUi(self, ScopeDialog):
         if not ScopeDialog.objectName():
             ScopeDialog.setObjectName(u"ScopeDialog")
-        ScopeDialog.resize(472, 131)
+
         ScopeDialog.setModal(True)
         self.verticalLayout = QVBoxLayout(ScopeDialog)
         self.verticalLayout.setObjectName(u"verticalLayout")

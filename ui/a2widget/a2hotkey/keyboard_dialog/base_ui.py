@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'base.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.0.0
+## Created by: Qt User Interface Compiler version 5.15.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ class Ui_Keyboard(object):
     def setupUi(self, Keyboard):
         if not Keyboard.objectName():
             Keyboard.setObjectName(u"Keyboard")
-        Keyboard.resize(1037, 387)
+
         self.dialog_layout = QVBoxLayout(Keyboard)
         self.dialog_layout.setObjectName(u"dialog_layout")
         self.dialog_layout.setSizeConstraint(QLayout.SetFixedSize)
