@@ -13,35 +13,41 @@ PACKAGE_SUB_NAME = 'alpha'
 MANIFEST_NAME = NAME + '_manifest.xml'
 SRC_SFX = NAME + '.sfx.exe'
 RCEDIT_EXE = 'rcedit-x64.exe'
-SEVENZ_EXE = '7zr\\7zr.exe'
+SEVENZ_DIR = '7zr'
+SEVENZ_EXE = '7zr.exe'
 
 
 class Paths:
     """Path holder object."""
+
     a2 = A2PATH
     lib = join(a2, 'lib')
     ui = UIPATH
+    a2icon = join(ui, 'res', 'a2.ico')
     ahk2exe = join(os.environ['PROGRAMFILES'], 'AutoHotkey', 'Compiler', 'Ahk2Exe.exe')
     package_config = join(a2, 'package.json')
 
     source = join(lib, '_source')
-    sfx = join(source, SRC_SFX)
+    # sfx_source_ui = join(source, SEVENZ_DIR, '7zS2.sfx')
+    sfx_source_ui = join(source, SEVENZ_DIR, '7zSD.sfx')
+    sfx_source_silent = join(source, SEVENZ_DIR, '7zS2con.sfx')
+    sevenz_exe = join(source, SEVENZ_DIR, SEVENZ_EXE)
     rcedit = join(source, RCEDIT_EXE)
     manifest = join(source, MANIFEST_NAME)
-    sevenz_exe = join(source, SEVENZ_EXE)
     installer_script = join(source, NAME + '.ahk')
+    installer_script_silent = join(source, NAME + '_silent.ahk')
 
     distroot = join(a2, '_ package')
-    sfx_target = join(distroot, SRC_SFX)
-    manifest_target = join(distroot, MANIFEST_NAME)
-    archive_target = join(distroot, 'archive.7z')
-    config_target = join(distroot, 'config.txt')
+    sfx_target_ui = join(distroot, '_ ' + SRC_SFX)
+    sfx_target_silent = join(distroot, '_ silent_' + SRC_SFX)
+    manifest_target = join(distroot, '_ ' + MANIFEST_NAME)
+    archive_target = join(distroot, '_ archive.7z')
 
     dist = join(distroot, 'a2')
-    dist_portable = join(distroot, 'a2_portable')
     distlib = join(dist, 'lib')
     distui = join(dist, 'ui')
     distlib_test = join(distlib, 'AutoHotkey', 'lib', 'test')
+    dist_portable = join(distroot, 'a2_portable')
 
     @classmethod
     def check(cls):
@@ -54,10 +60,11 @@ class Paths:
 
         if whats_missing:
             raise FileNotFoundError(
-                'There are some paths missing!\n  %s\nPlease resolve before continuing!' %
-                '\n  '.join(f'{k}: {p}' for k, p in whats_missing.items()))
+                'There are some paths missing!\n  %s\nPlease resolve before continuing!'
+                % '\n  '.join(f'{k}: {p}' for k, p in whats_missing.items())
+            )
 
-        print('All paths checked! Nice! Let\'s go!')
+        print("All paths checked! Nice! Let's go!")
 
     @staticmethod
     def _ignore_name(name):
@@ -65,7 +72,7 @@ class Paths:
             return True
         if name in ('check', 'iter'):
             return True
-        if name.endswith('_target'):
+        if '_target' in name:
             return True
         if name.startswith('dist'):
             return True

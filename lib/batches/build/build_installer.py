@@ -4,10 +4,11 @@ Called AFTER the PyInstaller package was built via _build_py_package.bat
 And after the package was handled by _finish_py_package.bat and finish_package.py.
 """
 import os
+import sys
 import time
+import shutil
 import codecs
 import subprocess
-from shutil import copy2
 
 import _build_package_init
 import a2util
@@ -15,11 +16,15 @@ import a2util
 Paths = _build_package_init.Paths
 PACKAGE_SUB_NAME = _build_package_init.PACKAGE_SUB_NAME
 TMP_NAME = 'a2_temp_buildpath'
-INSTALLER_CFG = (
-    ';!@Install@!UTF-8!\n'
-    'RunProgram="a2\\setup.exe"\n'
-    ';!@InstallEnd@!')
+SETUP_EXE = 'setup.exe'
+INSTALLER_CFG = f';!@Install@!UTF-8!\nRunProgram="{SETUP_EXE}"\n;!@InstallEnd@!'
 ERROR_NO_PACKAGE = 'No package? No need to build an installer :/ build a package first!'
+SEVEN_FLAGS = (
+    '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
+)
+CHKMK = b'\xe2\x9c\x94'.decode()
+EXMRK = b'\xe2\x9c\x96'.decode()
+_prnt = sys.stdout.write
 
 
 def main():
@@ -34,29 +39,20 @@ def main():
 
     os.makedirs(Paths.distroot, exist_ok=True)
 
-    if os.path.isfile(Paths.sfx_target):
-        os.unlink(Paths.sfx_target)
-    print('copying fresh sfx file ...')
-    copy2(Paths.sfx, Paths.sfx_target)
-
     version_string = _check_version(package_cfg['version'])
-    version_label = (version_string if not PACKAGE_SUB_NAME else
-                     version_string + ' ' + PACKAGE_SUB_NAME)
+    version_label = (
+        version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
+    )
 
+    _create_fresh_sfx_files()
     _update_manifest(version_string)
     _set_rc_key('FileVersion', '--set-file-version', version_label)
     _set_rc_key('ProductVersion', '--set-product-version', version_label)
     _apply_manifest()
 
-    print('writing installer config file ...')
-    with open(os.path.join(Paths.config_target), 'w') as file_obj:
-        file_obj.write(INSTALLER_CFG)
-
-    _check_installer_script_executable()
-
     _pack_installer_archive()
-
-    _copy_together_installer_binary(package_cfg["version"])
+    _copy_together_installer_binary(package_cfg['version'])
+    _make_portable()
 
 
 def _set_rc_key(key, arg, value_string):
@@ -71,19 +67,22 @@ def _set_rc_key(key, arg, value_string):
     --set-resource-string <key> <value>        Set resource string
     --get-resource-string <key>                Get resource string
     """
-    current = subprocess.check_output(
-        [Paths.rcedit, Paths.sfx_target, '--get-version-string', key]).decode()
-
-    if current != value_string:
-        print('Changing "%s" on file "%s" ...' % (key, os.path.basename(Paths.sfx_target)))
-        subprocess.call([Paths.rcedit, Paths.sfx_target, arg, value_string])
-        # check if things were changed correctly
+    for sfx_target in Paths.sfx_target_ui, Paths.sfx_target_silent:
         current = subprocess.check_output(
-            [Paths.rcedit, Paths.sfx_target, '--get-version-string', key]).decode()
-        if current == value_string:
-            print('  Success! "%s" is now "%s"!' % (key, value_string))
-        else:
-            print('  ERROR! "%s" is "%s" NOT "%s"!' % (key, current, value_string))
+            [Paths.rcedit, sfx_target, '--get-version-string', key]
+        ).decode()
+
+        if current != value_string:
+            _prnt('Set "%s" on "%s"...' % (key, os.path.basename(sfx_target)))
+            subprocess.call([Paths.rcedit, sfx_target, arg, value_string])
+            # check if things were changed correctly
+            current = subprocess.check_output(
+                [Paths.rcedit, sfx_target, '--get-version-string', key]
+            ).decode()
+            if current == value_string:
+                print(' %s %s' % (CHKMK, value_string))
+            else:
+                print(' %s "%s" is "%s" NOT "%s"!' % (EXMRK, key, current, value_string))
 
 
 def _check_version(version):
@@ -116,8 +115,7 @@ def _update_manifest(version_string):
                 continue
 
             if line.startswith('version="'):
-                line = 'version="%s"' % version_string
-                print(line)
+                line = f'version="{version_string}"'
 
             if not line.endswith('>'):
                 line += ' '
@@ -128,8 +126,8 @@ def _update_manifest(version_string):
 
 
 def _apply_manifest():
-    subprocess.call(
-        [Paths.rcedit, Paths.sfx_target, '--application-manifest', Paths.manifest_target])
+    for sfx_target in Paths.sfx_target_ui, Paths.sfx_target_silent:
+        subprocess.call([Paths.rcedit, sfx_target, '--application-manifest', Paths.manifest_target])
 
 
 def _pack_installer_archive():
@@ -137,10 +135,7 @@ def _pack_installer_archive():
     # -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
     if _need_rezipping():
         t0 = time.time()
-        subprocess.call(
-            [Paths.sevenz_exe, 'a', Paths.archive_target, Paths.dist,
-             '-m0=BCJ2', '-m1=LZMA:d25:fb255', '-m2=LZMA:d19', '-m3=LZMA:d19',
-             '-mb0:1', '-mb0s1:2', '-mb0s2:3', '-mx'])
+        subprocess.call([Paths.sevenz_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
         print('packing archive took: %.2fsec' % (time.time() - t0))
 
 
@@ -150,10 +145,11 @@ def _need_rezipping():
     """
     result = False
     if not os.path.isfile(Paths.archive_target):
+        print('Re-zip: TRUE :: No Archive yet!')
         result = True
 
     digest_path = os.path.join(os.environ['TEMP'], TMP_NAME, 'archive_digest.json')
-    if not _diff_digest(digest_path):
+    if _diff_digest(digest_path):
         t0 = time.time()
         digest_map = _create_digest()
         a2util.json_write(digest_path, digest_map)
@@ -171,66 +167,38 @@ def _create_digest():
             item_path = os.path.join(dir_path, item)
             digest_map[dir_path][item] = {
                 'mtime': os.path.getmtime(item_path),
-                'size': os.path.getsize(item_path)}
+                'size': os.path.getsize(item_path),
+            }
     return digest_map
 
 
 def _diff_digest(digest_path):
     """Return True if there is no difference in the digest."""
     if not os.path.isfile(digest_path):
-        print('diff_digest: no digest yet!')
-        return False
+        print('Re-zip: TRUE :: No digest yet!')
+        return True
 
     current_map = a2util.json_read(digest_path)
     for dir_path, _, files in os.walk(Paths.dist):
         this_map = current_map.get(dir_path, ())
         if len(files) != len(this_map):
-            print('diff_digest: num files diff: %s' % dir_path)
-            return False
+            print('Re-zip: TRUE :: num files diff: %s' % dir_path)
+            return True
 
         for item in files:
             item_path = os.path.join(dir_path, item)
             if item not in this_map:
-                print('diff_digest: new file! %s' % item_path)
-                return False
+                print('Re-zip: TRUE :: new file! %s' % item_path)
+                return True
 
             if this_map[item]['mtime'] != os.path.getmtime(item_path):
-                print('diff_digest: mtime diff! %s' % item_path)
-                return False
+                print('Re-zip: TRUE :: Modified item: %s' % item_path)
+                return True
             if this_map[item]['size'] != os.path.getsize(item_path):
-                print('diff_digest: size diff! %s' % item_path)
-                return False
-    print('diff_digest: No differences!!')
-    return True
-
-
-def _check_installer_script_executable():
-    json_path = os.path.join(os.environ['TEMP'], TMP_NAME, 'script_time.json')
-    setup_exe = os.path.join(Paths.dist, 'setup.exe')
-    current_time = os.path.getmtime(Paths.installer_script)
-
-    write_exe = False
-    if os.path.isfile(setup_exe) and os.path.isfile(json_path):
-        script_time = a2util.json_read(json_path)
-        if script_time != current_time:
-            print('check_installer_script_executable: Script Changed!')
-            write_exe = True
-    else:
-        print('check_installer_script_executable: Creating setup_exe!')
-        write_exe = True
-
-    if not write_exe:
-        print('check_installer_script_executable: Nice Nothing to-do!!')
-        return
-
-    _rebuild_installer_script_executable(setup_exe)
-    a2util.json_write(json_path, current_time)
-
-
-def _rebuild_installer_script_executable(setup_exe):
-    # "%Ahk2Exe%" /in "%source_path%\a2_installer.ahk" /out "%distpath%\setup.exe" /mpress 0
-    cmds = [Paths.ahk2exe, '/in', Paths.installer_script, '/out', setup_exe, '/mpress', '0']
-    subprocess.call(subprocess.list2cmdline(cmds))
+                print('Re-zip: TRUE :: Size diff: %s' % item_path)
+                return True
+    print('_diff_digest :: No differences.')
+    return False
 
 
 def _copy_together_installer_binary(version_label):
@@ -242,21 +210,85 @@ def _copy_together_installer_binary(version_label):
         set installerx=%distroot%\\a2_installer.exe
         copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
     """
-    installer_name = f'{_build_package_init.NAME}_{version_label}_{PACKAGE_SUB_NAME}.exe'
-    installer_target = os.path.join(Paths.distroot, installer_name)
-    print('installer_target: %s' % installer_target)
-    if os.path.isfile(installer_target):
-        os.unlink(installer_target)
+    name = f'{_build_package_init.NAME}_{version_label}_{PACKAGE_SUB_NAME}'
+    name_ui = name + '.exe'
+    name_silent = name + '_silent.exe'
 
-    with open(installer_target, 'wb') as installer_file:
-        for source in (Paths.sfx_target, Paths.config_target, Paths.archive_target):
-            with open(source, 'rb') as source_file:
-                installer_file.write(source_file.read())
+    target_cfg = os.path.join(Paths.distroot, '_ config.cfg')
+    with open(os.path.join(target_cfg), 'w') as file_obj:
+        file_obj.write(INSTALLER_CFG)
 
-    if os.path.isfile(installer_target):
-        print('Success!: %s written!' % installer_name)
+    for target_name, target_sfx, setup_script in (
+        (name_ui, Paths.sfx_target_ui, Paths.installer_script),
+        (name_silent, Paths.sfx_target_silent, Paths.installer_script_silent),
+    ):
+        target_path = os.path.join(Paths.distroot, target_name)
+        if os.path.isfile(target_path):
+            os.unlink(target_path)
+
+        # copy archive
+        this_archive = os.path.join(Paths.distroot, f'_ {target_name}.7z')
+        shutil.copyfile(Paths.archive_target, this_archive)
+        # create setup exe
+        exe_path = os.path.join(Paths.distroot, SETUP_EXE)
+        subprocess.call([Paths.ahk2exe, '/in', setup_script, '/out', exe_path, '/mpress', '0'])
+        # add setup executable to archive
+        subprocess.call([Paths.sevenz_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
+        os.unlink(exe_path)
+        # copy together
+        with open(target_path, 'wb') as trg_file:
+            for source in (target_sfx, target_cfg, this_archive):
+                with open(source, 'rb') as source_file:
+                    trg_file.write(source_file.read())
+
+        if os.path.isfile(target_path):
+            print('\n%s Success!: "%s" written!\n' % (CHKMK, target_name))
+        else:
+            raise FileNotFoundError('%s Installer "%s" was not written!' % (EXMRK, target_name))
+
+
+def _create_fresh_sfx_files():
+    """
+    For the installer we need
+    """
+    for src, trg in (
+        (Paths.sfx_source_ui, Paths.sfx_target_ui),
+        (Paths.sfx_source_silent, Paths.sfx_target_silent),
+    ):
+        if os.path.isfile(trg):
+            os.unlink(trg)
+        print(f'copy fresh sfx {os.path.basename(Paths.sfx_target_ui)} ...')
+        shutil.copyfile(src, trg)
+        subprocess.call([Paths.rcedit, trg, '--set-icon', Paths.a2icon])
+
+
+def _make_portable():
+    print('Making portable package ...')
+    _prnt('  copying ... ')
+    if os.path.exists(Paths.dist_portable):
+        print(f'{CHKMK} Already done')
+        # shutil.rmtree(Paths.dist_portable, ignore_errors=True)
     else:
-        raise FileNotFoundError('Installer "%s" was not written!' % installer_name)
+        shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
+        print(f'{CHKMK} done')
+
+    # remove unwanted files if present
+    for name in 'setup', 'Uninstall a2':
+        path = os.path.join(Paths.dist_portable, name + '.exe')
+        if os.path.isfile(path):
+            os.unlink(path)
+
+    _prnt('  zipping ... ')
+    name = os.path.basename(Paths.dist_portable)
+    package_cfg = a2util.json_read(Paths.package_config)
+    portable_name = f'{name}_{package_cfg["version"]}_{PACKAGE_SUB_NAME}.zip'
+    portable_path = os.path.join(Paths.distroot, portable_name)
+    if os.path.isfile(portable_path):
+        print(f'{CHKMK} Already done')
+    else:
+        tar = os.path.join(os.getenv('WINDIR'), 'System32', 'tar.exe')
+        subprocess.call([tar, '-a', '-c', '-f', portable_path, '*'], cwd=Paths.dist_portable)
+        print(f'{CHKMK} done')
 
 
 if __name__ == '__main__':

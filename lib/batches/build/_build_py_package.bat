@@ -9,7 +9,6 @@ set distpath=%a2path%\_ package\a2
 rem getting latest python path
 set ahk_exe=%here%..\..\Autohotkey\Autohotkey.exe
 set tmp_txt=_ sfdgsdfgsdfgsdfg.txt
-
 "%ahk_exe%" %here%..\versions\get_Python_path.ahk > "%tmp_txt%"
 set /p pypath= < "%tmp_txt%"
 del "%tmp_txt%"

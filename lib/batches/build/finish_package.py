@@ -1,11 +1,10 @@
 """
-a2 package assembly script to prepare deployment after pyinstaller.
+a2 package assembly to prepare deployment after pyinstaller,
+before zipping and building the installer executables from it.
 
-Whow! Batch files are such a pain!
-Better keep them as short as possible.
+Whow! Batch files are such a pain! Better keep them as short as possible...
 """
 import os
-from os.path import join
 import shutil
 import codecs
 import subprocess
@@ -69,8 +68,6 @@ def main():
 
     with open(os.path.join(Paths.dist, 'desktop.ini'), 'w') as file_obj:
         file_obj.write(DESKTOP_INI_CODE)
-
-    make_portable()
 
     print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
 
@@ -168,7 +165,7 @@ def copy_files():
         else:
             this_dest = os.path.join(Paths.distlib, item.name)
             if os.path.isdir(this_dest):
-                print(f'  dir already copied: {this_dest}')
+                print(f'  dir already copied: {os.path.relpath(this_dest, Paths.dist)}')
             else:
                 shutil.copytree(item.path, this_dest, ignore=_ignore_items)
 
@@ -176,7 +173,7 @@ def copy_files():
     for folder in UI_FOLDERS:
         this_dest = os.path.join(Paths.distui, folder)
         if os.path.isdir(this_dest):
-            print(f'  dir already copied: {this_dest}')
+            print(f'  dir already copied: {os.path.relpath(this_dest, Paths.dist)}')
             continue
         shutil.copytree(
             os.path.join(Paths.ui, folder),
@@ -211,11 +208,17 @@ def _ignore_items(path, items):
             # ignore autmatically build python 3 cache files
             if item in ['__pycache__']:
                 result.append(item)
-            # ignore a2 dev build stuff
-            elif item == 'demo' and os.path.basename(path) == 'a2widget':
-                result.append(item)
-            elif item == 'work' and os.path.basename(path) == 'res':
-                result.append(item)
+                continue
+            this_base = os.path.basename(path)
+            for base, name in (
+                ('Autohotkey', 'Compiler'),
+                ('a2widget', 'demo'),
+                ('res', 'work'),
+                # lets keep lib/test for implementation examples
+                # ('lib', 'test'),
+            ):
+                if this_base == base and item == name:
+                    result.append(item)
 
         # ignore uncompiled ui files
         elif item.endswith('.ui'):
@@ -227,35 +230,6 @@ def _ignore_items(path, items):
     return result
 
 
-def make_portable():
-    print('making portable package ...')
-    if os.path.exists(Paths.dist_portable):
-        shutil.rmtree(Paths.dist_portable, ignore_errors=True)
-
-    print('  copying ...')
-    shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
-
-    shutil.copyfile(
-        os.path.join(Paths.lib, '_a2_portable.ahk'),
-        os.path.join(Paths.dist_portable, 'lib', 'a2_portable.ahk'),
-    )
-    # remove unwanted files if present
-    for name in 'setup', 'Uninstall a2':
-        path = os.path.join(Paths.dist_portable, name + '.exe')
-        if os.path.isfile(path):
-            os.unlink(path)
-
-    print('  zipping ...')
-    name = 'a2_portable'
-    package_cfg = a2util.json_read(Paths.package_config)
-    portable_name = f'{name}_{package_cfg["version"]}_{_build_package_init.PACKAGE_SUB_NAME}.zip'
-    tar = os.path.join(os.getenv('WINDIR'), 'System32', 'tar.exe')
-    subprocess.call(
-        [tar, '-a', '-c', '-f', os.path.join(Paths.distroot, portable_name), '*'],
-        cwd=Paths.dist_portable,
-    )
-
-
 def fix_qt():
     """
     Deal with the preferred Qt for Python version.
@@ -265,7 +239,7 @@ def fix_qt():
     * handle selected Qt dlls
     * handle shiboken and PySide dirs
     * remove translation
-    * make sure the right plugin dir is present/remove other
+    * make sure right plugin dir is present/remove other
     """
     wanted_dlls = [QT_DLL % (QT_VERSION, base) for base in QT_HAVE_DLLS]
     for item in os.scandir(Paths.distui):
