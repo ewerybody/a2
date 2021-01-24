@@ -6,12 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
-    <height>650</height>
+    <width>767</width>
+    <height>472</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -50,16 +59,34 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <layout class="QVBoxLayout" name="integrations_layout"/>
-         </item>
-         <item row="2" column="1">
           <widget class="QCheckBox" name="remember_selection">
            <property name="text">
             <string notr="true">Remember last selected Module</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0" colspan="2">
+         <item row="2" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string notr="true">Integration</string>
+           </property>
+           <layout class="QVBoxLayout" name="integrations_layout">
+            <property name="leftMargin">
+             <number>11</number>
+            </property>
+            <property name="topMargin">
+             <number>25</number>
+            </property>
+            <property name="rightMargin">
+             <number>11</number>
+            </property>
+            <property name="bottomMargin">
+             <number>11</number>
+            </property>
+           </layout>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
           <widget class="QGroupBox" name="module_source_box">
            <property name="title">
             <string notr="true">Module Sources</string>
@@ -127,7 +154,7 @@ Go ahead and add or create one:</string>
      </widget>
      <widget class="QWidget" name="advanced_tab">
       <attribute name="title">
-       <string>Advanced</string>
+       <string notr="true">Advanced</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="database_tab">
@@ -164,7 +191,7 @@ Go ahead and add or create one:</string>
      </widget>
      <widget class="QWidget" name="console_tab">
       <attribute name="title">
-       <string>Console</string>
+       <string notr="true">Console</string>
       </attribute>
      </widget>
     </widget>

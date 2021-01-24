@@ -21,8 +21,8 @@ class Ui_a2settings(object):
             a2settings.setObjectName(u"a2settings")
 
         self.a2settings_view_layout = QVBoxLayout(a2settings)
-        self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
         self.a2settings_view_layout.setObjectName(u"a2settings_view_layout")
+        self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
         self.a2settings_tab = QTabWidget(a2settings)
         self.a2settings_tab.setObjectName(u"a2settings_tab")
         self.main_tab = QWidget()
@@ -46,16 +46,20 @@ class Ui_a2settings(object):
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.a2hotkey)
 
-        self.integrations_layout = QVBoxLayout()
-        self.integrations_layout.setObjectName(u"integrations_layout")
-
-        self.formLayout.setLayout(1, QFormLayout.FieldRole, self.integrations_layout)
-
         self.remember_selection = QCheckBox(self.main_tab)
         self.remember_selection.setObjectName(u"remember_selection")
         self.remember_selection.setText(u"Remember last selected Module")
 
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.remember_selection)
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.remember_selection)
+
+        self.groupBox = QGroupBox(self.main_tab)
+        self.groupBox.setObjectName(u"groupBox")
+        self.groupBox.setTitle(u"Integration")
+        self.integrations_layout = QVBoxLayout(self.groupBox)
+        self.integrations_layout.setObjectName(u"integrations_layout")
+        self.integrations_layout.setContentsMargins(11, 25, 11, 11)
+
+        self.formLayout.setWidget(2, QFormLayout.SpanningRole, self.groupBox)
 
         self.module_source_box = QGroupBox(self.main_tab)
         self.module_source_box.setObjectName(u"module_source_box")
@@ -99,7 +103,7 @@ class Ui_a2settings(object):
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
 
 
-        self.formLayout.setWidget(3, QFormLayout.SpanningRole, self.module_source_box)
+        self.formLayout.setWidget(4, QFormLayout.SpanningRole, self.module_source_box)
 
 
         self.verticalLayout.addLayout(self.formLayout)
@@ -109,6 +113,7 @@ class Ui_a2settings(object):
         self.advanced_tab = QWidget()
         self.advanced_tab.setObjectName(u"advanced_tab")
         self.a2settings_tab.addTab(self.advanced_tab, "")
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.advanced_tab), u"Advanced")
         self.database_tab = QWidget()
         self.database_tab.setObjectName(u"database_tab")
         self.verticalLayout_5 = QVBoxLayout(self.database_tab)
@@ -138,6 +143,7 @@ class Ui_a2settings(object):
         self.console_tab = QWidget()
         self.console_tab.setObjectName(u"console_tab")
         self.a2settings_tab.addTab(self.console_tab, "")
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), u"Console")
 
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
 
@@ -151,8 +157,6 @@ class Ui_a2settings(object):
     # setupUi
 
     def retranslateUi(self, a2settings):
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.advanced_tab), QCoreApplication.translate("a2settings", u"Advanced", None))
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), QCoreApplication.translate("a2settings", u"Console", None))
         pass
     # retranslateUi
 
