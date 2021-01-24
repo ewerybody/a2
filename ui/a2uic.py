@@ -11,7 +11,7 @@ PYSIDE_REPLACE = 'a2qt'
 log = a2core.get_logger(__name__)
 
 
-def check_module(module, force=True):
+def check_module(module, force=False):
     """
     Recompile a ui xml file to Python if out-of-date.
 
@@ -121,9 +121,9 @@ def _patch_ui(uiname, pyfile):
 
     setup_line = lines[class_block_start + 1]
     parts = setup_line.split()
-    assert(parts[0] == 'def')
-    assert(parts[1] == 'setupUi(self,')
-    assert(parts[2].endswith('):'))
+    assert parts[0] == 'def'
+    assert parts[1] == 'setupUi(self,'
+    assert parts[2].endswith('):')
     obj_name = parts[2][:-2]
 
     # Remove the resize. All our uis are dynamically sized.
