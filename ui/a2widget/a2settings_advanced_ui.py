@@ -143,6 +143,24 @@ class Ui_Form(object):
 
         self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.autohotkey)
 
+        self.label_9 = QLabel(self.dev_widget)
+        self.label_9.setObjectName(u"label_9")
+        self.label_9.setText(u"JSON Indent:")
+
+        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_9)
+
+        self.json_indent = QSpinBox(self.dev_widget)
+        self.json_indent.setObjectName(u"json_indent")
+        self.json_indent.setMaximumSize(QSize(70, 16777215))
+
+        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.json_indent)
+
+        self.auto_reload = QCheckBox(self.dev_widget)
+        self.auto_reload.setObjectName(u"auto_reload")
+        self.auto_reload.setText(u"Auto-Reload Runtime On Script Changes")
+
+        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.auto_reload)
+
         self.line = QFrame(self.dev_widget)
         self.line.setObjectName(u"line")
         sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -169,19 +187,6 @@ class Ui_Form(object):
 
         self.formLayout_2.setWidget(11, QFormLayout.FieldRole, self.data_folder)
 
-        self.label_10 = QLabel(self.dev_widget)
-        self.label_10.setObjectName(u"label_10")
-        self.label_10.setText(u"Python Executable:")
-
-        self.formLayout_2.setWidget(14, QFormLayout.LabelRole, self.label_10)
-
-        self.python_executable = A2PathField(self.dev_widget)
-        self.python_executable.setObjectName(u"python_executable")
-        self.python_executable.setEnabled(False)
-        self.python_executable.setText(u"")
-
-        self.formLayout_2.setWidget(14, QFormLayout.FieldRole, self.python_executable)
-
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.button_set_user_dir_standard = QPushButton(self.dev_widget)
@@ -199,29 +204,18 @@ class Ui_Form(object):
 
         self.formLayout_2.setLayout(12, QFormLayout.FieldRole, self.horizontalLayout_4)
 
-        self.portable_label = QLabel(self.dev_widget)
-        self.portable_label.setObjectName(u"portable_label")
-        self.portable_label.setWordWrap(True)
+        self.label_10 = QLabel(self.dev_widget)
+        self.label_10.setObjectName(u"label_10")
+        self.label_10.setText(u"Python Executable:")
 
-        self.formLayout_2.setWidget(13, QFormLayout.FieldRole, self.portable_label)
+        self.formLayout_2.setWidget(13, QFormLayout.LabelRole, self.label_10)
 
-        self.json_indent = QSpinBox(self.dev_widget)
-        self.json_indent.setObjectName(u"json_indent")
-        self.json_indent.setMaximumSize(QSize(70, 16777215))
+        self.python_executable = A2PathField(self.dev_widget)
+        self.python_executable.setObjectName(u"python_executable")
+        self.python_executable.setEnabled(False)
+        self.python_executable.setText(u"")
 
-        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.json_indent)
-
-        self.label_9 = QLabel(self.dev_widget)
-        self.label_9.setObjectName(u"label_9")
-        self.label_9.setText(u"JSON Indent:")
-
-        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_9)
-
-        self.auto_reload = QCheckBox(self.dev_widget)
-        self.auto_reload.setObjectName(u"auto_reload")
-        self.auto_reload.setText(u"Auto-Reload Runtime On Script Changes")
-
-        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.auto_reload)
+        self.formLayout_2.setWidget(13, QFormLayout.FieldRole, self.python_executable)
 
 
         self.verticalLayout_3.addWidget(self.dev_widget)
@@ -243,7 +237,7 @@ class Ui_Form(object):
         self.proxy_http.addItem(u"http://")
         self.proxy_http.addItem(u"https://")
         self.proxy_http.setObjectName(u"proxy_http")
-        self.proxy_http.setProperty("currentText", u"http://")
+        self.proxy_http.setCurrentText(u"http://")
 
         self.horizontalLayout_2.addWidget(self.proxy_http)
 
@@ -313,7 +307,6 @@ class Ui_Form(object):
     # setupUi
 
     def retranslateUi(self, Form):
-        self.portable_label.setText(QCoreApplication.translate("Form", u"a2 runs in portable mode! The data path is in the main directory and cannot be changed!", None))
 
         self.proxy_server.setText("")
         pass

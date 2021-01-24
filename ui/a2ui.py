@@ -135,12 +135,12 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
-        if self.a2.is_portable():
-            self.ui.actionUninstall_a2.deleteLater()
-            self.on_uninstall_a2 = None
-        else:
+        if os.path.isfile(self.a2.paths.uninstaller):
             self.ui.actionUninstall_a2.setIcon(icons.a2x)
             self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
+        else:
+            self.ui.actionUninstall_a2.deleteLater()
+            self.on_uninstall_a2 = None
 
     def _setup_shortcuts(self):
         Qt = QtCore.Qt
@@ -220,6 +220,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         log.info('  Writing includes ...')
         import a2runtime
+
         a2runtime.write_includes(specific)
 
         log.info('  Restarting runtime ...')
@@ -260,6 +261,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.a2.db.set('last_selected', [m.key for m in self.selected])
 
         from a2qt import shiboken
+
         for thread in self._threads.values():
             if thread is None:
                 continue
@@ -598,6 +600,7 @@ class ShutdownThread(QtCore.QThread):
 
     def run(self):
         import a2runtime
+
         pid = a2runtime.kill_a2_process()
         if pid:
             log.info('Shut down process with PID: %s', pid)
@@ -629,6 +632,7 @@ class RuntimeWatcher(QtCore.QThread):
         a2 = a2core.A2Obj.inst()
         if os.path.isdir(a2.paths.git):
             import a2ahk
+
             self._win_title = a2ahk.get_variables(a2.paths.a2_config).get('a2_title', a2core.NAME)
         else:
             self._win_title = a2core.NAME

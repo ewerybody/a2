@@ -263,6 +263,10 @@ def _create_fresh_sfx_files():
 
 
 def _make_portable():
+    """
+    a2 is now portable by default! This is just preparing a zip without an
+    uninstaller. That's all. Voilà!
+    """
     print('Making portable package ...')
     _prnt('  copying ... ')
     if os.path.exists(Paths.dist_portable):

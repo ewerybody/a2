@@ -193,10 +193,6 @@ class A2Obj:
             self.start_up()
         return self._db
 
-    def is_portable(self):
-        """Tell if we're in portable mode."""
-        return os.path.isfile(self.paths.a2_portable)
-
 
 class URLs:
     """Internet adresses for various things."""
@@ -248,7 +244,7 @@ class Paths:
         self.autohotkey = join(self.lib, 'Autohotkey', 'Autohotkey.exe')
         self.python = sys.executable
         self.git = join(self.a2, '.git')
-        self.a2_portable = join(self.lib, 'a2_portable.ahk')
+        self.uninstaller = join(self.a2, 'Uninstall a2.exe')
 
         # get data dir from user include file in a2 root
         self.default_data = join(self.a2, 'data')
@@ -259,13 +255,10 @@ class Paths:
         self._test_dirs()
 
     def _build_data_paths(self):
-        if os.path.isfile(self.a2_portable):
+        try:
+            self.data = self.get_data_path()
+        except FileNotFoundError:
             self.data = self.default_data
-        else:
-            try:
-                self.data = self.get_data_path()
-            except FileNotFoundError:
-                self.data = self.default_data
         os.makedirs(self.data, exist_ok=True)
 
         join = os.path.join

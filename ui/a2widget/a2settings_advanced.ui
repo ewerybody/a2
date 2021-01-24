@@ -167,6 +167,30 @@
                </property>
               </widget>
              </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string notr="true">JSON Indent:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="json_indent">
+               <property name="maximumSize">
+                <size>
+                 <width>70</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QCheckBox" name="auto_reload">
+               <property name="text">
+                <string notr="true">Auto-Reload Runtime On Script Changes</string>
+               </property>
+              </widget>
+             </item>
              <item row="10" column="0" colspan="2">
               <widget class="Line" name="line">
                <property name="sizePolicy">
@@ -203,23 +227,6 @@
                </property>
               </widget>
              </item>
-             <item row="14" column="0">
-              <widget class="QLabel" name="label_10">
-               <property name="text">
-                <string notr="true">Python Executable:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="14" column="1">
-              <widget class="A2PathField" name="python_executable">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string notr="true"/>
-               </property>
-              </widget>
-             </item>
              <item row="12" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_4">
                <item>
@@ -238,37 +245,20 @@
                </item>
               </layout>
              </item>
+             <item row="13" column="0">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string notr="true">Python Executable:</string>
+               </property>
+              </widget>
+             </item>
              <item row="13" column="1">
-              <widget class="QLabel" name="portable_label">
+              <widget class="A2PathField" name="python_executable">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
-                <string>a2 runs in portable mode! The data path is in the main directory and cannot be changed!</string>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QSpinBox" name="json_indent">
-               <property name="maximumSize">
-                <size>
-                 <width>70</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string notr="true">JSON Indent:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QCheckBox" name="auto_reload">
-               <property name="text">
-                <string notr="true">Auto-Reload Runtime On Script Changes</string>
+                <string notr="true"/>
                </property>
               </widget>
              </item>
@@ -297,7 +287,7 @@
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QComboBox" name="proxy_http">
-              <property name="currentText" stdset="0">
+              <property name="currentText">
                <string notr="true">http://</string>
               </property>
               <item>

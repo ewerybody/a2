@@ -28,8 +28,6 @@ LIB_EXCLUDES = (
     'a2init_check',
     'a2dev_find_py',
     'a2init_check',
-    '_a2_portable',
-    'a2_portable',
 )
 UI_FOLDERS = 'a2ctrl', 'a2widget', 'a2element', 'res', 'style'
 UI_REMOVE_FILES = (

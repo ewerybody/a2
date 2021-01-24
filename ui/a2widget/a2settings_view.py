@@ -33,8 +33,7 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.no_sources_msg.setVisible(self.a2.module_sources == {})
         for module_source in sorted(self.a2.module_sources.values(), key=lambda x: x.name):
             widget = a2module_source.ModSourceWidget(
-                self.main, module_source,
-                show_enabled=module_source.name in enabled_list
+                self.main, module_source, show_enabled=module_source.name in enabled_list
             )
             widget.toggled.connect(self.reload_requested.emit)
             widget.changed.connect(self.reload_requested.emit)
@@ -202,17 +201,12 @@ class DataPathUiHandler(QtCore.QObject):
         self.a2 = a2
         self.ui.data_folder.setText(self.a2.paths.data)
 
-        if self.a2.is_portable():
-            self.ui.button_set_user_dir_standard.hide()
-            self.ui.button_set_user_dir_custom.hide()
-        else:
-            self.ui.portable_label.hide()
-            self.ui.button_set_user_dir_standard.clicked.connect(self.set_standard)
-            self.ui.button_set_user_dir_custom.clicked.connect(self.build_custom_data_menu)
-            self.ui.button_set_user_dir_custom.setIcon(a2ctrl.Icons.inst().more)
-            self.menu = QtWidgets.QMenu(self.ui.button_set_user_dir_custom)
+        self.ui.button_set_user_dir_standard.clicked.connect(self.set_standard)
+        self.ui.button_set_user_dir_custom.clicked.connect(self.build_custom_data_menu)
+        self.ui.button_set_user_dir_custom.setIcon(a2ctrl.Icons.inst().more)
+        self.menu = QtWidgets.QMenu(self.ui.button_set_user_dir_custom)
 
-            self.ui.button_set_user_dir_standard.setEnabled(self.a2.paths.has_data_override())
+        self.ui.button_set_user_dir_standard.setEnabled(self.a2.paths.has_data_override())
 
     def set_standard(self):
         self._set_path(None)
@@ -288,19 +282,9 @@ class IntegrationUIHandler(QtCore.QObject):
         self.a2 = a2
         self._cmds = None
 
-        if self.a2.is_portable():
-            portable_widget = _IntegrationCheckBox(self.parent(), 'Portable Mode', a2)
-            portable_widget.check.setEnabled(False)
-            portable_widget.check.setChecked(True)
-            self.ui.integrations_layout.addWidget(portable_widget)
-            # TBD: finish portable checker
-            # button = QtWidgets.QPushButton('check')
-            # button.clicked.connect(self._check_portable)
-            # portable_widget.layout().insertWidget(1, button)
-        else:
-            for label, data in self.cmds.items():
-                widget = _IntegrationCheckBox(self.parent(), label, a2, data)
-                self.ui.integrations_layout.addWidget(widget)
+        for label, data in self.cmds.items():
+            widget = _IntegrationCheckBox(self.parent(), label, a2, data)
+            self.ui.integrations_layout.addWidget(widget)
 
     @property
     def cmds(self):
@@ -309,12 +293,6 @@ class IntegrationUIHandler(QtCore.QObject):
                 os.path.join(self.a2.paths.ui, 'a2widget', 'integration_ui.json')
             )
         return self._cmds
-
-    def _check_portable(self):
-        for label, data in self.cmds.items():
-            current_path = a2ahk.call_lib_cmd(data['get'])
-            if current_path:
-                log.warn(f'{label} is set! ({current_path})')
 
 
 class _IntegrationCheckBox(QtWidgets.QWidget):
@@ -370,6 +348,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         checked = False
         if path:
             import a2path
+
             target_path = getattr(self.a2.paths, self.path_name)
             checked = a2path.is_same(path, target_path)
             if not checked:
