@@ -224,7 +224,7 @@ class A2Window(QtWidgets.QMainWindow):
         a2runtime.write_includes(specific)
 
         log.info('  Restarting runtime ...')
-        self._run_thread('restart', RestartThread)
+        self._run_thread('restart', RuntimeCallThread)
 
     def refresh_ui(self):
         log.info('  Refreshing Ui ...')
@@ -425,7 +425,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionLoad_a2_Runtime.setVisible(not live)
 
     def shut_down_runtime(self):
-        self._run_thread('shutdown', ShutdownThread)
+        self._run_thread('shutdown', RuntimeCallThread, '--shutdown')
 
     def load_runtime_and_ui(self):
         self.settings_changed()
@@ -568,43 +568,41 @@ class A2Window(QtWidgets.QMainWindow):
         return super(A2Window, self).showEvent(event)
 
     def on_uninstall_a2(self):
-        a2util.start_process_detached(os.path.join(self.a2.paths.a2, 'Uninstall a2.exe'))
+        a2util.start_process_detached(self.a2.paths.uninstaller)
 
-    def _run_thread(self, name, thread_class):
-        thread = thread_class(self)
+    def _run_thread(self, name, thread_class, args=None):
+        if args is None:
+            thread = thread_class(self)
+        else:
+            thread = thread_class(self, args)
         self._threads[name] = thread
         thread.finished.connect(thread.deleteLater)
         thread.start()
         return thread
 
 
-class RestartThread(QtCore.QThread):
-    def __init__(self, parent):
-        super(RestartThread, self).__init__(parent)
+class RuntimeCallThread(QtCore.QThread):
+    def __init__(self, parent, args=None):
+        super(RuntimeCallThread, self).__init__(parent)
+        self._args = args
 
     def run(self):
         self.msleep(RESTART_DELAY)
         a2 = a2core.A2Obj.inst()
+
+        args = [a2.paths.a2_script]
+        if self._args is None:
+            pass
+        elif isinstance(self._args, str):
+            args.append(self._args)
+        elif isinstance(self._args, list):
+            args.extend(self._args)
+        else:
+            raise TypeError('Unable to handle arguments type "%s"' % type(self._args))
+
         _retval, _pid = a2util.start_process_detached(
-            a2.paths.autohotkey,
-            [a2.paths.a2_script],
-            a2.paths.a2,
+            a2.paths.autohotkey, args, working_dir=a2.paths.a2
         )
-
-
-class ShutdownThread(QtCore.QThread):
-    success = QtCore.Signal(bool)
-
-    def __init__(self, parent):
-        super(ShutdownThread, self).__init__(parent)
-
-    def run(self):
-        import a2runtime
-
-        pid = a2runtime.kill_a2_process()
-        if pid:
-            log.info('Shut down process with PID: %s', pid)
-            self.success.emit(not a2runtime.is_runtime_live())
 
 
 class RuntimeWatcher(QtCore.QThread):

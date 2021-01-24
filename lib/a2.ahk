@@ -22,26 +22,9 @@ global a2includes := a2data "includes\"
 global a2temp := a2data "temp\"
 global a2db := a2data "ad.db"
 
-; build the tray icon menu
-Menu, Tray, Icon, %a2ui_res%a2.ico, , 1
-Menu, Tray, Icon
-Gui, 1:Destroy
+check_args()
 
-Menu, Tray, NoStandard
-Menu, Tray, DeleteAll
-Menu, Tray, Tip, %a2_title%
-Menu, Tray, Click, 1
-Menu, Tray, add, Open a2 User Interface, a2ui
-Menu, Tray, icon, Open a2 User Interface, %a2ui_res%a2.ico
-Menu, Tray, default, Open a2 User Interface
-Menu, Tray, add, Open a2 Directory, a2_explore
-Menu, Tray, icon, Open a2 Directory, %a2ui_res%a2.ico
-Menu, Tray, add, Reload a2 Runtime, a2ui_reload
-Menu, Tray, icon, Reload a2 Runtime, %a2ui_res%a2reload.ico
-Menu, Tray, add, Help on a2, a2ui_help
-Menu, Tray, icon, Help on a2, %a2ui_res%a2help.ico
-Menu, Tray, add, Quit a2 Runtime, a2ui_exit
-Menu, Tray, icon, Quit a2 Runtime, %a2ui_res%a2x.ico
+build_tray_menu()
 
 global a2cfg := _a2_get_user_config()
 
@@ -51,8 +34,8 @@ if !a2cfg.no_startup_tooltip
 if a2cfg.auto_reload
     SetTimer, a2_check_changes, 1000
 
-; Finally the user data includes happening in the end so the top of this main script
-; is executed before the first Return.
+; Finally the user data includes. Happening in the end
+; so the top of this main script is executed before first Return.
 #include *i _ user_data_include
 Return ; -----------------------------------------------------------------------------
 
@@ -150,9 +133,45 @@ a2ui_reload() {
 }
 
 a2ui_exit() {
+    exit_func := "a2_exit_calls"
+    if IsFunc(exit_func)
+        %exit_func%()
     ExitApp
 }
 
 a2_explore() {
     Run, %A_WinDir%\explorer.exe %a2dir%
+}
+
+check_args() {
+    ; Look into the commandline arguments for certain flags.
+    for _, arg in A_Args {
+        if (arg == "--shutdown")
+            ExitApp
+        else
+            MsgBox, a2, Arguments handling is WIP!`nWhat's "%arg%"?
+    }
+}
+
+build_tray_menu() {
+    ; Build the tray icon menu.
+    Menu, Tray, Icon, %a2ui_res%a2.ico, , 1
+    Menu, Tray, Icon
+    Gui, 1:Destroy
+
+    Menu, Tray, NoStandard
+    Menu, Tray, DeleteAll
+    Menu, Tray, Tip, %a2_title%
+    Menu, Tray, Click, 1
+    Menu, Tray, add, Open a2 User Interface, a2ui
+    Menu, Tray, icon, Open a2 User Interface, %a2ui_res%a2.ico
+    Menu, Tray, default, Open a2 User Interface
+    Menu, Tray, add, Open a2 Directory, a2_explore
+    Menu, Tray, icon, Open a2 Directory, %a2ui_res%a2.ico
+    Menu, Tray, add, Reload a2 Runtime, a2ui_reload
+    Menu, Tray, icon, Reload a2 Runtime, %a2ui_res%a2reload.ico
+    Menu, Tray, add, Help on a2, a2ui_help
+    Menu, Tray, icon, Help on a2, %a2ui_res%a2help.ico
+    Menu, Tray, add, Quit a2 Runtime, a2ui_exit
+    Menu, Tray, icon, Quit a2 Runtime, %a2ui_res%a2x.ico
 }
