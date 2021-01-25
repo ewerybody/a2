@@ -23,8 +23,7 @@ global a2temp := a2data "temp\"
 global a2db := a2data "ad.db"
 
 check_args()
-
-build_tray_menu()
+build_tray_menu(a2_title)
 
 global a2cfg := _a2_get_user_config()
 
@@ -33,6 +32,8 @@ if !a2cfg.no_startup_tooltip
 
 if a2cfg.auto_reload
     SetTimer, a2_check_changes, 1000
+
+OnExit("a2ui_exit")
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
@@ -138,6 +139,9 @@ a2ui_exit() {
         %exit_func%()
     ExitApp
 }
+_a2ui_exit() {
+    ExitApp
+}
 
 a2_explore() {
     Run, %A_WinDir%\explorer.exe %a2dir%
@@ -153,7 +157,7 @@ check_args() {
     }
 }
 
-build_tray_menu() {
+build_tray_menu(a2_title) {
     ; Build the tray icon menu.
     Menu, Tray, Icon, %a2ui_res%a2.ico, , 1
     Menu, Tray, Icon
@@ -172,6 +176,6 @@ build_tray_menu() {
     Menu, Tray, icon, Reload a2 Runtime, %a2ui_res%a2reload.ico
     Menu, Tray, add, Help on a2, a2ui_help
     Menu, Tray, icon, Help on a2, %a2ui_res%a2help.ico
-    Menu, Tray, add, Quit a2 Runtime, a2ui_exit
+    Menu, Tray, add, Quit a2 Runtime, _a2ui_exit
     Menu, Tray, icon, Quit a2 Runtime, %a2ui_res%a2x.ico
 }

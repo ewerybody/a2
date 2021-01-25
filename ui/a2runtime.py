@@ -26,6 +26,7 @@ class IncludeType(enum.Enum):
     hotkeys = 3
     init = 4
     source_libs = 5
+    exit = 6
 
 
 class IncludeDataCollector(object):
@@ -38,6 +39,7 @@ class IncludeDataCollector(object):
         self.hotkeys = None
         self.init = None
         self.source_libs = None
+        self.exit = None
 
     def collect(self):
         mod_settings = self.a2.db.tables()
@@ -82,7 +84,7 @@ class IncludeDataCollector(object):
         Collections per module.
         A property to be dynamically fillable.
         """
-        return [self.variables, self.includes, self.hotkeys, self.init]
+        return [self.variables, self.includes, self.hotkeys, self.init, self.exit]
 
     def get_vars(self):
         self.variables = VariablesCollection(self.a2)
@@ -99,12 +101,16 @@ class IncludeDataCollector(object):
     def get_source_libs(self):
         self.source_libs = SourceLibsCollection(self.a2)
 
+    def get_exit(self):
+        self.exit = ExitCollection(self.a2)
+
     def get_all_collections(self):
         self.get_vars()
         self.get_includes()
         self.get_hotkeys()
         self.get_init()
         self.get_source_libs()
+        self.get_exit()
 
 
 class _Collection(object):
@@ -317,6 +323,30 @@ class InitCollection(_Collection):
         return self.init_code != ''
 
 
+class ExitCollection(_Collection):
+    def __init__(self, a2obj_instance=None):
+        super(ExitCollection, self).__init__(a2obj_instance)
+        self.name = 'exit'
+        self.exit_code = ''
+
+    def gather(self, mod):
+        exit_calls = self.a2.db.get('exit_calls', mod.key) or []
+        if exit_calls:
+            self.exit_code += '    ; %s\n' % mod.key
+            for call in exit_calls:
+                call = '    ' + call.replace('\n', '\n    ')
+                if not call.endswith('\n'):
+                    call += '\n'
+                self.exit_code += call
+
+    def get_content(self):
+        return 'a2_exit_calls() {\n' + self.exit_code + '}\n'
+
+    @property
+    def has_content(self):
+        return self.exit_code != ''
+
+
 class SourceLibsCollection(_Collection):
     """
     For script libraries that may come with a module source package.
@@ -372,6 +402,8 @@ def collect_includes(specific=None):
             collector.get_hotkeys()
         elif specific is IncludeType.init:
             collector.get_init()
+        elif specific is IncludeType.exit:
+            collector.get_exit()
 
     collector.collect()
     return collector
@@ -407,7 +439,10 @@ def _get_hidden_process_startup_nfo():
 
 def kill_a2_process():
     """
-    finds and kills Autohotkey processes that run a2.ahk.
+    Deprecated. Keping for emergency reasons.
+    a2 runtime can now deal with a "--shutdown" argument!
+
+    Find and kill Autohotkey processes that run a2.ahk.
     Takes a moment. So start it in a thread!
 
     note there is also:
@@ -435,7 +470,7 @@ def get_a2_runtime_pid():
     wmicout = subprocess.check_output(
         f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" ' 'get ProcessID,CommandLine',
         startupinfo=_get_hidden_process_startup_nfo(),
-        stderr=subprocess.STDOUT
+        stderr=subprocess.STDOUT,
     )
     wmicout = str(wmicout).split('\\r\\r\\n')
 

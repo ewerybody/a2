@@ -6,3 +6,4 @@ if IsFunc(initFunc)
 #include includes\includes.ahk
 #include includes\hotkeys.ahk
 #include includes\init.ahk
+#include includes\exit.ahk
