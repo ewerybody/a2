@@ -127,7 +127,10 @@ ask_for_user_data_deletion(ByRef items) {
     if FileExist(user_data_path) {
         MsgBox, 36, Delete User data?, Do you also want to delete the user data?
         IfMsgBox Yes
-        items.push(user_data_path)
+        {
+            items.push(user_data_path)
+            items.push("_ user_data_include")
+        }
     }
 }
 
