@@ -12,7 +12,6 @@ string_join(byref array_of_strings, byref separator=", ") {
     Return result
 }
 
-
 string_is_in_array(byref search, byref array) {
     ; look up the items of an array object
     ; returns index of search string if found
@@ -23,7 +22,6 @@ string_is_in_array(byref search, byref array) {
     }
     Return 0
 }
-
 
 string_is_web_address(string) {
     ; Return true if given string looks like an URL
@@ -50,14 +48,12 @@ string_endswith(byref string, byref end) {
     return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
 }
 
-
 is_whitespace(byref string) {
     if (string == A_Space OR string == A_Tab OR string == "`n" OR string == "`r")
         return true
     else
         return false
 }
-
 
 string_trim(byref string, byref trim) {
     return string_trimLeft(string_trimRight(string, trim), trim)
@@ -93,7 +89,6 @@ string_trimRight(string, trim)
     return string
 }
 
-
 ; WIP: Which version do you like more?!?!
 ; strips whitespace from start and end of a string:
 string_strip(byref inputString) {
@@ -116,16 +111,15 @@ string_strip(byref inputString) {
 }
 
 string_unquote(string, quote = """") {
-    ; Remove quotes from a string if necessary
+    ; Remove quotes from a string if necessary.
     if (InStr(string, quote) = 1 && string_endsWith(string, quote))
         return string_trim(string, quote)
     return string
 }
 
 string_quote(string, once = 1, quote = """") {
-    ; Add quotes to a string only if necessary
-    if once
-    {
+    ; Add quotes to a string only if necessary.
+    if (once) {
         if (InStr(string, quote) != 1)
             string := quote string
         if (!string_endsWith(string, quote))
@@ -136,7 +130,7 @@ string_quote(string, once = 1, quote = """") {
 }
 
 string_suffix(string, suffix) {
-    ; Ensure a string to have a given suffix
+    ; Ensure a string to have a given suffix.
     if !string_endswith(string, suffix)
         return string suffix
     return string
