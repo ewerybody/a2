@@ -3,8 +3,22 @@ from a2element.common import DrawCtrl, EditCtrl, DrawCtrlMixin
 
 
 # amend with new elements to show in edit mode on Add Element-buttons:
-DISPLAY_ELEMENTS = ['button', 'check', 'combo', 'coords', 'group', 'hotkey', 'init',
-                    'label', 'menu_item', 'number', 'path', 'pathlist', 'string']
+DISPLAY_ELEMENTS = [
+    'button',
+    'check',
+    'combo',
+    'coords',
+    'exit',
+    'group',
+    'hotkey',
+    'init',
+    'label',
+    'menu_item',
+    'number',
+    'path',
+    'pathlist',
+    'string',
+]
 
 _UI_DATA = None
 log = a2core.get_logger(__name__)
@@ -22,6 +36,7 @@ def get_list(force=False):
 
 def _load_ui_data():
     import a2ctrl
+
     global _UI_DATA
     _UI_DATA = []
     for element in DISPLAY_ELEMENTS:

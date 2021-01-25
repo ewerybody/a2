@@ -9,7 +9,9 @@ class Edit(EditCtrl):
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg)
 
-        self.mainLayout.addWidget(QtWidgets.QLabel('Some code to be executed on a2 runtime start:'))
+        self.mainLayout.addWidget(
+            QtWidgets.QLabel('Some code to be executed on a2 runtime shutdown:')
+        )
         self.text_field = A2CodeField()
         self.mainLayout.addWidget(self.text_field)
         a2ctrl.connect.control(self.text_field, 'code', self.cfg)
@@ -17,7 +19,7 @@ class Edit(EditCtrl):
     @staticmethod
     def element_name():
         """The elements display name shown in UI"""
-        return 'Init Call'
+        return 'Exit Call'
 
     @staticmethod
     def element_icon():
@@ -25,4 +27,4 @@ class Edit(EditCtrl):
 
 
 def get_settings(_module_key, cfg, db_dict, _user_cfg):
-    db_dict.setdefault('init_calls', []).append(cfg['code'])
+    db_dict.setdefault('exit_calls', []).append(cfg['code'])

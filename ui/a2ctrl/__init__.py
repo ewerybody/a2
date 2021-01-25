@@ -12,7 +12,7 @@ from a2ctrl.icons import Ico, Icons
 
 
 log = a2core.get_logger(__name__)
-NO_DRAW_TYPES = ['include', 'init']
+NO_DRAW_TYPES = ['exit', 'include', 'init']
 ELEMENTS_PACKAGE = 'a2element'
 LOCAL_ELEMENT_ID = 'a2_local_element'
 _element_map = {}
