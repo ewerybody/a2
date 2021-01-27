@@ -34,11 +34,12 @@ if a2cfg.auto_reload
     SetTimer, a2_check_changes, 1000
 
 OnExit("a2ui_exit")
+OnError("a2ui_on_error")
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
 #include *i _ user_data_include
-Return ; -----------------------------------------------------------------------------
+Return ; -----------------------------------------------------------------------
 
 a2ui() {
     tt("Calling a2 ui ...")
@@ -154,6 +155,24 @@ check_args() {
             ExitApp
         else
             MsgBox, a2, Arguments handling is WIP!`nWhat's "%arg%"?
+    }
+}
+
+a2ui_on_error(exception) {
+    MsgBox exception: %exception%
+    msg := ""
+    msg .= "Message: " exception.Message "`n"
+    msg .= "What: " exception.What "`n"
+    msg .= "Extra: " exception.Extra "`n"
+    msg .= "File: " exception.File "`n"
+    msg .= "Line: " exception.Line "`n"
+    MsgBox, %msg%
+
+    a2_win_id := WinExist("a2 ahk_class Qt5152QWindowIcon ahk_exe pythonw.exe")
+    if (a2_win_id)
+        WinActivate, ahk_id %a2_win_id%
+    else {
+        a2ui()
     }
 }
 
