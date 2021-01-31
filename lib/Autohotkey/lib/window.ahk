@@ -180,3 +180,26 @@ window_get_geometry(hwnd) {
     r.h := Abs(max(r.y, r.y2) - min(r.y, r.y2))
     Return r
 }
+
+window_cut_hole(hwnd, inner, outer := "") {
+    ; Cut a rectangle into a window.
+    ;
+    ; hwnd:     Window handle.
+    ; inner:    Rectangle object with .x .y .x2 .y2 member attributes.
+    ;           Where xy is the upper left and x2y2 the lower bottom corner.
+    ;           Needs to be relative to the given window geometry as
+    ;           WinSet, Region works RELATIVE to the window!
+    ; outer:    Rectangle of the given window, or bigger. Just needs .w & .h.
+    CoordMode, Pixel, Screen
+
+    outer := window_get_geometry(hwnd)
+    ; top_left := outer.x "-" outer.y
+    outer_str := "0-0 " outer.w "-0 "
+    outer_str .= outer.w "-" outer.h " 0-" outer.h " 0-0"
+
+    top_left2 := inner.x "-" inner.y
+    inner_str := top_left2 " " inner.x2 "-" inner.y " "
+    inner_str .= inner.x2 "-" inner.y2 " " inner.x "-" inner.y2 " " top_left2
+    ; tt(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nw:" inner.w "`nh:" inner.h)
+    WinSet, Region, %outer_str% %inner_str%, ahk_id %hwnd%
+}

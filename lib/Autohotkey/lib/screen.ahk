@@ -8,7 +8,6 @@ screen_get_virtual_size(ByRef x, ByRef y, ByRef w, ByRef h) {
     SysGet, h, 79
 }
 
-
 screen_get_index(hwnd) {
     ; Return the MonitorID where the specified window is located on
     ; @author shnywong
@@ -27,9 +26,9 @@ screen_get_index(hwnd) {
     if (monitorHandle := DllCall("MonitorFromWindow", "uint", hwnd, "uint", 0x2))
         && DllCall("GetMonitorInfo", "uint", monitorHandle, "uint", &monitorInfo)
     {
-        monitorLeft   := NumGet(monitorInfo,  4, "Int")
-        monitorTop    := NumGet(monitorInfo,  8, "Int")
-        monitorRight  := NumGet(monitorInfo, 12, "Int")
+        monitorLeft := NumGet(monitorInfo, 4, "Int")
+        monitorTop := NumGet(monitorInfo, 8, "Int")
+        monitorRight := NumGet(monitorInfo, 12, "Int")
         monitorBottom := NumGet(monitorInfo, 16, "Int")
 
         SysGet, monitorCount, MonitorCount
@@ -51,15 +50,22 @@ screen_get_index(hwnd) {
     return %monitorIndex%
 }
 
-
 class Screen_Workarea {
-	__new(index=1) {
-		SysGet, WorkArea, MonitorWorkArea, %index%
-		this.left := WorkAreaLeft
-		this.right := WorkAreaRight
-		this.top := WorkAreaTop
-		this.bottom	:= WorkAreaBottom
-		this.width := WorkAreaRight - WorkAreaLeft
-		this.height := WorkAreaBottom - WorkAreaTop
-	}
+    __new(index=1) {
+        SysGet, WorkArea, MonitorWorkArea, %index%
+        this.left := WorkAreaLeft
+        this.x := this.left
+        this.right := WorkAreaRight
+        this.x2 := this.right
+
+        this.top := WorkAreaTop
+        this.y := this.top
+        this.bottom	:= WorkAreaBottom
+        this.y2 := this.bottom
+
+        this.width := WorkAreaRight - WorkAreaLeft
+        this.w := this.width
+        this.height := WorkAreaBottom - WorkAreaTop
+        this.h := this.height
+    }
 }
