@@ -182,7 +182,8 @@ window_get_geometry(hwnd) {
 }
 
 window_cut_hole(hwnd, inner, outer := "") {
-    ; Cut a rectangle into a window.
+    ; Cut a rectangle into a window. But from rectangle-object
+    ; rather than this huge coordinates string.
     ;
     ; hwnd:     Window handle.
     ; inner:    Rectangle object with .x .y .x2 .y2 member attributes.
@@ -190,16 +191,14 @@ window_cut_hole(hwnd, inner, outer := "") {
     ;           Needs to be relative to the given window geometry as
     ;           WinSet, Region works RELATIVE to the window!
     ; outer:    Rectangle of the given window, or bigger. Just needs .w & .h.
-    CoordMode, Pixel, Screen
-
-    outer := window_get_geometry(hwnd)
-    ; top_left := outer.x "-" outer.y
+    If (!IsObject(outer))
+        outer := window_get_geometry(hwnd)
     outer_str := "0-0 " outer.w "-0 "
     outer_str .= outer.w "-" outer.h " 0-" outer.h " 0-0"
 
     top_left2 := inner.x "-" inner.y
     inner_str := top_left2 " " inner.x2 "-" inner.y " "
     inner_str .= inner.x2 "-" inner.y2 " " inner.x "-" inner.y2 " " top_left2
-    ; tt(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nw:" inner.w "`nh:" inner.h)
+    ; tt(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nx2:" inner.x2 "`ny2:" inner.y2)
     WinSet, Region, %outer_str% %inner_str%, ahk_id %hwnd%
 }

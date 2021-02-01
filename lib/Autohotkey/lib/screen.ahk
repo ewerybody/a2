@@ -69,3 +69,13 @@ class Screen_Workarea {
         this.h := this.height
     }
 }
+
+screen_get_work_area(monitor_index := -1) {
+    ; Get a Screen_Workarea object of the currently active (where the active window is)
+    ; or from the monitor with the given number.
+    if (monitor_index == -1) {
+        monitor_index := screen_get_index(WinExist("A"))
+    }
+    area := new Screen_WorkArea(monitor_index)
+    return area
+}
