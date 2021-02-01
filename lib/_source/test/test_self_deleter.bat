@@ -1,8 +1,11 @@
+rem Test batch script to run the self deleter on its own.
+rem literally just finds local Autohotkey.exe,
+rem runs ahk script to find latest Python.
+rem runs python test script. I'm sorry :/ but it works.
 @echo off
 set here=%~dp0
 echo here: %here%
 set ahkbin=%here%..\..\AutoHotkey
-set Ahk2Exe=%ahkbin%\Compiler\Ahk2Exe.exe
 set ahk_exe=%ahkbin%\Autohotkey.exe
 
 rem getting latest python path
@@ -18,27 +21,5 @@ if not exist %pypath% (
 echo pypath: %pypath%
 
 echo running py build script ...
-"%pypath%\python.exe" "%here%test_self_deleter.py"
-
-@REM set this_path=%~dp0
-@REM echo this_path: %this_path%
-@REM set sourcedir=%this_path%
-@REM set Ahk2Exe=%sourcedir%\..\AutoHotkey\Compiler\Ahk2Exe.exe
-@REM set script=%this_path%\test_self_deleter.ahk
-@REM set executable=%this_path%\test_self_deleter.exe
-@REM set test_dir=%this_path%\_ self_deleter_test
-
-@REM echo Ahk2Exe: %Ahk2Exe%
-
-@REM if exist "%test_dir%" (
-@REM     RMDIR /Q "%test_dir%"
-@REM )
-@REM MD "%test_dir%"
-
-@REM echo creating executable %executable%...
-@REM "%Ahk2Exe%" /in "%script%" /out "%executable%" /mpress 0
-
-@REM echo copy executable to ...
-
-@REM copy "%executable%" "%test_dir%\"
+"%pypath%\python.exe" "%here%_test_self_deleter.py"
 pause

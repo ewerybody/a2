@@ -96,7 +96,7 @@ def main():
     if not successes:
         print(f'\n{EXMRK} FAILED!')
     else:
-        print(f'\n{CHKMK} Test Completed! ({successes})')
+        print(f'\n{CHKMK} Test PASSED! ({successes})')
 
 
 _prnt = sys.stdout.write

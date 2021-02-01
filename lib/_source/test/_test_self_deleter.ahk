@@ -1,5 +1,3 @@
-;@Ahk2Exe-Bin ..\..\Autohotkey\Compiler\AutoHotkeySC.bin
-
 path := A_ScriptDir
 batch_path := create_deleter_batch(A_ScriptDir)
 x := FileExist(batch_path)
@@ -11,7 +9,7 @@ Run, %batch_path%
 sleep, 100
 ExitApp
 
-Return,
+Return, ;-----------------------------------------------------------------------
 #Include, %A_ScriptDir%\..
 #Include, a2_uninstaller.ahk
 ;@Ahk2Exe-SetMainIcon ..\..\..\ui\res\a2x.ico
