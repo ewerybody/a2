@@ -13,7 +13,7 @@
 
 dragtangle(drag_func := ""
 , start_func := "", finished_func := ""
-, escape_func := "", loop_delay := 20, data := "")
+, escape_func := "", loop_delay := 10, data := "")
 {
     if (!IsObject(data))
         data := {}
@@ -31,6 +31,7 @@ dragtangle(drag_func := ""
             Return data
         }
 
+        cursor_set_cross()
         MouseGetPos, mx, my
         data.mx := mx
         data.my := my
