@@ -22,8 +22,8 @@ global a2includes := a2data "includes\"
 global a2temp := a2data "temp\"
 global a2db := a2data "ad.db"
 
-check_args()
-build_tray_menu(a2_title)
+_a2_check_arguments()
+_a2_build_tray_menu(a2_title)
 
 global a2cfg := _a2_get_user_config()
 
@@ -31,10 +31,10 @@ if !a2cfg.no_startup_tooltip
     tt(a2_title, 1)
 
 if a2cfg.auto_reload
-    SetTimer, a2_check_changes, 1000
+    SetTimer, _a2_check_changes, 1000
 
 OnExit("a2ui_exit")
-OnError("a2ui_on_error")
+OnError("_a2ui_on_error")
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
@@ -42,14 +42,43 @@ OnError("a2ui_on_error")
 Return ; -----------------------------------------------------------------------
 
 a2ui() {
-    tt("Calling a2 ui ...")
-    a2_ahk := A_ScriptDir "\Autohotkey\Autohotkey.exe"
-    Run, "%a2_ahk%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
-    WinWait, a2,, 5
-    tt("Calling a2 ui ...", 1)
+    tt_text := "Calling a2 ui ..."
+    tt(tt_text)
+    a2_win_id := WinExist("a2 ahk_class Qt5152QWindowIcon ahk_exe pythonw.exe")
+    if (a2_win_id)
+        WinActivate, ahk_id %a2_win_id%
+    else {
+        a2_ahk := A_ScriptDir "\Autohotkey\Autohotkey.exe"
+        Run, "%a2_ahk%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
+        WinWait, a2,, 5
+    }
+    tt(tt_text, 1)
 }
 
-a2_check_changes() {
+a2ui_help() {
+    Run, %a2_help%
+}
+
+a2ui_reload() {
+    Reload
+}
+
+a2ui_exit() {
+    exit_func := "a2_exit_calls"
+    if IsFunc(exit_func)
+        %exit_func%()
+    ExitApp
+}
+_a2ui_exit() {
+    ExitApp
+}
+
+a2_explore() {
+    ; Open the a2 root directory in the file browser.
+    Run, %A_WinDir%\explorer.exe %a2dir%
+}
+
+_a2_check_changes() {
     ; Check library & module scripts for changes via archive file attribute.
     ; Removes the attribute from all files and returns true if any was found
     do_reload := false
@@ -126,29 +155,7 @@ _a2_get_user_config() {
     Return a2cfg
 }
 
-a2ui_help() {
-    Run, %a2_help%
-}
-
-a2ui_reload() {
-    Reload
-}
-
-a2ui_exit() {
-    exit_func := "a2_exit_calls"
-    if IsFunc(exit_func)
-        %exit_func%()
-    ExitApp
-}
-_a2ui_exit() {
-    ExitApp
-}
-
-a2_explore() {
-    Run, %A_WinDir%\explorer.exe %a2dir%
-}
-
-check_args() {
+_a2_check_arguments() {
     ; Look into the commandline arguments for certain flags.
     for _, arg in A_Args {
         if (arg == "--shutdown")
@@ -158,25 +165,42 @@ check_args() {
     }
 }
 
-a2ui_on_error(exception) {
-    MsgBox exception: %exception%
-    msg := ""
-    msg .= "Message: " exception.Message "`n"
-    msg .= "What: " exception.What "`n"
-    msg .= "Extra: " exception.Extra "`n"
-    msg .= "File: " exception.File "`n"
-    msg .= "Line: " exception.Line "`n"
-    MsgBox, %msg%
+_a2ui_on_error(exception) {
+    file_path := exception.File, line_nr := exception.Line
+    FileReadLine, code_line, %file_path%, %line_nr%
+    file_name := path_basename(file_path)
 
-    a2_win_id := WinExist("a2 ahk_class Qt5152QWindowIcon ahk_exe pythonw.exe")
-    if (a2_win_id)
-        WinActivate, ahk_id %a2_win_id%
-    else {
-        a2ui()
+    msg := "There was an exception thrown:`n " exception.Message "`n"
+    msg .= "command: """ exception.What """`n"
+    msg .= "value: """ exception.Extra """`n"
+    msg .= "file: " file_name ", Line: " line_nr "`n"
+    msg .= ">>>" code_line
+    title := "a2 Runtime Error: " exception.Message
+
+    SetTimer, _a2ui_on_error_change_buttons, 50
+    MsgBox, 19, %title%, %msg%
+    IfMsgBox, Yes
+    {
+        editor := "C:\Users\eric\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
+        file_line := exception.File ":" exception.Line
+        Run, "%editor%" --reuse-window --goto "%file_line%"
     }
+    IfMsgBox, No
+    a2ui()
+
+    Reload
+
+    _a2ui_on_error_change_buttons:
+        IfWinNotExist, %title%
+            return ; Keep waiting.
+        SetTimer, _a2ui_on_error_change_buttons, Off
+        WinActivate
+        ControlSetText, Button1, Edit Code
+        ControlSetText, Button2, Open UI
+    Return
 }
 
-build_tray_menu(a2_title) {
+_a2_build_tray_menu(a2_title) {
     ; Build the tray icon menu.
     Menu, Tray, Icon, %a2ui_res%a2.ico, , 1
     Menu, Tray, Icon
