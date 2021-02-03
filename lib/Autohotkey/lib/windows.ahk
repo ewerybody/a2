@@ -3,7 +3,7 @@
  *     Get the version ID of the current Windows installation
  *
  * @sample
- *     GetWindowsVersion()     ; ie: returns 10.0
+ *     windows_get_version()     ; ie: returns 10.0
  *
  * @return  integer
  */

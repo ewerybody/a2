@@ -34,7 +34,7 @@ class Ca2
         this.path := A_ScriptDir "\.."
         this.modules := a2_modules
         this.db := new this.Ca2DB()
-        
+
         x := this.path
         msgbox this.path: %x%
     }
@@ -143,7 +143,7 @@ class Ca2
          */
         increment(modulePack, moduleName, key, step = 1)
         {
-            if (!IsNumeric(step))
+            if step is not number
                 return -1
 
             moduleTable := this.__moduleTable(modulePack, moduleName)
@@ -152,7 +152,7 @@ class Ca2
 
             currentValue := this.__get(moduleTable, key)
 
-            if (!IsNumeric(currentValue))
+            if currentValue is not number
                 return -2
 
             value := ((currentValue) ? currentValue : 0) + step

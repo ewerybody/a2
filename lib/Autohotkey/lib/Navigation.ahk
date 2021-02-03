@@ -208,7 +208,7 @@ Class CConsoleNavigationSource
         ; Get info about the active console screen buffer.
         if (!DllCall("GetConsoleScreenBufferInfo", "PTR", hConOut, "PTR", &info))
         {
-            WriteDebug("GetConsoleScreenBufferInfo failed - error " A_LastError ".", "", "error", "Navigation")
+            a2log_error("GetConsoleScreenBufferInfo failed - error " A_LastError ".", "Navigation")
             this.FreeConsole(hConOut)
             return ""
         }
@@ -224,7 +224,7 @@ Class CConsoleNavigationSource
         ; Read text.
         if (!DllCall("ReadConsoleOutputCharacter", "PTR", hConOut, "str", text, "uint", ConWinWidth*ConWinHeight, "uint", 0, "PTR*", numCharsRead, "uint"))
         {
-            WriteDebug("ReadConsoleOutputCharacter failed - error " A_LastError, "", "error", "Navigation")
+            a2log_error("ReadConsoleOutputCharacter failed - error " A_LastError, "Navigation")
             this.FreeConsole(hConOut)
             return ""
         }
@@ -288,7 +288,7 @@ Class CConsoleNavigationSource
         ; AttachConsole accepts a process ID.
         if (!DllCall("AttachConsole","uint",pid))
         {
-            WriteDebug("AttachConsole failed - error " A_LastError, "", "error", "Navigation")
+            a2log_error("AttachConsole failed - error " A_LastError, "Navigation")
             return ""
         }
         ; If it succeeded, console functions now operate on the target console window.
@@ -296,7 +296,7 @@ Class CConsoleNavigationSource
         hConOut := DllCall("CreateFile", "str", "CONOUT$", "uint", 0xC0000000, "uint", 7, "PTR", 0, "uint", 3, "uint", 0, "PTR", 0, "PTR")
         if hConOut = -1 ; INVALID_HANDLE_VALUE
         {
-            WriteDebug("CreateFile failed - error " A_LastError, "", "error", "Navigation")
+            a2log_error("CreateFile failed - error " A_LastError, "Navigation")
             return ""
         }
         return hConOut
@@ -580,7 +580,7 @@ Class CExplorerNavigationSource
         }
         catch e
         {
-            WriteDebug("Error getting path of current Explorer window", "", "error", "Navigation")
+            a2log_error("Error getting path of current Explorer window", "Navigation")
         }
     }
 
@@ -594,7 +594,7 @@ Class CExplorerNavigationSource
         }
         catch e
         {
-            WriteDebug("Error getting display name for current Explorer window path", "", "error", "Navigation")
+            a2log_error("Error getting display name for current Explorer window path", "Navigation")
         }
     }
 
@@ -616,7 +616,7 @@ Class CExplorerNavigationSource
                         SetTimerF("ExplorerPathChanged", -100)
                     }
                     catch e
-                        WriteDebug("Error setting Explorer Path to " Path, "", "error", "Navigation")
+                        a2log_error("Error setting Explorer Path to " Path, "Navigation")
                 }
     }
 
@@ -634,7 +634,7 @@ Class CExplorerNavigationSource
                 }
         }
         catch e
-            WriteDebug("Error getting selected filepaths in Explorer", "", "error", "Navigation")
+            a2log_error("Error getting selected filepaths in Explorer", "Navigation")
         return Files
     }
 
@@ -652,7 +652,7 @@ Class CExplorerNavigationSource
                 }
         }
         catch e
-            WriteDebug("Error getting selected filenames in Explorer", "", "error", "Navigation")
+            a2log_error("Error getting selected filenames in Explorer", "Navigation")
         return Files
     }
 
@@ -665,7 +665,7 @@ Class CExplorerNavigationSource
                     return Window.Document.FocusedItem.Path
         }
         catch e
-            WriteDebug("Error getting focused filepath in Explorer", "", "error", "Navigation")
+            a2log_error("Error getting focused filepath in Explorer", "Navigation")
     }
 
     GetFocusedFilename(hwnd)
@@ -677,7 +677,7 @@ Class CExplorerNavigationSource
                     return Window.Document.FocusedItem.Name
         }
         catch e
-            WriteDebug("Error getting focused filename in Explorer", "", "error", "Navigation")
+            a2log_error("Error getting focused filename in Explorer", "Navigation")
     }
 
     SelectFiles(Files, hWnd)
@@ -748,7 +748,7 @@ Class CExplorerNavigationSource
             }
         }
         catch e
-            WriteDebug("Error selecting files in Explorer", "", "error", "Navigation")
+            a2log_error("Error selecting files in Explorer", "Navigation")
         return 0
     }
 
@@ -765,7 +765,7 @@ Class CExplorerNavigationSource
                 }
         }
         catch e
-            WriteDebug("Error navigating backward in Explorer", "", "error", "Navigation")
+            a2log_error("Error navigating backward in Explorer", "Navigation")
     }
 
     GoForward(hwnd)
@@ -781,7 +781,7 @@ Class CExplorerNavigationSource
                 }
         }
         catch e
-            WriteDebug("Error navigating forward in Explorer", "", "error", "Navigation")
+            a2log_error("Error navigating forward in Explorer", "Navigation")
     }
 
     GoUpward(hwnd)
@@ -806,7 +806,7 @@ Class CExplorerNavigationSource
                 }
         }
         catch e
-            WriteDebug("Error refreshing Explorer", "", "error", "Navigation")
+            a2log_error("Error refreshing Explorer", "Navigation")
     }
 
     InvertSelection(hwnd)
@@ -833,5 +833,76 @@ Class CExplorerNavigationSource
             ;        NewSelection.Insert(A_LoopFileName)
             ; this.SelectFiles(hwnd, NewSelection)
         }
+    }
+}
+
+
+/**
+ * Helper Function
+ *     Runs a command as user (whether as as admin)
+ *
+ * @param   string  Command     Command to be executed
+ * @param   string  WorkingDir
+ * @param   string  Options
+ * @return  string  PID         ProcessID of the started command
+*/
+; #include lib\ahklib\CNotification.ahk
+RunAsUser(Command, WorkingDir = "", Options = "")
+{
+    result := DllCall(Settings.DllPath "\Explorer.dll\CreateProcessMediumIL", Str, Command, Str, WorkingDir, Str, Options, "UInt")
+    if (A_LastError = 740) ;ERROR_ELEVATION_REQUIRED
+    {
+        Run, %Command% , %WorkingDir%, %Mode% UseErrorLevel, v
+        if (A_LastError)
+            Notify("Error", "Error launching " Target, 5, NotifyIcons.Error)
+        Return, v
+    }
+}
+
+
+
+/**
+ * Helper Function
+ *     Starts a timer that can cal functions and object methods
+ *
+ * @param   func    Function     A function or method reference to be called
+ * @param   integer Period      Period/Timer in ms to call the Fcunction / value "OFF" deactivates a timer
+ * @param           ParmObject
+ * @param           Priority
+ * @return
+ */
+SetTimerF( Function, Period=0, ParmObject=0, Priority=0 ) {
+    Static current,tmrs:=Object() ;current will hold timer that is currently running
+    If IsFunc( Function ) || IsObject( Function ) {
+        if IsObject(tmr:=tmrs[Function]) ;destroy timer before creating a new one
+            ret := DllCall("KillTimer", UInt,0, UInt, tmr.tmr)
+                , DllCall("GlobalFree", UInt, tmr.CBA)
+                , tmrs.Remove(Function)
+        if (Period = 0 || Period ? "off")
+            return ret ;Return as we want to turn off timer
+        ; create object that will hold information for timer, it will be passed trough A_EventInfo when Timer is launched
+        tmr:=tmrs[Function]:=Object("func",Function,"Period",Period="on" ? 250 : Period,"Priority",Priority
+                            ,"OneTime",(Period<0),"params",IsObject(ParmObject)?ParmObject:Object()
+                            ,"Tick",A_TickCount)
+        tmr.CBA := RegisterCallback(A_ThisFunc,"F",4,&tmr)
+        return !!(tmr.tmr  := DllCall("SetTimer", UInt,0, UInt,0, UInt
+                            , (Period && Period!="On") ? Abs(Period) : (Period := 250)
+                            , UInt,tmr.CBA)) ;Create Timer and return true if a timer was created
+                            , tmr.Tick:=A_TickCount
+    }
+    tmr := Object(A_EventInfo) ;A_Event holds object which contains timer information
+    if IsObject(tmr) {
+        DllCall("KillTimer", UInt,0, UInt,tmr.tmr) ;deactivate timer so it does not run again while we are processing the function
+        If (!tmr.active && tmr.Priority<(current.priority ? current.priority : 0)) ;Timer with higher priority is already current so return
+           Return (tmr.tmr:=DllCall("SetTimer", UInt,0, UInt,0, UInt, 100, UInt,tmr.CBA)) ;call timer again asap
+        current:=tmr
+        tmr.tick:=ErrorLevel :=Priority ;update tick to launch function on time
+        func := tmr.func.(tmr.params*) ;call function
+        current= ;reset timer
+        if (tmr.OneTime) ;One time timer, deactivate and delete it
+           return DllCall("GlobalFree", UInt,tmr.CBA)
+                 ,tmrs.Remove(tmr.func)
+        tmr.tmr:= DllCall("SetTimer", UInt,0, UInt,0, UInt ;reset timer
+                ,((A_TickCount-tmr.Tick) > tmr.Period) ? 0 : (tmr.Period-(A_TickCount-tmr.Tick)), UInt,tmr.CBA)
     }
 }

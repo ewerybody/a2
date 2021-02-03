@@ -95,7 +95,7 @@ class CPrompt
 
         Gui, %GuiNum%:Show, Autosize Hide
         Gui, %GuiNum%:+LastFound
-        x := max(GetClientRect(WinExist()).w - (this.Cancel ? 180 : 90), 10)
+        x := max(window_get_geometry(WinExist()).w - (this.Cancel ? 180 : 90), 10)
         Gui, %GuiNum%:Add, Button, % "Default x" x " y+10 w80 hwndhOK gInputBox_OK " (this.Validate && (this.DataType = "Text" || this.DataType = "Path" || this.DataType = "File") ? "Disabled" : ""), OK
         if (this.Cancel)
             Gui, %GuiNum%:Add, Button, x+10 w80 gInputBox_Cancel, Cancel
