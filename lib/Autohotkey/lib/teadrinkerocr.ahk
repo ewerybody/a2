@@ -1,8 +1,9 @@
 ; ORC solution using Windows.Media.Ocr.OcrEngine
-; Written by malcev and teadrinker source:
+; https://docs.microsoft.com/en-us/uwp/api/windows.media.ocr
+; Written for Autohotkey by malcev and teadrinker. source:
 ; https://www.autohotkey.com/boards/viewtopic.php?t=72674
 
-teadrinker_ocr(rect, language := "en") {
+teadrinkerocr(rect, language := "en") {
     hBitmap := HBitmapFromScreen(rect.x, rect.y, rect.w, rect.h)
     pIRandomAccessStream := HBitmapToRandomAccessStream(hBitmap)
     DllCall("DeleteObject", "Ptr", hBitmap)
@@ -16,8 +17,7 @@ HBitmapFromScreen(X, Y, W, H) {
     DllCall("SelectObject", "Ptr", PDC, "Ptr", HBM)
     DllCall("BitBlt", "Ptr", PDC, "Int", 0, "Int", 0, "Int", W, "Int", H
     , "Ptr", HDC, "Int", X, "Int", Y, "UInt", 0x00CC0020)
-    DllCall("DeleteDC", "Ptr", PDC)
-    DllCall("ReleaseDC", "Ptr", 0, "Ptr", HDC)
+    DllCall("DeleteDC", "Ptr", PDC), DllCall("ReleaseDC", "Ptr", 0, "Ptr", HDC)
     Return HBM
 }
 
@@ -30,17 +30,14 @@ HBitmapToRandomAccessStream(hBitmap) {
     DllCall("Ole32\CreateStreamOnHGlobal", "Ptr", 0, "UInt", true, "PtrP", pIStream, "UInt")
 
     VarSetCapacity(PICTDESC, sz := 8 + A_PtrSize*2, 0)
-    NumPut(sz, PICTDESC)
-    NumPut(PICTYPE_BITMAP, PICTDESC, 4)
-    NumPut(hBitmap, PICTDESC, 8)
+    NumPut(sz, PICTDESC), NumPut(PICTYPE_BITMAP, PICTDESC, 4), NumPut(hBitmap, PICTDESC, 8)
     riid := CLSIDFromString(IID_IPicture, GUID1)
     DllCall("OleAut32\OleCreatePictureIndirect", "Ptr", &PICTDESC, "Ptr", riid, "UInt", false, "PtrP", pIPicture, "UInt")
     ; IPicture::SaveAsFile
     DllCall(NumGet(NumGet(pIPicture+0) + A_PtrSize*15), "Ptr", pIPicture, "Ptr", pIStream, "UInt", true, "UIntP", size, "UInt")
     riid := CLSIDFromString(IID_IRandomAccessStream, GUID2)
     DllCall("ShCore\CreateRandomAccessStreamOverStream", "Ptr", pIStream, "UInt", BSOS_DEFAULT, "Ptr", riid, "PtrP", pIRandomAccessStream, "UInt")
-    ObjRelease(pIPicture)
-    ObjRelease(pIStream)
+    ObjRelease(pIPicture), ObjRelease(pIStream)
     Return pIRandomAccessStream
 }
 
@@ -51,35 +48,14 @@ CLSIDFromString(IID, ByRef CLSID) {
     Return &CLSID
 }
 
-ocr(file, lang := "FirstFromAvailableLanguages")
+ocr(IRandomAccessStream, lang := "FirstFromAvailableLanguages")
 {
-    static OcrEngineStatics, OcrEngine, MaxDimension, LanguageFactory, Language, CurrentLanguage, BitmapDecoderStatics, GlobalizationPreferencesStatics
+    static OcrEngineStatics, OcrEngine, MaxDimension, LanguageFactory, Language, CurrentLanguage, BitmapDecoderStatics
     if (OcrEngineStatics = "") {
         CreateClass("Windows.Globalization.Language", ILanguageFactory := "{9B0252AC-0C27-44F8-B792-9793FB66C63E}", LanguageFactory)
         CreateClass("Windows.Graphics.Imaging.BitmapDecoder", IBitmapDecoderStatics := "{438CCB26-BCEF-4E95-BAD6-23A822E58D01}", BitmapDecoderStatics)
         CreateClass("Windows.Media.Ocr.OcrEngine", IOcrEngineStatics := "{5BFFA85A-3384-3540-9940-699120D428A8}", OcrEngineStatics)
         DllCall(NumGet(NumGet(OcrEngineStatics+0)+6*A_PtrSize), "ptr", OcrEngineStatics, "uint*", MaxDimension) ; MaxImageDimension
-    }
-
-    if (file = "ShowAvailableLanguages") {
-        if (GlobalizationPreferencesStatics = "")
-            CreateClass("Windows.System.UserProfile.GlobalizationPreferences", IGlobalizationPreferencesStatics := "{01BF4326-ED37-4E96-B0E9-C1340D1EA158}", GlobalizationPreferencesStatics)
-        DllCall(NumGet(NumGet(GlobalizationPreferencesStatics+0)+9*A_PtrSize), "ptr", GlobalizationPreferencesStatics, "ptr*", LanguageList) ; get_Languages
-        DllCall(NumGet(NumGet(LanguageList+0)+7*A_PtrSize), "ptr", LanguageList, "int*", count) ; count
-        loop % count
-        {
-            DllCall(NumGet(NumGet(LanguageList+0)+6*A_PtrSize), "ptr", LanguageList, "int", A_Index-1, "ptr*", hString) ; get_Item
-            DllCall(NumGet(NumGet(LanguageFactory+0)+6*A_PtrSize), "ptr", LanguageFactory, "ptr", hString, "ptr*", LanguageTest) ; CreateLanguage
-            DllCall(NumGet(NumGet(OcrEngineStatics+0)+8*A_PtrSize), "ptr", OcrEngineStatics, "ptr", LanguageTest, "int*", bool) ; IsLanguageSupported
-            if (bool = 1) {
-                DllCall(NumGet(NumGet(LanguageTest+0)+6*A_PtrSize), "ptr", LanguageTest, "ptr*", hText)
-                buffer := DllCall("Combase.dll\WindowsGetStringRawBuffer", "ptr", hText, "uint*", length, "ptr")
-                text .= StrGet(buffer, "UTF-16") "`n"
-            }
-            ObjRelease(LanguageTest)
-        }
-        ObjRelease(LanguageList)
-        return text
     }
 
     if (lang != CurrentLanguage) or (lang = "FirstFromAvailableLanguages") {
@@ -103,7 +79,6 @@ ocr(file, lang := "FirstFromAvailableLanguages")
         CurrentLanguage := lang
     }
 
-    IRandomAccessStream := file
     DllCall(NumGet(NumGet(BitmapDecoderStatics+0)+14*A_PtrSize), "ptr", BitmapDecoderStatics, "ptr", IRandomAccessStream, "ptr*", BitmapDecoder) ; CreateAsync
     WaitForAsync(BitmapDecoder)
     BitmapFrame := ComObjQuery(BitmapDecoder, IBitmapFrame := "{72A49A1C-8081-438D-91BC-94ECFC8185C6}")
@@ -133,15 +108,37 @@ ocr(file, lang := "FirstFromAvailableLanguages")
     ObjRelease(Close)
     Close := ComObjQuery(SoftwareBitmap, IClosable := "{30D5A829-7FA4-4026-83BB-D75BAE4EA99E}")
     DllCall(NumGet(NumGet(Close+0)+6*A_PtrSize), "ptr", Close) ; Close
-    ObjRelease(Close)
-    ObjRelease(IRandomAccessStream)
-    ObjRelease(BitmapDecoder)
-    ObjRelease(BitmapFrame)
-    ObjRelease(BitmapFrameWithSoftwareBitmap)
-    ObjRelease(SoftwareBitmap)
-    ObjRelease(OcrResult)
-    ObjRelease(LinesList)
+    ObjRelease(Close), ObjRelease(IRandomAccessStream), ObjRelease(BitmapDecoder), ObjRelease(BitmapFrame)
+    , ObjRelease(BitmapFrameWithSoftwareBitmap), ObjRelease(SoftwareBitmap), ObjRelease(OcrResult), ObjRelease(LinesList)
     Return text
+}
+
+teadrinkerocr_get_available_languages() {
+    static GlobalizationPreferencesStatics, LanguageFactory, OcrEngineStatics
+    if (GlobalizationPreferencesStatics = "") {
+        CreateClass("Windows.Globalization.Language", ILanguageFactory := "{9B0252AC-0C27-44F8-B792-9793FB66C63E}", LanguageFactory)
+        CreateClass("Windows.System.UserProfile.GlobalizationPreferences", IGlobalizationPreferencesStatics := "{01BF4326-ED37-4E96-B0E9-C1340D1EA158}", GlobalizationPreferencesStatics)
+        CreateClass("Windows.Media.Ocr.OcrEngine", IOcrEngineStatics := "{5BFFA85A-3384-3540-9940-699120D428A8}", OcrEngineStatics)
+    }
+
+    DllCall(NumGet(NumGet(GlobalizationPreferencesStatics+0)+9*A_PtrSize), "ptr", GlobalizationPreferencesStatics, "ptr*", LanguageList) ; get_Languages
+    DllCall(NumGet(NumGet(LanguageList+0)+7*A_PtrSize), "ptr", LanguageList, "int*", count) ; count
+
+    lang_list := []
+    loop % count
+    {
+        DllCall(NumGet(NumGet(LanguageList+0)+6*A_PtrSize), "ptr", LanguageList, "int", A_Index-1, "ptr*", hString) ; get_Item
+        DllCall(NumGet(NumGet(LanguageFactory+0)+6*A_PtrSize), "ptr", LanguageFactory, "ptr", hString, "ptr*", LanguageTest) ; CreateLanguage
+        DllCall(NumGet(NumGet(OcrEngineStatics+0)+8*A_PtrSize), "ptr", OcrEngineStatics, "ptr", LanguageTest, "int*", bool) ; IsLanguageSupported
+        if (bool = 1) {
+            DllCall(NumGet(NumGet(LanguageTest+0)+6*A_PtrSize), "ptr", LanguageTest, "ptr*", hText)
+            buffer := DllCall("Combase.dll\WindowsGetStringRawBuffer", "ptr", hText, "uint*", length, "ptr")
+            lang_list.push(StrGet(buffer, "UTF-16"))
+        }
+        ObjRelease(LanguageTest)
+    }
+    ObjRelease(LanguageList)
+    return lang_list
 }
 
 CreateClass(string, interface, ByRef Class) {
