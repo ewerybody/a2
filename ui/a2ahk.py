@@ -50,6 +50,7 @@ def call_lib_cmd(cmd_name, *args, **kwargs):
     :rtype: str
     """
     import a2core
+
     a2 = a2core.A2Obj.inst()
     cmd_name = ensure_ahk_ext(cmd_name)
     cmd_path = os.path.join(a2.paths.lib, 'cmds', cmd_name)
@@ -66,10 +67,10 @@ def call_cmd(cmd_path, *args, **kwargs):
     :rtype: str
     """
     if not os.path.isfile(cmd_path):
-        raise RuntimeError(
-            'Cannot call command script! No such file!\n  %s' % cmd_path)
+        raise RuntimeError('Cannot call command script! No such file!\n  %s' % cmd_path)
 
     import a2core
+
     a2 = a2core.A2Obj.inst()
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
@@ -102,24 +103,25 @@ def get_variables(ahk_file):
         # skip lines with indentation
         if key[0] != _key[0]:
             continue
-        key = _key
-        result[key] = convert_string_to_type(value)
+        result[_key] = convert_string_to_type(value)
     return result
 
 
-def set_variable(ahk_file, key, value):
+def set_variable(ahk_file, key, value, create_key=False):
     """
     Set a single root variable in an Autohotkey script file.
 
     Root variable means ignore scoped or indented entries.
-    If wile does not exist: Create new file with entry.
-    Otherwise raise KeyError if value was not found.
+    If file does not exist: Create new with entry.
+    If key does not exist:
+        - raise KeyError or
+        - create it if `create_key` set `True`.
     """
     try:
         with open(ahk_file) as fobj:
             lines = [l for l in fobj.read().split('\n')]
 
-        found = False
+        write_line_nr = 0
         write = False
         for i, line in enumerate(lines):
             parts = line.split('=', 1)
@@ -130,18 +132,22 @@ def set_variable(ahk_file, key, value):
             # skip lines with indentation
             if curkey[0] != _key[0]:
                 continue
-            # skip if its not the key we're looking for
+            # skip if its not the droids we're looking for
             if key != curkey:
                 continue
-            found = True
-            curvalue = convert_string_to_type(_value.strip('" '))
-            if curvalue != value:
+
+            if convert_string_to_type(_value.strip('" ')) != value:
                 write = True
                 write_line_nr = i
             break
-
-        if not found:
-            raise KeyError('There is no key "%s" to set in %s' % (key, ahk_file))
+        else:
+            if create_key:
+                write = True
+                if lines[-1] != '':
+                    lines.append('')
+                write_line_nr = len(lines) - 1
+            else:
+                raise KeyError('There is no key "%s" to set in %s' % (key, ahk_file))
 
     except FileNotFoundError:
         lines = ['']
@@ -244,26 +250,32 @@ for _key, _code in {'win': '#', 'shift': '+', 'alt': '!', 'ctrl': '^', 'control'
     MODIFIERS['l' + _key] = '<' + _code
     MODIFIERS['r' + _key] = '>' + _code
 
-MOUSE_KEYS = ['lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2',
-              'wheeldown', 'wheelup', 'wheelleft', 'wheelright']
-NUMPAD_KEYS = ['numlock', 'numpadins', 'numpadend', 'numpadpgup', 'numpadpgdn',
-               'numpaddown', 'numpadleft', 'numpadright', 'numpadclear', 'numpadhome',
-               'numpadup', 'numpaddot', 'numpaddel', 'numpad0', 'numpad1', 'numpad2',
-               'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8',
-               'numpad9', 'numpaddiv', 'numpadmult', 'numpadadd', 'numpadsub', 'numpadenter', ]
-KEYS = (['capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backspace',
-         'bs', 'scrolllock', 'delete', 'del', 'insert', 'ins', 'home', 'end',
-         'pgup', 'pgdn', 'up', 'down', 'left', 'right',
-         'browser_back', 'browser_forward', 'browser_refresh', 'browser_stop',
-         'browser_search', 'browser_favorites', 'browser_home', 'volume_mute',
-         'volume_down', 'volume_up', 'media_next', 'media_prev', 'media_stop',
-         'media_play_pause', 'launch_mail', 'launch_media', 'launch_app1',
-         'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak', 'pause',
-         'break', 'help', 'sleep'] + MOUSE_KEYS + NUMPAD_KEYS +
-        ['f%i' % _i for _i in range(1, 25)])
+# fmt: off
+MOUSE_KEYS = [
+    'lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2', 'wheeldown', 'wheelup',
+    'wheelleft', 'wheelright'
+]
+NUMPAD_KEYS = [
+    'numlock', 'numpadins', 'numpadend', 'numpadpgup', 'numpadpgdn', 'numpaddown', 'numpadleft',
+    'numpadright', 'numpadclear', 'numpadhome', 'numpadup', 'numpaddot', 'numpaddel', 'numpad0',
+    'numpad1', 'numpad2', 'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8',
+    'numpad9', 'numpaddiv', 'numpadmult', 'numpadadd', 'numpadsub', 'numpadenter',
+]
+KEYS = ([
+    'capslock', 'space', 'tab', 'enter', 'return', 'escape', 'esc', 'backspace', 'bs',
+    'scrolllock', 'delete', 'del', 'insert', 'ins', 'home', 'end', 'pgup', 'pgdn', 'up', 'down',
+    'left', 'right', 'browser_back', 'browser_forward', 'browser_refresh', 'browser_stop',
+    'browser_search', 'browser_favorites', 'browser_home', 'volume_mute', 'volume_down',
+    'volume_up', 'media_next', 'media_prev', 'media_stop', 'media_play_pause', 'launch_mail',
+    'launch_media', 'launch_app1', 'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak',
+    'pause', 'break', 'help', 'sleep']
+    + MOUSE_KEYS + NUMPAD_KEYS + ['f%i' % _i for _i in range(1, 25)
+])
+# fmt: on
 
 
 if __name__ == '__main__':
     import unittest
     import test.test_ahk
+
     unittest.main(test.test_ahk, verbosity=2)

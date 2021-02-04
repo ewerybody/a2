@@ -11,6 +11,7 @@ import a2uic
 import a2core
 import a2util
 import a2ctrl.connect
+from a2ctrl import Icons
 from a2widget import a2module_source, a2hotkey
 
 log = a2core.get_logger(__name__)
@@ -56,7 +57,7 @@ class A2Settings(QtWidgets.QWidget):
 
         self.add_source_menu = QtWidgets.QMenu(self)
         self.ui.a2add_button.clicked.connect(self.build_add_source_menu)
-        self.ui.a2add_button.setIcon(a2ctrl.Icons.inst().list_add)
+        self.ui.a2add_button.setIcon(Icons.inst().list_add)
 
         self.ui.db_print_all_button.clicked.connect(self.get_db_digest)
 
@@ -76,7 +77,7 @@ class A2Settings(QtWidgets.QWidget):
         self.main.settings_changed('hotkeys')
 
     def build_add_source_menu(self):
-        icons = a2ctrl.Icons.inst()
+        icons = Icons.inst()
         menu = self.add_source_menu
         menu.clear()
 
@@ -203,7 +204,7 @@ class DataPathUiHandler(QtCore.QObject):
 
         self.ui.button_set_user_dir_standard.clicked.connect(self.set_standard)
         self.ui.button_set_user_dir_custom.clicked.connect(self.build_custom_data_menu)
-        self.ui.button_set_user_dir_custom.setIcon(a2ctrl.Icons.inst().more)
+        self.ui.button_set_user_dir_custom.setIcon(Icons.inst().more)
         self.menu = QtWidgets.QMenu(self.ui.button_set_user_dir_custom)
 
         self.ui.button_set_user_dir_standard.setEnabled(self.a2.paths.has_data_override())
@@ -212,7 +213,7 @@ class DataPathUiHandler(QtCore.QObject):
         self._set_path(None)
 
     def build_custom_data_menu(self):
-        icons = a2ctrl.Icons.inst()
+        icons = Icons.inst()
         self.menu.clear()
 
         for path in self.a2.db.get('recent_override_paths') or ():
@@ -307,7 +308,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         layout.addWidget(self.check)
 
         icon_size = self.a2.win.style.get('icon_size_small')
-        pixmap = a2ctrl.Icons.inst().help.pixmap(icon_size)
+        pixmap = Icons.inst().help.pixmap(icon_size)
         self.alert_label = QtWidgets.QLabel('')
         self.alert_label.setPixmap(pixmap)
         self.alert_label.hide()
@@ -341,7 +342,6 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
     def _on_check_finished(self):
         thread = self.sender()
-        thread
         self._set_path(thread.result, thread.error)
 
     def _set_path(self, path, tooltip):
@@ -438,20 +438,22 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.hk_dialog_layout.currentTextChanged.connect(layouts.set_layout)
 
     def set_startup_tooltips(self, state):
-        self._set_variable('no_startup_tooltip', not state)
+        self._set_cfg_variable('no_startup_tooltip', not state)
 
     def set_auto_reload(self, state):
-        self._set_variable('auto_reload', state)
+        self._set_cfg_variable('auto_reload', state)
 
-    def _set_variable(self, name, value):
-        a2ahk.set_variable(self.a2.paths.user_cfg, name, value)
+    def _set_cfg_variable(self, name, value):
+        a2ahk.set_variable(self.a2.paths.user_cfg, name, value, create_key=True)
         self.reload_requested.emit()
 
     def on_dev_setting_changed(self, *_args):
+        self._set_cfg_variable('code_editor', self.dev_set_dict['code_editor'])
         self.main.devset.set(self.dev_set_dict)
 
     def dev_mode_toggle(self, state):
         self.a2.set_dev_mode(state)
+        self._set_cfg_variable('dev_mode', state)
         self.ui.dev_widget.setVisible(state)
         self.main.check_main_menu_bar()
 

@@ -6,20 +6,20 @@ from functools import partial
 
 import a2ahk
 
+TEST_CONTENT = """; some random ahk comment
+a_string := "lorem ipsum... "
+  anIndentedString = asvasd asdfasd asdfasd
+a_bool := false
+a_number = 42133723
+a_float = 123.567
+"""
+
 
 class Test(unittest.TestCase):
     def test_get_set_vars(self):
-        test_content = (
-            '; some random ahk comment\n'
-            'a_string := "lorem ipsum... " \n'
-            ' anotherString = asvasd asdfasd asdfasd\n'
-            'a_bool := false\n'
-            'a_number = 42133723\n'
-            'a_float = 123.567')
-
-        test_file = os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
+        test_file = _get_test_ahk_path()
         with open(test_file, 'w') as fob:
-            fob.write(test_content)
+            fob.write(TEST_CONTENT)
 
         ahkvars = a2ahk.get_variables(test_file)
         self.assertEqual(len(ahkvars), 4)
@@ -42,9 +42,9 @@ class Test(unittest.TestCase):
         self.assertFalse(os.path.isfile(test_file))
 
     def test_get_set_vars_new_file(self):
-        test_file = os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
+        test_file = _get_test_ahk_path()
         self.assertFalse(os.path.isfile(test_file))
-        for key, value in (('somekey', "Monkeys"), ('another', 4815162342)):
+        for key, value in (('somekey', 'Monkeys'), ('another', 4815162342)):
             a2ahk.set_variable(test_file, key, value)
             self.assertTrue(os.path.isfile(test_file))
             vars = a2ahk.get_variables(test_file)
@@ -52,6 +52,18 @@ class Test(unittest.TestCase):
             self.assertTrue(vars[key] == value)
             os.remove(test_file)
             self.assertFalse(os.path.isfile(test_file))
+
+    def test_create_vars(self):
+        """Test adding lines to files or re-using last empty line."""
+        for content in TEST_CONTENT, TEST_CONTENT.strip():
+            test_file =_get_test_ahk_path()
+            with open(test_file, 'w') as fob:
+                fob.write(content)
+
+            key, value = str(uuid.uuid4()), str(uuid.uuid4())
+            a2ahk.set_variable(test_file, key, value, create_key=True)
+            ahkvars = a2ahk.get_variables(test_file)
+            self.assertEqual(ahkvars[key], value)
 
     def test_string_convert(self):
         result = a2ahk.convert_string_to_type('string')
@@ -68,10 +80,13 @@ class Test(unittest.TestCase):
 
     def test_py_value_to_string(self):
         for item, result in [
-                (True, 'true'), (False, 'false'),
-                ('String', '"String"'),
-                (0.333, '0.333'), (1337, '1337'),
-                (['something', 42, 13.37], '["something", 42, 13.37]')]:
+            (True, 'true'),
+            (False, 'false'),
+            ('String', '"String"'),
+            (0.333, '0.333'),
+            (1337, '1337'),
+            (['something', 42, 13.37], '["something", 42, 13.37]'),
+        ]:
             converted = a2ahk.py_value_to_ahk_string(item)
             self.assertEqual(converted, result)
 
@@ -84,9 +99,12 @@ class Test(unittest.TestCase):
 
     def test_call_lib_cmd(self):
         win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
-        win_startup_path
         print('win_startup_path: "%s"' % win_startup_path)
 
 
-if __name__ == "__main__":
+def _get_test_ahk_path():
+    return os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
+
+
+if __name__ == '__main__':
     unittest.main()
