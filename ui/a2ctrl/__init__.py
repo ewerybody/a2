@@ -237,9 +237,3 @@ def iter_element_cfg_type(cfg_list, typ=None):
             yield element_cfg
         elif element_cfg['typ'] == typ:
             yield element_cfg
-
-
-if __name__ == '__main__':
-    import a2app
-
-    a2app.main()

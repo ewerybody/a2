@@ -378,9 +378,3 @@ def set_dev_mode(state):
     """
     a2 = A2Obj.inst()
     a2.set_dev_mode(state)
-
-
-if __name__ == '__main__':
-    import a2app
-
-    a2app.main()

@@ -658,9 +658,3 @@ class RuntimeWatcher(QtCore.QThread):
             else:
                 self._lifetime = 0
                 self._build_win_title(False)
-
-
-if __name__ == '__main__':
-    import a2app
-
-    a2app.main()

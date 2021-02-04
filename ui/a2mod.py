@@ -354,8 +354,3 @@ class Mod(object):
 
         if self.path in sys.path:
             sys.path.remove(self.path)
-
-
-if __name__ == '__main__':
-    import a2app
-    a2app.main()
