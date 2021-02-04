@@ -121,7 +121,7 @@ class _Collection(object):
             self.a2 = a2core.A2Obj.inst()
         else:
             self.a2 = a2_instance
-        self.name = None
+        self.name = ''
 
     def write(self):
         path = os.path.join(self.a2.paths.includes, self.name + a2ahk.EXTENSION)

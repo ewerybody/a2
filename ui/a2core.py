@@ -18,8 +18,6 @@ LOG_LEVEL = logging.INFO
 log = logging.getLogger(__name__)
 log.setLevel(LOG_LEVEL)
 
-a2ahk, a2db, a2mod, a2modsource = None, None, None, None
-
 A2DEFAULT_HOTKEY = 'Win+Shift+A'
 A2TAGS = {
     'file': 'File system',
@@ -35,6 +33,7 @@ NAME = 'a2'
 ENTRYPOINT_FILENAME = 'user_data_include'
 USER_INCLUDES_NAME = 'a2_user_includes.ahk'
 EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatically!\n"
+DATA_PATTERN = '{a2data}'
 
 
 # pylint: disable=too-many-instance-attributes
@@ -61,10 +60,7 @@ class A2Obj:
                 '  Use A2Obj.inst() to get the instance!'
             )
 
-        # lazy import so importing a2core does not depend on other a2 module
-        # pylint: disable=invalid-name,global-statement,redefined-outer-name,multiple-imports
-        global a2ahk, a2db, a2mod, a2modsource
-        import a2ahk, a2db, a2mod, a2modsource, a2output
+        import a2output
 
         self.app = None
         self.win = None
@@ -78,6 +74,8 @@ class A2Obj:
         log.info('A2Obj initialised!')
 
     def start_up(self):
+        import a2db
+
         self.log.set_data_path(self.paths.data)
         self._db = a2db.A2db(self.paths.db)
         self._enabled = None
@@ -103,11 +101,13 @@ class A2Obj:
             ModSource.mods = {'module1': a2Mod.Mod,
                               'module2': a2Mod.Mod, ...}
         """
+        import a2modsource
+
         self.module_sources.clear()
         self.module_sources.update(a2modsource.get(self, self.paths.modules))
         self._modules_fetched = time.time()
 
-    def get_module_obj(self, source_name, module_name):
+    def get_module_obj(self, source_name: str, module_name: str):
         source = self.module_sources.get(source_name)
         if source is None:
             raise RuntimeError(f'No module source named "{source_name}"!')
@@ -161,7 +161,7 @@ class A2Obj:
             if server:
                 from urllib import request
 
-                http_mode = settins.get('http')
+                http_mode = settins.get('http', '')
                 proxy_str = http_mode + '://'
 
                 usr, pwd = settins.get('user'), settins.get('pass')
@@ -201,6 +201,8 @@ class URLs:
         """
         Common a2 & ahk related web links.
         """
+        import a2ahk
+
         variables_dict = a2ahk.get_variables(a2_urls_ahk)
         self.a2 = variables_dict.get('a2_url', 'https://github.com/ewerybody/a2')
         self.help = variables_dict.get('a2_help', (self.a2 + '#a2--'))
@@ -248,9 +250,9 @@ class Paths:
 
         # get data dir from user include file in a2 root
         self.default_data = join(self.a2, 'data')
-        self.local_user_data = join(os.getenv('LOCALAPPDATA'), NAME, 'data')
+        self.local_user_data = join(os.getenv('LOCALAPPDATA', ''), NAME, 'data')
         self.user_includes = join(self.a2, '_ user_data_include')
-        self.data = None
+        self.data = ''
         self._build_data_paths()
         self._test_dirs()
 
@@ -278,11 +280,11 @@ class Paths:
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
             raise RuntimeError('a2ui start interrupted! %s inaccessable!' % self.data)
 
-    def set_data_path(self, path=None):
+    def set_data_path(self, path: str = ''):
         """
         Make sure currently set user data path can be included by runtime.
         """
-        self.data = self.default_data if path is None else path
+        self.data = self.default_data if not path else path
         self._write_entrypoint()
         self._build_data_paths()
 
@@ -337,7 +339,7 @@ class Paths:
             file_obj.write(entrypoint_script)
 
 
-def get_logger(name):
+def get_logger(name: str):
     newlog = logging.getLogger(name)
     newlog.setLevel(LOG_LEVEL)
     return newlog

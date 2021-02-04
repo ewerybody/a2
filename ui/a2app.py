@@ -10,6 +10,7 @@ import platform
 import traceback
 from ctypes import windll
 
+import a2qt
 from a2qt import QtWidgets, QtCore
 from singlesiding import QSingleApplication
 
@@ -36,7 +37,7 @@ class A2Main(QSingleApplication):
         self.lastWindowClosed.connect(self.last_window_closed)
 
         # adding PySide plugin paths. e.g. to make all the imageformats available
-        pyside_plugin_path = os.path.join(sys.modules['a2qt'].QT_PATH, 'plugins')
+        pyside_plugin_path = os.path.join(a2qt.QT_PATH, 'plugins')
         self.addLibraryPath(pyside_plugin_path)
 
         winfo = platform.uname()
