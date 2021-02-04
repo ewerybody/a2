@@ -142,7 +142,7 @@ class Ca2
          */
         increment(moduleSource, moduleName, key, step = 1)
         {
-            if (!IsNumeric(step))
+            if step is not number
                 return -1
 
             moduleTable := this.__moduleTable(moduleSource, moduleName)
@@ -151,7 +151,7 @@ class Ca2
 
             currentValue := this.__get(moduleTable, key)
 
-            if (!IsNumeric(currentValue))
+            if currentValue is not number
                 return -2
 
             value := ((currentValue) ? currentValue : 0) + step
