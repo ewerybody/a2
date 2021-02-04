@@ -8,6 +8,7 @@
 #include lib\a2_config.ahk
 #include lib\a2_globals.ahk
 #include lib\a2_urls.ahk
+#include lib\a2_exceptions.ahk
 
 ; build essential paths
 global a2dir := A_ScriptDir "\..\"
@@ -34,7 +35,7 @@ if a2cfg.auto_reload
     SetTimer, _a2_check_changes, 1000
 
 OnExit("a2ui_exit")
-OnError("_a2ui_on_error")
+OnError("a2_exceptions_handle")
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
@@ -48,8 +49,7 @@ a2ui() {
     if (a2_win_id)
         WinActivate, ahk_id %a2_win_id%
     else {
-        a2_ahk := A_ScriptDir "\Autohotkey\Autohotkey.exe"
-        Run, "%a2_ahk%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
+        Run, "%A_AhkPath%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
         WinWait, a2,, 5
     }
     tt(tt_text, 1)
@@ -149,7 +149,7 @@ _a2_get_user_config() {
             else if (_value == "false")
                 a2cfg[varname] := false
             else
-                a2cfg[varname] := value
+                a2cfg[varname] := string_unquote(value)
         }
     }
     Return a2cfg
@@ -163,41 +163,6 @@ _a2_check_arguments() {
         else
             MsgBox, a2, Arguments handling is WIP!`nWhat's "%arg%"?
     }
-}
-
-_a2ui_on_error(exception) {
-    file_path := exception.File, line_nr := exception.Line
-    FileReadLine, code_line, %file_path%, %line_nr%
-    file_name := path_basename(file_path)
-
-    msg := "There was an exception thrown:`n " exception.Message "`n"
-    msg .= "command: """ exception.What """`n"
-    msg .= "value: """ exception.Extra """`n"
-    msg .= "file: " file_name ", Line: " line_nr "`n"
-    msg .= ">>>" code_line
-    title := "a2 Runtime Error: " exception.Message
-
-    SetTimer, _a2ui_on_error_change_buttons, 50
-    MsgBox, 19, %title%, %msg%
-    IfMsgBox, Yes
-    {
-        editor := "C:\Users\eric\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
-        file_line := exception.File ":" exception.Line
-        Run, "%editor%" --reuse-window --goto "%file_line%"
-    }
-    IfMsgBox, No
-    a2ui()
-
-    Reload
-
-    _a2ui_on_error_change_buttons:
-        IfWinNotExist, %title%
-            return ; Keep waiting.
-        SetTimer, _a2ui_on_error_change_buttons, Off
-        WinActivate
-        ControlSetText, Button1, Edit Code
-        ControlSetText, Button2, Open UI
-    Return
 }
 
 _a2_build_tray_menu(a2_title) {
