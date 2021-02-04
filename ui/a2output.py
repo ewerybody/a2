@@ -6,7 +6,6 @@ import time
 _SOUT = None
 _SERR = None
 LOG_STD_NAME = 'a2.log'
-# LOG_ERR_NAME = 'a2_errors.log'
 SEP = ' - '
 
 
@@ -72,7 +71,7 @@ class A2Logger:
         """
         Return the singleton instance of A2Logger.
 
-        :rtype: A2Obj
+        :rtype: A2Logger
         """
         if A2Logger._instance is None:
             A2Logger._instance = A2Logger()
@@ -114,7 +113,11 @@ class A2Logger:
     def data_path(self):
         """Path to the directory with log files."""
         if self._data_path is None:
-            return os.path.join(os.getenv('LOCALAPPDATA'), 'a2', 'data')
+            # log to default data dir as long as not definitely set.
+            data = os.path.abspath(os.path.join(__file__, '..', '..', 'data'))
+            if not os.path.isdir(data):
+                os.mkdir(data)
+            return data
         return self._data_path
 
     @property
