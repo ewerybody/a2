@@ -7,12 +7,13 @@ import subprocess
 
 import a2ahk
 import a2core
+import a2path
 import a2util
 
 log = a2core.get_logger(__name__)
 
 A2_DATA = '%a2data%'
-
+PACKAGE_LIB = '.lib'
 
 class Scope:
     glob = '0'
@@ -77,6 +78,7 @@ class IncludeDataCollector(object):
         if self.source_libs:
             self.source_libs.write()
         self.a2.paths.set_data_path(self.a2.paths.data)
+        self.a2.paths.write_user_include()
 
     @property
     def collections(self):
@@ -362,17 +364,16 @@ class SourceLibsCollection(_Collection):
         self.includes = []
 
     def gather(self, source):
-        lib_path = os.path.join(source.path, '.lib')
+        lib_path = os.path.join(source.path, PACKAGE_LIB)
         if not os.path.isdir(lib_path):
             return
-        rel_path = os.path.relpath(lib_path, self.a2.paths.data)
-        for item in os.scandir(lib_path):
-            if item.is_dir():
-                continue
-            _, ext = os.path.splitext(item.name)
-            if ext.lower() != a2ahk.EXTENSION:
-                continue
-            self.includes.append(os.path.join(rel_path, item.name))
+        names = [i.name for i in a2path.iter_types(lib_path, a2ahk.EXTENSION)]
+        if not names:
+            return
+        # point the includes into the lib dir of this package
+        self.includes.append(lib_path)
+        # then add the names for relative include
+        self.includes.extend(names)
 
     def get_content(self):
         return '\n'.join(['#include %s' % p for p in self.includes])

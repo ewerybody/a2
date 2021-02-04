@@ -287,13 +287,16 @@ class Paths:
         self._build_data_paths()
 
         # make sure standard files are available
-        includes_path = os.path.join(self.data, USER_INCLUDES_NAME)
-        import shutil
+        if not os.path.isfile(self.user_cfg):
+            with open(os.path.join(self.defaults, os.path.basename(self.user_cfg))) as src_file_obj:
+                with open(self.user_cfg, 'w') as dst_file_obj:
+                    dst_file_obj.write(src_file_obj.read())
+        self.write_user_include()
 
-        for std_file_path in includes_path, self.user_cfg:
-            if not os.path.isfile(std_file_path):
-                includes_src = os.path.join(self.defaults, os.path.basename(std_file_path))
-                shutil.copyfile(includes_src, std_file_path)
+    def write_user_include(self):
+        with open(os.path.join(self.defaults, USER_INCLUDES_NAME)) as src_file_obj:
+            with open(os.path.join(self.data, USER_INCLUDES_NAME), 'w') as dst_file_obj:
+                dst_file_obj.write(src_file_obj.read().format(a2data=self.data))
 
     def get_data_path(self):
         if os.path.isfile(self.user_includes):
