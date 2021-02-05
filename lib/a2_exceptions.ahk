@@ -1,4 +1,18 @@
 a2_exceptions_handle(exception) {
+    ; Handle exceptions happening after load time.
+    ; This will either open your code editor with the offending line
+    ; selected of make the UI appear with the right module showing.
+    ; command-line args for VS Code:
+    ; https://code.visualstudio.com/docs/editor/command-line
+    ; Maybe we could have a {executable: pattern} map for the different
+    ; IDEs? like {
+    ;    "Code.exe": "--reuse-window --goto \"{file}:{line}:{char}\"",
+    ;    "nodepad++.exe": "\"{file}\" -n{line} -c{char}",
+    ;    "subl.exe": "\"{file}:{line}:{char}\""
+    ;    "": "\"{file}:{line}\"",
+    ; }
+    ;
+
     file_path := exception.File, line_nr := exception.Line
     FileReadLine, code_line, %file_path%, %line_nr%
     file_name := path_basename(file_path)
