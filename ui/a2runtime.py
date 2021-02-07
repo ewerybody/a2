@@ -14,6 +14,8 @@ log = a2core.get_logger(__name__)
 
 A2_DATA = '%a2data%'
 PACKAGE_LIB = '.lib'
+EDIT_DISCLAIMER = a2core.EDIT_DISCLAIMER
+
 
 class Scope:
     glob = '0'
@@ -141,7 +143,7 @@ class _Collection(object):
         raise NotImplementedError
 
     def _get_final_content(self):
-        return a2core.EDIT_DISCLAIMER % self.name + self.get_content()
+        return EDIT_DISCLAIMER % self.name + self.get_content()
 
 
 class VariablesCollection(_Collection):

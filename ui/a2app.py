@@ -1,6 +1,7 @@
 """
 a2app backend hosting only the QApplication.
-Tries makes sure it's only visible once through the 'singlesiding' package
+
+Tries making sure it's only running once through the 'singlesiding' package
 and enables sending messages to the main app instance.
 """
 import os

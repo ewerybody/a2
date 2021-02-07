@@ -1,4 +1,6 @@
-"""Catch standard and error outputs with custom functions."""
+"""
+Catch standard and error outputs with custom functions.
+"""
 import os
 import sys
 import time
@@ -29,6 +31,7 @@ def connect_error(write_func):
 
 class _OutputWrangler(object):
     """Mimic standard output object but connected to multiple target functions."""
+
     def __init__(self, root):
         self._root = root
         if self._root is None:
@@ -64,6 +67,7 @@ class _OutputWrangler(object):
 
 class A2Logger:
     """Handles all output to be written to one log with timestamps."""
+
     _instance = None
 
     @classmethod
@@ -81,7 +85,8 @@ class A2Logger:
         if A2Logger._instance is not None:
             raise RuntimeError(
                 'Singleton A2Logger has already been initialized!\n'
-                '  Use A2Logger.inst() to get the instance!')
+                '  Use A2Logger.inst() to get the instance!'
+            )
 
         self._data_path = None
         self._path = None
@@ -139,4 +144,5 @@ def get_logwriter():
 if __name__ == '__main__':
     import unittest
     import test.test_output
+
     unittest.main(test.test_output, verbosity=2)
