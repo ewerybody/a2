@@ -23,7 +23,7 @@ LIB_EXCLUDES = (
     'batches',
     '_source',
     'a2ui',
-    'a2ui dev',
+    '_a2ui dev',
     'ahklib',
     'a2init_check',
     'a2dev_find_py',
@@ -153,7 +153,7 @@ def copy_files():
         if base in LIB_EXCLUDES:
             continue
 
-        if item.name == 'a2ui release.ahk':
+        if item.name == '_a2ui release.ahk':
             shutil.copy2(item.path, os.path.join(Paths.distlib, 'a2ui.ahk'))
             continue
 

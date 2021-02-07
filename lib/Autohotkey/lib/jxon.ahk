@@ -54,7 +54,7 @@ Jxon_Load(ByRef src, args*) {
         }
 
         else { ; string | number | true | false | null
-            if (ch == q) {; string
+            if (ch == q) { ; string
                 i := pos
                 while i := InStr(src, q,, i+1) {
                     val := StrReplace(SubStr(src, pos+1, i-pos-1), "\\", "\u005C")
