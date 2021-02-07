@@ -36,6 +36,7 @@ class Ui_a2settings(object):
         self.label_3 = QLabel(self.main_tab)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setText(u"Open a2 Dialog")
+        self.label_3.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
 
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_3)
 
