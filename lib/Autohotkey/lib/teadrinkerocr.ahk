@@ -3,11 +3,54 @@
 ; Written for Autohotkey by malcev and teadrinker. source:
 ; https://www.autohotkey.com/boards/viewtopic.php?t=72674
 
+;Standalone part
+If (A_Args.Length() == 5) {
+    rect := {x: A_Args.1, y: A_Args.2, w: A_Args.3, h: A_Args.4}
+    text := teadrinkerocr(rect, A_Args.5)
+    FileAppend, %Text%, *
+}
+
+; Library part
+Return
+
 teadrinkerocr(rect, language := "en") {
+    ; Read text from the given rectangle with language.
+    ; "rect" is an object with absolute screen coordinates .x .y .w .h.
+    ; return string
     hBitmap := HBitmapFromScreen(rect.x, rect.y, rect.w, rect.h)
     pIRandomAccessStream := HBitmapToRandomAccessStream(hBitmap)
     DllCall("DeleteObject", "Ptr", hBitmap)
     return ocr(pIRandomAccessStream, language)
+}
+
+teadrinkerocr_get_available_languages() {
+    ; Get list of installed language pack names the OCR Engine can make use of.
+    ; return list of strings
+    static GlobalizationPreferencesStatics, LanguageFactory, OcrEngineStatics
+    if (GlobalizationPreferencesStatics = "") {
+        CreateClass("Windows.Globalization.Language", ILanguageFactory := "{9B0252AC-0C27-44F8-B792-9793FB66C63E}", LanguageFactory)
+        CreateClass("Windows.System.UserProfile.GlobalizationPreferences", IGlobalizationPreferencesStatics := "{01BF4326-ED37-4E96-B0E9-C1340D1EA158}", GlobalizationPreferencesStatics)
+        CreateClass("Windows.Media.Ocr.OcrEngine", IOcrEngineStatics := "{5BFFA85A-3384-3540-9940-699120D428A8}", OcrEngineStatics)
+    }
+
+    DllCall(NumGet(NumGet(GlobalizationPreferencesStatics+0)+9*A_PtrSize), "ptr", GlobalizationPreferencesStatics, "ptr*", LanguageList) ; get_Languages
+    DllCall(NumGet(NumGet(LanguageList+0)+7*A_PtrSize), "ptr", LanguageList, "int*", count) ; count
+
+    lang_list := []
+    loop % count
+    {
+        DllCall(NumGet(NumGet(LanguageList+0)+6*A_PtrSize), "ptr", LanguageList, "int", A_Index-1, "ptr*", hString) ; get_Item
+        DllCall(NumGet(NumGet(LanguageFactory+0)+6*A_PtrSize), "ptr", LanguageFactory, "ptr", hString, "ptr*", LanguageTest) ; CreateLanguage
+        DllCall(NumGet(NumGet(OcrEngineStatics+0)+8*A_PtrSize), "ptr", OcrEngineStatics, "ptr", LanguageTest, "int*", bool) ; IsLanguageSupported
+        if (bool = 1) {
+            DllCall(NumGet(NumGet(LanguageTest+0)+6*A_PtrSize), "ptr", LanguageTest, "ptr*", hText)
+            buffer := DllCall("Combase.dll\WindowsGetStringRawBuffer", "ptr", hText, "uint*", length, "ptr")
+            lang_list.push(StrGet(buffer, "UTF-16"))
+        }
+        ObjRelease(LanguageTest)
+    }
+    ObjRelease(LanguageList)
+    return lang_list
 }
 
 HBitmapFromScreen(X, Y, W, H) {
@@ -111,34 +154,6 @@ ocr(IRandomAccessStream, lang := "FirstFromAvailableLanguages")
     ObjRelease(Close), ObjRelease(IRandomAccessStream), ObjRelease(BitmapDecoder), ObjRelease(BitmapFrame)
     , ObjRelease(BitmapFrameWithSoftwareBitmap), ObjRelease(SoftwareBitmap), ObjRelease(OcrResult), ObjRelease(LinesList)
     Return text
-}
-
-teadrinkerocr_get_available_languages() {
-    static GlobalizationPreferencesStatics, LanguageFactory, OcrEngineStatics
-    if (GlobalizationPreferencesStatics = "") {
-        CreateClass("Windows.Globalization.Language", ILanguageFactory := "{9B0252AC-0C27-44F8-B792-9793FB66C63E}", LanguageFactory)
-        CreateClass("Windows.System.UserProfile.GlobalizationPreferences", IGlobalizationPreferencesStatics := "{01BF4326-ED37-4E96-B0E9-C1340D1EA158}", GlobalizationPreferencesStatics)
-        CreateClass("Windows.Media.Ocr.OcrEngine", IOcrEngineStatics := "{5BFFA85A-3384-3540-9940-699120D428A8}", OcrEngineStatics)
-    }
-
-    DllCall(NumGet(NumGet(GlobalizationPreferencesStatics+0)+9*A_PtrSize), "ptr", GlobalizationPreferencesStatics, "ptr*", LanguageList) ; get_Languages
-    DllCall(NumGet(NumGet(LanguageList+0)+7*A_PtrSize), "ptr", LanguageList, "int*", count) ; count
-
-    lang_list := []
-    loop % count
-    {
-        DllCall(NumGet(NumGet(LanguageList+0)+6*A_PtrSize), "ptr", LanguageList, "int", A_Index-1, "ptr*", hString) ; get_Item
-        DllCall(NumGet(NumGet(LanguageFactory+0)+6*A_PtrSize), "ptr", LanguageFactory, "ptr", hString, "ptr*", LanguageTest) ; CreateLanguage
-        DllCall(NumGet(NumGet(OcrEngineStatics+0)+8*A_PtrSize), "ptr", OcrEngineStatics, "ptr", LanguageTest, "int*", bool) ; IsLanguageSupported
-        if (bool = 1) {
-            DllCall(NumGet(NumGet(LanguageTest+0)+6*A_PtrSize), "ptr", LanguageTest, "ptr*", hText)
-            buffer := DllCall("Combase.dll\WindowsGetStringRawBuffer", "ptr", hText, "uint*", length, "ptr")
-            lang_list.push(StrGet(buffer, "UTF-16"))
-        }
-        ObjRelease(LanguageTest)
-    }
-    ObjRelease(LanguageList)
-    return lang_list
 }
 
 CreateClass(string, interface, ByRef Class) {
