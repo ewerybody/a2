@@ -101,7 +101,7 @@ class A2ModuleList(QtWidgets.QWidget):
                     if self._show_enabled_only and not mod.enabled:
                         continue
 
-                item = QtWidgets.QListWidgetItem(mod.name)
+                item = QtWidgets.QListWidgetItem(mod.display_name)
                 self._item_map[id(item)] = mod
                 self._module_map[mod.key] = item
                 self._set_item_state(item, mod)

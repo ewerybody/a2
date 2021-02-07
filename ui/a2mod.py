@@ -39,6 +39,7 @@ class Mod(object):
         # gather files from module path in local list
         self.source = source
         self.name = modname
+        self._display_name = None
         self.a2 = a2core.A2Obj.inst()
         self.path = os.path.join(self.source.path, modname)
         self._data_path = None
@@ -354,3 +355,12 @@ class Mod(object):
 
         if self.path in sys.path:
             sys.path.remove(self.path)
+
+    @property
+    def display_name(self):
+        if self._display_name is None:
+            try:
+                self._display_name = self.config[0].get('display_name', self.name)
+            except IndexError:
+                return self.name
+        return self._display_name

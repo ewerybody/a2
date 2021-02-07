@@ -141,7 +141,7 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             self.ui.head_widget.setVisible(True)
             self.ui.a2mod_view_source_label.setText(self.main.mod.source.name)
-            self.ui.a2_mod_name.setText(self.main.mod.name)
+            self.ui.a2_mod_name.setText(self.main.mod.display_name)
             # weird.. need to set false first to fix tristate effect
             self.ui.mod_check.setChecked(False)
             self.ui.mod_check.setChecked(self.main.mod.enabled)

@@ -37,12 +37,12 @@ class Ui_edit(object):
         self.internalNameLabel.setText(u"Author:")
         self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.internalNameLabel)
+        self.edit_layout.setWidget(2, QFormLayout.LabelRole, self.internalNameLabel)
 
         self.cfg_author = QLineEdit(edit)
         self.cfg_author.setObjectName(u"cfg_author")
 
-        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_author)
+        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_author)
 
         self.displayLabelLabel = QLabel(edit)
         self.displayLabelLabel.setObjectName(u"displayLabelLabel")
@@ -50,45 +50,58 @@ class Ui_edit(object):
         self.displayLabelLabel.setText(u"Version:")
         self.displayLabelLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.edit_layout.setWidget(2, QFormLayout.LabelRole, self.displayLabelLabel)
+        self.edit_layout.setWidget(3, QFormLayout.LabelRole, self.displayLabelLabel)
 
         self.cfg_version = QLineEdit(edit)
         self.cfg_version.setObjectName(u"cfg_version")
 
-        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_version)
+        self.edit_layout.setWidget(3, QFormLayout.FieldRole, self.cfg_version)
 
         self.label = QLabel(edit)
         self.label.setObjectName(u"label")
         self.label.setText(u"Date:")
 
-        self.edit_layout.setWidget(3, QFormLayout.LabelRole, self.label)
+        self.edit_layout.setWidget(4, QFormLayout.LabelRole, self.label)
 
         self.cfg_date = QLineEdit(edit)
         self.cfg_date.setObjectName(u"cfg_date")
 
-        self.edit_layout.setWidget(3, QFormLayout.FieldRole, self.cfg_date)
+        self.edit_layout.setWidget(4, QFormLayout.FieldRole, self.cfg_date)
 
         self.label_2 = QLabel(edit)
         self.label_2.setObjectName(u"label_2")
         self.label_2.setText(u"URL:")
 
-        self.edit_layout.setWidget(4, QFormLayout.LabelRole, self.label_2)
+        self.edit_layout.setWidget(5, QFormLayout.LabelRole, self.label_2)
 
         self.cfg_url = QLineEdit(edit)
         self.cfg_url.setObjectName(u"cfg_url")
 
-        self.edit_layout.setWidget(4, QFormLayout.FieldRole, self.cfg_url)
+        self.edit_layout.setWidget(5, QFormLayout.FieldRole, self.cfg_url)
 
         self.label_3 = QLabel(edit)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setText(u"Tags:")
 
-        self.edit_layout.setWidget(5, QFormLayout.LabelRole, self.label_3)
+        self.edit_layout.setWidget(6, QFormLayout.LabelRole, self.label_3)
 
         self.cfg_tags = A2TagField(edit)
         self.cfg_tags.setObjectName(u"cfg_tags")
 
-        self.edit_layout.setWidget(5, QFormLayout.FieldRole, self.cfg_tags)
+        self.edit_layout.setWidget(6, QFormLayout.FieldRole, self.cfg_tags)
+
+        self.internalNameLabel_2 = QLabel(edit)
+        self.internalNameLabel_2.setObjectName(u"internalNameLabel_2")
+        self.internalNameLabel_2.setMinimumSize(QSize(100, 0))
+        self.internalNameLabel_2.setText(u"Display Name:")
+        self.internalNameLabel_2.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.edit_layout.setWidget(1, QFormLayout.LabelRole, self.internalNameLabel_2)
+
+        self.cfg_display_name = QLineEdit(edit)
+        self.cfg_display_name.setObjectName(u"cfg_display_name")
+
+        self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_display_name)
 
 
         self.retranslateUi(edit)
