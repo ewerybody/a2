@@ -21,8 +21,8 @@ class Ui_a2settings(object):
             a2settings.setObjectName(u"a2settings")
 
         self.a2settings_view_layout = QVBoxLayout(a2settings)
-        self.a2settings_view_layout.setObjectName(u"a2settings_view_layout")
         self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
+        self.a2settings_view_layout.setObjectName(u"a2settings_view_layout")
         self.a2settings_tab = QTabWidget(a2settings)
         self.a2settings_tab.setObjectName(u"a2settings_tab")
         self.main_tab = QWidget()
@@ -75,8 +75,8 @@ class Ui_a2settings(object):
 
         self.no_sources_msg = QLabel(self.module_source_box)
         self.no_sources_msg.setObjectName(u"no_sources_msg")
-        self.no_sources_msg.setText(u"Currently there are no modules sources listed.\n"
-"Go ahead and add or create one:")
+        self.no_sources_msg.setText(u"Currently there are no modules sources listed.<br>Go ahead and add or create one:")
+        self.no_sources_msg.setTextFormat(Qt.RichText)
         self.no_sources_msg.setAlignment(Qt.AlignCenter)
         self.no_sources_msg.setWordWrap(True)
 

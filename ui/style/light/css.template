@@ -258,7 +258,7 @@ QToolButton#a2option_button {
 }
 
 QLabel#a2_mod_name {
-	font-size: %(font_size_big)ipx;
+	font-size: %(font_size_large)ipx;
 }
 
 QLineEdit {

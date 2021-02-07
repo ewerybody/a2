@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
-    <height>578</height>
+    <width>919</width>
+    <height>602</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="A2ModuleViewLayout">
@@ -19,8 +19,8 @@
    </property>
    <item>
     <widget class="QWidget" name="head_widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,1,0">
-      <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,1,0">
+      <item alignment="Qt::AlignBottom">
        <widget class="QCheckBox" name="mod_check">
         <property name="text">
          <string/>
@@ -30,7 +30,26 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
+       <widget class="QLabel" name="icon_label">
+        <property name="minimumSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QLabel" name="a2_mod_name">
         <property name="font">
          <font>
@@ -40,18 +59,6 @@
           <bold>true</bold>
          </font>
         </property>
-        <property name="statusTip">
-         <string notr="true"/>
-        </property>
-        <property name="whatsThis">
-         <string notr="true"/>
-        </property>
-        <property name="accessibleName">
-         <string notr="true"/>
-        </property>
-        <property name="accessibleDescription">
-         <string notr="true"/>
-        </property>
         <property name="text">
          <string notr="true">ModName</string>
         </property>
@@ -60,7 +67,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QLabel" name="mod_version">
         <property name="font">
          <font>
@@ -73,7 +80,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QLabel" name="mod_author">
         <property name="font">
          <font>
@@ -86,7 +93,7 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QLabel" name="a2mod_view_source_label">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
@@ -128,8 +135,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>614</width>
-        <height>473</height>
+        <width>917</width>
+        <height>495</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4"/>

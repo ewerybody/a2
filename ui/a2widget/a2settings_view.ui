@@ -11,16 +11,7 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" name="a2settings_view_layout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -104,8 +95,10 @@
             <item>
              <widget class="QLabel" name="no_sources_msg">
               <property name="text">
-               <string notr="true">Currently there are no modules sources listed.
-Go ahead and add or create one:</string>
+               <string notr="true">Currently there are no modules sources listed.&lt;br&gt;Go ahead and add or create one:</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::RichText</enum>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

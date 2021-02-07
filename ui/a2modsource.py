@@ -235,6 +235,13 @@ class ModSource(object):
     def is_git(self):
         return os.path.isdir(os.path.join(self.path, '.git'))
 
+    @property
+    def display_name(self) -> str:
+        """UI name of this package."""
+        if 'display_name' in self.config:
+            return self.config['display_name']
+        return self.name
+
 
 class ModSourceCheckThread(QtCore.QThread):
     """

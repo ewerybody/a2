@@ -31,7 +31,7 @@ class ModSourceWidget(QtWidgets.QWidget):
     toggled = QtCore.Signal()
     changed = QtCore.Signal()
 
-    def __init__(self, main, mod_source, show_enabled=False):
+    def __init__(self, main, mod_source: a2modsource.ModSource, show_enabled=False):
         """
         :param a2modsource.ModSource mod_source: The module source to display.
         """
@@ -65,20 +65,23 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui = a2module_source_ui.Ui_Form()
         self.ui.setupUi(self)
 
-        self.ui.mod_label.setText(self.mod_source.name)
         self.ui.check.setChecked(show_enabled)
         self.ui.check.clicked[bool].connect(self.mod_source.toggle)
         self.ui.check.clicked.connect(self.toggled.emit)
 
         self.ui.tool_button.clicked.connect(self._toggle_details)
         self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
-        self.ui.icon_label.setPixmap(self.mod_source.icon.pixmap(self.main.style.get('icon_size')))
+        icon_size = self.main.style.get('icon_size')
+        self.ui.icon_label.setPixmap(self.mod_source.icon.pixmap(icon_size))
+        self.ui.icon_label.setMinimumSize(icon_size, icon_size)
+        self.ui.icon_label.setMaximumSize(icon_size, icon_size)
         self.ui.label_widget.mousePressEvent = self._toggle_details
         self.ui.details_widget.hide()
+
+        label = f'<b>{self.mod_source.display_name}</b>'
         if self.mod_source.is_git():
-            self.ui.extra_label.setText('(git)')
-        else:
-            self.ui.extra_label.hide()
+            label += ' (git)'
+        self.ui.mod_label.setText(label)
 
     def _set_body_labels(self):
         if self.ui_body is not None:

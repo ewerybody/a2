@@ -47,6 +47,9 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
         self.toggle_edit(False)
+        icon_size = self.main.style.get('icon_size')
+        self.ui.icon_label.setMinimumSize(icon_size, icon_size)
+        self.ui.icon_label.setMaximumSize(icon_size, icon_size)
 
         margin = self.main.style.get('margin', 0)
         self.ui.a2edit_okcancel_layout.setContentsMargins(margin, margin, margin, margin)
@@ -69,11 +72,16 @@ class A2ModuleView(QtWidgets.QWidget):
                 config[0]['description'] = MULTI_MODULE_DESC
 
             module_user_cfg = {}
+            self.ui.icon_label.hide()
 
         else:
             config = self.main.mod.config
             module_user_cfg = self.main.mod.get_user_cfg()
             self.main.temp_config = None
+            self.ui.icon_label.show()
+            self.ui.icon_label.setPixmap(
+                self.main.mod.icon.pixmap(self.main.style.get('icon_size'))
+            )
 
         if config:
             if config[0].get('typ') != 'nfo':

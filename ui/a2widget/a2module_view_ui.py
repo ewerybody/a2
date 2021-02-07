@@ -30,7 +30,14 @@ class Ui_A2ModuleView(object):
         self.mod_check.setObjectName(u"mod_check")
         self.mod_check.setTristate(False)
 
-        self.horizontalLayout.addWidget(self.mod_check)
+        self.horizontalLayout.addWidget(self.mod_check, 0, Qt.AlignBottom)
+
+        self.icon_label = QLabel(self.head_widget)
+        self.icon_label.setObjectName(u"icon_label")
+        self.icon_label.setMinimumSize(QSize(20, 20))
+        self.icon_label.setMaximumSize(QSize(20, 20))
+
+        self.horizontalLayout.addWidget(self.icon_label, 0, Qt.AlignBottom)
 
         self.a2_mod_name = QLabel(self.head_widget)
         self.a2_mod_name.setObjectName(u"a2_mod_name")
@@ -40,22 +47,10 @@ class Ui_A2ModuleView(object):
         font.setBold(True)
         font.setWeight(75)
         self.a2_mod_name.setFont(font)
-#if QT_CONFIG(statustip)
-        self.a2_mod_name.setStatusTip(u"")
-#endif // QT_CONFIG(statustip)
-#if QT_CONFIG(whatsthis)
-        self.a2_mod_name.setWhatsThis(u"")
-#endif // QT_CONFIG(whatsthis)
-#if QT_CONFIG(accessibility)
-        self.a2_mod_name.setAccessibleName(u"")
-#endif // QT_CONFIG(accessibility)
-#if QT_CONFIG(accessibility)
-        self.a2_mod_name.setAccessibleDescription(u"")
-#endif // QT_CONFIG(accessibility)
         self.a2_mod_name.setText(u"ModName")
         self.a2_mod_name.setTextFormat(Qt.PlainText)
 
-        self.horizontalLayout.addWidget(self.a2_mod_name)
+        self.horizontalLayout.addWidget(self.a2_mod_name, 0, Qt.AlignBottom)
 
         self.mod_version = QLabel(self.head_widget)
         self.mod_version.setObjectName(u"mod_version")
@@ -65,14 +60,14 @@ class Ui_A2ModuleView(object):
         self.mod_version.setFont(font1)
         self.mod_version.setText(u"v0.0")
 
-        self.horizontalLayout.addWidget(self.mod_version)
+        self.horizontalLayout.addWidget(self.mod_version, 0, Qt.AlignBottom)
 
         self.mod_author = QLabel(self.head_widget)
         self.mod_author.setObjectName(u"mod_author")
         self.mod_author.setFont(font1)
         self.mod_author.setText(u"- Author Name")
 
-        self.horizontalLayout.addWidget(self.mod_author)
+        self.horizontalLayout.addWidget(self.mod_author, 0, Qt.AlignBottom)
 
         self.a2mod_view_source_label = QLabel(self.head_widget)
         self.a2mod_view_source_label.setObjectName(u"a2mod_view_source_label")
@@ -84,7 +79,7 @@ class Ui_A2ModuleView(object):
         self.a2mod_view_source_label.setFont(font1)
         self.a2mod_view_source_label.setText(u"- Module Source")
 
-        self.horizontalLayout.addWidget(self.a2mod_view_source_label)
+        self.horizontalLayout.addWidget(self.a2mod_view_source_label, 0, Qt.AlignBottom)
 
         self.a2help_button = QPushButton(self.head_widget)
         self.a2help_button.setObjectName(u"a2help_button")
@@ -93,7 +88,7 @@ class Ui_A2ModuleView(object):
 
         self.horizontalLayout.addWidget(self.a2help_button)
 
-        self.horizontalLayout.setStretch(4, 1)
+        self.horizontalLayout.setStretch(5, 1)
 
         self.A2ModuleViewLayout.addWidget(self.head_widget)
 
@@ -102,7 +97,7 @@ class Ui_A2ModuleView(object):
         self.a2scroll_area.setWidgetResizable(True)
         self.scroll_area_contents = QWidget()
         self.scroll_area_contents.setObjectName(u"scroll_area_contents")
-        self.scroll_area_contents.setGeometry(QRect(0, 0, 614, 473))
+        self.scroll_area_contents.setGeometry(QRect(0, 0, 917, 495))
         self.verticalLayout_4 = QVBoxLayout(self.scroll_area_contents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.a2scroll_area.setWidget(self.scroll_area_contents)
@@ -148,6 +143,7 @@ class Ui_A2ModuleView(object):
 
     def retranslateUi(self, A2ModuleView):
         self.mod_check.setText("")
+        self.icon_label.setText("")
         pass
     # retranslateUi
 

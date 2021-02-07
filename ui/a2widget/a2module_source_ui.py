@@ -19,8 +19,8 @@ class Ui_Form(object):
             Form.setObjectName(u"Form")
 
         self.modsource_layout = QVBoxLayout(Form)
-        self.modsource_layout.setObjectName(u"modsource_layout")
         self.modsource_layout.setContentsMargins(0, 0, 0, 0)
+        self.modsource_layout.setObjectName(u"modsource_layout")
         self.header_layout = QHBoxLayout()
         self.header_layout.setObjectName(u"header_layout")
         self.check = QCheckBox(Form)
@@ -39,42 +39,35 @@ class Ui_Form(object):
 
         self.label_widget = QWidget(Form)
         self.label_widget.setObjectName(u"label_widget")
-        self.labels_layout = QHBoxLayout(self.label_widget)
-        self.labels_layout.setObjectName(u"labels_layout")
-        self.labels_layout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2 = QHBoxLayout(self.label_widget)
+        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.icon_label = QLabel(self.label_widget)
         self.icon_label.setObjectName(u"icon_label")
         self.icon_label.setMinimumSize(QSize(20, 20))
+        self.icon_label.setMaximumSize(QSize(20, 20))
         self.icon_label.setText(u"")
 
-        self.labels_layout.addWidget(self.icon_label)
+        self.horizontalLayout_2.addWidget(self.icon_label)
 
         self.mod_label = QLabel(self.label_widget)
         self.mod_label.setObjectName(u"mod_label")
         self.mod_label.setMinimumSize(QSize(40, 0))
         font = QFont()
-        font.setBold(True)
-        font.setWeight(75)
+        font.setBold(False)
+        font.setWeight(50)
         self.mod_label.setFont(font)
         self.mod_label.setText(u"ModSourceName")
 
-        self.labels_layout.addWidget(self.mod_label)
-
-        self.extra_label = QLabel(self.label_widget)
-        self.extra_label.setObjectName(u"extra_label")
-        self.extra_label.setMinimumSize(QSize(40, 0))
-        self.extra_label.setText(u"(extra)")
-
-        self.labels_layout.addWidget(self.extra_label)
+        self.horizontalLayout_2.addWidget(self.mod_label)
 
         self.mod_count = QLabel(self.label_widget)
         self.mod_count.setObjectName(u"mod_count")
         self.mod_count.setText(u"TextLabel")
         self.mod_count.setAlignment(Qt.AlignCenter)
 
-        self.labels_layout.addWidget(self.mod_count)
+        self.horizontalLayout_2.addWidget(self.mod_count)
 
-        self.labels_layout.setStretch(3, 1)
 
         self.header_layout.addWidget(self.label_widget)
 
