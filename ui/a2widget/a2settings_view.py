@@ -307,12 +307,11 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         self.check.clicked[bool].connect(self._set)
         layout.addWidget(self.check)
 
-        icon_size = self.a2.win.style.get('icon_size_small')
-        pixmap = Icons.inst().help.pixmap(icon_size)
         self.alert_label = QtWidgets.QLabel('')
-        self.alert_label.setPixmap(pixmap)
-        self.alert_label.hide()
+        icon_size = self.a2.win.style.get('icon_size_small')
+        self.alert_label.setPixmap(Icons.inst().help.pixmap(icon_size))
         layout.addWidget(self.alert_label)
+        layout.setStretch(1, 1)
 
         if data is None:
             self.get_cmd = None
