@@ -360,7 +360,7 @@ class Mod(object):
     def display_name(self):
         if self._display_name is None:
             try:
-                self._display_name = self.config[0].get('display_name', self.name)
+                self._display_name = self.config[0].get('display_name') or self.name
             except IndexError:
                 return self.name
         return self._display_name
