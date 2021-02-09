@@ -122,7 +122,7 @@ backup() {
     logmsg("backing up '" . install_ver . "': " . backup_dir)
     if FileExist(backup_dir) {
         backup_dir = %A_Temp%\%backup_dir_name%\%A_Now%
-        logmsg(" backup_dir exists: bending to:" . backup_dir)
+        logmsg(" version already backed up!: moving to temp:" . backup_dir)
         delete_later := true
     }
 
@@ -130,20 +130,20 @@ backup() {
     for i, item in backup_items {
         this_path := path_join(A2DIR, [item])
         back_path := path_join(backup_dir, [item])
-        if path_is_dir(path) {
-            logmsg(" backing up dir: '" . iten)
+        if path_is_dir(this_path) {
+            logmsg(" backing up dir: " . item)
             FileMoveDir, %this_path%, %back_path%
-        } else if path_is_file(path) {
-            logmsg(" backing up file: '" . iten)
+        } else if path_is_file(this_path) {
+            logmsg(" backing up file: '" . item)
             FileMove, %this_path%, %back_path%
         }
     }
 
-    ; In WHAT case would I want to do that?
-    ; if delete_later
-    ;     FileRemoveDir, %backup_dir%
-    ; else
-    ;     remove_if_empty(backup_dir)
+    ; In case the version was already backed up, remove the temp backup.
+    if delete_later
+        FileRemoveDir, %backup_dir%
+    else
+        remove_if_empty(backup_dir)
 }
 
 install() {
