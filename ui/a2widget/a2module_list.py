@@ -5,12 +5,13 @@ import a2uic
 import a2ctrl
 import a2core
 
-
 log = a2core.get_logger(__name__)
 
 
 class A2ModuleList(QtWidgets.QWidget):
     selection_changed = QtCore.Signal(list)
+    enable_requested = QtCore.Signal()
+    disable_requested = QtCore.Signal()
 
     def __init__(self, parent):
         super(A2ModuleList, self).__init__(parent)
@@ -71,6 +72,8 @@ class A2ModuleList(QtWidgets.QWidget):
                     selection.append(mod)
                 except (KeyError, AttributeError):
                     continue
+            else:
+                continue
 
             if list_item is not None:
                 list_item.setSelected(True)
@@ -139,6 +142,8 @@ class A2ModuleList(QtWidgets.QWidget):
         self.setLayout(self.ui.module_list_layout)
 
         self.ui.a2module_list_widget.items_selected.connect(self._on_selection_change)
+        self.ui.a2module_list_widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.ui.a2module_list_widget.customContextMenuRequested.connect(self._build_context_menu)
 
     def update_filter(self, phrase=''):
         self._filter_phrase = phrase
@@ -207,3 +212,43 @@ class A2ModuleList(QtWidgets.QWidget):
         self._font_color_tinted = tinted
         self.brush_default = QtGui.QBrush(QtGui.QColor(self._font_color))
         self.brush_tinted = QtGui.QBrush(QtGui.QColor(self._font_color_tinted))
+
+    def _build_context_menu(self, pos):
+        if not self.selection:
+            return
+
+        menu = QtWidgets.QMenu(self)
+        if len(self.selection) == 1:
+            module = self.selection[0]
+            menu.addAction(
+                a2ctrl.Icons.inst().folder,
+                f'Explore to module folder',
+                self._explore_module,
+            )
+            name = f'"{module.display_name}"'
+            if module.enabled:
+                _add_action(menu, 'Disable', name, self.disable_requested)
+            else:
+                _add_action(menu, 'Enable', name, self.enable_requested)
+
+        else:
+            num_enabled = sum(m.enabled for m in self.selection)
+            name = 'Selected Modules'
+            if len(self.selection) != num_enabled:
+                _add_action(menu, 'Enable', name, self.enable_requested)
+            if num_enabled:
+                _add_action(menu, 'Disable', name, self.disable_requested)
+
+        if not menu.isEmpty():
+            menu.popup(self.mapToGlobal(pos))
+
+    def _explore_module(self):
+        if not self.selection:
+            return
+        import a2util
+
+        a2util.explore(self.selection[0].path)
+
+
+def _add_action(menu, label, name, signal):
+    menu.addAction(a2ctrl.Icons.inst().check, f'{label} {name}', signal.emit)

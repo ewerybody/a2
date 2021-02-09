@@ -145,6 +145,12 @@ class Mod(object):
             self.a2.enabled = current
         self.change()
 
+    def set_enabled(self):
+        self.enabled = True
+
+    def set_disabled(self):
+        self.enabled = False
+
     def create_script(self, script_name, author_name):
         script_name = script_name.strip()
         if not script_name:

@@ -20,6 +20,8 @@ EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout he
 
 class A2ModuleView(QtWidgets.QWidget):
     reload_requested = QtCore.Signal()
+    enable_requested = QtCore.Signal()
+    disable_requested = QtCore.Signal()
 
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
@@ -41,7 +43,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.scrollBar = self.ui.a2scroll_area.verticalScrollBar()
         self.settings_widget = self.ui.scroll_area_contents
 
-        self.ui.mod_check.clicked[bool].connect(self.main.mod_enable)
+        self.ui.mod_check.clicked[bool].connect(self.toggle_state)
         self.ui.a2help_button.clicked.connect(self.help)
 
         self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
@@ -290,6 +292,14 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls[:] = [settings_widget]
         self.update_header()
         self.draw_ui()
+
+    def toggle_state(self, state):
+        """Get the top checkbox state and emit according request."""
+        state = not self.ui.mod_check.isTristate() and state
+        if state:
+            self.enable_requested.emit()
+        else:
+            self.disable_requested.emit()
 
 
 class EditView(QtWidgets.QWidget):

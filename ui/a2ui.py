@@ -75,10 +75,14 @@ class A2Window(QtWidgets.QMainWindow):
             tinted=self.style.get('font_color_tinted'),
         )
         self.module_list.selection_changed.connect(self._module_selected)
+        self.module_list.enable_requested.connect(self.mod_enable_selected)
+        self.module_list.disable_requested.connect(self.mod_disable_selected)
 
         self.module_view = self.ui.module_view
         self.module_view.reload_requested.connect(self.load_runtime_and_ui)
         self.module_view.setup_ui(self)
+        self.module_view.enable_requested.connect(self.mod_enable_selected)
+        self.module_view.disable_requested.connect(self.mod_disable_selected)
 
         self._setup_actions()
         self._setup_shortcuts()
@@ -195,20 +199,23 @@ class A2Window(QtWidgets.QMainWindow):
             self.settings_changed()
         self.module_view.draw_mod()
 
-    def mod_enable(self, check):
+    def mod_enable(self, state: bool):
         """
         Handles the module checkbox to enable/disable one or multiple modules.
 
         :param bool check: Checkbox state incoming from the module view header.
         """
-        check_box = self.module_view.ui.mod_check
-        check = not check_box.isTristate() and check
         for mod in self.selected:
-            mod.enabled = check
+            mod.enabled = state
         self.module_list.set_item_states(self.selected)
-        check_box.setTristate(False)
-        check_box.setChecked(check)
+        self.module_view.update_header()
         self.settings_changed()
+
+    def mod_enable_selected(self):
+        self.mod_enable(True)
+
+    def mod_disable_selected(self):
+        self.mod_enable(False)
 
     def mod_disable_all(self):
         self.a2.enabled = {}
