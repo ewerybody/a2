@@ -240,7 +240,7 @@ class A2ModuleList(QtWidgets.QWidget):
                 _add_action(menu, 'Disable', name, self.disable_requested)
 
         if not menu.isEmpty():
-            menu.popup(self.mapToGlobal(pos))
+            menu.popup(QtGui.QCursor.pos())
 
     def _explore_module(self):
         if not self.selection:
