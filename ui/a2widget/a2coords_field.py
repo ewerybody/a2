@@ -73,8 +73,6 @@ class A2CoordsField(QtWidgets.QWidget):
             values = values.x(), values.y()
         elif isinstance(values, QtCore.QSize):
             values = values.width(), values.height()
-        else:
-            return
 
         self.x_field.blockSignals(True)
         self.y_field.blockSignals(True)

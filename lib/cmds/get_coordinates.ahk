@@ -3,7 +3,6 @@
 msg := "`nLeft Mouse Button To Pick`nEscape To Cancel"
 tt(msg)
 cursor_set_cross()
-;CoordMode, Mouse, Screen|Window|Client]
 CoordMode, Mouse, Screen
 
 SetTimer, WatchCursor, 50
