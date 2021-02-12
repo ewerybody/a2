@@ -82,7 +82,7 @@ _a2_check_changes() {
     ; Check library & module scripts for changes via archive file attribute.
     ; Removes the attribute from all files and returns true if any was found
     do_reload := false
-    for _, libdir in [a2lib, path_join(a2lib, ["Autohotkey", "lib"])] {
+    for _, libdir in [a2lib, path_join(a2lib, "Autohotkey", "lib")] {
         pattern := string_suffix(libdir, "\") "*.ahk"
         Loop, Files, %pattern%
         {
@@ -93,13 +93,13 @@ _a2_check_changes() {
         }
     }
 
-    includes_path := path_join(a2data, ["includes", "includes.ahk"])
+    includes_path := path_join(a2data, "includes", "includes.ahk")
     Loop, read, %includes_path%
     {
         if !string_startswith(A_LoopReadLine, "#include ")
             Continue
 
-        path := path_join(a2data, [SubStr(A_LoopReadLine, 10)])
+        path := path_join(a2data, SubStr(A_LoopReadLine, 10))
         if InStr(FileGetAttrib(path), "A") {
             do_reload := true
             FileSetAttrib, -A, %path%

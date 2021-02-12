@@ -122,7 +122,7 @@ ask_for_user_data_deletion(ByRef items) {
     global A2DIR, run_silent
     if run_silent
         return
-    user_data_path := path_join(A2DIR, ["data"])
+    user_data_path := path_join(A2DIR, "data")
 
     if FileExist(user_data_path) {
         MsgBox, 36, Delete User data?, Do you also want to delete the user data?
@@ -179,7 +179,7 @@ create_deleter_batch(path) {
     if (!path)
         log_error("create_deleter_batch", "No path given!")
 
-    batch_path := path_join(A_Temp, ["_ a2_uninstaller_deleter.bat"])
+    batch_path := path_join(A_Temp, "_ a2_uninstaller_deleter.bat")
     batch_sleep := "ping 127.0.0.1 -n 1 > nul`n"
 
     content := "@echo off`n"
@@ -189,7 +189,7 @@ create_deleter_batch(path) {
     content .= "set trg_dir=" . path . "`n"
 
     If (A_IsCompiled) {
-        if (path_join(path, [A_ScriptName]) == A_ScriptFullPath)
+        if (path_join(path, A_ScriptName) == A_ScriptFullPath)
             content .= "set trg_exe=%trg_dir%\" . A_ScriptName . "`n"
         else
             content .= "set trg_exe=" . A_ScriptFullPath . "`n"

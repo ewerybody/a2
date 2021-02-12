@@ -16,7 +16,7 @@ a2log_error(msg, module="") {
 
 _a2log(level, module, msg) {
     global a2data
-    log_path := path_join(a2data, ["a2.log"])
+    log_path := path_join(a2data, "a2.log")
     line := time_unix_ms() " - " level ":" module ": " msg
     FileAppend %line%`n, %log_path%
 }

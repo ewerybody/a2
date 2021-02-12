@@ -119,7 +119,7 @@ explorer_show(path) {
     ; Open an Explorer with the given directory or file selected.
     path := StrReplace(path, "\\", "\")
 
-    explorer_path := path_join(A_WinDir, ["explorer.exe"])
+    explorer_path := path_join(A_WinDir, "explorer.exe")
     if path_is_file(path)
         cmd := """" . explorer_path . """ /select, """ . path . """"
     else if path_is_dir(path)

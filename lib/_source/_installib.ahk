@@ -108,7 +108,7 @@ check_silent() {
 
 check_execution_dir() {
     dir_name := path_basename(A_ScriptDir)
-    parent_dir := path_join(A_ScriptDir, ["a2"])
+    parent_dir := path_join(A_ScriptDir, "a2")
     msg := "This could mess things up!`nAborting ..."
 
     if (dir_name == "_ source") {

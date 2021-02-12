@@ -128,8 +128,8 @@ backup() {
 
     FileCreateDir, %backup_dir%
     for i, item in backup_items {
-        this_path := path_join(A2DIR, [item])
-        back_path := path_join(backup_dir, [item])
+        this_path := path_join(A2DIR, item)
+        back_path := path_join(backup_dir, item)
         if path_is_dir(this_path) {
             logmsg(" backing up dir: " . item)
             FileMoveDir, %this_path%, %back_path%
