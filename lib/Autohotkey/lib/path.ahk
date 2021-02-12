@@ -39,13 +39,15 @@ path_is_file(byref path) {
         return false
 }
 
-path_join(byref base_path, byref items) {
+path_join(byref base_path, byref items*) {
     ; Append two paths together and treat possibly double or missing backslashes
+    ; Now Variadic! https://www.autohotkey.com/docs/Functions.htm#Variadic
     path := RTrim(base_path, "\")
     Loop % items.Length()
         path .= "\" Trim(items[A_Index], "\")
     return path
 }
+
 
 path_normalize(byref path) {
     ; From the documentation - https://www.autohotkey.com/docs/misc/LongPaths.htm
