@@ -1,26 +1,22 @@
 ﻿; these init checks are for the root executable scripts
 
-_init_get_var(var_name, relative="\..") {
-    ; reads a2_settings.ahk and returns the value of a given variable name.
-    ; without including the file
-    default_config = %A_ScriptDir%%relative%\lib\a2_config.ahk
-    user_config = 
-    settings_dir = %A_ScriptDir%%relative%\settings
-    Loop, read, %settings_dir%\a2_settings.ahk
-    {
-        parts := StrSplit(A_LoopReadLine, ["=", ":="])
-        this_name := Trim(parts[1])
-
-        if (this_name == var_name) {
-            value := Trim(parts[2])
-            Return value
-        }
+_init_get_lib_path() {
+    ; To be able to run the starter without compiling
+    if string_endswith(A_ScriptDir, "\lib\_source")
+        return path_dirname(A_ScriptDir)
+    else {
+        lib_path := path_join(A_ScriptDir, "lib")
+        if path_is_dir(lib_path)
+            return lib_path
+        else
+            MsgBox, Where am I?!?, _init_get_lib_path() should either be in _source or in the root and have a lib subdir :/
     }
 }
 
 
 _init_get_autohotkey_exe() {
     ; returns default Autohotkey.exe in lib
-    ahk_exe = %A_ScriptDir%\lib\Autohotkey\Autohotkey.exe
+    lib_path := _init_get_lib_path()
+    ahk_exe = %lib_path%\Autohotkey\Autohotkey.exe
     Return ahk_exe
 }
