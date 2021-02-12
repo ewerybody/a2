@@ -89,31 +89,30 @@ string_trimRight(string, trim)
     return string
 }
 
-; WIP: Which version do you like more?!?!
-; strips whitespace from start and end of a string:
-string_strip(byref inputString) {
+string_strip(string) {
+    ; strip whitespace from start and end of a string:
     ; if first char is space, tab or linefeed, remove it and look again:
-    c := SubStr(inputString, 1, 1)
+    c := SubStr(string, 1, 1)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
     {
-        StringTrimLeft, inputString, inputString, 1
-        string_strip(inputString)
+        StringTrimLeft, string, string, 1
+        string := string_strip(string)
     }
     ; now last character:
-    c := SubStr(inputString, 0)
+    c := SubStr(string, 0)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
     {
-        StringTrimRight, inputString, inputString, 1
-        string_strip(inputString)
+        StringTrimRight, string, string, 1
+        string := string_strip(string)
     }
 
-    return inputString
+    return string
 }
 
 string_unquote(string, quote = """") {
     ; Remove quotes from a string if necessary.
     if (InStr(string, quote) = 1 && string_endsWith(string, quote))
-        return string_trim(string, quote)
+        string := string_trim(string, quote)
     return string
 }
 
