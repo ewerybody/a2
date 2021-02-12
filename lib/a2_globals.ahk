@@ -12,6 +12,7 @@ global WIN_8 := 6.2
 global WIN_10 := 10.0
 
 global WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
+global A_AppDataLocal := path_join(path_dirname(A_AppData), "Local")
 
 ; groups for explorer classes
 GroupAdd, ExplorerGroup, ahk_class ExploreWClass
