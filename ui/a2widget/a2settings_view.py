@@ -310,6 +310,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         self.alert_label = QtWidgets.QLabel('')
         icon_size = self.a2.win.style.get('icon_size_small')
         self.alert_label.setPixmap(Icons.inst().help.pixmap(icon_size))
+        self.alert_label.hide()
         layout.addWidget(self.alert_label)
         layout.setStretch(1, 1)
 
@@ -322,6 +323,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
             self.set_cmd = data['set']
             self.path_name = data['path_name']
         self._update_checkbox()
+        self.setEnabled(False)
 
     def _set(self, state):
         import a2ahk
@@ -342,6 +344,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
     def _on_check_finished(self):
         thread = self.sender()
         self._set_path(thread.result, thread.error)
+        self.setEnabled(True)
 
     def _set_path(self, path, tooltip):
         checked = False
