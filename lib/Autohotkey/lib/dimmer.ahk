@@ -7,9 +7,14 @@ dimmer_create(area := "") {
 
     Gui, New , +AlwaysOnTop -Caption -Border +ToolWindow -Resize +Disabled -DPIScale, ScreenDimmerGui
     Gui, +LastFound
-    WinGet, _screen_dimmer_id, ID
+    WinGet, new_id, ID
     Gui, Color, 000000
     WinSet, Transparent, 0
+
+    if (new_id != _screen_dimmer_id) AND WinExist("ahk_id " _screen_dimmer_id) {
+        WinClose, ahk_id %_screen_dimmer_id%
+    }
+    _screen_dimmer_id := new_id
 
     if (!IsObject(area)) {
         area := screen_get_work_area()
@@ -51,7 +56,7 @@ _dimmer_turn_down() {
     value -= 20
     if (value < 0) {
         SetTimer, _dimmer_turn_down, Off
-        WinClose, %id_str%
+        WinHide, %id_str%
         if IsFunc(_screen_dimmer_finished_func)
             %_screen_dimmer_finished_func%()
         return
