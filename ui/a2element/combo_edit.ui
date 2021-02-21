@@ -116,7 +116,7 @@
             </size>
            </property>
            <property name="text">
-            <string>+</string>
+            <string notr="true">+</string>
            </property>
           </widget>
          </item>
@@ -129,7 +129,7 @@
             </size>
            </property>
            <property name="text">
-            <string>-</string>
+            <string notr="true">-</string>
            </property>
            <property name="autoDefault">
             <bool>true</bool>

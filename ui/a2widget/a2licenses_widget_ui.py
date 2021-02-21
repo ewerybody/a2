@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-################################################################################
-## Form generated from reading UI file 'a2licenses_widget.ui'
-##
-## Created by: Qt User Interface Compiler version 5.15.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
+"""
+Form generated from reading UI file 'a2licenses_widget.ui'
+
+Created by: Qt User Interface Compiler version 5.15.2
+
+WARNING! All changes made in this file will be lost when recompiling UI file!
+"""
 
 from a2qt.QtCore import *
 from a2qt.QtGui import *
@@ -17,7 +17,6 @@ class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-
         Form.setWindowTitle(u"")
         self.license_layout = QVBoxLayout(Form)
         self.license_layout.setObjectName(u"license_layout")
@@ -37,20 +36,7 @@ class Ui_Form(object):
                         "sion 2.0</span></a></p><p align=\"center\"><br/></p><p align=\"center\">Thanks so much!</p><p align=\"center\"><br/></p></body></html>")
         self.a2license_text.setWordWrap(True)
         self.a2license_text.setOpenExternalLinks(True)
-
         self.verticalLayout_2.addWidget(self.a2license_text)
-
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
-
         self.license_layout.addWidget(self.scrollArea)
-
-
-        self.retranslateUi(Form)
-
         QMetaObject.connectSlotsByName(Form)
-    # setupUi
-
-    def retranslateUi(self, Form):
-        pass
-    # retranslateUi
-

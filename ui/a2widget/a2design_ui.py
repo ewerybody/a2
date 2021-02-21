@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-################################################################################
-## Form generated from reading UI file 'a2design.ui'
-##
-## Created by: Qt User Interface Compiler version 5.15.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
+"""
+Form generated from reading UI file 'a2design.ui'
+
+Created by: Qt User Interface Compiler version 5.15.2
+
+WARNING! All changes made in this file will be lost when recompiling UI file!
+"""
 
 from a2qt.QtCore import *
 from a2qt.QtGui import *
@@ -16,11 +16,10 @@ from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
 
 
-class Ui_a2MainWindow(object):
+class Ui_a2MainWindow:
     def setupUi(self, a2MainWindow):
         if not a2MainWindow.objectName():
             a2MainWindow.setObjectName(u"a2MainWindow")
-
         font = QFont()
         font.setPointSize(10)
         a2MainWindow.setFont(font)
@@ -31,18 +30,14 @@ class Ui_a2MainWindow(object):
         self.actionEdit_module = QAction(a2MainWindow)
         self.actionEdit_module.setObjectName(u"actionEdit_module")
         self.actionEdit_module.setText(u"Edit Module")
-#if QT_CONFIG(shortcut)
         self.actionEdit_module.setShortcut(u"Ctrl+E")
-#endif // QT_CONFIG(shortcut)
         self.actionDisable_all_modules = QAction(a2MainWindow)
         self.actionDisable_all_modules.setObjectName(u"actionDisable_all_modules")
         self.actionDisable_all_modules.setText(u"Disable All Modules")
         self.actionExplore_to = QAction(a2MainWindow)
         self.actionExplore_to.setObjectName(u"actionExplore_to")
         self.actionExplore_to.setText(u"Explore to Module ...")
-#if QT_CONFIG(shortcut)
         self.actionExplore_to.setShortcut(u"Alt+E")
-#endif // QT_CONFIG(shortcut)
         self.actionAbout_Autohotkey = QAction(a2MainWindow)
         self.actionAbout_Autohotkey.setObjectName(u"actionAbout_Autohotkey")
         self.actionAbout_Autohotkey.setText(u"About Autohotkey")
@@ -58,48 +53,34 @@ class Ui_a2MainWindow(object):
         self.actionRefresh_UI = QAction(a2MainWindow)
         self.actionRefresh_UI.setObjectName(u"actionRefresh_UI")
         self.actionRefresh_UI.setText(u"Refresh UI")
-#if QT_CONFIG(shortcut)
         self.actionRefresh_UI.setShortcut(u"F5")
-#endif // QT_CONFIG(shortcut)
         self.actionReport_Issue = QAction(a2MainWindow)
         self.actionReport_Issue.setObjectName(u"actionReport_Issue")
         self.actionReport_Issue.setText(u"Report Issue")
         self.actionNew_Module_Dialog = QAction(a2MainWindow)
         self.actionNew_Module_Dialog.setObjectName(u"actionNew_Module_Dialog")
         self.actionNew_Module_Dialog.setText(u"Create New Module")
-#if QT_CONFIG(shortcut)
         self.actionNew_Module_Dialog.setShortcut(u"Ctrl+N")
-#endif // QT_CONFIG(shortcut)
         self.actionBuild_A2_Package = QAction(a2MainWindow)
         self.actionBuild_A2_Package.setObjectName(u"actionBuild_A2_Package")
         self.actionBuild_A2_Package.setText(u"Build A2 Package")
-#if QT_CONFIG(shortcut)
         self.actionBuild_A2_Package.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionCreate_New_Element = QAction(a2MainWindow)
         self.actionCreate_New_Element.setObjectName(u"actionCreate_New_Element")
         self.actionCreate_New_Element.setText(u"Create New Element")
-#if QT_CONFIG(shortcut)
         self.actionCreate_New_Element.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionHelp_on_Module = QAction(a2MainWindow)
         self.actionHelp_on_Module.setObjectName(u"actionHelp_on_Module")
         self.actionHelp_on_Module.setText(u"Help on Module")
-#if QT_CONFIG(shortcut)
         self.actionHelp_on_Module.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionRevert_Settings = QAction(a2MainWindow)
         self.actionRevert_Settings.setObjectName(u"actionRevert_Settings")
         self.actionRevert_Settings.setText(u"Revert Settings")
-#if QT_CONFIG(shortcut)
         self.actionRevert_Settings.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionReload_a2_Runtime = QAction(a2MainWindow)
         self.actionReload_a2_Runtime.setObjectName(u"actionReload_a2_Runtime")
         self.actionReload_a2_Runtime.setText(u"Reload a2 Runtime")
-#if QT_CONFIG(shortcut)
         self.actionReload_a2_Runtime.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionUnload_a2_Runtime = QAction(a2MainWindow)
         self.actionUnload_a2_Runtime.setObjectName(u"actionUnload_a2_Runtime")
         self.actionUnload_a2_Runtime.setText(u"Unload a2 Runtime")
@@ -109,9 +90,7 @@ class Ui_a2MainWindow(object):
         self.actionExplore_to_a2_data_dir = QAction(a2MainWindow)
         self.actionExplore_to_a2_data_dir.setObjectName(u"actionExplore_to_a2_data_dir")
         self.actionExplore_to_a2_data_dir.setText(u"Explore to a2 data ...")
-#if QT_CONFIG(shortcut)
         self.actionExplore_to_a2_data_dir.setShortcut(u"")
-#endif // QT_CONFIG(shortcut)
         self.actionUninstall_a2 = QAction(a2MainWindow)
         self.actionUninstall_a2.setObjectName(u"actionUninstall_a2")
         self.actionUninstall_a2.setText(u"Uninstall a2")
@@ -130,9 +109,7 @@ class Ui_a2MainWindow(object):
         self.module_view = A2ModuleView(self.splitter)
         self.module_view.setObjectName(u"module_view")
         self.splitter.addWidget(self.module_view)
-
         self.verticalLayout.addWidget(self.splitter)
-
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(a2MainWindow)
         self.menubar.setObjectName(u"menubar")
@@ -153,7 +130,6 @@ class Ui_a2MainWindow(object):
         self.menuModule.setObjectName(u"menuModule")
         self.menuModule.setTitle(u"Module")
         a2MainWindow.setMenuBar(self.menubar)
-
         self.menubar.addAction(self.menuMain.menuAction())
         self.menubar.addAction(self.menuModule.menuAction())
         self.menubar.addAction(self.menuDev.menuAction())
@@ -184,13 +160,4 @@ class Ui_a2MainWindow(object):
         self.menuMain.addAction(self.actionExit_a2ui)
         self.menuModule.addAction(self.actionHelp_on_Module)
         self.menuModule.addAction(self.actionRevert_Settings)
-
-        self.retranslateUi(a2MainWindow)
-
         QMetaObject.connectSlotsByName(a2MainWindow)
-    # setupUi
-
-    def retranslateUi(self, a2MainWindow):
-        pass
-    # retranslateUi
-

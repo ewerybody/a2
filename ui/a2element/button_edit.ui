@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QFormLayout" name="edit_layout">
    <property name="fieldGrowthPolicy">
@@ -29,7 +29,7 @@
       </size>
      </property>
      <property name="text">
-      <string>label text</string>
+      <string notr="true">label text</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -55,7 +55,7 @@
       </size>
      </property>
      <property name="text">
-      <string>button text</string>
+      <string notr="true">button text</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -64,11 +64,8 @@
    </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="cfg_buttontext">
-     <property name="text">
-      <string/>
-     </property>
      <property name="placeholderText">
-      <string>Text to show on the Button.</string>
+      <string notr="true">Text to show on the Button.</string>
      </property>
     </widget>
    </item>
@@ -81,7 +78,7 @@
       </size>
      </property>
      <property name="text">
-      <string>python script</string>
+      <string notr="true">python script</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

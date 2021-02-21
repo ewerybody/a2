@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-################################################################################
-## Form generated from reading UI file 'a2settings_view.ui'
-##
-## Created by: Qt User Interface Compiler version 5.15.2
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
+"""
+Form generated from reading UI file 'a2settings_view.ui'
+
+Created by: Qt User Interface Compiler version 5.15.2
+
+WARNING! All changes made in this file will be lost when recompiling UI file!
+"""
 
 from a2qt.QtCore import *
 from a2qt.QtGui import *
@@ -19,7 +19,6 @@ class Ui_a2settings(object):
     def setupUi(self, a2settings):
         if not a2settings.objectName():
             a2settings.setObjectName(u"a2settings")
-
         self.a2settings_view_layout = QVBoxLayout(a2settings)
         self.a2settings_view_layout.setContentsMargins(0, 0, 0, 0)
         self.a2settings_view_layout.setObjectName(u"a2settings_view_layout")
@@ -37,31 +36,23 @@ class Ui_a2settings(object):
         self.label_3.setObjectName(u"label_3")
         self.label_3.setText(u"Open a2 Dialog")
         self.label_3.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
-
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_3)
-
         self.a2hotkey = A2Hotkey(self.main_tab)
         self.a2hotkey.setObjectName(u"a2hotkey")
         self.a2hotkey.setEnabled(True)
         self.a2hotkey.setText(u"Win+Shift+A")
-
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.a2hotkey)
-
         self.remember_selection = QCheckBox(self.main_tab)
         self.remember_selection.setObjectName(u"remember_selection")
         self.remember_selection.setText(u"Remember last selected Module")
-
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.remember_selection)
-
         self.groupBox = QGroupBox(self.main_tab)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setTitle(u"Integration")
         self.integrations_layout = QVBoxLayout(self.groupBox)
         self.integrations_layout.setObjectName(u"integrations_layout")
         self.integrations_layout.setContentsMargins(11, 25, 11, 11)
-
         self.formLayout.setWidget(2, QFormLayout.SpanningRole, self.groupBox)
-
         self.module_source_box = QGroupBox(self.main_tab)
         self.module_source_box.setObjectName(u"module_source_box")
         self.module_source_box.setTitle(u"Module Sources")
@@ -71,18 +62,14 @@ class Ui_a2settings(object):
         self.mod_source_box_layout.setContentsMargins(-1, 25, -1, -1)
         self.mod_source_layout = QVBoxLayout()
         self.mod_source_layout.setObjectName(u"mod_source_layout")
-
         self.mod_source_box_layout.addLayout(self.mod_source_layout)
-
         self.no_sources_msg = QLabel(self.module_source_box)
         self.no_sources_msg.setObjectName(u"no_sources_msg")
         self.no_sources_msg.setText(u"Currently there are no modules sources listed.<br>Go ahead and add or create one:")
         self.no_sources_msg.setTextFormat(Qt.RichText)
         self.no_sources_msg.setAlignment(Qt.AlignCenter)
         self.no_sources_msg.setWordWrap(True)
-
         self.mod_source_box_layout.addWidget(self.no_sources_msg)
-
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.a2add_button = QPushButton(self.module_source_box)
@@ -93,22 +80,12 @@ class Ui_a2settings(object):
         sizePolicy.setHeightForWidth(self.a2add_button.sizePolicy().hasHeightForWidth())
         self.a2add_button.setSizePolicy(sizePolicy)
         self.a2add_button.setText(u"Add Source")
-
         self.horizontalLayout.addWidget(self.a2add_button)
-
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
         self.horizontalLayout.addItem(self.horizontalSpacer)
-
-
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
-
-
         self.formLayout.setWidget(4, QFormLayout.SpanningRole, self.module_source_box)
-
-
         self.verticalLayout.addLayout(self.formLayout)
-
         self.a2settings_tab.addTab(self.main_tab, "")
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.main_tab), u"a2 Settings")
         self.advanced_tab = QWidget()
@@ -122,9 +99,7 @@ class Ui_a2settings(object):
         self.db_print_all_button = QPushButton(self.database_tab)
         self.db_print_all_button.setObjectName(u"db_print_all_button")
         self.db_print_all_button.setText(u"get db digest")
-
         self.verticalLayout_5.addWidget(self.db_print_all_button)
-
         self.db_printout = QTextEdit(self.database_tab)
         self.db_printout.setObjectName(u"db_printout")
         font = QFont()
@@ -132,9 +107,7 @@ class Ui_a2settings(object):
         font.setPointSize(10)
         self.db_printout.setFont(font)
         self.db_printout.setReadOnly(True)
-
         self.verticalLayout_5.addWidget(self.db_printout)
-
         self.a2settings_tab.addTab(self.database_tab, "")
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.database_tab), u"Database View")
         self.licenses_tab = QWidget()
@@ -145,19 +118,6 @@ class Ui_a2settings(object):
         self.console_tab.setObjectName(u"console_tab")
         self.a2settings_tab.addTab(self.console_tab, "")
         self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), u"Console")
-
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
-
-
-        self.retranslateUi(a2settings)
-
         self.a2settings_tab.setCurrentIndex(0)
-
-
         QMetaObject.connectSlotsByName(a2settings)
-    # setupUi
-
-    def retranslateUi(self, a2settings):
-        pass
-    # retranslateUi
-
