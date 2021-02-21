@@ -12,7 +12,7 @@ OLDSCHOOL_CLASS = '(object):\n'
 log = a2core.get_logger(__name__)
 
 
-def check_module(module, force=True):
+def check_module(module, force=False):
     """
     Recompile a ui xml file to Python if out-of-date.
 
