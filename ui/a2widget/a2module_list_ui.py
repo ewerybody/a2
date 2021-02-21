@@ -16,7 +16,7 @@ from a2widget.a2more_button import A2MoreButton
 from a2widget.a2list import A2List
 
 
-class Ui_ModuleLis:
+class Ui_ModuleList:
     def setupUi(self, ModuleList):
         if not ModuleList.objectName():
             ModuleList.setObjectName(u"ModuleList")

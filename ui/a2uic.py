@@ -74,17 +74,19 @@ def check_module(module, force=False):
 def _patch_ui(uiname, pyfile):
     """
     Patch compiled ui file to fix a couple of problems there are with
-    the default uic executable. See #219. TODO:
+    the default uic executable. See #219. Done:
     [x] make use of a2qt wrapper instead of PySideX
     [x] remove main-obj resizes (!!!!!)
-    [ ] get rid of broad * imports
     [x] make a proper doc-string instead of comments block
     [x] remove #if/#endif comments
     [x] remove # setupUi and # retranslateUi comments
     [x] remove retranslateUi and its call if empty
     [x] remove unneeded empty lines
     [x] make it class Name: instead of oldschool class Name(object):
-    [ ] make it black/brunette compliant
+    TODO:
+    [ ] get rid of broad * imports - this is pretty big. We'd need some LUTs.
+    [ ] make it black/brunette compliant - I'd rather leave this to brunette itself.
+        but in a separate process that auto-checks for updated ui-files.
     """
     with open(pyfile) as pyfobj:
         lines: list[str] = pyfobj.readlines()
@@ -123,7 +125,7 @@ def _patch_ui(uiname, pyfile):
         if class_block_start is None and line.startswith('class '):
             class_block_start = i
             if line.endswith(OLDSCHOOL_CLASS):
-                lines[i] = line.rstrip(OLDSCHOOL_CLASS) + ':\n'
+                lines[i] = line[:-len(OLDSCHOOL_CLASS)] + ':\n'
             break
 
     setup_line = lines[class_block_start + 1]

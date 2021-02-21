@@ -13,7 +13,7 @@ from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
 
-class Ui_Form(object):
+class Ui_Form:
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")

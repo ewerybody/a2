@@ -15,7 +15,7 @@ from a2qt.QtWidgets import *
 from a2widget.a2hotkey import A2Hotkey
 
 
-class Ui_a2settings(object):
+class Ui_a2settings:
     def setupUi(self, a2settings):
         if not a2settings.objectName():
             a2settings.setObjectName(u"a2settings")
