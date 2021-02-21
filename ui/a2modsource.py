@@ -233,7 +233,16 @@ class ModSource(object):
         return str(self._config_load_error)
 
     def is_git(self):
+        """Tell if the package seems to be under git source control."""
         return os.path.isdir(os.path.join(self.path, '.git'))
+
+    def is_release(self):
+        """Tell if this package seems to be a release one. Otherwise dev is assumed."""
+        if 'github.com/' in self.config.get('update_url', '') and not self.is_git():
+            return True
+        elif self.config.get('release', False):
+            return True
+        return False
 
     @property
     def display_name(self) -> str:

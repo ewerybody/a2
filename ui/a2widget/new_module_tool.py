@@ -82,7 +82,7 @@ class NewModulueTool(A2InputDialog):
         return a2util.standard_name_check(name, self._module_list, 'Module name "%s" is in use!')
 
     def _init_source_dict(self, module_source):
-        sources = [s.name for s in self.a2.module_sources.values() if s.enabled]
+        sources = [s.name for s in self.a2.module_sources.values() if s.enabled and not s.is_release()]
         source_dict = {'sources': sources, 'names': {}}
         if module_source is None:
             last_source = self.a2.db.get('last_module_create_source')
