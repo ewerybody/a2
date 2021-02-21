@@ -8,10 +8,11 @@ from importlib import reload
 
 UI_FILE_SUFFIX = '_ui'
 PYSIDE_REPLACE = 'a2qt'
+OLDSCHOOL_CLASS = '(object):\n'
 log = a2core.get_logger(__name__)
 
 
-def check_module(module, force=False):
+def check_module(module, force=True):
     """
     Recompile a ui xml file to Python if out-of-date.
 
@@ -77,12 +78,12 @@ def _patch_ui(uiname, pyfile):
     [x] make use of a2qt wrapper instead of PySideX
     [x] remove main-obj resizes (!!!!!)
     [ ] get rid of broad * imports
-    [ ] make a proper doc-string instead of comments block
-    [ ] remove #if/#endif comments
-    [ ] remove # setupUi and # retranslateUi comments
-    [ ] remove retranslateUi and its call if empty
-    [ ] remove unneeded empty lines
-    [ ] make it class Name: instead of oldschool class Name(object):
+    [x] make a proper doc-string instead of comments block
+    [x] remove #if/#endif comments
+    [x] remove # setupUi and # retranslateUi comments
+    [x] remove retranslateUi and its call if empty
+    [x] remove unneeded empty lines
+    [x] make it class Name: instead of oldschool class Name(object):
     [ ] make it black/brunette compliant
     """
     with open(pyfile) as pyfobj:
@@ -98,9 +99,11 @@ def _patch_ui(uiname, pyfile):
             mod_doc_block = [i]
 
     # find the imports block
-    pyside_wrapped_line = None
-    for i, line in enumerate(lines[mod_doc_block[1] :], mod_doc_block[1]):
-        if pyside_wrapped_line and not line.strip():
+    pyside_import_lines = []
+    start = mod_doc_block[1]
+    for i, line in enumerate(lines[start:], start):
+        # finish when collected and next line is empty
+        if pyside_import_lines and not line.strip():
             break
 
         if line.startswith('from PySide'):
@@ -110,13 +113,17 @@ def _patch_ui(uiname, pyfile):
                 raise RuntimeError('Patching compiled ui failed on line %i:\n  %s' % (i, line))
             parts[1] = PYSIDE_REPLACE + parts[1][dot_pos:]
             lines[i] = ' '.join(parts) + '\n'
-            pyside_wrapped_line = i
+            pyside_import_lines.append(i)
+    pyside_import_lines[:] = [min(pyside_import_lines), max(pyside_import_lines)]
 
     # find class block
     class_block_start = None
-    for i, line in enumerate(lines[pyside_wrapped_line + 1 :], pyside_wrapped_line + 1):
+    start = pyside_import_lines[-1] + 1
+    for i, line in enumerate(lines[start:], start):
         if class_block_start is None and line.startswith('class '):
             class_block_start = i
+            if line.endswith(OLDSCHOOL_CLASS):
+                lines[i] = line.rstrip(OLDSCHOOL_CLASS) + ':\n'
             break
 
     setup_line = lines[class_block_start + 1]
@@ -126,15 +133,48 @@ def _patch_ui(uiname, pyfile):
     assert parts[2].endswith('):')
     obj_name = parts[2][:-2]
 
-    # Remove the resize. All our uis are dynamically sized.
+    # prepare the class block
+    resize_removed = False
+    retranslate_call_line = None
     for i, _line in enumerate(lines[class_block_start + 1 :], class_block_start + 1):
         line = _line.strip()
-        if line.startswith(f'{obj_name}.resize('):
-            lines[i] = '\n'
-            break
+        if not line:
+            lines[i] = ''
+        # Remove the resize. All our uis are dynamically sized.
+        elif not resize_removed and line.startswith(f'{obj_name}.resize('):
+            lines[i] = ''
+            resize_removed = True
+        # remove comments
+        elif line.startswith('#'):
+            lines[i] = ''
+
+        # remove translation func if empty
+        elif line.startswith('self.retranslateUi('):
+            retranslate_call_line = i
+        elif (
+            line.startswith('def retranslateUi(self, ')
+            and lines[i + 1].strip() == 'pass'
+            and retranslate_call_line is not None
+        ):
+            lines[i] = ''
+            lines[i + 1] = ''
+            lines[retranslate_call_line] = ''
+
+    # assemble new lines
+    new_lines = lines[: mod_doc_block[0]]
+    new_lines.append('"""\n')
+    for i in range(mod_doc_block[0] + 1, mod_doc_block[1] - 1):
+        line = lines[i].strip('# \n')
+        if line:
+            new_lines.append(line + '\n')
+        else:
+            new_lines.append('\n')
+    new_lines.append('"""\n\n')
+    new_lines.extend(lines[pyside_import_lines[0] : class_block_start])
+    new_lines.extend(l for l in lines[class_block_start:] if l)
 
     with open(pyfile, 'w') as pyfobj:
-        pyfobj.write(''.join(lines))
+        pyfobj.write(''.join(new_lines))
 
 
 def _get_ui_basename_from_header(py_ui_path):
