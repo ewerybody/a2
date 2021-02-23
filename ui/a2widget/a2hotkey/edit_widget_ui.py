@@ -17,7 +17,7 @@ from a2widget.a2hotkey.edit_func_widget import FuncWidget
 from a2widget.a2more_button import A2MoreButton
 
 
-class Ui_edi:
+class Ui_edit:
     def setupUi(self, edit):
         if not edit.objectName():
             edit.setObjectName(u"edit")

@@ -15,7 +15,7 @@ from a2qt.QtWidgets import *
 from a2widget.a2tag_field import A2TagField
 
 
-class Ui_edi:
+class Ui_edit:
     def setupUi(self, edit):
         if not edit.objectName():
             edit.setObjectName(u"edit")

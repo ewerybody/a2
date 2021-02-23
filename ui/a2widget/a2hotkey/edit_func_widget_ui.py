@@ -15,7 +15,7 @@ from a2qt.QtWidgets import *
 from a2widget.a2more_button import A2MoreButton
 
 
-class Ui_FuncWidg:
+class Ui_FuncWidget:
     def setupUi(self, FuncWidget):
         if not FuncWidget.objectName():
             FuncWidget.setObjectName(u"FuncWidget")
