@@ -13,7 +13,7 @@ from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
 
-class Ui_edi:
+class Ui_edit:
     def setupUi(self, edit):
         if not edit.objectName():
             edit.setObjectName(u"edit")
