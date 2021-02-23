@@ -31,7 +31,11 @@
         ";": "Emoji Tool",
         ".": "Emoji Tool",
         "+": "Magnifier Zoom In",
-        "-": "Magnifier Zoom Out"
+        "-": "Magnifier Zoom Out",
+        "up": "Maximize Window",
+        "down": "Minimize Window",
+        "right": "Move Window to right side",
+        "left": "Move Window to left side"
     },
     "Ctrl": {
         "w": "Close Current Tab/Window"
