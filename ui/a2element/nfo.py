@@ -1,4 +1,4 @@
-from a2qt import QtWidgets
+from a2qt import QtWidgets, QtCore
 
 import a2uic
 import a2core
@@ -13,6 +13,9 @@ class Draw(QtWidgets.QWidget):
         text = args[1].get('description', '')
         if text:
             self.label = QtWidgets.QLabel(self)
+            self.label.setOpenExternalLinks(True)
+            self.label.setTextFormat(QtCore.Qt.RichText)
+            text = text.replace('\n', '<br>')
             self.label.setText(text)
             self.label.setWordWrap(True)
             self.main_layout.addWidget(self.label)
