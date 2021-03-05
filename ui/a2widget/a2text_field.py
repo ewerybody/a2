@@ -19,8 +19,8 @@ class A2TextField(QtWidgets.QPlainTextEdit):
     similar to the one on the Line edit. The difference is: The trigger here
     is timed and on focus loss. Enter adds a new line as expected.
     """
-
     editing_finished = QtCore.Signal()
+    text_changed = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(A2TextField, self).__init__(parent)
@@ -98,6 +98,7 @@ class A2TextField(QtWidgets.QPlainTextEdit):
 
     def check_editing_finished(self):
         """Rewind the timer."""
+        self.text_changed.emit(self.text())
         self._timer.start()
 
     def finish_editing(self):
@@ -113,4 +114,4 @@ class A2CodeField(A2TextField):
     """
 
     def __init__(self, parent=None):
-        A2TextField.__init__(self, parent)
+        super(A2CodeField, self).__init__(parent)

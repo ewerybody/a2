@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>FuncWidget</class>
  <widget class="QWidget" name="FuncWidget">
@@ -13,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -104,7 +114,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="function_text" />
+      <widget class="A2CodeField" name="function_text"/>
+     </item>
+     <item>
+      <widget class="A2PathField" name="run_url"/>
      </item>
     </layout>
    </item>
@@ -116,7 +129,17 @@
    <extends>QToolButton</extends>
    <header>a2widget.a2more_button</header>
   </customwidget>
+  <customwidget>
+   <class>A2PathField</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2path_field</header>
+  </customwidget>
+  <customwidget>
+   <class>A2CodeField</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

@@ -13,6 +13,8 @@ from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
 from a2widget.a2more_button import A2MoreButton
+from a2widget.a2path_field import A2PathField
+from a2widget.a2text_field import A2CodeField
 
 
 class Ui_FuncWidget:
@@ -20,8 +22,8 @@ class Ui_FuncWidget:
         if not FuncWidget.objectName():
             FuncWidget.setObjectName(u"FuncWidget")
         self.verticalLayout = QVBoxLayout(FuncWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.function_row_layout = QHBoxLayout()
         self.function_row_layout.setObjectName(u"function_row_layout")
         self.function_row_layout.setContentsMargins(-1, 0, -1, -1)
@@ -52,9 +54,12 @@ class Ui_FuncWidget:
         self.run_label = QLabel(FuncWidget)
         self.run_label.setObjectName(u"run_label")
         self.horizontalLayout.addWidget(self.run_label)
-        self.function_text = QLineEdit(FuncWidget)
+        self.function_text = A2CodeField(FuncWidget)
         self.function_text.setObjectName(u"function_text")
         self.horizontalLayout.addWidget(self.function_text)
+        self.run_url = A2PathField(FuncWidget)
+        self.run_url.setObjectName(u"run_url")
+        self.horizontalLayout.addWidget(self.run_url)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.retranslateUi(FuncWidget)
         QMetaObject.connectSlotsByName(FuncWidget)

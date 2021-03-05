@@ -6,16 +6,28 @@ from a2widget.a2hotkey import edit_func_widget_ui
 from a2widget.a2hotkey.hotkey_common import Vars
 
 
-FUNCTIONS = [Vars.function_code, Vars.function_url, Vars.function_send]
+# FUNCTIONS = [Vars.function_code, Vars.function_url, Vars.function_send]
 SEND_MODES = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
 MOD_KEYS = ['! - Alt', '^ - Control', '+ - Shift', '# - Win']
 
 
-class HelpLabels(object):
+class HelpLabels:
     cmds = 'Help on Autohotkey commands'
     run = 'Help on Autohotkey "Run"'
     send = 'Help on Autohotkey "Send"'
     vars = 'Help on Autohotkey Built-in Variables'
+
+
+class FuncTypes:
+    code = 'Run code'
+    open = 'Open file/url'
+    send = 'Send keystroke'
+
+FUNCTIONS = {
+    FuncTypes.code: Vars.function_code,
+    FuncTypes.open: Vars.function_url,
+    FuncTypes.send: Vars.function_send,
+}
 
 
 class FuncWidget(QtWidgets.QWidget):
@@ -29,7 +41,8 @@ class FuncWidget(QtWidgets.QWidget):
         self.ui = edit_func_widget_ui.Ui_FuncWidget()
         self.ui.setupUi(self)
 
-        self.ui.function_text.textChanged.connect(self.on_input)
+        self.ui.function_text.text_changed.connect(self.on_input)
+        self.ui.run_url.changed.connect(self.on_input)
         self.ui.function_send_mode.currentIndexChanged.connect(self.on_send_mode_change)
 
         self.ui.a2option_button.menu_called.connect(self.build_menu)
@@ -60,7 +73,6 @@ class FuncWidget(QtWidgets.QWidget):
         else:
             fsubmenu1 = menu.addMenu('Insert modifier key')
             for label in MOD_KEYS:
-                # action = QtGui.QAction(label, fsubmenu1, triggered=partial(self.ui.function_text.insert, key))
                 fsubmenu1.addAction(label, self.insert_mod_key)
 
                 # fsubmenu2 = self.menu.addMenu('built-in variables')
@@ -98,55 +110,66 @@ class FuncWidget(QtWidgets.QWidget):
     def insert_dir(self):
         directory = QtWidgets.QFileDialog.getExistingDirectory(self, 'Browsing for a directory ...')
         if directory:
-            self.ui.function_text.insert(directory)
+            self.ui.run_url.insert(directory)
 
     def insert_file(self):
         # options = QtGui.QFileDialog.Options() | QtGui.QFileDialog.DontConfirmOverwrite
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Browsing for a file ...')
         if file_name:
-            self.ui.function_text.insert(os.path.normpath(file_name))
+            self.ui.run_url.insert(os.path.normpath(file_name))
 
     def on_send_mode_change(self):
         code = self.ui.function_text.text()
         self.on_input(code)
 
     def on_input(self, code):
-        index = self.ui.cfg_functionMode.currentIndex()
-        if index == 1:
+        current = self.ui.cfg_functionMode.currentText()
+        if current == FuncTypes.open:
             code = 'Run, ' + code
 
-        elif index == 2:
+        elif current == FuncTypes.send:
             send_mode = self.ui.function_send_mode.currentText()
             code = '%s, %s' % (send_mode, code)
 
-        self._config_dict[FUNCTIONS[index]] = code
+        self._config_dict[FUNCTIONS[current]] = code
         self.changed.emit()
 
-    def set_function_text(self, index=None):
-        if index is None:
-            index = self.ui.cfg_functionMode.currentIndex()
-        self.ui.run_label.setVisible(index == 1)
-        self.ui.function_send_mode.setVisible(index == 2)
+    def set_function_text(self, current=None):
+        if current is None:
+            current = self.ui.cfg_functionMode.currentText()
 
-        text = self._config_dict.get(FUNCTIONS[index]) or ''
-        text = self._strip_mode(text, index)
-        self.ui.function_text.setText(text)
+        self.ui.run_label.setVisible(current == FuncTypes.open)
+        self.ui.function_send_mode.setVisible(current == FuncTypes.send)
+        self.ui.run_url.setVisible(current == FuncTypes.open)
+        self.ui.function_text.setVisible(current != FuncTypes.open)
 
-    def _strip_mode(self, text, index):
+        text = self._config_dict.get(FUNCTIONS[current], '')
+        text = self._strip_mode(text, current)
+        if current == FuncTypes.open:
+            self.ui.run_url.setText(text)
+        else:
+            self.ui.function_text.setText(text)
+
+    def _strip_mode(self, text, current):
         """
         removes Run, or Send* to put it into the input field
         """
-        modes = [None, ['run'], SEND_MODES]
-        if index in [1, 2]:
-            for mode in modes[index]:
+        modes = {
+            FuncTypes.open: ['run'],
+            FuncTypes.send: SEND_MODES
+        }
+
+        if current in (FuncTypes.open, FuncTypes.send):
+            for mode in modes[current]:
                 if text.lower().startswith(mode):
                     text = text[len(mode) :]
                     if text.startswith(','):
                         text = text[1:]
                     text = text.strip()
                     break
+
             # set the send mode combobox
-            if index == 2:
+            if current == FuncTypes.send:
                 for i in range(self.ui.function_send_mode.count()):
                     if self.ui.function_send_mode.itemText(i).lower() == mode:
                         self.ui.function_send_mode.setCurrentIndex(i)
@@ -154,9 +177,8 @@ class FuncWidget(QtWidgets.QWidget):
         return text
 
     def showEvent(self, *args, **kwargs):
-
         self.set_function_text()
-        self.ui.cfg_functionMode.currentIndexChanged.connect(self.set_function_text)
+        self.ui.cfg_functionMode.currentTextChanged.connect(self.set_function_text)
 
         return QtWidgets.QWidget.showEvent(self, *args, **kwargs)
 
