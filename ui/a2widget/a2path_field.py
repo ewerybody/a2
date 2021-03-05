@@ -175,3 +175,9 @@ class A2PathField(QtWidgets.QWidget):
 
     def copy_path(self):
         QtWidgets.QApplication.clipboard().setText(self.value)
+
+
+if __name__ == '__main__':
+    from a2widget.demo import path_field_demo
+
+    path_field_demo.show()
