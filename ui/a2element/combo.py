@@ -4,7 +4,7 @@ import a2uic
 import a2ctrl
 import a2util
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
-
+from a2widget import a2combo
 
 _FLAGS = (
     QtCore.Qt.ItemIsSelectable
@@ -28,7 +28,7 @@ class Draw(DrawCtrl):
         self.label = QtWidgets.QLabel(self.label_text, self)
         self.layout.addWidget(self.label)
 
-        self.value_ctrl = QtWidgets.QComboBox()
+        self.value_ctrl = a2combo.A2Combo()
         if self.user_edit:
             items = self.get_user_value(list, 'items')
             self.value_ctrl.setEditable(True)
