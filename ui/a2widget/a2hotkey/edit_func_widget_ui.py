@@ -15,6 +15,7 @@ from a2qt.QtWidgets import *
 from a2widget.a2more_button import A2MoreButton
 from a2widget.a2path_field import A2PathField
 from a2widget.a2text_field import A2CodeField
+from a2widget.a2combo import A2Combo
 
 
 class Ui_FuncWidget:
@@ -22,12 +23,12 @@ class Ui_FuncWidget:
         if not FuncWidget.objectName():
             FuncWidget.setObjectName(u"FuncWidget")
         self.verticalLayout = QVBoxLayout(FuncWidget)
-        self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName(u"verticalLayout")
         self.function_row_layout = QHBoxLayout()
         self.function_row_layout.setObjectName(u"function_row_layout")
         self.function_row_layout.setContentsMargins(-1, 0, -1, -1)
-        self.cfg_functionMode = QComboBox(FuncWidget)
+        self.cfg_functionMode = A2Combo(FuncWidget)
         self.cfg_functionMode.addItem("")
         self.cfg_functionMode.addItem("")
         self.cfg_functionMode.addItem("")
@@ -43,7 +44,7 @@ class Ui_FuncWidget:
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
-        self.function_send_mode = QComboBox(FuncWidget)
+        self.function_send_mode = A2Combo(FuncWidget)
         self.function_send_mode.addItem("")
         self.function_send_mode.addItem("")
         self.function_send_mode.addItem("")

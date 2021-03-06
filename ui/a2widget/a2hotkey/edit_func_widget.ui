@@ -14,16 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
@@ -32,7 +23,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="cfg_functionMode">
+      <widget class="A2Combo" name="cfg_functionMode">
        <item>
         <property name="text">
          <string>Run code</string>
@@ -78,7 +69,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="function_send_mode">
+      <widget class="A2Combo" name="function_send_mode">
        <item>
         <property name="text">
          <string>Send</string>
@@ -138,6 +129,11 @@
    <class>A2CodeField</class>
    <extends>QLineEdit</extends>
    <header>a2widget.a2text_field</header>
+  </customwidget>
+  <customwidget>
+   <class>A2Combo</class>
+   <extends>QComboBox</extends>
+   <header>a2widget.a2combo</header>
   </customwidget>
  </customwidgets>
  <resources/>
