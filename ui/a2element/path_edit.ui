@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>edit</class>
  <widget class="QWidget" name="edit">
@@ -10,14 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QFormLayout" name="edit_layout">
    <property name="fieldGrowthPolicy">
     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
-   <property name="labelAlignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
    <property name="leftMargin">
     <number>10</number>
@@ -40,7 +38,7 @@
       </size>
      </property>
      <property name="text">
-      <string>internal name:</string>
+      <string notr="true">internal name:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -50,7 +48,7 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="cfg_name">
      <property name="text">
-      <string>extensionX_path1</string>
+      <string notr="true">extensionX_path1</string>
      </property>
     </widget>
    </item>
@@ -63,7 +61,7 @@
       </size>
      </property>
      <property name="text">
-      <string>display label:</string>
+      <string notr="true">display label:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -73,14 +71,20 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="cfg_label">
      <property name="text">
-      <string>some path bla</string>
+      <string notr="true">some path bla</string>
+     </property>
+     <property name="placeholderText">
+      <string notr="true"/>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="A2PathField" name="cfg_value">
      <property name="text">
-      <string />
+      <string notr="true"/>
+     </property>
+     <property name="placeholderText">
+      <string notr="true"/>
      </property>
     </widget>
    </item>
@@ -93,7 +97,7 @@
       </size>
      </property>
      <property name="text">
-      <string>default path:</string>
+      <string notr="true">default path:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -103,7 +107,7 @@
    <item row="3" column="1">
     <widget class="QCheckBox" name="cfg_writable">
      <property name="text">
-      <string>writable field</string>
+      <string notr="true">writable field</string>
      </property>
     </widget>
    </item>
@@ -112,14 +116,14 @@
      <item>
       <widget class="QRadioButton" name="cfg_browse_type_0">
        <property name="text">
-        <string>folder</string>
+        <string notr="true">folder</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QRadioButton" name="cfg_browse_type_1">
        <property name="text">
-        <string>file</string>
+        <string notr="true">file</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -129,7 +133,7 @@
      <item>
       <widget class="QCheckBox" name="cfg_save_mode">
        <property name="text">
-        <string>save mode</string>
+        <string notr="true">save mode</string>
        </property>
       </widget>
      </item>
@@ -144,7 +148,7 @@
       </size>
      </property>
      <property name="text">
-      <string>browse mode:</string>
+      <string notr="true">browse mode:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -163,7 +167,7 @@
       </size>
      </property>
      <property name="text">
-      <string>file types:</string>
+      <string notr="true">file types:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -173,7 +177,7 @@
    <item row="5" column="1">
     <widget class="QLineEdit" name="cfg_file_types">
      <property name="text">
-      <string />
+      <string/>
      </property>
     </widget>
    </item>
@@ -186,6 +190,6 @@
    <header>a2widget.a2path_field</header>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

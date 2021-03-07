@@ -42,28 +42,6 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         if del_widget.path:
             self.check()
 
-    def _make_path_widget(self, index, path=''):
-        widget = QtWidgets.QWidget(self)
-        layout = QtWidgets.QHBoxLayout(widget)
-        layout.setContentsMargins(0, 0, 0, 0)
-        widget.label = QtWidgets.QLabel(str(index + 1))
-        layout.addWidget(widget.label)
-        field = A2PathField(widget, path, writable=False)
-        field.browse_type = self.cfg.get('browse_type', 0)
-        field.changed.connect(self.check)
-        layout.addWidget(field)
-        button = QtWidgets.QToolButton(self)
-        if index:
-            button.path_index = index
-            button.setIcon(a2ctrl.Icons.inst().clear)
-            button.clicked.connect(self.remove_path)
-        else:
-            button.clicked.connect(self.add_path)
-            button.setIcon(a2ctrl.Icons.inst().label_plus)
-        layout.addWidget(button)
-        self.a2_group_layout.addWidget(widget)
-        return field
-
     def check(self, *_args):
         path_list = [w.path for w in self.path_widgets if w.path]
         self.set_user_value(path_list)

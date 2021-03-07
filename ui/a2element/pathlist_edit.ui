@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>549</width>
-    <height>124</height>
+    <height>135</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QFormLayout" name="edit_layout">
    <item row="0" column="0">
@@ -23,7 +23,7 @@
       </size>
      </property>
      <property name="text">
-      <string>internal name:</string>
+      <string notr="true">internal name:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -33,7 +33,7 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="cfg_name">
      <property name="text">
-      <string>extensionX_path1</string>
+      <string notr="true">extensionX_path1</string>
      </property>
     </widget>
    </item>
@@ -46,7 +46,7 @@
       </size>
      </property>
      <property name="text">
-      <string>display label:</string>
+      <string notr="true">display label:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -56,7 +56,7 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="cfg_label">
      <property name="text">
-      <string>some pathlist bla</string>
+      <string notr="true">some pathlist bla</string>
      </property>
     </widget>
    </item>
@@ -85,7 +85,7 @@
       </size>
      </property>
      <property name="text">
-      <string>max items:</string>
+      <string notr="true">max items:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -100,7 +100,7 @@
      <item>
       <widget class="QRadioButton" name="cfg_browse_type_0">
        <property name="text">
-        <string>folder</string>
+        <string notr="true">folder</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -110,7 +110,7 @@
      <item>
       <widget class="QRadioButton" name="cfg_browse_type_1">
        <property name="text">
-        <string>file</string>
+        <string notr="true">file</string>
        </property>
       </widget>
      </item>
@@ -125,7 +125,7 @@
       </size>
      </property>
      <property name="text">
-      <string>type:</string>
+      <string notr="true">type:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

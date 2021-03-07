@@ -153,6 +153,9 @@ class A2PathField(QtWidgets.QWidget):
         """
         self.writable = not state
 
+    def setPlaceholderText(self, text):
+        self.line_field.setPlaceholderText(text)
+
     @property
     def value(self):
         return self._value
