@@ -263,6 +263,25 @@ def rolling_list_add(item, to_list, max_items=10):
     return to_list[:max_items]
 
 
+def set_archive(file_path, state: bool):
+    """
+    Change the archive file attribute.
+
+    Pretty weird. There seems to be no built-in solution. Cooked via:
+    https://stackoverflow.com/a/40372658/469322
+    """
+    import ctypes
+
+    attrs = os.stat(file_path).st_file_attributes
+    if state:
+        changed = attrs | stat.FILE_ATTRIBUTE_ARCHIVE
+    else:
+        changed = attrs & ~stat.FILE_ATTRIBUTE_ARCHIVE
+
+    if attrs != changed:
+        ctypes.windll.kernel32.SetFileAttributesW(file_path, changed)
+
+
 if __name__ == '__main__':
     x = unroll_seconds(29030400.0, 0)
     print('x: %s' % x)
