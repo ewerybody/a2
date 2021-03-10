@@ -15,7 +15,7 @@ from a2qt.QtWidgets import *
 from a2widget.a2list import A2List
 
 
-class Ui_A2ItemEditor(object):
+class Ui_A2ItemEditor:
     def setupUi(self, A2ItemEditor):
         if not A2ItemEditor.objectName():
             A2ItemEditor.setObjectName(u"A2ItemEditor")
@@ -25,12 +25,13 @@ class Ui_A2ItemEditor(object):
         sizePolicy.setHeightForWidth(A2ItemEditor.sizePolicy().hasHeightForWidth())
         A2ItemEditor.setSizePolicy(sizePolicy)
         self.item_editor_layout = QHBoxLayout(A2ItemEditor)
+        self.item_editor_layout.setContentsMargins(0, 0, 0, 0)
         self.item_editor_layout.setObjectName(u"item_editor_layout")
         self.list_layout_widget = QWidget(A2ItemEditor)
         self.list_layout_widget.setObjectName(u"list_layout_widget")
         self.list_layout = QVBoxLayout(self.list_layout_widget)
-        self.list_layout.setObjectName(u"list_layout")
         self.list_layout.setContentsMargins(0, 0, 0, 0)
+        self.list_layout.setObjectName(u"list_layout")
         self.search_field_layout = QHBoxLayout()
         self.search_field_layout.setObjectName(u"search_field_layout")
         self.search_field = QLineEdit(self.list_layout_widget)
