@@ -466,7 +466,7 @@ class ConsoleUiHandler(QtCore.QObject):
         self.tab_widget = tab_widget
         self.main = parent.main
 
-        self._start_byte = None
+        self._start_byte = 0
         self._end_byte = None
         self._lines = []
         self._lines_shown = 0
@@ -484,24 +484,7 @@ class ConsoleUiHandler(QtCore.QObject):
 
         logger = a2output.get_logwriter()
         self._sep = a2output.SEP
-
-        with open(logger.path) as file_obj:
-            num_bytes = os.path.getsize(logger.path)
-            if num_bytes > self._init_block_size:
-                self._start_byte = num_bytes - self._init_block_size
-                file_obj.seek(self._start_byte)
-            else:
-                self._start_byte = 0
-            self._end_byte = num_bytes
-
-            # first line might be incomplete, if so add len to start_byte
-            first_line = file_obj.__next__()
-            if not self.line_gathered(first_line):
-                self._start_byte += len(first_line)
-
-            for line in file_obj:
-                self.line_gathered(line)
-
+        self._init_readlines(logger.path)
         self.append_lines()
 
         self.log_watcher = QtCore.QFileSystemWatcher(self)
@@ -542,6 +525,31 @@ class ConsoleUiHandler(QtCore.QObject):
         content = '\n'.join('%.2f - %s' % (ftime, txt) for ftime, txt in self._lines[start:end])
         self.a2console.appendPlainText(content)
         self._lines_shown = end
+
+    def _init_readlines(self, log_path):
+        """
+        For immediate display: read last block of `_init_block_size` from log.
+        Ignoring anything above.
+        """
+        if not os.path.isfile(log_path):
+            return
+
+        with open(log_path) as file_obj:
+            num_bytes = os.path.getsize(log_path)
+            if num_bytes > self._init_block_size:
+                self._start_byte = num_bytes - self._init_block_size
+            else:
+                self._start_byte = 0
+            file_obj.seek(self._start_byte)
+            self._end_byte = num_bytes
+
+            # first line might be incomplete, if so add len to start_byte
+            first_line = file_obj.__next__()
+            if not self.line_gathered(first_line):
+                self._start_byte += len(first_line)
+
+            for line in file_obj:
+                self.line_gathered(line)
 
 
 class _CmdCheckThread(QtCore.QThread):
