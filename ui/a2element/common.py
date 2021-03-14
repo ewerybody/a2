@@ -23,10 +23,6 @@ class DrawCtrlMixin:
     """
 
     def __init__(self, main, cfg, mod, user_cfg=None):
-        """ "
-        :param bool _init_ctrl: Set False when using multiple inheritance
-        to keep it from calling super() again.
-        """
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.cfg = cfg
@@ -49,7 +45,7 @@ class DrawCtrlMixin:
 
     def get_user_dict(self):
         """
-        Gets an element configuration PLUS anything set from the user.
+        Get element configuration PLUS anything set from the user.
         :return: Dictionary with user values inserted.
         """
         user_dict = {}
@@ -74,7 +70,7 @@ class DrawCtrlMixin:
 
     def has_user_cfg(self):
         """
-        Tells you if the element has user data saved.
+        Tell if the element has user data saved.
         :rtype: bool
         """
         if self.mod is None:
