@@ -117,7 +117,7 @@ class LibIco(Ico):
         super(LibIco, self).__init__(name, 512, DEFAULT_ALPHA)
 
 
-class Icons:
+class _Icons:
     """
     Our load-only-once icon library object.
 
@@ -134,13 +134,13 @@ class Icons:
         """
         :rtype: Icons
         """
-        if Icons._instance is None:
-            Icons._instance = Icons()
-        return Icons._instance
+        if _Icons._instance is None:
+            _Icons._instance = _Icons()
+        return _Icons._instance
 
     def __getattribute__(self, name):
         try:
-            obj = super(Icons, self).__getattribute__(name)
+            obj = super(_Icons, self).__getattribute__(name)
         except AttributeError:
             log.error('Icons lib got request for inexistent icon:\n  "%s"!', name)
             return Ico(_PLACEHOLDER_ICON)
@@ -208,6 +208,9 @@ class Icons:
         self.up = False
         self.up_align = False
         # Icons end
+
+
+Icons = _Icons.inst()
 
 
 def get(current_icon, folder, fallback=None):
