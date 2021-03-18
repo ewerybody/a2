@@ -65,7 +65,7 @@ class Draw(DrawCtrl):
 class Edit(EditCtrl):
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        self.helpUrl = self.a2.urls.help_number
+        self.helpUrl = self.a2.urls.wiki + 'Edit' + self.element_name()
 
         a2uic.check_module(combo_edit_ui)
         self.ui = combo_edit_ui.Ui_edit()
@@ -73,6 +73,8 @@ class Edit(EditCtrl):
 
         self.ui.plus_button.clicked.connect(self.add_item)
         self.ui.minus_button.clicked.connect(self.ui.cfg_items.remove_selected)
+        self.ui.plus_button.setIcon(a2ctrl.Icons.list_add)
+        self.ui.minus_button.setIcon(a2ctrl.Icons.clear)
 
         self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
@@ -110,7 +112,7 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().combo
+        return a2ctrl.Icons.combo
 
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
