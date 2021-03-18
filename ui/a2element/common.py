@@ -255,11 +255,8 @@ class EditCtrl(QtWidgets.QGroupBox):
         self._ctrl_layout.setContentsMargins(0, 0, 0, 0)
         self._sub_layout = QtWidgets.QHBoxLayout()
 
-        try:
-            margin = self.main.style.get('margin')
-            self._sub_layout.setContentsMargins(margin, margin, margin, margin)
-        except AttributeError:
-            pass
+        margin = self.get_style_value('margin', 8)
+        self._sub_layout.setContentsMargins(margin, margin, margin, margin)
 
         self.mainWidget = QtWidgets.QWidget(self)
         self._sub_layout.addWidget(self.mainWidget)
@@ -267,7 +264,8 @@ class EditCtrl(QtWidgets.QGroupBox):
 
         if add_layout:
             self.mainLayout = QtWidgets.QVBoxLayout()
-            self.mainLayout.setContentsMargins(5, 5, 5, 5)
+            spacing = self.get_style_value('small_spacing', 5)
+            self.mainLayout.setContentsMargins(spacing, spacing, spacing, spacing)
             self.mainWidget.setLayout(self.mainLayout)
 
         self._ctrl_button_layout = QtWidgets.QVBoxLayout()
@@ -276,7 +274,7 @@ class EditCtrl(QtWidgets.QGroupBox):
 
         self._ctrl_button = QtWidgets.QToolButton(self)
         self._ctrl_button.setIcon(Icons.inst().more)
-        button_size = 32
+        button_size = self.get_style_value('icon_size', 32)
         self._ctrl_button.setMinimumSize(QtCore.QSize(button_size, button_size))
         self._ctrl_button.setMaximumSize(QtCore.QSize(button_size, button_size))
         self._ctrl_button.setIconSize(QtCore.QSize(button_size, button_size))
@@ -350,6 +348,13 @@ class EditCtrl(QtWidgets.QGroupBox):
     def leaveEvent(self, event):
         self._ctrl_button.setVisible(False)
         return QtWidgets.QGroupBox.leaveEvent(self, event)
+
+    def get_style_value(self, value_name, default=None):
+        """Retrieve a value from the main style builder."""
+        try:
+            return self.main.style.get(value_name, default)
+        except AttributeError:
+            return default
 
 
 class EditAddElem(QtWidgets.QWidget):
