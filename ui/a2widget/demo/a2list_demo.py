@@ -14,6 +14,7 @@ class Demo(QtWidgets.QMainWindow):
         lyt.addWidget(QtWidgets.QLabel('a simple list:'))
         list_items = 'mango banana apple kiwi apple strawberry'.split()
         self.widget1 = A2List(self, list_items)
+        self.widget1.set_multi_selection()
         lyt.addWidget(self.widget1)
 
         self.widget1.items_selected.connect(self.on_things_selection)

@@ -186,6 +186,11 @@ class A2List(QtWidgets.QListWidget):
     def set_context_menu(self, menu):
         self._menu = menu
 
+    def set_multi_selection(self, state=True):
+        if state:
+            self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
+        else:
+            self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
 
 class A2ListCompact(A2List):
     def __init__(self, parent=None, names=None):

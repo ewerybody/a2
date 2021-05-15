@@ -193,14 +193,16 @@ class A2ItemEditor(QtWidgets.QWidget):
 
     def _on_selection_change(self, item_objs):
         self.selection_changed.emit(item_objs)
+        num_items = len(item_objs)
 
-        text = item_objs[0].text() if item_objs else ''
-        if text != self._selected_name:
-            self._selected_name = text
-            self.selected_name_changed.emit(text)
+        if num_items == 1:
+            text = item_objs[0].text() if item_objs else ''
+            if text != self._selected_name:
+                self._selected_name = text
+                self.selected_name_changed.emit(text)
 
-        self.ui.config_widget.setEnabled(item_objs != [])
-        self.ui.a2item_editor_remove_button.setEnabled(item_objs != [])
+        self.ui.config_widget.setEnabled(num_items == 1)
+        self.ui.a2item_editor_remove_button.setEnabled(num_items > 0)
 
     def _add_and_setup_item(self, name):
         item = QtWidgets.QListWidgetItem(name)
@@ -256,3 +258,6 @@ class A2ItemEditor(QtWidgets.QWidget):
     def delete_item(self):
         """Delete selected items from the list."""
         self.ui.item_list.remove_selected()
+
+    def set_multi_selection(self, state):
+        self.ui.item_list.set_multi_selection(state)
