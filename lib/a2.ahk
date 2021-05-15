@@ -30,7 +30,7 @@ _a2_build_tray_menu(a2_title)
 global a2cfg := a2_get_user_config(a2data)
 
 if !a2cfg.no_startup_tooltip
-    tt(a2_title, 1)
+    a2tip(a2_title)
 
 if a2cfg.auto_reload
     SetTimer, _a2_check_changes, 1000
@@ -45,7 +45,7 @@ Return ; -----------------------------------------------------------------------
 
 a2ui() {
     tt_text := "Calling a2 ui ..."
-    tt(tt_text)
+    a2tip(tt_text)
     a2_win_id := WinExist("a2 ahk_class Qt5152QWindowIcon ahk_exe pythonw.exe")
     if (a2_win_id)
         WinActivate, ahk_id %a2_win_id%
@@ -53,7 +53,7 @@ a2ui() {
         Run, "%A_AhkPath%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
         WinWait, a2,, 5
     }
-    tt(tt_text, 1)
+    a2tip(tt_text)
 }
 
 a2ui_help() {
@@ -90,6 +90,7 @@ _a2_check_changes() {
             If InStr(A_LoopFileAttrib, "A") {
                 do_reload := true
                 FileSetAttrib, -A, %A_LoopFileFullpath%
+                a2log_debug("Changed lib file: " A_LoopFileFullPath)
             }
         }
     }
@@ -103,6 +104,7 @@ _a2_check_changes() {
         path := path_join(a2data, SubStr(A_LoopReadLine, 10))
         if InStr(FileGetAttrib(path), "A") {
             do_reload := true
+            a2log_debug("Changed include file: " path)
             FileSetAttrib, -A, %path%
         }
     }
