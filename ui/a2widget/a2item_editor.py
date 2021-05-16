@@ -191,15 +191,23 @@ class A2ItemEditor(QtWidgets.QWidget):
         """String name of currently selected item."""
         return self._selected_name
 
+    @property
+    def selected_names(self):
+        """List of String names of currently selected items."""
+        return self.ui.item_list.get_selected_names()
+
     def _on_selection_change(self, item_objs):
         self.selection_changed.emit(item_objs)
         num_items = len(item_objs)
 
         if num_items == 1:
             text = item_objs[0].text() if item_objs else ''
-            if text != self._selected_name:
-                self._selected_name = text
-                self.selected_name_changed.emit(text)
+        else:
+            text = None
+
+        if text != self._selected_name:
+            self._selected_name = text
+            self.selected_name_changed.emit(text)
 
         self.ui.config_widget.setEnabled(num_items == 1)
         self.ui.a2item_editor_remove_button.setEnabled(num_items > 0)
@@ -260,4 +268,9 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.item_list.remove_selected()
 
     def set_multi_selection(self, state):
+        """Set the list to multiple or single selections."""
         self.ui.item_list.set_multi_selection(state)
+
+    def select(self, names):
+        """Select a named item, a list of names or None."""
+        self.ui.item_list.select_names(names)
