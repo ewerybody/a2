@@ -56,14 +56,14 @@ class DrawCtrlMixin:
                 user_dict[key] = self.cfg[key]
         return user_dict
 
-    def set_user_value(self, this, name=None):
+    def set_user_value(self, value, name=None):
         """
         Set a user value in the module config.
         Name is None by by default so you can just set the default value by ... well:
         passing the value. Voila!
         """
         try:
-            self.mod.set_user_cfg(self.cfg, this, name)
+            self.mod.set_user_cfg(self.cfg, value, name)
         except AttributeError:
             # cannot set config if no module given
             pass

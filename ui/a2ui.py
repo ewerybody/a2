@@ -531,9 +531,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.load_runtime_and_ui()
 
     def check_element(self, name):
-        """
-        Finds a named element and calls its check func.
-        """
+        """Find a named element and call its `check` method."""
         self.module_view.check_element(name)
 
     def _restore_splitter(self, win_prefs=None):

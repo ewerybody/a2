@@ -189,7 +189,7 @@ class Mod(object):
 
         :param dict element_cfg: The modules original config for the element.
         :param any value: Variable value o
-        :param str attr_name: If given sets the value to the name inside a dict.
+        :param str attr_name: If given: set value to the key inside a dict.
             Otherwise the value is regarded as a whole.
         """
         cfg_name = a2util.get_cfg_default_name(element_cfg)
