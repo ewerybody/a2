@@ -398,7 +398,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         icons = a2ctrl.Icons.inst()
         if self.key:
             menu.addAction(icons.clear, 'Clear Hotkey', self.clear_hotkey)
-        menu.addAction(icons.help, 'Help on Hotket Setup', self.goto_help)
+        menu.addAction(icons.help, 'Help on Hotkey Setup', self.goto_help)
 
     def _log_size(self):
         """
