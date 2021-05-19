@@ -472,7 +472,7 @@ class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
 
         self.setTitle('Include Script')
         self.dialog_title = 'New Autohotkey Script'
-        self.dialog_msg = 'Give a name for the new Autohotkety script:'
+        self.dialog_msg = 'Give a name for the new Autohotkey script:'
         self.extension = a2ahk.EXTENSION
         self.on_create_name_check = self.main.mod.check_create_script
 
