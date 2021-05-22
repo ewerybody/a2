@@ -232,6 +232,10 @@ def _copy_together_installer_binary(version_label):
         # create setup exe
         exe_path = os.path.join(Paths.distroot, SETUP_EXE)
         subprocess.call([Paths.ahk2exe, '/in', setup_script, '/out', exe_path, '/mpress', '0'])
+        if not os.path.isfile(exe_path):
+            print('\n%s FAIL!: "%s" was not created!\n' % (EXMRK, exe_path))
+            continue
+
         # add setup executable to archive
         subprocess.call([Paths.sevenz_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
         os.unlink(exe_path)
