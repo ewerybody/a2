@@ -5,7 +5,7 @@ Basically just locally or from an FTP, github, another URL, network location ...
 They can be enabled/disabled individually affecting all their child modules.
 """
 import os
-from os import remove
+import sys
 import time
 import shutil
 import traceback
@@ -63,7 +63,6 @@ class ModSource(object):
         self.name = name
         self.path = os.path.join(a2.paths.modules, name)
         self.config_file = os.path.join(self.path, CONFIG_FILENAME)
-        self.backup_path = os.path.join(a2.paths.temp, name, 'versions')
         self.mods = {}
         self.mod_count = 0
 
@@ -97,6 +96,23 @@ class ModSource(object):
         for mod_name in mods_in_path:
             if mod_name not in self.mods:
                 self.mods[mod_name] = a2mod.Mod(self, mod_name)
+
+    def refresh(self):
+        """Unload Python modules from within this ModSource and re-fetch modules."""
+        log.info('Refreshing module package: "%s" ...', self.name)
+        # self.a2.paths.modules
+        my_mods = []
+        for name, pymod in sys.modules.items():
+            if not hasattr(pymod, '__file__'):
+                continue
+            if not pymod.__file__.startswith(self.path):
+                continue
+            my_mods.append(name)
+
+        for name in my_mods:
+            log.info('  unloading py module: "%s" ...', name)
+            del sys.modules[name]
+        self.fetch_modules()
 
     @property
     def config(self):
@@ -250,6 +266,10 @@ class ModSource(object):
         if 'display_name' in self.config:
             return self.config['display_name']
         return self.name
+
+    @property
+    def backup_path(self) -> str:
+        return os.path.join(self.a2.paths.temp, self.name, 'versions')
 
 
 class ModSourceCheckThread(QtCore.QThread):
@@ -503,7 +523,7 @@ class ModSourceFetchThread(QtCore.QThread):
         self.fetched.emit()
 
 
-def backup_version(mod_source, old_version):
+def backup_version(mod_source: ModSource, old_version):
     if old_version is None:
         for _ in os.listdir(mod_source.path):
             raise RuntimeError(MSG_NOT_EMPTY_ERROR)

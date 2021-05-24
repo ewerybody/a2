@@ -164,7 +164,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.set_idle()
         self._update_msg(MSG_UPTODATE)
         self._update_to_version = None
-        self.mod_source.fetch_modules()
+        self.mod_source.refresh()
         self.set_labels()
         self.changed.emit()
 
