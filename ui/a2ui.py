@@ -593,13 +593,8 @@ class RuntimeCallThread(QtCore.QThread):
 
     def run(self):
         self.msleep(RESTART_DELAY)
-        a2 = a2core.A2Obj.inst()
 
-        # args = [a2.paths.a2_script]
-        script = 'a2_starter.ahk'
-        path = os.path.join(a2.paths.lib, '_source')
-        args = [script]
-
+        args = []
         if self._args is None:
             pass
         elif isinstance(self._args, str):
@@ -609,7 +604,8 @@ class RuntimeCallThread(QtCore.QThread):
         else:
             raise TypeError('Unable to handle arguments type "%s"' % type(self._args))
 
-        _retval, _pid = a2util.start_process_detached(a2.paths.autohotkey, args, working_dir=path)
+        a2 = a2core.A2Obj.inst()
+        _retval, _pid = a2util.start_process_detached(a2.paths.a2exe, args, working_dir=a2.paths.a2)
 
 
 class RuntimeWatcher(QtCore.QThread):
