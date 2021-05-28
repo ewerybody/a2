@@ -1,5 +1,22 @@
 """
-Home of the A2ItemEditor Lister widget.
+Home of the super universal A2ItemEditor lister widget that allows editing
+dictionary data thats layed out the same way over all values. For example::
+
+    data = {
+        "key1": {
+            "bool_val": True,
+            "str_val": "Muppets",
+            "number": 1337
+        },
+        "key2": {
+            "bool_val": False,
+            "str_val": "Smurfs",
+            "number": 2342
+        } ...
+    }
+
+Keys are in a list widget and the values appear in according ui to the right
+for display and modification.
 """
 from collections import OrderedDict
 
@@ -86,6 +103,8 @@ class A2ItemEditor(QtWidgets.QWidget):
         self, value_name, widget, set_function, change_signal=None, default_value=None, label=None
     ):
         """
+        Append a label & widget to config_layout and connect it to the data.
+
         :param str value_name: Name of the data item to control.
         :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
         :param function set_function: Widget member function to display its current data.
@@ -94,7 +113,6 @@ class A2ItemEditor(QtWidgets.QWidget):
         :param str label: Optional string to put into the Label Field of a FormLayout.
         """
         label = label if label is not None else value_name.title()
-        # self.ui.config_layout.addRow(label, widget)
         self.add_row(label, widget)
         self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
 
@@ -102,7 +120,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         self, value_name, widget, set_function, change_signal=None, default_value=None
     ):
         """
-        Fills the config_layout with a control and connects it to the data.
+        Append widget to config_layout and connect it to the data.
 
         :param str value_name: Name of the data item to control.
         :param QtWidgets.QWidget widget: The QWidget object to put into the layout.
@@ -116,19 +134,20 @@ class A2ItemEditor(QtWidgets.QWidget):
     def add_row(self, *args):
         self.ui.config_layout.addRow(*args)
 
-    def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
-        self._drawing = True
+    def enlist_widget(self, value_name, widget, set_function, default_value):
+        """Connect a widget to be filled with data from `value_name` on selection."""
         self._data_widgets[value_name] = {
             'widget': widget,
             'set_function': set_function,
-            'change_signal': change_signal,
             'default_value': default_value,
         }
 
+    def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
+        self._drawing = True
+        self.enlist_widget(value_name, widget, set_function, default_value)
         a2ctrl.connect.control(
             widget, value_name, self._current_data, self._value_changed, change_signal
         )
-
         self._drawing = False
 
     def draw_data(self, item_name):
@@ -136,7 +155,9 @@ class A2ItemEditor(QtWidgets.QWidget):
         self._drawing = True
         for value_name, widget_dict in self._data_widgets.items():
             value = self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
+            widget_dict['widget'].blockSignals(True)
             widget_dict['set_function'](value)
+            widget_dict['widget'].blockSignals(False)
             self._current_data[value_name] = value
 
         self._drawing = False
@@ -274,3 +295,9 @@ class A2ItemEditor(QtWidgets.QWidget):
     def select(self, names):
         """Select a named item, a list of names or None."""
         self.ui.item_list.select_names(names)
+
+
+if __name__ == '__main__':
+    from a2widget.demo import a2item_editor_demo
+
+    a2item_editor_demo.show()
