@@ -1,5 +1,5 @@
-"""X"""
 from a2qt import QtWidgets, QtCore
+from a2widget.tools import BlockSignalContext
 
 
 class KeyValueTable(QtWidgets.QTableWidget):
@@ -87,15 +87,15 @@ class KeyValueTable(QtWidgets.QTableWidget):
                 'Cannot set data of type "%s" to %s' % (type(data), self.__class__.__name__)
             )
 
-        self.blockSignals(True)
-        self.clearContents()
-        self.setRowCount(max(1, len(data)))
-        for i, (key, value) in enumerate(data.items()):
-            item = QtWidgets.QTableWidgetItem(str(key))
-            self.setItem(i, 0, item)
-            item = QtWidgets.QTableWidgetItem(str(value))
-            self.setItem(i, 1, item)
-        self.blockSignals(False)
+        with BlockSignalContext(self):
+            self.clearContents()
+            self.setRowCount(max(1, len(data)))
+            for i, (key, value) in enumerate(data.items()):
+                item = QtWidgets.QTableWidgetItem(str(key))
+                self.setItem(i, 0, item)
+                item = QtWidgets.QTableWidgetItem(str(value))
+                self.setItem(i, 1, item)
+
         self._on_change()
 
 
