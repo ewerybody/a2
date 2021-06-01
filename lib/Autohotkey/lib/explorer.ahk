@@ -28,17 +28,18 @@ explorer_get_path(hwnd="") {
         return ErrorLevel := "ERROR"
     if (window="desktop")
         return A_Desktop
-    path := window.LocationURL
-    path := RegExReplace(path, "ftp://.*@", "ftp://")
-    StringReplace, path, path, file:///
-    StringReplace, path, path, /, \, All
-
+    path := RegExReplace(window.LocationURL, "ftp://.*@", "ftp://")
+    path := StrReplace(path, "file:///", "")
+    path := StrReplace(path, "/", "\")
     ; thanks to polyethene
     Loop
+    {
+        ; What the hell?!? This is to replace percentage notation, right?
         If RegExMatch(path, "i)(?<=%)[\da-f]{1,2}", hex)
-        StringReplace, path, path, `%%hex%, % Chr("0x" . hex), All
-    Else Break
-        return path
+            StringReplace, path, path, `%%hex%, % Chr("0x" . hex), All
+        Else Break
+            return path
+    }
 }
 
 explorer_get_all(hwnd="") {

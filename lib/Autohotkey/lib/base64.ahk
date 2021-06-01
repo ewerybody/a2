@@ -29,7 +29,7 @@ __base64_code(i) {   ; <== Chars[i & 63], 0-base index
 
 base64_decode(ByRef bin, code) {
    Static Chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-   StringReplace code, code, =,, All
+   code := StrReplace(code, "=", "")
    VarSetCapacity(bin, 3*StrLen(code)//4, 0)
    pos = 0
    Loop Parse, code

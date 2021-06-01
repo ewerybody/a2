@@ -209,11 +209,12 @@ Class _Struct {
         ,_struct_.Insert(RegExMatch(_LF_,"i)^struct\s*\{")?(1,_align_total_:=0):0)
         ,_LF_:=SubStr(_LF_,_match_)
 
-      StringReplace,_LF_,_LF_,},,A ;remove all closing brackets (these will be checked later)
+      ; remove all closing brackets (these will be checked later)
+      _LF_ := StrReplace(_LF_, "}", "")
 
       ; Check if item is a pointer and remove * for further processing, separate key will store that information
       While % (InStr(_LF_,"*")){
-        StringReplace,_LF_,_LF_,*
+        _LF_ := StrReplace(_LF_, "*", "")
         _IsPtr_:=A_Index
       }
       ; Split off data type, name and size (only data type is mandatory)
