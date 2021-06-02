@@ -147,10 +147,12 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         # TODO: Do this for the other ctrl types
         if trigger_signal is None:
             trigger_signal = ctrl.textChanged
-
         trigger_signal.connect(partial(_text_edit_update, cfg, name, ctrl))
+
         if change_signal is not None:
+            # FIXME: Whytf were we passing the ctrl here?!
             trigger_signal.connect(partial(change_signal.emit, ctrl))
+            # trigger_signal.connect(change_signal.emit)
         if name in cfg:
             ctrl.setPlainText(cfg[name])
         else:
@@ -175,8 +177,10 @@ def _radio_update(cfg, name, value, state):
         cfg[name] = value
 
 
-def _text_edit_update(cfg, name, ctrl):
-    cfg[name] = ctrl.toPlainText()
+def _text_edit_update(cfg, name, ctrl, value=None):
+    if value is None:
+        value = ctrl.toPlainText()
+    cfg[name] = value
 
 
 def _text_edit_send(signal, ctrl):
