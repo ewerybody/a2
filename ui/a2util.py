@@ -186,24 +186,17 @@ def unroll_seconds(value, decimals=2):
     :rtype: str
     """
     current = float(value)
-    name = 'seconds'
+    name = 'second'
     if value > 60:
-        d = [
-            (60, 'minutes'),
-            (60, 'hours'),
-            (24, 'days'),
-            (7, 'weeks'),
-            (4, 'months'),
-            (12, 'years'),
-        ]
+        times = [60, 60, 24, 7, 4, 12]
+        names = ['minute', 'hour', 'day', 'week', 'month', 'year']
         last = current
-        for i, (divider, name) in enumerate(d):
+        for i, (divider, name) in enumerate(zip(times, names)):
             current = current / divider
-            # print('%ss is %s %s' % (value, current, name))
             if current == 1.0:
                 break
             if current < 1:
-                name = d[i - 1][1]
+                name = names[i - 1]
                 current = last
                 break
             last = current
@@ -211,8 +204,8 @@ def unroll_seconds(value, decimals=2):
     v = round(current, decimals)
     if decimals == 0:
         v = int(v)
-        if v == 1:
-            name = name[:-1]
+        if v != 1:
+            name += 's'
     return '%s %s' % (v, name)
 
 
@@ -263,7 +256,7 @@ def rolling_list_add(item, to_list, max_items=10):
     return to_list[:max_items]
 
 
-def set_archive(file_path, state: bool):
+def set_archive(file_path: str, state: bool):
     """
     Change the archive file attribute.
 
@@ -279,9 +272,13 @@ def set_archive(file_path, state: bool):
         changed = attrs & ~stat.FILE_ATTRIBUTE_ARCHIVE
 
     if attrs != changed:
+        # print(f'Bits before:\n{attrs:016b}')
         ctypes.windll.kernel32.SetFileAttributesW(file_path, changed)
+        # print(f'{changed:016b}\nBits now^')
 
 
 if __name__ == '__main__':
-    x = unroll_seconds(29030400.0, 0)
-    print('x: %s' % x)
+    import unittest
+    import test.test_util
+
+    unittest.main(test.test_util, verbosity=2)
