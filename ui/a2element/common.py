@@ -13,7 +13,7 @@ from a2ctrl import Icons
 from a2widget import local_script
 
 LOCAL_MENU_PREFIX = 'local: '
-DELAYED_CHECK_DELAY = 250
+DELAYED_CHECK_DELAY = 500
 
 
 class DrawCtrlMixin:
@@ -56,12 +56,15 @@ class DrawCtrlMixin:
                 user_dict[key] = self.cfg[key]
         return user_dict
 
-    def set_user_value(self, value, name=None):
+    def set_user_value(self, value=None, name=None):
         """
         Set a user value in the module config.
         Name is None by by default so you can just set the default value by ... well:
         passing the value. Voila!
         """
+        if value is None:
+            value = self.user_cfg
+
         try:
             self.mod.set_user_cfg(self.cfg, value, name)
         except AttributeError:
