@@ -60,16 +60,22 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui = a2item_editor_ui.Ui_A2ItemEditor()
         self.ui.setupUi(self)
 
-        self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
-        self.ui.config_layout.setContentsMargins(0, 0, 0, 0)
-
         self._data_widgets = OrderedDict()
+        self._drawing = False
+        self._current_data = {}
+        self._selected_name = None
 
         self.search_field_min_items = SEARCH_FIELD_MIN_ITEMS
         self.item_flags = DEFAULT_ITEM_FLAGS
-        self.fill_item_list()
+        self.ignore_default_values = True
 
-        self._selected_name = None
+        self._setup_ui()
+        self.fill_item_list()
+        self.update_filter()
+
+    def _setup_ui(self):
+        self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
+        self.ui.config_layout.setContentsMargins(0, 0, 0, 0)
 
         icons = a2ctrl.icons.Icons.inst()
         self.ui.item_list.itemChanged.connect(self.check_item_change)
@@ -83,8 +89,6 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.a2item_editor_remove_button.setIcon(icons.clear)
         self.ui.a2item_editor_remove_button.clicked.connect(self.ui.item_list.remove_selected)
 
-        self._drawing = False
-        self._current_data = {}
         self.selected_name_changed.connect(self.draw_data)
 
         self._value_changed.connect(self.update_data)
@@ -92,7 +96,6 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
         self.ui.a2search_x_button.setIcon(icons.clear)
-        self.update_filter()
 
     def set_data(self, data):
         """Fill in some data."""
@@ -142,11 +145,15 @@ class A2ItemEditor(QtWidgets.QWidget):
             'default_value': default_value,
         }
 
-    def _add_data_widget(self, value_name, widget, set_function, change_signal, default_value):
+    def _add_data_widget(self, value_name, widget, set_function, trigger_signal, default_value):
         self._drawing = True
         self.enlist_widget(value_name, widget, set_function, default_value)
         a2ctrl.connect.control(
-            widget, value_name, self._current_data, self._value_changed, change_signal
+            ctrl=widget,
+            name=value_name,
+            cfg=self._current_data,
+            change_signal=self._value_changed,
+            trigger_signal=trigger_signal,
         )
         self._drawing = False
 
@@ -162,7 +169,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
         self._drawing = False
 
-    def update_data(self):
+    def update_data(self, *args):
         """
         Shall always update the config but not trigger change if there was no text set
         and text was not deleted.
@@ -173,7 +180,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         diff_dict = {}
         for value_name, widget_dict in self._data_widgets.items():
             value = self._current_data.get(value_name)
-            if value != widget_dict['default_value']:
+            if not self.ignore_default_values or value != widget_dict['default_value']:
                 diff_dict[value_name] = value
 
         if self.data[self.selected_name] != diff_dict:
@@ -191,7 +198,8 @@ class A2ItemEditor(QtWidgets.QWidget):
             self.data[new_name] = data
             self.draw_data(new_name)
 
-            self.data_changed.emit()
+            # self.data_changed.emit()
+            self.update_data()
             self.item_changed.emit((old_name, new_name, item))
 
     @property
