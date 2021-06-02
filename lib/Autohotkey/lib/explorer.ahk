@@ -37,9 +37,10 @@ explorer_get_path(hwnd="") {
         ; What the hell?!? This is to replace percentage notation, right?
         If RegExMatch(path, "i)(?<=%)[\da-f]{1,2}", hex)
             StringReplace, path, path, `%%hex%, % Chr("0x" . hex), All
-        Else Break
-            return path
+        Else
+            Break
     }
+    return path
 }
 
 explorer_get_all(hwnd="") {

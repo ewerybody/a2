@@ -150,7 +150,7 @@ Random(Min = "", Max = "") {
     Random, v, %Min%, %Max%
     Return, v
 }
-RegRead(RootKey, SubKey, ValueName = "") {
+RegRead(RootKey, SubKey = "", ValueName = "") {
     RegRead, v, %RootKey%, %SubKey%, %ValueName%
     Return, v
 }
