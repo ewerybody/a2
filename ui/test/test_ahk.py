@@ -83,6 +83,7 @@ class Test(unittest.TestCase):
             (True, 'true'),
             (False, 'false'),
             ('String', '"String"'),
+            ('escaped "String"', '"escaped ""String"""'),
             (0.333, '0.333'),
             (1337, '1337'),
             (['something', 42, 13.37], '["something", 42, 13.37]'),
