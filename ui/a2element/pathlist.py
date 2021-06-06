@@ -22,21 +22,23 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
             self.add_path(path)
 
     def add_path(self, path=''):
-        """Adds a path to the list."""
+        """Add a path widget to the list."""
         path_widget = PathEntry(
-            self, self.a2_group_layout.count(), self.cfg.get('browse_type', 0), path
+            self, self.a2_group_layout.count() + 1, self.cfg.get('browse_type', 0), path
         )
         path_widget.changed.connect(self.check)
         path_widget.add_path.connect(self.add_path)
-        path_widget.delete_me.connect(self._path_removed)
+        path_widget.delete_me.connect(self._on_path_removed)
         self.a2_group_layout.addWidget(path_widget)
         self.path_widgets.append(path_widget)
 
-    def _path_removed(self, del_index):
-        del_widget = self.path_widgets.pop(del_index)
+    def _on_path_removed(self):
+        del_widget = self.sender()
+        self.path_widgets.remove(del_widget)
+
         # fix index labels
         for index, widget in enumerate(self.path_widgets):
-            widget.index = index
+            widget.set_label(index + 1)
 
         # avoid check when path was empty
         if del_widget.path:
@@ -64,23 +66,21 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().check
+        return a2ctrl.Icons.check
 
 
 class PathEntry(QtWidgets.QWidget):
     """A single line widget for each entry in the ui"""
 
     changed = QtCore.Signal(str)
-    delete_me = QtCore.Signal(int)
+    delete_me = QtCore.Signal()
     add_path = QtCore.Signal()
 
     def __init__(self, parent, index, browse_type, path=''):
         super(PathEntry, self).__init__(parent)
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        self._index = 0
-        self._label = QtWidgets.QLabel()
-        self.index = index
+        self._label = QtWidgets.QLabel(str(index))
         layout.addWidget(self._label)
         self._field = A2PathField(self, path, writable=False)
         self._field.browse_type = browse_type
@@ -89,12 +89,12 @@ class PathEntry(QtWidgets.QWidget):
 
         button = QtWidgets.QToolButton(self)
         button.setAutoRaise(True)
-        if index:
-            button.setIcon(a2ctrl.Icons.inst().clear)
-            button.clicked.connect(self.delete)
-        else:
-            button.setIcon(a2ctrl.Icons.inst().folder_add)
+        if index == 1:
+            button.setIcon(a2ctrl.Icons.folder_add)
             button.clicked.connect(self.add_path.emit)
+        else:
+            button.setIcon(a2ctrl.Icons.clear)
+            button.clicked.connect(self.delete)
         layout.addWidget(button)
 
     @property
@@ -105,33 +105,16 @@ class PathEntry(QtWidgets.QWidget):
         """
         return self._field.value
 
-    @property
-    def index(self):
-        """
-        Holds the index of the widget
-        :rtype: int
-        """
-        return self._index
-
-    @index.setter
-    def index(self, value):
-        """
-        Sets the index number and label.
-        Does NOT actually move the widget!
-        :param int value: Index to set.
-        """
-        self._index = value
-        self._label.setText(str(value + 1))
+    def set_label(self, value):
+        self._label.setText(str(value))
 
     def delete(self):
-        """
-        Tells Qt and the parent widget to delete this one.
-        """
+        """Tell Qt and parent widget to delete this one."""
         self.deleteLater()
-        self.delete_me.emit(self.index)
+        self.delete_me.emit()
 
     def __repr__(self, *args, **kwargs):
-        return '<PathEntry %i "%s" at %s>' % (self.index, self.path, id(self))
+        return '<PathEntry "%s" at %s>' % (self.path, id(self))
 
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
