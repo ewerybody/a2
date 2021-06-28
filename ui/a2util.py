@@ -75,11 +75,11 @@ def get_cfg_default_name(cfg):
     return cfg_name
 
 
-def get_next_free_number(name, name_list, separator=''):
+def get_next_free_number(name, name_list, separator='', start_nr=2):
     """
     Browses a list of names to find a free new version of
     the given name + integer number. Just returns the name if its not even
-    in the name_list. Otherwise the first next will be 2.
+    in the name_list. Otherwise the first next will be `name` + `start_nr`.
 
     Example:
 
@@ -100,7 +100,21 @@ def get_next_free_number(name, name_list, separator=''):
     if name not in name_list:
         return name
 
-    number = 2
+    # Get number if name already ends with some.
+    nr = ''
+    for i in range(1, len(name)):
+        if name[-i].isdigit():
+            nr = name[-i] + nr
+        else:
+            break
+    if nr:
+        number = int(nr)
+        name = name[:-len(nr)]
+        if separator and name.endswith(separator):
+            name = name[:-len(separator)]
+    else:
+        number = start_nr
+
     try_name = name + separator + str(number)
 
     while try_name in name_list:

@@ -17,6 +17,22 @@ class Test(unittest.TestCase):
             time_string = a2util.unroll_seconds(seconds, 0)
             self.assertEqual(time_string, control)
 
+    def test_free_name(self):
+        name = 'trumpet'
+        name_list = ['swamp', 'noodle']
+        result = a2util.get_next_free_number(name, name_list)
+        self.assertEqual(result, name)
+
+        name = 'bob'
+        name_list = ['bob', 'alice', 'bob 2', 'bob 4']
+        result = a2util.get_next_free_number(name, name_list, separator=' ')
+        self.assertEqual(result, f'{name} 3')
+
+        name_list = [f'name_{i}' for i in range(1, 23)]
+        name = name_list[-1]
+        result = a2util.get_next_free_number(name, name_list)
+        self.assertEqual(result, 'name_23')
+
 
 if __name__ == "__main__":
     unittest.main()
