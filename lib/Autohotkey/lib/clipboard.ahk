@@ -12,12 +12,12 @@
     WinGetClass, Class, A
     WinGet, this_process, ProcessName, ahk_class %Class%
 
-    ; sending keystroke Ctrl+C in maya can cause a "scene clipboard save" which can be heavy
-    ; to avoid this we go sure we are in the text editor window of maya
+    ; Sending `Ctrl+C` in Maya may cause a "scene clipboard save" which can be heavy!
+    ; To avoid this we make sure we're not on the main window of Maya.
     if (this_process == "maya.exe")
     {
         WinGetTitle, this_title, A
-        if (this_title != "Script Editor")
+        if (string_startswith(this_title, "Autodesk Maya "))
             Return ""
     }
 

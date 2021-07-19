@@ -3,7 +3,7 @@
 ; when moved and disappearing by default.
 ; a2tip("help!")
 
-a2tip(msg, timeout := "") {
+a2tip(msg := "", timeout := "") {
     Global _a2tip_message, _a2_tip_id
     static last_timeout
     refresh_delay := 30
@@ -50,7 +50,6 @@ a2tip(msg, timeout := "") {
         SetTimer, a2tip_timer, Off
     Return
 }
-
 
 a2tip_add(msg, timeout := "") {
     Global _a2tip_message
