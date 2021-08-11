@@ -3,12 +3,7 @@ import a2core
 import a2util
 from a2qt import QtGui, QtCore, QtWidgets
 from a2widget.a2hotkey import edit_func_widget_ui
-from a2widget.a2hotkey.hotkey_common import Vars
-
-
-# FUNCTIONS = [Vars.function_code, Vars.function_url, Vars.function_send]
-SEND_MODES = ['sendraw', 'sendinput', 'sendplay', 'sendevent', 'send']
-MOD_KEYS = ['! - Alt', '^ - Control', '+ - Shift', '# - Win']
+from a2widget.a2hotkey.hotkey_common import Vars, MOD_KEYS, SEND_MODES, strip_mode
 
 
 class HelpLabels:
@@ -22,6 +17,7 @@ class FuncTypes:
     code = 'Run code'
     open = 'Open file/url'
     send = 'Send keystroke'
+
 
 FUNCTIONS = {
     FuncTypes.code: Vars.function_code,
@@ -128,6 +124,8 @@ class FuncWidget(QtWidgets.QWidget):
             code = 'Run, ' + code
 
         elif current == FuncTypes.send:
+            # If `code` is empty we SHOULD strip the whole thing but we also
+            # detect the Send mode from it :/ This has to happen somewhere else!
             send_mode = self.ui.function_send_mode.currentText()
             code = '%s, %s' % (send_mode, code)
 
@@ -152,21 +150,15 @@ class FuncWidget(QtWidgets.QWidget):
 
     def _strip_mode(self, text, current):
         """
-        removes Run, or Send* to put it into the input field
+        Remove `Run, ` or `Send*, ` to put it into the input field.
         """
         modes = {
-            FuncTypes.open: ['run'],
-            FuncTypes.send: SEND_MODES
+            FuncTypes.open: ('run'),
+            FuncTypes.send: SEND_MODES,
         }
 
         if current in (FuncTypes.open, FuncTypes.send):
-            for mode in modes[current]:
-                if text.lower().startswith(mode):
-                    text = text[len(mode) :]
-                    if text.startswith(','):
-                        text = text[1:]
-                    text = text.strip()
-                    break
+            text, mode = strip_mode(text, modes[current])
 
             # set the send mode combobox
             if current == FuncTypes.send:

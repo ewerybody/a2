@@ -2,7 +2,11 @@
 Common hotkey things.
 """
 
+import unittest
 
+
+SEND_MODES = ('sendraw', 'sendinput', 'sendplay', 'sendevent', 'send')
+MOD_KEYS = ('! - Alt', '^ - Control', '+ - Shift', '# - Win')
 DISPLAY_MODIFIERS = {
     'ctrl': 'Ctrl',
     'lctrl': 'LCtrl',
@@ -16,12 +20,13 @@ DISPLAY_MODIFIERS = {
     'altgr': 'AltGr',
     'shift': 'Shift',
     'lshift': 'LShift',
-    'rshift': 'RShift'
+    'rshift': 'RShift',
 }
 
 
 class Vars:
     """Stub for these hotkey strings."""
+
     key_change = 'keyChange'
 
     scope = 'scope'
@@ -53,8 +58,8 @@ def get_keys_list(in_keys):
     else:
         raise TypeError(
             'Wrong Value Type for A2Hotkey.key: "%s" (%s)\n'
-            'Need string or list of strings!' %
-            (str(in_keys), type(in_keys)))
+            'Need string or list of strings!' % (str(in_keys), type(in_keys))
+        )
 
     for i, keys in enumerate(keys_list):
         fixed = sort_modifiers(keys)
@@ -68,7 +73,7 @@ def get_parts_from_list(key_list):
     """
     Disassemble modifier and trigger keys and format them nicely.
     """
-    trigger_key = key_list.pop(-1)
+    trigger_key = key_list.pop(-1).strip()
     modifiers = key_list
 
     # try to title-case the trigger_key:
@@ -85,8 +90,10 @@ def get_parts_from_list(key_list):
 
         if len(new_mods) != len(modifiers):
             low_mods = map(str.lower, new_mods)
-            raise ValueError('Some modifiers could not be identified!:\n  %s' %
-                             set(modifiers).difference(low_mods))
+            raise ValueError(
+                'Some modifiers could not be identified!:\n  %s'
+                % set(modifiers).difference(low_mods)
+            )
         mod_string = '+'.join(new_mods)
         return mod_string, trigger_key
 
@@ -141,16 +148,16 @@ def parent_modifier_string(modifier_string):
     return '+'.join(modifiers)
 
 
-if __name__ == '__main__':
-    # testing these things ...
-    for k in ['f', 'numpadleft', 'alt+CTRL+f3', 'lShift+Altgr+y',
-              'win+lbutton', 'ctrl+VSJKDBk+4', '']:
-        try:
-            print(' in: %s\nout: %s\n' % (k, sort_modifiers(k)))
-        except ValueError as error:
-            print(error, '\n')
+def strip_mode(code, modes):
+    """Find and remove `mode` from a Hotkey code snippet.
+    Return stripped code and found mode in tuple."""
+    for mode in modes:
+        if code.lower().startswith(mode):
+            return code[len(mode) :].lstrip(' ,'), mode
+    return code, modes[0]
 
-    _key_list = 'shift+Alt+d'
-    _new_list = get_keys_list(_key_list)
-    print(_new_list)
-    print(_new_list == get_keys_list(_new_list))
+
+if __name__ == '__main__':
+    from a2widget.a2hotkey.test import test_common
+
+    unittest.main(test_common, verbosity=2)
