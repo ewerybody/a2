@@ -85,7 +85,7 @@ class FuncWidget(QtWidgets.QWidget):
 
     def insert_mod_key(self):
         key = self.sender().text()[0]
-        self.ui.function_text.insert(key)
+        self.ui.function_text.insertPlainText(key)
 
     def _build_help_map(self):
         if self.help_map is None:
