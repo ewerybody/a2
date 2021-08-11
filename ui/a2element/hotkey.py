@@ -25,9 +25,10 @@ import a2ctrl.connect
 import a2util
 from a2element import DrawCtrl, EditCtrl
 from a2widget import a2hotkey
+from a2widget.a2hotkey.hotkey_common import Vars, SEND_MODES, strip_mode
 from a2widget.a2more_button import A2MoreButton
 
-Vars = a2hotkey.Vars
+
 log = a2core.get_logger(__name__)
 
 
@@ -213,19 +214,25 @@ def build_hotkey_menu(menu, button, help_func):
     menu.addAction(icons.help, 'Help on Hotkey Setup', help_func)
 
 
-def get_settings(_module_key, cfg, db_dict, user_cfg):
+def get_settings(module_key, cfg, db_dict, user_cfg):
     key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key')
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope, list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope_mode, int)
-    func = cfg.get(
+    code = cfg.get(
         [Vars.function_code, Vars.function_url, Vars.function_send][cfg.get(Vars.function_mode, 0)],
         '',
     )
+
+    # Avoid setting hotstrings with no code on send modes (`Send, `).
+    _code, _ = strip_mode(code, SEND_MODES)
+    if not _code.strip():
+        log.warning('Empty Send code on "%s" hotkey (%s): "%s"', module_key, key, code)
+        return
 
     db_dict.setdefault('hotkeys', {})
     db_dict['hotkeys'].setdefault(scope_mode, [])
     # save a global if global scope set or all-but AND scope is empty
     if scope_mode == 0 or scope_mode == 2 and scope == '':
-        db_dict['hotkeys'][0].append([key, func])
+        db_dict['hotkeys'][0].append([key, code])
     else:
-        db_dict['hotkeys'][scope_mode].append([scope, key, func])
+        db_dict['hotkeys'][scope_mode].append([scope, key, code])
