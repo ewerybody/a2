@@ -11,10 +11,19 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -26,17 +35,17 @@
       <widget class="A2Combo" name="cfg_functionMode">
        <item>
         <property name="text">
-         <string>Run code</string>
+         <string notr="true">Run code</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Open file/url</string>
+         <string notr="true">Open file/url</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Send keystroke</string>
+         <string notr="true">Send keystroke</string>
         </property>
        </item>
       </widget>
@@ -72,27 +81,27 @@
       <widget class="A2Combo" name="function_send_mode">
        <item>
         <property name="text">
-         <string>Send</string>
+         <string notr="true">Send</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>SendRaw</string>
+         <string notr="true">SendRaw</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>SendInput</string>
+         <string notr="true">SendInput</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>SendPlay</string>
+         <string notr="true">SendPlay</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>SendEvent</string>
+         <string notr="true">SendEvent</string>
         </property>
        </item>
       </widget>
@@ -100,7 +109,7 @@
      <item>
       <widget class="QLabel" name="run_label">
        <property name="text">
-        <string>Run, </string>
+        <string notr="true">Run, </string>
        </property>
       </widget>
      </item>
