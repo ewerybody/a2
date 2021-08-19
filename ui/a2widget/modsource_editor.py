@@ -61,7 +61,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
 
     def _show_error(self, error):
         self.source_ui.busy_icon.set_idle()
-        print('_show_error: %s' % error)
+        log.error(error)
 
     def _write_config(self):
         self.mod_source.config = self.source_cfg
@@ -75,6 +75,7 @@ class GithubCommitsChecker(QtCore.QObject):
         self.source_ui.github_commits_btn.clicked.connect(self._fetch_github_commits)
         self.source_ui.github_commits_btn.setIcon(a2ctrl.Icons.inst().github)
         super(GithubCommitsChecker, self).__init__(parent)
+        self._config = None
 
     @staticmethod
     def has_github_update_url(cfg):
@@ -91,31 +92,59 @@ class GithubCommitsChecker(QtCore.QObject):
     def _fetch_github_commits(self):
         self.source_ui.github_commits_btn.setEnabled(False)
         self.source_ui.busy_icon.set_busy()
-        thread = self.mod_source.get_update_checker(self)
-        thread.data_fetched.connect(self._show_check_result)
-        thread.update_error.connect(self._show_error)
-        thread.finished.connect(thread.deleteLater)
-        thread.start()
+        # get latest remote config first:
+        if a2core.is_debugging():
+            import a2modsource
+
+            update_url = self.mod_source.config.get('update_url', '')
+            main_branch = self.mod_source.config.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
+            remote_data = a2modsource.get_remote_cfg(update_url, main_branch)
+            self._check_result(remote_data)
+        else:
+            thread = self.mod_source.get_update_checker(self)
+            thread.data_fetched.connect(self._check_result)
+            thread.update_error.connect(self._show_error)
+            thread.finished.connect(thread.deleteLater)
+            thread.start()
 
     def _show_error(self, error):
         self.source_ui.github_commits_btn.setEnabled(False)
         self.parent()._show_error(error)
 
-    def _show_check_result(self, result):
+    def _check_result(self, result):
+        self._config = result
         owner, repo = a2download.get_github_owner_repo(result['update_url'])
         main_branch = self.parent().source_cfg.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
         compare_url = a2download.GITHUB_COMPARE_TEMPLATE.format(
             owner=owner, repo=repo, from_tag=result['version'], to_tag=main_branch
         )
         thread = a2download.GetJSONThread(self, compare_url)
-        thread.data_fetched.connect(self._show_check_result2)
-        thread.error.connect(self._show_error)
+        thread.data_fetched.connect(self._check_result2)
+        thread.error.connect(self._on_compare_error)
         thread.finished.connect(thread.deleteLater)
         thread.start()
 
-    def _show_check_result2(self, result):
+    def _on_compare_error(self, error):
+        if 'HTTP Error 404: Not Found' in error:
+            log.error('Could not get commits via from...to tags! Trying global commits...')
+            owner, repo = a2download.get_github_owner_repo(self._config['update_url'])
+            url = a2download.GITHUB_COMMITS.format(owner=owner, repo=repo)
+            thread = a2download.GetJSONThread(self, url)
+            thread.data_fetched.connect(self._check_result2)
+            thread.error.connect(self._show_error)
+            thread.finished.connect(thread.deleteLater)
+            thread.start()
+        else:
+            self._show_error(error)
+
+    def _check_result2(self, result):
         messages = []
-        for commit in result.get('commits', ()):
+        if isinstance(result, list):
+            commits_list = result
+        else:
+            commits_list = result.get('commits', ())
+
+        for commit in commits_list:
             message = commit.get('commit', {}).get('message', '').strip()
             if not message:
                 continue
