@@ -9,7 +9,7 @@
  * @param   integer IconNumber  Index of the icon in the file
  * @param   integer IconSize    Resolution of the icon
  * @return  bitmap
- */
+*/
 icon_extract(Filename, IconNumber = 0, IconSize = 64) {
     ; LoadImage is not used..
     ; ..with exe/dll files because:
@@ -30,11 +30,19 @@ icon_extract(Filename, IconNumber = 0, IconSize = 64) {
     return 0
 }
 
-
 icon_from_type(extension) {
     ; Try looking up Windows registry in CLASSES ROOT for given extension.
-    ; Find DefaultIcon and return path if any
+    ; Find DefaultIcon, return path if any, if not:
+    ; Find shell/open/command, return path
+    extension := string_prefix(extension, ".")
     typ := RegRead(path_join("HKCR", extension))
-    icon := RegRead(path_join("HKCR", typ, "DefaultIcon"))
+    def_icon_pth := path_join(typ, "DefaultIcon")
+    icon := RegRead(path_join("HKCR", def_icon_pth))
+    if (!icon) {
+        icon := RegRead(path_join("HKCR", path_join(typ, "shell\open\command")))
+        if string_startswith(icon, """") {
+            icon := SubStr(icon, 2, InStr(icon, """" ,, 2) - 2)
+        }
+    }
     return icon
 }
