@@ -361,7 +361,7 @@ def set_loglevel(debug=False):
 
 def is_dev_mode():
     """
-    Checks for developer mode flag without the ui or a2 obj.
+    Check for developer mode flag without the ui or a2 obj.
     :rtype: bool
     """
     global _IS_DEV
@@ -378,3 +378,9 @@ def set_dev_mode(state):
     """
     a2 = A2Obj.inst()
     a2.set_dev_mode(state)
+
+
+def is_debugging():
+    """Tell if there is a debugger attached."""
+    gettrace = getattr(sys, 'gettrace', None)
+    return gettrace is not None and gettrace() is not None

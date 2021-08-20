@@ -367,14 +367,20 @@ def get_github_cfg(url):
     And only then at the raw main branch settings file.^
     """
     owner, repo = a2download.get_github_owner_repo(url)
-    latest_url = a2download.GITHUB_LATEST.format(owner=owner, repo=repo)
+    _url = a2download.GITHUB_LATEST.format(owner=owner, repo=repo)
     try:
-        remote_data = a2download.get_remote_data(latest_url)
+        remote_data = a2download.get_remote_data(_url)
     except RuntimeError:
-        releases_url = a2download.GITHUB_RELEASE.format(owner=owner, repo=repo)
+        _url = a2download.GITHUB_RELEASE.format(owner=owner, repo=repo)
         try:
-            all_releases = a2download.get_remote_data(releases_url)
-            remote_data = all_releases[0]
+            all_releases = a2download.get_remote_data(_url)
+            if all_releases:
+                remote_data = all_releases[0]
+            else:
+                log.error('No releases found! Looking for raw data ...')
+                _url = '/'.join([a2download.GITHUB_RAW_URL, owner, repo, 'main', CONFIG_FILENAME])
+                remote_data = a2download.get_remote_data(_url)
+
         except RuntimeError:
             return False
 
@@ -386,8 +392,8 @@ def get_github_cfg(url):
     cfg = {
         'maintainer': owner,
         'name': repo,
-        'news': remote_data['body'],
-        'version': remote_data['tag_name'],
+        'news': remote_data.get('body', remote_data.get('news', '')),
+        'version': remote_data.get('tag_name', remote_data.get('version', '')),
         'prerelease': remote_data.get('prerelease', False),
         'zip_size': size,
         'update_url': url,

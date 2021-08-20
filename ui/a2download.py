@@ -10,10 +10,10 @@ log = a2core.get_logger(__name__)
 
 # ERROR_FILE_NOT_FOUND = 'File not found (%s)'
 GITHUB_URL = 'github.com'
-GITHUB_COMPARE_TEMPLATE = (
-    'https://api.github.com/repos/{owner}/{repo}/compare/{from_tag}...{to_tag}'
-)
-GITHUB_RELEASE = 'https://api.github.com/repos/{owner}/{repo}/releases'
+GITHUB_API = 'https://api.github.com/repos/'
+GITHUB_COMPARE_TEMPLATE = GITHUB_API + '{owner}/{repo}/compare/{from_tag}...{to_tag}'
+GITHUB_RELEASE = GITHUB_API + '{owner}/{repo}/releases'
+GITHUB_COMMITS = GITHUB_API + '{owner}/{repo}/commits'
 GITHUB_LATEST = GITHUB_RELEASE + '/latest'
 GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
 DEFAULT_MAIN_BRANCH = 'master'
