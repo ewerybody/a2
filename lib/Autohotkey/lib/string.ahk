@@ -129,8 +129,15 @@ string_quote(string, once = 1, quote = """") {
 }
 
 string_suffix(string, suffix) {
-    ; Ensure a string to have a given suffix.
+    ; Ensure a string to end with a suffix string.
     if !string_endswith(string, suffix)
         return string suffix
+    return string
+}
+
+string_prefix(string, prefix) {
+    ; Ensure a string to start with a suffix string.
+    if !string_startswith(string, prefix)
+        return prefix string
     return string
 }

@@ -43,6 +43,12 @@ nstr := string_suffix(st, "!")
 nst2 := string_suffix(nstr, "!")
 s1 := assertmsg(st != nstr)
 s2 := assertmsg(nst2 == nstr)
-msg .= "string_suffix: " s1 " " s2
+msg .= "string_suffix: " s1 " " s2 "`n"
+
+pstr := string_prefix(st, "Free")
+s3 := assertmsg(st == pstr)
+pstr2 := string_prefix(st, "!")
+s4 := assertmsg(st != pstr2)
+msg .= "string_prefix: " s3 " " s4
 
 MsgBox, %msg%
