@@ -81,6 +81,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_view.reload_requested.connect(self.load_runtime_and_ui)
         self.module_view.setup_ui(self)
         self.module_view.enable_request.connect(self.mod_enable)
+        self.module_view.edit_mode.connect(self._set_edit_mode)
 
         self._setup_actions()
         self._setup_shortcuts()
@@ -576,6 +577,10 @@ class A2Window(QtWidgets.QMainWindow):
         thread.finished.connect(thread.deleteLater)
         thread.start()
         return thread
+
+    def _set_edit_mode(self, state):
+        self.module_list.setEnabled(not state)
+        self.ui.menubar.setEnabled(not state)
 
 
 class RuntimeCallThread(QtCore.QThread):

@@ -21,6 +21,7 @@ EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout he
 class A2ModuleView(QtWidgets.QWidget):
     reload_requested = QtCore.Signal()
     enable_request = QtCore.Signal(bool)
+    edit_mode = QtCore.Signal(bool)
 
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
@@ -47,7 +48,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
-        self.toggle_edit(False)
+        self._set_editing(False)
         icon_size = self.main.style.get('icon_size')
         self.ui.icon_label.setMinimumSize(icon_size, icon_size)
         self.ui.icon_label.setMaximumSize(icon_size, icon_size)
@@ -62,7 +63,7 @@ class A2ModuleView(QtWidgets.QWidget):
         On change they trigger writing to the db, collect all include info
         and restart a2.
         """
-        self.toggle_edit(False)
+        self._set_editing(False)
 
         if self.main.mod is None:
             if not self.main.num_selected:
@@ -110,7 +111,7 @@ class A2ModuleView(QtWidgets.QWidget):
                 log.error('What is element "%s"?!' % element_widget)
 
         self.ui.head_widget.setVisible(True)
-        self.toggle_edit(False)
+        self._set_editing(False)
         self.draw_ui()
 
     def update_header(self, author='', version=''):
@@ -157,6 +158,7 @@ class A2ModuleView(QtWidgets.QWidget):
         """
         if self.main.mod is None:
             return
+        self.edit_mode.emit(True)
 
         import a2element.common
         from copy import deepcopy
@@ -193,7 +195,7 @@ class A2ModuleView(QtWidgets.QWidget):
         # self.ui.a2scroll_area.setWidget(new_widget)
         # self.settings_widget = new_widget
 
-        self.toggle_edit(True)
+        self._set_editing(True)
         self.settings_widget.setFocus()
 
     def draw_ui(self):
@@ -251,8 +253,9 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.a2scroll_area.setWidget(new_widget)
         self.settings_widget = new_widget
 
-    def toggle_edit(self, state):
+    def _set_editing(self, state):
         self.editing = state
+        self.edit_mode.emit(state)
         self.ui.a2edit_okcancel_widget.setVisible(state)
         for button in [self.ui.a2cancel_button, self.ui.a2ok_button]:
             button.setEnabled(state)
