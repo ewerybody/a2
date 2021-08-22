@@ -20,8 +20,7 @@ EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout he
 
 class A2ModuleView(QtWidgets.QWidget):
     reload_requested = QtCore.Signal()
-    enable_requested = QtCore.Signal()
-    disable_requested = QtCore.Signal()
+    enable_request = QtCore.Signal(bool)
 
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
@@ -199,7 +198,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
     def draw_ui(self):
         """
-        takes list of controls and arranges them in the scroll layout
+        Take list of controls and arrange them in scroll layout.
 
         1. I tried to just create layouts for each module unhook them from the
         scroll layout on demand and hook up another one but Qt is smart so it
@@ -238,13 +237,13 @@ class A2ModuleView(QtWidgets.QWidget):
                 log.error(traceback.format_exc().strip())
                 raise error
 
-        policy = QtWidgets.QSizePolicy
         # amend a spacer
-        spacer = QtWidgets.QSpacerItem(0, 0, policy.Minimum, policy.Minimum)
+        QSizePolicy = QtWidgets.QSizePolicy
+        spacer = QtWidgets.QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Minimum)
         new_layout.addItem(spacer)
 
-        vertical_policy = policy.Minimum if has_expandable_widget else policy.Maximum
-        new_widget.setSizePolicy(policy(policy.Preferred, vertical_policy))
+        vertical_policy = QSizePolicy.Minimum if has_expandable_widget else QSizePolicy.Maximum
+        new_widget.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, vertical_policy))
 
         # turn scroll layout content to new host widget
         _current_widget = self.ui.a2scroll_area.takeWidget()
@@ -268,9 +267,7 @@ class A2ModuleView(QtWidgets.QWidget):
             self.main.mod.help()
 
     def check_element(self, name):
-        """
-        Finds a named element and calls its check func.
-        """
+        """Find a named element and call its `check` method."""
         for widget in self.controls:
             try:
                 if widget.cfg['name'] == name:
@@ -296,10 +293,7 @@ class A2ModuleView(QtWidgets.QWidget):
     def toggle_state(self, state):
         """Get the top checkbox state and emit according request."""
         state = not self.ui.mod_check.isTristate() and state
-        if state:
-            self.enable_requested.emit()
-        else:
-            self.disable_requested.emit()
+        self.enable_request.emit(state)
 
 
 class EditView(QtWidgets.QWidget):

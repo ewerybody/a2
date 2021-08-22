@@ -24,7 +24,7 @@ TITLE_OFFLINE = 'Runtime is Offline!'
 class A2Window(QtWidgets.QMainWindow):
     def __init__(self, app=None):
         super(A2Window, self).__init__(parent=None)
-        # self.setEnabled(False)
+        self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
         self.app = app
         self._threads = {}
@@ -75,18 +75,15 @@ class A2Window(QtWidgets.QMainWindow):
             tinted=self.style.get('font_color_tinted'),
         )
         self.module_list.selection_changed.connect(self._module_selected)
-        self.module_list.enable_requested.connect(self.mod_enable_selected)
-        self.module_list.disable_requested.connect(self.mod_disable_selected)
+        self.module_list.enable_request.connect(self.mod_enable)
 
         self.module_view = self.ui.module_view
         self.module_view.reload_requested.connect(self.load_runtime_and_ui)
         self.module_view.setup_ui(self)
-        self.module_view.enable_requested.connect(self.mod_enable_selected)
-        self.module_view.disable_requested.connect(self.mod_disable_selected)
+        self.module_view.enable_request.connect(self.mod_enable)
 
         self._setup_actions()
         self._setup_shortcuts()
-        # return
 
         self.check_main_menu_bar()
 
@@ -206,16 +203,11 @@ class A2Window(QtWidgets.QMainWindow):
         :param bool check: Checkbox state incoming from the module view header.
         """
         for mod in self.selected:
-            mod.enabled = state
+            if mod.enabled != state:
+                mod.enabled = state
         self.module_list.set_item_states(self.selected)
         self.module_view.update_header()
         self.settings_changed()
-
-    def mod_enable_selected(self):
-        self.mod_enable(True)
-
-    def mod_disable_selected(self):
-        self.mod_enable(False)
 
     def mod_disable_all(self):
         self.a2.enabled = {}

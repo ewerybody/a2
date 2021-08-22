@@ -1,3 +1,4 @@
+from functools import partial
 from a2qt import QtGui, QtCore, QtWidgets
 
 import a2mod
@@ -10,8 +11,7 @@ log = a2core.get_logger(__name__)
 
 class A2ModuleList(QtWidgets.QWidget):
     selection_changed = QtCore.Signal(list)
-    enable_requested = QtCore.Signal()
-    disable_requested = QtCore.Signal()
+    enable_request = QtCore.Signal(bool)
 
     def __init__(self, parent):
         super(A2ModuleList, self).__init__(parent)
@@ -226,18 +226,16 @@ class A2ModuleList(QtWidgets.QWidget):
                 self._explore_module,
             )
             name = f'"{module.display_name}"'
-            if module.enabled:
-                _add_action(menu, 'Disable', name, self.disable_requested)
-            else:
-                _add_action(menu, 'Enable', name, self.enable_requested)
+            label = 'Disable' if module.enabled else 'Enable'
+            _add_action(menu, label, name, partial(self.enable_request.emit, not module.enabled))
 
         else:
             num_enabled = sum(m.enabled for m in self.selection)
             name = 'Selected Modules'
             if len(self.selection) != num_enabled:
-                _add_action(menu, 'Enable', name, self.enable_requested)
+                _add_action(menu, 'Enable', name, partial(self.enable_request.emit, True))
             if num_enabled:
-                _add_action(menu, 'Disable', name, self.disable_requested)
+                _add_action(menu, 'Disable', name, partial(self.enable_request.emit, False))
 
         if not menu.isEmpty():
             menu.popup(QtGui.QCursor.pos())
@@ -251,4 +249,4 @@ class A2ModuleList(QtWidgets.QWidget):
 
 
 def _add_action(menu, label, name, signal):
-    menu.addAction(a2ctrl.Icons.inst().check, f'{label} {name}', signal.emit)
+    menu.addAction(a2ctrl.Icons.inst().check, f'{label} {name}', signal)
