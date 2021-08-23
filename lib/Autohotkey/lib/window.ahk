@@ -203,7 +203,7 @@ window_cut_hole(hwnd, inner, outer := "") {
     WinSet, Region, %outer_str% %inner_str%, ahk_id %hwnd%
 }
 
-window_list(hidden=0, process_name="") {
+window_list(hidden=0, process_name="", class_name="") {
     ; Create list of window objects with range of information.
     current_detect_state := DetectHiddenWindows()
     if (current_detect_state != hidden) {
@@ -221,6 +221,9 @@ window_list(hidden=0, process_name="") {
             continue
 
         WinGetClass, clss, %ahkid%
+        if (class_name && clss != class_name)
+            continue
+
         WinGetTitle, title, %ahkid%
         WinGet, min_max, MinMax, %ahkid%
         WinGet, pid, PID, %ahkid%
