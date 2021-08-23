@@ -6,6 +6,8 @@ uri_url_encode(url) { ; keep ":/;?@,&=+$#."
 
 
 uri_decode(uri) {
+    ; Find percentage encoding and turn it back to readable characters.
+    ; "https%3A%2F%2F" -> "https://"
     Pos := 1
     While Pos := RegExMatch(uri, "i)(%[\da-f]{2})+", Code, Pos)
     {
@@ -21,6 +23,7 @@ uri_decode(uri) {
 
 
 uri_encode(uri, RE="[0-9A-Za-z]") {
+    ; Turn special characters to percentage encoding.
     VarSetCapacity(Var, StrPut(uri, "UTF-8"), 0), StrPut(uri, &Var, "UTF-8")
     While Code := NumGet(Var, A_Index - 1, "UChar")
         Res .= (Chr:=Chr(Code)) ~= RE ? Chr : Format("%{:02X}", Code)
