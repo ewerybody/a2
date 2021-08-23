@@ -158,7 +158,6 @@ class A2ModuleView(QtWidgets.QWidget):
         """
         if self.main.mod is None:
             return
-        self.edit_mode.emit(True)
 
         import a2element.common
         from copy import deepcopy

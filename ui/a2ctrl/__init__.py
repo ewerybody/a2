@@ -104,7 +104,7 @@ def get_a2element_object(obj_name, element_cfg, module_path=None):
 
 def get_a2element_module(element_type):
     """
-    From the "typ" tries to import the according module from a2element
+    From `element_type` try importing according module from a2element.
     """
     try:
         return _element_map[element_type]
@@ -199,24 +199,24 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
         if module_path is None and element_cfg['typ'] == LOCAL_ELEMENT_ID:
             module_path = _get_module_path(module_key, a2obj)
 
-        element_get_settings_func = get_a2element_object('get_settings', element_cfg, module_path)
+        element_get_settings = get_a2element_object('get_settings', element_cfg, module_path)
 
         # no result try again with getting the module path:
-        if element_get_settings_func is None and module_path is None:
+        if element_get_settings is None and module_path is None:
             module_path = _get_module_path(module_key, a2obj)
-            element_get_settings_func = get_a2element_object(
-                'get_settings', element_cfg, module_path
-            )
+            element_get_settings = get_a2element_object('get_settings', element_cfg, module_path)
 
-        if element_get_settings_func is not None:
-            try:
-                element_get_settings_func(module_key, element_cfg, db_dict, user_cfg)
-            except Exception:
-                log.error(traceback.format_exc().strip())
-                log.error(
-                    'Error calling get_settings function ' 'for module: "%s"',
-                    module_key,
-                )
+        if element_get_settings is None:
+            return
+
+        try:
+            element_get_settings(module_key, element_cfg, db_dict, user_cfg)
+        except Exception:
+            log.error(traceback.format_exc().strip())
+            log.error(
+                'Error calling get_settings function ' 'for module: "%s"',
+                module_key,
+            )
 
 
 def _get_module_path(module_key, a2obj):
