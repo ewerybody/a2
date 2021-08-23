@@ -16,6 +16,8 @@
 	Joshua A. Kinnison
 	2011-04-27, 16:12
 */
+SHELL_TRAYWND := "Shell_TrayWnd"
+global EXPLORER_CLS := "CabinetWClass"
 
 explorer_get_selected(hwnd="") {
     ; Get paths of target window's selected items.
@@ -48,23 +50,22 @@ explorer_get_all(hwnd="") {
     return explorer_get(hwnd)
 }
 
-explorer_get_window(hwnd="")
-{
+explorer_get_window(hwnd="") {
     ; thanks to jethrow for some pointers here
-    WinGet, process, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
-    WinGetClass class, ahk_id %hwnd%
-
-    if (process!="explorer.exe")
+    WinGet, proc, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
+    if (proc != "explorer.exe")
         return
 
-    if (class ~= "(Cabinet|Explore)WClass")
-    {
+    WinGetClass clss, ahk_id %hwnd%
+    if (clss ~= "(Cabinet|Explore)WClass") {
         for window in ComObjCreate("Shell.Application").Windows
             Try if (window.hwnd==hwnd)
             return window
     }
-    else if (class ~= "Progman|WorkerW")
+    else if (clss ~= "Progman|WorkerW")
         return "desktop" ; desktop found
+    else if (clss == SHELL_TRAYWND)
+        return
 }
 
 explorer_get(hwnd="",selection=false)
@@ -131,4 +132,10 @@ explorer_show(path) {
         MsgBox, No such path to explorer to!`n %path%
 
     Run, %cmd%
+}
+
+
+explorer_window_list() {
+    ; Assemble list of available Explorer class windows.
+    return window_list(,,EXPLORER_CLS)
 }
