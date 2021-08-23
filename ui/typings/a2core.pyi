@@ -1,6 +1,5 @@
 import logging
 import typing
-import typing
 from singlesiding import QSingleApplication
 from a2qt import QtWidgets
 import a2db
