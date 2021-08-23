@@ -3,12 +3,14 @@ SysGet, WIN_FRAME_HEIGHT, 33
 global WIN_FRAME_WIDTH
 global WIN_FRAME_HEIGHT
 
-#Include %A_ScriptDir%\..\ahk_functions.ahk
+#Include %A_ScriptDir%\..\
+#Include ahk_functions.ahk
 ; #Include  %A_ScriptDir%\..\..\..\a2_globals.ahk
-#Include %A_ScriptDir%\..\window.ahk
-#Include %A_ScriptDir%\..\screen.ahk
+#Include window.ahk
+#Include screen.ahk
 
 win_id := WinExist("A")
+
 WinGetPos, X, Y, Width, Height, ahk_id %win_id%
 window_get_rect(_x, _y, _w, _h, win_id)
 msgbox AHK xywh: %X%,%Y%,%Width%,%Height%`nReal xywh: %_x%,%_y%,%_w%,%_h%`nWIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`nWIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%
@@ -64,3 +66,19 @@ window_cut_hole(win_id, rect)
 msgbox resetting ...
 WinSet, Region,, ahk_id %win_id%
 window_set_rect(_x, _y, _w, _h, win_id)
+
+
+win_list1 := window_list(0)
+win_list2 := window_list(true)
+msg := win_list1.Length() " windows (" win_list2.Length() " including hidden)`n"
+explorers := []
+for i, win in win_list1 {
+    if (win_id == win.id) {
+        msg .= i " is active window: """ win.title """`n  class: " win.class "`n"
+        msg .= "  hwnd: " win_id "`n  pid: " win.pid "`n  minmax: " win.minmax "`n"
+        g := win.geo()
+        msg .= "  xywh: " g.x " " g.y " " g.w " " g.h
+    }
+}
+
+MsgBox, %msg%

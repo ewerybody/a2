@@ -202,3 +202,50 @@ window_cut_hole(hwnd, inner, outer := "") {
     ; tt(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nx2:" inner.x2 "`ny2:" inner.y2)
     WinSet, Region, %outer_str% %inner_str%, ahk_id %hwnd%
 }
+
+window_list(hidden=0, process_name="") {
+    ; Create list of window objects with range of information.
+    current_detect_state := DetectHiddenWindows()
+    if (current_detect_state != hidden) {
+        DetectHiddenWindows(hidden)
+    }
+
+    windows := []
+
+    WinGet, win_ids, list
+    loop %win_ids% {
+        winid := win_ids%A_Index%
+        ahkid := "ahk_id " winid
+        WinGet, proc, ProcessName, %ahkid%
+        if (process_name && proc != process_name)
+            continue
+
+        WinGetClass, clss, %ahkid%
+        WinGetTitle, title, %ahkid%
+        WinGet, min_max, MinMax, %ahkid%
+        WinGet, pid, PID, %ahkid%
+
+        windows.push(new Window(proc, title, clss, winid, min_max, pid))
+    }
+
+    if (current_detect_state != hidden)
+        DetectHiddenWindows(current_detect_state)
+
+    return windows
+}
+
+class Window {
+    ; Abstract window information object.
+    __New(proc_name, win_title, win_class, id, minmax, pid) {
+        this.proc_name := proc_name
+        this.title := win_title
+        this.class := win_class
+        this.id := id
+        this.minmax := minmax
+        this.pid := pid
+    }
+
+    geo() {
+        return window_get_geometry(this.id)
+    }
+}
