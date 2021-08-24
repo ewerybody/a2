@@ -1,6 +1,7 @@
 from a2qt import QtWidgets
 
 class A2TextField(QtWidgets.QPlainTextEdit):
+    """Auto-height-adjusting `QPlainTextEdit`."""
     pass
 
 class A2CodeField(A2TextField):

@@ -109,9 +109,5 @@ class A2TextField(QtWidgets.QPlainTextEdit):
 
 
 class A2CodeField(A2TextField):
-    """
-    Just subclassed to be identifiable via CSS to apply a monospaced font.
-    """
-
     def __init__(self, parent=None):
         super(A2CodeField, self).__init__(parent)
