@@ -211,7 +211,6 @@ window_list(hidden=0, process_name="", class_name="") {
     }
 
     windows := []
-
     WinGet, win_ids, list
     loop %win_ids% {
         winid := win_ids%A_Index%
@@ -228,7 +227,7 @@ window_list(hidden=0, process_name="", class_name="") {
         WinGet, min_max, MinMax, %ahkid%
         WinGet, pid, PID, %ahkid%
 
-        windows.push(new Window(proc, title, clss, winid, min_max, pid))
+        windows.push(new _Window(proc, title, clss, winid, min_max, pid))
     }
 
     if (current_detect_state != hidden)
@@ -237,7 +236,7 @@ window_list(hidden=0, process_name="", class_name="") {
     return windows
 }
 
-class Window {
+class _Window {
     ; Abstract window information object.
     __New(proc_name, win_title, win_class, id, minmax, pid) {
         this.proc_name := proc_name
