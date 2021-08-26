@@ -97,6 +97,7 @@ class A2ModuleList(QtWidgets.QWidget):
         self._item_map, self._module_map = {}, {}
 
         for source in self.a2.module_sources.values():
+            # root_item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [source.name])
             for mod in source.mods.values():
                 if mod not in select_mods:
                     if self.is_filtered(mod):
@@ -104,11 +105,12 @@ class A2ModuleList(QtWidgets.QWidget):
                     if self._show_enabled_only and not mod.enabled:
                         continue
 
-                item = QtWidgets.QListWidgetItem(mod.display_name)
+                item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [mod.display_name])
                 self._item_map[id(item)] = mod
                 self._module_map[mod.key] = item
                 self._set_item_state(item, mod)
-                self.ui.a2module_list_widget.addItem(item)
+
+        self.ui.a2module_list_widget.sortItems(0, QtCore.Qt.AscendingOrder)
 
         if select_mods:
             self.select(select_mods)
@@ -197,11 +199,11 @@ class A2ModuleList(QtWidgets.QWidget):
 
     def _set_item_state(self, item, module):
         if module.enabled:
-            item.setIcon(module.icon)
-            item.setForeground(self.brush_default)
+            icon, brush = module.icon, self.brush_default
         else:
-            item.setIcon(module.icon.tinted)
-            item.setForeground(self.brush_tinted)
+            icon, brush = module.icon.tinted, self.brush_tinted
+        item.setIcon(0, icon)
+        item.setForeground(0, brush)
 
     def set_item_states(self, modules):
         for mod in modules:

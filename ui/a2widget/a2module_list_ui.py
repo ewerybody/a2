@@ -13,13 +13,14 @@ from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
 from a2widget.a2more_button import A2MoreButton
-from a2widget.a2list import A2List
+from a2widget.a2modlist import A2ModList
 
 
 class Ui_ModuleList:
     def setupUi(self, ModuleList):
         if not ModuleList.objectName():
             ModuleList.setObjectName(u"ModuleList")
+        ModuleList.setWindowTitle(u"Form")
         self.module_list_layout = QVBoxLayout(ModuleList)
         self.module_list_layout.setSpacing(5)
         self.module_list_layout.setObjectName(u"module_list_layout")
@@ -38,16 +39,19 @@ class Ui_ModuleList:
         self.filter_menu_button.setObjectName(u"filter_menu_button")
         self.horizontalLayout.addWidget(self.filter_menu_button)
         self.module_list_layout.addLayout(self.horizontalLayout)
-        self.a2module_list_widget = A2List(ModuleList)
+        self.a2module_list_widget = A2ModList(ModuleList)
+        __qtreewidgetitem = QTreeWidgetItem()
+        __qtreewidgetitem.setText(0, u"1");
+        self.a2module_list_widget.setHeaderItem(__qtreewidgetitem)
         self.a2module_list_widget.setObjectName(u"a2module_list_widget")
         self.a2module_list_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.a2module_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.a2module_list_widget.setProperty("showDropIndicator", False)
         self.a2module_list_widget.setAlternatingRowColors(True)
         self.a2module_list_widget.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.a2module_list_widget.setSortingEnabled(True)
+        self.a2module_list_widget.setIndentation(0)
+        self.a2module_list_widget.setAnimated(True)
+        self.a2module_list_widget.setColumnCount(1)
+        self.a2module_list_widget.header().setVisible(False)
         self.module_list_layout.addWidget(self.a2module_list_widget)
-        self.retranslateUi(ModuleList)
         QMetaObject.connectSlotsByName(ModuleList)
-    def retranslateUi(self, ModuleList):
-        ModuleList.setWindowTitle(QCoreApplication.translate("ModuleList", u"Form", None))
-        self.a2search_x_button.setText("")
-        self.filter_menu_button.setText(QCoreApplication.translate("ModuleList", u"...", None))

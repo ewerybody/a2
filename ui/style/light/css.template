@@ -85,7 +85,8 @@ QGroupBox::title {
 }
 
 QScrollArea,
-QListWidget#a2module_list_widget {
+QListWidget#a2module_list_widget,
+QTreeWidget#a2module_list_widget {
 	border-style: none;
 }
 

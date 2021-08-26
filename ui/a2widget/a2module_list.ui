@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ModuleList</class>
  <widget class="QWidget" name="ModuleList">
@@ -10,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QVBoxLayout" name="module_list_layout">
    <property name="spacing">
@@ -34,31 +35,30 @@
       <number>5</number>
      </property>
      <item>
-      <widget class="QLineEdit" name="search_field" />
+      <widget class="QLineEdit" name="search_field"/>
      </item>
      <item>
       <widget class="QPushButton" name="a2search_x_button">
-       <property name="text">
-        <string />
-       </property>
        <property name="flat">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="A2MoreButton" name="filter_menu_button">
-       <property name="text">
-        <string>...</string>
-       </property>
-      </widget>
+      <widget class="A2MoreButton" name="filter_menu_button"/>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="A2List" name="a2module_list_widget">
+    <widget class="A2ModList" name="a2module_list_widget">
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="showDropIndicator" stdset="0">
+      <bool>false</bool>
      </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
@@ -66,9 +66,23 @@
      <property name="selectionMode">
       <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
-     <property name="sortingEnabled">
+     <property name="indentation">
+      <number>0</number>
+     </property>
+     <property name="animated">
       <bool>true</bool>
      </property>
+     <property name="columnCount">
+      <number>1</number>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>
@@ -80,11 +94,11 @@
    <header>a2widget.a2more_button</header>
   </customwidget>
   <customwidget>
-   <class>A2List</class>
-   <extends>QListWidget</extends>
-   <header>a2widget.a2list</header>
+   <class>A2ModList</class>
+   <extends>QTreeWidget</extends>
+   <header>a2widget.a2modlist</header>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>
