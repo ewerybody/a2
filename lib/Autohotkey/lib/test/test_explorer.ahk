@@ -7,23 +7,34 @@
 #Include string.ahk
 #Include ahk_functions.ahk
 
-explorers := explorer_window_list()
+explorers := window_list(,,"CabinetWClass")
+if !(explorers.Length()) {
+    MsgBox, 33, No Exploreres!, For this test you need to have an Explorer Window open.`nOpen One?
+        IfMsgBox, Cancel
+    ExitApp
+
+    explorer_show(A_ScriptDir)
+    ; Sleep, 500
+    WinWait, ahk_class CabinetWClass
+    Run, "%A_AhkPath%" "%A_ScriptFullPath%", %A_ScriptDir%
+    ExitApp
+}
+
 txt := "Found " explorers.Length() " explorer windows`n"
-paths := get_explorer_paths(explorers)
-txt .= "with" paths.Length() " different paths:`n  " string_join(paths, "`n  ")
+paths := _get_paths(explorers)
+txt .= "with " paths.Length() " different paths:`n " string_join(paths, "`n ")
+
+x1 := explorers[1]
+selpths := explorer_get_selected(x1.id)
+allpths := explorer_get_all(x1.id)
+txt .= "`n`nExplorer 1: """ x1.title """ " x1.id " " x1.pid "`n"
+txt .= "Selection: " selpths.Length() " " string_join(selpths) "`nTotal number of items: " allpths.Length()
+
 Msgbox %txt%
-
-; for i, win in explorers {
-;     ; pid := win.pid
-;     Process, Close, % win.pid
-; }
-
-; for i, path in paths
-;     explorer_show(path)
 
 Return
 
-get_explorer_paths(explorers) {
+_get_paths(explorers) {
     paths := []
     for i, win in explorers
     {
