@@ -67,6 +67,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
         self.search_field_min_items = SEARCH_FIELD_MIN_ITEMS
         self.item_flags = DEFAULT_ITEM_FLAGS
+        # : If `True` values won't be in resulting dictionary if equal to default.
         self.ignore_default_values = True
 
         self._setup_ui()

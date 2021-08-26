@@ -121,7 +121,7 @@ class A2List(QtWidgets.QListWidget):
 
     def select_items(self, items):
         """
-        WTF!?: there is an error when checking if a QListWidgetItem is  in a list
+        WTF!?: there is an error when checking if a QListWidgetItem is in a list
         of QListWidgetItems via "item in item_list":
             NotImplementedError: operator not implemented.
         This uses a workaround getting the objects id()s.
@@ -191,6 +191,7 @@ class A2List(QtWidgets.QListWidget):
             self.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         else:
             self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+
 
 class A2ListCompact(A2List):
     def __init__(self, parent=None, names=None):
