@@ -7,6 +7,11 @@ import a2ctrl
 import a2core
 
 log = a2core.get_logger(__name__)
+_CFG_PREFIX = 'modlist_'
+SHOW_ENABLED = 'show_enabled_only'
+ARRANG_PACKG = 'arrange_by_package'
+SORT_BY_PAKG = 'sort_by_package'
+PKG_COLLAPSD = 'package_collapsed'
 
 
 class A2ModuleList(QtWidgets.QWidget):
@@ -16,25 +21,23 @@ class A2ModuleList(QtWidgets.QWidget):
     def __init__(self, parent):
         super(A2ModuleList, self).__init__(parent)
         self.a2 = a2core.A2Obj.inst()
-        self.setup_ui()
+        self._setup_ui()
         self.selection = None
 
         self._filtered = False
         self._filter_tags = []
-        self._show_enabled_only = self.a2.db.get('modlist_show_enabled_only') or False
-        self.icon_label = a2ctrl.Icons.inst().label
-        self._font_color = None
-        self._font_color_tinted = None
-        self.brush_default = None
-        self.brush_tinted = None
+        # self.icon_label = a2ctrl.Icons.label
+        self._brush_default = None
+        self._brush_tinted = None
         # to avoid adding variables to external objects
-        self._item_map = {}
         self._module_map = {}
 
     def _on_selection_change(self, items):
-        modules = [self._item_map.get(id(item)) for item in items]
-        self.selection = [m for m in modules if m is not None]
-        self.selection_changed.emit(self.selection)
+        modules = [item.data(0, QtCore.Qt.UserRole) for item in items]
+        selection = [m for m in modules if m is not None]
+        if selection != self.selection:
+            self.selection = selection
+            self.selection_changed.emit(self.selection)
 
     def select(self, modules=None):
         self.ui.a2module_list_widget.blockSignals(True)
@@ -87,34 +90,62 @@ class A2ModuleList(QtWidgets.QWidget):
         ... to match filtering, module deletion or enabling of module sources.
         """
         if not select_mods:
-            if not self._filtered and not self._filter_tags and not self._show_enabled_only:
+            if not self._filtered and not self._filter_tags and not self.cfg(SHOW_ENABLED):
                 select_mods = self.selection or []
             else:
                 select_mods = []
 
         self.ui.a2module_list_widget.blockSignals(True)
         self.ui.a2module_list_widget.clear()
-        self._item_map, self._module_map = {}, {}
+        self._module_map.clear()
+
+        arrange = self.cfg(ARRANG_PACKG, True)
+        collapsed = self.cfg(PKG_COLLAPSD, [])
+        show_enabled = self.cfg(SHOW_ENABLED)
+
+        if arrange:
+            self.ui.a2module_list_widget.itemCollapsed.connect(self._on_root_toggle)
+            self.ui.a2module_list_widget.itemExpanded.connect(self._on_root_toggle)
+        self.ui.a2module_list_widget.setIndentation(10 if arrange else 0)
 
         for source in self.a2.module_sources.values():
-            # root_item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [source.name])
+            if arrange:
+                root_item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [source.name])
+                root_item.setIcon(0, source.icon)
+                if source.name not in collapsed:
+                    root_item.setExpanded(True)
+            else:
+                root_item = self.ui.a2module_list_widget
+
             for mod in source.mods.values():
                 if mod not in select_mods:
                     if self.is_filtered(mod):
                         continue
-                    if self._show_enabled_only and not mod.enabled:
+                    if show_enabled and not mod.enabled:
                         continue
 
-                item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [mod.display_name])
-                self._item_map[id(item)] = mod
+                item = QtWidgets.QTreeWidgetItem(root_item)
+                item.setText(0, mod.display_name)
+                item.setData(0, QtCore.Qt.UserRole, mod)
                 self._module_map[mod.key] = item
                 self._set_item_state(item, mod)
 
-        self.ui.a2module_list_widget.sortItems(0, QtCore.Qt.AscendingOrder)
+        if not self.cfg(SORT_BY_PAKG):
+            self.ui.a2module_list_widget.sortItems(0, QtCore.Qt.AscendingOrder)
 
         if select_mods:
             self.select(select_mods)
         self.ui.a2module_list_widget.blockSignals(False)
+
+    def _on_root_toggle(self, item):
+        collapsed = self.cfg(PKG_COLLAPSD, [])
+        name = item.data(0, QtCore.Qt.DisplayRole)
+        if self.ui.a2module_list_widget.isItemExpanded(item):
+            if name in collapsed:
+                collapsed.remove(name)
+        elif name not in collapsed:
+            collapsed.append(name)
+        self.set_cfg(PKG_COLLAPSD, collapsed)
 
     def is_filtered(self, mod):
         """
@@ -129,14 +160,14 @@ class A2ModuleList(QtWidgets.QWidget):
             return True
         return False
 
-    def setup_ui(self):
+    def _setup_ui(self):
         from a2widget import a2module_list_ui
 
         a2uic.check_module(a2module_list_ui)
         self.ui = a2module_list_ui.Ui_ModuleList()
         self.ui.setupUi(self)
 
-        self.ui.a2search_x_button.setIcon(a2ctrl.Icons.inst().clear)
+        self.ui.a2search_x_button.setIcon(a2ctrl.Icons.clear)
         self.ui.a2search_x_button.setVisible(False)
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
@@ -156,21 +187,26 @@ class A2ModuleList(QtWidgets.QWidget):
     def reset_filter(self):
         self.ui.search_field.setText('')
 
-    def build_filter_menu(self, menu):
-        action = menu.addAction('Only Enabled', self.toggle_show_enabled)
-        action.setCheckable(True)
-        action.setChecked(self._show_enabled_only)
-
+    def build_filter_menu(self, menu: QtWidgets.QMenu):
+        self._add_cfg_action(menu, SHOW_ENABLED, 'Only Enabled', self.toggle_cfg)
+        self._add_cfg_action(menu, ARRANG_PACKG, 'Arrange under package', self.toggle_cfg)
+        self._add_cfg_action(menu, SORT_BY_PAKG, 'Sort by package', self.toggle_cfg)
         menu.addSeparator()
 
-        icons = a2ctrl.Icons.inst()
         if self._filter_tags:
-            menu.addAction(icons.clear, 'Clear Tags', self.clear_filter_tags)
+            menu.addAction(a2ctrl.Icons.clear, 'Clear Tags', self.clear_filter_tags)
 
         for tag in a2core.A2TAGS:
-            action = menu.addAction(icons.label, tag, self.do_filter_tags)
+            action = menu.addAction(a2ctrl.Icons.label, tag, self.do_filter_tags)
             action.setCheckable(True)
             action.setChecked(tag in self._filter_tags)
+
+    def _add_cfg_action(self, menu: QtWidgets.QMenu, name, label, func):
+        action = menu.addAction(label, func)
+        action.setData(name)
+        action.setCheckable(True)
+        action.setChecked(self.cfg(name, False))
+        return action
 
     def clear_filter_tags(self):
         self._filter_tags = []
@@ -184,10 +220,9 @@ class A2ModuleList(QtWidgets.QWidget):
             self._filter_tags.append(tag_name)
         self.draw_modules()
 
-    def toggle_show_enabled(self):
-        state = self.sender().isChecked()
-        self._show_enabled_only = state
-        self.a2.db.set('modlist_show_enabled_only', state)
+    def toggle_cfg(self):
+        action = self.sender()
+        self.set_cfg(action.data(), action.isChecked())
         self.draw_modules()
 
     def set_item_state(self, module):
@@ -199,9 +234,9 @@ class A2ModuleList(QtWidgets.QWidget):
 
     def _set_item_state(self, item, module):
         if module.enabled:
-            icon, brush = module.icon, self.brush_default
+            icon, brush = module.icon, self._brush_default
         else:
-            icon, brush = module.icon.tinted, self.brush_tinted
+            icon, brush = module.icon.tinted, self._brush_tinted
         item.setIcon(0, icon)
         item.setForeground(0, brush)
 
@@ -210,10 +245,8 @@ class A2ModuleList(QtWidgets.QWidget):
             self.set_item_state(mod)
 
     def set_item_colors(self, default, tinted):
-        self._font_color = default
-        self._font_color_tinted = tinted
-        self.brush_default = QtGui.QBrush(QtGui.QColor(self._font_color))
-        self.brush_tinted = QtGui.QBrush(QtGui.QColor(self._font_color_tinted))
+        self._brush_default = QtGui.QBrush(QtGui.QColor(default))
+        self._brush_tinted = QtGui.QBrush(QtGui.QColor(tinted))
 
     def _build_context_menu(self, pos):
         if not self.selection:
@@ -222,11 +255,7 @@ class A2ModuleList(QtWidgets.QWidget):
         menu = QtWidgets.QMenu(self)
         if len(self.selection) == 1:
             module = self.selection[0]
-            menu.addAction(
-                a2ctrl.Icons.inst().folder,
-                f'Explore to module folder',
-                self._explore_module,
-            )
+            menu.addAction(a2ctrl.Icons.folder, 'Explore to module folder', self._explore_module)
             name = f'"{module.display_name}"'
             label = 'Disable' if module.enabled else 'Enable'
             _add_action(menu, label, name, partial(self.enable_request.emit, not module.enabled))
@@ -249,6 +278,17 @@ class A2ModuleList(QtWidgets.QWidget):
 
         a2util.explore(self.selection[0].path)
 
+    def cfg(self, name, default=None):
+        """Lookup Module List settings from db."""
+        value = self.a2.db.get(f'{_CFG_PREFIX}{name}')
+        if value is None:
+            return default
+        return value
+
+    def set_cfg(self, name, value):
+        """Set Module List settings to db."""
+        self.a2.db.set(f'{_CFG_PREFIX}{name}', value)
+
 
 def _add_action(menu, label, name, signal):
-    menu.addAction(a2ctrl.Icons.inst().check, f'{label} {name}', signal)
+    menu.addAction(a2ctrl.Icons.check, f'{label} {name}', signal)
