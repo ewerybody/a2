@@ -232,7 +232,10 @@ class A2Window(QtWidgets.QMainWindow):
 
     def escape(self):
         if self.module_view.editing:
-            log.debug('Exiting Module edit mode!')
+            if self.module_view.cfg_different():
+                if self.module_view.user_cancels():
+                    return
+                log.debug('Exiting Module edit mode!')
             self.module_view.draw_mod()
         else:
             log.info('Exiting a2 Ui! okithxbye')

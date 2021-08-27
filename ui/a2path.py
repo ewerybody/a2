@@ -47,12 +47,22 @@ def remove_dir(path):
     correctly fail moving to temp if ANY of the containing items is locked.
     So there is no other safeguard needed.
     """
-    import uuid
     import shutil
 
-    trash_path = os.path.join(os.getenv('TEMP'), str(uuid.uuid4()))
+    trash_path = temp_path()
     os.rename(path, trash_path)
     shutil.rmtree(trash_path)
+
+
+def temp_path(prefix='', ext=''):
+    import uuid
+
+    if ext and not ext.startswith('.'):
+        ext = '.' + ext
+    trypath = None
+    while trypath is None or os.path.exists(trypath):
+        trypath = os.path.join(os.getenv('TEMP'), prefix + str(uuid.uuid4()) + ext)
+    return trypath
 
 
 def iter_files(path):

@@ -305,6 +305,53 @@ class A2ModuleView(QtWidgets.QWidget):
 
         return deepcopy(self._tmp_cfg)
 
+    def cfg_different(self):
+        """Shallow difference check between temp and current module config.
+
+        Could have been done with deepdiff, but we want to treat empty string values
+        equal to None or even key missing."""
+        if self._tmp_cfg == self.main.mod.config:
+            return False
+
+        if len(self._tmp_cfg) != len(self.main.mod.config):
+            return True
+
+        for cfg0, cfg1 in zip(self.main.mod.config, self._tmp_cfg):
+            for key in set(cfg0).intersection(cfg1):
+                if cfg0.get(key) != cfg1.get(key):
+                    return True
+            for key in set(cfg0).difference(cfg1):
+                if cfg0[key] != '':
+                    return True
+            for key in set(cfg1).difference(cfg0):
+                if cfg1[key] != '':
+                    return True
+        return False
+
+    def user_cancels(self):
+        """Popup dialog to ask about discarding changes.
+        Return `True` if user clicks **Cancel** to keep editing."""
+        import a2dev
+
+        msg = (
+            'The module configuration appears to have changed!\n'
+            'Do you really want to exit and discard the changes?\n\n'
+            'You can also have a look at the differences...'
+        )
+        dialog = a2dev.OkDiffDialog(
+            self.main, 'Config Changed!', msg, self.main.mod.config_file, None
+        )
+        dialog.diff_requested.connect(self._on_diff_requested)
+        dialog.exec_()
+
+        return dialog.result is False
+
+    def _on_diff_requested(self):
+        dialog = self.sender()
+        tmp_path = a2path.temp_path(f'temp_{self.main.mod.name}_', 'json')
+        a2util.json_write(tmp_path, self._tmp_cfg)
+        dialog.file_path2 = tmp_path
+
 
 class EditView(QtWidgets.QWidget):
     def __init__(self, parent, controls, config_list):
