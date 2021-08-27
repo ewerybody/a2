@@ -447,12 +447,6 @@ class A2Window(QtWidgets.QMainWindow):
             for action in self.module_view.menu_items:
                 menu.addAction(action)
 
-    def diff_files(self, file1, file2):
-        app_path = self.devset.get_differ()
-        if not app_path:
-            return
-        _result, _pid = a2util.start_process_detached(app_path, [file1, file2])
-
     def on_dev_menu_build(self):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
 
@@ -487,8 +481,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         from a2dev import RollbackDiffDialog
 
-        dialog = RollbackDiffDialog(self, title)
-        dialog.diff.connect(partial(self.diff_files, self.mod.config_file, file_path))
+        dialog = RollbackDiffDialog(self, title, self.mod.config_file, file_path)
         dialog.okayed.connect(partial(self.on_rollback, file_name))
         dialog.show()
 

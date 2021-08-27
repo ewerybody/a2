@@ -12,20 +12,35 @@ _QUEST_MSG = 'Do you want to %s now?'
 log = a2core.get_logger(__name__)
 
 
-class RollbackDiffDialog(A2ConfirmDialog):
+class OkDiffDialog(A2ConfirmDialog):
+    diff_requested = QtCore.Signal()
+
+    def __init__(self, parent, title, msg, file_path1, file_path2):
+        super(OkDiffDialog, self).__init__(parent, title, msg, )
+
+        self.file_path1 = file_path1
+        self.file_path2 = file_path2
+
+        button = QtWidgets.QPushButton('Diff', self)
+        button.setObjectName('a2ok_button')
+        button.clicked.connect(self.diff_requested.emit)
+        button.clicked.connect(self.diff)
+        self.ui.horizontalLayout.insertWidget(1, button)
+        self.ui.diff_button = button
+
+    def diff(self):
+        app_path = self.parent().devset.get_differ()
+        if not app_path:
+            return
+        _res, _pid = a2util.start_process_detached(app_path, [self.file_path1, self.file_path2])
+
+
+class RollbackDiffDialog(OkDiffDialog):
     """Dialog to ask user for rollback confirmation and offer diffing."""
-
-    diff = QtCore.Signal()
-
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, file_path1, file_path2):
         title = 'Rollback to "%s"' % title
         msg = 'Press <b>OK</b> to can roll back directly or <b>Diff</b> it if you want:'
-        super(RollbackDiffDialog, self).__init__(parent, title, msg)
-
-        self.ui.diff_button = QtWidgets.QPushButton('Diff', self)
-        self.ui.diff_button.setObjectName('a2ok_button')
-        self.ui.horizontalLayout.insertWidget(1, self.ui.diff_button)
-        self.ui.diff_button.clicked.connect(self.diff.emit)
+        super(RollbackDiffDialog, self).__init__(parent, title, msg, file_path1, file_path2)
 
 
 # pylint: disable=too-many-instance-attributes
