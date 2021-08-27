@@ -20,7 +20,7 @@ CONFIG_FILENAME = 'a2module.json'
 USER_CFG_KEY = 'user_cfg'
 
 
-class Mod(object):
+class Mod:
     """
     The ui creates such a Mod instance when dealing with it
     from this it gets all information that it displays (hotkey interface,

@@ -32,7 +32,9 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
 
     def get_available_scripts(self):
         scripts_in_use = set()
-        for cfg in a2ctrl.iter_element_cfg_type(self.main.temp_config, self.config_typ):
+        # TODO: This needs to be done with the Editor widget! Not by the single element!
+        temp_config = self.main.module_view._tmp_cfg
+        for cfg in a2ctrl.iter_element_cfg_type(temp_config, self.config_typ):
             this_name = cfg.get('script_name')
             if this_name:
                 scripts_in_use.add(this_name)

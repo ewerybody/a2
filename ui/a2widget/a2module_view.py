@@ -6,6 +6,7 @@ import a2uic
 import a2core
 import a2ctrl
 import a2util
+import a2path
 
 
 log = a2core.get_logger(__name__)
@@ -22,6 +23,7 @@ class A2ModuleView(QtWidgets.QWidget):
     reload_requested = QtCore.Signal()
     enable_request = QtCore.Signal(bool)
     edit_mode = QtCore.Signal(bool)
+    okayed = QtCore.Signal()
 
     def __init__(self, parent):
         super(A2ModuleView, self).__init__(parent)
@@ -30,6 +32,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls = []
         self.menu_items = []
         self.a2 = a2core.A2Obj.inst()
+        self._tmp_cfg = None
 
     def setup_ui(self, main):
         self.main = main
@@ -46,7 +49,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.mod_check.clicked[bool].connect(self.toggle_state)
         self.ui.a2help_button.clicked.connect(self.help)
 
-        self.ui.a2ok_button.clicked.connect(self.main.edit_submit)
+        self.ui.a2ok_button.clicked.connect(self.okayed.emit)
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
         self._set_editing(False)
         icon_size = self.main.style.get('icon_size')
@@ -79,7 +82,7 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             config = self.main.mod.config
             module_user_cfg = self.main.mod.get_user_cfg()
-            self.main.temp_config = None
+            self._tmp_cfg = None
             self.ui.icon_label.show()
             self.ui.icon_label.setPixmap(
                 self.main.mod.icon.pixmap(self.main.style.get('icon_size'))
@@ -164,10 +167,9 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.controls.clear()
         self.menu_items.clear()
-        if self.main.temp_config is None:
-            self.main.temp_config = deepcopy(self.main.mod.config)
+        self._tmp_cfg = deepcopy(self.main.mod.config)
 
-        if not self.main.temp_config:
+        if not self._tmp_cfg:
             new_cfg = NEW_MODULE_CFG.copy()
             new_cfg.update(
                 {
@@ -176,17 +178,17 @@ class A2ModuleView(QtWidgets.QWidget):
                     'author': self.main.devset.author_name,
                 }
             )
-            self.main.temp_config.insert(0, new_cfg)
+            self._tmp_cfg.insert(0, new_cfg)
 
-        for cfg in self.main.temp_config:
-            self.controls.append(a2ctrl.edit(cfg, self.main, self.main.temp_config))
+        for cfg in self._tmp_cfg:
+            self.controls.append(a2ctrl.edit(cfg, self.main, self._tmp_cfg))
 
-        edit_select = a2element.common.EditAddElem(self.main, self.main.temp_config)
+        edit_select = a2element.common.EditAddElem(self.main, self._tmp_cfg)
         self.controls.append(edit_select)
 
         self.draw_ui()
 
-        # new_widget = EditView(self, self.controls, self.main.temp_config)
+        # new_widget = EditView(self, self.controls, self._tmp_cfg)
 
         # # turn scroll layout content to new host widget
         # _current_widget = self.ui.a2scroll_area.takeWidget()
@@ -296,6 +298,12 @@ class A2ModuleView(QtWidgets.QWidget):
         """Get the top checkbox state and emit according request."""
         state = not self.ui.mod_check.isTristate() and state
         self.enable_request.emit(state)
+
+    def get_cfg_copy(self):
+        """Give a copy of the current temp config."""
+        from copy import deepcopy
+
+        return deepcopy(self._tmp_cfg)
 
 
 class EditView(QtWidgets.QWidget):

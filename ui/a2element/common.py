@@ -339,7 +339,9 @@ class EditCtrl(QtWidgets.QGroupBox):
         """
         Look up the current controls to find a free number for given name.
         """
-        names = [e.get('name') for e in a2ctrl.iter_element_cfg_type(self.main.temp_config)]
+        # TODO: This needs to be done with the Editor widget! Not by the single element!
+        tmp_cfg = self.main.module_view._tmp_cfg
+        names = [e.get('name') for e in a2ctrl.iter_element_cfg_type(tmp_cfg)]
         names = [n for n in names if n is not None]
         new_name = a2util.get_next_free_number(name, names)
         return new_name
@@ -481,7 +483,9 @@ class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
 
     def get_available_scripts(self):
         scripts_used = set()
-        for cfg in a2ctrl.iter_element_cfg_type(self.main.temp_config, 'include'):
+        # TODO: This needs to be done with the Editor widget! Not by the single element!
+        temp_config = self.main.module_view._tmp_cfg
+        for cfg in a2ctrl.iter_element_cfg_type(temp_config, 'include'):
             scripts_used.add(cfg['file'].lower())
 
         available = [name for name in self.main.mod.scripts if name.lower() not in scripts_used]

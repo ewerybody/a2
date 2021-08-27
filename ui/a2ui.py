@@ -31,7 +31,6 @@ class A2Window(QtWidgets.QMainWindow):
         self._scroll_anim = None
 
         self.edit_clipboard = []
-        self.temp_config = None
         self.selected = []
         self.num_selected = 0
         self.mod = None
@@ -82,6 +81,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_view.setup_ui(self)
         self.module_view.enable_request.connect(self.mod_enable)
         self.module_view.edit_mode.connect(self._set_edit_mode)
+        self.module_view.okayed.connect(self.edit_submit)
 
         self._setup_actions()
         self._setup_shortcuts()
@@ -183,15 +183,13 @@ class A2Window(QtWidgets.QMainWindow):
 
     def edit_submit(self):
         """
-        Calls the mod to write the temp_config to disc.
+        Call module to write `temp_config` to disc.
         If it's enabled only trigger settingsChanged when
-
         """
         if not self.module_view.editing:
             return
-        from copy import deepcopy
 
-        self.mod.config = deepcopy(self.temp_config)
+        self.mod.config = self.module_view.get_cfg_copy()
         if self.mod.enabled:
             self.mod.change()
             self.settings_changed()
