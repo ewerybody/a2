@@ -43,10 +43,8 @@ class A2Main(QSingleApplication):
 
         winfo = platform.uname()
         self.info(
-            'initialised!\n  Python: %s\n  Windows: %s\n  Qt: %s',
-            sys.version,
-            str(winfo)[31:-1],
-            QtCore.__version__,
+            f'initialised!\n  Python: {sys.version}\n  Windows: {str(winfo)[31:-1]}\n'
+            f'  Qt: {QtCore.__version__}',
         )
 
         # this is to set the actual taskbar icon

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 a2ctrl - basic functionality for all the a2element building blocks
 """
