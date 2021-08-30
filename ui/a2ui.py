@@ -90,7 +90,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def _setup_actions(self):
         icons = a2ctrl.Icons.inst()
-        self.ui.actionEdit_module.triggered.connect(self.edit_mod)
+        self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
         self.ui.actionEdit_module.setIcon(icons.edit)
 
         self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
@@ -161,10 +161,6 @@ class A2Window(QtWidgets.QMainWindow):
             shortcut.setKey(QtGui.QKeySequence(keys))
             shortcut.activated.connect(func)
 
-    def edit_mod(self):
-        if self.num_selected == 1:
-            self.module_view.edit_mod()
-
     def check_main_menu_bar(self):
         """Handle main menu item visibility."""
         if self.a2.dev_mode:
@@ -189,7 +185,7 @@ class A2Window(QtWidgets.QMainWindow):
         if not self.module_view.editing:
             return
 
-        self.mod.config = self.module_view.get_cfg_copy()
+        self.mod.config = self.module_view.editor.get_cfg_copy()
         if self.mod.enabled:
             self.mod.change()
             self.settings_changed()

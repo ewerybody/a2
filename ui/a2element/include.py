@@ -5,7 +5,7 @@ from a2qt import QtWidgets
 
 from a2element import EditCtrl
 from a2widget.local_script import ScriptSelector
-from a2element.common import LocalAHKScriptsMenu
+from a2element._edit import LocalAHKScriptsMenu
 
 
 log = a2core.get_logger(__name__)

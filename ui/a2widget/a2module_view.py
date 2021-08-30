@@ -2,6 +2,7 @@ import traceback
 
 from a2qt import QtCore, QtWidgets, QtGui
 
+import a2mod
 import a2uic
 import a2core
 import a2ctrl
@@ -10,11 +11,6 @@ import a2path
 
 
 log = a2core.get_logger(__name__)
-NEW_MODULE_DESC = (
-    'Because none existed before this temporary description was created '
-    'for "%s". Change it to describe what it does with a couple of words.'
-)
-NEW_MODULE_CFG = {'typ': 'nfo', 'version': '0.1', 'author': ''}
 MULTI_MODULE_DESC = 'Multiple modules selected. Here goes some useful info in the future...'
 EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout here ...'
 
@@ -32,7 +28,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls = []
         self.menu_items = []
         self.a2 = a2core.A2Obj.inst()
-        self._tmp_cfg = None
+        self.editor = None
 
     def setup_ui(self, main):
         self.main = main
@@ -73,7 +69,7 @@ class A2ModuleView(QtWidgets.QWidget):
                 self.draw_settings()
                 return
             else:
-                config = [NEW_MODULE_CFG.copy()]
+                config = [a2mod.NEW_MODULE_CFG.copy()]
                 config[0]['description'] = MULTI_MODULE_DESC
 
             module_user_cfg = {}
@@ -82,7 +78,6 @@ class A2ModuleView(QtWidgets.QWidget):
         else:
             config = self.main.mod.config
             module_user_cfg = self.main.mod.get_user_cfg()
-            self._tmp_cfg = None
             self.ui.icon_label.show()
             self.ui.icon_label.setPixmap(
                 self.main.mod.icon.pixmap(self.main.style.get('icon_size'))
@@ -92,7 +87,7 @@ class A2ModuleView(QtWidgets.QWidget):
             if config[0].get('typ') != 'nfo':
                 log.error('First element of config is not typ nfo! %s' % self.main.mod.name)
         else:
-            config = [NEW_MODULE_CFG.copy()]
+            config = [a2mod.NEW_MODULE_CFG.copy()]
             config[0]['description'] = EMPTY_MODULE_DESC
 
         nfo = config[0]
@@ -114,7 +109,6 @@ class A2ModuleView(QtWidgets.QWidget):
                 log.error('What is element "%s"?!' % element_widget)
 
         self.ui.head_widget.setVisible(True)
-        self._set_editing(False)
         self.draw_ui()
 
     def update_header(self, author='', version=''):
@@ -162,40 +156,14 @@ class A2ModuleView(QtWidgets.QWidget):
         if self.main.mod is None:
             return
 
-        import a2element.common
         from copy import deepcopy
+        from a2widget import a2module_editor
 
         self.controls.clear()
         self.menu_items.clear()
-        self._tmp_cfg = deepcopy(self.main.mod.config)
 
-        if not self._tmp_cfg:
-            new_cfg = NEW_MODULE_CFG.copy()
-            new_cfg.update(
-                {
-                    'description': NEW_MODULE_DESC % self.main.mod.name,
-                    'date': a2util.get_date(),
-                    'author': self.main.devset.author_name,
-                }
-            )
-            self._tmp_cfg.insert(0, new_cfg)
-
-        for cfg in self._tmp_cfg:
-            self.controls.append(a2ctrl.edit(cfg, self.main, self._tmp_cfg))
-
-        edit_select = a2element.common.EditAddElem(self.main, self._tmp_cfg)
-        self.controls.append(edit_select)
-
-        self.draw_ui()
-
-        # new_widget = EditView(self, self.controls, self._tmp_cfg)
-
-        # # turn scroll layout content to new host widget
-        # _current_widget = self.ui.a2scroll_area.takeWidget()
-        # _current_widget.deleteLater()
-        # self.ui.a2scroll_area.setWidget(new_widget)
-        # self.settings_widget = new_widget
-
+        self.editor = a2module_editor.EditView(self.main, deepcopy(self.main.mod.config))
+        self._set_widget(self.editor)
         self._set_editing(True)
         self.settings_widget.setFocus()
 
@@ -214,15 +182,12 @@ class A2ModuleView(QtWidgets.QWidget):
         4. I'll try to create an all new layout,
             fill it and switch away from the old one:
         """
-        # to refill the scroll layout:
-        # create widget to host the module's new layout
+        # to refill the scroll layout: create widget to host the module's new layout
         new_widget = QtWidgets.QWidget(self.main)
-
         # create new column layout for the module controls
         new_layout = QtWidgets.QVBoxLayout(new_widget)
 
-        # make the new inner layout the mainLayout
-        # add the controls to it
+        # make the new inner layout the mainLayout add the controls to it
         has_expandable_widget = False
         for ctrl in self.controls:
             if ctrl is None:
@@ -232,9 +197,12 @@ class A2ModuleView(QtWidgets.QWidget):
                 new_layout.addWidget(ctrl)
                 if ctrl.is_expandable_widget:
                     has_expandable_widget = True
+
+            # TODO: draw an error-widget instead!
             except RuntimeError as error:
                 log.error(traceback.format_exc().strip())
                 raise error
+
             except AttributeError as error:
                 log.debug('Error drawing widget: %s', ctrl)
                 log.error(traceback.format_exc().strip())
@@ -247,8 +215,10 @@ class A2ModuleView(QtWidgets.QWidget):
 
         vertical_policy = QSizePolicy.Minimum if has_expandable_widget else QSizePolicy.Maximum
         new_widget.setSizePolicy(QSizePolicy(QSizePolicy.Preferred, vertical_policy))
+        self._set_widget(new_widget)
 
-        # turn scroll layout content to new host widget
+    def _set_widget(self, new_widget):
+        """Turn scroll layout content to new host widget."""
         _current_widget = self.ui.a2scroll_area.takeWidget()
         _current_widget.deleteLater()
         self.ui.a2scroll_area.setWidget(new_widget)
@@ -299,24 +269,24 @@ class A2ModuleView(QtWidgets.QWidget):
         state = not self.ui.mod_check.isTristate() and state
         self.enable_request.emit(state)
 
-    def get_cfg_copy(self):
-        """Give a copy of the current temp config."""
-        from copy import deepcopy
-
-        return deepcopy(self._tmp_cfg)
+    @property
+    def _tmp_cfg(self):
+        # TODO: The editor should handle all by itself and not pass that config
+        return self.editor.get_cfg_copy()
 
     def cfg_different(self):
         """Shallow difference check between temp and current module config.
 
         Could have been done with deepdiff, but we want to treat empty string values
         equal to None or even key missing."""
-        if self._tmp_cfg == self.main.mod.config:
+        tmp_cfg = self.editor.get_cfg_copy()
+        if tmp_cfg == self.main.mod.config:
             return False
 
-        if len(self._tmp_cfg) != len(self.main.mod.config):
+        if len(tmp_cfg) != len(self.main.mod.config):
             return True
 
-        for cfg0, cfg1 in zip(self.main.mod.config, self._tmp_cfg):
+        for cfg0, cfg1 in zip(self.main.mod.config, tmp_cfg):
             for key in set(cfg0).intersection(cfg1):
                 if cfg0.get(key) != cfg1.get(key):
                     return True
@@ -351,43 +321,3 @@ class A2ModuleView(QtWidgets.QWidget):
         tmp_path = a2path.temp_path(f'temp_{self.main.mod.name}_', 'json')
         a2util.json_write(tmp_path, self._tmp_cfg)
         dialog.file_path2 = tmp_path
-
-
-class EditView(QtWidgets.QWidget):
-    def __init__(self, parent, controls, config_list):
-        super(EditView, self).__init__(parent)
-        self.edit_layout = QtWidgets.QVBoxLayout(self)
-        self.controls = controls
-        self.config_list = config_list
-
-        import a2element.common
-
-        for ctrl in controls:
-            if ctrl is None:
-                continue
-
-            self.edit_layout.addWidget(ctrl)
-
-            if isinstance(ctrl, a2element.common.EditCtrl):
-                ctrl.delete_requested.connect(self.delete_element)
-                ctrl.move_abs_requested.connect(self.move_absolute)
-                ctrl.move_rel_requested.connect(self.move_relative)
-
-        # amend a spacer
-        policy = QtWidgets.QSizePolicy
-        spacer = QtWidgets.QSpacerItem(10, 10, policy.Minimum, policy.Minimum)
-        self.edit_layout.addItem(spacer)
-
-        self.setSizePolicy(policy(policy.Preferred, policy.Maximum))
-
-    def delete_element(self):
-        sender = self.sender()
-        print('delete_element', sender)
-
-    def move_relative(self, value):
-        sender = self.sender()
-        print('move_relative', sender, value)
-
-    def move_absolute(self, value):
-        sender = self.sender()
-        print('move_absolute', sender, value)

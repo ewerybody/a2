@@ -4,7 +4,6 @@ import a2util
 
 from a2qt import QtWidgets
 from a2element import group_edit_ui, DrawCtrlMixin, EditCtrl
-from a2element.common import EditAddElem
 
 
 class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
@@ -77,7 +76,11 @@ class Edit(EditCtrl):
         for child in self.cfg['children']:
             controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
 
-        controls.append(EditAddElem(self.main, self.cfg['children'], 'Add Group Element'))
+        from a2element._edit import EditAddElem
+        adder_widget = EditAddElem(self.main, self.cfg['children'], 'Add Group Element')
+        adder_widget.add_request.connect(self._add_element)
+        controls.append(adder_widget)
+
         for ctrl in controls:
             self.ui.edit_layout.addWidget(ctrl)
 
@@ -87,15 +90,19 @@ class Edit(EditCtrl):
         self._check_checkable()
         self.ui.cfg_disablable.clicked[bool].connect(self._check_checkable)
 
+    def _add_element(self, element_cfg):
+        self.cfg['children'].append(element_cfg)
+        self.changed.emit()
+
     def paste(self):
         """
         Amends child list with cfgs from the main edit_clipboard
         and flushes it afterwards.
         """
-        for cfg in self.main.edit_clipboard:
-            self.cfg['children'].append(cfg)
+        for element_cfg in self.main.edit_clipboard:
+            self.cfg['children'].append(element_cfg)
         self.main.edit_clipboard = []
-        self.main.edit_mod()
+        self.changed.emit()
 
     def _check_checkable(self, checked=None):
         """If not checkable the group is automatically enabled!"""
