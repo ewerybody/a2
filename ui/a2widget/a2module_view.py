@@ -163,6 +163,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.menu_items.clear()
 
         self.editor = a2module_editor.EditView(self.main, deepcopy(self.main.mod.config))
+        self.ui.a2edit_tool_button.clicked.connect(self.editor.on_menu_button_clicked)
         self._set_widget(self.editor)
         self._set_editing(True)
         self.settings_widget.setFocus()
