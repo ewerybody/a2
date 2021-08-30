@@ -18,6 +18,11 @@ import a2util
 log = a2core.get_logger(__name__)
 CONFIG_FILENAME = 'a2module.json'
 USER_CFG_KEY = 'user_cfg'
+NEW_MODULE_DESC = (
+    'Because none existed before this temporary description was created '
+    'for "%s". Change it to describe what it does with a couple of words.'
+)
+NEW_MODULE_CFG = {'typ': 'nfo', 'version': '0.1', 'author': ''}
 
 
 class Mod:
