@@ -34,6 +34,15 @@ class OkDiffDialog(A2ConfirmDialog):
             return
         _res, _pid = a2util.start_process_detached(app_path, [self.file_path1, self.file_path2])
 
+    def remove_temp_files(self):
+        for file_path in self.file_path1, self.file_path2:
+            if not file_path:
+                continue
+            dirpath, base = os.path.split(file_path)
+            if os.path.normcase(dirpath) == os.path.normcase(os.getenv('TEMP')):
+                log.info('Deleting temp file: %s', base)
+                os.unlink(file_path)
+
 
 class RollbackDiffDialog(OkDiffDialog):
     """Dialog to ask user for rollback confirmation and offer diffing."""
