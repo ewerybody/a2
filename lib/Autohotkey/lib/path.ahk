@@ -48,7 +48,6 @@ path_join(byref base_path, byref items*) {
     return path
 }
 
-
 path_normalize(byref path) {
     ; From the documentation - https://www.autohotkey.com/docs/misc/LongPaths.htm
     cc := DllCall("GetFullPathName", "str", path, "uint", 0, "ptr", 0, "ptr", 0, "uint")
@@ -76,4 +75,21 @@ path_set_writable(byref path) {
 
 path_set_readonly(ByRef path) {
     FileSetAttrib, +R, %path%
+}
+
+path_expand_env(byref path) {
+    ; Find environment %variables% in a path,
+    ; Return expanded path string.
+    if !InStr(path, "%")
+        Return path
+
+    pos1 := InStr(path, "%")
+    pos2 := InStr(path, "%",, pos1 + 1)
+    if !pos2
+        Return path
+    subs := SubStr(path, pos1 + 1, pos2 - pos1 - 1)
+    env_path := EnvGet(subs)
+    new_path := StrReplace(path, "%" subs "%", env_path)
+    ; MsgBox pos1: %pos1%`npos2: %pos2%`nsubs: %subs%`nenv_path: %env_path%`nnew_path: %new_path%
+    return new_path
 }

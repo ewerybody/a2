@@ -35,10 +35,16 @@ path_set_writable(write_test_file)
 w2 := assertmsg(path_is_writeable(write_test_file))
 FileDelete, %write_test_file%
 
+epth := "%SystemRoot%\System32\imageres.dll"
+npth := path_expand_env(epth)
+x1 := assertmsg(InStr(npth, "%") == 0)
+x2 := assertmsg(FileExist(npth))
+
 msg = a path: %p%`npath_dirname: %x%`npath_dirname: %y%`npath_join: %z%`n`n
 msg = %msg%path_normalize: %n%`n!path_is_absolute: %a1% (%sub_dir%)`npath_is_absolute: %a2% (%n%)`n`n
 msg = %msg%path_is_file: %f1% (%p%)`n!path_is_file: %f2% (%z%)`n!path_is_file: %f3% (%x%)`npath_is_file: %f4% (%p2%)`n`n
 msg = %msg%path_is_dir: %d1% (%x%)`n!path_is_dir: %d2% (%n%)`npath_basename: %b1% (%p%)`n`n
 msg = %msg%!path_is_empty: %e0% (%A_ScriptDir%)`npath_is_empty: %e1% (%test_dir%)`n`n
-msg = %msg%!path_is_writeable: %w1%`npath_is_writeable: %w2%
+msg = %msg%!path_is_writeable: %w1%`npath_is_writeable: %w2%`n
+msg = %msg%path_expand_env: %x1% %x2%
 msgbox %msg%
