@@ -314,7 +314,7 @@ class A2ModuleView(QtWidgets.QWidget):
         )
         dialog.diff_requested.connect(self._on_diff_requested)
         dialog.exec_()
-
+        dialog.remove_temp_files()
         return dialog.result is False
 
     def _on_diff_requested(self):
