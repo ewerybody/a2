@@ -1,65 +1,61 @@
 /**
  * a2 global object definition
- */
-class Ca2
+*/
+class A2Core_Class
 {
     /**
      * Title of the a2 instance
      *
      * @type string
-     */
+    */
     static title := ""
-
-    /**
-     * Root path of the a2 instance
-     *
-     * @type string
-     */
-    static path := ""
-    /**
-     * Path to the module folder of the a2 instance
-     *
-     * @type string
-     */
-    static modules := ""
 
     /**
      * Constructor
      *     Creates an object for the DB of the a2 instance
-     */
-    __New()
+    */
+    __New(data_path)
     {
-        global a2_modules
         this.title := "a2"
-        this.path := A_ScriptDir "\.."
-        this.modules := a2_modules
-        this.db := new this.Ca2DB()
+        this.db := new this.Ca2DB(data_path)
 
-        x := this.path
-        msgbox this.path: %x%
+        root_dir := path_dirname(A_ScriptDir) "\"
+        this.paths := {a2: root_dir
+            ,lib: A_ScriptDir "\"
+            ,ahklib: A_ScriptDir "\Autohotkey\lib\"
+            ,ui: root_dir "ui\"
+            ,resources: root_dir "ui\res\"
+            ,data: data_path
+            ,modules: data_path "modules\"
+            ,module_data: data_path "module_data\"
+            ,temp: data_path "temp\"
+        ,includes: data_path "includes\includes.ahk"}
+
+        this.cfg := {}
     }
 
     /**
      * API for modules to inteact with the DB
-     */
+    */
     class Ca2DB
     {
         /**
          * Path to the DB file of the a2 instance
          *
          * @type string
-         */
-        static path := A_ScriptDir "\..\settings\a2.db"
+        */
+        static path := ""
 
         /**
          * Constructor
          *     Opens connection to the DB
-         */
-        __New()
+        */
+        __New(data_path)
         {
+            this.path := data_path "a2.db"
             ; Ensure the DB file does exist
             if (!FileExist(this.path))
-                throw Exception("Database could not be found", -1)
+                throw Exception("Database could not be found (" this.path ")", -1)
 
             this.dbObject := new SQLiteDB
         }
@@ -67,7 +63,7 @@ class Ca2
         /**
          * Destructor
          *     Closes the connection to the DB
-         */
+        */
         __Delete()
         {
             this.dbObject.CloseDB()
@@ -81,13 +77,25 @@ class Ca2
          * @param  string   moduleName  Name of the Module that called the method
          * @param  string   key         Name of the key in the Table
          * @return string
-         */
+        */
         get(modulePack, moduleName, key)
         {
             moduleTable := this.__moduleTable(modulePack, moduleName)
-
             this.__validateTable(moduleTable) ; will throw an error if invalid
+            return this.__get(moduleTable, key)
+        }
 
+         /**
+         * From a A_LineFile path build the module key and fetch the wanted value.
+         * Entry in DB is a key/value pair.
+         *
+         * @param  string   line_file  Path to a file in a module directory.
+         * @param  string   key        Name of the key in the Table.
+         * @return string
+        */
+        find(line_file, key) {
+            moduleTable := this.__moduleTableFromFile(line_file)
+            this.__validateTable(moduleTable)
             return this.__get(moduleTable, key)
         }
 
@@ -99,7 +107,7 @@ class Ca2
          * @param  string   moduleName  Name of the Module that called the method
          * @param  string   key         Name of the key in the Table
          * @param  string   value       Value to be set in the Table
-         */
+        */
         set(modulePack, moduleName, key, value)
         {
             moduleTable := this.__moduleTable(modulePack, moduleName)
@@ -113,13 +121,31 @@ class Ca2
         }
 
         /**
+         * From a A_LineFile path build the module key and set the according value.
+         * Entry in DB is a key/value pair.
+         *
+         * @param  string   line_file  Path to a file in a module directory.
+         * @param  string   key        Name of the key in table.
+         * @param  string   value      Value to be set in table.
+         * @return string
+        */
+        find_set(line_file, key, value) {
+            moduleTable := this.__moduleTableFromFile(line_file)
+            this.__validateTable(moduleTable)
+            if (this.__get(moduleTable, key))
+                this.__update(moduleTable, key, value)
+            else
+                this.__insert(moduleTable, key, value)
+        }
+
+        /**
          * Delete a row from the table in the DB
          * based on the key name
          *
          * @param   string  modulePack  Name of the Module Pack that called the method
          * @param   string  moduleName  Name of the Module that called the method
          * @param   string  key         Name of the key in the Table
-         */
+        */
         delete(modulePack, moduleName, key)
         {
             moduleTable := this.__moduleTable(modulePack, moduleName)
@@ -140,7 +166,7 @@ class Ca2
          * @param   string  key         Name of the key in the Table
          * @param   integer step        Amount to increase the value by
          * @return  integer             Value after adding the amount
-         */
+        */
         increment(modulePack, moduleName, key, step = 1)
         {
             if step is not number
@@ -170,7 +196,7 @@ class Ca2
          * @param   string  moduleTable     Name of the Table
          * @param   string  key             Value in column "key"
          * @return  string
-         */
+        */
         __get(moduleTable, key)
         {
             this.__openConnection()
@@ -184,10 +210,10 @@ class Ca2
 
             if (recordSet.HasRows)
                 Loop % recordSet.HasRows
-                {
-                    recordSet.next(row)
-                    result := row[1]
-                }
+            {
+                recordSet.next(row)
+                result := row[1]
+            }
             recordSet.Free()
 
             ; Close connection to DB to unlock the file
@@ -204,7 +230,7 @@ class Ca2
          * @param   string  moduleTable     Name of the Table
          * @param   string  key             Value for column "key"
          * @param   string  value           Value for column "value"
-         */
+        */
         __insert(moduleTable, key, value)
         {
             this.__openConnection()
@@ -225,7 +251,7 @@ class Ca2
          * @param   string  moduleTable     Name of the Table
          * @param   string  key             Value in column "key"
          * @param   string  value           Value for column "value"
-         */
+        */
         __update(moduleTable, key, value)
         {
             this.__openConnection()
@@ -245,7 +271,7 @@ class Ca2
          *
          * @param   string  moduleTable     Name of the Table
          * @param   string  key             Value in column "key"
-         */
+        */
         __remove(moduleTable, key)
         {
             this.__openConnection()
@@ -266,10 +292,18 @@ class Ca2
          * @param   string  modulePack  Name of the Module Pack that called the method
          * @param   string  moduleName  Name of the Module that called the method
          * @return  string
-         */
+        */
         __moduleTable(modulePack, moduleName)
         {
             return modulePack "|" moduleName
+        }
+
+        __moduleTableFromFile(line_file) {
+            parts := StrSplit(line_file, "\")
+            num_parts := parts.Length()
+            if num_parts < 3
+                throw Exception("Unusable path input! Cannot find db entry from """ line_file """!", -1)
+            return this.__moduleTable(parts[num_parts - 2], parts[num_parts - 1])
         }
 
         /**
@@ -278,7 +312,7 @@ class Ca2
          *     Throws a terminating Exception if it doesn't
          *
          * @param   string  moduleTable     Name of the Table
-         */
+        */
         __validateTable(moduleTable)
         {
             this.__openConnection()
@@ -295,15 +329,19 @@ class Ca2
         /**
          * Private Method
          *     Handles the establishing of the connection to the DB
-         */
+        */
         __openConnection()
         {
-            if (!this.dbObject._Handle)  ; connection is already open
-                Loop, 5
-                    if (this.dbObject.OpenDB(this.path))
-                        break
-                    else
-                        sleep 50
+            if (this.dbObject._Handle) ; connection is already open
+                Return
+
+            Loop, 5
+            {
+                if (this.dbObject.OpenDB(this.path))
+                    break
+                else
+                    sleep 50
+            }
 
             if (!this.dbObject._Handle)
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
@@ -312,7 +350,7 @@ class Ca2
         /**
          * Private Method
          *     Handles the terminate of the connection to the DB
-         */
+        */
         __closeConnection()
         {
             if (!this.dbObject.CloseDB())
