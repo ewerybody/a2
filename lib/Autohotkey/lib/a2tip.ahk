@@ -6,7 +6,7 @@
 a2tip(msg := "", timeout := "") {
     Global _a2tip_message, _a2_tip_id
     static last_timeout
-    refresh_delay := 30
+    refresh_delay := 50
 
     _a2tip_message := msg
 

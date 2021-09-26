@@ -199,7 +199,7 @@ window_cut_hole(hwnd, inner, outer := "") {
     top_left2 := inner.x "-" inner.y
     inner_str := top_left2 " " inner.x2 "-" inner.y " "
     inner_str .= inner.x2 "-" inner.y2 " " inner.x "-" inner.y2 " " top_left2
-    ; tt(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nx2:" inner.x2 "`ny2:" inner.y2)
+    ; a2tip(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nx2:" inner.x2 "`ny2:" inner.y2)
     WinSet, Region, %outer_str% %inner_str%, ahk_id %hwnd%
 }
 

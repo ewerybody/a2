@@ -93,3 +93,9 @@ path_expand_env(byref path) {
     ; MsgBox pos1: %pos1%`npos2: %pos2%`nsubs: %subs%`nenv_path: %env_path%`nnew_path: %new_path%
     return new_path
 }
+
+path_neighbor(file_path, neighbor_name) {
+    ; Shorthand to do `path_join(path_dirname(file_path), "somename.txt")`.
+    ; Also handy with builtin var `A_LineFile`!
+    return path_join(path_dirname(file_path), neighbor_name)
+}
