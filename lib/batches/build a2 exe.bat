@@ -1,6 +1,8 @@
 @echo off
 
-set Ahk2Exe=..\AutoHotkey\Compiler\Ahk2Exe.exe
+set AHKdir=..\AutoHotkey\
+set Ahk2Exe=%AHKdir%Compiler\Ahk2Exe.exe
+set AhkExe=%AHKdir%Autohotkey.exe
 set this_path=%~dp0
 set lib_path=%this_path%..
 set a2path=%lib_path%\..
@@ -12,4 +14,4 @@ echo    /in: %script%
 echo   /out: %executable%
 echo ...
 
-"%Ahk2Exe%" /in "%script%" /out "%executable%" /mpress 0
+"%Ahk2Exe%" /in "%script%" /out "%executable%" /mpress 0 /ahk "%AhkExe%"
