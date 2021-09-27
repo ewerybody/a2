@@ -22,8 +22,7 @@ a2tip(msg := "", timeout := "") {
         SetTimer, a2tip_off, -%ms_timeout%
     }
 
-    if not WinExist("ahk_id " _a2_tip_id)
-    {
+    if (!WinExist("ahk_id " _a2_tip_id)) {
         tooltip,% (ttID:=msg) ;create tooltip and give it something to find it
         _a2_tip_id := WinExist(ttID ahk_class tooltips_class32) ;get ID from it
         font_set(_a2_tip_id, "s11, Arial")
