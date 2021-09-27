@@ -18,9 +18,11 @@ dragtangle(drag_func := ""
     if (!IsObject(data))
         data := {}
     data.started := false
+    data.done := false
+    data.escaped := false
 
     ; WIP. Prevent Escape key stroke to be passed on other windows.
-    Hotkey, *Esc, dragtangle_off, On P100
+    ; Hotkey, *Esc, dragtangle_off, On P100
 
     cursor_set_cross()
     CoordMode, Mouse, Screen
@@ -31,6 +33,7 @@ dragtangle(drag_func := ""
             if IsFunc(escape_func)
                 %escape_func%(data)
             cursor_reset()
+            data.escaped := true
             Return data
         }
 
@@ -61,6 +64,7 @@ dragtangle(drag_func := ""
             if IsFunc(finished_func)
                 %finished_func%(data)
             cursor_reset()
+            data.done := true
             Return data
         }
         Sleep, %loop_delay%
