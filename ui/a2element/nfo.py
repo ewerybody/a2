@@ -45,7 +45,7 @@ class Edit(QtWidgets.QGroupBox):
         self.ui = nfo_edit_ui.Ui_edit()
         self.ui.setupUi(self.main_widget)
 
-        self.ui.cfg_tags.set_available_tags(a2core.A2TAGS)
+        self.ui.cfg_tags.set_available_tags(a2core.tags())
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         self.is_expandable_widget = False
 

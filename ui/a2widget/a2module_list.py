@@ -196,7 +196,7 @@ class A2ModuleList(QtWidgets.QWidget):
         if self._filter_tags:
             menu.addAction(a2ctrl.Icons.clear, 'Clear Tags', self.clear_filter_tags)
 
-        for tag in a2core.A2TAGS:
+        for tag in a2core.tags():
             action = menu.addAction(a2ctrl.Icons.label, tag, self.do_filter_tags)
             action.setCheckable(True)
             action.setChecked(tag in self._filter_tags)

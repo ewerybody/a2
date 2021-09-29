@@ -16,15 +16,7 @@ log = logging.getLogger(__name__)
 log.setLevel(LOG_LEVEL)
 
 A2DEFAULT_HOTKEY = 'Win+Shift+A'
-A2TAGS = {
-    'file': 'File system',
-    'window': 'Window handling',
-    'text': 'Text manipulation',
-    'code': 'Programming',
-    'lookup': 'Searching things',
-    'web': 'Internet related',
-    'wip': 'Experimental',
-}
+_A2TAGS = {}
 _IS_DEV = None
 NAME = 'a2'
 ENTRYPOINT_FILENAME = 'user_data_include'
@@ -337,7 +329,9 @@ class Paths:
         tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
         with open(tmpl8_path) as file_obj:
             tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
-        entrypoint_script = tmpl8.format(data_path=data_path)
+        write_if_changed(
+            os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME), tmpl8.format(data_path=data_path)
+        )
 
         dll_path = os.path.join(self.ui, SQLDLL)
         if not os.path.isfile(dll_path):
@@ -408,3 +402,12 @@ def write_if_changed(path: str, content: str):
         file_obj.write(content)
 
     return True
+
+
+def tags():
+    if not _A2TAGS:
+        import a2util
+
+        a2 = A2Obj.inst()
+        _A2TAGS.update(a2util.json_read(os.path.join(a2.paths.defaults, 'tags.json')))
+    return _A2TAGS
