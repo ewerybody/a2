@@ -28,6 +28,7 @@ EXTRA_FILE = join(TEST_DIR, 'random_test_name_4favafvar4var.ext')
 TMP_EXE = join(THIS_DIR, f'{NAME}.exe')
 TEST_EXE = join(TEST_DIR, f'{NAME}.exe')
 AHK_DIR = os.path.abspath(join(THIS_DIR, '..', '..', 'Autohotkey'))
+AHK_EXE = join('Autohotkey.exe')
 COMPILER = join(AHK_DIR, 'Compiler', 'Ahk2Exe.exe')
 TEST_SCRIPT = join(THIS_DIR, NAME + '.ahk')
 CHKMK = b'\xe2\x9c\x94'.decode()
@@ -54,7 +55,9 @@ def main():
 
             _prnt('Compiling ... ')
 
-            subprocess.call([COMPILER, '/in', TEST_SCRIPT, '/out', TEST_EXE], cwd=SOURCE_DIR)
+            subprocess.call(
+                [COMPILER, '/in', TEST_SCRIPT, '/out', TEST_EXE, '/ahk', AHK_EXE], cwd=SOURCE_DIR
+            )
 
             if os.path.isfile(TEST_EXE):
                 print(f'{CHKMK} done - {TEST_EXE}')

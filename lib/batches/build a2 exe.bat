@@ -14,4 +14,4 @@ echo    /in: %script%
 echo   /out: %executable%
 echo ...
 
-"%Ahk2Exe%" /in "%script%" /out "%executable%" /mpress 0 /ahk "%AhkExe%"
+"%Ahk2Exe%" /in "%script%" /out "%executable%" /compress 0 /ahk "%AhkExe%"

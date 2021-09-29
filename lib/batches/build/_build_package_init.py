@@ -25,6 +25,7 @@ class Paths:
     ui = UIPATH
     a2icon = join(ui, 'res', 'a2.ico')
     ahk2exe = join(lib, 'AutoHotkey', 'Compiler', 'Ahk2Exe.exe')
+    ahkexe = join(lib, 'AutoHotkey', 'AutoHotkey.exe')
 
     package_config = join(a2, 'package.json')
 

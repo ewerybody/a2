@@ -218,7 +218,7 @@ def _copy_together_installer_binary(version_label):
     with open(os.path.join(target_cfg), 'w') as file_obj:
         file_obj.write(INSTALLER_CFG)
 
-    for target_name, target_sfx, setup_script in (
+    for target_name, target_sfx, script in (
         (name_ui, Paths.sfx_target_ui, Paths.installer_script),
         (name_silent, Paths.sfx_target_silent, Paths.installer_script_silent),
     ):
@@ -231,7 +231,8 @@ def _copy_together_installer_binary(version_label):
         shutil.copyfile(Paths.archive_target, this_archive)
         # create setup exe
         exe_path = os.path.join(Paths.distroot, SETUP_EXE)
-        subprocess.call([Paths.ahk2exe, '/in', setup_script, '/out', exe_path, '/mpress', '0'])
+        cmd = [Paths.ahk2exe, '/in', script, '/out', exe_path, '/compress', '0', '/ahk', Paths.ahkexe]
+        subprocess.call(cmd)
         if not os.path.isfile(exe_path):
             print('\n%s FAIL!: "%s" was not created!\n' % (EXMRK, exe_path))
             continue

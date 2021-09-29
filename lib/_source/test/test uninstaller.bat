@@ -1,5 +1,8 @@
 @echo off
-set Ahk2Exe=..\AutoHotkey\Compiler\Ahk2Exe.exe
+
+set AHKdir=..\AutoHotkey\
+set Ahk2Exe=%AHKdir%Compiler\Ahk2Exe.exe
+set AhkExe=%AHKdir%Autohotkey.exe
 set this_path=%~dp0..\
 set script=%this_path%a2_uninstaller.ahk
 set executable=%this_path%Uninstall a2.exe
@@ -22,7 +25,7 @@ if not exist "%a2data%" (
     REM XCOPY "%a2backup%\*" "%a2data%\*" /E
 )
 echo creating executable %executable%...
-"%Ahk2Exe%" /in "%script%" /out "%executable%" /mpress 0
+"%Ahk2Exe%" /in "%script%" /out "%executable%" /compress 0 /ahk "%AhkExe%"
 echo copy executable to a2data ...
 copy "%executable%" "%a2data%"
 pause
