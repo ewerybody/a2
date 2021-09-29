@@ -4,16 +4,13 @@ a2core - Foundation module to host basic info and functionality.
 Everything thats needed by but itself has no constrains to the user interface.
 Such as paths and os tweaks. Mainly this is to thin out the ui module but also
 to make functionality available without passing the main ui object.
-
-@created: 15.03.2016
-@author: eric
 """
 import os
 import sys
 import time
 import logging
 
-# only spot where this is set! Use a2core.get_logger() anywhere else!
+# Only spot where this is set! Use a2core.get_logger() anywhere else!
 LOG_LEVEL = logging.INFO
 log = logging.getLogger(__name__)
 log.setLevel(LOG_LEVEL)
@@ -34,6 +31,8 @@ ENTRYPOINT_FILENAME = 'user_data_include'
 USER_INCLUDES_NAME = 'a2_user_includes.ahk'
 EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatically!\n"
 DATA_PATTERN = '{a2data}'
+SQLDLL = 'sqlite3.dll'
+SQLINI = 'SQLiteDB.ini'
 
 
 # pylint: disable=too-many-instance-attributes
@@ -66,6 +65,7 @@ class A2Obj:
         self.win = None
         self.module_sources = {}
         self._modules_fetched = 0.0
+        self._enabled = None
 
         self.paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
@@ -191,6 +191,7 @@ class A2Obj:
         """Return the database instance. Make sure to start up if None yet."""
         if self._db is None:
             self.start_up()
+        assert self._db is not None
         return self._db
 
 
@@ -282,23 +283,25 @@ class Paths:
 
     def set_data_path(self, path: str = ''):
         """
-        Make sure currently set user data path can be included by runtime.
+        Make sure currently set user data path can be included by runtime and
+        some standard files are available.
         """
         self.data = self.default_data if not path else path
         self._write_entrypoint()
         self._build_data_paths()
 
-        # make sure standard files are available
         if not os.path.isfile(self.user_cfg):
-            with open(os.path.join(self.defaults, os.path.basename(self.user_cfg))) as src_file_obj:
+            with open(os.path.join(self.defaults, NAME + '.cfg')) as src_file_obj:
                 with open(self.user_cfg, 'w') as dst_file_obj:
                     dst_file_obj.write(src_file_obj.read())
         self.write_user_include()
 
     def write_user_include(self):
         with open(os.path.join(self.defaults, USER_INCLUDES_NAME)) as src_file_obj:
-            with open(os.path.join(self.data, USER_INCLUDES_NAME), 'w') as dst_file_obj:
-                dst_file_obj.write(src_file_obj.read().format(a2data=self.data))
+            write_if_changed(
+                os.path.join(self.data, USER_INCLUDES_NAME),
+                src_file_obj.read().format(a2data=self.data),
+            )
 
     def get_data_path(self):
         if os.path.isfile(self.user_includes):
@@ -322,6 +325,8 @@ class Paths:
         return self.data != self.default_data
 
     def _write_entrypoint(self):
+        """Write `_ user_data_include` file to point to the right data path.
+        Write SQLiteDB.ini with path to its needed .dll file."""
         try:
             data_path = os.path.relpath(self.data, self.a2)
             if data_path.startswith('.'):
@@ -334,9 +339,11 @@ class Paths:
             tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
         entrypoint_script = tmpl8.format(data_path=data_path)
 
-        script_path = os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME)
-        with open(script_path, 'w') as file_obj:
-            file_obj.write(entrypoint_script)
+        dll_path = os.path.join(self.ui, SQLDLL)
+        if not os.path.isfile(dll_path):
+            dll_path = os.path.join(os.path.dirname(self.python), 'DLLs', SQLDLL)
+        assert os.path.isfile(dll_path)
+        write_if_changed(os.path.join(self.lib, SQLINI), f'[Main]\nDllPath={dll_path}')
 
 
 def get_logger(name: str):
@@ -384,3 +391,20 @@ def is_debugging():
     """Tell if there is a debugger attached."""
     gettrace = getattr(sys, 'gettrace', None)
     return gettrace is not None and gettrace() is not None
+
+
+def write_if_changed(path: str, content: str):
+    """Write file at given `path` when needed.
+    That is: file does not exist or file has different `content`."""
+    if os.path.isfile(path):
+        with open(path) as file_obj:
+            if file_obj.read() == content:
+                return False
+        log.debug('Updating "%s"', os.path.basename(path))
+    else:
+        log.debug('Creating "%s"', os.path.basename(path))
+
+    with open(path, 'w') as file_obj:
+        file_obj.write(content)
+
+    return True

@@ -80,7 +80,6 @@ class IncludeDataCollector(object):
         if self.source_libs:
             self.source_libs.write()
         self.a2.paths.set_data_path(self.a2.paths.data)
-        self.a2.paths.write_user_include()
 
     @property
     def collections(self):

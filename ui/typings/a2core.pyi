@@ -7,6 +7,7 @@ import a2modsource
 
 A2DEFAULT_HOTKEY: str
 EDIT_DISCLAIMER: str
+NAME: str
 
 class A2Obj(object):
     """Non-Ui a2 backend object."""
@@ -40,3 +41,6 @@ class Paths(object):
     def write_user_include(self): ...
 
 def get_logger(str) -> logging.Logger: ...
+
+def tags() -> dict[str, str]:
+    """Return tags dictionary with shortnames/english desctiptions."""

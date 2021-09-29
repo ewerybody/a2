@@ -157,6 +157,14 @@ install() {
         FileMoveDir, %A_LoopFilePath%, %A2DIR%\%A_LoopFileName%
     Loop, Files, %PACKAGE_DIR%\*, F
         FileMove, %A_LoopFilePath%, %A2DIR%\%A_LoopFileName%
+
+    sqldll := "SQLite3.dll"
+    dll_path := path_join(A2DIR, "ui", sqldll)
+    if (!FileExist(dll_path))
+        log_error(sqldll " missing?!", "The """ sqldll " "" must exist here:`n" dll_path "`n!`nWhere is it?")
+    ini_path := path_join(A2DIR, "lib", "SQLiteDB.ini")
+    ini_code := "[Main]`nDllPath=" dll_path
+    FileAppend, %ini_code%, %ini_path%
 }
 
 remove_if_empty(path) {
