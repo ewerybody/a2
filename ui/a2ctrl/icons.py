@@ -2,7 +2,8 @@
 Finally an own little module all things icons.
 """
 import os
-from a2qt import QtGui, QtCore, QtSvg
+# from a2qt import QtGui, QtCore, QtSvg
+from PySide2 import QtGui, QtCore, QtSvg
 import a2core
 import a2path
 
@@ -98,6 +99,8 @@ class Ico(QtGui.QIcon):
         return image
 
     def _paint(self):
+        if self._image is None or self._painter is None:
+            return
         pixmap = QtGui.QPixmap.fromImage(self._image)
         self.addPixmap(pixmap)
         self._painter.end()

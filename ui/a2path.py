@@ -61,7 +61,7 @@ def temp_path(prefix='', ext=''):
         ext = '.' + ext
     trypath = None
     while trypath is None or os.path.exists(trypath):
-        trypath = os.path.join(os.getenv('TEMP'), prefix + str(uuid.uuid4()) + ext)
+        trypath = os.path.join(os.getenv('TEMP', ''), prefix + str(uuid.uuid4()) + ext)
     return trypath
 
 

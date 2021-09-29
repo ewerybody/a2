@@ -12,7 +12,7 @@ LOCAL_MENU_PREFIX = 'local: '
 
 class EditAddElem(QtWidgets.QWidget):
     """
-    to add a control to a module setup. This will probably go into some popup
+    Widget to add an element to a module setup. This will probably go into some popup
     later. This way its a little too clunky I think.
 
         * include > script1.ahk
@@ -21,9 +21,6 @@ class EditAddElem(QtWidgets.QWidget):
         * hotkey
         * checkBox
         * ...
-
-    TIL: if you don't make this a widget and just a object Qt will forget about
-    any connections you make!
     """
     add_request = QtCore.Signal(dict)
 

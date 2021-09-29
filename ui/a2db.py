@@ -29,7 +29,7 @@ _DEFAULTTABLE = a2core.NAME
 
 class A2db:
     """A2 Database abstraction class."""
-    def __init__(self, db_file_path=None):
+    def __init__(self, db_file_path: str):
         if not db_file_path:
             raise RuntimeError('Cannot create db without file path!')
 
