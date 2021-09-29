@@ -10,14 +10,14 @@ a2_ahk := _init_get_autohotkey_exe()
 lib_path := _init_get_lib_path()
 root_path := path_dirname(lib_path)
 a2data := a2_get_user_data_path(root_path)
-global a2cfg := a2_get_user_config(a2data)
+a2cfg := a2_get_user_config(a2data)
 
 if (A_Args.Length()) {
     args := _gather_args()
-    Run, %a2_ahk% %lib_path%\a2.ahk %args%, %root_path%
+    Run, "%a2_ahk%" "%lib_path%\a2.ahk" %args%, %root_path%
 }
 else
-    Run, %a2_ahk% %lib_path%\a2.ahk, %root_path%
+    Run, "%a2_ahk%" "%lib_path%\a2.ahk", %root_path%
 
 check_load_time_errors(lib_path)
 
