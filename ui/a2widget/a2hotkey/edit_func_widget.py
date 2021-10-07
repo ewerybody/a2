@@ -153,7 +153,7 @@ class FuncWidget(QtWidgets.QWidget):
         Remove `Run, ` or `Send*, ` to put it into the input field.
         """
         modes = {
-            FuncTypes.open: ('run'),
+            FuncTypes.open: ('run',),
             FuncTypes.send: SEND_MODES,
         }
 

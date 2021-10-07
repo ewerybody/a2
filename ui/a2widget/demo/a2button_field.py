@@ -9,7 +9,6 @@ class Demo(QtWidgets.QMainWindow):
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
         lyt = QtWidgets.QVBoxLayout(w)
-        w.setLayout(lyt)
 
         lyt.addWidget(QtWidgets.QLabel('with some static actions:'))
         self.bf1 = A2ButtonField()
