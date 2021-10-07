@@ -292,10 +292,10 @@ class HotkeysCollection(_Collection):
         for hotkey, commands in hotkey_data.items():
             code += a2ahk.translate_hotkey(hotkey) + '::'
 
-            command_code = '\n\t'.join([cmd for cmd, module in commands])
+            command_code = '\n\t'.join(cmd for cmd, _ in commands)
             # to gather more than 1 command in a code block
             if '\n' in command_code:
-                code += '\n\t' + command_code + '\nreturn\n'
+                code += '\n\t' + command_code.replace('\n', '\n\t') + '\nreturn\n'
             # or just inline
             else:
                 code += command_code + '\n'
