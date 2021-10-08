@@ -138,12 +138,12 @@ class GithubCommitsChecker(QtCore.QObject):
             self._show_error(error)
 
     def _check_result2(self, result):
-        messages = []
         if isinstance(result, list):
             commits_list = result
         else:
             commits_list = result.get('commits', ())
 
+        messages = []
         for commit in commits_list:
             message = commit.get('commit', {}).get('message', '').strip()
             if not message:

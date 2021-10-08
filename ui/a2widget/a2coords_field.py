@@ -15,10 +15,10 @@ log = a2core.get_logger(__name__)
 
 
 class A2CoordsField(QtWidgets.QWidget):
-    changed = QtCore.Signal(tuple)
+    changed = QtCore.Signal(list)
 
     def __init__(self, parent=None):
-        super(A2CoordsField, self).__init__(parent)
+        super().__init__(parent)
 
         self.main_layout = QtWidgets.QHBoxLayout(self)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -57,7 +57,7 @@ class A2CoordsField(QtWidgets.QWidget):
 
     @property
     def value(self):
-        return (self.x, self.y)
+        return [self.x, self.y]
 
     @value.setter
     def value(self, this):
@@ -66,13 +66,14 @@ class A2CoordsField(QtWidgets.QWidget):
     def set_value(self, values, y=None):
         if isinstance(values, (tuple, list)) and len(values) < 2:
             raise ValueError(
-                'A2CoordsField.set_value needs tuple or list '
-                'of 2 integers!\n  received: %s' % str(values)
+                f'A2CoordsField.set_value needs tuple or list '
+                f'of 2 integers!\n  received: {values}'
             )
-        elif isinstance(values, QtCore.QPoint):
-            values = values.x(), values.y()
+
+        if isinstance(values, QtCore.QPoint):
+            values = [values.x(), values.y()]
         elif isinstance(values, QtCore.QSize):
-            values = values.width(), values.height()
+            values = [values.width(), values.height()]
 
         self.x_field.blockSignals(True)
         self.y_field.blockSignals(True)
@@ -89,10 +90,10 @@ class A2CoordsField(QtWidgets.QWidget):
             (self.paste, icons.paste),
             (self.pick, icons.number),
         ]:
-            menu.addAction(icon, '%s Coordinates' % func.__name__.title(), func)
+            menu.addAction(icon, func.__name__.title() + ' Coordinates', func)
 
     def change_triggered(self):
-        self.changed.emit((self.x, self.y))
+        self.changed.emit([self.x, self.y])
 
     def copy(self):
         QtWidgets.QApplication.clipboard().setText('%i, %i' % (self.x, self.y))
