@@ -9,7 +9,7 @@ A2DEFAULT_HOTKEY: str
 EDIT_DISCLAIMER: str
 NAME: str
 
-class A2Obj(object):
+class A2Obj:
     """Non-Ui a2 backend object."""
 
     _instance: object
@@ -17,6 +17,7 @@ class A2Obj(object):
     app: typing.Optional[QSingleApplication] = None
     win: typing.Optional[QtWidgets.QMainWindow] = None
     paths: Paths
+    urls: URLs
     db: a2db.A2db
 
     enabled: typing.Dict[str, typing.List[str]]
@@ -28,7 +29,8 @@ class A2Obj(object):
     def start_up(self) -> None: ...
     def fetch_modules(self) -> None: ...
 
-class Paths(object):
+
+class Paths:
     """Aquires and hosts common paths around a2."""
 
     a2: str
@@ -39,6 +41,29 @@ class Paths(object):
     lib: str
     def set_data_path(self, str): ...
     def write_user_include(self): ...
+
+
+class URLs:
+    a2: str
+    help: str
+    wiki: str
+    helpEditCtrl: str
+    helpHotkey: str
+    helpCheckbox: str
+    help_scopes: str
+    help_string: str
+    help_number: str
+    help_path: str
+    help_report_issue: str
+    security: str
+    ahk: str
+    ahk_commands: str
+    ahk_run: str
+    ahk_send: str
+    ahkWinActive: str
+    ahk_builtin_vars: str
+    ahkWinTitle: str
+
 
 def get_logger(str) -> logging.Logger: ...
 
