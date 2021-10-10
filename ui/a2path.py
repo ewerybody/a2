@@ -1,5 +1,5 @@
 """
-All things file system.
+All things file system paths.
 """
 import os
 
@@ -14,7 +14,7 @@ def iter_dirs(path):
 
     for this in os.scandir(path):
         if this.is_dir():
-            item.set_path(this.path)
+            item._set_path(this.path)
             yield item
 
 
@@ -54,7 +54,7 @@ def remove_dir(path):
     shutil.rmtree(trash_path)
 
 
-def temp_path(prefix='', ext=''):
+def temp_path(prefix: str = '', ext: str = ''):
     import uuid
 
     if ext and not ext.startswith('.'):
@@ -69,7 +69,7 @@ def iter_files(path):
     item = FileObj()
     for this in os.scandir(path):
         if this.is_file():
-            item.set_path(this.path)
+            item._set_path(this.path)
             yield item
 
 
@@ -81,7 +81,7 @@ def iter_types(path, types):
     item = FileObj()
     for this in os.scandir(path):
         if this.is_file():
-            item.set_path(this.path)
+            item._set_path(this.path)
             if item.is_type(types):
                 yield item
 
@@ -106,33 +106,34 @@ def is_same(path1, path2):
 
 
 class _PathObj:
-    def __init__(self, path=None):
+    def __init__(self, path: str = ''):
         self._path = path
-        self._name = None
-        self._dir = None
+        self._name = ''
+        self._dir = ''
 
-    def set_path(self, path):
+    def _set_path(self, path: str):
         self._path = path
-        self._name = None
-        self._dir = None
+        self._name = ''
+        self._dir = ''
 
     @property
     def path(self):
-        if self._path is None:
-            if self._name is None or self._dir is None:
+        if not self._path:
+            if not self._name or not self._dir:
                 raise RuntimeError('Cannot build path without both dir and name!')
             self._path = os.path.join(self._dir, self._name)
         return self._path
 
-    def set_name(self, name):
+    def _set_name(self, name: str):
         self._name = name
-        if self._dir is None:
+        if not self._dir:
             self._dir, _ = os.path.split(self._path)
-        self._path = None
+        self._path = ''
 
     @property
     def name(self):
-        if self._name is None:
+        """Give the name aka tail part of the directorys path."""
+        if not self._name:
             self._set_dir_name()
         return self._name
 
@@ -140,8 +141,9 @@ class _PathObj:
         self._dir, self._name = os.path.split(self._path)
 
     @property
-    def dir(self):
-        if self._dir is None:
+    def dir(self) -> str:
+        """Give the parent path above the current directory."""
+        if not self._dir:
             self._set_dir_name()
         return self._dir
 
@@ -154,34 +156,43 @@ class DirObj(_PathObj):
 class FileObj(_PathObj):
     def __init__(self):
         super(FileObj, self).__init__()
-        self._ext = None
-        self._base = None
+        self._ext = None  # type str | None
+        self._base = ''
 
     @property
-    def ext(self):
+    def ext(self) -> str:
         if self._ext is None:
-            self._set_base_ext()
+            _, ext = self._set_base_ext()
+            return ext
         return self._ext
 
     def _set_base_ext(self):
         self._base, self._ext = os.path.splitext(self.name)
         self._ext = self._ext.lower()
+        return self._base, self._ext
 
     def is_type(self, type_list):
         return self.ext in type_list
 
     @property
-    def base(self):
-        if self._base is None:
+    def base(self) -> str:
+        if not self._base:
             self._set_base_ext()
         return self._base
 
-    def set_name(self, name):
-        super(FileObj, self).set_name(name)
+    def _set_name(self, name: str):
+        super(FileObj, self)._set_name(name)
         self._ext = None
-        self._base = None
+        self._base = ''
 
-    def set_path(self, path):
-        super(FileObj, self).set_path(path)
+    def _set_path(self, path):
+        super(FileObj, self)._set_path(path)
         self._ext = None
-        self._base = None
+        self._base = ''
+
+
+if __name__ == '__main__':
+    import unittest
+    from test import test_a2path
+
+    unittest.main(test_a2path, verbosity=2)
