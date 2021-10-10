@@ -2,8 +2,7 @@
 Finally an own little module all things icons.
 """
 import os
-# from a2qt import QtGui, QtCore, QtSvg
-from PySide2 import QtGui, QtCore, QtSvg
+from a2qt import QtGui, QtCore, QtSvg
 import a2core
 import a2path
 
@@ -141,7 +140,7 @@ class _Icons:
             _Icons._instance = _Icons()
         return _Icons._instance
 
-    def __getattribute__(self, name):
+    def __getattribute__(self, name) -> QtGui.QIcon:
         try:
             obj = super(_Icons, self).__getattribute__(name)
         except AttributeError:
