@@ -1,9 +1,8 @@
 """
 Ui for various module-local scripts.
 """
-
 import os
-from a2qt import QtWidgets, QtCore
+from a2qt import QtWidgets, QtCore, QtGui
 
 import a2ctrl
 import a2util
@@ -19,7 +18,7 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
     def __init__(self, parent, main):
         super(BrowseScriptsMenu, self).__init__(parent)
         self.main = main
-        self.setIcon(a2ctrl.Icons.inst().code)
+        self.setIcon(a2ctrl.Icons.code)
         self.aboutToShow.connect(self.build_menu)
 
         self.extension = DEFAULT_EXT
@@ -35,7 +34,7 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         # TODO: This needs to be done with the Editor widget! Not by the single element!
         temp_config = self.main.module_view._tmp_cfg
         for cfg in a2ctrl.iter_element_cfg_type(temp_config, self.config_typ):
-            this_name = cfg.get('script_name')
+            this_name = cfg.get('script_name', '')
             if this_name:
                 scripts_in_use.add(this_name)
 
@@ -51,7 +50,7 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         return menu_script_files
 
     def _on_script_selected_action(self):
-        script_name = self.sender().data()
+        script_name = self.sender().data()  # type: str
         self.set_script(script_name)
 
     def _on_create_script(self):
@@ -93,14 +92,12 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         available = self.get_available_scripts()
 
         for script_name in available:
-            action = self.addAction(
-                a2ctrl.Icons.inst().code, script_name, self._on_script_selected_action
-            )
+            action = self.addAction(a2ctrl.Icons.code, script_name, self._on_script_selected_action)
             action.setData(script_name)
         if available:
             self.addSeparator()
 
-        self.addAction(a2ctrl.Icons.inst().code, 'Create New', self._on_create_script)
+        self.addAction(a2ctrl.Icons.code, 'Create New', self._on_create_script)
 
 
 class ScriptSelector(QtWidgets.QWidget):
@@ -114,12 +111,12 @@ class ScriptSelector(QtWidgets.QWidget):
     def _setup_ui(self):
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.button = QtWidgets.QPushButton(self, 'None')
+        self.button = QtWidgets.QPushButton('None', self)
         layout.addWidget(self.button)
 
         self.edit_button = QtWidgets.QPushButton('edit script')
         self.edit_button.clicked.connect(self.edit_script)
-        self.edit_button.setIcon(a2ctrl.Icons.inst().edit)
+        self.edit_button.setIcon(a2ctrl.Icons.edit)
         layout.addWidget(self.edit_button)
         layout.setStretch(0, 1)
 
