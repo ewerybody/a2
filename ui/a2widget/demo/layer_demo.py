@@ -5,7 +5,7 @@ import a2uic
 
 class Demo(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Demo, self).__init__()
+        super().__init__()
 
         a2uic.check_module(layer_demo_ui)
 
@@ -17,12 +17,12 @@ class Demo(QtWidgets.QMainWindow):
         self.ui = layer_demo_ui.Ui_Form()
         self.ui.setupUi(self.lw)
 
-        self.ui.gridLayout.removeItem(self.ui.layout_1)
         self.ui.gridLayout.removeItem(self.ui.layout_0)
+        self.ui.gridLayout.removeItem(self.ui.layout_1)
 
-        # the order of layout adding is not important!
-        # what counts is the order of widget creation!
-        # the label needs to be created first! Then the button Voila!
+        # Order of layout adding is not important!
+        # What counts is the order of widget creation!
+        # The underlying label needs to be created first! Then the button Voila!
         self.ui.gridLayout.addLayout(self.ui.layout_0, 0, 0)
         self.ui.gridLayout.addLayout(self.ui.layout_1, 0, 0)
         self.ui.layout_1.setAlignment(

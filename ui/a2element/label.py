@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import a2ctrl.connect
 from a2qt import QtWidgets
 from a2element import DrawCtrl, EditCtrl
@@ -50,7 +49,7 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().text
+        return a2ctrl.Icons.text
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):

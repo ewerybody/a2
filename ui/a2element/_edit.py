@@ -1,6 +1,5 @@
 import os
 
-import a2mod
 import a2ctrl
 from a2widget import local_script
 from a2ctrl.icons import Icons
