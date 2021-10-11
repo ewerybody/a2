@@ -113,7 +113,7 @@ class Draw(DrawCtrl):
             menu.addAction('Revert to Default', self.clear_user_cfg)
 
         if self.cfg.get(Vars.key_change, True):
-            build_hotkey_menu(menu, self.hotkey_button, self.help)
+            build_hotkey_menu(menu, self.hotkey_button)
 
         menu.addSeparator()
 
@@ -125,9 +125,6 @@ class Draw(DrawCtrl):
             action.setChecked(current_style == name)
             action.triggered.connect(self._on_hotkey_dialog_style_change)
         menu.addMenu(submenu)
-
-    def help(self):
-        a2util.surf_to(self.helpUrl)
 
     def _on_hotkey_dialog_style_change(self):
         action = self.sender()
@@ -144,7 +141,7 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-
+        self.cfg.setdefault('name', '')
         # deferred because pretty huge & not needed by non dev users
         from a2widget.a2hotkey import edit_widget_ui, edit_func_widget_ui
 
@@ -154,15 +151,12 @@ class Edit(EditCtrl):
         self.ui = edit_widget_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        self.helpUrl = self.a2.urls.helpHotkey
-
         self.ui.hotkey_button.set_edit_mode(True)
         self.ui.hotkey_button.set_config(self.cfg)
         self.ui.hotkey_button.hotkey_changed.connect(self.hotkey_change)
 
         self.ui.a2option_button.menu_called.connect(self.build_edit_menu)
 
-        self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui.func_widget.ui)
         self.ui.func_widget.set_config(self.cfg)
@@ -186,7 +180,7 @@ class Edit(EditCtrl):
         self.cfg['key'] = new_keys
 
     def build_edit_menu(self, menu):
-        build_hotkey_menu(menu, self.ui.hotkey_button, self.help)
+        build_hotkey_menu(menu, self.ui.hotkey_button)
 
     @staticmethod
     def element_name():
@@ -197,7 +191,12 @@ class Edit(EditCtrl):
         return a2ctrl.Icons.inst().keyboard
 
 
-def build_hotkey_menu(menu, button, help_func):
+def hotkey_help():
+    a2 = a2core.A2Obj.inst()
+    a2util.surf_to(a2.urls.helpHotkey)
+
+
+def build_hotkey_menu(menu, button):
     icons = a2ctrl.Icons.inst()
     if not button.has_empty:
         menu.addAction(icons.list_add, 'Add another Hotkey', button.add_hotkey)
@@ -211,7 +210,7 @@ def build_hotkey_menu(menu, button, help_func):
         if not button.is_clear:
             menu.addAction(icons.clear, 'Clear Hotkey', button.clear)
 
-    menu.addAction(icons.help, 'Help on Hotkey Setup', help_func)
+    menu.addAction(icons.help, 'Help on Hotkey Setup', hotkey_help)
 
 
 def get_settings(module_key, cfg, db_dict, user_cfg):

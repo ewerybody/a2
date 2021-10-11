@@ -1,5 +1,6 @@
 import a2uic
 import a2ctrl
+import a2ctrl.connect
 
 from a2qt import QtWidgets
 
@@ -75,13 +76,13 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        self.helpUrl = self.a2.urls.help_number
+        self.cfg.setdefault('name', '')
+        self.help_url = self.a2.urls.help_number
 
         a2uic.check_module(number_edit_ui)
         self.ui = number_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
         # Make value widget adapt to changes of other settings.

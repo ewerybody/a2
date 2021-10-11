@@ -1,4 +1,5 @@
 import a2ctrl
+import a2ctrl.connect
 
 from a2qt import QtWidgets
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
@@ -33,12 +34,11 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        self.helpUrl = self.a2.urls.helpCheckbox
+        self.help_url = self.a2.urls.helpCheckbox
+        self.cfg.setdefault('name', '')
 
         self.ui = check_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
-
-        self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
     @staticmethod

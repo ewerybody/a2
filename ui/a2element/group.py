@@ -1,5 +1,6 @@
 import a2uic
 import a2ctrl
+import a2ctrl.connect
 import a2util
 
 from a2qt import QtWidgets
@@ -65,43 +66,38 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        if 'children' not in self.cfg:
-            self.cfg['children'] = []
+        self.cfg.setdefault('name', '')
+        self.cfg.setdefault('children', [])
+        self.config_list = self.cfg['children']
+        self._child_elements = []
 
         a2uic.check_module(group_edit_ui)
         self.ui = group_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        controls = []
-        for child in self.cfg['children']:
-            controls.append(a2ctrl.edit(child, self.main, self.cfg['children']))
-
-        from a2element._edit import EditAddElem
-        adder_widget = EditAddElem(self.main, self.cfg['children'], 'Add Group Element')
-        adder_widget.add_request.connect(self._add_element)
-        controls.append(adder_widget)
-
-        for ctrl in controls:
-            self.ui.edit_layout.addWidget(ctrl)
-
-        self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
         self._check_checkable()
         self.ui.cfg_disablable.clicked[bool].connect(self._check_checkable)
 
-    def _add_element(self, element_cfg):
-        self.cfg['children'].append(element_cfg)
-        self.changed.emit()
+    def fill_elements(self, elements: list):
+        from a2element._edit import EditAddElem
 
-    def paste(self):
-        """
-        Amends child list with cfgs from the main edit_clipboard
-        and flushes it afterwards.
-        """
-        for element_cfg in self.main.edit_clipboard:
-            self.cfg['children'].append(element_cfg)
-        self.main.edit_clipboard = []
+        adder_widget = EditAddElem(self.main, self.config_list, 'Add Group Element')
+        adder_widget.add_request.connect(self._add_element)
+        elements.append(adder_widget)
+
+        self._child_elements.clear()
+        for element in elements:
+            self.ui.edit_layout.addWidget(element)
+            self._child_elements.append(element)
+
+    def get_child_index(self, element):
+        return self._child_elements.index(element)
+
+    def _add_element(self, element_cfg):
+        # type: (dict[str, bool | float | str | list[str]]) -> None
+        self.config_list.append(element_cfg)
         self.changed.emit()
 
     def _check_checkable(self, checked=None):
@@ -113,6 +109,15 @@ class Edit(EditCtrl):
             self.ui.cfg_enabled.setChecked(True)
             self.cfg['enabled'] = True
         self.ui.cfg_enabled.setVisible(checked)
+
+    @property
+    def max_index(self):
+        """Give index of the last element config."""
+        return len(self.config_list) - 1
+
+    @property
+    def top_index(self):
+        return 0
 
     @staticmethod
     def element_name():

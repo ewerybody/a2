@@ -49,10 +49,10 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
+        self.cfg.setdefault('name', '')
         a2uic.check_module(coords_edit_ui)
         self.ui = coords_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
-        self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
     @staticmethod

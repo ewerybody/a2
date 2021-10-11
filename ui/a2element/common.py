@@ -1,7 +1,6 @@
 """
 The a2 element foundations.
 """
-import os
 from functools import partial
 
 from a2qt import QtCore, QtGui, QtWidgets
@@ -161,22 +160,19 @@ class EditCtrl(QtWidgets.QGroupBox):
         I'd like to have some actual up/down buttons and an x to indicate delete
         functionality
     """
-    delete_requested = QtCore.Signal()
-    move_rel_requested = QtCore.Signal(int)
-    move_abs_requested = QtCore.Signal(bool)
-    duplicate_requested = QtCore.Signal()
-    cut_requested = QtCore.Signal()
+
     changed = QtCore.Signal()
+    menu_requested = QtCore.Signal()
 
     def __init__(self, cfg, main, parent_cfg, add_layout=True):
         super(EditCtrl, self).__init__()
         self.a2 = a2core.A2Obj.inst()
-        self.cfg = cfg
+        self.cfg = cfg # type: dict[str, bool | int | float | str | list[str]]
         self.main = main
         self.parent_cfg = parent_cfg
 
         self._setup_ui(add_layout)
-        self.helpUrl = self.a2.urls.helpEditCtrl
+        self.help_url = ''
         self.is_expandable_widget = False
 
     @staticmethod
@@ -186,56 +182,6 @@ class EditCtrl(QtWidgets.QGroupBox):
     @staticmethod
     def element_icon():
         return None
-
-    def move(self, value, *args):
-        if self.parent_cfg and self.parent_cfg[0].get('typ', '') == 'nfo':
-            top_index = 1
-        else:
-            top_index = 0
-
-        index = None
-        for i, cfg in enumerate(self.parent_cfg):
-            if self.cfg is cfg:
-                index = i
-                break
-        if index is None:
-            index = self.parent_cfg.index(self.cfg)
-
-        max_index = len(self.parent_cfg) - 1
-        if isinstance(value, bool):
-            if value:
-                newindex = top_index
-            else:
-                newindex = max_index
-        else:
-            newindex = index + value
-        # hop out if already at start or end
-        if index == newindex or newindex < top_index or newindex > max_index:
-            # print('returning from move! curr/new/max: %s/%s/%s' % (index, newindex, max_index))
-            return
-
-        # cfg = self.parent_cfg.pop(index)
-        self.parent_cfg.pop(index)
-        self.parent_cfg.insert(newindex, self.cfg)
-        self.main.edit_mod()
-
-    def duplicate(self):
-        from copy import deepcopy
-
-        new_cfg = deepcopy(self.cfg)
-        if 'name' in new_cfg:
-            new_cfg['name'] = self.increase_name_number(new_cfg['name'])
-        self.parent_cfg.append(new_cfg)
-        self.main.edit_mod()
-
-    def cut(self):
-        from copy import deepcopy
-
-        self.main.edit_clipboard.append(deepcopy(self.cfg))
-        self.delete_requested.emit()
-
-    def help(self):
-        a2util.surf_to(self.helpUrl)
 
     def _setup_ui(self, add_layout):
         # self.setTitle(self.cfg['typ'])
@@ -267,7 +213,7 @@ class EditCtrl(QtWidgets.QGroupBox):
         self._ctrl_button_layout.setContentsMargins(0, 0, 0, 0)
 
         self._ctrl_button = QtWidgets.QToolButton(self)
-        self._ctrl_button.setIcon(Icons.inst().more)
+        self._ctrl_button.setIcon(Icons.more)
         button_size = self.get_style_value('icon_size', 32)
         self._ctrl_button.setMinimumSize(QtCore.QSize(button_size, button_size))
         self._ctrl_button.setMaximumSize(QtCore.QSize(button_size, button_size))
@@ -281,61 +227,8 @@ class EditCtrl(QtWidgets.QGroupBox):
 
         self._ctrl_layout.addLayout(self._ctrl_button_layout, 0, 0, 1, 1)
 
-        self._ctrl_menu = QtWidgets.QMenu(self)
-        self._ctrl_button.clicked.connect(self._build_menu)
+        self._ctrl_button.clicked.connect(self.menu_requested.emit)
         self._ctrl_button.setVisible(False)
-
-    def _build_menu(self):
-        """
-        TODO: don't show top/to top, bottom/to bottom when already at top/bottom
-        """
-        self._ctrl_menu.clear()
-        icons = Icons.inst()
-        menu_items = [
-            ('Up', partial(self.move, -1), icons.up),
-            ('Down', partial(self.move, 1), icons.down),
-            ('To Top', partial(self.move, True), icons.up_align),
-            ('To Bottom', partial(self.move, False), icons.down_align),
-            ('Delete', self.delete_requested.emit, icons.delete),
-            ('Duplicate', self.duplicate, icons.copy),
-            ('Help on %s' % self.element_name(), self.help, icons.help),
-        ]
-
-        clipboard_count = ''
-        if self.main.edit_clipboard:
-            clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
-
-        if self.cfg.get('typ') == 'group':
-            menu_items.insert(-1, ('Paste' + clipboard_count, self.paste, icons.paste))
-        else:
-            menu_items.insert(-1, ('Cut' + clipboard_count, self.cut, icons.cut))
-
-        for label, func, icon in menu_items:
-            action = self._ctrl_menu.addAction(icon, label, func)
-        self._ctrl_menu.insertSeparator(action)
-        self._ctrl_menu.popup(QtGui.QCursor.pos())
-
-    def check_new_name(self):
-        """
-        If no name set yet, like on new controls this creates a new unique
-        name for the control from the module name + control type + incremental number
-        """
-        if 'name' not in self.cfg:
-            # build the base control name
-            new_name = '%s_%s' % (self.main.mod.name, self.element_name())
-            new_name = new_name.replace(' ', '_')
-            self.cfg['name'] = self.increase_name_number(new_name)
-
-    def increase_name_number(self, name):
-        """
-        Look up the current controls to find a free number for given name.
-        """
-        # TODO: This needs to be done with the Editor widget! Not by the single element!
-        tmp_cfg = self.main.module_view._tmp_cfg
-        names = [e.get('name') for e in a2ctrl.iter_element_cfg_type(tmp_cfg)]
-        names = [n for n in names if n is not None]
-        new_name = a2util.get_next_free_number(name, names)
-        return new_name
 
     def enterEvent(self, event):
         self._ctrl_button.setVisible(True)
@@ -351,5 +244,3 @@ class EditCtrl(QtWidgets.QGroupBox):
             return self.main.style.get(value_name, default)
         except AttributeError:
             return default
-
-

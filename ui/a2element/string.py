@@ -52,13 +52,13 @@ class Edit(EditCtrl):
 
     def __init__(self, cfg, main, parent_cfg):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
-        self.helpUrl = self.a2.urls.help_string
+        self.cfg.setdefault('name', '')
+        self.help_url = self.a2.urls.help_string
 
         a2uic.check_module(string_edit_ui)
         self.ui = string_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
 
-        self.check_new_name()
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
     @staticmethod
