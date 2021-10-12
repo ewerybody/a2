@@ -29,6 +29,7 @@ class EditView(QtWidgets.QWidget):
 
         self.edit_layout = QtWidgets.QVBoxLayout(self)
         self._elemenu = QtWidgets.QMenu(self)
+
         self._draw()
 
     def _draw(self):
@@ -53,14 +54,9 @@ class EditView(QtWidgets.QWidget):
             self.edit_layout.addWidget(element)
             self.elements.append(element)
 
-        edit_select = a2element._edit.EditAddElem(self.main, self.config_list)
-        edit_select.add_request.connect(self.add_element)
-        self.elements.append(edit_select)
-        self.edit_layout.addWidget(edit_select)
-
         # amend a spacer
         policy = QtWidgets.QSizePolicy
-        spacer = QtWidgets.QSpacerItem(10, 10, policy.Minimum, policy.Minimum)
+        spacer = QtWidgets.QSpacerItem(10, 60, policy.Minimum, policy.Minimum)
         self.edit_layout.addItem(spacer)
 
         self.setSizePolicy(policy(policy.Preferred, policy.Maximum))

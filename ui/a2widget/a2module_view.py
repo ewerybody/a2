@@ -47,6 +47,8 @@ class A2ModuleView(QtWidgets.QWidget):
 
         self.ui.a2ok_button.clicked.connect(self.okayed.emit)
         self.ui.a2cancel_button.clicked.connect(self.draw_mod)
+        self.add_button = None
+        self.add_button_layer = None
         self._set_editing(False)
         icon_size = self.main.style.get('icon_size')
         self.ui.icon_label.setMinimumSize(icon_size, icon_size)
@@ -158,12 +160,26 @@ class A2ModuleView(QtWidgets.QWidget):
 
         from copy import deepcopy
         from a2widget import a2module_editor
+        import a2element._edit
 
         self.controls.clear()
         self.menu_items.clear()
 
-        self.editor = a2module_editor.EditView(self.main, deepcopy(self.main.mod.config))
+        config_copy = deepcopy(self.main.mod.config)
+        self.editor = a2module_editor.EditView(self.main, config_copy)
         self.ui.a2edit_tool_button.clicked.connect(self.editor.on_menu_button_clicked)
+
+        self.add_button = a2element._edit.EditAddElem(self.main, config_copy)
+        self.add_button.add_request.connect(self.editor.add_element)
+        self.add_button_layer = QtWidgets.QVBoxLayout()
+        spacing = self.main.style.get('spacing')
+        self.add_button_layer.setContentsMargins(spacing, 0, 0, 0)
+        self.add_button_layer.addWidget(self.add_button)
+        self.ui.mod_view_grid.addLayout(self.add_button_layer, 1, 0, 1, 1)
+        self.add_button_layer.setAlignment(
+            self.add_button, QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeft
+        )
+
         self._set_widget(self.editor)
         self._set_editing(True)
         self.settings_widget.setFocus()
@@ -231,6 +247,13 @@ class A2ModuleView(QtWidgets.QWidget):
         self.ui.a2edit_okcancel_widget.setVisible(state)
         for button in [self.ui.a2cancel_button, self.ui.a2ok_button]:
             button.setEnabled(state)
+        if not state:
+            if self.add_button_layer is None and self.add_button is None:
+                return
+            self.ui.mod_view_grid.removeItem(self.add_button_layer)
+            self.add_button.deleteLater()
+            self.add_button_layer = None
+            self.add_button = None
 
     def help(self):
         """
