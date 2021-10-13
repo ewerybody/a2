@@ -101,7 +101,7 @@ _a2_exceptions_handle(title, exception) {
 
     IfMsgBox, Yes
     {
-        editor := a2cfg.code_editor
+        editor := a2.cfg.code_editor
         base := path_basename(editor)
         if !editor OR !base
             MsgBox editor: %editor%`nbase: %base%
@@ -111,7 +111,7 @@ _a2_exceptions_handle(title, exception) {
     IfMsgBox, No
     {
         if IsFunc("a2ui")
-            "a2ui"()
+            a2ui()
     }
 
     _a2ui_on_error_change_buttons:
@@ -124,7 +124,6 @@ _a2_exceptions_handle(title, exception) {
         ControlSetText, Button4, ...
     Return
 }
-
 
 _get_neighbor_lines(file_path, line_nr, num_neighbor_lines) {
     start_line := line_nr - num_neighbor_lines - 1
