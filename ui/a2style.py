@@ -5,8 +5,8 @@ from a2qt import QtWidgets, QtGui, QtCore
 
 BASE_DPI = 96.0
 DEFAULT_STYLE = 'light'
-TEMPLATE_NAME = 'css.template'
-DEFAULTS_NAME = 'css_defaults.json'
+TEMPLATE_NAME = 'template.qss'
+DEFAULTS_NAME = 'qss_defaults.json'
 STYLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'style')
 
 
