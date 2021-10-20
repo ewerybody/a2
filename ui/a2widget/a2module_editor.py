@@ -63,6 +63,12 @@ class EditView(QtWidgets.QWidget):
 
     def _build_element(self, cfg, parent_cfg):
         element = a2ctrl.edit(cfg, self.main, parent_cfg)
+        new_name = self._check_new_name(cfg)
+        if new_name and element is not None:
+            if hasattr(element, 'ui') and hasattr(element.ui, 'cfg_name'):
+                name_widget = getattr(element.ui, 'cfg_name')
+                name_widget.setText(new_name)
+
         if isinstance(element, a2element.common.EditCtrl):
             element.menu_requested.connect(self._build_elemenu)
             element.changed.connect(self._draw)
@@ -124,7 +130,6 @@ class EditView(QtWidgets.QWidget):
         return deepcopy(self.config_list)
 
     def add_element(self, config):
-        self._check_new_name(config)
         self.config_list.append(config)
         self._draw()
 
@@ -226,6 +231,7 @@ class EditView(QtWidgets.QWidget):
         new_name = '%s_%s' % (self.main.mod.name, config['typ'].title())
         new_name = new_name.replace(' ', '_')
         config['name'] = self._increase_name_number(new_name)
+        return new_name
 
     def on_menu_button_clicked(self):
         pass
