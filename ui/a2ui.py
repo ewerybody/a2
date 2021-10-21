@@ -97,10 +97,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionExplore_to.setIcon(icons.folder)
 
-        self.ui.actionAbout_a2.triggered.connect(partial(a2util.surf_to, self.a2.urls.help))
-        self.ui.actionAbout_a2.setIcon(icons.a2help)
-        self.ui.actionAbout_Autohotkey.triggered.connect(partial(a2util.surf_to, self.a2.urls.ahk))
-        self.ui.actionAbout_Autohotkey.setIcon(icons.autohotkey)
+        self._make_url_action(self.ui.actionAbout_a2, self.a2.urls.help, icons.a2help)
+        self._make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, icons.autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionExplore_to_a2_dir.setIcon(icons.folder)
@@ -112,10 +110,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExit_a2ui.setIcon(icons.clear)
         self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
 
-        self.ui.actionReport_Issue.triggered.connect(
-            partial(a2util.surf_to, self.a2.urls.help_report_issue)
-        )
-        self.ui.actionReport_Issue.setIcon(icons.github)
+        self._make_url_action(self.ui.action_report_bug, self.a2.urls.report_bug, icons.github)
+        self._make_url_action(self.ui.action_report_sugg, self.a2.urls.report_sugg, icons.github)
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
         self.ui.actionNew_Module_Dialog.setIcon(icons.folder_add)
@@ -143,6 +139,16 @@ class A2Window(QtWidgets.QMainWindow):
         else:
             self.ui.actionUninstall_a2.deleteLater()
             self.on_uninstall_a2 = None
+
+    def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
+        action.setData(url)
+        action.setIcon(icon)
+        action.triggered.connect(self._on_url_action)
+
+    def _on_url_action(self):
+        action = self.sender()
+        if isinstance(action, QtGui.QAction):
+            a2util.surf_to(action.data())
 
     def _setup_shortcuts(self):
         Qt = QtCore.Qt

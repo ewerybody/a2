@@ -39,6 +39,7 @@ class Paths:
     defaults: str
     includes: str
     lib: str
+    uninstaller: str
     def set_data_path(self, str): ...
     def write_user_include(self): ...
 
@@ -54,7 +55,8 @@ class URLs:
     help_string: str
     help_number: str
     help_path: str
-    help_report_issue: str
+    report_bug: str
+    report_sugg: str
     security: str
     ahk: str
     ahk_commands: str

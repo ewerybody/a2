@@ -207,7 +207,8 @@ class URLs:
         self.help_string = self.wiki + 'Edit-String'
         self.help_number = self.wiki + 'Edit-Number'
         self.help_path = self.wiki + 'Edit-Path'
-        self.help_report_issue = self.a2 + '/issues/new'
+        self.report_bug = self.a2 + '/issues/new/?labels=bug'
+        self.report_sugg = self.a2 + '/issues/new/?labels=improvement'
         self.security = variables_dict.get('a2_security', '')
 
         self.ahk = 'https://autohotkey.com'
