@@ -2,7 +2,9 @@ import logging
 import typing
 from singlesiding import QSingleApplication
 from a2qt import QtWidgets
+import a2app
 import a2db
+import a2ui
 import a2modsource
 
 A2DEFAULT_HOTKEY: str
@@ -14,21 +16,19 @@ class A2Obj:
 
     _instance: object
 
-    app: typing.Optional[QSingleApplication] = None
-    win: typing.Optional[QtWidgets.QMainWindow] = None
+    app: a2app.A2App = ...
+    win: a2ui.A2Window = ...
     paths: Paths
     urls: URLs
     db: a2db.A2db
 
     enabled: typing.Dict[str, typing.List[str]]
     module_sources: typing.Dict[str, a2modsource.ModSource]
-
     def __init__(self) -> None: ...
     @classmethod
     def inst(cls) -> A2Obj: ...
     def start_up(self) -> None: ...
     def fetch_modules(self) -> None: ...
-
 
 class Paths:
     """Aquires and hosts common paths around a2."""
@@ -42,7 +42,6 @@ class Paths:
     uninstaller: str
     def set_data_path(self, str): ...
     def write_user_include(self): ...
-
 
 class URLs:
     a2: str
@@ -66,8 +65,7 @@ class URLs:
     ahk_builtin_vars: str
     ahkWinTitle: str
 
-
 def get_logger(str) -> logging.Logger: ...
-
+def set_loglevel(debug: bool = False): ...
 def tags() -> dict[str, str]:
     """Return tags dictionary with shortnames/english desctiptions."""

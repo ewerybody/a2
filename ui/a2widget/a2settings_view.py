@@ -244,7 +244,9 @@ class DataPathUiHandler(QtCore.QObject):
         self.reload_requested.emit()
 
     def _on_set_path_action(self):
-        self._set_path(self.sender().data())
+        action = self.sender()
+        if isinstance(action, QtGui.QAction):
+            self._set_path(action.data())
 
     def browse(self):
         file_path = QtWidgets.QFileDialog.getExistingDirectory(
@@ -297,14 +299,14 @@ class IntegrationUIHandler(QtCore.QObject):
 
 
 class _IntegrationCheckBox(QtWidgets.QWidget):
-    def __init__(self, parent, label, a2, data=None):
+    def __init__(self, parent, label, a2: a2core.A2Obj, data=None):
         super(_IntegrationCheckBox, self).__init__(parent)
 
         self.a2 = a2
         layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.check = QtWidgets.QCheckBox(label, self)
-        self.check.clicked[bool].connect(self._set)
+        self.check.clicked.connect(self._set)
         layout.addWidget(self.check)
 
         self.alert_label = QtWidgets.QLabel('')
@@ -343,8 +345,9 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
     def _on_check_finished(self):
         thread = self.sender()
-        self._set_path(thread.result, thread.error)
-        self.setEnabled(True)
+        if isinstance(thread, _CmdCheckThread):
+            self._set_path(thread.result, thread.error)
+            self.setEnabled(True)
 
     def _set_path(self, path, tooltip):
         checked = False

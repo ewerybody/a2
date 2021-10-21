@@ -19,7 +19,7 @@ class A2StyleBuilder(QtCore.QObject):
         self._user_scale = None
         self._last_style = None
         self._css_values = {}
-        self.template = None
+        self.template = ''
         self.defaults = {}
 
         self.get_local_scale()

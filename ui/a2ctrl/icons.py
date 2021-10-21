@@ -228,7 +228,7 @@ def get(current_icon, folder, fallback=None):
             current_icon = Ico(icon_path)
         else:
             if fallback is None:
-                fallback = Icons.inst().a2
+                fallback = Icons.a2
             current_icon = fallback
 
     return current_icon

@@ -16,11 +16,11 @@ from a2qt import QtWidgets, QtCore
 from singlesiding import QSingleApplication
 
 
-class A2Main(QSingleApplication):
+class A2App(QSingleApplication):
     """The a2 app foundation object."""
 
     def __init__(self):
-        super(A2Main, self).__init__(sys.argv)
+        super().__init__(sys.argv)
         self._core = None
         self._win = None
 
@@ -98,6 +98,8 @@ class A2Main(QSingleApplication):
             self.exit()
 
         elif '--show' in msg:
+            if self._win is None:
+                return
             self.info('received show command ...')
             self._win.show_raise()
 
@@ -122,7 +124,7 @@ def main():
         import a2output
 
         a2output.get_logwriter()
-        app = A2Main()
+        app = A2App()
         app.exec_()
     # Broad except is expected here!
     # pylint: disable=broad-except

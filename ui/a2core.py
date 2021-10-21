@@ -347,10 +347,10 @@ def get_logger(name: str):
     return newlog
 
 
-def set_loglevel(debug=False):
+def set_loglevel(debug: bool=False):
     level = [logging.INFO, logging.DEBUG][debug]
     for name, logger in log.manager.loggerDict.items():
-        if name.startswith(NAME):
+        if name.startswith(NAME) and isinstance(logger, logging.Logger):
             try:
                 logger.setLevel(level)
                 log.debug('"%s" Log level DEBUG: active', name)

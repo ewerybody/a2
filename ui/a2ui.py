@@ -22,7 +22,7 @@ TITLE_OFFLINE = 'Runtime is Offline!'
 
 
 class A2Window(QtWidgets.QMainWindow):
-    def __init__(self, app=None):
+    def __init__(self, app):
         super(A2Window, self).__init__(parent=None)
         self.setEnabled(False)
         self.a2 = a2core.A2Obj.inst()
@@ -35,7 +35,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.num_selected = 0
         self.mod = None
 
-        self.style = None
+        self._style = None
         self.rebuild_css()
 
         self.devset = a2dev.DevSettings(self.a2)
@@ -89,52 +89,52 @@ class A2Window(QtWidgets.QMainWindow):
         self.check_main_menu_bar()
 
     def _setup_actions(self):
-        icons = a2ctrl.Icons.inst()
+        Icons = a2ctrl.Icons
         self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
-        self.ui.actionEdit_module.setIcon(icons.edit)
+        self.ui.actionEdit_module.setIcon(Icons.edit)
 
         self.ui.actionDisable_all_modules.triggered.connect(self.mod_disable_all)
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
-        self.ui.actionExplore_to.setIcon(icons.folder)
+        self.ui.actionExplore_to.setIcon(Icons.folder)
 
-        self._make_url_action(self.ui.actionAbout_a2, self.a2.urls.help, icons.a2help)
-        self._make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, icons.autohotkey)
+        self._make_url_action(self.ui.actionAbout_a2, self.a2.urls.help, Icons.a2help)
+        self._make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
-        self.ui.actionExplore_to_a2_dir.setIcon(icons.folder)
+        self.ui.actionExplore_to_a2_dir.setIcon(Icons.folder)
         self.ui.actionExplore_to_a2_data_dir.triggered.connect(self.explore_a2data)
-        self.ui.actionExplore_to_a2_data_dir.setIcon(icons.folder)
+        self.ui.actionExplore_to_a2_data_dir.setIcon(Icons.folder)
         self.ui.actionA2_settings.triggered.connect(self.module_list.select)
-        self.ui.actionA2_settings.setIcon(icons.a2)
+        self.ui.actionA2_settings.setIcon(Icons.a2)
         self.ui.actionExit_a2ui.triggered.connect(self.close)
-        self.ui.actionExit_a2ui.setIcon(icons.clear)
+        self.ui.actionExit_a2ui.setIcon(Icons.clear)
         self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
 
-        self._make_url_action(self.ui.action_report_bug, self.a2.urls.report_bug, icons.github)
-        self._make_url_action(self.ui.action_report_sugg, self.a2.urls.report_sugg, icons.github)
+        self._make_url_action(self.ui.action_report_bug, self.a2.urls.report_bug, Icons.github)
+        self._make_url_action(self.ui.action_report_sugg, self.a2.urls.report_sugg, Icons.github)
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
-        self.ui.actionNew_Module_Dialog.setIcon(icons.folder_add)
+        self.ui.actionNew_Module_Dialog.setIcon(Icons.folder_add)
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
-        self.ui.actionCreate_New_Element.setIcon(icons.folder_add)
+        self.ui.actionCreate_New_Element.setIcon(Icons.folder_add)
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
-        self.ui.actionUnload_a2_Runtime.setIcon(icons.a2x)
+        self.ui.actionUnload_a2_Runtime.setIcon(Icons.a2x)
         self.ui.actionReload_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
-        self.ui.actionReload_a2_Runtime.setIcon(icons.a2reload)
+        self.ui.actionReload_a2_Runtime.setIcon(Icons.a2reload)
         self.ui.actionLoad_a2_Runtime.triggered.connect(self.load_runtime_and_ui)
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
         self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
         self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
-        self.ui.menuRollback_Changes.setIcon(icons.rollback)
+        self.ui.menuRollback_Changes.setIcon(Icons.rollback)
         self.ui.actionRevert_Settings.triggered.connect(self.on_revert_settings)
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
         if os.path.isfile(self.a2.paths.uninstaller):
-            self.ui.actionUninstall_a2.setIcon(icons.a2x)
+            self.ui.actionUninstall_a2.setIcon(Icons.a2x)
             self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
         else:
             self.ui.actionUninstall_a2.deleteLater()
@@ -400,19 +400,26 @@ class A2Window(QtWidgets.QMainWindow):
         self.a2.fetch_modules()
         self.module_view.draw_mod()
 
+    @property
+    def style(self):
+        if self._style is None:
+            self._style = self.rebuild_css()
+        return self._style
+
     def rebuild_css(self, user_scale=None):
         if user_scale is None:
             user_scale = self.a2.db.get('ui_scale') or 1.0
         else:
             self.a2.db.set('ui_scale', user_scale)
 
-        if self.style is None:
+        if self._style is None:
             import a2style
 
-            self.style = a2style.A2StyleBuilder(self.a2.db.get('ui_theme'))
+            self._style = a2style.A2StyleBuilder(self.a2.db.get('ui_theme'))
 
-        css_template = self.style.get_style(user_scale)
+        css_template = self._style.get_style(user_scale)
         self.app.setStyleSheet(css_template)
+        return self._style
 
     def build_package(self):
         batch_path = os.path.join(self.a2.paths.lib, 'batches')
@@ -454,7 +461,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
 
     def build_rollback_menu(self):
-        icons = a2ctrl.Icons.inst()
         menu = self.ui.menuRollback_Changes
         menu.clear()
         backups_sorted = self.mod.get_config_backups()
@@ -472,10 +478,10 @@ class A2Window(QtWidgets.QMainWindow):
                     )
                 except ValueError:
                     continue
-                action = menu.addAction(icons.rollback, label, self.module_rollback_to)
+                action = menu.addAction(a2ctrl.Icons.rollback, label, self.module_rollback_to)
                 action.setData(backup_name)
             menu.addSeparator()
-            menu.addAction(icons.delete, 'Clear Backups', self.mod.clear_backups)
+            menu.addAction(a2ctrl.Icons.delete, 'Clear Backups', self.mod.clear_backups)
 
     def module_rollback_to(self):
         title = self.sender().text()
@@ -548,12 +554,12 @@ class A2Window(QtWidgets.QMainWindow):
         """Override Qt showEvent with window initialization."""
         if not self._initial_draw_finished:
             self.setWindowTitle(a2core.NAME)
-            self.setWindowIcon(a2ctrl.Icons.inst().a2)
+            self.setWindowIcon(a2ctrl.Icons.a2)
             widget = QtWidgets.QWidget(self)
             layout = QtWidgets.QVBoxLayout(widget)
             label = QtWidgets.QLabel()
             label.setAlignment(QtCore.Qt.AlignCenter)
-            label.setPixmap(a2ctrl.Icons.inst().a2tinted.pixmap(256))
+            label.setPixmap(a2ctrl.Icons.a2tinted.pixmap(256))
             layout.addWidget(label)
             self.setCentralWidget(widget)
             self.restore_ui()
