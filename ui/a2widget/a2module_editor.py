@@ -23,7 +23,7 @@ class EditView(QtWidgets.QWidget):
         if not config_list:
             new_cfg = a2mod.NEW_MODULE_CFG.copy()
             new_cfg['description'] = a2mod.NEW_MODULE_DESC % self.main.mod.name
-            new_cfg['date'] = (a2util.get_date(),)
+            new_cfg['date'] = a2util.get_date()
             new_cfg['author'] = self.main.devset.author_name
             config_list.insert(0, new_cfg)
 
