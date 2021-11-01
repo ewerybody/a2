@@ -99,11 +99,17 @@ _window_toggle_maximize_reset(byref win_id, byref memory) {
     }
 }
 
-window_activate(win_id) {
+window_activate(win_id, seconds := 5) {
+    ; Make sure a window with hwnd `win_id` is activated.
+    ; Activate it if needed, wait for `seconds`.
+    ; To wait forever set `seconds` to 0.
     IfWinNotActive, ahk_id %win_id%
     {
         WinActivate, ahk_id %win_id%
-        WinWaitActive, ahk_id %win_id%
+        if (seconds)
+            WinWaitActive, ahk_id %win_id%,, %seconds%
+        else
+            WinWaitActive, ahk_id %win_id%,
     }
 }
 
