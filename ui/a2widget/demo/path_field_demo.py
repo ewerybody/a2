@@ -11,16 +11,21 @@ class Demo(QtWidgets.QMainWindow):
         w.setLayout(lyt)
 
         self.widget1 = A2PathField(self)
+        self.widget1.changed.connect(self.on_path_changed)
         lyt.addWidget(self.widget1)
 
         self.write_check = QtWidgets.QCheckBox('writable')
         lyt.addWidget(self.write_check)
 
         self.write_check.clicked[bool].connect(self.set_write_state)
-        self.set_write_state()
+        self.set_write_state(True)
+        self.write_check.setChecked(True)
 
     def set_write_state(self, state=False):
         self.widget1.writable = state
+
+    def on_path_changed(self, text_now):
+        print(f'field changed: {text_now}')
 
 
 def show():
