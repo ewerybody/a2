@@ -8,9 +8,6 @@ and filtered file types can be set. See:
 https://doc.qt.io/qtforpython/PySide6/QtWidgets/QFileDialog.html?highlight=qfiledialog#detailed-description
 
 TODO: add recent paths?
-
-@created: Jun 19, 2016
-@author: eRiC
 """
 import os
 from a2qt import QtCore, QtWidgets
@@ -18,6 +15,8 @@ from a2qt import QtCore, QtWidgets
 import a2ctrl
 import a2util
 from a2widget.a2more_button import A2MoreButton
+
+MSG_ERROR_CHANGABLE = 'PathField cannot be set writable while not being changable at the same time!'
 
 
 class BrowseType(object):
@@ -43,9 +42,10 @@ class A2PathField(QtWidgets.QWidget):
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.line_field = QtWidgets.QLineEdit(self)
         self.line_field.setText(value)
+        self.line_field.textChanged.connect(self._on_text_changed)
         self.main_layout.addWidget(self.line_field)
         self.browse_button = QtWidgets.QPushButton('Browse...', self)
-        self.browse_button.setIcon(a2ctrl.Icons.inst().folder2)
+        self.browse_button.setIcon(a2ctrl.Icons.folder2)
         self.browse_button.clicked.connect(self.browse)
         self.main_layout.addWidget(self.browse_button)
 
@@ -54,8 +54,7 @@ class A2PathField(QtWidgets.QWidget):
         self.a2option_button.menu_called.connect(self.show_options_menu)
         self.main_layout.addWidget(self.a2option_button)
 
-        self._set_delay = 150
-        self._field_set = False
+        self._set_delay = 500
 
         self._value = value
         self.file_types = file_types
@@ -68,6 +67,10 @@ class A2PathField(QtWidgets.QWidget):
         self._writable = None
         self.writable = writable
 
+        self._timer = QtCore.QTimer()
+        self._timer.setInterval(self._set_delay)
+        self._timer.timeout.connect(self._send_changed)
+
     @property
     def writable(self):
         return self._writable
@@ -78,19 +81,10 @@ class A2PathField(QtWidgets.QWidget):
             return
 
         if state and not self.changable:
-            raise RuntimeError(
-                'PathField cannot be set writable while not being changable at the same time!'
-            )
+            raise RuntimeError(MSG_ERROR_CHANGABLE)
 
         self._writable = state
         self.line_field.setReadOnly(not state)
-        if state:
-            self.line_field.editingFinished.connect(self._delayed_set)
-        else:
-            try:
-                self.line_field.editingFinished.disconnect(self._delayed_set)
-            except RuntimeError:
-                pass
 
     @property
     def changable(self):
@@ -125,13 +119,16 @@ class A2PathField(QtWidgets.QWidget):
         if file_path:
             self.value = file_path
 
-    def _delayed_set(self):
-        if self._field_set:
-            return
-        QtCore.QTimer().singleShot(self._set_delay, self._set_field)
+    def _on_text_changed(self, text):
+        self._timer.start()
 
-    def _set_field(self):
-        self._value = self.line_field.text()
+    def _send_changed(self):
+        if self._timer.isActive():
+            self._timer.stop()
+        new_value = self.line_field.text()
+        if new_value == self._value:
+            return
+        self._value = new_value
         self.changed.emit(self._value)
 
     def setText(self, this):
@@ -162,16 +159,13 @@ class A2PathField(QtWidgets.QWidget):
 
     @value.setter
     def value(self, this):
-        self._field_set = True
         self._value = os.path.normpath(this)
         self.line_field.setText(self._value)
         self.changed.emit(self._value)
-        self._field_set = False
 
     def show_options_menu(self, menu):
-        icons = a2ctrl.Icons.inst()
-        menu.addAction(icons.copy, 'Copy Path', self.copy_path)
-        menu.addAction(icons.folder, 'Explore Path', self.explore_path)
+        menu.addAction(a2ctrl.Icons.copy, 'Copy Path', self.copy_path)
+        menu.addAction(a2ctrl.Icons.folder, 'Explore Path', self.explore_path)
 
     def explore_path(self):
         a2util.explore(self.value)
