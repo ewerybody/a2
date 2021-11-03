@@ -123,8 +123,8 @@ class _Icons:
     """
     Our load-only-once icon library object.
 
-    For convenience this already lists all usable icons and for speed it
-    just loads them up when actually needed.
+    For convenience this already lists all usable icons and
+    for speed it just loads them up when actually needed.
     """
 
     # This is supposed to have many!
@@ -142,10 +142,11 @@ class _Icons:
 
     def __getattribute__(self, name) -> QtGui.QIcon:
         try:
-            obj = super(_Icons, self).__getattribute__(name)
+            obj = super().__getattribute__(name)
         except AttributeError:
-            log.error('Icons lib got request for inexistent icon:\n  "%s"!', name)
-            return Ico(_PLACEHOLDER_ICON)
+            if not name.startswith('_'):
+                log.error('Icons lib got request for inexistent icon:\n  "%s"!', name)
+                return Ico(_PLACEHOLDER_ICON)
 
         if not name.startswith('_'):
             if isinstance(obj, bool):
