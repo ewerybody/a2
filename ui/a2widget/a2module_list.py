@@ -19,7 +19,7 @@ class A2ModuleList(QtWidgets.QWidget):
     enable_request = QtCore.Signal(bool)
 
     def __init__(self, parent):
-        super(A2ModuleList, self).__init__(parent)
+        super().__init__(parent)
         self.a2 = a2core.A2Obj.inst()
         self._setup_ui()
         self.selection = None
@@ -108,7 +108,20 @@ class A2ModuleList(QtWidgets.QWidget):
             self.ui.a2module_list_widget.itemExpanded.connect(self._on_root_toggle)
         self.ui.a2module_list_widget.setIndentation(10 if arrange else 0)
 
+        shown_mods = []
         for source in self.a2.module_sources.values():
+            shown_mods.clear()
+            for mod in source.mods.values():
+                if mod not in select_mods:
+                    if self.is_filtered(mod):
+                        continue
+                    if show_enabled and not mod.enabled:
+                        continue
+                shown_mods.append(mod)
+
+            if show_enabled and not shown_mods or arrange and not shown_mods:
+                continue
+
             if arrange:
                 root_item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [source.name])
                 root_item.setIcon(0, source.icon)
@@ -117,13 +130,7 @@ class A2ModuleList(QtWidgets.QWidget):
             else:
                 root_item = self.ui.a2module_list_widget
 
-            for mod in source.mods.values():
-                if mod not in select_mods:
-                    if self.is_filtered(mod):
-                        continue
-                    if show_enabled and not mod.enabled:
-                        continue
-
+            for mod in shown_mods:
                 item = QtWidgets.QTreeWidgetItem(root_item)
                 item.setText(0, mod.display_name)
                 item.setData(0, QtCore.Qt.UserRole, mod)
