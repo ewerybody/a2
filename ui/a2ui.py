@@ -8,7 +8,7 @@ from functools import partial
 import a2uic
 import a2dev
 import a2core
-import a2ctrl
+from a2ctrl.icons import Icons
 import a2util
 
 from a2qt import QtGui, QtCore, QtWidgets
@@ -89,7 +89,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.check_main_menu_bar()
 
     def _setup_actions(self):
-        Icons = a2ctrl.Icons
         self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
         self.ui.actionEdit_module.setIcon(Icons.edit)
 
@@ -138,7 +137,6 @@ class A2Window(QtWidgets.QMainWindow):
             self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
         else:
             self.ui.actionUninstall_a2.deleteLater()
-            self.on_uninstall_a2 = None
 
     def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
         action.setData(url)
@@ -478,10 +476,10 @@ class A2Window(QtWidgets.QMainWindow):
                     )
                 except ValueError:
                     continue
-                action = menu.addAction(a2ctrl.Icons.rollback, label, self.module_rollback_to)
+                action = menu.addAction(Icons.rollback, label, self.module_rollback_to)
                 action.setData(backup_name)
             menu.addSeparator()
-            menu.addAction(a2ctrl.Icons.delete, 'Clear Backups', self.mod.clear_backups)
+            menu.addAction(Icons.delete, 'Clear Backups', self.mod.clear_backups)
 
     def module_rollback_to(self):
         title = self.sender().text()
@@ -554,12 +552,12 @@ class A2Window(QtWidgets.QMainWindow):
         """Override Qt showEvent with window initialization."""
         if not self._initial_draw_finished:
             self.setWindowTitle(a2core.NAME)
-            self.setWindowIcon(a2ctrl.Icons.a2)
+            self.setWindowIcon(Icons.a2)
             widget = QtWidgets.QWidget(self)
             layout = QtWidgets.QVBoxLayout(widget)
             label = QtWidgets.QLabel()
             label.setAlignment(QtCore.Qt.AlignCenter)
-            label.setPixmap(a2ctrl.Icons.a2tinted.pixmap(256))
+            label.setPixmap(Icons.a2tinted.pixmap(256))
             layout.addWidget(label)
             self.setCentralWidget(widget)
             self.restore_ui()
@@ -568,7 +566,8 @@ class A2Window(QtWidgets.QMainWindow):
         return super(A2Window, self).showEvent(event)
 
     def on_uninstall_a2(self):
-        a2util.start_process_detached(self.a2.paths.uninstaller)
+        if os.path.isfile(self.a2.paths.uninstaller):
+            a2util.start_process_detached(self.a2.paths.uninstaller)
 
     def _run_thread(self, name, thread_class, args=None):
         if args is None:
