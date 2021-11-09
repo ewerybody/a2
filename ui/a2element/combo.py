@@ -24,6 +24,7 @@ class Draw(DrawCtrl):
 
     def _setup_ui(self):
         self.layout = QtWidgets.QHBoxLayout(self)
+        self.layout.setContentsMargins(0,0,0,0)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
         self.layout.addWidget(self.label)
