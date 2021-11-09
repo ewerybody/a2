@@ -147,6 +147,7 @@ class _Icons:
             if not name.startswith('_'):
                 log.error('Icons lib got request for inexistent icon:\n  "%s"!', name)
                 return Ico(_PLACEHOLDER_ICON)
+            obj = Ico(_PLACEHOLDER_ICON)
 
         if not name.startswith('_'):
             if isinstance(obj, bool):

@@ -424,6 +424,9 @@ def collect_hotkeys():
     :rtype: tuple[dict, dict, dict]
     """
     collector = collect_includes(IncludeType.hotkeys)
+    if collector.hotkeys is None:
+        return ()
+
     data = (
         collector.hotkeys.hotkeys_global,
         collector.hotkeys.hotkeys_scope_incl,

@@ -12,7 +12,7 @@ TODO: add recent paths?
 import os
 from a2qt import QtCore, QtWidgets
 
-import a2ctrl
+from a2ctrl import Icons
 import a2util
 from a2widget.a2more_button import A2MoreButton
 
@@ -45,7 +45,7 @@ class A2PathField(QtWidgets.QWidget):
         self.line_field.textChanged.connect(self._on_text_changed)
         self.main_layout.addWidget(self.line_field)
         self.browse_button = QtWidgets.QPushButton('Browse...', self)
-        self.browse_button.setIcon(a2ctrl.Icons.folder2)
+        self.browse_button.setIcon(Icons.folder2)
         self.browse_button.clicked.connect(self.browse)
         self.main_layout.addWidget(self.browse_button)
 
@@ -164,8 +164,8 @@ class A2PathField(QtWidgets.QWidget):
         self.changed.emit(self._value)
 
     def show_options_menu(self, menu):
-        menu.addAction(a2ctrl.Icons.copy, 'Copy Path', self.copy_path)
-        menu.addAction(a2ctrl.Icons.folder, 'Explore Path', self.explore_path)
+        menu.addAction(Icons.copy, 'Copy Path', self.copy_path)
+        menu.addAction(Icons.folder, 'Explore Path', self.explore_path)
 
     def explore_path(self):
         a2util.explore(self.value)
