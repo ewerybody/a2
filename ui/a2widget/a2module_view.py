@@ -28,7 +28,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls = []
         self.menu_items = []
         self.a2 = a2core.A2Obj.inst()
-        self.editor = None
+        self._editor = None
 
     def setup_ui(self, main):
         self.main = main
@@ -166,11 +166,11 @@ class A2ModuleView(QtWidgets.QWidget):
         self.menu_items.clear()
 
         config_copy = deepcopy(self.main.mod.config)
-        self.editor = a2module_editor.EditView(self.main, config_copy)
-        self.ui.a2edit_tool_button.clicked.connect(self.editor.on_menu_button_clicked)
+        self._editor = a2module_editor.EditView(self.main, config_copy)
+        self.ui.a2edit_tool_button.clicked.connect(self._editor.on_menu_button_clicked)
 
         self.add_button = a2element._edit.EditAddElem(self.main, config_copy)
-        self.add_button.add_request.connect(self.editor.add_element)
+        self.add_button.add_request.connect(self._editor.add_element)
         self.add_button_layer = QtWidgets.QVBoxLayout()
         spacing = self.main.style.get('spacing')
         self.add_button_layer.setContentsMargins(spacing, 0, 0, 0)
@@ -180,7 +180,7 @@ class A2ModuleView(QtWidgets.QWidget):
             self.add_button, QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeft
         )
 
-        self._set_widget(self.editor)
+        self._set_widget(self._editor)
         self._set_editing(True)
         self.settings_widget.setFocus()
 
@@ -345,3 +345,9 @@ class A2ModuleView(QtWidgets.QWidget):
         tmp_path = a2path.temp_path(f'temp_{self.main.mod.name}_', 'json')
         a2util.json_write(tmp_path, self._tmp_cfg)
         dialog.file_path2 = tmp_path
+
+    @property
+    def editor(self):
+        if self._editor is None:
+            RuntimeError('No editor built!')
+        return self._editor
