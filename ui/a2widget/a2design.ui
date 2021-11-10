@@ -105,8 +105,11 @@
     <property name="title">
      <string notr="true">Module</string>
     </property>
+    <addaction name="separator"/>
     <addaction name="actionHelp_on_Module"/>
     <addaction name="actionRevert_Settings"/>
+    <addaction name="actionExport_Settings"/>
+    <addaction name="actionImport_Settings"/>
    </widget>
    <addaction name="menuMain"/>
    <addaction name="menuModule"/>
@@ -246,6 +249,16 @@
   <action name="action_report_sugg">
    <property name="text">
     <string notr="true">Suggest a feature</string>
+   </property>
+  </action>
+  <action name="actionExport_Settings">
+   <property name="text">
+    <string notr="true">Export Settings</string>
+   </property>
+  </action>
+  <action name="actionImport_Settings">
+   <property name="text">
+    <string notr="true">Import Settings</string>
    </property>
   </action>
  </widget>

@@ -131,6 +131,11 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
         self.ui.menuRollback_Changes.setIcon(Icons.rollback)
         self.ui.actionRevert_Settings.triggered.connect(self.on_revert_settings)
+        self.ui.actionRevert_Settings.setIcon(Icons.rollback)
+        self.ui.actionExport_Settings.triggered.connect(self._export_module_cfg)
+        self.ui.actionExport_Settings.setIcon(Icons.up)
+        self.ui.actionImport_Settings.triggered.connect(self._import_module_cfg)
+        self.ui.actionImport_Settings.setIcon(Icons.file_download)
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
@@ -139,6 +144,9 @@ class A2Window(QtWidgets.QMainWindow):
             self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
         else:
             self.ui.actionUninstall_a2.deleteLater()
+
+        self.ui.actionHelp_on_Module.triggered.connect(self.module_view.help)
+        self.ui.actionHelp_on_Module.setIcon(Icons.help)
 
     def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
         action.setData(url)
@@ -449,9 +457,13 @@ class A2Window(QtWidgets.QMainWindow):
         menu = self.sender()
         if not isinstance(menu, QtWidgets.QMenu):
             return
+
         menu.clear()
         menu.addAction(self.ui.actionHelp_on_Module)
         menu.addAction(self.ui.actionRevert_Settings)
+        menu.addAction(self.ui.actionExport_Settings)
+        menu.addAction(self.ui.actionImport_Settings)
+
         if self.module_view.menu_items:
             menu.addSeparator()
             for action in self.module_view.menu_items:
@@ -591,6 +603,24 @@ class A2Window(QtWidgets.QMainWindow):
     def _set_edit_mode(self, state):
         self.module_list.setEnabled(not state)
         self.ui.menubar.setEnabled(not state)
+
+    def _export_module_cfg(self):
+        if self.mod is None:
+            return
+        user_cfg = self.mod.get_user_cfg()
+        if not user_cfg:
+            # nothing to export
+            return
+        # write to json
+        user_cfg
+
+    def _import_module_cfg(self):
+        if self.mod is None:
+            return
+        # browse for json
+        #
+        # `self.mod.set_user_cfg`
+
 
 
 class RuntimeCallThread(QtCore.QThread):
