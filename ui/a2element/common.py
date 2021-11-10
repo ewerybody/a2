@@ -63,7 +63,7 @@ class DrawCtrlMixin:
             value = self.user_cfg
 
         try:
-            self.mod.set_user_cfg(self.cfg, value, name)
+            self.mod.set_user_value(self.cfg, value, name)
         except AttributeError:
             # cannot set config if no module given
             pass
