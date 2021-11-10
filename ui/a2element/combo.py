@@ -2,6 +2,7 @@ from a2qt import QtCore, QtWidgets
 
 import a2uic
 import a2ctrl
+import a2ctrl.connect
 import a2util
 from a2element import combo_edit_ui, DrawCtrl, EditCtrl
 from a2widget import a2combo
@@ -23,11 +24,11 @@ class Draw(DrawCtrl):
         self._setup_ui()
 
     def _setup_ui(self):
-        self.layout = QtWidgets.QHBoxLayout(self)
-        self.layout.setContentsMargins(0,0,0,0)
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.label_text = self.cfg.get('label', '')
         self.label = QtWidgets.QLabel(self.label_text, self)
-        self.layout.addWidget(self.label)
+        layout.addWidget(self.label)
 
         self.value_ctrl = a2combo.A2Combo()
         if self.user_edit:
@@ -38,7 +39,7 @@ class Draw(DrawCtrl):
             items = self.cfg.get('items', [])
         self.value_ctrl.addItems(items)
         self.value_ctrl.currentTextChanged.connect(self.delayed_check)
-        self.layout.addWidget(self.value_ctrl)
+        layout.addWidget(self.value_ctrl)
 
         if self.value in items:
             index = items.index(self.value)
@@ -117,8 +118,11 @@ class Edit(EditCtrl):
 
 
 def get_settings(_module_key, cfg, db_dict, user_cfg):
-    db_dict.setdefault('variables', {})
-    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default='')
-    # user values might been stuck in the db only save if allowed.
-    if cfg.get('user_edit', False) or value in cfg.get('items', []):
+    items = cfg.get('items', [])
+    default = items[0] if items else ''
+    value = a2ctrl.get_cfg_value(cfg, user_cfg, typ=str, default=default)
+
+    # User values might been stuck in db. Only save if allowed.
+    if cfg.get('user_edit', False) or value in items:
+        db_dict.setdefault('variables', {})
         db_dict['variables'][cfg['name']] = value
