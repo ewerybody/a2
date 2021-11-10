@@ -27,6 +27,8 @@ class Ui_a2MainWindow:
         self.actionUnload_a2_Runtime = QAction(a2MainWindow)
         self.actionLoad_a2_Runtime = QAction(a2MainWindow)
         self.actionExplore_to_a2_data_dir = QAction(a2MainWindow)
+        self.action_report_bug = QAction(a2MainWindow)
+        self.action_report_sugg = QAction(a2MainWindow)
         self.actionUninstall_a2 = QAction(a2MainWindow)
         self.centralwidget = QWidget(a2MainWindow)
         self.verticalLayout = QVBoxLayout(self.centralwidget)

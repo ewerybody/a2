@@ -1,9 +1,10 @@
+import typing
+
 import a2ui
 import a2mod
 from a2element.common import DrawCtrl, EditCtrl
 import a2ctrl.icons
 from a2ctrl.icons import Ico
-
 
 Icons: a2ctrl.icons._Icons
 
@@ -13,3 +14,10 @@ def draw(
 def edit(
     element_cfg: dict[str, str], main: a2ui.A2Window, user_cfg: dict[str, str]
 ) -> EditCtrl: ...
+def get_cfg_value(
+    element_cfg: dict,
+    user_cfg: dict,
+    attr_name: str = ...,
+    typ: typing.Any = ...,
+    default: typing.Any = ...,
+) -> typing.Any: ...
