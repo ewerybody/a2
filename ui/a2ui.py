@@ -10,6 +10,8 @@ import a2dev
 import a2core
 from a2ctrl.icons import Icons
 import a2util
+import a2mod
+import a2modsource
 
 from a2qt import QtGui, QtCore, QtWidgets
 
@@ -33,7 +35,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.edit_clipboard = []
         self.selected = []
         self.num_selected = 0
-        self.mod = None
+        self.mod = None  # type: a2mod.Mod | None
 
         self._style = None
         self.rebuild_css()
@@ -186,7 +188,7 @@ class A2Window(QtWidgets.QMainWindow):
         Call module to write `temp_config` to disc.
         If it's enabled only trigger settingsChanged when
         """
-        if not self.module_view.editing:
+        if self.mod is None or not self.module_view.editing:
             return
 
         self.mod.config = self.module_view.editor.get_cfg_copy()
@@ -309,7 +311,7 @@ class A2Window(QtWidgets.QMainWindow):
         geometry = self.geometry()
         geometry.setSize(QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
         # set to center of active screen
-        desktop = QtWidgets.QApplication.instance().desktop()
+        desktop = QtWidgets.QApplication.desktop()
         current_screen = desktop.screen(desktop.screenNumber(QtGui.QCursor.pos()))
         geometry.moveCenter(current_screen.geometry().center())
         log.info('Initializing window position & size: %s', geometry)
@@ -391,8 +393,6 @@ class A2Window(QtWidgets.QMainWindow):
         dialog.show()
 
     def _create_local_source(self, name):
-        import a2modsource
-
         a2modsource.create(name, self.devset.author_name, self.devset.author_url)
         # update the ui without runtime reload
         self.a2.fetch_modules()
@@ -447,6 +447,8 @@ class A2Window(QtWidgets.QMainWindow):
 
     def build_module_menu(self):
         menu = self.sender()
+        if not isinstance(menu, QtWidgets.QMenu):
+            return
         menu.clear()
         menu.addAction(self.ui.actionHelp_on_Module)
         menu.addAction(self.ui.actionRevert_Settings)
@@ -459,6 +461,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
 
     def build_rollback_menu(self):
+        if self.mod is None:
+            return
         menu = self.ui.menuRollback_Changes
         menu.clear()
         backups_sorted = self.mod.get_config_backups()
@@ -482,8 +486,11 @@ class A2Window(QtWidgets.QMainWindow):
             menu.addAction(Icons.delete, 'Clear Backups', self.mod.clear_backups)
 
     def module_rollback_to(self):
-        title = self.sender().text()
-        file_name = self.sender().data()
+        action = self.sender()
+        if not isinstance(action, QtGui.QAction) or self.mod is None:
+            return
+        title = action.text()
+        file_name = action.data()
         file_path = os.path.join(self.mod.backup_path, file_name)
 
         from a2dev import RollbackDiffDialog
@@ -493,8 +500,9 @@ class A2Window(QtWidgets.QMainWindow):
         dialog.show()
 
     def on_rollback(self, file_name):
-        self.mod.rollback(file_name)
-        self.settings_changed()
+        if self.mod is not None:
+            self.mod.rollback(file_name)
+            self.settings_changed()
 
     def on_revert_settings(self):
         if self.mod is None:
@@ -519,9 +527,10 @@ class A2Window(QtWidgets.QMainWindow):
             dialog.show()
 
     def _on_revert_settings(self):
-        self.mod.clear_user_cfg()
-        self.mod.change()
-        self.load_runtime_and_ui()
+        if self.mod is not None:
+            self.mod.clear_user_cfg()
+            self.mod.change()
+            self.load_runtime_and_ui()
 
     def check_element(self, name):
         """Find a named element and call its `check` method."""
