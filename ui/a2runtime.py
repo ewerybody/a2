@@ -15,6 +15,8 @@ log = a2core.get_logger(__name__)
 A2_DATA = '%a2data%'
 PACKAGE_LIB = '.lib'
 EDIT_DISCLAIMER = a2core.EDIT_DISCLAIMER
+ERROR_DUP_VALUE = 'Value name already collected!!\n  module: %s\n  value name: %s'
+ERROR_EMPTYNAME = 'Empty variable name!!\n  module: %s\n  value name: %s'
 
 
 class Scope:
@@ -154,13 +156,11 @@ class VariablesCollection(_Collection):
     def gather(self, mod):
         for var_name, value in (self.a2.db.get('variables', mod.key) or {}).items():
             if var_name in self.data:
-                log.error(
-                    'Value name already collected!!\n'
-                    '  module: %s\n'
-                    '  value name: %s' % (mod.name, var_name)
-                )
+                log.error(ERROR_DUP_VALUE, mod.name, var_name)
                 continue
-
+            if not var_name:
+                log.error(ERROR_EMPTYNAME, mod.name, var_name)
+                continue
             self.data[var_name] = value
 
     def get_content(self):
