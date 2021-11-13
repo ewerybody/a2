@@ -21,6 +21,7 @@ RUNTIME_WATCH_INTERVAL = 1000
 DEFAULT_WIN_SIZE = (700, 480)
 TITLE_ONLINE = 'Runtime is Live!'
 TITLE_OFFLINE = 'Runtime is Offline!'
+MSG_DEFAULT = 'Appears everything is on "factory settings"!'
 
 
 class A2Window(QtWidgets.QMainWindow):
@@ -531,11 +532,7 @@ class A2Window(QtWidgets.QMainWindow):
             dialog.okayed.connect(self._on_revert_settings)
             dialog.show()
         else:
-            dialog = A2ConfirmDialog(
-                self,
-                'Nothing to Revert!',
-                msg='Appears everything is on "factory settings"!',
-            )
+            dialog = A2ConfirmDialog(self, 'Nothing to Revert!', msg=MSG_DEFAULT)
             dialog.show()
 
     def _on_revert_settings(self):
@@ -607,20 +604,40 @@ class A2Window(QtWidgets.QMainWindow):
     def _export_module_cfg(self):
         if self.mod is None:
             return
+
         user_cfg = self.mod.get_user_cfg()
         if not user_cfg:
-            # nothing to export
+            from a2widget.a2input_dialog import A2ConfirmDialog
+
+            dialog = A2ConfirmDialog(self, 'Nothing to Export!', msg=MSG_DEFAULT)
+            dialog.show()
             return
-        # write to json
-        user_cfg
+
+        name = f'{self.mod.name}_settings.json'
+        path = os.path.join(self.a2.paths.a2, name)
+        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
+            self, 'Export Module Settings', path, 'JSON (*.json)'
+        )
+        if not file_path:
+            return
+
+        a2util.json_write(file_path, user_cfg)
 
     def _import_module_cfg(self):
         if self.mod is None:
             return
-        # browse for json
-        #
-        # `self.mod.set_user_cfg`
 
+        name = f'{self.mod.name}_settings.json'
+        path = os.path.join(self.a2.paths.a2, name)
+        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            self, 'Import Module Settings', path, 'JSON (*.json)'
+        )
+        if not file_path:
+            return
+
+        user_cfg = a2util.json_read(file_path)
+        self.mod.set_user_cfg(user_cfg)
+        self.load_runtime_and_ui()
 
 
 class RuntimeCallThread(QtCore.QThread):
