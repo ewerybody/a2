@@ -635,7 +635,33 @@ class A2Window(QtWidgets.QMainWindow):
         if not file_path:
             return
 
-        user_cfg = a2util.json_read(file_path)
+        import json
+        import traceback
+        from a2widget.a2input_dialog import A2ConfirmDialog
+
+        try:
+            user_cfg = a2util.json_read(file_path)
+        except json.JSONDecodeError:
+            report = traceback.format_exc().strip()
+
+            msg = 'There was a problem loading data from the json file!\n\n' + report
+            dialog = A2ConfirmDialog(self, 'JSONDecodeError!', msg=msg)
+            dialog.show()
+            return
+
+        if (
+            not user_cfg or
+            not isinstance(user_cfg, dict)
+        ):
+            msg = (
+                'Could not get valid data from the given file!\n'
+                'We need a dictionary with non-empty string keys!\n'
+                'Please make sure this is valid data!'
+            )
+            dialog = A2ConfirmDialog(self, 'Error!', msg=msg)
+            dialog.show()
+            return
+
         self.mod.set_user_cfg(user_cfg)
         self.load_runtime_and_ui()
 
