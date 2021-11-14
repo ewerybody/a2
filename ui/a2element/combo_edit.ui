@@ -7,18 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>625</width>
-    <height>296</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="edit_layout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
    <property name="labelAlignment">
-    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+    <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
    </property>
    <item row="0" column="0">
     <widget class="QLabel" name="internalNameLabel">
@@ -37,7 +34,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="cfg_name">
+    <widget class="A2InternalName" name="cfg_name">
      <property name="text">
       <string>extensionX_combobox1</string>
      </property>
@@ -63,22 +60,6 @@
     <widget class="QLineEdit" name="cfg_label">
      <property name="text">
       <string>some values</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="A2List" name="cfg_items">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>145</height>
-      </size>
-     </property>
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
     </widget>
    </item>
@@ -139,6 +120,22 @@
      </item>
     </layout>
    </item>
+   <item row="2" column="1">
+    <widget class="A2List" name="cfg_items">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>145</height>
+      </size>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="1">
     <widget class="QCheckBox" name="cfg_user_edit">
      <property name="text">
@@ -149,6 +146,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
   <customwidget>
    <class>A2List</class>
    <extends>QListWidget</extends>

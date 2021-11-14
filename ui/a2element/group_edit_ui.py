@@ -12,6 +12,8 @@ from a2qt.QtCore import *
 from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
+from a2widget.a2text_field import A2InternalName
+
 
 class Ui_edit:
     def setupUi(self, edit):
@@ -31,7 +33,7 @@ class Ui_edit:
         self.internalNameLabel.setMaximumSize(QSize(16777215, 16777215))
         self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QLineEdit(edit)
+        self.cfg_name = A2InternalName(edit)
         self.cfg_name.setObjectName(u"cfg_name")
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QLabel(edit)

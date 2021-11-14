@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>edit</class>
  <widget class="QWidget" name="edit">
@@ -36,7 +37,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="cfg_name">
+    <widget class="A2InternalName" name="cfg_name">
      <property name="text">
       <string>extensionX_hotkey1</string>
      </property>
@@ -97,7 +98,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string notr="true" />
+          <string notr="true"/>
          </property>
         </widget>
        </item>
@@ -195,11 +196,16 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="FuncWidget" name="func_widget" native="true" />
+    <widget class="FuncWidget" name="func_widget" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
   <customwidget>
    <class>A2Hotkey</class>
    <extends>QPushButton</extends>
@@ -217,6 +223,6 @@
    <header>a2widget.a2more_button</header>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

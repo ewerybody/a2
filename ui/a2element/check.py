@@ -1,3 +1,4 @@
+import a2uic
 import a2ctrl
 import a2ctrl.connect
 
@@ -37,6 +38,7 @@ class Edit(EditCtrl):
         self.help_url = self.a2.urls.helpCheckbox
         self.cfg.setdefault('name', '')
 
+        a2uic.check_module(check_edit_ui)
         self.ui = check_edit_ui.Ui_edit()
         self.ui.setupUi(self.mainWidget)
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)

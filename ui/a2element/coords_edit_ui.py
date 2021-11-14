@@ -12,6 +12,7 @@ from a2qt.QtCore import *
 from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
+from a2widget.a2text_field import A2InternalName
 from a2widget.a2coords_field import A2CoordsField
 
 
@@ -28,7 +29,7 @@ class Ui_edit:
         self.internalNameLabel.setMinimumSize(QSize(100, 0))
         self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QLineEdit(edit)
+        self.cfg_name = A2InternalName(edit)
         self.cfg_name.setObjectName(u"cfg_name")
         self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QLabel(edit)

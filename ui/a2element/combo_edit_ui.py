@@ -12,6 +12,7 @@ from a2qt.QtCore import *
 from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
+from a2widget.a2text_field import A2InternalName
 from a2widget.a2list import A2List
 
 
@@ -21,14 +22,13 @@ class Ui_edit:
             edit.setObjectName(u"edit")
         self.edit_layout = QFormLayout(edit)
         self.edit_layout.setObjectName(u"edit_layout")
-        self.edit_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
         self.internalNameLabel = QLabel(edit)
         self.internalNameLabel.setObjectName(u"internalNameLabel")
         self.internalNameLabel.setMinimumSize(QSize(100, 0))
         self.internalNameLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.edit_layout.setWidget(0, QFormLayout.LabelRole, self.internalNameLabel)
-        self.cfg_name = QLineEdit(edit)
+        self.cfg_name = A2InternalName(edit)
         self.cfg_name.setObjectName(u"cfg_name")
         self.edit_layout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
         self.displayLabelLabel = QLabel(edit)
@@ -39,12 +39,6 @@ class Ui_edit:
         self.cfg_label = QLineEdit(edit)
         self.cfg_label.setObjectName(u"cfg_label")
         self.edit_layout.setWidget(1, QFormLayout.FieldRole, self.cfg_label)
-        self.cfg_items = A2List(edit)
-        self.cfg_items.setObjectName(u"cfg_items")
-        self.cfg_items.setMaximumSize(QSize(16777215, 145))
-        self.cfg_items.setAlternatingRowColors(True)
-        self.cfg_items.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_items)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.label_6 = QLabel(edit)
@@ -70,6 +64,12 @@ class Ui_edit:
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.edit_layout.setLayout(2, QFormLayout.LabelRole, self.verticalLayout)
+        self.cfg_items = A2List(edit)
+        self.cfg_items.setObjectName(u"cfg_items")
+        self.cfg_items.setMaximumSize(QSize(16777215, 145))
+        self.cfg_items.setAlternatingRowColors(True)
+        self.cfg_items.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.edit_layout.setWidget(2, QFormLayout.FieldRole, self.cfg_items)
         self.cfg_user_edit = QCheckBox(edit)
         self.cfg_user_edit.setObjectName(u"cfg_user_edit")
         self.edit_layout.setWidget(3, QFormLayout.FieldRole, self.cfg_user_edit)

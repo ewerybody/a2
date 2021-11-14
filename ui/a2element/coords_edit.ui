@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1010</width>
-    <height>194</height>
+    <width>529</width>
+    <height>143</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="cfg_name">
+    <widget class="A2InternalName" name="cfg_name">
      <property name="text">
       <string>extensionX_number1</string>
      </property>
@@ -79,6 +79,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
   <customwidget>
    <class>A2CoordsField</class>
    <extends>QSpinBox</extends>

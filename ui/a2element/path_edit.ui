@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="cfg_name">
+    <widget class="A2InternalName" name="cfg_name">
      <property name="text">
       <string notr="true">extensionX_path1</string>
      </property>
@@ -184,6 +184,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
   <customwidget>
    <class>A2PathField</class>
    <extends>QLineEdit</extends>
