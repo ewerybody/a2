@@ -1,5 +1,4 @@
 from copy import deepcopy
-from a2ctrl import connect
 
 import a2mod
 import a2core
@@ -10,7 +9,7 @@ import a2element._edit
 import a2element.group
 from a2ctrl import Icons
 
-from a2qt import QtWidgets, QtGui
+from a2qt import QtCore, QtWidgets, QtGui
 
 
 class EditView(QtWidgets.QWidget):
@@ -42,7 +41,7 @@ class EditView(QtWidgets.QWidget):
             if element is None:
                 continue
 
-            if cfg.get('typ', '') == 'group':
+            if isinstance(element, a2element.group.Edit):
                 sub_elements = []
                 for sub_cfg in cfg['children']:
                     sub_element = self._build_element(sub_cfg, cfg['children'])
