@@ -3,16 +3,15 @@ a2ui - setup interface for an Autohotkey environment.
 """
 import os
 import time
-from functools import partial
 
 import a2uic
 import a2dev
 import a2core
-from a2ctrl.icons import Icons
 import a2util
 import a2mod
-import a2modsource
+from a2ctrl.icons import Icons
 
+import a2ui.module_cfg
 from a2qt import QtGui, QtCore, QtWidgets
 
 log = a2core.get_logger(__name__)
@@ -21,7 +20,6 @@ RUNTIME_WATCH_INTERVAL = 1000
 DEFAULT_WIN_SIZE = (700, 480)
 TITLE_ONLINE = 'Runtime is Live!'
 TITLE_OFFLINE = 'Runtime is Offline!'
-MSG_DEFAULT = 'Appears everything is on "factory settings"!'
 
 
 class A2Window(QtWidgets.QMainWindow):
@@ -37,6 +35,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.selected = []
         self.num_selected = 0
         self.mod = None  # type: a2mod.Mod | None
+        self.mod_cfg = a2ui.module_cfg.ModuleConfig(self)
+        self.mod_cfg.reload_requested.connect(self.load_runtime_and_ui)
 
         self._style = None
         self.rebuild_css()
@@ -129,13 +129,13 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
         self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
-        self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
+        self.ui.menuRollback_Changes.aboutToShow.connect(self.mod_cfg.build_rollback_menu)
         self.ui.menuRollback_Changes.setIcon(Icons.rollback)
-        self.ui.actionRevert_Settings.triggered.connect(self.on_revert_settings)
+        self.ui.actionRevert_Settings.triggered.connect(self.mod_cfg.revert)
         self.ui.actionRevert_Settings.setIcon(Icons.rollback)
-        self.ui.actionExport_Settings.triggered.connect(self._export_module_cfg)
+        self.ui.actionExport_Settings.triggered.connect(self.mod_cfg.export)
         self.ui.actionExport_Settings.setIcon(Icons.up)
-        self.ui.actionImport_Settings.triggered.connect(self._import_module_cfg)
+        self.ui.actionImport_Settings.triggered.connect(self.mod_cfg.load)
         self.ui.actionImport_Settings.setIcon(Icons.file_download)
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
@@ -402,6 +402,8 @@ class A2Window(QtWidgets.QMainWindow):
         dialog.show()
 
     def _create_local_source(self, name):
+        import a2modsource
+
         a2modsource.create(name, self.devset.author_name, self.devset.author_url)
         # update the ui without runtime reload
         self.a2.fetch_modules()
@@ -473,74 +475,6 @@ class A2Window(QtWidgets.QMainWindow):
     def on_dev_menu_build(self):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
 
-    def build_rollback_menu(self):
-        if self.mod is None:
-            return
-        menu = self.ui.menuRollback_Changes
-        menu.clear()
-        backups_sorted = self.mod.get_config_backups()
-        if not backups_sorted:
-            action = menu.addAction('Nothing to roll back to!')
-            action.setEnabled(False)
-        else:
-            now = time.time()
-            for this_time, backup_name in backups_sorted[:15]:
-                try:
-                    label = a2util.unroll_seconds(now - this_time, 2)
-                    label = 'version %s - %s ago' % (
-                        int(backup_name[-1]),
-                        label,
-                    )
-                except ValueError:
-                    continue
-                action = menu.addAction(Icons.rollback, label, self.module_rollback_to)
-                action.setData(backup_name)
-            menu.addSeparator()
-            menu.addAction(Icons.delete, 'Clear Backups', self.mod.clear_backups)
-
-    def module_rollback_to(self):
-        action = self.sender()
-        if not isinstance(action, QtGui.QAction) or self.mod is None:
-            return
-        title = action.text()
-        file_name = action.data()
-        file_path = os.path.join(self.mod.backup_path, file_name)
-
-        from a2dev import RollbackDiffDialog
-
-        dialog = RollbackDiffDialog(self, title, self.mod.config_file, file_path)
-        dialog.okayed.connect(partial(self.on_rollback, file_name))
-        dialog.show()
-
-    def on_rollback(self, file_name):
-        if self.mod is not None:
-            self.mod.rollback(file_name)
-            self.settings_changed()
-
-    def on_revert_settings(self):
-        if self.mod is None:
-            return
-        from a2widget.a2input_dialog import A2ConfirmDialog
-
-        module_user_cfg = self.mod.get_user_cfg()
-        if module_user_cfg:
-            dialog = A2ConfirmDialog(
-                self,
-                'Revert User Settings',
-                msg='This will throw away any user changes!',
-            )
-            dialog.okayed.connect(self._on_revert_settings)
-            dialog.show()
-        else:
-            dialog = A2ConfirmDialog(self, 'Nothing to Revert!', msg=MSG_DEFAULT)
-            dialog.show()
-
-    def _on_revert_settings(self):
-        if self.mod is not None:
-            self.mod.clear_user_cfg()
-            self.mod.change()
-            self.load_runtime_and_ui()
-
     def check_element(self, name):
         """Find a named element and call its `check` method."""
         self.module_view.check_element(name)
@@ -600,70 +534,6 @@ class A2Window(QtWidgets.QMainWindow):
     def _set_edit_mode(self, state):
         self.module_list.setEnabled(not state)
         self.ui.menubar.setEnabled(not state)
-
-    def _export_module_cfg(self):
-        if self.mod is None:
-            return
-
-        user_cfg = self.mod.get_user_cfg()
-        if not user_cfg:
-            from a2widget.a2input_dialog import A2ConfirmDialog
-
-            dialog = A2ConfirmDialog(self, 'Nothing to Export!', msg=MSG_DEFAULT)
-            dialog.show()
-            return
-
-        name = f'{self.mod.name}_settings.json'
-        path = os.path.join(self.a2.paths.a2, name)
-        file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
-            self, 'Export Module Settings', path, 'JSON (*.json)'
-        )
-        if not file_path:
-            return
-
-        a2util.json_write(file_path, user_cfg)
-
-    def _import_module_cfg(self):
-        if self.mod is None:
-            return
-
-        name = f'{self.mod.name}_settings.json'
-        path = os.path.join(self.a2.paths.a2, name)
-        file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
-            self, 'Import Module Settings', path, 'JSON (*.json)'
-        )
-        if not file_path:
-            return
-
-        import json
-        import traceback
-        from a2widget.a2input_dialog import A2ConfirmDialog
-
-        try:
-            user_cfg = a2util.json_read(file_path)
-        except json.JSONDecodeError:
-            report = traceback.format_exc().strip()
-
-            msg = 'There was a problem loading data from the json file!\n\n' + report
-            dialog = A2ConfirmDialog(self, 'JSONDecodeError!', msg=msg)
-            dialog.show()
-            return
-
-        if (
-            not user_cfg or
-            not isinstance(user_cfg, dict)
-        ):
-            msg = (
-                'Could not get valid data from the given file!\n'
-                'We need a dictionary with non-empty string keys!\n'
-                'Please make sure this is valid data!'
-            )
-            dialog = A2ConfirmDialog(self, 'Error!', msg=msg)
-            dialog.show()
-            return
-
-        self.mod.set_user_cfg(user_cfg)
-        self.load_runtime_and_ui()
 
 
 class RuntimeCallThread(QtCore.QThread):
