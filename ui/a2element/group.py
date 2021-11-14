@@ -21,7 +21,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
         self.setChecked(self.get_user_value(bool, 'enabled'))
-        self.clicked[bool].connect(self.check)
+        self.clicked.connect(self.check)
 
         self.a2_group_layout = QtWidgets.QVBoxLayout(self)
 
@@ -48,8 +48,10 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         if expandable:
             self.is_expandable_widget = True
 
-    def check(self, *args):
-        self.set_user_value(args[0], 'enabled')
+    def check(self, state=None):
+        if state is None:
+            state = self.isChecked()
+        self.set_user_value(state, 'enabled')
         self.change()
 
 
@@ -78,7 +80,7 @@ class Edit(EditCtrl):
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
         self._check_checkable()
-        self.ui.cfg_disablable.clicked[bool].connect(self._check_checkable)
+        self.ui.cfg_disablable.clicked.connect(self._check_checkable)
 
     def fill_elements(self, elements: list):
         from a2element._edit import EditAddElem
