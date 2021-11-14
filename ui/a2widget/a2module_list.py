@@ -75,16 +75,21 @@ class A2ModuleList(QtWidgets.QWidget):
             else:
                 continue
 
+        for item in list_items:
+            item.setSelected(True)
+
         # Weird! I'm super sure this used to work within the selection loop!
         # Now `setCurrentItem` reselects, removing the former selection.
-        # Using the override and passing a `command` does not seem to work :/
+        # AHH now I know: Its because we changed from `QListWidget` to `QTreeWidget`
+        # and appears there is an inconsistency with `setCurrentItem`!
+        # So. Passing this QItemSelectionModel works! Even afterwards!
+        if list_items:
+            self.ui.a2module_list_widget.setCurrentItem(
+                list_items[-1], 0, QtCore.QItemSelectionModel.Current
+            )
         # Why do we have to do this at all? Well, it can be that you
         # actually select an item but have keyboard-focus on another one!
         # which feels super weird.
-        if list_items:
-            self.ui.a2module_list_widget.setCurrentItem(list_items[-1])
-        for item in list_items:
-            item.setSelected(True)
 
         return selection
 
