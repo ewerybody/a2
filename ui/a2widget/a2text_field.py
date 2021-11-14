@@ -111,3 +111,8 @@ class A2TextField(QtWidgets.QPlainTextEdit):
 class A2CodeField(A2TextField):
     def __init__(self, parent=None):
         super(A2CodeField, self).__init__(parent)
+
+
+class A2InternalName(QtWidgets.QLineEdit):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
