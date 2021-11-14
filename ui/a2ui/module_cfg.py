@@ -2,12 +2,21 @@ import os
 import time
 from functools import partial
 
+import a2mod
 import a2util
 from a2ctrl import Icons
 from a2qt import QtGui, QtCore, QtWidgets
 
 
 MSG_DEFAULT = 'Appears everything is on "factory settings"!'
+MSG_USER_CHANGES = 'This will throw away any user changes!\n'
+MSG_JSON_ERROR = 'There was a problem loading data from the json file!\n\n'
+_MSG_NEEDS = (
+    'We need a dictionary with non-empty string keys!\nPlease make sure this is valid data!'
+)
+MSG_IMPORT_ERROR = (
+    'Could not get valid data from the given file!\n' + _MSG_NEEDS
+)
 
 
 class ModuleConfig(QtCore.QObject):
@@ -18,7 +27,7 @@ class ModuleConfig(QtCore.QObject):
         self.main = parent
 
     @property
-    def mod(self):
+    def mod(self) -> a2mod.Mod:
         mod = self.main.mod
         if mod is None:
             raise RuntimeError('There is no single module selected!')
@@ -48,6 +57,16 @@ class ModuleConfig(QtCore.QObject):
         a2util.json_write(file_path, user_cfg)
 
     def load(self):
+        from a2widget.a2input_dialog import A2ConfirmDialog
+
+        current_cfg = self.mod.get_user_cfg()
+        if current_cfg:
+            msg = 'Are you sure you want to do this?\n' + MSG_USER_CHANGES + _MSG_NEEDS
+            dialog = A2ConfirmDialog(self.main, 'Import User Settings', msg=msg)
+            dialog.okayed.connect(self._on_import)
+            dialog.show()
+
+    def _on_import(self):
         name = f'{self.mod.name}_settings.json'
         path = os.path.join(self.a2.paths.a2, name)
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
@@ -64,23 +83,12 @@ class ModuleConfig(QtCore.QObject):
             user_cfg = a2util.json_read(file_path)
         except json.JSONDecodeError:
             report = traceback.format_exc().strip()
-
-            msg = 'There was a problem loading data from the json file!\n\n' + report
-            dialog = A2ConfirmDialog(self, 'JSONDecodeError!', msg=msg)
+            dialog = A2ConfirmDialog(self, 'JSONDecodeError!', msg=MSG_JSON_ERROR + report)
             dialog.show()
             return
 
-        if (
-            not user_cfg or
-            not isinstance(user_cfg, dict) or
-            any(not key for key in user_cfg)
-        ):
-            msg = (
-                'Could not get valid data from the given file!\n'
-                'We need a dictionary with non-empty string keys!\n'
-                'Please make sure this is valid data!'
-            )
-            dialog = A2ConfirmDialog(self, 'Error!', msg=msg)
+        if not user_cfg or not isinstance(user_cfg, dict) or any(not key for key in user_cfg):
+            dialog = A2ConfirmDialog(self, 'Error!', msg=MSG_IMPORT_ERROR)
             dialog.show()
             return
 
@@ -92,11 +100,7 @@ class ModuleConfig(QtCore.QObject):
 
         module_user_cfg = self.mod.get_user_cfg()
         if module_user_cfg:
-            dialog = A2ConfirmDialog(
-                self.main,
-                'Revert User Settings',
-                msg='This will throw away any user changes!',
-            )
+            dialog = A2ConfirmDialog(self.main, 'Revert User Settings', msg=MSG_USER_CHANGES)
             dialog.okayed.connect(self._on_revert)
             dialog.show()
         else:
@@ -105,7 +109,6 @@ class ModuleConfig(QtCore.QObject):
 
     def _on_revert(self):
         self.mod.clear_user_cfg()
-        self.mod.change()
         self.reload_requested.emit()
 
     def build_rollback_menu(self):
