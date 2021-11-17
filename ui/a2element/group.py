@@ -70,7 +70,6 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.cfg.setdefault('name', '')
         self.cfg.setdefault('children', [])
-        self.config_list = self.cfg['children']
         self._child_elements = []
 
         a2uic.check_module(group_edit_ui)
@@ -127,7 +126,14 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().group
+        return a2ctrl.Icons.group
+
+    @property
+    def config_list(self) -> list:
+        children = self.cfg.get('children')
+        if children is None or not isinstance(children, list):
+            return []
+        return children
 
 
 def get_settings(module_key, cfg, db_dict, _user_cfg):
