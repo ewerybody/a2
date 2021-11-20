@@ -85,6 +85,7 @@ class IncludeDataCollector(object):
 
     @property
     def collections(self):
+        # type: () -> list[None | _Collection]
         """
         Collections per module.
         A property to be dynamically fillable.
@@ -151,17 +152,30 @@ class VariablesCollection(_Collection):
     def __init__(self, a2obj_instance=None):
         super(VariablesCollection, self).__init__(a2obj_instance)
         self.name = 'variables'
-        self.data = {}
+        self._data = {}
 
     def gather(self, mod):
         for var_name, value in (self.a2.db.get('variables', mod.key) or {}).items():
-            if var_name in self.data:
+            if var_name in self._data:
                 log.error(ERROR_DUP_VALUE, mod.name, var_name)
                 continue
             if not var_name:
                 log.error(ERROR_EMPTYNAME, mod.name, var_name)
                 continue
-            self.data[var_name] = value
+            self._data[var_name] = (value, mod.key)
+
+    @property
+    def data(self):
+        flat_data = {}
+        for var_name, (value, _) in self._data.items():
+            flat_data[var_name] = value
+        return flat_data
+
+    def iter_mod_variables(self):
+        """Loop over all gathered variables, yield tuple of source module key,
+        variable name and value."""
+        for var_name, (value, mod_key) in self._data.items():
+            yield mod_key, var_name, value
 
     def get_content(self):
         content = ''
@@ -171,7 +185,7 @@ class VariablesCollection(_Collection):
 
     @property
     def has_content(self):
-        return self.data != {}
+        return self._data != {}
 
 
 class IncludesCollection(_Collection):
@@ -417,11 +431,11 @@ def write_includes(specific=None):
 
 
 def collect_hotkeys():
+    # type: () -> tuple[dict, dict, dict] | tuple
     """
-    Kicks of Hotkeys collection and returns all dictionaries.
+    Kick of Hotkeys collection and return all dictionaries.
 
     :return: Tuple with 3 collections: global, include, exclude
-    :rtype: tuple[dict, dict, dict]
     """
     collector = collect_includes(IncludeType.hotkeys)
     if collector.hotkeys is None:
@@ -433,6 +447,15 @@ def collect_hotkeys():
         collector.hotkeys.hotkeys_scope_excl,
     )
     return data
+
+
+def collect_variables():
+    """Kick of Variables collection and return collection object."""
+    collector = collect_includes(IncludeType.variables)
+    if collector.variables is None:
+        raise RuntimeError('Variables was not collected!')
+
+    return collector.variables
 
 
 def _get_hidden_process_startup_nfo():
