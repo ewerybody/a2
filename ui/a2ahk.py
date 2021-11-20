@@ -3,12 +3,12 @@ Autohotkey stuff to be used across the modules.
 """
 import os
 import codecs
-import subprocess
-
+import string
 
 EXECUTABLE_NAME = 'autohotkey.exe'
 EXTENSION = '.ahk'
 _LOW_BOOLS = {'true': True, 'false': False}
+ALLOWED_VAR_NAME_CHARS = string.ascii_letters + string.digits + '_'
 
 
 def translate_hotkey(display_string):
@@ -70,6 +70,7 @@ def call_cmd(cmd_path, *args, **kwargs):
         raise RuntimeError('Cannot call command script! No such file!\n  %s' % cmd_path)
 
     import a2core
+    import subprocess
 
     a2 = a2core.A2Obj.inst()
 
@@ -117,6 +118,10 @@ def set_variable(ahk_file, key, value, create_key=False):
         - raise KeyError or
         - create it if `create_key` set `True`.
     """
+    result = check_variable_name(key)
+    if result:
+        raise KeyError(result)
+
     try:
         with open(ahk_file) as fobj:
             lines = [l for l in fobj.read().split('\n')]
@@ -242,6 +247,27 @@ def py_dict_to_ahk_string(dict_obj):
     if result.endswith(', '):
         result = result[:-2]
     return result + '}'
+
+
+def check_variable_name(name):
+    """Tell if `name` can be a valid Autohotkey variable name.
+
+    Take a good look at `a2util.standard_name_check` but note some differences:
+    In Autohotkey variable names aren't case sensitive but can start with numbers!
+    Dots and dashes are forbidden tho!
+    """
+    if not name:
+        return 'Variable name cannot be empty!'
+
+    if not all((l in ALLOWED_VAR_NAME_CHARS) for l in name):
+        return 'Variable name can only have letters, digits and "_"!'
+    if any((l in string.whitespace) for l in name):
+        return 'Variable name cannot have whitespace! Use "_" insead!'
+    if all(l.isnumeric() for l in name):
+        return 'Variable name cannot be all Numbers!'
+    if name.lower().startswith('a_'):
+        return 'Variable name cannot start with Autohotkey-reserved "A_"!'
+    return ''
 
 
 # : http://www.autohotkey.com/docs/KeyList.htm
