@@ -71,7 +71,7 @@ QGroupBox {
 	font-weight: bold;
 	margin: %(margin)ipx;
 	margin-top: %(group_label_space)ipx;
-	border-width: 1px;
+	border-width: 3px;
 	border-style: solid;
 	border-radius: %(border_radius)ipx;
 	border-color: "%(color_hover)s";
