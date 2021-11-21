@@ -29,7 +29,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         # group box title. It works in settings view tho. So far I'm unable
         # to fix this via CSS. Enlighten me!
         self.a2_group_marging_top = QtWidgets.QWidget()
-        self.a2_group_marging_top.setMaximumHeight(self.main.style.get('margin_h'))
+        self.a2_group_marging_top.setMinimumHeight(self.main.style.get('margin'))
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
 
         expandable = False
@@ -102,14 +102,14 @@ class Edit(EditCtrl):
         self.changed.emit()
 
     def _check_checkable(self, checked=None):
-        """If not checkable the group is automatically enabled!"""
+        """If not checkable the group is automatically enabled."""
         if checked is None:
             checked = self.cfg.get('disablable', True)
 
         if not checked:
             self.ui.cfg_enabled.setChecked(True)
             self.cfg['enabled'] = True
-        self.ui.cfg_enabled.setVisible(checked)
+        self.ui.cfg_enabled.setVisible(bool(checked))
 
     @property
     def max_index(self):
