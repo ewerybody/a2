@@ -11,12 +11,19 @@ from a2ctrl import Icons
 
 from a2qt import QtCore, QtWidgets, QtGui
 
+ISSUE_DOUBLE = (
+    'Double name! Variable "<b>%s</b>" already defined<br>'
+    'in other element "<b>%s</b>" at position %i'
+)
+ISSUE_TAKEN = 'Name taken! Variable "<b>%s</b>" already defined<br>in other module <b>%s</b>'
+
 
 class EditView(QtWidgets.QWidget):
     def __init__(self, parent, config_list):
         super(EditView, self).__init__(parent)
-        self.elements = []
-        self.config_list = config_list
+        self.elements = []  # type: list[QtWidgets.QWidget]
+        self._indexed_elements = []  # type: list[QtWidgets.QWidget]
+        self.config_list = config_list  # type: list[dict]
         self.main = parent
 
         if not config_list:
@@ -35,9 +42,11 @@ class EditView(QtWidgets.QWidget):
         for element in self.elements:
             element.deleteLater()
         self.elements.clear()
+        self._indexed_elements.clear()
 
         for cfg in self.config_list:
             element = self._build_element(cfg, self.config_list)
+            self._indexed_elements.append(element)
             if element is None:
                 continue
 
@@ -45,6 +54,7 @@ class EditView(QtWidgets.QWidget):
                 sub_elements = []
                 for sub_cfg in cfg['children']:
                     sub_element = self._build_element(sub_cfg, cfg['children'])
+                    self._indexed_elements.append(sub_element)
                     if sub_element is None:
                         continue
                     sub_elements.append(sub_element)
@@ -66,9 +76,12 @@ class EditView(QtWidgets.QWidget):
         element = a2ctrl.edit(cfg, self.main, parent_cfg)
         new_name = self._check_new_name(cfg)
         if new_name and element is not None:
-            if hasattr(element, 'ui') and hasattr(element.ui, 'cfg_name'):
-                name_widget = getattr(element.ui, 'cfg_name')
+            try:
+                ui = getattr(element, 'ui')
+                name_widget = getattr(ui, 'cfg_name')
                 name_widget.setText(new_name)
+            except AttributeError:
+                pass
 
         if isinstance(element, a2element.common.EditCtrl):
             element.menu_requested.connect(self._build_elemenu)
@@ -80,7 +93,7 @@ class EditView(QtWidgets.QWidget):
         self._elemenu.clear()
 
         menu_items = []
-        if (parent.max_index - parent.top_index):
+        if parent.max_index - parent.top_index:
             if index != parent.top_index:
                 menu_items.append(('Up', self.move_up, Icons.up))
             if index != parent.max_index:
@@ -151,7 +164,7 @@ class EditView(QtWidgets.QWidget):
                 if not isinstance(other, a2element.group.Edit):
                     continue
                 try:
-                    return element, self.elements[6].get_child_index(element), other
+                    return element, other.get_child_index(element), other
                 except ValueError:
                     continue
         raise RuntimeError(f'Element could not be found! {element}')
@@ -236,3 +249,47 @@ class EditView(QtWidgets.QWidget):
 
     def on_menu_button_clicked(self):
         pass
+
+    def check_cfg(self):
+        import a2ahk, a2runtime
+
+        variables = a2runtime.collect_variables()
+        this_key = self.main.mod.key
+        other_vars = {}
+        for mod_key, var_name, _ in variables.iter_mod_variables():
+            if mod_key == this_key:
+                continue
+            other_vars[var_name.lower()] = mod_key
+
+        names = {}
+        issues = {}
+        for i, cfg in enumerate(a2ctrl.iter_element_cfg_type(self.config_list)):
+            if 'name' not in cfg:
+                continue
+            name = cfg['name']
+            _name = name.lower()
+
+            if _name in names:
+                pos = names[_name]
+                other = self._indexed_elements[names[_name]].element_name()
+                issues.setdefault(i, []).append(ISSUE_DOUBLE % (name, other, pos))
+            else:
+                names[_name] = i
+
+            if _name in other_vars:
+                issues.setdefault(i, []).append(ISSUE_TAKEN % (name, other_vars[_name]))
+
+            result = a2ahk.check_variable_name(name)
+            if result:
+                issues.setdefault(i, []).append(result)
+
+        if issues:
+            for index, element in enumerate(self._indexed_elements):
+                if index in issues:
+                    element.setStyleSheet('QGroupBox {border-color: "red";}')
+                    element.setToolTip('\n'.join(issues[index]))
+                else:
+                    element.setStyleSheet('QGroupBox {border-color: "#DDD";}')
+                    element.setToolTip('')
+
+        return issues
