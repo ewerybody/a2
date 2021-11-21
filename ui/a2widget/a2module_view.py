@@ -309,6 +309,9 @@ class A2ModuleView(QtWidgets.QWidget):
         if tmp_cfg == self.main.mod.config:
             return False
 
+        if tmp_cfg and not self.main.mod.config:
+            return True
+
         if len(tmp_cfg) != len(self.main.mod.config):
             return True
 
@@ -327,16 +330,15 @@ class A2ModuleView(QtWidgets.QWidget):
     def user_cancels(self):
         """Popup dialog to ask about discarding changes.
         Return `True` if user clicks **Cancel** to keep editing."""
-        import a2dev
+        import a2dev, os
 
-        msg = (
-            'The module configuration appears to have changed!\n'
-            'Do you really want to exit and discard the changes?\n\n'
-            'You can also have a look at the differences...'
-        )
-        dialog = a2dev.OkDiffDialog(
-            self.main, 'Config Changed!', msg, self.main.mod.config_file, None
-        )
+        if os.path.isfile(self.main.mod.config_file):
+            dialog = a2dev.OkDiffDialog(
+                self.main, 'Config Changed!', a2dev.MSG_CFG_DIFF, self.main.mod.config_file
+            )
+        else:
+            dialog = a2dev.OkDiffDialog(self.main, 'Trash New Config?!', a2dev.MSG_CFG_NEW)
+
         dialog.diff_requested.connect(self._on_diff_requested)
         dialog.exec_()
         dialog.remove_temp_files()
