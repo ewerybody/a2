@@ -24,7 +24,7 @@ class EditView(QtWidgets.QWidget):
     def __init__(self, parent, config_list):
         super(EditView, self).__init__(parent)
         self.elements = []  # type: list[QtWidgets.QWidget]
-        self._indexed_elements = []  # type: list[QtWidgets.QWidget]
+        self._indexed_elements = []  # type: list[a2element.common.EditCtrl]
         self.config_list = config_list  # type: list[dict]
         self.main = parent
 
@@ -253,7 +253,10 @@ class EditView(QtWidgets.QWidget):
     def on_menu_button_clicked(self):
         pass
 
-    def check_cfg(self):
+    def check_issues(self):
+        """Do some tests to check the validity of all elements in the editor.
+        Return `True` if there is nothing to report.
+        """
         import a2ahk, a2runtime
 
         variables = a2runtime.collect_variables()
@@ -286,18 +289,21 @@ class EditView(QtWidgets.QWidget):
             if result:
                 issues.setdefault(i, []).append(result)
 
-        if issues:
-            for index, element in enumerate(self._indexed_elements):
-                if index in issues:
-                    element.setStyleSheet('QGroupBox {border-color: "red";}')
-                    element.setToolTip('\n'.join(issues[index]))
-                else:
-                    element.setStyleSheet('QGroupBox {border-color: "#DDD";}')
-                    element.setToolTip('')
+        for index, element in enumerate(self._indexed_elements):
+            element_issue = element.check_issues()
+            if element_issue:
+                issues.setdefault(index, []).append(element_issue)
 
+            if index in issues:
+                element.setStyleSheet('QGroupBox {border-color: "red";}')
+                element.setToolTip('\n'.join(issues[index]))
+            else:
+                element.setStyleSheet('QGroupBox {border-color: "#DDD";}')
+                element.setToolTip('')
+
+        if issues:
             first_index = sorted(issues)[0]
             element = self._indexed_elements[first_index]
-            pos = element.geometry().top()
-            self.scroll_request.emit(pos)
+            self.scroll_request.emit(element.geometry().top())
 
-        return issues
+        return bool(issues)

@@ -200,7 +200,7 @@ class A2Window(QtWidgets.QMainWindow):
         if self.mod is None or not self.module_view.editing:
             return
 
-        if self.module_view.editor.check_cfg():
+        if self.module_view.editor.check_issues():
             return
 
         self.mod.config = self.module_view.editor.get_cfg_copy()

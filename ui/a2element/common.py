@@ -244,3 +244,7 @@ class EditCtrl(QtWidgets.QGroupBox):
             return self.main.style.get(value_name, default)
         except AttributeError:
             return default
+
+    def check_issues(self):
+        """To be reimplemented for elements to report issues."""
+        return ''
