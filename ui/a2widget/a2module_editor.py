@@ -19,6 +19,8 @@ ISSUE_TAKEN = 'Name taken! Variable "<b>%s</b>" already defined<br>in other modu
 
 
 class EditView(QtWidgets.QWidget):
+    scroll_request = QtCore.Signal(int)
+
     def __init__(self, parent, config_list):
         super(EditView, self).__init__(parent)
         self.elements = []  # type: list[QtWidgets.QWidget]
@@ -219,9 +221,10 @@ class EditView(QtWidgets.QWidget):
         and flushes it afterwards.
         """
         group, index, parent = self._element_index()
-        group.config_list.extend(self.main.edit_clipboard)
-        self.main.edit_clipboard.clear()
-        self._draw()
+        if isinstance(group, a2element.group.Edit):
+            group.config_list.extend(self.main.edit_clipboard)
+            self.main.edit_clipboard.clear()
+            self._draw()
 
     def cut(self):
         element, index, parent = self._element_index()
@@ -291,5 +294,10 @@ class EditView(QtWidgets.QWidget):
                 else:
                     element.setStyleSheet('QGroupBox {border-color: "#DDD";}')
                     element.setToolTip('')
+
+            first_index = sorted(issues)[0]
+            element = self._indexed_elements[first_index]
+            pos = element.geometry().top()
+            self.scroll_request.emit(pos)
 
         return issues

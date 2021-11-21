@@ -29,6 +29,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.menu_items = []
         self.a2 = a2core.A2Obj.inst()
         self._editor = None
+        self._scroll_anim = None
 
     def setup_ui(self, main):
         self.main = main
@@ -167,6 +168,7 @@ class A2ModuleView(QtWidgets.QWidget):
 
         config_copy = deepcopy(self.main.mod.config)
         self._editor = a2module_editor.EditView(self.main, config_copy)
+        self._editor.scroll_request.connect(self.scroll_to)
         self.ui.a2edit_tool_button.clicked.connect(self._editor.on_menu_button_clicked)
 
         self.add_button = a2element._edit.EditAddElem(self.main, config_copy)
@@ -351,3 +353,15 @@ class A2ModuleView(QtWidgets.QWidget):
         if self._editor is None:
             RuntimeError('No editor built!')
         return self._editor
+
+    def scroll_to(self, value):
+        scrollbar = self.ui.a2scroll_area.verticalScrollBar()
+        start = scrollbar.value()
+        if self._scroll_anim is None:
+            self._scroll_anim = QtCore.QPropertyAnimation(scrollbar, b'value')
+            self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+            self._scroll_anim.setDuration(500)
+            self._scroll_anim.setLoopCount(1)
+        self._scroll_anim.setStartValue(start)
+        self._scroll_anim.setEndValue(value)
+        self._scroll_anim.start()
