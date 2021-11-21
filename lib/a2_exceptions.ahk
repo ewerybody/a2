@@ -110,8 +110,9 @@ _a2_exceptions_handle(title, exception) {
     }
     IfMsgBox, No
     {
-        if IsFunc("a2ui")
-            a2ui()
+        ui_func := "a2ui"
+        if IsFunc(ui_func)
+            %ui_func%()
     }
 
     _a2ui_on_error_change_buttons:

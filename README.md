@@ -35,6 +35,6 @@ The features in this runtime are introduced via **modules** bundled in **package
 * [Oliver Lipkau](https://github.com/lipkau)
 
 ## versions in latest build package:
-* AutoHotkey: 1.1.33.09
-* Python: 3.9.6150.1013
+* AutoHotkey: 1.1.33.10
+* Python: 3.9.7150.1013
 * PySide2: 5.15.2.0
