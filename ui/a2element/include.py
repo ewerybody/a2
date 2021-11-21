@@ -51,7 +51,7 @@ class Edit(EditCtrl):
 
     def check_issues(self):
         file_name = self.cfg.get('file', '')
-        if file_name:
+        if file_name and isinstance(file_name, str):
             file_path = os.path.join(self.main.mod.path, file_name)
             if not os.path.isfile(file_path):
                 return ISSUE_FILE_MISSING % file_name
