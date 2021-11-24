@@ -12,63 +12,25 @@
  *         * Manifest of the Module (a2module.json)
  */
 
-#include lib\ahklib\CManifest.ahk
+#include <CManifest>
+#include <RichObject>
 
 class ModuleModel
 {
     /**
-     * Allocate static properties for
-     *     the name of the module
-     *     the name of the module package
-     *     the url to the documentation of this module
-     */
-    /**
-     * A property witht he name of the Module Pack
+     * Information about the module and its metadata
      *     is populated in Construtor
      *
-     * @type string
+     * @type RichObject
+     * @property Source    Source of the Module
+     * @property Name      Name of the Module
+     * @property URL       URL of the Module
+     * @property Path      Module's base Directory
+     * @property DataPath  Module's path for "AppData"
+     * @property DBKey     Module's key for the DB
+     * @property Icon      Module's Icon
      */
-    static moduleSource
-
-    /**
-     * A property witht the Name of the Module
-     *     is populated in Construtor
-     *
-     * @type string
-     */
-    static moduleName
-
-    /**
-     * A property with the Link to the Module's HomePage
-     *     is populated in Construtor
-     *
-     * @type string
-     */
-    static moduleURL
-
-    /**
-     * A property with the Module's base Directory
-     *     is populated in Construtor
-     *
-     * @type string
-     */
-    static modulePath
-
-    /**
-     * A property with the Module's key for the DB
-     *     is populated in Construtor
-     *
-     * @type string
-     */
-    static moduleKey
-
-    /**
-     * A property with the Module's icon
-     *     is populated in Construtor
-     *
-     * @type hBitmap
-     */
-    static moduleIcon
+    static module
 
     /*+
      * A property with the data from the Module's manifest
@@ -111,16 +73,20 @@ class ModuleModel
      */
     __New(LineFile)
     {
-        this.manifest     := new CManifest(LineFile)
-        this.moduleSource := this.manifest.metaData.source
-        this.moduleName   := this.manifest.metaData.name
-        this.moduleURL    := this.manifest.metaData.url
-        this.modulePath   := a2.path "\" a2.modules "\" this.moduleSource "\" this.moduleName
-        this.moduleKey    := this.moduleSource "|" this.moduleName
+        global a2
+
+        this.manifest           := new CManifest(LineFile)
+        this.module             := new CRichObject()
+        this.module["Source"]   := this.manifest.metaData.source
+        this.module["Name"]     := this.manifest.metaData.name
+        this.module["URL"]      := this.manifest.metaData.url
+        this.module["Path"]     := a2.paths.modules "" this.module.Source "\" this.module.Name
+        this.module["DataPath"] := a2.paths.module_data "" this.module.Source "\" this.module.Name
+        this.module["DBKey"]    := this.module.Source "|" this.module.Name
         for i,v in [".svg", ".png", ".ico"] {
             iconFile := this.modulePath "\a2icon" v
             if (FileExist(iconFile)) {
-                this.moduleIcon := iconFile  ; TODO extract icon
+                this.module["Icon"] := iconFile  ; TODO extract icon
                 break
             }
         }

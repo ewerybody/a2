@@ -1,4 +1,4 @@
-#include lib\ahklib\jxon.ahk
+#include <jxon>
 
 /**
  * Global class to read the manifest (a2module.json)
