@@ -8,19 +8,12 @@ Created by: Qt User Interface Compiler version 6.2.0
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from a2qt.QtWidgets import (QApplication, QCheckBox, QComboBox, QCommandLinkButton,
-    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-    QLabel, QLineEdit, QListView, QMainWindow,
-    QMenuBar, QPlainTextEdit, QPushButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QSplitter, QStatusBar,
-    QTabWidget, QTextEdit, QVBoxLayout, QWidget)
+from a2qt.QtWidgets import (QCheckBox, QComboBox, QCommandLinkButton, QFrame, QGridLayout, 
+    QGroupBox, QHBoxLayout, QLabel, QLineEdit, QListView, QMenuBar, QPlainTextEdit, QPushButton, 
+    QScrollArea, QSizePolicy, QSpacerItem, QSplitter, QStatusBar, QTabWidget, QTextEdit, 
+    QVBoxLayout, QWidget)
+from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
+from a2qt.QtGui import QFont
 
 class Ui_MainWindow:
     def setupUi(self, MainWindow):

@@ -17,7 +17,7 @@ from PySide6 import QtWidgets
 
 def main():
     ui_path = _ensure_a2_path.A2UI_PATH
-    a2widget_path = a2widget.__path__[0]
+    a2widget_path = os.path.dirname(a2widget.__file__)
     if not os.path.isdir(ui_path):
         raise NotADirectoryError(f'No such path: "{ui_path}"')
 
@@ -72,8 +72,10 @@ def _fixml(ui_path, a2widget_classes):
         if header_node is None:
             continue
         class_node = widget_node.find('class')
+        if class_node is None:
+            continue
         proposed_mod = a2widget_classes.get(class_node.text)
-        if proposed_mod != header_node.text:
+        if proposed_mod != header_node.text and header_node.text is not None:
             print('header: %s' % header_node.text)
             print('class: %s' % class_node.text)
             header_parts = header_node.text.split('.')

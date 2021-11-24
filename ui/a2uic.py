@@ -80,12 +80,12 @@ def check_module(module, force=False):
 
     os.chdir(curr_cwd)
 
-    _patch_ui(uiname, pyfile)
+    patch_ui(uiname, pyfile)
 
     reload(module)
 
 
-def _patch_ui(uiname, pyfile):
+def patch_ui(uiname, pyfile):
     """
     Patch compiled ui file to fix a couple of problems there are with
     the default uic executable. See #219. Done:

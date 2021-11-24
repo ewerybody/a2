@@ -8,15 +8,9 @@ Created by: Qt User Interface Compiler version 6.2.0
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from a2qt.QtWidgets import (QApplication, QGridLayout, QHBoxLayout, QPushButton,
-    QSizePolicy, QVBoxLayout, QWidget)
+from a2qt.QtWidgets import QGridLayout, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
+from a2qt.QtGui import QFont
+from a2qt.QtCore import QMetaObject
 
 class Ui_CursorBlock:
     def setupUi(self, CursorBlock):

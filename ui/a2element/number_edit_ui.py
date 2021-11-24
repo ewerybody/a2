@@ -8,16 +8,9 @@ Created by: Qt User Interface Compiler version 6.2.0
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from a2qt.QtWidgets import (QApplication, QCheckBox, QDoubleSpinBox, QFormLayout,
-    QHBoxLayout, QLabel, QLineEdit, QSizePolicy,
-    QSpinBox, QWidget)
+from a2qt.QtWidgets import (QCheckBox, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLabel, 
+    QLineEdit, QSpinBox)
+from a2qt.QtCore import QCoreApplication, QMetaObject, QSize, Qt
 
 from a2widget.a2text_field import A2InternalName
 
