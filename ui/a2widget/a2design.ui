@@ -40,8 +40,25 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="A2ModuleList" name="module_list" native="true"/>
-      <widget class="A2ModuleView" name="module_view" native="true"/>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="A2ModuleList" name="module_list" native="true">
+       <property name="maximumSize">
+        <size>
+         <width>500</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="A2ModuleView" name="module_view" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>500</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
