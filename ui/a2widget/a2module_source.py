@@ -70,7 +70,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui.check.clicked.connect(self.toggled.emit)
 
         self.ui.tool_button.clicked.connect(self._toggle_details)
-        self.ui.error_icon.setIcon(a2ctrl.Icons.inst().error)
+        self.ui.error_icon.setIcon(a2ctrl.Icons.error)
         icon_size = self.main.style.get('icon_size')
         self.ui.icon_label.setPixmap(self.mod_source.icon.pixmap(icon_size))
         self.ui.icon_label.setMinimumSize(icon_size, icon_size)
@@ -174,15 +174,15 @@ class ModSourceWidget(QtWidgets.QWidget):
         remote_version = remote_data.get('version')
 
         if remote_version == self.mod_source.config.get('version'):
-            self._update_msg(MSG_UPTODATE, a2ctrl.Icons.inst().check_circle)
+            self._update_msg(MSG_UPTODATE, a2ctrl.Icons.check_circle)
         else:
             self._update_to_version = remote_version
             self.ui_body.update_button.setText(MSG_UPDATE_AVAILABLE % remote_version)
-            self.ui_body.update_button.setIcon(a2ctrl.Icons.inst().cloud_download)
+            self.ui_body.update_button.setIcon(a2ctrl.Icons.cloud_download)
 
     def _show_update_error(self, msg):
         self.set_idle()
-        self._update_msg(msg, a2ctrl.Icons.inst().error)
+        self._update_msg(msg, a2ctrl.Icons.error)
 
     def _show_update_status(self, msg):
         self.ui_body.update_button.setText(msg)
@@ -206,25 +206,25 @@ class ModSourceWidget(QtWidgets.QWidget):
                 self.ui_body.update_button.setIcon(icon)
 
     def build_version_menu(self, menu):
-        icons = a2ctrl.Icons.inst()
-
         backup_versions = self.mod_source.get_backup_versions()
         if backup_versions:
             backup_menu = menu.addMenu('Backed up versions')
             for version in backup_versions:
                 if version != self.mod_source.config.get('version'):
-                    action = backup_menu.addAction(icons.rollback, version, self.rollback)
+                    action = backup_menu.addAction(a2ctrl.Icons.rollback, version, self.rollback)
                     action.setData(version)
 
             backup_menu.addSeparator()
-            backup_menu.addAction(icons.delete, 'Remove backups', self.mod_source.remove_backups)
+            backup_menu.addAction(
+                a2ctrl.Icons.delete, 'Remove backups', self.mod_source.remove_backups
+            )
         else:
             action = menu.addAction('No backed up verions!')
             action.setEnabled(False)
         menu.addSeparator()
-        menu.addAction(icons.delete, 'Uninstall "%s"' % self.mod_source.name, self.uninstall)
+        menu.addAction(a2ctrl.Icons.delete, 'Uninstall "%s"' % self.mod_source.name, self.uninstall)
         if self.main.a2.dev_mode:
-            menu.addAction(icons.edit, 'Edit Meta Data', self._on_edit_meta_data)
+            menu.addAction(a2ctrl.Icons.edit, 'Edit Meta Data', self._on_edit_meta_data)
 
     def uninstall(self):
         dialog = A2ConfirmDialog(
@@ -268,14 +268,14 @@ class BusyIcon(QtWidgets.QLabel):
         self.anim_timer = QtCore.QTimer()
         self.anim_timer.setInterval(25)
         self.anim_timer.timeout.connect(self.update_rotation)
-        self.icon = a2ctrl.Icons.inst().reload
+        self.icon = a2ctrl.Icons.reload
         self.icon_size = size
         self.rotation_speed = 22
         self.setMaximumHeight(self.icon_size)
         self.setMinimumHeight(self.icon_size)
         self.setMaximumWidth(self.icon_size)
         self.setMinimumWidth(self.icon_size)
-        self.setPixmap(None)
+        self._blank = QtGui.QPixmap()
 
         self._state = False
         self._rotation = 0
@@ -284,7 +284,7 @@ class BusyIcon(QtWidgets.QLabel):
         self.anim_timer.start()
 
     def set_idle(self):
-        self.setPixmap(None)
+        self.setPixmap(self._blank)
         self.anim_timer.stop()
 
     def update_rotation(self):
