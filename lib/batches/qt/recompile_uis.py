@@ -10,6 +10,7 @@ from importlib import import_module
 from xml.etree import ElementTree
 
 import _ensure_a2_path
+import a2uic
 import a2widget
 from PySide6 import QtWidgets
 
@@ -58,6 +59,7 @@ def main():
                 except Exception as error:
                     print('error: %s' % error)
                     error
+                a2uic._patch_ui(ui_path, py_path)
                 print('py_file recompiled:', py_path)
     os.chdir(curr_cwd)
 
