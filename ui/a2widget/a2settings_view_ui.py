@@ -3,17 +3,24 @@
 """
 Form generated from reading UI file 'a2settings_view.ui'
 
-Created by: Qt User Interface Compiler version 5.15.2
+Created by: Qt User Interface Compiler version 6.2.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import *
-from a2qt.QtGui import *
-from a2qt.QtWidgets import *
+from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from a2qt.QtWidgets import (QApplication, QCheckBox, QFormLayout, QGroupBox,
+    QHBoxLayout, QLabel, QPushButton, QSizePolicy,
+    QSpacerItem, QTabWidget, QTextEdit, QVBoxLayout,
+    QWidget)
 
 from a2widget.a2hotkey import A2Hotkey
-
 
 class Ui_a2settings:
     def setupUi(self, a2settings):
@@ -103,7 +110,7 @@ class Ui_a2settings:
         self.db_printout = QTextEdit(self.database_tab)
         self.db_printout.setObjectName(u"db_printout")
         font = QFont()
-        font.setFamily(u"Consolas")
+        font.setFamilies([u"Consolas"])
         font.setPointSize(10)
         self.db_printout.setFont(font)
         self.db_printout.setReadOnly(True)

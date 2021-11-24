@@ -3,18 +3,24 @@
 """
 Form generated from reading UI file 'a2module_list.ui'
 
-Created by: Qt User Interface Compiler version 5.15.2
+Created by: Qt User Interface Compiler version 6.2.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import *
-from a2qt.QtGui import *
-from a2qt.QtWidgets import *
+from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from a2qt.QtWidgets import (QAbstractItemView, QApplication, QHBoxLayout, QHeaderView,
+    QLineEdit, QPushButton, QSizePolicy, QTreeWidgetItem,
+    QVBoxLayout, QWidget)
 
-from a2widget.a2more_button import A2MoreButton
 from a2widget.a2modlist import A2ModList
-
+from a2widget.a2more_button import A2MoreButton
 
 class Ui_ModuleList:
     def setupUi(self, ModuleList):

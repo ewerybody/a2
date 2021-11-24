@@ -3,15 +3,20 @@
 """
 Form generated from reading UI file 'a2module_source.ui'
 
-Created by: Qt User Interface Compiler version 5.15.2
+Created by: Qt User Interface Compiler version 6.2.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import *
-from a2qt.QtGui import *
-from a2qt.QtWidgets import *
-
+from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from a2qt.QtWidgets import (QApplication, QCheckBox, QHBoxLayout, QLabel,
+    QSizePolicy, QToolButton, QVBoxLayout, QWidget)
 
 class Ui_Form:
     def setupUi(self, Form):
@@ -48,7 +53,6 @@ class Ui_Form:
         self.mod_label.setMinimumSize(QSize(40, 0))
         font = QFont()
         font.setBold(False)
-        font.setWeight(50)
         self.mod_label.setFont(font)
         self.mod_label.setText(u"ModSourceName")
         self.horizontalLayout_2.addWidget(self.mod_label)

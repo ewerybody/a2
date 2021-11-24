@@ -3,15 +3,21 @@
 """
 Form generated from reading UI file 'a2module_view.ui'
 
-Created by: Qt User Interface Compiler version 5.15.2
+Created by: Qt User Interface Compiler version 6.2.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtCore import *
-from a2qt.QtGui import *
-from a2qt.QtWidgets import *
-
+from a2qt.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from a2qt.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from a2qt.QtWidgets import (QApplication, QCheckBox, QGridLayout, QHBoxLayout,
+    QLabel, QPushButton, QScrollArea, QSizePolicy,
+    QToolButton, QVBoxLayout, QWidget)
 
 class Ui_A2ModuleView:
     def setupUi(self, A2ModuleView):
@@ -36,10 +42,9 @@ class Ui_A2ModuleView:
         self.a2_mod_name = QLabel(self.head_widget)
         self.a2_mod_name.setObjectName(u"a2_mod_name")
         font = QFont()
-        font.setFamily(u"Segoe UI")
+        font.setFamilies([u"Segoe UI"])
         font.setPointSize(11)
         font.setBold(True)
-        font.setWeight(75)
         self.a2_mod_name.setFont(font)
         self.a2_mod_name.setText(u"ModName")
         self.a2_mod_name.setTextFormat(Qt.PlainText)
@@ -47,7 +52,7 @@ class Ui_A2ModuleView:
         self.mod_version = QLabel(self.head_widget)
         self.mod_version.setObjectName(u"mod_version")
         font1 = QFont()
-        font1.setFamily(u"Segoe UI")
+        font1.setFamilies([u"Segoe UI"])
         font1.setPointSize(10)
         self.mod_version.setFont(font1)
         self.mod_version.setText(u"v0.0")
