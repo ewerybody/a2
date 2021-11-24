@@ -5,11 +5,25 @@ import os
 import sys
 import a2core
 from importlib import reload
+from a2qt import QtCore, QtGui, QtWidgets, QtSvg
+
+log = a2core.get_logger(__name__)
 
 UI_FILE_SUFFIX = '_ui'
 PYSIDE_REPLACE = 'a2qt'
 OLDSCHOOL_CLASS = '(object):\n'
-log = a2core.get_logger(__name__)
+LINE_LEN = 95
+QMEMBERS = {}
+MEMBERSQ = {}
+
+for mod in (QtCore, QtGui, QtWidgets, QtSvg):
+    name = mod.__name__.split('.')[1]
+    QMEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != 'a2qt']
+    for member in QMEMBERS[name]:
+        if member in MEMBERSQ:
+            print(f'{member} already listed in {MEMBERSQ[member]}!!')
+            continue
+        MEMBERSQ[member] = name
 
 
 def check_module(module, force=False):
@@ -92,17 +106,20 @@ def _patch_ui(uiname, pyfile):
         lines: list[str] = pyfobj.readlines()
 
     # find the module doc string
-    mod_doc_block = None
+    mod_doc_block = []
     for i, line in enumerate(lines):
-        if mod_doc_block is not None and not line.strip():
+        if mod_doc_block and not line.strip():
             mod_doc_block.append(i)
             break
-        if line.startswith('##') and mod_doc_block is None:
+        if line.startswith('##') and not mod_doc_block:
             mod_doc_block = [i]
 
     # find the imports block
     pyside_import_lines = []
     start = mod_doc_block[1]
+    submod_lines = {}
+    submods_used = {}
+    _submod = ''
     for i, line in enumerate(lines[start:], start):
         # finish when collected and next line is empty
         if pyside_import_lines and not line.strip():
@@ -113,10 +130,18 @@ def _patch_ui(uiname, pyfile):
             dot_pos = parts[1].find('.')
             if dot_pos == -1:
                 raise RuntimeError('Patching compiled ui failed on line %i:\n  %s' % (i, line))
-            parts[1] = PYSIDE_REPLACE + parts[1][dot_pos:]
+            _submod = parts[1][dot_pos + 1 :]
+            parts[1] = PYSIDE_REPLACE + '.' + _submod
             lines[i] = ' '.join(parts) + '\n'
             pyside_import_lines.append(i)
+            submod_lines[_submod] = [i]
+        elif _submod:
+            submod_lines[_submod].append(i)
+            pyside_import_lines.append(i)
     pyside_import_lines[:] = [min(pyside_import_lines), max(pyside_import_lines)]
+
+    if not all(mod in globals() for mod in submod_lines):
+        raise RuntimeError('Not all Qt Submodules loaded!')
 
     # find class block
     class_block_start = None
@@ -125,7 +150,7 @@ def _patch_ui(uiname, pyfile):
         if class_block_start is None and line.startswith('class '):
             class_block_start = i
             if line.endswith(OLDSCHOOL_CLASS):
-                lines[i] = line[:-len(OLDSCHOOL_CLASS)] + ':\n'
+                lines[i] = line[: -len(OLDSCHOOL_CLASS)] + ':\n'
             break
 
     setup_line = lines[class_block_start + 1]
@@ -162,6 +187,34 @@ def _patch_ui(uiname, pyfile):
             lines[i + 1] = ''
             lines[retranslate_call_line] = ''
 
+        for word, mod in MEMBERSQ.items():
+            if word in line:
+                if line[line.find(word) + len(word)] in '(.':
+                    submods_used.setdefault(mod, set()).add(word)
+                else:
+                    log.error(f'Word "{word}" found in line but not handled!\n> {line}')
+
+    new_import_lines = []
+    for mod in submods_used:
+        members = sorted(submods_used[mod])
+        line = f'from {PYSIDE_REPLACE}.{mod} import '
+
+        rest = ', '.join(members)
+        if len(line + rest) <= 95:
+            new_import_lines.append(line + rest)
+            continue
+
+        line += '('
+        for word in members[:-1]:
+            if len(line + word) <= 95:
+                line += word + ', '
+                continue
+            new_import_lines.append(line)
+            line = '    ' + word + ', '
+        line += members[-1] + ')'
+        new_import_lines.append(line)
+
+
     # assemble new lines
     new_lines = lines[: mod_doc_block[0]]
     new_lines.append('"""\n')
@@ -172,7 +225,10 @@ def _patch_ui(uiname, pyfile):
         else:
             new_lines.append('\n')
     new_lines.append('"""\n\n')
-    new_lines.extend(lines[pyside_import_lines[0] : class_block_start])
+    new_lines.append('\n'.join(new_import_lines) + '\n')
+    # these are probably all other imports
+    new_lines.extend(lines[pyside_import_lines[1] + 1: class_block_start])
+    # this skips all empty lines
     new_lines.extend(l for l in lines[class_block_start:] if l)
 
     with open(pyfile, 'w') as pyfobj:

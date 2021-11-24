@@ -59,7 +59,7 @@ def main():
                 except Exception as error:
                     print('error: %s' % error)
                     error
-                a2uic._patch_ui(ui_path, py_path)
+                a2uic.patch_ui(ui_path, py_path)
                 print('py_file recompiled:', py_path)
     os.chdir(curr_cwd)
 
