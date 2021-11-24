@@ -11,7 +11,7 @@ WARNING! All changes made in this file will be lost when recompiling UI file!
 from a2qt.QtWidgets import (QCheckBox, QHBoxLayout, QLabel, QLayout, QLineEdit, QPushButton, 
     QVBoxLayout, QWidget)
 from a2qt.QtGui import QFont
-from a2qt.QtCore import QCoreApplication, QMetaObject, Qt
+from a2qt.QtCore import QMetaObject, Qt
 
 from a2widget.a2more_button import A2MoreButton
 
@@ -19,6 +19,7 @@ class Ui_Keyboard:
     def setupUi(self, Keyboard):
         if not Keyboard.objectName():
             Keyboard.setObjectName(u"Keyboard")
+        Keyboard.setWindowTitle(u"Hotkey Dialog")
         self.dialog_layout = QVBoxLayout(Keyboard)
         self.dialog_layout.setObjectName(u"dialog_layout")
         self.dialog_layout.setSizeConstraint(QLayout.SetFixedSize)
@@ -32,9 +33,11 @@ class Ui_Keyboard:
         self.top_layout.addWidget(self.key_field)
         self.option_button = A2MoreButton(Keyboard)
         self.option_button.setObjectName(u"option_button")
+        self.option_button.setText(u"...")
         self.top_layout.addWidget(self.option_button)
         self.label_2 = QLabel(Keyboard)
         self.label_2.setObjectName(u"label_2")
+        self.label_2.setText(u"Show:")
         self.top_layout.addWidget(self.label_2)
         self.check_numpad = QCheckBox(Keyboard)
         self.check_numpad.setObjectName(u"check_numpad")
@@ -48,13 +51,13 @@ class Ui_Keyboard:
         self.keys_widget = QWidget(Keyboard)
         self.keys_widget.setObjectName(u"keys_widget")
         self.keys_layout = QHBoxLayout(self.keys_widget)
-        self.keys_layout.setContentsMargins(0, 0, 0, 0)
         self.keys_layout.setObjectName(u"keys_layout")
+        self.keys_layout.setContentsMargins(0, 0, 0, 0)
         self.main_widget = QWidget(self.keys_widget)
         self.main_widget.setObjectName(u"main_widget")
         self.main_layout = QVBoxLayout(self.main_widget)
-        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setObjectName(u"main_layout")
+        self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.f_row = QHBoxLayout()
         self.f_row.setObjectName(u"f_row")
         self.escape = QPushButton(self.main_widget)
@@ -171,9 +174,4 @@ class Ui_Keyboard:
         self.i_know_checkbox.setText(u"I know what I'm doing!")
         self.dialog_layout.addWidget(self.i_know_checkbox, 0, Qt.AlignVCenter)
         self.dialog_layout.setStretch(1, 1)
-        self.retranslateUi(Keyboard)
         QMetaObject.connectSlotsByName(Keyboard)
-    def retranslateUi(self, Keyboard):
-        Keyboard.setWindowTitle(QCoreApplication.translate("Keyboard", u"Hotkey Dialog", None))
-        self.option_button.setText(QCoreApplication.translate("Keyboard", u"...", None))
-        self.label_2.setText(QCoreApplication.translate("Keyboard", u"Show:", None))

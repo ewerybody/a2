@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1037</width>
-    <height>387</height>
+    <height>395</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Hotkey Dialog</string>
+   <string notr="true">Hotkey Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="dialog_layout" stretch="0,1,0,0">
    <property name="sizeConstraint">
@@ -38,14 +38,14 @@
      <item>
       <widget class="A2MoreButton" name="option_button">
        <property name="text">
-        <string>...</string>
+        <string notr="true">...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Show:</string>
+        <string notr="true">Show:</string>
        </property>
       </widget>
      </item>
@@ -68,13 +68,31 @@
    <item>
     <widget class="QWidget" name="keys_widget" native="true">
      <layout class="QHBoxLayout" name="keys_layout">
-      <property name="margin" stdset="0">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
        <widget class="QWidget" name="main_widget" native="true">
         <layout class="QVBoxLayout" name="main_layout">
-         <property name="margin" stdset="0">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -138,6 +156,7 @@
             <widget class="QPushButton" name="lshift">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -150,6 +169,7 @@
             <widget class="QPushButton" name="rshift">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -166,6 +186,7 @@
             <widget class="QPushButton" name="lctrl">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -178,6 +199,7 @@
             <widget class="QPushButton" name="lwin">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -190,6 +212,7 @@
             <widget class="QPushButton" name="lalt">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -212,6 +235,7 @@
             <widget class="QPushButton" name="ralt">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -224,6 +248,7 @@
             <widget class="QPushButton" name="rwin">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -243,6 +268,7 @@
             <widget class="QPushButton" name="rctrl">
              <property name="font">
               <font>
+               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>

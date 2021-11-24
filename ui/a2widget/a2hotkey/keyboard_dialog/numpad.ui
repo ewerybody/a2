@@ -6,21 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>550</height>
+    <width>418</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="1,0,0,0,0,0">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item row="1" column="0">
     <widget class="QPushButton" name="numlock">
      <property name="text">
-      <string>Num
+      <string notr="true">Num
 Lock</string>
      </property>
     </widget>
@@ -28,105 +37,103 @@ Lock</string>
    <item row="1" column="1">
     <widget class="QPushButton" name="numpaddiv">
      <property name="text">
-      <string>/</string>
+      <string notr="true">/</string>
      </property>
     </widget>
    </item>
    <item row="4" column="0">
     <widget class="QPushButton" name="numpad1">
      <property name="text">
-      <string>1</string>
+      <string notr="true">1</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1">
     <widget class="QPushButton" name="numpad5">
      <property name="text">
-      <string>5</string>
+      <string notr="true">5</string>
      </property>
     </widget>
    </item>
    <item row="1" column="2">
     <widget class="QPushButton" name="numpadmult">
      <property name="text">
-      <string>*</string>
+      <string notr="true">*</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QPushButton" name="numpad8">
      <property name="text">
-      <string>8</string>
+      <string notr="true">8</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
     <widget class="QPushButton" name="numpad4">
      <property name="text">
-      <string>4</string>
+      <string notr="true">4</string>
      </property>
     </widget>
    </item>
    <item row="4" column="2">
     <widget class="QPushButton" name="numpad3">
      <property name="text">
-      <string>3</string>
+      <string notr="true">3</string>
      </property>
     </widget>
    </item>
    <item row="3" column="2">
     <widget class="QPushButton" name="numpad6">
      <property name="text">
-      <string>6</string>
+      <string notr="true">6</string>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
     <widget class="QPushButton" name="numpad7">
      <property name="text">
-      <string>7</string>
+      <string notr="true">7</string>
      </property>
     </widget>
    </item>
    <item row="4" column="1">
     <widget class="QPushButton" name="numpad2">
      <property name="text">
-      <string>2</string>
+      <string notr="true">2</string>
      </property>
     </widget>
    </item>
    <item row="5" column="2">
     <widget class="QPushButton" name="numpaddot">
      <property name="text">
-      <string>.</string>
+      <string notr="true">.</string>
      </property>
     </widget>
    </item>
    <item row="2" column="2">
     <widget class="QPushButton" name="numpad9">
      <property name="text">
-      <string>9</string>
+      <string notr="true">9</string>
      </property>
     </widget>
    </item>
    <item row="5" column="0" colspan="2">
     <widget class="QPushButton" name="numpad0">
      <property name="text">
-      <string>0</string>
+      <string notr="true">0</string>
      </property>
     </widget>
    </item>
    <item row="1" column="3">
     <widget class="QPushButton" name="numpadsub">
      <property name="text">
-      <string>-</string>
+      <string notr="true">-</string>
      </property>
     </widget>
    </item>
    <item row="0" column="0" colspan="5">
-    <widget class="QWidget" name="num_spacer" native="true">
-     <zorder>numpadsub</zorder>
-    </widget>
+    <widget class="QWidget" name="num_spacer" native="true"/>
    </item>
    <item row="2" column="3" rowspan="2">
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -142,7 +149,7 @@ Lock</string>
         </size>
        </property>
        <property name="text">
-        <string>+</string>
+        <string notr="true">+</string>
        </property>
       </widget>
      </item>
@@ -172,7 +179,7 @@ Lock</string>
         </size>
        </property>
        <property name="text">
-        <string>Enter</string>
+        <string notr="true">Enter</string>
        </property>
       </widget>
      </item>

@@ -23,13 +23,11 @@ class Ui_CursorBlock:
         self.print_block.setObjectName(u"print_block")
         self.printscreen = QPushButton(CursorBlock)
         self.printscreen.setObjectName(u"printscreen")
-        self.printscreen.setText(u"Print\n"
-"Screen")
+        self.printscreen.setText(u"Print\nScreen")
         self.print_block.addWidget(self.printscreen)
         self.scrolllock = QPushButton(CursorBlock)
         self.scrolllock.setObjectName(u"scrolllock")
-        self.scrolllock.setText(u"Scroll\n"
-"Lock")
+        self.scrolllock.setText(u"Scroll\nLock")
         self.print_block.addWidget(self.scrolllock)
         self.pause = QPushButton(CursorBlock)
         self.pause.setObjectName(u"pause")
@@ -65,8 +63,7 @@ class Ui_CursorBlock:
         self.gridLayout.addWidget(self.insert, 0, 0, 1, 1)
         self.pgup = QPushButton(CursorBlock)
         self.pgup.setObjectName(u"pgup")
-        self.pgup.setText(u"Page\n"
-"Up")
+        self.pgup.setText(u"Page\nUp")
         self.gridLayout.addWidget(self.pgup, 0, 2, 1, 1)
         self.left = QPushButton(CursorBlock)
         self.left.setObjectName(u"left")
@@ -84,8 +81,7 @@ class Ui_CursorBlock:
         self.gridLayout.addWidget(self.up, 3, 1, 1, 1)
         self.pgdn = QPushButton(CursorBlock)
         self.pgdn.setObjectName(u"pgdn")
-        self.pgdn.setText(u"Page\n"
-"Down")
+        self.pgdn.setText(u"Page\nDown")
         self.gridLayout.addWidget(self.pgdn, 1, 2, 1, 1)
         self.right = QPushButton(CursorBlock)
         self.right.setObjectName(u"right")

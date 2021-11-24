@@ -11,10 +11,19 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -29,7 +38,16 @@
       <property name="spacing">
        <number>10</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -53,10 +71,10 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Left Mouse Button</string>
+         <string notr="true">Left Mouse Button</string>
         </property>
         <property name="text">
-         <string>L</string>
+         <string notr="true">L</string>
         </property>
        </widget>
       </item>
@@ -69,10 +87,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Wheel Left</string>
-        </property>
-        <property name="text">
-         <string/>
+         <string notr="true">Wheel Left</string>
         </property>
        </widget>
       </item>
@@ -90,10 +105,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Wheel Up</string>
-          </property>
-          <property name="text">
-           <string/>
+           <string notr="true">Wheel Up</string>
           </property>
          </widget>
         </item>
@@ -112,10 +124,10 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Middle Mouse Button</string>
+           <string notr="true">Middle Mouse Button</string>
           </property>
           <property name="text">
-           <string>M</string>
+           <string notr="true">M</string>
           </property>
          </widget>
         </item>
@@ -128,10 +140,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Wheel Down</string>
-          </property>
-          <property name="text">
-           <string/>
+           <string notr="true">Wheel Down</string>
           </property>
          </widget>
         </item>
@@ -146,10 +155,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Wheel Right</string>
-        </property>
-        <property name="text">
-         <string/>
+         <string notr="true">Wheel Right</string>
         </property>
        </widget>
       </item>
@@ -168,10 +174,10 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Right Mouse Button</string>
+         <string notr="true">Right Mouse Button</string>
         </property>
         <property name="text">
-         <string>R</string>
+         <string notr="true">R</string>
         </property>
        </widget>
       </item>
@@ -185,9 +191,6 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
      </property>
     </widget>
    </item>
