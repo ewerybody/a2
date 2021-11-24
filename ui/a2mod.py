@@ -178,9 +178,9 @@ class Mod:
         return a2util.standard_name_check(
             name, black_list, 'Module has already a script named "%s"!')
 
-    def set_user_cfg(self, element_cfg, value, attr_name=None):
+    def set_user_value(self, element_cfg, value, attr_name=None):
         """
-        Sets an elements user value.
+        Set an elements user value.
 
         Helps to keep the user config as small as possible.
         For instance if there is a value 'enabled' True by default
@@ -230,9 +230,12 @@ class Mod:
 
         # delete module_user_cfg alltogether if needed
         if module_user_cfg:
-            self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
+            self.set_user_cfg(module_user_cfg)
         else:
             self.clear_user_cfg()
+
+    def set_user_cfg(self, user_cfg):
+        self.a2.db.set(USER_CFG_KEY, user_cfg, self.key)
 
     def get_user_cfg(self):
         return self.a2.db.get(USER_CFG_KEY, self.key) or {}

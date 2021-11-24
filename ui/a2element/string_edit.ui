@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>edit</class>
  <widget class="QWidget" name="edit">
@@ -24,7 +25,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="cfg_name">
+    <widget class="A2InternalName" name="cfg_name">
      <property name="text">
       <string>extensionX_string1</string>
      </property>
@@ -59,7 +60,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="A2TextField" name="cfg_value" />
+    <widget class="A2TextField" name="cfg_value"/>
    </item>
    <item row="4" column="1">
     <widget class="QCheckBox" name="cfg_password_mode">
@@ -72,11 +73,16 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
+  <customwidget>
    <class>A2TextField</class>
    <extends>QPlainTextEdit</extends>
    <header>a2widget.a2text_field</header>
   </customwidget>
  </customwidgets>
- <resources />
- <connections />
+ <resources/>
+ <connections/>
 </ui>

@@ -3,14 +3,15 @@ a2ui - setup interface for an Autohotkey environment.
 """
 import os
 import time
-from functools import partial
 
 import a2uic
 import a2dev
 import a2core
-import a2ctrl
 import a2util
+import a2mod
+from a2ctrl.icons import Icons
 
+import a2ui.module_cfg
 from a2qt import QtGui, QtCore, QtWidgets
 
 log = a2core.get_logger(__name__)
@@ -33,7 +34,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.edit_clipboard = []
         self.selected = []
         self.num_selected = 0
-        self.mod = None
+        self.mod = None  # type: a2mod.Mod | None
+        self.mod_cfg = a2ui.module_cfg.ModuleConfig(self)
+        self.mod_cfg.reload_requested.connect(self.load_runtime_and_ui)
 
         self._style = None
         self.rebuild_css()
@@ -89,7 +92,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.check_main_menu_bar()
 
     def _setup_actions(self):
-        Icons = a2ctrl.Icons
         self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
         self.ui.actionEdit_module.setIcon(Icons.edit)
 
@@ -127,9 +129,14 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
         self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
-        self.ui.menuRollback_Changes.aboutToShow.connect(self.build_rollback_menu)
+        self.ui.menuRollback_Changes.aboutToShow.connect(self.mod_cfg.build_rollback_menu)
         self.ui.menuRollback_Changes.setIcon(Icons.rollback)
-        self.ui.actionRevert_Settings.triggered.connect(self.on_revert_settings)
+        self.ui.actionRevert_Settings.triggered.connect(self.mod_cfg.revert)
+        self.ui.actionRevert_Settings.setIcon(Icons.rollback)
+        self.ui.actionExport_Settings.triggered.connect(self.mod_cfg.export)
+        self.ui.actionExport_Settings.setIcon(Icons.up)
+        self.ui.actionImport_Settings.triggered.connect(self.mod_cfg.load)
+        self.ui.actionImport_Settings.setIcon(Icons.file_download)
 
         self.ui.menuModule.aboutToShow.connect(self.build_module_menu)
 
@@ -138,7 +145,9 @@ class A2Window(QtWidgets.QMainWindow):
             self.ui.actionUninstall_a2.triggered.connect(self.on_uninstall_a2)
         else:
             self.ui.actionUninstall_a2.deleteLater()
-            self.on_uninstall_a2 = None
+
+        self.ui.actionHelp_on_Module.triggered.connect(self.module_view.help)
+        self.ui.actionHelp_on_Module.setIcon(Icons.help)
 
     def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
         action.setData(url)
@@ -188,7 +197,10 @@ class A2Window(QtWidgets.QMainWindow):
         Call module to write `temp_config` to disc.
         If it's enabled only trigger settingsChanged when
         """
-        if not self.module_view.editing:
+        if self.mod is None or not self.module_view.editing:
+            return
+
+        if self.module_view.editor.check_issues():
             return
 
         self.mod.config = self.module_view.editor.get_cfg_copy()
@@ -311,7 +323,7 @@ class A2Window(QtWidgets.QMainWindow):
         geometry = self.geometry()
         geometry.setSize(QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
         # set to center of active screen
-        desktop = QtWidgets.QApplication.instance().desktop()
+        desktop = QtWidgets.QApplication.desktop()
         current_screen = desktop.screen(desktop.screenNumber(QtGui.QCursor.pos()))
         geometry.moveCenter(current_screen.geometry().center())
         log.info('Initializing window position & size: %s', geometry)
@@ -449,9 +461,15 @@ class A2Window(QtWidgets.QMainWindow):
 
     def build_module_menu(self):
         menu = self.sender()
+        if not isinstance(menu, QtWidgets.QMenu):
+            return
+
         menu.clear()
         menu.addAction(self.ui.actionHelp_on_Module)
         menu.addAction(self.ui.actionRevert_Settings)
+        menu.addAction(self.ui.actionExport_Settings)
+        menu.addAction(self.ui.actionImport_Settings)
+
         if self.module_view.menu_items:
             menu.addSeparator()
             for action in self.module_view.menu_items:
@@ -459,71 +477,6 @@ class A2Window(QtWidgets.QMainWindow):
 
     def on_dev_menu_build(self):
         self.ui.menuRollback_Changes.setEnabled(self.mod is not None)
-
-    def build_rollback_menu(self):
-        menu = self.ui.menuRollback_Changes
-        menu.clear()
-        backups_sorted = self.mod.get_config_backups()
-        if not backups_sorted:
-            action = menu.addAction('Nothing to roll back to!')
-            action.setEnabled(False)
-        else:
-            now = time.time()
-            for this_time, backup_name in backups_sorted[:15]:
-                try:
-                    label = a2util.unroll_seconds(now - this_time, 2)
-                    label = 'version %s - %s ago' % (
-                        int(backup_name[-1]),
-                        label,
-                    )
-                except ValueError:
-                    continue
-                action = menu.addAction(a2ctrl.Icons.rollback, label, self.module_rollback_to)
-                action.setData(backup_name)
-            menu.addSeparator()
-            menu.addAction(a2ctrl.Icons.delete, 'Clear Backups', self.mod.clear_backups)
-
-    def module_rollback_to(self):
-        title = self.sender().text()
-        file_name = self.sender().data()
-        file_path = os.path.join(self.mod.backup_path, file_name)
-
-        from a2dev import RollbackDiffDialog
-
-        dialog = RollbackDiffDialog(self, title, self.mod.config_file, file_path)
-        dialog.okayed.connect(partial(self.on_rollback, file_name))
-        dialog.show()
-
-    def on_rollback(self, file_name):
-        self.mod.rollback(file_name)
-        self.settings_changed()
-
-    def on_revert_settings(self):
-        if self.mod is None:
-            return
-        from a2widget.a2input_dialog import A2ConfirmDialog
-
-        module_user_cfg = self.mod.get_user_cfg()
-        if module_user_cfg:
-            dialog = A2ConfirmDialog(
-                self,
-                'Revert User Settings',
-                msg='This will throw away any user changes!',
-            )
-            dialog.okayed.connect(self._on_revert_settings)
-            dialog.show()
-        else:
-            dialog = A2ConfirmDialog(
-                self,
-                'Nothing to Revert!',
-                msg='Appears everything is on "factory settings"!',
-            )
-            dialog.show()
-
-    def _on_revert_settings(self):
-        self.mod.clear_user_cfg()
-        self.mod.change()
-        self.load_runtime_and_ui()
 
     def check_element(self, name):
         """Find a named element and call its `check` method."""
@@ -554,12 +507,12 @@ class A2Window(QtWidgets.QMainWindow):
         """Override Qt showEvent with window initialization."""
         if not self._initial_draw_finished:
             self.setWindowTitle(a2core.NAME)
-            self.setWindowIcon(a2ctrl.Icons.a2)
+            self.setWindowIcon(Icons.a2)
             widget = QtWidgets.QWidget(self)
             layout = QtWidgets.QVBoxLayout(widget)
             label = QtWidgets.QLabel()
             label.setAlignment(QtCore.Qt.AlignCenter)
-            label.setPixmap(a2ctrl.Icons.a2tinted.pixmap(256))
+            label.setPixmap(Icons.a2tinted.pixmap(256))
             layout.addWidget(label)
             self.setCentralWidget(widget)
             self.restore_ui()
@@ -568,7 +521,8 @@ class A2Window(QtWidgets.QMainWindow):
         return super(A2Window, self).showEvent(event)
 
     def on_uninstall_a2(self):
-        a2util.start_process_detached(self.a2.paths.uninstaller)
+        if os.path.isfile(self.a2.paths.uninstaller):
+            a2util.start_process_detached(self.a2.paths.uninstaller)
 
     def _run_thread(self, name, thread_class, args=None):
         if args is None:

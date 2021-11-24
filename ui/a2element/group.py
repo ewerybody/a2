@@ -21,7 +21,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         self.setTitle(self.cfg.get('label', ''))
         self.setCheckable(self.cfg.get('disablable', True))
         self.setChecked(self.get_user_value(bool, 'enabled'))
-        self.clicked[bool].connect(self.check)
+        self.clicked.connect(self.check)
 
         self.a2_group_layout = QtWidgets.QVBoxLayout(self)
 
@@ -29,7 +29,7 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         # group box title. It works in settings view tho. So far I'm unable
         # to fix this via CSS. Enlighten me!
         self.a2_group_marging_top = QtWidgets.QWidget()
-        self.a2_group_marging_top.setMaximumHeight(self.main.style.get('margin_h'))
+        self.a2_group_marging_top.setMinimumHeight(self.main.style.get('margin'))
         self.a2_group_layout.addWidget(self.a2_group_marging_top)
 
         expandable = False
@@ -48,8 +48,10 @@ class Draw(QtWidgets.QGroupBox, DrawCtrlMixin):
         if expandable:
             self.is_expandable_widget = True
 
-    def check(self, *args):
-        self.set_user_value(args[0], 'enabled')
+    def check(self, state=None):
+        if state is None:
+            state = self.isChecked()
+        self.set_user_value(state, 'enabled')
         self.change()
 
 
@@ -68,7 +70,6 @@ class Edit(EditCtrl):
         super(Edit, self).__init__(cfg, main, parent_cfg, add_layout=False)
         self.cfg.setdefault('name', '')
         self.cfg.setdefault('children', [])
-        self.config_list = self.cfg['children']
         self._child_elements = []
 
         a2uic.check_module(group_edit_ui)
@@ -78,7 +79,7 @@ class Edit(EditCtrl):
         a2ctrl.connect.cfg_controls(self.cfg, self.ui)
 
         self._check_checkable()
-        self.ui.cfg_disablable.clicked[bool].connect(self._check_checkable)
+        self.ui.cfg_disablable.clicked.connect(self._check_checkable)
 
     def fill_elements(self, elements: list):
         from a2element._edit import EditAddElem
@@ -101,14 +102,14 @@ class Edit(EditCtrl):
         self.changed.emit()
 
     def _check_checkable(self, checked=None):
-        """If not checkable the group is automatically enabled!"""
+        """If not checkable the group is automatically enabled."""
         if checked is None:
             checked = self.cfg.get('disablable', True)
 
         if not checked:
             self.ui.cfg_enabled.setChecked(True)
             self.cfg['enabled'] = True
-        self.ui.cfg_enabled.setVisible(checked)
+        self.ui.cfg_enabled.setVisible(bool(checked))
 
     @property
     def max_index(self):
@@ -125,7 +126,14 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().group
+        return a2ctrl.Icons.group
+
+    @property
+    def config_list(self) -> list:
+        children = self.cfg.get('children')
+        if children is None or not isinstance(children, list):
+            return []
+        return children
 
 
 def get_settings(module_key, cfg, db_dict, _user_cfg):

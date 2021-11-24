@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>822</width>
-    <height>130</height>
+    <height>129</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="cfg_name">
+      <widget class="A2InternalName" name="cfg_name">
        <property name="text">
         <string>extensionX_group1</string>
        </property>
@@ -110,6 +110,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -43,10 +43,7 @@ class A2ModuleList(QtWidgets.QWidget):
         self.ui.a2module_list_widget.blockSignals(True)
         self.ui.a2module_list_widget.clear_selection()
 
-        selection, last_item = self._select(modules)
-
-        if last_item is not None:
-            self.ui.a2module_list_widget.setCurrentItem(last_item)
+        selection = self._select(modules)
 
         self.ui.a2module_list_widget.blockSignals(False)
         if selection != self.selection:
@@ -55,9 +52,9 @@ class A2ModuleList(QtWidgets.QWidget):
 
     def _select(self, modules):
         selection = []
-        last_item = None
+        list_items = []
         if not modules:
-            return selection, last_item
+            return selection
 
         if isinstance(modules, str):
             modules = [modules]
@@ -65,10 +62,10 @@ class A2ModuleList(QtWidgets.QWidget):
         for item in modules:
             if isinstance(item, a2mod.Mod):
                 selection.append(item)
-                list_item = self._module_map.get(item.key)
+                list_items.append(self._module_map.get(item.key))
 
             elif isinstance(item, str):
-                list_item = self._module_map.get(item)
+                list_items.append(self._module_map.get(item))
                 try:
                     srcname, modname = item.split('|', 1)
                     mod = self.a2.module_sources[srcname].mods[modname]
@@ -78,11 +75,23 @@ class A2ModuleList(QtWidgets.QWidget):
             else:
                 continue
 
-            if list_item is not None:
-                list_item.setSelected(True)
-                last_item = list_item
+        for item in list_items:
+            item.setSelected(True)
 
-        return selection, last_item
+        # Weird! I'm super sure this used to work within the selection loop!
+        # Now `setCurrentItem` reselects, removing the former selection.
+        # AHH now I know: Its because we changed from `QListWidget` to `QTreeWidget`
+        # and appears there is an inconsistency with `setCurrentItem`!
+        # So. Passing this QItemSelectionModel works! Even afterwards!
+        if list_items:
+            self.ui.a2module_list_widget.setCurrentItem(
+                list_items[-1], 0, QtCore.QItemSelectionModel.Current
+            )
+        # Why do we have to do this at all? Well, it can be that you
+        # actually select an item but have keyboard-focus on another one!
+        # which feels super weird.
+
+        return selection
 
     def draw_modules(self, select_mods=None):
         """

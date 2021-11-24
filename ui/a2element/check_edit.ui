@@ -6,29 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>710</width>
-    <height>146</height>
+    <width>670</width>
+    <height>105</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true">Form</string>
   </property>
   <layout class="QFormLayout" name="edit_layout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
-   <property name="leftMargin">
-    <number>10</number>
-   </property>
-   <property name="topMargin">
-    <number>5</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>5</number>
-   </property>
+   <item row="0" column="1">
+    <widget class="A2InternalName" name="cfg_name">
+     <property name="text">
+      <string notr="true">extensionX_checkbox1</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="internalNameLabel">
      <property name="minimumSize">
@@ -38,17 +30,10 @@
       </size>
      </property>
      <property name="text">
-      <string>internal name:</string>
+      <string notr="true">internal name:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="cfg_name">
-     <property name="text">
-      <string>extensionX_checkbox1</string>
      </property>
     </widget>
    </item>
@@ -61,7 +46,7 @@
       </size>
      </property>
      <property name="text">
-      <string>display label:</string>
+      <string notr="true">display label:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -71,14 +56,14 @@
    <item row="1" column="1">
     <widget class="QLineEdit" name="cfg_label">
      <property name="text">
-      <string>toggle some value On/Off</string>
+      <string notr="true">toggle some value On/Off</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
     <widget class="QCheckBox" name="cfg_value">
      <property name="text">
-      <string>enabled by default</string>
+      <string notr="true">enabled by default</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -87,6 +72,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>A2InternalName</class>
+   <extends>QLineEdit</extends>
+   <header>a2widget.a2text_field</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

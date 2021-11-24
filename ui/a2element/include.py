@@ -1,3 +1,4 @@
+import os
 import a2ctrl
 import a2core
 
@@ -9,6 +10,7 @@ from a2element._edit import LocalAHKScriptsMenu
 
 
 log = a2core.get_logger(__name__)
+ISSUE_FILE_MISSING = 'The file "%s" cannot be found! Cannot include missing file!'
 
 
 class Edit(EditCtrl):
@@ -45,7 +47,15 @@ class Edit(EditCtrl):
 
     @staticmethod
     def element_icon():
-        return a2ctrl.Icons.inst().code
+        return a2ctrl.Icons.code
+
+    def check_issues(self):
+        file_name = self.cfg.get('file', '')
+        if file_name and isinstance(file_name, str):
+            file_path = os.path.join(self.main.mod.path, file_name)
+            if not os.path.isfile(file_path):
+                return ISSUE_FILE_MISSING % file_name
+        return ''
 
 
 def get_settings(_module_key, cfg, db_dict, _user_cfg):

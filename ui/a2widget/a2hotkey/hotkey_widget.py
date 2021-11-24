@@ -102,10 +102,11 @@ class A2Hotkey(QtWidgets.QWidget):
 
     def popup_dialog(self):
         class_name = self.a2.db.get(Vars.dialog_style_setting)
-        hotkey_dialog_class = None  # type: class
+        hotkey_dialog_class = None  # type: QtWidgets.QWidget | None
         if class_name:
-            for hotkey_dialog_class in DIALOG_CLASSES:
-                if hotkey_dialog_class.__name__ == class_name:
+            for _class in DIALOG_CLASSES:
+                if _class.__name__ == class_name:
+                    hotkey_dialog_class = _class
                     break
         if hotkey_dialog_class is None:
             hotkey_dialog_class = DIALOG_DEFAULT
@@ -189,9 +190,9 @@ class A2Hotkey(QtWidgets.QWidget):
         selecting the right items for this configuration
         """
         scope_ui_map = (
-            (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.inst().scope_global),
-            (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.inst().scope),
-            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.inst().scope_exclude),
+            (SCOPE_TOOLTIP_GLOBAL, a2ctrl.Icons.scope_global),
+            (SCOPE_TOOLTIP_INCLUDE, a2ctrl.Icons.scope),
+            (SCOPE_TOOLTIP_EXCLUDE, a2ctrl.Icons.scope_exclude),
         )
         tooltip, icon = scope_ui_map[self._cfg.get(Vars.scope_mode, 0)]
 

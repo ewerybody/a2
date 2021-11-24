@@ -22,8 +22,6 @@ class Ui_edit:
         edit.setWindowTitle(u"Form")
         self.edit_layout = QFormLayout(edit)
         self.edit_layout.setObjectName(u"edit_layout")
-        self.edit_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        self.edit_layout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
         self.displayLabelLabel = QLabel(edit)
         self.displayLabelLabel.setObjectName(u"displayLabelLabel")
         self.displayLabelLabel.setMinimumSize(QSize(100, 0))

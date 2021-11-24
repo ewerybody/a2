@@ -10,23 +10,37 @@ from a2widget.a2input_dialog import A2ConfirmDialog
 _TASK_MSG = 'browse for a %s executable'
 _QUEST_MSG = 'Do you want to %s now?'
 log = a2core.get_logger(__name__)
+MSG_CFG_DIFF = (
+    'The module configuration appears to have changed!\n'
+    'Do you really want to exit and discard the changes?\n\n'
+    'You can also have a look at the differences...'
+)
+MSG_CFG_NEW = (
+    'The module configuration appears to be new!\n'
+    'Do you really want to exit and discard the changes?'
+)
 
 
 class OkDiffDialog(A2ConfirmDialog):
     diff_requested = QtCore.Signal()
 
-    def __init__(self, parent, title, msg, file_path1, file_path2):
-        super(OkDiffDialog, self).__init__(parent, title, msg, )
+    def __init__(self, parent, title, msg, file_path1=None, file_path2=None):
+        super(OkDiffDialog, self).__init__(
+            parent,
+            title,
+            msg,
+        )
 
         self.file_path1 = file_path1
         self.file_path2 = file_path2
 
-        button = QtWidgets.QPushButton('Diff', self)
-        button.setObjectName('a2ok_button')
-        button.clicked.connect(self.diff_requested.emit)
-        button.clicked.connect(self.diff)
-        self.ui.horizontalLayout.insertWidget(1, button)
-        self.ui.diff_button = button
+        if self.file_path1 is not None:
+            button = QtWidgets.QPushButton('Diff', self)
+            button.setObjectName('a2ok_button')
+            button.clicked.connect(self.diff_requested.emit)
+            button.clicked.connect(self.diff)
+            self.ui.horizontalLayout.insertWidget(1, button)
+            self.ui.diff_button = button
 
     def diff(self):
         app_path = self.parent().devset.get_differ()
@@ -46,6 +60,7 @@ class OkDiffDialog(A2ConfirmDialog):
 
 class RollbackDiffDialog(OkDiffDialog):
     """Dialog to ask user for rollback confirmation and offer diffing."""
+
     def __init__(self, parent, title, file_path1, file_path2):
         title = 'Rollback to "%s"' % title
         msg = 'Press <b>OK</b> to can roll back directly or <b>Diff</b> it if you want:'

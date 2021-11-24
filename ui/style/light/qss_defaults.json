@@ -11,6 +11,7 @@
     "font_size_large": 15,
     "margin": 5,
     "margin_h": 15,
+    "scrollbar_width": 8,
     "color_background": "#eee",
     "color_blue": "#43B6FF",
     "color_blue_hover": "#53C6FF",

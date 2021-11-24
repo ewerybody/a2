@@ -158,6 +158,7 @@ install() {
     Loop, Files, %PACKAGE_DIR%\*, F
         FileMove, %A_LoopFilePath%, %A2DIR%\%A_LoopFileName%
 
+    ; make sure the SQLlite-dll can be found
     sqldll := "SQLite3.dll"
     dll_path := path_join(A2DIR, "ui", sqldll)
     if (!FileExist(dll_path))
@@ -165,6 +166,16 @@ install() {
     ini_path := path_join(A2DIR, "lib", "SQLiteDB.ini")
     ini_code := "[Main]`nDllPath=" dll_path
     FileAppend, %ini_code%, %ini_path%
+
+    ; If there is no db-file yet, make sure there is an empty one.
+    data_path := path_join(A2DIR, "data")
+    if (!FileExist(data_path))
+        FileCreateDir, %data_path%
+    db_path := path_join(data_path, "a2.db")
+    if (!FileExist(db_path)) {
+        txt := ""
+        FileAppend, %txt%, %db_path%
+    }
 }
 
 remove_if_empty(path) {

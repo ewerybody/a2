@@ -23,7 +23,7 @@ delete_items(items)
 
 batch_path := create_deleter_batch(A2DIR)
 logmsg(" calling installer deleter...")
-Run, %batch_path%
+Run, %batch_path%,,Min
 ExitApp
 
 ; --------------------------------------------------------
@@ -139,7 +139,7 @@ delete_items(items) {
 
     num_items := items.Length()
     if (!run_silent)
-        Progress, r0-%num_items% w500 cb37ED95, ...,, %NAME%, Small Fonts
+        Progress, r0-%num_items% w500 cb36EC95, ...,, %NAME%, Small Fonts
 
     for i, path in items {
         if (!run_silent)

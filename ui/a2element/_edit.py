@@ -128,7 +128,7 @@ class LocalAHKScriptsMenu(local_script.BrowseScriptsMenu):
     def get_available_scripts(self):
         scripts_used = set()
         # TODO: This needs to be done with the Editor widget! Not by the single element!
-        temp_config = self.main.module_view._tmp_cfg
+        temp_config = self.main.module_view.editor.get_cfg_copy()
         for cfg in a2ctrl.iter_element_cfg_type(temp_config, 'include'):
             scripts_used.add(cfg['file'].lower())
 

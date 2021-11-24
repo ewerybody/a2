@@ -66,6 +66,8 @@ def temp_path(prefix: str = '', ext: str = ''):
 
 
 def iter_files(path):
+    if not os.path.isdir(path):
+        return
     item = FileObj()
     for this in os.scandir(path):
         if this.is_file():

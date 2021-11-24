@@ -21,7 +21,7 @@ ILLEGAL_NAMES = (
     'com9 lpt1 lpt2 lpt3 lpt4 lpt5 lpt6 lpt7 lpt8 lpt9'.split()
 )
 ALLOWED_CHARS = string.ascii_letters + string.digits + '_-.'
-EXPLORER_PATH = os.path.join(os.getenv('WINDIR'), 'explorer.exe')
+EXPLORER_PATH = os.path.join(os.getenv('WINDIR', ''), 'explorer.exe')
 DEFAULT_NAME_MSG = 'Name "%s" already in use!'
 
 
@@ -41,23 +41,22 @@ def standard_name_check(name, black_list=None, black_list_msg=None):
         black_list_msg = DEFAULT_NAME_MSG
 
     _name = name.lower()
-    msg = ''
     if _name == a2core.NAME:
-        msg = f'You just cannot name it "{a2core.NAME}"! Ok?'
-    elif name.startswith('.'):
-        msg = 'Names starting with a dot would be ignored!'
-    elif black_list is not None and name in black_list:
-        msg = black_list_msg % name
-    elif any([(l in string.whitespace) for l in name]):
-        msg = 'Name cannot have whitespace! Use _ or - insead!'
-    elif not all([(l in ALLOWED_CHARS) for l in name]):
-        msg = 'Name can only have letters, digits and "_.-"'
-    elif name in ILLEGAL_NAMES:
-        msg = 'Name cannot be reserved OS device name!'
-    elif not any([(l in string.ascii_letters) for l in name]):
-        msg = 'Have at least 1 letter in the name!'
+        return f'You just cannot name it "{a2core.NAME}"! Ok?'
+    if name.startswith('.'):
+        return 'Names starting with a dot would be ignored!'
+    if black_list is not None and name in black_list:
+        return black_list_msg % name
+    if any((l in string.whitespace) for l in name):
+        return 'Name cannot have whitespace! Use _ or - insead!'
+    if not all((l in ALLOWED_CHARS) for l in name):
+        return 'Name can only have letters, digits and "_.-"'
+    if name in ILLEGAL_NAMES:
+        return 'Name cannot be reserved OS device name!'
+    if all(l.isnumeric() for l in name):
+        return 'Have at least 1 letter in the name!'
 
-    return msg
+    return ''
 
 
 def get_cfg_default_name(cfg):

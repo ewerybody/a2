@@ -21,6 +21,7 @@ class A2Obj:
     paths: Paths
     urls: URLs
     db: a2db.A2db
+    dev_mode: bool
 
     enabled: typing.Dict[str, typing.List[str]]
     module_sources: typing.Dict[str, a2modsource.ModSource]
@@ -29,17 +30,26 @@ class A2Obj:
     def inst(cls) -> A2Obj: ...
     def start_up(self) -> None: ...
     def fetch_modules(self) -> None: ...
+    def fetch_modules_if_stale(self) -> None: ...
 
 class Paths:
     """Aquires and hosts common paths around a2."""
 
     a2: str
+    a2exe: str
+    a2uiexe: str
+    a2_config: str
+    a2_script: str
+    a2_urls: str
     autohotkey: str
     data: str
     defaults: str
+    elements: str
     includes: str
+    git: str
     lib: str
     uninstaller: str
+    widgets: str
     def set_data_path(self, str): ...
     def write_user_include(self): ...
 

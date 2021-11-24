@@ -12,6 +12,7 @@ from a2qt.QtCore import *
 from a2qt.QtGui import *
 from a2qt.QtWidgets import *
 
+from a2widget.a2text_field import A2InternalName
 from a2widget.a2text_field import A2TextField
 
 
@@ -25,7 +26,7 @@ class Ui_edit:
         self.label = QLabel(edit)
         self.label.setObjectName(u"label")
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
-        self.cfg_name = QLineEdit(edit)
+        self.cfg_name = A2InternalName(edit)
         self.cfg_name.setObjectName(u"cfg_name")
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.cfg_name)
         self.label_2 = QLabel(edit)

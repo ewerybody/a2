@@ -51,6 +51,9 @@ class Edit(QtWidgets.QGroupBox):
 
         self.ui.cfg_display_name.setPlaceholderText(main.mod.name)
 
+    def check_issues(self):
+        return ''
+
 
 def get_settings(*args):
     raise NotImplementedError('Settings for nfo are never fetched!')

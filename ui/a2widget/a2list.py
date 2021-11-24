@@ -232,10 +232,10 @@ class A2ListCompact(A2List):
         if not self._shown:
             return
 
-        self._init_line_height()
+        line_height = self._init_line_height()
         num_items = self.count()
-        h = self._list_line_height * min(max(num_items, 1), self._max_lines_visible)
-        h += self._list_line_height / 3
+        h = line_height * min(max(num_items, 1), self._max_lines_visible)
+        h += line_height / 3
         self.setMinimumHeight(h)
         self.setMaximumHeight(h)
         self._line_height_set = True

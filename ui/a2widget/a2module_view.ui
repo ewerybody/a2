@@ -160,7 +160,7 @@
          </font>
         </property>
         <property name="text">
-         <string notr="true">OK</string>
+         <string notr="true">Check &amp;&amp; Submit</string>
         </property>
        </widget>
       </item>
@@ -168,6 +168,9 @@
        <widget class="QToolButton" name="a2edit_tool_button">
         <property name="text">
          <string>...</string>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

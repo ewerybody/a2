@@ -2,8 +2,10 @@ a2_get_user_data_path(a2dir) {
     ; Get the user data directory from cfg file or:
     ; Set it as "data", right in the the a2 root.
     user_include := "_ user_data_include"
-    if !FileExist(user_include)
-        return path_join(a2dir, "data\")
+    if !FileExist(user_include) {
+        ; Make sure there is a slash at the end:
+        return path_join(a2dir, "data", "")
+    }
 
     line := FileReadLine(user_include, 2)
     include_key := "#include "

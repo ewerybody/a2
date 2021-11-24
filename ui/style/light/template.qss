@@ -71,7 +71,7 @@ QGroupBox {
 	font-weight: bold;
 	margin: %(margin)ipx;
 	margin-top: %(group_label_space)ipx;
-	border-width: 1px;
+	border-width: 3px;
 	border-style: solid;
 	border-radius: %(border_radius)ipx;
 	border-color: "%(color_hover)s";
@@ -204,10 +204,10 @@ QScrollBar:horizontal {
 	margin: 0px;
 }
 QScrollBar:vertical {
-	width: %(font_size_small)ipx;
+	width: %(scrollbar_width)ipx;
 }
 QScrollBar:horizontal {
-	height: %(font_size_small)ipx;
+	height: %(scrollbar_width)ipx;
 }
 
 QScrollBar::add-line,
@@ -219,7 +219,7 @@ QScrollBar::sub-line{
 }
 
 QScrollBar::handle {
-	background-color: "%(color_button)s";
+	background-color: "%(color_hover)s";
 	border-radius: %(border_radius)ipx;
 }
 
@@ -236,14 +236,16 @@ QScrollBar::handle:horizontal {
 }
 
 QScrollBar::handle:hover {
-	background-color: "%(color_hover)s";
+	background-color: "%(color_button)s";
 }
 
 QScrollBar::handle:pressed {
 	background-color: "%(color_pressed)s";
 }
 
+
 A2CodeField,
+A2InternalName,
 QPlainTextEdit#a2console {
 	font-family: "Consolas";
 }

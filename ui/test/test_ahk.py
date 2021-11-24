@@ -1,17 +1,17 @@
 """Test the a2ahk module"""
+import os
 import uuid
 import unittest
-import os.path
 from functools import partial
 
 import a2ahk
 
 TEST_CONTENT = """; some random ahk comment
-a_string := "lorem ipsum... "
+_a_string := "lorem ipsum... "
   anIndentedString = asvasd asdfasd asdfasd
-a_bool := false
-a_number = 42133723
-a_float = 123.567
+_a_bool := false
+_a_number = 42133723
+_a_float = 123.567
 """
 
 
@@ -23,20 +23,22 @@ class Test(unittest.TestCase):
 
         ahkvars = a2ahk.get_variables(test_file)
         self.assertEqual(len(ahkvars), 4)
-        self.assertTrue('a_string' in ahkvars)
-        self.assertEqual(ahkvars['a_string'], 'lorem ipsum...')
+        self.assertTrue('_a_string' in ahkvars)
+        self.assertEqual(ahkvars['_a_string'], 'lorem ipsum...')
 
-        a2ahk.set_variable(test_file, 'a_bool', True)
+        a2ahk.set_variable(test_file, '_a_bool', True)
         ahkvars = a2ahk.get_variables(test_file)
-        self.assertTrue(ahkvars['a_bool'])
+        self.assertTrue(ahkvars['_a_bool'])
         self.assertRaises(KeyError, partial(a2ahk.set_variable, test_file, 'MissingName', False))
-        a2ahk.set_variable(test_file, 'a_number', 1)
+        a2ahk.set_variable(test_file, '_a_number', 1)
         ahkvars = a2ahk.get_variables(test_file)
-        self.assertEqual(ahkvars['a_number'], 1)
+        self.assertEqual(ahkvars['_a_number'], 1)
         test_string = 'a rose is a rose...'
-        a2ahk.set_variable(test_file, 'a_string', test_string)
+        a2ahk.set_variable(test_file, '_a_string', test_string)
         ahkvars = a2ahk.get_variables(test_file)
-        self.assertEqual(ahkvars['a_string'], test_string)
+        self.assertEqual(ahkvars['_a_string'], test_string)
+
+        self.assertRaises(KeyError, partial(a2ahk.set_variable, test_file, 'bad name', 123))
 
         os.remove(test_file)
         self.assertFalse(os.path.isfile(test_file))
@@ -56,11 +58,11 @@ class Test(unittest.TestCase):
     def test_create_vars(self):
         """Test adding lines to files or re-using last empty line."""
         for content in TEST_CONTENT, TEST_CONTENT.strip():
-            test_file =_get_test_ahk_path()
+            test_file = _get_test_ahk_path()
             with open(test_file, 'w') as fob:
                 fob.write(content)
 
-            key, value = str(uuid.uuid4()), str(uuid.uuid4())
+            key, value = str(uuid.uuid4()).replace('-', ''), str(uuid.uuid4())
             a2ahk.set_variable(test_file, key, value, create_key=True)
             ahkvars = a2ahk.get_variables(test_file)
             self.assertEqual(ahkvars[key], value)
@@ -102,9 +104,17 @@ class Test(unittest.TestCase):
         win_startup_path = a2ahk.call_lib_cmd('get_win_startup_path')
         print('win_startup_path: "%s"' % win_startup_path)
 
+    def test_var_names(self):
+        legal_names = ('a', 'ABC', 'snake_case', '_____lol', '1name')
+        illegal_nms = ('1', 'sva-sdf', 'asda.asd', '12342', 'with  space', ' ')
+        for name in legal_names:
+            self.assertFalse(a2ahk.check_variable_name(name))
+        for name in illegal_nms:
+            self.assertTrue(a2ahk.check_variable_name(name))
+
 
 def _get_test_ahk_path():
-    return os.path.join(os.getenv('temp'), str(uuid.uuid4()) + a2ahk.EXTENSION)
+    return os.path.join(os.getenv('temp', ''), str(uuid.uuid4()) + a2ahk.EXTENSION)
 
 
 if __name__ == '__main__':

@@ -14,6 +14,7 @@ DEFAULT_SCRIPT_NAME = 'awesome_script'
 
 class BrowseScriptsMenu(QtWidgets.QMenu):
     script_selected = QtCore.Signal(str, str)
+    edit_requested = QtCore.Signal(str)
 
     def __init__(self, parent, main):
         super(BrowseScriptsMenu, self).__init__(parent)
@@ -50,8 +51,10 @@ class BrowseScriptsMenu(QtWidgets.QMenu):
         return menu_script_files
 
     def _on_script_selected_action(self):
-        script_name = self.sender().data()  # type: str
-        self.set_script(script_name)
+        action = self.sender()
+        if isinstance(action, QtGui.QAction):
+            script_name = action.data()  # type: str
+            self.set_script(script_name)
 
     def _on_create_script(self):
         from a2widget.a2input_dialog import A2InputDialog

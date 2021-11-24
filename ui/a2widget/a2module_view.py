@@ -28,7 +28,8 @@ class A2ModuleView(QtWidgets.QWidget):
         self.controls = []
         self.menu_items = []
         self.a2 = a2core.A2Obj.inst()
-        self.editor = None
+        self._editor = None
+        self._scroll_anim = None
 
     def setup_ui(self, main):
         self.main = main
@@ -166,11 +167,12 @@ class A2ModuleView(QtWidgets.QWidget):
         self.menu_items.clear()
 
         config_copy = deepcopy(self.main.mod.config)
-        self.editor = a2module_editor.EditView(self.main, config_copy)
-        self.ui.a2edit_tool_button.clicked.connect(self.editor.on_menu_button_clicked)
+        self._editor = a2module_editor.EditView(self.main, config_copy)
+        self._editor.scroll_request.connect(self.scroll_to)
+        self.ui.a2edit_tool_button.clicked.connect(self._editor.on_menu_button_clicked)
 
         self.add_button = a2element._edit.EditAddElem(self.main, config_copy)
-        self.add_button.add_request.connect(self.editor.add_element)
+        self.add_button.add_request.connect(self._editor.add_element)
         self.add_button_layer = QtWidgets.QVBoxLayout()
         spacing = self.main.style.get('spacing')
         self.add_button_layer.setContentsMargins(spacing, 0, 0, 0)
@@ -180,7 +182,7 @@ class A2ModuleView(QtWidgets.QWidget):
             self.add_button, QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeft
         )
 
-        self._set_widget(self.editor)
+        self._set_widget(self._editor)
         self._set_editing(True)
         self.settings_widget.setFocus()
 
@@ -307,6 +309,9 @@ class A2ModuleView(QtWidgets.QWidget):
         if tmp_cfg == self.main.mod.config:
             return False
 
+        if tmp_cfg and not self.main.mod.config:
+            return True
+
         if len(tmp_cfg) != len(self.main.mod.config):
             return True
 
@@ -325,16 +330,15 @@ class A2ModuleView(QtWidgets.QWidget):
     def user_cancels(self):
         """Popup dialog to ask about discarding changes.
         Return `True` if user clicks **Cancel** to keep editing."""
-        import a2dev
+        import a2dev, os
 
-        msg = (
-            'The module configuration appears to have changed!\n'
-            'Do you really want to exit and discard the changes?\n\n'
-            'You can also have a look at the differences...'
-        )
-        dialog = a2dev.OkDiffDialog(
-            self.main, 'Config Changed!', msg, self.main.mod.config_file, None
-        )
+        if os.path.isfile(self.main.mod.config_file):
+            dialog = a2dev.OkDiffDialog(
+                self.main, 'Config Changed!', a2dev.MSG_CFG_DIFF, self.main.mod.config_file
+            )
+        else:
+            dialog = a2dev.OkDiffDialog(self.main, 'Trash New Config?!', a2dev.MSG_CFG_NEW)
+
         dialog.diff_requested.connect(self._on_diff_requested)
         dialog.exec_()
         dialog.remove_temp_files()
@@ -345,3 +349,21 @@ class A2ModuleView(QtWidgets.QWidget):
         tmp_path = a2path.temp_path(f'temp_{self.main.mod.name}_', 'json')
         a2util.json_write(tmp_path, self._tmp_cfg)
         dialog.file_path2 = tmp_path
+
+    @property
+    def editor(self):
+        if self._editor is None:
+            RuntimeError('No editor built!')
+        return self._editor
+
+    def scroll_to(self, value):
+        scrollbar = self.ui.a2scroll_area.verticalScrollBar()
+        start = scrollbar.value()
+        if self._scroll_anim is None:
+            self._scroll_anim = QtCore.QPropertyAnimation(scrollbar, b'value')
+            self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+            self._scroll_anim.setDuration(500)
+            self._scroll_anim.setLoopCount(1)
+        self._scroll_anim.setStartValue(start)
+        self._scroll_anim.setEndValue(value)
+        self._scroll_anim.start()
