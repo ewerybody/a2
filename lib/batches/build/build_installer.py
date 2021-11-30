@@ -16,6 +16,7 @@ import a2util
 Paths = _build_package_init.Paths
 PACKAGE_SUB_NAME = _build_package_init.PACKAGE_SUB_NAME
 TMP_NAME = 'a2_temp_buildpath'
+NFO_DESCRIPTION = 'a2 self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
 INSTALLER_CFG = f';!@Install@!UTF-8!\nRunProgram="{SETUP_EXE}"\n;!@InstallEnd@!'
 ERROR_NO_PACKAGE = 'No package? No need to build an installer :/ build a package first!'
@@ -46,16 +47,21 @@ def main():
 
     _create_fresh_sfx_files()
     _update_manifest(version_string)
-    _set_rc_key('FileVersion', '--set-file-version', version_label)
-    _set_rc_key('ProductVersion', '--set-product-version', version_label)
-    _apply_manifest()
+    for sfx_target in Paths.sfx_target_ui, Paths.sfx_target_silent:
+        _set_rc_key(sfx_target, 'FileVersion', version_label)
+        _set_rc_key(sfx_target, 'ProductVersion', version_label)
+        _set_rc_key(sfx_target, 'FileDescription', NFO_DESCRIPTION)
+        _set_rc_key(sfx_target, 'ProductName', _build_package_init.NAME)
+        _set_rc_key(sfx_target, 'CompanyName', '')
+        _set_rc_key(sfx_target, 'LegalCopyright', '')
+        _apply_manifest(sfx_target)
 
     _pack_installer_archive()
     _copy_together_installer_binary(package_cfg['version'])
     _make_portable()
 
 
-def _set_rc_key(key, arg, value_string):
+def _set_rc_key(target_path, key, value_string):
     """
     --set-version-string <key> <value>         Set version string
     --get-version-string <key>                 Print version string
@@ -66,23 +72,33 @@ def _set_rc_key(key, arg, value_string):
     --application-manifest <path-to-file>      Set manifest file
     --set-resource-string <key> <value>        Set resource string
     --get-resource-string <key>                Get resource string
-    """
-    for sfx_target in Paths.sfx_target_ui, Paths.sfx_target_silent:
-        current = subprocess.check_output(
-            [Paths.rcedit, sfx_target, '--get-version-string', key]
-        ).decode()
 
-        if current != value_string:
-            _prnt('Set "%s" on "%s"...' % (key, os.path.basename(sfx_target)))
-            subprocess.call([Paths.rcedit, sfx_target, arg, value_string])
-            # check if things were changed correctly
-            current = subprocess.check_output(
-                [Paths.rcedit, sfx_target, '--get-version-string', key]
-            ).decode()
-            if current == value_string:
-                print(' %s %s' % (CHKMK, value_string))
-            else:
-                print(' %s "%s" is "%s" NOT "%s"!' % (EXMRK, key, current, value_string))
+    For key names have a look at the `string-name` section under:
+    https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource#parameters
+    FileDescription, ProductName, LegalCopyright, OriginalFilename, CompanyName
+    """
+    current = subprocess.check_output(
+        [Paths.rcedit, target_path, '--get-version-string', key]
+    ).decode()
+    if current == value_string:
+        return
+
+    _prnt('Set "%s" on "%s"...' % (key, os.path.basename(target_path)))
+    if key == 'FileVersion':
+        subprocess.call([Paths.rcedit, target_path, '--set-file-version', value_string])
+    elif key == 'ProductVersion':
+        subprocess.call([Paths.rcedit, target_path, '--set-product-version', value_string])
+    else:
+        subprocess.call([Paths.rcedit, target_path, '--set-version-string', key, value_string])
+
+    # check if things were changed correctly
+    current = subprocess.check_output(
+        [Paths.rcedit, target_path, '--get-version-string', key]
+    ).decode()
+    if current == value_string:
+        print(' %s %s' % (CHKMK, value_string))
+    else:
+        print(' %s "%s" is "%s" NOT "%s"!' % (EXMRK, key, current, value_string))
 
 
 def _check_version(version):
@@ -125,9 +141,8 @@ def _update_manifest(version_string):
     print('manifest written: %s' % Paths.manifest_target)
 
 
-def _apply_manifest():
-    for sfx_target in Paths.sfx_target_ui, Paths.sfx_target_silent:
-        subprocess.call([Paths.rcedit, sfx_target, '--application-manifest', Paths.manifest_target])
+def _apply_manifest(sfx_target):
+    subprocess.call([Paths.rcedit, sfx_target, '--application-manifest', Paths.manifest_target])
 
 
 def _pack_installer_archive():
@@ -148,7 +163,10 @@ def _need_rezipping():
         print('Re-zip: TRUE :: No Archive yet!')
         result = True
 
-    digest_path = os.path.join(os.environ['TEMP'], TMP_NAME, 'archive_digest.json')
+    tmp_dir = os.path.join(os.environ['TEMP'], TMP_NAME)
+    if not os.path.isdir(tmp_dir):
+        os.makedirs(tmp_dir)
+    digest_path = os.path.join(tmp_dir, 'archive_digest.json')
     if _diff_digest(digest_path):
         t0 = time.time()
         digest_map = _create_digest()
@@ -222,6 +240,8 @@ def _copy_together_installer_binary(version_label):
         (name_ui, Paths.sfx_target_ui, Paths.installer_script),
         (name_silent, Paths.sfx_target_silent, Paths.installer_script_silent),
     ):
+        _set_rc_key(target_sfx, 'OriginalFilename', target_name)
+
         target_path = os.path.join(Paths.distroot, target_name)
         if os.path.isfile(target_path):
             os.unlink(target_path)
