@@ -199,7 +199,7 @@ class A2ItemEditor(QtWidgets.QWidget):
             self.data[new_name] = data
             self.draw_data(new_name)
 
-            # self.data_changed.emit()
+            self.data_changed.emit()
             self.update_data()
             self.item_changed.emit((old_name, new_name, item))
 

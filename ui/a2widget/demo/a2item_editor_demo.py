@@ -51,6 +51,11 @@ class Demo(QtWidgets.QMainWindow):
             'Seed Appearance',
         )
 
+        self.editor.data_changed.connect(self.on_data_change)
+
+    def on_data_change(self):
+        print('data_changed!')
+
 
 def show():
     app = QtWidgets.QApplication([])
