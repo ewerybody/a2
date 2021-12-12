@@ -26,7 +26,7 @@ check_registry(supported_versions, exe_type) {
         py_key = HKEY_CURRENT_USER\Software\Python\PythonCore\%this_version%\InstallPath
         RegRead, pypath, %py_key%, %reg_name%
 
-        if !pypath
+        if !string_endswith(pypath, filename)
         {
             py_key = HKEY_LOCAL_MACHINE\Software\Python\PythonCore\%this_version%\InstallPath
             RegRead, pypath, %py_key%, %reg_name%
