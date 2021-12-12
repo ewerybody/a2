@@ -16,15 +16,6 @@ LINE_LEN = 95
 QMEMBERS = {}
 MEMBERSQ = {}
 
-for mod in (QtCore, QtGui, QtWidgets, QtSvg):
-    name = mod.__name__.split('.')[1]
-    QMEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != 'a2qt']
-    for member in QMEMBERS[name]:
-        if member in MEMBERSQ:
-            print(f'{member} already listed in {MEMBERSQ[member]}!!')
-            continue
-        MEMBERSQ[member] = name
-
 
 def check_module(module, force=False):
     """
@@ -97,11 +88,13 @@ def patch_ui(uiname, pyfile):
     [x] remove retranslateUi and its call if empty
     [x] remove unneeded empty lines
     [x] make it class Name: instead of oldschool class Name(object):
+    [x] get rid of broad * imports
     TODO:
-    [ ] get rid of broad * imports - this is pretty big. We'd need some LUTs.
     [ ] make it black/brunette compliant - I'd rather leave this to brunette itself.
         but in a separate process that auto-checks for updated ui-files.
     """
+    _get_QMEMBERS()
+
     with open(pyfile) as pyfobj:
         lines: list[str] = pyfobj.readlines()
 
@@ -152,6 +145,8 @@ def patch_ui(uiname, pyfile):
             if line.endswith(OLDSCHOOL_CLASS):
                 lines[i] = line[: -len(OLDSCHOOL_CLASS)] + ':\n'
             break
+    if class_block_start is None:
+        raise RuntimeError('class_block_start was not found!')
 
     setup_line = lines[class_block_start + 1]
     parts = setup_line.split()
@@ -249,3 +244,17 @@ def _get_ui_basename_from_header(py_ui_path):
                 break
             line = fobj.readline()
     return uibase
+
+
+def _get_QMEMBERS():
+    if QMEMBERS:
+        return
+
+    for mod in (QtCore, QtGui, QtWidgets, QtSvg):
+        name = mod.__name__.split('.')[1]
+        QMEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != 'a2qt']
+        for member in QMEMBERS[name]:
+            if member in MEMBERSQ:
+                print(f'{member} already listed in {MEMBERSQ[member]}!!')
+                continue
+            MEMBERSQ[member] = name
