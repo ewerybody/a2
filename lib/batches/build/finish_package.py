@@ -38,8 +38,8 @@ UI_REMOVE_FILES = (
 UI_REMOVE_DIRS = 'lib2to3', 'Include', 'numpy'
 
 PYSIDE = 'PySide'
-PYSIDE_VERSION = 2
-QT_VERSION = 5
+PYSIDE_VERSION = 6
+QT_VERSION = 6
 # The dlls we want to KEEP! For some reason Qml is indispensable :/
 QT_HAVE_DLLS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg', 'Qml'
 QT_DLL = 'Qt%i%s.dll'

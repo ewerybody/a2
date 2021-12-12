@@ -16,11 +16,11 @@ set /p pypath= < "%tmp_txt%"
 del "%tmp_txt%"
 echo pypath: %pypath%
 
-echo building root a2ui executable ...
-"%Ahk2Exe%" /in "%source_path%\a2ui_starter.ahk" /out "%distpath%\a2ui.exe" /compress 0 /ahk "%ahk_exe%"
-
 echo building root a2 executable ...
 "%Ahk2Exe%" /in "%source_path%\a2_starter.ahk" /out "%distpath%\a2.exe" /compress 0 /ahk "%ahk_exe%"
+
+echo building root a2ui executable ...
+"%Ahk2Exe%" /in "%source_path%\a2ui_starter.ahk" /out "%distpath%\a2ui.exe" /compress 0 /ahk "%ahk_exe%"
 
 echo building root a2 Uninstaller executable ...
 "%Ahk2Exe%" /in "%source_path%\a2_uninstaller.ahk" /out "%distpath%\Uninstall a2.exe" /compress 0 /ahk "%ahk_exe%"
