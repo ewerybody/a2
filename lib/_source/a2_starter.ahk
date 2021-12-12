@@ -1,10 +1,16 @@
 ; This is the script that becomes the a2.exe in root!
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
+;@Ahk2Exe-SetCompanyName a2
+;@Ahk2Exe-SetCopyright GPLv3
+;@Ahk2Exe-SetDescription a2 runtime starter
+;@Ahk2Exe-SetOrigFilename a2.exe
+;@Ahk2Exe-SetProductName a2
+;@Ahk2Exe-SetVersion 0.3.0
 
-; If (!A_IsCompiled) {
-;     MsgBox, 16, ERROR, a2_starter should ONLY be run compiled!
-;     ExitApp
-; }
+If (!A_IsCompiled) {
+    MsgBox, 16, ERROR, a2_starter should ONLY be run compiled!
+    ExitApp
+}
 
 a2_ahk := _init_get_autohotkey_exe()
 lib_path := _init_get_lib_path()

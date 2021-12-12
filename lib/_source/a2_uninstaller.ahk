@@ -10,6 +10,13 @@
 ; * exit
 ;@Ahk2Exe-ConsoleApp
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2x.ico
+;@Ahk2Exe-SetCompanyName a2
+;@Ahk2Exe-SetCopyright GPLv3
+;@Ahk2Exe-SetDescription a2 Uninstaller
+;@Ahk2Exe-SetOrigFilename Uninstall a2.exe
+;@Ahk2Exe-SetProductName a2
+;@Ahk2Exe-SetVersion 0.3.0
+
 
 complain_if_uncompiled()
 

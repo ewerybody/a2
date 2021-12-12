@@ -1,6 +1,13 @@
 ; a2 installer version to enforce silent mode
+
 ;@Ahk2Exe-ConsoleApp
-;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
+;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2x.ico
+;@Ahk2Exe-SetCompanyName a2
+;@Ahk2Exe-SetCopyright GPLv3
+;@Ahk2Exe-SetDescription a2 install script silent
+;@Ahk2Exe-SetOrigFilename setup.exe
+;@Ahk2Exe-SetProductName a2
+;@Ahk2Exe-SetVersion 0.3.0
 
 complain_if_uncompiled()
 check_execution_dir()
