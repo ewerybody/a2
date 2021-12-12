@@ -50,6 +50,9 @@ from enum import Enum
 from typing import Any, Callable, Optional, Tuple, Type, Union, Sequence, Dict, List, overload
 
 
+__version__: int
+
+
 class ClassInfo(object):
 
     def __init__(self, **info:Dict[str, str]) -> None: ...
