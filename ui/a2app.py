@@ -125,7 +125,7 @@ def main():
 
         a2output.get_logwriter()
         app = A2App()
-        app.exec_()
+        app.exec()
     # Broad except is expected here!
     # pylint: disable=broad-except
     except Exception:

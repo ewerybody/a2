@@ -323,9 +323,9 @@ class A2Window(QtWidgets.QMainWindow):
         geometry = self.geometry()
         geometry.setSize(QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
         # set to center of active screen
-        desktop = QtWidgets.QApplication.desktop()
-        current_screen = desktop.screen(desktop.screenNumber(QtGui.QCursor.pos()))
-        geometry.moveCenter(current_screen.geometry().center())
+        for screen in QtWidgets.QApplication.screens():
+            if screen.geometry().contains(QtGui.QCursor.pos()):
+                geometry.moveCenter(screen.geometry().center())
         log.info('Initializing window position & size: %s', geometry)
         self.setGeometry(geometry)
 
