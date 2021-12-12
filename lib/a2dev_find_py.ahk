@@ -31,7 +31,6 @@ check_registry(supported_versions, exe_type) {
             py_key = HKEY_LOCAL_MACHINE\Software\Python\PythonCore\%this_version%\InstallPath
             RegRead, pypath, %py_key%, %reg_name%
         }
-        MsgBox this_version: %this_version%`npypath: %pypath%
 
         IfExist, %pypath%
         {
