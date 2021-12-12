@@ -11,18 +11,29 @@ import codecs
 import subprocess
 
 import _build_package_init
+import a2core
 import a2util
 
 Paths = _build_package_init.Paths
 PACKAGE_SUB_NAME = _build_package_init.PACKAGE_SUB_NAME
-TMP_NAME = 'a2_temp_buildpath'
-NFO_DESCRIPTION = 'a2 self-extracting installation package.'
+TMP_NAME = a2core.NAME + '_temp_buildpath'
+NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
 INSTALLER_CFG = f';!@Install@!UTF-8!\nRunProgram="{SETUP_EXE}"\n;!@InstallEnd@!'
 ERROR_NO_PACKAGE = 'No package? No need to build an installer :/ build a package first!'
 SEVEN_FLAGS = (
     '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
 )
+COMPANY = 'github.com/ewerybody/a2'
+COPYRIGHT = f'GPLv3 ({COMPANY})'
+EXE_NFO = {
+    'FileVersion': '',
+    'ProductVersion': '',
+    'FileDescription': '',
+    'ProductName': a2core.NAME,
+    'CompanyName': COMPANY,
+    'LegalCopyright': COPYRIGHT,
+}
 CHKMK = b'\xe2\x9c\x94'.decode()
 EXMRK = b'\xe2\x9c\x96'.decode()
 _prnt = sys.stdout.write
@@ -35,10 +46,8 @@ def main():
         raise FileNotFoundError(ERROR_NO_PACKAGE)
 
     package_cfg = a2util.json_read(Paths.package_config)
-    package_name = f'a2 {PACKAGE_SUB_NAME} {package_cfg["version"]}'
+    package_name = f'{a2core.NAME} {PACKAGE_SUB_NAME} {package_cfg["version"]}'
     print('\n{0} building installer: {1} ... {0}'.format(15 * '#', package_name))
-
-    os.makedirs(Paths.distroot, exist_ok=True)
 
     version_string = _check_version(package_cfg['version'])
     version_label = (
@@ -47,18 +56,14 @@ def main():
 
     _create_fresh_sfx_files()
     _update_manifest(version_string)
-    for sfx_target in Paths.sfx_target_ui, Paths.sfx_target_silent:
-        _set_rc_key(sfx_target, 'FileVersion', version_label)
-        _set_rc_key(sfx_target, 'ProductVersion', version_label)
-        _set_rc_key(sfx_target, 'FileDescription', NFO_DESCRIPTION)
-        _set_rc_key(sfx_target, 'ProductName', _build_package_init.NAME)
-        _set_rc_key(sfx_target, 'CompanyName', '')
-        _set_rc_key(sfx_target, 'LegalCopyright', '')
-        _apply_manifest(sfx_target)
-
     _pack_installer_archive()
     _copy_together_installer_binary(package_cfg['version'])
     _make_portable()
+
+
+def _set_rc_nfo(target_path: str, nfo: dict[str, str]):
+    for key, value in nfo.items():
+        _set_rc_key(target_path, key, value)
 
 
 def _set_rc_key(target_path, key, value_string):
@@ -77,9 +82,13 @@ def _set_rc_key(target_path, key, value_string):
     https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource#parameters
     FileDescription, ProductName, LegalCopyright, OriginalFilename, CompanyName
     """
-    current = subprocess.check_output(
-        [Paths.rcedit, target_path, '--get-version-string', key]
-    ).decode()
+    try:
+        current = subprocess.check_output(
+            [Paths.rcedit, target_path, '--get-version-string', key]
+        ).decode()
+    except subprocess.CalledProcessError:
+        current = ''
+
     if current == value_string:
         return
 
@@ -236,11 +245,19 @@ def _copy_together_installer_binary(version_label):
     with open(os.path.join(target_cfg), 'w') as file_obj:
         file_obj.write(INSTALLER_CFG)
 
+    vnfo = EXE_NFO.copy()
+    vnfo['FileVersion'] = version_label
+    vnfo['ProductVersion'] = version_label
+
     for target_name, target_sfx, script in (
         (name_ui, Paths.sfx_target_ui, Paths.installer_script),
         (name_silent, Paths.sfx_target_silent, Paths.installer_script_silent),
     ):
-        _set_rc_key(target_sfx, 'OriginalFilename', target_name)
+        nfo = vnfo.copy()
+        nfo['FileDescription'] = NFO_DESCRIPTION
+        nfo['OriginalFilename'] = target_name
+        _set_rc_nfo(target_sfx, nfo)
+        _apply_manifest(target_sfx)
 
         target_path = os.path.join(Paths.distroot, target_name)
         if os.path.isfile(target_path):
@@ -249,17 +266,12 @@ def _copy_together_installer_binary(version_label):
         # copy archive
         this_archive = os.path.join(Paths.distroot, f'_ {target_name}.7z')
         shutil.copyfile(Paths.archive_target, this_archive)
-        # create setup exe
-        exe_path = os.path.join(Paths.distroot, SETUP_EXE)
-        cmd = [Paths.ahk2exe, '/in', script, '/out', exe_path, '/compress', '0', '/ahk', Paths.ahkexe]
-        subprocess.call(cmd)
-        if not os.path.isfile(exe_path):
-            print('\n%s FAIL!: "%s" was not created!\n' % (EXMRK, exe_path))
-            continue
 
         # add setup executable to archive
+        exe_path = make_ahkexe(script, os.path.join(Paths.distroot, SETUP_EXE), nfo)
         subprocess.call([Paths.sevenz_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
         os.unlink(exe_path)
+
         # copy together
         with open(target_path, 'wb') as trg_file:
             for source in (target_sfx, target_cfg, this_archive):
@@ -273,9 +285,6 @@ def _copy_together_installer_binary(version_label):
 
 
 def _create_fresh_sfx_files():
-    """
-    For the installer we need
-    """
     for src, trg in (
         (Paths.sfx_source_ui, Paths.sfx_target_ui),
         (Paths.sfx_source_silent, Paths.sfx_target_silent),
@@ -290,7 +299,7 @@ def _create_fresh_sfx_files():
 def _make_portable():
     """
     a2 is now portable by default! This is just preparing a zip without an
-    uninstaller. That's all. Voilà!
+    uninstaller. That's all. Voila!
     """
     print('Making portable package ...')
     _prnt('  copying ... ')
@@ -315,9 +324,28 @@ def _make_portable():
     if os.path.isfile(portable_path):
         print(f'{CHKMK} Already done')
     else:
-        tar = os.path.join(os.getenv('WINDIR'), 'System32', 'tar.exe')
+        tar = os.path.join(os.getenv('WINDIR', ''), 'System32', 'tar.exe')
         subprocess.call([tar, '-a', '-c', '-f', portable_path, '*'], cwd=Paths.dist_portable)
         print(f'{CHKMK} done')
+
+
+def make_ahkexe(script, outpath, nfo=None):
+    if not os.path.isfile(script):
+        raise RuntimeError('No such Script File!! (%s)' % script)
+
+    cmd = [Paths.ahk2exe, '/in', script, '/out', outpath, '/compress', '0', '/ahk', Paths.ahkexe]
+    subprocess.call(cmd, cwd=Paths.lib)
+    if not os.path.isfile(outpath):
+        print('cmd: %s' % cmd)
+        print('Paths.lib: %s' % Paths.lib)
+        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, outpath))
+
+    if nfo is not None:
+        if not nfo.get('OriginalFilename'):
+            nfo['OriginalFilename'] = os.path.basename(outpath)
+        _set_rc_nfo(outpath, nfo)
+
+    return outpath
 
 
 if __name__ == '__main__':
