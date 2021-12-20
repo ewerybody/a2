@@ -27,6 +27,7 @@ class HoverWidget(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__(parent)
         self.hlayout = QtWidgets.QHBoxLayout(self)
+        self.hlayout.setContentsMargins(0, 0, 0, 0)
         self._hover_widget = None  # type: QtWidgets.QAbstractButton | None
 
     def set_hover_widget(self, widget):
