@@ -21,14 +21,13 @@ class FancyCheck(QtWidgets.QWidget):
 class HoverWidget(QtWidgets.QWidget):
     clicked = QtCore.Signal()
     context_menu_requested = QtCore.Signal()
-
     mouse_pressed = QtCore.Signal()
     mouse_released = QtCore.Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self.hlayout = QtWidgets.QHBoxLayout(self)
-        self._hover_widget = None
+        self._hover_widget = None  # type: QtWidgets.QAbstractButton | None
 
     def set_hover_widget(self, widget):
         self._hover_widget = widget
@@ -41,7 +40,7 @@ class HoverWidget(QtWidgets.QWidget):
         return super().enterEvent(event)
 
     def leaveEvent(self, event):
-        if self._send_hover_event(event):
+        if self._hover_widget is not None and self._send_hover_event(event):
             self._hover_widget.setDown(False)
         return super().leaveEvent(event)
 
@@ -64,7 +63,30 @@ class HoverWidget(QtWidgets.QWidget):
         if self._hover_widget is not None:
             if self._hover_widget.isEnabled() and event.button() == QtCore.Qt.LeftButton:
                 self._hover_widget.setDown(True)
+
+                if self._rich_text_label_clicked(event):
+                    self.clicked.emit()
+
         return super().mousePressEvent(event)
+
+    def _rich_text_label_clicked(self, event):
+        """Mitigate a 11 year old bug that causes QLabels with rich text to
+        not pass a `mouseReleaseEvent`. https://bugreports.qt.io/browse/QTBUG-12982
+
+        Unfortunately seems impossible to check if a QLabel is actually containing
+        rich-text if it's turned to AutoText!
+        """
+        app = QtWidgets.QApplication.instance()
+        if not isinstance(app, QtWidgets.QApplication):
+            return False
+        widget = app.widgetAt(event.globalPos())
+        if not isinstance(widget, QtWidgets.QLabel):
+            return False
+
+        if widget.textFormat() in (QtCore.Qt.RichText, QtCore.Qt.MarkdownText):
+            return True
+
+        return widget.textFormat() is QtCore.Qt.AutoText and '<' in widget.text()
 
     def mouseReleaseEvent(self, event):
         self.mouse_released.emit()
