@@ -11,7 +11,6 @@ WARNING! All changes made in this file will be lost when recompiling UI file!
 from a2qt.QtWidgets import QFormLayout, QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 from a2qt.QtCore import QMetaObject
 
-from a2widget.a2more_button import A2MoreButton
 from a2widget.a2path_field import A2PathField
 
 class Ui_Form:
@@ -62,11 +61,6 @@ class Ui_Form:
         self.update_button.setObjectName(u"update_button")
         self.update_button.setText(u"check for updates ...")
         self.update_layout.addWidget(self.update_button)
-        self.a2option_button = A2MoreButton(self.frame)
-        self.a2option_button.setObjectName(u"a2option_button")
-        self.a2option_button.setText(u"")
-        self.a2option_button.setAutoRaise(True)
-        self.update_layout.addWidget(self.a2option_button)
         self.update_layout.setStretch(0, 1)
         self.formLayout.setLayout(1, QFormLayout.FieldRole, self.update_layout)
         self.label_5 = QLabel(self.frame)
