@@ -48,7 +48,7 @@ from shiboken6 import Shiboken
 from enum import Enum
 from typing import Any, Optional, Tuple, Type, Union, Iterable, Sequence, Dict, List, overload, Text
 
-from PySide6 import QtGui, QtCore
+from a2qt import QtGui, QtCore
 
 
 class QAbstractButton(QWidget):

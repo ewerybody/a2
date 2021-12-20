@@ -48,7 +48,7 @@ from shiboken6 import Shiboken
 import os
 from enum import Enum
 from typing import Any, Callable, Optional, Tuple, Type, Union, Sequence, Dict, List, overload
-
+from a2qt import QtWidgets
 
 __version__: int
 
@@ -1542,7 +1542,7 @@ class QCoreApplication(QObject):
     @staticmethod
     def installTranslator(messageFile:QTranslator) -> bool: ...
     @staticmethod
-    def instance() -> Optional[QCoreApplication]: ...
+    def instance() -> Optional[QCoreApplication | QtWidgets.QApplication]: ...
     @staticmethod
     def isQuitLockEnabled() -> bool: ...
     @staticmethod
@@ -12640,6 +12640,9 @@ class QtMsgType(Enum):
 
 
 class Signal(object):
+    def connect(self, slot:object, type:Optional[type]=...) -> None: ...
+    def disconnect(self, slot:object=...) -> None: ...
+    def emit(self, *args:Any) -> None: ...
 
     def __init__(self, *types:type, name:Optional[str]=..., arguments:Optional[str]=...) -> None: ...
 
