@@ -7,7 +7,7 @@ import a2uic
 import a2core
 import a2ctrl
 import a2modsource
-from a2widget.a2input_dialog import A2ConfirmDialog, A2InputDialog
+from a2widget import a2input_dialog, hover_widget
 
 
 log = a2core.get_logger(__name__)
@@ -23,7 +23,7 @@ MSG_INSTALL_DISCLAIMER = (
 )
 MSG_INSTALL_CHECK = 'I understand!'
 MSG_ADD_DIALOG = (
-    'Please provide a URL to a network location\n' 'or internet address to get an a2 package from:'
+    'Please provide a URL to a network location\nor internet address to get an a2 package from:'
 )
 
 
@@ -46,18 +46,6 @@ class ModSourceWidget(QtWidgets.QWidget):
         self._setup_ui(show_enabled)
         self.set_labels()
 
-    def set_labels(self):
-        self.ui.mod_count.setText(
-            MOD_COUNT_TEXT % (self.mod_source.mod_count, self.mod_source.enabled_count)
-        )
-        self._set_body_labels()
-
-        if self.mod_source.has_problem:
-            self.ui.error_icon.setVisible(True)
-            self.ui.error_icon.setToolTip(self.mod_source.get_problem_msg())
-        else:
-            self.ui.error_icon.setVisible(False)
-
     def _setup_ui(self, show_enabled):
         from a2widget import a2module_source_ui
 
@@ -75,13 +63,35 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui.icon_label.setPixmap(self.mod_source.icon.pixmap(icon_size))
         self.ui.icon_label.setMinimumSize(icon_size, icon_size)
         self.ui.icon_label.setMaximumSize(icon_size, icon_size)
-        self.ui.label_widget.mousePressEvent = self._toggle_details
         self.ui.details_widget.hide()
 
-        label = f'<b>{self.mod_source.display_name}</b>'
+        label = self.mod_source.display_name
         if self.mod_source.is_git():
             label += ' (git)'
         self.ui.mod_label.setText(label)
+
+        self.hover_widget = hover_widget.HoverWidget(self)
+        self.hover_widget.add_widget(self.ui.icon_label)
+        self.hover_widget.add_widget(self.ui.mod_label)
+        self.hover_widget.add_widget(self.ui.mod_count)
+        self.hover_widget.set_hover_widget(self.ui.tool_button)
+        self.hover_widget.clicked.connect(self._toggle_details)
+        self.ui.header_layout.insertWidget(2, self.hover_widget)
+        self.ui.header_layout.setStretch(2, 1)
+
+        self.ui.a2option_button.menu_called.connect(self.build_version_menu)
+
+    def set_labels(self):
+        self.ui.mod_count.setText(
+            MOD_COUNT_TEXT % (self.mod_source.mod_count, self.mod_source.enabled_count)
+        )
+        self._set_body_labels()
+
+        if self.mod_source.has_problem:
+            self.ui.error_icon.setVisible(True)
+            self.ui.error_icon.setToolTip(self.mod_source.get_problem_msg())
+        else:
+            self.ui.error_icon.setVisible(False)
 
     def _set_body_labels(self):
         if self.ui_body is not None:
@@ -125,15 +135,14 @@ class ModSourceWidget(QtWidgets.QWidget):
             self.ui_body.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
             self.ui_body.update_layout.insertWidget(1, self.ui_body.busy_icon)
 
-            self.ui_body.a2option_button.menu_called.connect(self.build_version_menu)
             # self.version_menu = QtWidgets.QMenu(self)
             self.ui.modsource_layout.addWidget(self.ui_body.frame)
             self._set_body_labels()
 
         state = self.ui_body.frame.isVisible()
         self.ui_body.frame.setVisible(not state)
-        a = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
-        self.ui.tool_button.setArrowType(a[state])
+        arrows = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
+        self.ui.tool_button.setArrowType(arrows[state])
 
     def set_busy(self, text=None):
         self.ui_body.busy_icon.set_busy()
@@ -227,7 +236,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             menu.addAction(a2ctrl.Icons.edit, 'Edit Meta Data', self._on_edit_meta_data)
 
     def uninstall(self):
-        dialog = A2ConfirmDialog(
+        dialog = a2input_dialog.A2ConfirmDialog(
             self.main,
             'Uninstall "%s"' % self.mod_source.name,
             'This will delete the package "%s" from the module\n'
@@ -298,7 +307,7 @@ class BusyIcon(QtWidgets.QLabel):
         self.setPixmap(pixmap.copy(xoff, yoff, self.icon_size, self.icon_size))
 
 
-class AddSourceDialog(A2InputDialog):
+class AddSourceDialog(a2input_dialog.A2InputDialog):
     def __init__(self, main, url):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
