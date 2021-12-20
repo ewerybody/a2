@@ -24,3 +24,6 @@ class A2InputDialog(A2ConfirmDialog):
         msg: str = ...,
         ok_func: typing.Callable | None = ...,
     ) -> None: ...
+    class ui:
+        main_layout: QtWidgets.QHBoxLayout
+        label: QtWidgets.QLabel
