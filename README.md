@@ -12,6 +12,9 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 
 The features in this runtime are introduced via **modules** bundled in **packages**. Each module can have various script files and is presented with its own configuration frontend to setup Hotkey shortcuts, Variables ect. These frontends are comprised of reusable elements that a developer can easily arrange.
 
+## What is it good for?
+...
+
 ## news:
 * Thanks to [rcedit](https://github.com/electron/rcedit) from the **electron** project we now have fully automated package building, zipping and versioning. 🚀 Before I actually opened up Visual Studio 2017 and hacked in the updated version numbers into the sfx file for building the installer executable...
 * The humongous ["new structure" branch](https://github.com/ewerybody/a2/issues/152) was finally merged back to master ↪ and the issues in the endless [road-to-release-project](https://github.com/ewerybody/a2/projects/1) are thinning out. So we have the package builder back up and running, the structure is much nicer and maintainable 👍, local python snippets are now files and finally debugable!
