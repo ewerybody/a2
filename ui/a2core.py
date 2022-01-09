@@ -209,6 +209,8 @@ class URLs:
         self.help_path = self.wiki + 'Edit-Path'
         self.report_bug = self.a2 + '/issues/new/?labels=bug'
         self.report_sugg = self.a2 + '/issues/new/?labels=improvement'
+        self.gitter = 'https://gitter.im/ewerybody/a2'
+        self.telegram = 'https://t.me/a2script_de'
         self.security = variables_dict.get('a2_security', '')
 
         self.ahk = 'https://autohotkey.com'

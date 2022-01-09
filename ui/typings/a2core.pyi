@@ -74,9 +74,12 @@ class URLs:
     ahkWinActive: str
     ahk_builtin_vars: str
     ahkWinTitle: str
+    gitter: str
+    telegram: str
 
 def get_logger(str) -> logging.Logger: ...
 def set_loglevel(debug: bool = False): ...
 def tags() -> dict[str, str]:
     """Return tags dictionary with shortnames/english desctiptions."""
+
 def is_dev_mode() -> bool: ...

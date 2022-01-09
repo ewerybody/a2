@@ -149,6 +149,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionHelp_on_Module.triggered.connect(self.module_view.help)
         self.ui.actionHelp_on_Module.setIcon(Icons.help)
 
+        self._make_url_action(self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter)
+        self._make_url_action(self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram)
+
     def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
         action.setData(url)
         action.setIcon(icon)

@@ -192,6 +192,7 @@ class _Icons:
         self.folder = False
         self.folder2 = False
         self.folder_add = False
+        self.gitter = False
         self.group = False
         self.help = False
         self.keyboard = False
@@ -208,6 +209,7 @@ class _Icons:
         self.scope_exclude = False
         self.scope_global = False
         self.string = False
+        self.telegram = False
         self.text = False
         self.up = False
         self.up_align = False
