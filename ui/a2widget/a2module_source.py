@@ -354,7 +354,8 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         elif self._dialog_state == 1:
             self._install_package()
         elif self._dialog_state == 2:
-            self.okayed.emit('')
+            self.okayed.emit()
+            self.yielded.emit('')
             self.accept()
 
     def show_error(self, msg):

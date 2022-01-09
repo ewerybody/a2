@@ -35,7 +35,7 @@ class NewElementDialog(A2InputDialog):
         self.element_cfg = {'target': 'global', 'enlist': True}
         self.setup_ui()
         self.check_func = self.check_element_name
-        self.okayed.connect(self.create_element)
+        self.yielded.connect(self.create_element)
 
     def setup_ui(self):
         self.ui.radio_global = QtWidgets.QRadioButton(LABEL_GLOBAL % self.text, self)

@@ -21,6 +21,7 @@ class InputDialogDemo(QtWidgets.QMainWindow):
             check_func=self.check_func,
         )
         self.c.okayed.connect(self.ok_func)
+        self.c.yielded.connect(self.yield_func)
         self.c.canceled.connect(self.cancel_func)
         self.c.field_changed.connect(self.field_changed)
 
@@ -41,8 +42,12 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         print('text: %s' % text)
 
     @staticmethod
-    def ok_func(value):
-        print('dialog okayed! value: "%s"' % value)
+    def ok_func():
+        print('dialog okayed!')
+
+    @staticmethod
+    def yield_func(value):
+        print('dialog yielded: "%s"' % value)
 
     @staticmethod
     def cancel_func():

@@ -40,7 +40,7 @@ class A2TagField(QtWidgets.QWidget):
 
     def create_tag(self):
         dialog = A2InputDialog(self, 'Create New Tag', self.create_check)
-        dialog.okayed.connect(self.add)
+        dialog.yielded.connect(self.add)
         dialog.show()
 
     def create_check(self, tag_name):

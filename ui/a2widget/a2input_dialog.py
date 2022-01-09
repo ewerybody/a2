@@ -10,11 +10,8 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
-        self.setWindowFlags(
-            QtCore.Qt.Window
-            | QtCore.Qt.WindowCloseButtonHint
-            | QtCore.Qt.MSWindowsFixedSizeDialogHint
-        )
+        Qt = QtCore.Qt
+        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
         a2uic.check_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
@@ -50,7 +47,8 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
 
 class A2InputDialog(A2ConfirmDialog):
-    okayed = QtCore.Signal(str)
+    okayed = QtCore.Signal()
+    yielded = QtCore.Signal(str)
     field_changed = QtCore.Signal(str)
 
     def __init__(self, parent, title, check_func=None, text='', msg='', ok_func=None):
@@ -107,7 +105,8 @@ class A2InputDialog(A2ConfirmDialog):
         result = self.check(txt)
         if result is None or result is True:
             self._output = txt
-            self.okayed.emit(txt)
+            self.okayed.emit()
+            self.yielded.emit(txt)
             self.accept()
 
 

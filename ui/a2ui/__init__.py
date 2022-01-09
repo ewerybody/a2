@@ -404,7 +404,7 @@ class A2Window(QtWidgets.QMainWindow):
         from a2widget import new_module_source_tool
 
         dialog = new_module_source_tool.NewModuleSourceTool(self)
-        dialog.okayed.connect(self._create_local_source)
+        dialog.yielded.connect(self._create_local_source)
         dialog.show()
 
     def _create_local_source(self, name):
