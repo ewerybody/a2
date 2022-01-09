@@ -3,6 +3,7 @@ SysGet, WIN_FRAME_HEIGHT, 33
 global WIN_FRAME_WIDTH
 global WIN_FRAME_HEIGHT
 
+#Include a2test.ahk
 #Include %A_ScriptDir%\..\
 #Include ahk_functions.ahk
 ; #Include  %A_ScriptDir%\..\..\..\a2_globals.ahk
@@ -10,6 +11,14 @@ global WIN_FRAME_HEIGHT
 #Include screen.ahk
 
 win_id := WinExist("A")
+
+aot := window_is_aot(win_id)
+window_set_aot(!aot, win_id)
+aot2 := window_is_aot(win_id)
+
+window_set_aot(aot, win_id)
+aot3 := window_is_aot(win_id)
+MsgBox % "Setting Always-On-Top ON: " assertmsg(aot == !aot2) " OFF: " assertmsg(aot == aot3)
 
 WinGetPos, X, Y, Width, Height, ahk_id %win_id%
 window_get_rect(_x, _y, _w, _h, win_id)
@@ -68,6 +77,8 @@ WinSet, Region,, ahk_id %win_id%
 window_set_rect(_x, _y, _w, _h, win_id)
 
 
+
+
 win_list1 := window_list(0)
 win_list2 := window_list(true)
 msg := win_list1.Length() " windows (" win_list2.Length() " including hidden)`n"
@@ -82,3 +93,5 @@ for i, win in win_list1 {
 }
 
 MsgBox, %msg%
+
+

@@ -17,8 +17,9 @@ window_toggle_maximize(win_id="") {
 
     ahk_id := "ahk_id " win_id
 
-    If (WinGetMinMax(ahk_id) == 1)
+    If (WinGetMinMax(ahk_id) == 1) {
         WinRestore(ahk_id)
+    }
     Else
     {
         WinMaximize(ahk_id)
@@ -169,10 +170,10 @@ window_get_geometry(hwnd) {
     ; geo.x2, geo.y2   : Bottom-right corner of the window
     size := VarSetCapacity(rect, 16, 0)
     error := DllCall("dwmapi\DwmGetWindowAttribute"
-    , "UPtr", hWnd ; HWND  hwnd
-    , "UInt", 9 ; DWORD dwAttribute (DWMWA_EXTENDED_FRAME_BOUNDS)
-    , "UPtr", &rect ; PVOID pvAttribute
-    , "UInt", size ; DWORD cbAttribute
+        , "UPtr", hWnd ; HWND  hwnd
+        , "UInt", 9 ; DWORD dwAttribute (DWMWA_EXTENDED_FRAME_BOUNDS)
+        , "UPtr", &rect ; PVOID pvAttribute
+        , "UInt", size ; DWORD cbAttribute
     , "UInt") ; HRESULT
 
     If error {
@@ -256,4 +257,24 @@ class _Window {
     geo() {
         return window_get_geometry(this.id)
     }
+}
+
+window_is_aot(win_id="") {
+    ; Get a windows Always On Top state.
+    if !win_id
+        win_id := WinExist("A")
+
+    WinGet, wc_ExStyle, ExStyle, ahk_id %win_id%
+    if (wc_ExStyle & 0x8)
+        return 1
+    else
+        return 0
+}
+
+window_set_aot(state, win_id = "") {
+    ; Set a windows Always On Top state.
+    if !win_id
+        win_id := WinExist("A")
+
+    WinSet, AlwaysOnTop, %state%, ahk_id %win_id%
 }
