@@ -14,6 +14,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
 class A2InputDialog(A2ConfirmDialog):
     field_changed: QtCore.Signal = ...
+    yielded: QtCore.Signal = ...
     output: str
     def __init__(
         self,
