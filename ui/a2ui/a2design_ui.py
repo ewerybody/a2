@@ -3,14 +3,14 @@
 """
 Form generated from reading UI file 'a2design.ui'
 
-Created by: Qt User Interface Compiler version 6.2.0
+Created by: Qt User Interface Compiler version 6.2.2
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
 from a2qt.QtGui import QAction, QFont
 from a2qt.QtWidgets import QMenu, QMenuBar, QSplitter, QVBoxLayout, QWidget
-from a2qt.QtCore import QMetaObject, QRect, QSize, Qt
+from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
 
 from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
@@ -102,6 +102,10 @@ class Ui_a2MainWindow:
         self.actionImport_Settings = QAction(a2MainWindow)
         self.actionImport_Settings.setObjectName(u"actionImport_Settings")
         self.actionImport_Settings.setText(u"Import Settings")
+        self.actionChat_on_Gitter = QAction(a2MainWindow)
+        self.actionChat_on_Gitter.setObjectName(u"actionChat_on_Gitter")
+        self.actionChat_on_Telegram = QAction(a2MainWindow)
+        self.actionChat_on_Telegram.setObjectName(u"actionChat_on_Telegram")
         self.centralwidget = QWidget(a2MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -147,6 +151,8 @@ class Ui_a2MainWindow:
         self.menubar.addAction(self.menuHelp.menuAction())
         self.menuHelp.addAction(self.action_report_bug)
         self.menuHelp.addAction(self.action_report_sugg)
+        self.menuHelp.addAction(self.actionChat_on_Gitter)
+        self.menuHelp.addAction(self.actionChat_on_Telegram)
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
@@ -176,4 +182,9 @@ class Ui_a2MainWindow:
         self.menuModule.addAction(self.actionRevert_Settings)
         self.menuModule.addAction(self.actionExport_Settings)
         self.menuModule.addAction(self.actionImport_Settings)
+        self.retranslateUi(a2MainWindow)
         QMetaObject.connectSlotsByName(a2MainWindow)
+    def retranslateUi(self, a2MainWindow):
+        self.actionChat_on_Gitter.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Gitter", None))
+        self.actionChat_on_Telegram.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Telegram", None))
+        pass

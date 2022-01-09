@@ -65,7 +65,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_view.draw_mod()
 
     def _setup_ui(self):
-        from a2widget import a2design_ui
+        from a2ui import a2design_ui
 
         a2uic.check_module(a2design_ui)
         self.ui = a2design_ui.Ui_a2MainWindow()

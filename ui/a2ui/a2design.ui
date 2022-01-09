@@ -78,6 +78,8 @@
     </property>
     <addaction name="action_report_bug"/>
     <addaction name="action_report_sugg"/>
+    <addaction name="actionChat_on_Gitter"/>
+    <addaction name="actionChat_on_Telegram"/>
     <addaction name="separator"/>
     <addaction name="actionAbout_a2"/>
     <addaction name="actionAbout_Autohotkey"/>
@@ -276,6 +278,16 @@
   <action name="actionImport_Settings">
    <property name="text">
     <string notr="true">Import Settings</string>
+   </property>
+  </action>
+  <action name="actionChat_on_Gitter">
+   <property name="text">
+    <string>Chat on Gitter</string>
+   </property>
+  </action>
+  <action name="actionChat_on_Telegram">
+   <property name="text">
+    <string>Chat on Telegram</string>
    </property>
   </action>
  </widget>
