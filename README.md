@@ -12,8 +12,25 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 
 The features in this runtime are introduced via **modules** bundled in **packages**. Each module can have various script files and is presented with its own configuration frontend to setup Hotkey shortcuts, Variables ect. These frontends are comprised of reusable elements that a developer can easily arrange.
 
-## What is it good for?
-...
+## Who is it for?
+
+### Everyday Computer people looking to automate/simplify working with Windows.
+* Simple setup and management of scripts
+  * no files to copy around or edit
+  * updates via button press
+  * no intrusive installation (all integrations steps visualized, uninstall/delete and its gone)
+* A range of things to try out
+* Build own simple modules without a line of code
+* No Admin rights needed 
+* ...
+
+### Autohotkey Script Developers
+* no boilderplate code needed
+* broad library to keep your code DRY
+* clickable UI components for most use-cases
+* streamlined github driven deployment
+* ...
+
 
 ## news:
 * Thanks to [rcedit](https://github.com/electron/rcedit) from the **electron** project we now have fully automated package building, zipping and versioning. 🚀 Before I actually opened up Visual Studio 2017 and hacked in the updated version numbers into the sfx file for building the installer executable...
