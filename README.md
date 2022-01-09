@@ -4,13 +4,18 @@
 (See [Tom Scott ranting about it on YouTube](https://youtu.be/lIFE7h3m40U))\
 **a2** helps getting, updating scripts and developing your own.
 
-Basically a2 is an **Autohotkey runtime** that you conveniently configure with a [Qt for Python](https://wiki.qt.io/Qt_for_Python) **UI**.
+Basically a2 is an **Autohotkey runtime** running in the background that you conveniently configure with a [Qt for Python](https://wiki.qt.io/Qt_for_Python) **UI**.
+
+Features for this background app come via **modules** bundled in **packages**.\
+Each module can have various script or configuration files\
+and is presented with its own frontend UI to setup Hotkey shortcuts, Variables ect...\
+These frontend UIs are comprised of reusable elements that a developer can easily arrange.
 
 See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especially:
 * [How to use a2](../../wiki/How-to-use-a2).
 * [How to develop a2](../../wiki/How-to-develop-a2).
 
-The features in this runtime are introduced via **modules** bundled in **packages**. Each module can have various script files and is presented with its own configuration frontend to setup Hotkey shortcuts, Variables ect. These frontends are comprised of reusable elements that a developer can easily arrange.
+
 
 ## Who is it for?
 
@@ -19,9 +24,9 @@ The features in this runtime are introduced via **modules** bundled in **package
   * no files to copy around or edit
   * updates via button press
   * no intrusive installation (all integrations steps visualized, uninstall/delete and its gone)
+  * no Admin rights needed
 * A range of things to try out
 * Build own simple modules without a line of code
-* No Admin rights needed 
 * ...
 
 ### Autohotkey Script Developers
