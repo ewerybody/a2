@@ -25,7 +25,7 @@ from a2qt import QtCore, QtWidgets
 import a2uic
 import a2core
 import a2ctrl.connect
-import a2ctrl.icons
+from a2ctrl.icons import Icons
 from a2widget import a2item_editor_ui
 
 
@@ -78,16 +78,15 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
         self.ui.config_layout.setContentsMargins(0, 0, 0, 0)
 
-        icons = a2ctrl.icons.Icons.inst()
         self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.context_menu_requested.connect(self.list_menu_called.emit)
         self.ui.item_list.items_removed.connect(self._on_items_removed)
         self.ui.item_list.items_selected.connect(self._on_selection_change)
 
         self.ui.a2item_editor_add_button.clicked.connect(self.add_item)
-        self.ui.a2item_editor_add_button.setIcon(icons.list_add)
+        self.ui.a2item_editor_add_button.setIcon(Icons.list_add)
 
-        self.ui.a2item_editor_remove_button.setIcon(icons.clear)
+        self.ui.a2item_editor_remove_button.setIcon(Icons.clear)
         self.ui.a2item_editor_remove_button.clicked.connect(self.ui.item_list.remove_selected)
 
         self.selected_name_changed.connect(self.draw_data)
@@ -96,7 +95,7 @@ class A2ItemEditor(QtWidgets.QWidget):
 
         self.ui.search_field.textChanged.connect(self.update_filter)
         self.ui.a2search_x_button.clicked.connect(self.reset_filter)
-        self.ui.a2search_x_button.setIcon(icons.clear)
+        self.ui.a2search_x_button.setIcon(Icons.clear)
 
     def set_data(self, data):
         """Fill in some data."""

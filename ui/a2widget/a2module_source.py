@@ -367,14 +367,14 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
 
     def _get_remote_data(self, url=None):
         if url is None:
-            url = self.ui.text_field.text()
+            url = self.ui_text_field.text()
         else:
-            self.ui.text_field.setText(url)
+            self.ui_text_field.setText(url)
 
         if not self.check(url):
             return
 
-        self.ui.text_field.setEnabled(False)
+        self.ui_text_field.setEnabled(False)
         self.busy_icon.set_busy()
         self.ui.label.setText('fetching data ...')
 

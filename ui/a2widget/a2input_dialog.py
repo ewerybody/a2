@@ -67,11 +67,11 @@ class A2InputDialog(A2ConfirmDialog):
         self._output = None
         self._text = text
 
-        self.ui.text_field = QtWidgets.QLineEdit(self)
-        self.ui.main_layout.insertWidget(1, self.ui.text_field)
-        self.ui.text_field.textChanged.connect(self.check)
-        self.ui.text_field.setText(self._text)
-        self.ui.text_field.setFocus()
+        self.ui_text_field = QtWidgets.QLineEdit(self)
+        self.ui.main_layout.insertWidget(1, self.ui_text_field)
+        self.ui_text_field.textChanged.connect(self.check)
+        self.ui_text_field.setText(self._text)
+        self.ui_text_field.setFocus()
 
     @property
     def text(self):
@@ -79,7 +79,7 @@ class A2InputDialog(A2ConfirmDialog):
 
     def check(self, text=None):
         if text is None:
-            text = self.ui.text_field.text()
+            text = self.ui_text_field.text()
 
         if text != self._text:
             self.field_changed.emit(text)
@@ -101,7 +101,7 @@ class A2InputDialog(A2ConfirmDialog):
         return self._output
 
     def okay(self):
-        txt = self.ui.text_field.text()
+        txt = self.ui_text_field.text()
         result = self.check(txt)
         if result is None or result is True:
             self._output = txt
