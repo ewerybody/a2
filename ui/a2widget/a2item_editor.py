@@ -24,6 +24,7 @@ from a2qt import QtCore, QtWidgets
 
 import a2uic
 import a2core
+import a2util
 import a2ctrl.connect
 from a2ctrl.icons import Icons
 from a2widget import a2item_editor_ui
@@ -192,8 +193,19 @@ class A2ItemEditor(QtWidgets.QWidget):
         new_name = item.text()
         old_name = self._selected_name
         if new_name != old_name:
+            # Handle double names so data is not erased!
+            if new_name in self.data:
+                new_name = a2util.get_next_free_number(new_name, self.data)
+                # Now setText will trigger a new check!
+                item.setText(new_name)
+                return
+
             self._selected_name = new_name
-            data = self.data.pop(old_name) if old_name else {}
+
+            if old_name and old_name in self.data:
+                data = self.data.pop(old_name)
+            else:
+                data = {}
 
             self.data[new_name] = data
             self.draw_data(new_name)
