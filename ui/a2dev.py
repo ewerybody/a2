@@ -53,7 +53,7 @@ class OkDiffDialog(A2ConfirmDialog):
             if not file_path:
                 continue
             dirpath, base = os.path.split(file_path)
-            if os.path.normcase(dirpath) == os.path.normcase(os.getenv('TEMP')):
+            if os.path.normcase(dirpath) == os.path.normcase(os.getenv('TEMP', '')):
                 log.info('Deleting temp file: %s', base)
                 os.unlink(file_path)
 

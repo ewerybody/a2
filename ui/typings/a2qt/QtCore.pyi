@@ -1600,7 +1600,7 @@ class QCoreApplication(QObject):
     @staticmethod
     def testAttribute(attribute:Qt.ApplicationAttribute) -> bool: ...
     @staticmethod
-    def translate(context:bytes, key:bytes, disambiguation:Optional[bytes]=..., n:int=...) -> str: ...
+    def translate(context:str|bytes, key:str|bytes, disambiguation:Optional[bytes]=..., n:int=...) -> str: ...
 
 
 class QCryptographicHash(Shiboken.Object):
@@ -9140,6 +9140,7 @@ class QTimeZone(Shiboken.Object):
 
 
 class QTimer(QObject):
+    timeout : Signal = ...
 
     def __init__(self, parent:Optional[QObject]=...) -> None: ...
 
@@ -11569,6 +11570,8 @@ class Qt(Shiboken.Object):
         ItemIsAutoTristate       : Qt.ItemFlag = ... # 0x40
         ItemNeverHasChildren     : Qt.ItemFlag = ... # 0x80
         ItemIsUserTristate       : Qt.ItemFlag = ... # 0x100
+
+        def __or__(self, arg_2: Qt.ItemFlag) -> Qt.ItemFlag: ...
 
     class ItemFlags(object): ...
 

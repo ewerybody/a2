@@ -52,6 +52,7 @@ from a2qt import QtGui, QtCore
 
 
 class QAbstractButton(QWidget):
+    clicked: QtCore.Signal = ...
 
     def __init__(self, parent:Optional[QWidget]=...) -> None: ...
 
@@ -122,11 +123,11 @@ class QAbstractItemDelegate(QtCore.QObject):
 
     class EndEditHint(Enum):
 
-        NoHint                   : QAbstractItemDelegate.EndEditHint = ... # 0x0
-        EditNextItem             : QAbstractItemDelegate.EndEditHint = ... # 0x1
-        EditPreviousItem         : QAbstractItemDelegate.EndEditHint = ... # 0x2
-        SubmitModelCache         : QAbstractItemDelegate.EndEditHint = ... # 0x3
-        RevertModelCache         : QAbstractItemDelegate.EndEditHint = ... # 0x4
+        NoHint                   : QAbstractItemDelegate.EndEditHint # 0x0
+        EditNextItem             : QAbstractItemDelegate.EndEditHint # 0x1
+        EditPreviousItem         : QAbstractItemDelegate.EndEditHint # 0x2
+        SubmitModelCache         : QAbstractItemDelegate.EndEditHint # 0x3
+        RevertModelCache         : QAbstractItemDelegate.EndEditHint # 0x4
 
 
     def __init__(self, parent:Optional[QtCore.QObject]=...) -> None: ...
@@ -195,16 +196,16 @@ class QAbstractItemView(QAbstractScrollArea):
 
     class CursorAction(Enum):
 
-        MoveUp                   : QAbstractItemView.CursorAction = ... # 0x0
-        MoveDown                 : QAbstractItemView.CursorAction = ... # 0x1
-        MoveLeft                 : QAbstractItemView.CursorAction = ... # 0x2
-        MoveRight                : QAbstractItemView.CursorAction = ... # 0x3
-        MoveHome                 : QAbstractItemView.CursorAction = ... # 0x4
-        MoveEnd                  : QAbstractItemView.CursorAction = ... # 0x5
-        MovePageUp               : QAbstractItemView.CursorAction = ... # 0x6
-        MovePageDown             : QAbstractItemView.CursorAction = ... # 0x7
-        MoveNext                 : QAbstractItemView.CursorAction = ... # 0x8
-        MovePrevious             : QAbstractItemView.CursorAction = ... # 0x9
+        MoveUp                   : QAbstractItemView.CursorAction # 0x0
+        MoveDown                 : QAbstractItemView.CursorAction # 0x1
+        MoveLeft                 : QAbstractItemView.CursorAction # 0x2
+        MoveRight                : QAbstractItemView.CursorAction # 0x3
+        MoveHome                 : QAbstractItemView.CursorAction # 0x4
+        MoveEnd                  : QAbstractItemView.CursorAction # 0x5
+        MovePageUp               : QAbstractItemView.CursorAction # 0x6
+        MovePageDown             : QAbstractItemView.CursorAction # 0x7
+        MoveNext                 : QAbstractItemView.CursorAction # 0x8
+        MovePrevious             : QAbstractItemView.CursorAction # 0x9
 
     class DragDropMode(Enum):
 
@@ -4969,7 +4970,7 @@ class QListWidgetItem(Shiboken.Object):
     def setBackground(self, brush:Union[QtGui.QBrush, QtCore.Qt.BrushStyle, QtCore.Qt.GlobalColor, QtGui.QColor, QtGui.QGradient, QtGui.QImage, QtGui.QPixmap]) -> None: ...
     def setCheckState(self, state:QtCore.Qt.CheckState) -> None: ...
     def setData(self, role:int, value:Any) -> None: ...
-    def setFlags(self, flags:QtCore.Qt.ItemFlags) -> None: ...
+    def setFlags(self, flags:QtCore.Qt.ItemFlag) -> None: ...
     def setFont(self, font:Union[QtGui.QFont, str, Sequence[str]]) -> None: ...
     def setForeground(self, brush:Union[QtGui.QBrush, QtCore.Qt.BrushStyle, QtCore.Qt.GlobalColor, QtGui.QColor, QtGui.QGradient, QtGui.QImage, QtGui.QPixmap]) -> None: ...
     def setHidden(self, hide:bool) -> None: ...
