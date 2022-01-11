@@ -19,7 +19,7 @@ class DrawCtrlMixin:
     user for him to set up on your module.
     """
 
-    def __init__(self, main, cfg, mod, user_cfg=None):
+    def __init__(self, main, cfg, mod=None, user_cfg=None):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self.cfg = cfg
@@ -57,6 +57,9 @@ class DrawCtrlMixin:
         Name is None by by default so you can just set the default value by ... well:
         passing the value. Voila!
         """
+        if self.mod is None:
+            return
+
         if value is None:
             value = self.user_cfg
 
@@ -77,6 +80,8 @@ class DrawCtrlMixin:
         return self.mod.is_in_user_cfg(name)
 
     def clear_user_cfg(self):
+        if self.mod is None:
+            return
         name = a2util.get_cfg_default_name(self.cfg)
         self.mod.clear_user_cfg_name(name)
         self.main.load_runtime_and_ui()
@@ -140,7 +145,7 @@ class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
     user for him to set up on your module.
     """
 
-    def __init__(self, main, cfg, mod, user_cfg=None):
+    def __init__(self, main, cfg, mod=None, user_cfg=None):
         super(DrawCtrl, self).__init__(parent=main)
         DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
 
