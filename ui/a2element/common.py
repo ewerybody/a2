@@ -27,9 +27,7 @@ class DrawCtrlMixin:
 
         self._check_scheduled = False
         self.is_expandable_widget = False
-        self._check_timer = QtCore.QTimer()
-        self._check_timer.setInterval(DELAYED_CHECK_DELAY)
-        self._check_timer.timeout.connect(self._check)
+        self._check_timer = None
         self._check_args = None
         self.user_cfg = user_cfg or {}
 
@@ -100,10 +98,14 @@ class DrawCtrlMixin:
         Calls the check method with a little delay to prevent spamming reload.
         """
         self._check_args = args
+        if self._check_timer is None:
+            self._check_timer = QtCore.QTimer()
+            self._check_timer.setInterval(DELAYED_CHECK_DELAY)
+            self._check_timer.timeout.connect(self._check)
         self._check_timer.start()
 
     def _check(self):
-        if self._check_timer.isActive():
+        if self._check_timer is not None and self._check_timer.isActive():
             self._check_timer.stop()
         self.check(*self._check_args)
 
