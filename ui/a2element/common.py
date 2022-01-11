@@ -57,17 +57,14 @@ class DrawCtrlMixin:
         Name is None by by default so you can just set the default value by ... well:
         passing the value. Voila!
         """
-        if self.mod is None:
-            return
-
         if value is None:
             value = self.user_cfg
 
-        try:
+        if self.mod is None:
+            self.user_cfg[name] = value
+        else:
             self.mod.set_user_value(self.cfg, value, name)
-        except AttributeError:
-            # cannot set config if no module given
-            pass
+
 
     def has_user_cfg(self):
         """

@@ -63,7 +63,7 @@ class Demo(QtWidgets.QMainWindow):
 
             if self.user_hotkey is not None:
                 self.user_hotkey.deleteLater()
-            new_user_hotkey = a2element.hotkey.Draw(self, config, None)
+            new_user_hotkey = a2element.hotkey.Draw(self, config)
             new_user_hotkey.changed.connect(self.user_change)
             self.user_hotkey = new_user_hotkey
             self.lyt.addRow(self.user_hotkey)
