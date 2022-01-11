@@ -38,6 +38,7 @@ class Draw(DrawCtrl):
     shows: label, checkbox if disablable, shortcut(s), controls to add, remove
         additional shortcuts, controls to change scope if that's enabled...
     """
+    changed = QtCore.Signal()
 
     def __init__(self, *args):
         super(Draw, self).__init__(*args)
@@ -98,15 +99,18 @@ class Draw(DrawCtrl):
         state = self.checkbox.isChecked()
         self.set_user_value(state, 'enabled')
         self.change('hotkeys')
+        self.changed.emit()
 
     def hotkey_change(self, new_keys):
         self.set_user_value(new_keys, 'key')
         self.change('hotkeys')
+        self.changed.emit()
 
     def scope_change(self, scope, scope_mode):
         self.set_user_value(scope, 'scope')
         self.set_user_value(scope_mode, 'scopeMode')
         self.change('hotkeys')
+        self.changed.emit()
 
     def build_hotkey_options_menu(self, menu):
         if self.has_user_cfg():

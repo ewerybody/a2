@@ -64,15 +64,27 @@ class Demo(QtWidgets.QMainWindow):
             if self.user_hotkey is not None:
                 self.user_hotkey.deleteLater()
             new_user_hotkey = a2element.hotkey.Draw(self, config, None)
+            new_user_hotkey.changed.connect(self.user_change)
             self.user_hotkey = new_user_hotkey
             self.lyt.addRow(self.user_hotkey)
+
+    def user_change(self):
+        user_cfg = self.user_hotkey.get_user_dict()
+        changed = False
+        for key in set(user_cfg).union(self._config_backup):
+            user_value = user_cfg.get(key)
+            if user_value != self._config_backup.get(key):
+                print(f'User change: {key}: {user_value}')
+                changed = True
+        if not changed:
+            print('All values original!')
 
 
 def show():
     app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':
