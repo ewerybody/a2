@@ -810,6 +810,7 @@ class QAccessibleValueInterface(Shiboken.Object):
 
 
 class QAction(QtCore.QObject):
+    triggered: QtCore.Signal = ...
 
     Trigger                  : QAction.ActionEvent = ... # 0x0
     Hover                    : QAction.ActionEvent = ... # 0x1
