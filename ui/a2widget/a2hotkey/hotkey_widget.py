@@ -16,6 +16,7 @@ SCOPE_TOOLTIP_EXCLUDE = _SCOPE_TOOLTIP + 'to exclude specific windows.'
 SCOPE_CANNOT_CHANGE = '\nThis cannot be changed!'
 SCOPE_GLOBAL_NOCHANGE = 'Global - unchangable'
 HOTKEY_CANNOT_CHANGE = 'The hotkey cannot be changed!'
+HOTKEY_EMPTY = 'Empty Hotkeys will be ignored!'
 
 DIALOG_CLASSES = [HotKeyBoard, HotkeyDialog1]
 DIALOG_DEFAULT = DIALOG_CLASSES[0]
@@ -40,6 +41,7 @@ class A2Hotkey(QtWidgets.QWidget):
         self.key = None
         self._cfg = {}
         self._edit_mode = False
+        self._locked = None
 
         uber_layout = QtWidgets.QHBoxLayout(self)
         uber_widget = QtWidgets.QWidget(self)
@@ -74,7 +76,9 @@ class A2Hotkey(QtWidgets.QWidget):
 
     def set_key(self, key):
         key_list = get_keys_list(key)
-        if key_list != self.key:
+        change = key_list != self.key
+
+        if change:
             self.key = key_list
             num_keys, num_buttons = len(key_list), len(self._hotkey_buttons)
             if num_keys > num_buttons:
@@ -89,15 +93,18 @@ class A2Hotkey(QtWidgets.QWidget):
                     self._hotkey_buttons[i].deleteLater()
                 self._hotkey_buttons = self._hotkey_buttons[:num_keys]
 
-            locked = not self.is_edit_mode and not self._cfg.get(Vars.key_change, True)
+        locked = not self.is_edit_mode and not self._cfg.get(Vars.key_change, True)
+        if change or self._locked is None or self._locked != locked:
+            self._locked = locked
             for i, button in enumerate(self._hotkey_buttons):
                 button.setText(key_list[i])
                 button.setEnabled(not locked)
                 if locked:
                     button.setToolTip(HOTKEY_CANNOT_CHANGE)
                 elif key_list[i] == '':
-                    button.setToolTip('Empty Hotkeys will be ignored!')
+                    button.setToolTip(HOTKEY_EMPTY)
 
+        if change:
             self.hotkey_changed.emit(key_list)
 
     def popup_dialog(self):

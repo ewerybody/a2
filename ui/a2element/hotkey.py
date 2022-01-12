@@ -56,7 +56,7 @@ class Draw(DrawCtrl):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtWidgets.QHBoxLayout()
 
-        if self.cfg['disablable']:
+        if self.cfg.get('disablable', True):
             state = self.get_user_value(bool, 'enabled', True)
             self.checkbox = QtWidgets.QCheckBox(self)
 

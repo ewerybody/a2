@@ -8,7 +8,7 @@ from a2widget.a2text_field import A2CodeField
 from a2widget.a2hotkey import scope_widget_ui, edit_widget_ui
 
 
-config = {
+CONFIG = {
     'typ': 'hotkey',
     'key': ['Alt+H', 'Alt+D'],
     'name': '_my_module_Hotkey2',
@@ -41,7 +41,7 @@ class Demo(QtWidgets.QMainWindow):
         lyt.setSpacing(20)
         w.setLayout(lyt)
 
-        self.hotkey = a2element.hotkey.Edit(config, self, {})
+        self.hotkey = a2element.hotkey.Edit(deepcopy(CONFIG), self, {})
         lyt.addRow(self.hotkey)
 
         self.code = A2CodeField(self)
@@ -54,19 +54,23 @@ class Demo(QtWidgets.QMainWindow):
         self._config_backup = None
 
         self.user_hotkey = None
-        lyt.addRow(QtWidgets.QLabel('user hotkey:'))
+        self.overwrite_check = QtWidgets.QCheckBox('Create Fresh Hotkey element (Off: overwrite)', checked=True)
+        lyt.addRow('user hotkey:', self.overwrite_check)
 
     def check_changes(self):
-        if self._config_backup != config:
-            self.code.setText(config)
-            self._config_backup = deepcopy(config)
+        if self._config_backup != self.hotkey.cfg:
+            self.code.setText(self.hotkey.cfg)
+            self._config_backup = deepcopy(self.hotkey.cfg)
 
-            if self.user_hotkey is not None:
-                self.user_hotkey.deleteLater()
-            new_user_hotkey = a2element.hotkey.Draw(self, config)
-            new_user_hotkey.changed.connect(self.user_change)
-            self.user_hotkey = new_user_hotkey
-            self.lyt.addRow(self.user_hotkey)
+            if self.overwrite_check.isChecked() or self.user_hotkey is None:
+                if self.user_hotkey is not None:
+                    self.user_hotkey.deleteLater()
+                new_user_hotkey = a2element.hotkey.Draw(self, self.hotkey.cfg)
+                new_user_hotkey.changed.connect(self.user_change)
+                self.user_hotkey = new_user_hotkey
+                self.lyt.addRow(self.user_hotkey)
+            else:
+                self.user_hotkey.set_config(self.hotkey.cfg)
 
     def user_change(self):
         user_cfg = self.user_hotkey.get_user_dict()
