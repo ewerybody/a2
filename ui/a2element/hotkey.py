@@ -17,7 +17,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 """
 
-from a2qt import QtCore, QtWidgets
+from a2qt import QtCore, QtGui, QtWidgets
 
 import a2uic
 import a2core
@@ -132,7 +132,19 @@ class Draw(DrawCtrl):
 
     def _on_hotkey_dialog_style_change(self):
         action = self.sender()
-        a2hotkey.set_dialog_style(action.text())
+        if isinstance(action, QtGui.QAction):
+            a2hotkey.set_dialog_style(action.text())
+
+    def set_config(self, cfg):
+        """For manual re-configuration! Set ALL the sub-elements in one go:
+        Checkbox, Hotkey and Scope-widget."""
+        self.user_cfg = cfg
+        self.checkbox.blockSignals(True)
+        self.hotkey_button.blockSignals(True)
+        self.hotkey_button.set_config(cfg)
+        self.checkbox.setChecked(cfg.get('enabled', True))
+        self.checkbox.blockSignals(False)
+        self.hotkey_button.blockSignals(False)
 
 
 class Edit(EditCtrl):
