@@ -54,6 +54,7 @@ clipboard_paste( byref inputString, sleepTime=50 ) {
     Clipboard := inputString
     ClipWait, 1
     Send, {Ctrl down}^v{Ctrl up}
+    Sleep, 20
     Clipboard := SavedClipboard
 }
 
@@ -78,6 +79,7 @@ clipboard_empty() {
         if (Clipboard == "")
             return
         Clipboard := ""
+        Sleep, 20
     }
     MsgBox, Could not empty the clipboard after 10 tries :/ (clipboard: "%clipboard%")
 }
