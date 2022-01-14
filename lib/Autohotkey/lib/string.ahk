@@ -38,7 +38,7 @@ string_is_web_address(string) {
 }
 
 string_startswith(byref string, byref startstr) {
-    ; Determines if a string starts with another string.
+    ; Determine if a string starts with another string.
     ; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
     return InStr(string, startstr) = 1
 }
@@ -55,32 +55,30 @@ is_whitespace(byref string) {
         return false
 }
 
-string_trim(byref string, byref trim) {
-    return string_trimLeft(string_trimRight(string, trim), trim)
+string_trim(byref string, byref chars) {
+    return string_trimLeft(string_trimRight(string, chars), chars)
 }
 
-; Removes all occurences of trim at the beginning of string
-; trim can be an array of strings that should be removed.
-string_trimLeft(string, trim)
-{
-    if (!IsObject(trim))
-        trim := [trim]
-    for index, trimString in trim
+string_trimLeft(string, chars) {
+    ; Remove all occurences of trim at the beginning of string
+    ; trim can be an array of strings that should be removed.
+    if (!IsObject(chars))
+        chars := [chars]
+    for index, trimString in chars
     {
-        len := strLen(trimString)
-        while(InStr(string, trimString) = 1)
-            StringTrimLeft, string, string, %len%
+        len := StrLen(trimString)
+        while(SubStr(String, 1, len) == trimString)
+            string := SubStr(String, len + 1)
     }
     return string
 }
 
-; Removes all occurences of trim at the end of string
-; trim can be an array of strings that should be removed.
-string_trimRight(string, trim)
-{
-    if (!IsObject(trim))
-        trim := [trim]
-    for index, trimString in trim
+string_trimRight(string, chars) {
+    ; Remove all occurences of trim at the end of string
+    ; trim can be an array of strings that should be removed.
+    if (!IsObject(chars))
+        chars := [chars]
+    for index, trimString in chars
     {
         len := strLen(trimString)
         while(string_endsWith(string, trimString))
@@ -140,4 +138,11 @@ string_prefix(string, prefix) {
     if !string_startswith(string, prefix)
         return prefix string
     return string
+}
+
+string_reverse(byref string) {
+    new_string := ""
+    Loop, % StrLen(string)
+        new_string := SubStr(string, A_Index, 1) new_string
+    Return new_string
 }

@@ -14,6 +14,15 @@ Loop, % arr.MaxIndex()
 j1 := assertmsg(sabc == abcs)
 j2 := assertmsg(sabc == res)
 msg = string_join:%j1% test:>%sabc%< control:>%abcs%<`n
+; Test starts/endswith
+; This is also case-INsensitive
+sw1 := assertmsg(string_startswith("a#$ NCowehofd", "A#$ "))
+sw2 := assertmsg(!string_startswith(" 3456 NCowehofd", " 3456  "))
+msg .= "string_startswith ' :" sw1 " " sw2 "`n"
+
+ew1 := assertmsg(string_endswith("NCowehofd$#%S", "$#%s"))
+ew2 := assertmsg(!string_endswith("NCowehofd$#%", "9fh3"))
+msg .= "string_endswith ' :" ew1 " " ew2 "`n"
 
 ; Test quote/unquote
 s := "'XfgfsgsdfgX'"
@@ -24,7 +33,8 @@ q3 := string_quote(un,once:=1,quote:="'")
 q4 := assertmsg(s == q3)
 u1 := assertmsg(string_startswith(un, "X"))
 u2 := assertmsg(string_endswith(un, "X"))
-p := "C:\Users\eric\AppData\Local\Programs\Microsoft VS Code Insiders\Code - Insiders.exe"
+
+p := A_ScriptFullPath
 pq := """" . p . """"
 up := string_unquote(p)
 ups := assertmsg(p == up)
@@ -49,6 +59,12 @@ pstr := string_prefix(st, "Free")
 s3 := assertmsg(st == pstr)
 pstr2 := string_prefix(st, "!")
 s4 := assertmsg(st != pstr2)
-msg .= "string_prefix: " s3 " " s4
+msg .= "string_prefix: " s3 " " s4 "`n"
+
+; Test Reverse
+st := "Test Reverse"
+s1 := string_reverse(st)
+s2 := assertmsg(st == string_reverse(s1))
+msg .= "string_reverse: " st " " s2 " " s1 "`n"
 
 MsgBox, %msg%
