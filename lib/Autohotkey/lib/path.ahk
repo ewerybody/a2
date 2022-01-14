@@ -22,6 +22,12 @@ path_basename(byref path) {
     Return OutFileName
 }
 
+path_split_ext(byref path) {
+    ; Return No-extension file name and extension in a list.
+    SplitPath, path,,, OutExtension, OutNameNoExt
+    Return [OutNameNoExt, OutExtension]
+}
+
 path_is_dir(byref path) {
     ; Return true/false according to if the given path exists and is a directory.
     if (InStr(FileExist(path), "D"))
