@@ -12,10 +12,10 @@ class KeyValueTable(QtWidgets.QTableWidget):
         self._setup_ui()
 
     def _setup_ui(self):
-        self.setSortingEnabled(True)
-        self.setDragEnabled(True)
-        self.setAcceptDrops(True)
-        self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+        # self.setSortingEnabled(True)
+        # self.setDragEnabled(True)
+        # self.setAcceptDrops(True)
+        # self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.setAlternatingRowColors(True)
 
         self.setColumnCount(2)
@@ -30,8 +30,12 @@ class KeyValueTable(QtWidgets.QTableWidget):
         self.itemChanged.connect(self._on_change)
 
     def _on_change(self, item=None):
+        """Make checks on item change."""
+        self._check_item()
+        self.changed.emit()
+
+    def _check_item(self, item=None):
         """
-        Make checks on item change.
         * Always have a last empty row to add lines.
         * Alert on empty key items.
         * Alert on double key items.
@@ -55,7 +59,6 @@ class KeyValueTable(QtWidgets.QTableWidget):
             keys = [i.text() for i in keyitems if i is not None and i is not item]
             if item.text() in keys:
                 QtCore.QTimer(self).singleShot(50, self._edit_item)
-        self.changed.emit()
 
     def _edit_item(self):
         items = self.selectedItems()
@@ -81,7 +84,12 @@ class KeyValueTable(QtWidgets.QTableWidget):
         return data
 
     def set_data(self, data):
-        """From a key:value dictionary set rows & columns of the table."""
+        """From a key:value dictionary set rows & columns of the table.
+        and trigger change"""
+        self.set_silent(data)
+        self.changed.emit()
+
+    def set_silent(self, data):
         if not isinstance(data, dict):
             raise TypeError(
                 'Cannot set data of type "%s" to %s' % (type(data), self.__class__.__name__)
@@ -95,8 +103,7 @@ class KeyValueTable(QtWidgets.QTableWidget):
                 self.setItem(i, 0, item)
                 item = QtWidgets.QTableWidgetItem(str(value))
                 self.setItem(i, 1, item)
-
-        self._on_change()
+        self._check_item()
 
 
 if __name__ == '__main__':
