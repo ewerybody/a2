@@ -4472,7 +4472,12 @@ class QLCDNumber(QFrame):
 class QLabel(QFrame):
 
     @overload
-    def __init__(self, parent:Optional[QWidget]=..., f:QtCore.Qt.WindowFlags=...) -> None: ...
+    def __init__(
+        self,
+        parent:Optional[QWidget]=...,
+        f:QtCore.Qt.WindowFlags=...,
+        wordWrap: bool = ...,
+        openExternalLinks: bool = ...) -> None: ...
     @overload
     def __init__(self, text:str, parent:Optional[QWidget]=..., f:QtCore.Qt.WindowFlags=...) -> None: ...
 
