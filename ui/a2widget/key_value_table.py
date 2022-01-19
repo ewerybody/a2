@@ -12,9 +12,11 @@ class KeyValueTable(QtWidgets.QTableWidget):
         self._setup_ui()
 
     def _setup_ui(self):
-        # self.setSortingEnabled(True)
-        # self.setDragEnabled(True)
-        # self.setAcceptDrops(True)
+        # Drag & Drop and sorting would be nice if we had a solution to
+        # keep the connected data consistent... so far we better disable it.
+        self.setSortingEnabled(False)
+        self.setDragEnabled(False)
+        self.setAcceptDrops(False)
         # self.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
         self.setAlternatingRowColors(True)
 
