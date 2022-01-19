@@ -1,6 +1,6 @@
 from .hotkey_widget import A2Hotkey, DIALOG_CLASSES, DIALOG_DEFAULT
 from .hotkey_common import Vars
-
+NAME = 'hotkey'
 
 def iter_dialog_styles():
     """
