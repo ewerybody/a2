@@ -55,7 +55,11 @@ class A2Core_Class
             this.path := data_path "a2.db"
             ; Ensure the DB file does exist
             if (!FileExist(this.path))
-                throw Exception("Database could not be found (" this.path ")", -1)
+            {
+                db_file := FileOpen(this.path, "w")
+                db_file.Write("")
+                db_file.Close()
+            }
 
             this.dbObject := new SQLiteDB
         }
