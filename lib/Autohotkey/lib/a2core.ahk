@@ -17,7 +17,6 @@ class A2Core_Class
     __New(data_path)
     {
         this.title := "a2"
-        this.db := new this.Ca2DB(data_path)
 
         root_dir := path_dirname(A_ScriptDir) "\"
         this.paths := {a2: root_dir
@@ -32,6 +31,9 @@ class A2Core_Class
         ,includes: data_path "includes\includes.ahk"}
 
         this.cfg := {}
+
+        this._check_sqlite()
+        this.db := new this.Ca2DB(data_path)
     }
 
     /**
@@ -361,5 +363,24 @@ class A2Core_Class
                 throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
+    }
+
+    _check_sqlite() {
+        ; make sure the SQLlite-dll can be found
+        ini_path := path_join(this.paths.lib, "SQLiteDB.ini")
+        if (FileExist(ini_path))
+            Return
+
+        sqldll := "SQLite3.dll"
+        dll_path := path_join(this.paths.ui, sqldll)
+
+        if (!FileExist(dll_path)) {
+            msg := "The """ sqldll " "" must exist here:`n" dll_path "!`n`nWhere is it?"
+            MsgBox, 16, %sqldll% missing?!, %msg%
+            Return
+        }
+
+        ini_code := "[Main]`nDllPath=" dll_path
+        FileAppend, %ini_code%, %ini_path%
     }
 }
