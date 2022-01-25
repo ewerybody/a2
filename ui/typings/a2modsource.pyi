@@ -1,11 +1,49 @@
+import typing
 import a2core
 import a2mod
-from a2qt import QtGui
+from a2qt import QtGui, QtCore
 
 class ModSource:
     name: str
     icon: QtGui.QIcon
     mods: dict[str, a2mod.Mod]
+    config: dict[str, str]
     def __init__(self, a2: a2core.A2Obj, name: str) -> None: ...
+    def remove_backups(self) -> None: ...
+    def get_backup_versions(self) -> list[str]: ...
+    def toggle(self, state: bool | None) -> None: ...
 
 def create(name: str, author_name: str, author_url: str) -> None: ...
+def create_dir(name: str) -> str: ...
+def get_remote_cfg(update_url: str, main_branch: str = ...) -> dict: ...
+
+class ModSourceFetchThread(QtCore.QThread):
+    fetched: QtCore.Signal = ...
+    failed: QtCore.Signal = ...
+    status: QtCore.Signal = ...
+    def __init__(
+        self,
+        mod_source: ModSource,
+        parent: QtCore.QObject,
+        version: str,
+        remote_data: dict | None = ...,
+        url: str | None = ...,
+    ) -> None: ...
+
+def fetch(
+    mod_source: ModSource,
+    version: str,
+    url: str = ...,
+    status_cb: typing.Callable[[str], None] | None = ...,
+    download_cb: typing.Callable = ...,
+) -> str: ...
+
+class ModSourceCheckThread(QtCore.QThread):
+    data_fetched: QtCore.Signal = ...
+    update_error: QtCore.Signal = ...
+    def __init__(
+        self,
+        parent: QtCore.QObject,
+        mod_source: ModSource = ...,
+        check_url: str = ...,
+    ) -> None: ...
