@@ -3,6 +3,11 @@ from a2qt import QtCore, QtWidgets
 import a2uic
 from a2widget import a2input_dialog_ui
 
+SIZABLE_FLAGS = QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint
+FIXED_FLAGS = (
+    QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.MSWindowsFixedSizeDialogHint
+)
+
 
 class A2ConfirmDialog(QtWidgets.QDialog):
     okayed = QtCore.Signal()
@@ -10,8 +15,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
-        Qt = QtCore.Qt
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint | Qt.MSWindowsFixedSizeDialogHint)
+        # self.setWindowFlags(FIXED_FLAGS)
         a2uic.check_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
