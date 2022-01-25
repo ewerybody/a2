@@ -27,6 +27,11 @@ SQLDLL = 'sqlite3.dll'
 SQLINI = 'SQLiteDB.ini'
 
 
+def get():
+    """Pass the core A2Obj instance."""
+    return A2Obj.inst()
+
+
 # pylint: disable=too-many-instance-attributes
 class A2Obj:
     """Non-Ui a2 backend object."""
@@ -349,7 +354,7 @@ def get_logger(name: str):
     return newlog
 
 
-def set_loglevel(debug: bool=False):
+def set_loglevel(debug: bool = False):
     level = [logging.INFO, logging.DEBUG][debug]
     for name, logger in log.manager.loggerDict.items():
         if name.startswith(NAME) and isinstance(logger, logging.Logger):
