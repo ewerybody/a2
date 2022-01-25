@@ -42,7 +42,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self._remote_data = None
         self._reset_timer = None
 
-        self.ui_body = None
+        self._ui_body = None
         self._setup_ui(show_enabled)
         self.set_labels()
 
@@ -54,7 +54,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.ui.setupUi(self)
 
         self.ui.check.setChecked(show_enabled)
-        self.ui.check.clicked[bool].connect(self.mod_source.toggle)
+        self.ui.check.clicked.connect(self.mod_source.toggle)
         self.ui.check.clicked.connect(self.toggled.emit)
 
         self.ui.tool_button.clicked.connect(self._toggle_details)
@@ -94,7 +94,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             self.ui.error_icon.setVisible(False)
 
     def _set_body_labels(self):
-        if self.ui_body is not None:
+        if self._ui_body is not None:
             self.ui_body.version_label.setText(self.mod_source.config.get('version', 'x.x.x'))
             if self.mod_source.is_git():
                 self.ui_body.update_button.setText(DEV_LABEL)
@@ -121,51 +121,56 @@ class ModSourceWidget(QtWidgets.QWidget):
                 url_label = url_label[4:]
             self.ui_body.homepage_label.setText('<a href="%s">%s</a>' % (url, url_label))
 
-    def _toggle_details(self, *_args):
-        if self.ui_body is None:
+    @property
+    def ui_body(self):
+        if self._ui_body is None:
             from a2widget import a2module_source_body_ui
 
             a2uic.check_module(a2module_source_body_ui)
-            self.ui_body = a2module_source_body_ui.Ui_Form()
-            self.ui_body.setupUi(self.ui.details_widget)
-            self.ui_body.local_path.changable = False
-            self.ui_body.update_button.clicked.connect(self._on_update_button)
+            self._ui_body = a2module_source_body_ui.Ui_Form()
+            self._ui_body.setupUi(self.ui.details_widget)
+            self._ui_body.local_path.changable = False
+            self._ui_body.update_button.clicked.connect(self._on_update_button)
             self._update_to_version = None
 
-            self.ui_body.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
-            self.ui_body.update_layout.insertWidget(1, self.ui_body.busy_icon)
+            self.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
+            self._ui_body.update_layout.insertWidget(1, self.busy_icon)
 
             # self.version_menu = QtWidgets.QMenu(self)
-            self.ui.modsource_layout.addWidget(self.ui_body.frame)
+            self.ui.modsource_layout.addWidget(self._ui_body.frame)
             self._set_body_labels()
+        return self._ui_body
 
+    def _toggle_details(self, *_args):
         state = self.ui_body.frame.isVisible()
         self.ui_body.frame.setVisible(not state)
         arrows = [QtCore.Qt.DownArrow, QtCore.Qt.RightArrow]
         self.ui.tool_button.setArrowType(arrows[state])
 
     def set_busy(self, text=None):
-        self.ui_body.busy_icon.set_busy()
+        self.busy_icon.set_busy()
         self.ui_body.update_button.setEnabled(False)
         if text:
             self.ui_body.update_button.setText(text)
 
     def set_idle(self):
-        self.ui_body.busy_icon.set_idle()
+        self.busy_icon.set_idle()
         self.ui_body.update_button.setEnabled(True)
 
     def _on_update_button(self):
         self.set_busy(MSG_FETCHING)
         if self._update_to_version is None:
-            # debug:
-            # remote_data = a2modsource.get_remote_cfg(self.mod_source.config.get('update_url'))
-            # self._show_check_result(remote_data)
-            # threaded:
-            update_check_thread = self.mod_source.get_update_checker(self.main)
-            update_check_thread.data_fetched.connect(self._show_check_result)
-            update_check_thread.update_error.connect(self._show_update_error)
-            update_check_thread.finished.connect(update_check_thread.deleteLater)
-            update_check_thread.start()
+            if a2core.is_debugging():
+                remote_data = a2modsource.get_remote_cfg(
+                    self.mod_source.config.get('update_url', '')
+                )
+                self._show_check_result(remote_data)
+            else:
+                thread = a2modsource.ModSourceCheckThread(self.main, self.mod_source)
+                thread.data_fetched.connect(self._show_check_result)
+                thread.update_error.connect(self._show_update_error)
+                thread.finished.connect(thread.deleteLater)
+                thread.start()
         else:
             self._change_version(self._update_to_version)
 
@@ -193,7 +198,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         self.set_idle()
         self._update_msg(msg, a2ctrl.Icons.error)
 
-    def _show_update_status(self, msg):
+    def _show_update_status(self, msg: str):
         self.ui_body.update_button.setText(msg)
 
     def _update_msg(self, msg=None, icon=None):
@@ -249,15 +254,20 @@ class ModSourceWidget(QtWidgets.QWidget):
 
     def _change_version(self, version):
         self.set_busy()
-        # debug
-        # TODO
-        # threaded
-        update_thread = self.mod_source.get_updater(self.main, version, self._remote_data)
-        update_thread.fetched.connect(self._show_update_finished)
-        update_thread.failed.connect(self._show_update_error)
-        update_thread.status.connect(self._show_update_status)
-        update_thread.finished.connect(update_thread.deleteLater)
-        update_thread.start()
+        if a2core.is_debugging():
+            result = a2modsource.fetch(self.mod_source, version, status_cb=self._show_update_status)
+            if result:
+                self._show_update_error(result)
+            self._show_update_finished()
+        else:
+            thread = a2modsource.ModSourceFetchThread(
+                self.mod_source, self.main, version, self._remote_data
+            )
+            thread.fetched.connect(self._show_update_finished)
+            thread.failed.connect(self._show_update_error)
+            thread.status.connect(self._show_update_status)
+            thread.finished.connect(thread.deleteLater)
+            thread.start()
 
     def rollback(self):
         to_version = self.sender().data()
@@ -330,12 +340,14 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self.ui.main_layout.insertWidget(1, self.checkbox)
 
         self._dialog_state = 0
-        self.remote_data = None
-        self.repo_url = None
+        self.remote_data = {}
+        self.repo_url = ''
 
         # skip input if url passed
         if url:
             self._get_remote_data(url)
+        else:
+            self.ui.a2ok_button.setEnabled(True)
 
     def check_name(self, name=''):
         """
@@ -374,6 +386,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         if not self.check(url):
             return
 
+        self.ui.a2ok_button.setEnabled(False)
         self.ui_text_field.setEnabled(False)
         self.busy_icon.set_busy()
         self.ui.label.setText('fetching data ...')
@@ -384,7 +397,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         thread.update_error.connect(self.show_error)
         thread.start()
 
-    def on_data_fetched(self, data):
+    def on_data_fetched(self, data: dict[str, str]):
         self.remote_data = data
         self.busy_icon.set_idle()
         try:
@@ -423,20 +436,31 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self.clickable_label.setVisible(False)
         self.checkbox.setVisible(False)
         self.resize_delayed()
-        self.busy_icon.set_busy()
 
         name = self.remote_data['name']
         a2modsource.create_dir(name)
         mod_source = a2modsource.ModSource(self.a2, name)
-        thread = a2modsource.ModSourceFetchThread(
-            mod_source, self.main, self.remote_data['version'], self.remote_data, self.repo_url
-        )
 
-        thread.fetched.connect(self.on_install_finished)
-        thread.failed.connect(self.show_error)
-        thread.status.connect(self.show_status)
-        thread.finished.connect(thread.deleteLater)
-        thread.start()
+        if a2core.is_debugging():
+            result = a2modsource.fetch(
+                mod_source, self.remote_data['version'], self.repo_url, self.show_status
+            )
+            if result:
+                self.show_error(result)
+            else:
+                self.on_install_finished()
+        else:
+            self.busy_icon.set_busy()
+
+            thread = a2modsource.ModSourceFetchThread(
+                mod_source, self.main, self.remote_data['version'], self.remote_data, self.repo_url
+            )
+
+            thread.fetched.connect(self.on_install_finished)
+            thread.failed.connect(self.show_error)
+            thread.status.connect(self.show_status)
+            thread.finished.connect(thread.deleteLater)
+            thread.start()
 
     def show_status(self, msg):
         self.ui.label.setText(msg)

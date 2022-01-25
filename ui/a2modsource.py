@@ -466,67 +466,79 @@ class ModSourceFetchThread(QtCore.QThread):
         self.status.emit(msg)
 
     def run(self):
-        # exit if there is no URL to actually use
-        update_url = self.url or self.mod_source.config.get('update_url')
-        if not update_url:
-            self._error(MSG_NO_UPDATE_URL)
+        result = fetch(
+            self.mod_source,
+            self.version,
+            self.url,
+            self.status.emit,
+            self._download_status,
+        )
+        if result:
+            self._error(result)
             return
+        self.fetched.emit()
 
-        old_version = self.mod_source.config.get('version')
 
-        # exit if given version is current version
-        if old_version is not None and old_version == self.version:
-            self.fetched.emit()
-            return
+def fetch(mod_source, version, url=None, status_cb=None, download_cb=None):
+    # exit if there is no URL to actually use
+    update_url = url or mod_source.config.get('update_url')
+    if not update_url:
+        return MSG_NO_UPDATE_URL
 
-        pack_basename = '%s.zip' % self.version
-        temp_packpath = os.path.join(self.mod_source.backup_path, pack_basename)
-        temp_new_version = os.path.join(self.mod_source.backup_path, self.version)
+    old_version = mod_source.config.get('version')
 
-        if not os.path.isdir(temp_new_version):
-            self.status.emit(MSG_DOWNLOAD % (self.mod_source.name, self.version, 0))
-            os.makedirs(self.mod_source.backup_path, exist_ok=True)
+    # exit if given version is current version
+    if old_version is not None and old_version == version:
+        return ''
 
-            if update_url.startswith('http') or 'github.com/' in update_url:
-                try:
-                    download_update(update_url, pack_basename, temp_packpath, self._download_status)
-                except (RuntimeError, Exception) as error:
-                    self._error(error)
-                    return
+    pack_basename = '%s.zip' % version
+    temp_packpath = os.path.join(mod_source.backup_path, pack_basename)
+    temp_new_version = os.path.join(mod_source.backup_path, version)
 
-            else:
-                try:
-                    copy_update(update_url, pack_basename, temp_packpath)
-                except (RuntimeError, Exception) as error:
-                    self._error(error)
-                    return
+    if not os.path.isdir(temp_new_version):
+        if status_cb is not None:
+            status_cb(MSG_DOWNLOAD % (mod_source.name, version, 0))
 
-            self.status.emit(MSG_UNPACK % (self.mod_source.name, self.version))
+        os.makedirs(mod_source.backup_path, exist_ok=True)
+
+        if update_url.startswith('http') or 'github.com/' in update_url:
             try:
-                new_version_dir = unpack_update(temp_packpath, temp_new_version)
+                download_update(update_url, pack_basename, temp_packpath, download_cb)
             except (RuntimeError, Exception) as error:
-                self._error(error)
-                return
+                return str(error)
 
         else:
-            new_version_dir = temp_new_version
+            try:
+                copy_update(update_url, pack_basename, temp_packpath)
+            except (RuntimeError, Exception) as error:
+                return str(error)
 
-        # backup current
+        if status_cb is not None:
+            status_cb(MSG_UNPACK % (mod_source.name, version))
         try:
-            if old_version is not None:
-                self.status.emit(MSG_BACKUP % old_version)
-            backup_version(self.mod_source, old_version)
-        except RuntimeError as error:
-            self._error(error)
-            return
+            new_version_dir = unpack_update(temp_packpath, temp_new_version)
+        except (RuntimeError, Exception) as error:
+            return str(error)
 
-        # cleanup
-        self.status.emit(MSG_INSTALL % self.version)
-        os.rename(new_version_dir, self.mod_source.path)
-        if os.path.isdir(temp_new_version):
-            shutil.rmtree(temp_new_version)
+    else:
+        new_version_dir = temp_new_version
 
-        self.fetched.emit()
+    # backup current
+    try:
+        if old_version is not None and status_cb is not None:
+            status_cb(MSG_BACKUP % old_version)
+        backup_version(mod_source, old_version)
+    except RuntimeError as error:
+        return str(error)
+
+    # cleanup
+    if status_cb is not None:
+        status_cb(MSG_INSTALL % version)
+    os.rename(new_version_dir, mod_source.path)
+    if os.path.isdir(temp_new_version):
+        shutil.rmtree(temp_new_version)
+
+    return ''
 
 
 def backup_version(mod_source: ModSource, old_version):
@@ -607,7 +619,7 @@ def unpack_update(temp_packpath, temp_new_version):
 
 
 def create_dir(name):
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     source_path = os.path.join(a2.paths.modules, name)
     os.makedirs(source_path, exist_ok=True)
     return source_path
