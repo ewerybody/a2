@@ -270,8 +270,10 @@ class ModSourceWidget(QtWidgets.QWidget):
             thread.start()
 
     def rollback(self):
-        to_version = self.sender().data()
-        self._change_version(to_version)
+        action = self.sender()
+        if isinstance(action, QtGui.QAction):
+            to_version = action.data()
+            self._change_version(to_version)
 
     def _on_edit_meta_data(self):
         from a2widget import modsource_editor
@@ -324,6 +326,8 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         super(AddSourceDialog, self).__init__(
             self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG
         )
+        self.setWindowFlags(a2input_dialog.SIZABLE_FLAGS)
+        self.ui.a2ok_button.setEnabled(False)
 
         self.ui.main_layout.setSpacing(self.main.style.get('spacing') * 3)
         self.h_layout = QtWidgets.QHBoxLayout()
@@ -348,6 +352,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
             self._get_remote_data(url)
         else:
             self.ui.a2ok_button.setEnabled(True)
+        # self.setWindowFlags(a2input_dialog.FIXED_FLAGS)
 
     def check_name(self, name=''):
         """
@@ -378,6 +383,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self.ui.a2ok_button.setEnabled(False)
 
     def _get_remote_data(self, url=None):
+        self.setWindowFlags(a2input_dialog.SIZABLE_FLAGS)
         if url is None:
             url = self.ui_text_field.text()
         else:
