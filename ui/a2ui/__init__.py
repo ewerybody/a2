@@ -489,8 +489,9 @@ class A2Window(QtWidgets.QMainWindow):
         if win_prefs is None:
             win_prefs = self.a2.db.get('windowprefs') or {}
         splitter_size = win_prefs.get('splitter')
-        if splitter_size is not None:
-            self.ui.splitter.setSizes(splitter_size)
+        if splitter_size is None:
+            splitter_size = (self.width() * 0.25, self.width() * 0.75)
+        self.ui.splitter.setSizes(splitter_size)
 
     def _finish_initial_draw(self):
         self._setup_ui()
