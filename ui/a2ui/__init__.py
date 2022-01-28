@@ -11,6 +11,7 @@ import a2util
 import a2mod
 from a2ctrl.icons import Icons
 
+import a2widget.tools
 import a2ui.module_cfg
 from a2qt import QtGui, QtCore, QtWidgets
 
@@ -326,9 +327,8 @@ class A2Window(QtWidgets.QMainWindow):
         geometry = self.geometry()
         geometry.setSize(QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
         # set to center of active screen
-        for screen in QtWidgets.QApplication.screens():
-            if screen.geometry().contains(QtGui.QCursor.pos()):
-                geometry.moveCenter(screen.geometry().center())
+        screen = a2widget.tools.get_screen(geometry)
+        geometry.moveCenter(screen.geometry().center())
         log.info('Initializing window position & size: %s', geometry)
         self.setGeometry(geometry)
 
