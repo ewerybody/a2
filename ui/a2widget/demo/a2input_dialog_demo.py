@@ -1,6 +1,6 @@
-# import _demo_env
+from functools import partial
+from a2qt import QtCore, QtWidgets
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
-from a2qt import QtWidgets
 
 
 class InputDialogDemo(QtWidgets.QMainWindow):
@@ -58,11 +58,22 @@ class InputDialogDemo(QtWidgets.QMainWindow):
             self,
             'A title',
             msg='Some <b>more</b> text bla blaaa with extra formatting and stuff.\n'
-            "We wouldn't want it to be <i>too</i> boring, right? 😉",
+            "We wouldn't want it to be <i>too</i> boring, right? 😉 ... wait for it ...",
         )
         dialog.okayed.connect(self.confirm_dialog_okayed)
         dialog.canceled.connect(self.confirm_dialog_canceled)
         dialog.show()
+        QtCore.QTimer(self).singleShot(500, partial(self._add_text, dialog))
+
+    def _add_text(self, dialog):
+        current = dialog.ui.label.text()
+        current += (
+            ' here is be some more text to text expanding the dialog<br>horizontally '
+            'and vertically until line break would occur<br>'
+            'or the boundaries are reached ...'
+        )
+        dialog.ui.label.setText(current)
+        # dialog.resize_delayed()
 
     @staticmethod
     def confirm_dialog_okayed():

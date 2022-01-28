@@ -1,6 +1,7 @@
 from a2qt import QtCore, QtWidgets
 
 import a2uic
+import a2widget.tools
 from a2widget import a2input_dialog_ui
 
 SIZABLE_FLAGS = QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint
@@ -44,10 +45,20 @@ class A2ConfirmDialog(QtWidgets.QDialog):
         return self._result
 
     def resize_delayed(self, timout=50):
+        return
         QtCore.QTimer(self).singleShot(timout, self._resize_height)
 
     def _resize_height(self):
-        self.resize(self.width(), self.minimumSizeHint().height())
+        self.resize(self.width(), self.minimumSizeHint().height() + 100)
+
+    def resizeEvent(self, event):
+        if self.windowFlags() == FIXED_FLAGS or not event.spontaneous():
+            # make resize grow from center instead to bottom right corner
+            geo = self.geometry()
+            geo.translate(*((event.oldSize() - event.size()) / 2).toTuple())
+            a2widget.tools.fit_to_sceen(geo)
+            self.setGeometry(geo)
+        return super().resizeEvent(event)
 
 
 class A2InputDialog(A2ConfirmDialog):
