@@ -1,61 +1,72 @@
-﻿clipboard_get(clipWaitTime=0.5) {
+﻿#Include, <WinClip>
+#Include, <WinClipAPI>
+
+
+clipboard_get(clipWaitTime=0.5) {
     ; Use the clipboard to get selected text.
     ;
     ; Basically stores current clipboard, fires Ctrl+C, gets variable
     ; from clipboard, restores clipboard and returns variable. Voila!
 
-    SavedClipboard := ClipboardAll
-    clipboard_empty()
-    Sleep, 0
+    wc := new WinClip
+    wc.iCopy(clipWaitTime)
+    selection := wc.iGetText()
+    wc :=
+    return selection
 
-    ; also watch for the process-executable instead of just window title:
-    WinGetClass, Class, A
-    WinGet, this_process, ProcessName, ahk_class %Class%
+    ; SavedClipboard := ClipboardAll
+    ; clipboard_empty()
+    ; Sleep, 0
 
-    ; Sending `Ctrl+C` in Maya may cause a "scene clipboard save" which can be heavy!
-    ; To avoid this we make sure we're not on the main window of Maya.
-    if (this_process == "maya.exe")
-    {
-        WinGetTitle, this_title, A
-        if (string_startswith(this_title, "Autodesk Maya "))
-            Return ""
-    }
+    ; ; also watch for the process-executable instead of just window title:
+    ; WinGetClass, Class, A
+    ; WinGet, this_process, ProcessName, ahk_class %Class%
 
-    ;Send, {Blind}%resetModifiers%^c%restoreModifiers%
-    if (this_process == "Photoshop.exe")
-    {
-        SetKeyDelay, 20, 20
-        SendEvent, {Ctrl down}^c{Ctrl up}
-    }
-    Else If Class in PuTTY,ConsoleWindowClass,ytWindow
-        Send, {ENTER}
-    Else
-        Send, {Ctrl down}^c{Ctrl up}
+    ; ; Sending `Ctrl+C` in Maya may cause a "scene clipboard save" which can be heavy!
+    ; ; To avoid this we make sure we're not on the main window of Maya.
+    ; if (this_process == "maya.exe")
+    ; {
+    ;     WinGetTitle, this_title, A
+    ;     if (string_startswith(this_title, "Autodesk Maya "))
+    ;         Return ""
+    ; }
 
-    If clipWaitTime <>
-    {
-        If copyAsText = 0
-            ClipWait, %clipWaitTime%, 1
-        Else
-            ClipWait, %clipWaitTime%
-    }
-    Sleep,0
+    ; ;Send, {Blind}%resetModifiers%^c%restoreModifiers%
+    ; if (this_process == "Photoshop.exe")
+    ; {
+    ;     SetKeyDelay, 20, 20
+    ;     SendEvent, {Ctrl down}^c{Ctrl up}
+    ; }
+    ; Else If Class in PuTTY,ConsoleWindowClass,ytWindow
+    ;     Send, {ENTER}
+    ; Else
+    ;     Send, {Ctrl down}^c{Ctrl up}
 
-    Selection := Clipboard
-    Clipboard := SavedClipboard
+    ; If clipWaitTime <>
+    ; {
+    ;     If copyAsText = 0
+    ;         ClipWait, %clipWaitTime%, 1
+    ;     Else
+    ;         ClipWait, %clipWaitTime%
+    ; }
+    ; Sleep,0
 
-    Return Selection
+    ; Selection := Clipboard
+    ; Clipboard := SavedClipboard
+
+    ; Return Selection
 }
 
 clipboard_paste( byref inputString, sleepTime=50 ) {
+    WinClip.Paste(inputString)
     ; Use the clipboard to paste given text.
-    SavedClipboard := ClipboardAll
-    clipboard_empty()
-    Clipboard := inputString
-    ClipWait, 1
-    Send, {Ctrl down}^v{Ctrl up}
-    Sleep, 20
-    Clipboard := SavedClipboard
+    ; SavedClipboard := ClipboardAll
+    ; clipboard_empty()
+    ; Clipboard := inputString
+    ; ClipWait, 1
+    ; Send, {Ctrl down}^v{Ctrl up}
+    ; Sleep, 20
+    ; Clipboard := SavedClipboard
 }
 
 clipboard_get_files() {
