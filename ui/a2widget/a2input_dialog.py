@@ -49,7 +49,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
         QtCore.QTimer(self).singleShot(timout, self._resize_height)
 
     def _resize_height(self):
-        self.resize(self.width(), self.minimumSizeHint().height() + 100)
+        self.resize(self.width(), self.minimumSizeHint().height())
 
     def resizeEvent(self, event):
         if self.windowFlags() == FIXED_FLAGS or not event.spontaneous():

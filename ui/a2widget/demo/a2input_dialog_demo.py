@@ -1,5 +1,6 @@
 from functools import partial
 from a2qt import QtCore, QtWidgets
+from a2widget import a2input_dialog
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
 
 
@@ -60,6 +61,7 @@ class InputDialogDemo(QtWidgets.QMainWindow):
             msg='Some <b>more</b> text bla blaaa with extra formatting and stuff.\n'
             "We wouldn't want it to be <i>too</i> boring, right? 😉 ... wait for it ...",
         )
+        dialog.setWindowFlags(a2input_dialog.FIXED_FLAGS)
         dialog.okayed.connect(self.confirm_dialog_okayed)
         dialog.canceled.connect(self.confirm_dialog_canceled)
         dialog.show()
@@ -72,8 +74,11 @@ class InputDialogDemo(QtWidgets.QMainWindow):
             'and vertically until line break would occur<br>'
             'or the boundaries are reached ...'
         )
+
+        button = QtWidgets.QPushButton('HHaaallo')
+        button.setMinimumHeight(100)
+        dialog.ui.main_layout.addWidget(button)
         dialog.ui.label.setText(current)
-        # dialog.resize_delayed()
 
     @staticmethod
     def confirm_dialog_okayed():
@@ -88,7 +93,7 @@ def show():
     app = QtWidgets.QApplication([])
     win = InputDialogDemo()
     win.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':
