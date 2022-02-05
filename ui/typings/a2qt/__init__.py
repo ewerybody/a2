@@ -1,1 +1,2 @@
 QT_PATH: str
+QT_VERSION: int

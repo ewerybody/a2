@@ -57,3 +57,4 @@ else:
         QToolBox, QToolButton, QToolTip, QTreeView, QTreeWidget, QTreeWidgetItem,
         QTreeWidgetItemIterator, QUndoView, QVBoxLayout, QWhatsThis, QWidget,
         QWidgetAction, QWidgetItem, QWizard, QWizardPage)
+    QApplication.exec = QApplication.exec_
