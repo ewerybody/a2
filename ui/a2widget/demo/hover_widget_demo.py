@@ -1,7 +1,5 @@
-import uuid
 from a2qt import QtCore, QtWidgets
 from a2widget import hover_widget
-
 
 
 class Demo(QtWidgets.QMainWindow):

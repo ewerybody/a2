@@ -537,6 +537,7 @@ class QAbstractSlider(QWidget):
 
 
 class QAbstractSpinBox(QWidget):
+    valueChanged: QtCore.Signal = ...
 
     UpDownArrows             : QAbstractSpinBox.ButtonSymbols = ... # 0x0
     PlusMinus                : QAbstractSpinBox.ButtonSymbols = ... # 0x1
