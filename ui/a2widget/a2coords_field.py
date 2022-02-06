@@ -1,8 +1,3 @@
-"""
-Created on 08.03.2017
-
-@author: eric
-"""
 from a2qt import QtCore, QtWidgets
 
 import a2ahk
@@ -84,11 +79,10 @@ class A2CoordsField(QtWidgets.QWidget):
         self.change_triggered()
 
     def show_menu(self, menu):
-        icons = a2ctrl.Icons.inst()
         for func, icon in [
-            (self.copy, icons.copy),
-            (self.paste, icons.paste),
-            (self.pick, icons.number),
+            (self.copy, a2ctrl.Icons.copy),
+            (self.paste, a2ctrl.Icons.paste),
+            (self.pick, a2ctrl.Icons.number),
         ]:
             menu.addAction(icon, func.__name__.title() + ' Coordinates', func)
 
@@ -143,6 +137,6 @@ class A2CoordsField(QtWidgets.QWidget):
 
 
 if __name__ == '__main__':
-    import a2widget.demo.a2coords_field
+    from a2widget.demo import a2coords_field_demo
 
-    a2widget.demo.a2coords_field.show()
+    a2coords_field_demo.show()
