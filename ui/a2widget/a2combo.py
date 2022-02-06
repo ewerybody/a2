@@ -8,7 +8,10 @@ So hovering and changing the value via wheel still works while
 scrolling over is properly ignored.
 """
 import time
-from a2qt import QtWidgets, QtCore
+from a2qt import QtWidgets, QtCore, QtGui
+
+# : Seconds to wait for the combo box to accept wheel events
+HOVER_TIMEOUT = 0.4
 
 
 class A2Combo(QtWidgets.QComboBox):
@@ -25,7 +28,7 @@ class A2Combo(QtWidgets.QComboBox):
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         super(A2Combo, self).focusOutEvent(event)
 
-    def enterEvent(self, event: QtCore.QEvent) -> None:
+    def enterEvent(self, event: QtGui.QEnterEvent) -> None:
         self._in_time = time.time()
         return super().enterEvent(event)
 
@@ -39,8 +42,14 @@ class A2Combo(QtWidgets.QComboBox):
                 event.ignore()
                 return
             # make it possible to hover over the combo to scroll it.
-            if time.time() - self._in_time < 0.4:
+            if time.time() - self._in_time < HOVER_TIMEOUT:
                 event.ignore()
                 return
 
         return super(A2Combo, self).wheelEvent(event)
+
+
+if __name__ == '__main__':
+    from a2widget.demo import a2combo_demo
+
+    a2combo_demo.show()

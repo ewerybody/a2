@@ -16,7 +16,7 @@ class ComboDemo(QtWidgets.QMainWindow):
         sa.setWidget(w)
         vlay = QtWidgets.QVBoxLayout(w)
 
-        spacer_widget1 = QtWidgets.QWidget(self)
+        spacer_widget1 = QtWidgets.QLabel('Hover Cursor here\nand Scroll down ...\nvvvvvvvv', self)
         spacer_widget1.setMinimumHeight(200)
         vlay.addWidget(spacer_widget1)
 
