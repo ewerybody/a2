@@ -9,6 +9,7 @@ EXECUTABLE_NAME = 'autohotkey.exe'
 EXTENSION = '.ahk'
 _LOW_BOOLS = {'true': True, 'false': False}
 ALLOWED_VAR_NAME_CHARS = string.ascii_letters + string.digits + '_'
+ENCODINGS = 'UTF-8', 'UTF-8-RAW', 'UTF-16', 'UTF-16-RAW'
 
 
 def translate_hotkey(display_string):
@@ -106,6 +107,7 @@ def get_variables(ahk_file):
             continue
         result[_key] = convert_string_to_type(value)
     return result
+
 
 
 def set_variable(ahk_file, key, value, create_key=False):
