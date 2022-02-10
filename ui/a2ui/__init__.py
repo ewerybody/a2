@@ -222,7 +222,8 @@ class A2Window(QtWidgets.QMainWindow):
         for mod in self.selected:
             if mod.enabled != state:
                 mod.enabled = state
-        self.module_list.set_item_states(self.selected)
+        # self.module_list.set_item_states(self.selected)
+        self.module_list.draw_modules()
         self.module_view.update_header()
         self.settings_changed()
 
