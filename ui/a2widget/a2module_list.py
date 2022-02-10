@@ -31,6 +31,7 @@ class A2ModuleList(QtWidgets.QWidget):
         self._brush_tinted = None
         # to avoid adding variables to external objects
         self._module_map = {}
+        self._menu = None
 
     def _on_selection_change(self, items):
         modules = [item.data(0, QtCore.Qt.UserRole) for item in items]
@@ -267,25 +268,36 @@ class A2ModuleList(QtWidgets.QWidget):
     def _build_context_menu(self, pos):
         if not self.selection:
             return
+        if self._menu is None:
+            self._menu = QtWidgets.QMenu(self)
+        self._menu.clear()
 
-        menu = QtWidgets.QMenu(self)
         if len(self.selection) == 1:
             module = self.selection[0]
-            menu.addAction(a2ctrl.Icons.folder, 'Explore to module folder', self._explore_module)
+            self._menu.addAction(
+                a2ctrl.Icons.folder, 'Explore to module folder', self._explore_module
+            )
             name = f'"{module.display_name}"'
             label = 'Disable' if module.enabled else 'Enable'
-            _add_action(menu, label, name, partial(self.enable_request.emit, not module.enabled))
+            self._add_menu_action(label, name, not module.enabled)
 
         else:
             num_enabled = sum(m.enabled for m in self.selection)
             name = 'Selected Modules'
             if len(self.selection) != num_enabled:
-                _add_action(menu, 'Enable', name, partial(self.enable_request.emit, True))
+                self._add_menu_action('Enable', name, True)
             if num_enabled:
-                _add_action(menu, 'Disable', name, partial(self.enable_request.emit, False))
+                self._add_menu_action('Disable', name, False)
 
-        if not menu.isEmpty():
-            menu.popup(QtGui.QCursor.pos())
+        if not self._menu.isEmpty():
+            self._menu.popup(QtGui.QCursor.pos())
+
+    def _add_menu_action(self, label, name, state):
+        if self._menu is None:
+            self._menu = QtWidgets.QMenu(self)
+        self._menu.addAction(
+            a2ctrl.Icons.check, f'{label} {name}', partial(self.enable_request.emit, state)
+        )
 
     def _explore_module(self):
         if not self.selection:
@@ -304,7 +316,3 @@ class A2ModuleList(QtWidgets.QWidget):
     def set_cfg(self, name, value):
         """Set Module List settings to db."""
         self.a2.db.set(f'{_CFG_PREFIX}{name}', value)
-
-
-def _add_action(menu, label, name, signal):
-    menu.addAction(a2ctrl.Icons.check, f'{label} {name}', signal)
