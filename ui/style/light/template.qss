@@ -284,3 +284,11 @@ QMenu::item {
 QMenu::item:selected {
 	background: "%(color_hover)s";
 }
+
+QGroupBox#a2modlist_label_group {
+    margin: 0px;
+    margin-left: %(margin)ipx;
+}
+QGroupBox#a2modlist_label_group > QLabel {
+    font-size: %(font_size_small)ipx;
+}

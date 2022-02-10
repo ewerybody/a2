@@ -12,6 +12,9 @@ SHOW_ENABLED = 'show_enabled_only'
 ARRANG_PACKG = 'arrange_by_package'
 SORT_BY_PAKG = 'sort_by_package'
 PKG_COLLAPSD = 'package_collapsed'
+MSG_ALL_HIDDEN = 'None enabled! Showing all (%i):'
+MSG_NO_MODULES = 'No modules to list yet!'
+MSG_NO_MATCHES = 'No matches found!'
 
 
 class A2ModuleList(QtWidgets.QWidget):
@@ -99,11 +102,12 @@ class A2ModuleList(QtWidgets.QWidget):
         Call to refill the module list with items.
         ... to match filtering, module deletion or enabling of module sources.
         """
+        show_enabled = self.cfg(SHOW_ENABLED)
         if not select_mods:
-            if not self._filtered and not self._filter_tags and not self.cfg(SHOW_ENABLED):
-                select_mods = self.selection or []
-            else:
-                select_mods = []
+            select_mods = self.selection or []
+            # if not self._filtered and not self._filter_tags and not show_enabled:
+            # else:
+            #     select_mods = []
 
         self.ui.a2module_list_widget.blockSignals(True)
         self.ui.a2module_list_widget.clear()
@@ -111,14 +115,13 @@ class A2ModuleList(QtWidgets.QWidget):
 
         arrange = self.cfg(ARRANG_PACKG, True)
         collapsed = self.cfg(PKG_COLLAPSD, [])
-        show_enabled = self.cfg(SHOW_ENABLED)
 
         if arrange:
             self.ui.a2module_list_widget.itemCollapsed.connect(self._on_root_toggle)
             self.ui.a2module_list_widget.itemExpanded.connect(self._on_root_toggle)
         self.ui.a2module_list_widget.setIndentation(10 if arrange else 0)
 
-        shown_mods = []
+        shown_mods, hidden = {}, {}
         for source in self.a2.module_sources.values():
             shown_mods.clear()
             for mod in source.mods.values():
@@ -126,12 +129,26 @@ class A2ModuleList(QtWidgets.QWidget):
                     if self.is_filtered(mod):
                         continue
                     if show_enabled and not mod.enabled:
+                        hidden.setdefault(source, []).append(mod)
                         continue
-                shown_mods.append(mod)
+                shown_mods.setdefault(source, []).append(mod)
 
-            if show_enabled and not shown_mods or arrange and not shown_mods:
-                continue
+            # if show_enabled and not shown_mods or arrange and not shown_mods:
+            #     continue
 
+        label_msg = ''
+        if self._filtered:
+            if not shown_mods:
+                label_msg = MSG_NO_MATCHES
+        elif not shown_mods:
+            if show_enabled and hidden:
+                shown_mods = hidden
+                label_msg = MSG_ALL_HIDDEN % sum(len(mods) for mods in shown_mods.values())
+            else:
+                label_msg = MSG_NO_MODULES
+        self._show_label_msg(label_msg)
+
+        for source, mod_list in shown_mods.items():
             if arrange:
                 root_item = QtWidgets.QTreeWidgetItem(self.ui.a2module_list_widget, [source.name])
                 root_item.setIcon(0, source.icon)
@@ -140,7 +157,7 @@ class A2ModuleList(QtWidgets.QWidget):
             else:
                 root_item = self.ui.a2module_list_widget
 
-            for mod in shown_mods:
+            for mod in mod_list:
                 item = QtWidgets.QTreeWidgetItem(root_item)
                 item.setText(0, mod.display_name)
                 item.setData(0, QtCore.Qt.UserRole, mod)
@@ -153,6 +170,13 @@ class A2ModuleList(QtWidgets.QWidget):
         if select_mods:
             self.select(select_mods)
         self.ui.a2module_list_widget.blockSignals(False)
+
+    def _show_label_msg(self, msg):
+        if not msg:
+            self.ui.a2modlist_label_group.hide()
+            return
+        self.ui.a2modlist_label_group.show()
+        self.ui.label.setText(msg)
 
     def _on_root_toggle(self, item):
         collapsed = self.cfg(PKG_COLLAPSD, [])

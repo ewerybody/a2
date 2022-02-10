@@ -6,22 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>296</width>
-    <height>759</height>
+    <width>347</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Form</string>
   </property>
   <layout class="QVBoxLayout" name="module_list_layout">
-   <property name="spacing">
-    <number>5</number>
-   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
    <property name="topMargin">
-    <number>5</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
     <number>0</number>
@@ -33,6 +30,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>5</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
      </property>
      <item>
       <widget class="QLineEdit" name="search_field"/>
@@ -48,6 +48,25 @@
       <widget class="A2MoreButton" name="filter_menu_button"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="a2modlist_label_group">
+     <property name="styleSheet">
+      <string notr="true">b</string>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string notr="true"/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="A2ModList" name="a2module_list_widget">
