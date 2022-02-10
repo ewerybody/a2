@@ -229,9 +229,9 @@ class A2ModuleList(QtWidgets.QWidget):
         self.ui.search_field.setText('')
 
     def build_filter_menu(self, menu: QtWidgets.QMenu):
-        self._add_cfg_action(menu, SHOW_ENABLED, 'Only Enabled', self.toggle_cfg)
-        self._add_cfg_action(menu, ARRANG_PACKG, 'Arrange under package', self.toggle_cfg)
-        self._add_cfg_action(menu, SORT_BY_PAKG, 'Sort by package', self.toggle_cfg)
+        self._add_cfg_action(menu, SHOW_ENABLED, 'Only Enabled', False)
+        self._add_cfg_action(menu, ARRANG_PACKG, 'Arrange under package', True)
+        self._add_cfg_action(menu, SORT_BY_PAKG, 'Sort by package', False)
         menu.addSeparator()
 
         if self._filter_tags:
@@ -242,11 +242,11 @@ class A2ModuleList(QtWidgets.QWidget):
             action.setCheckable(True)
             action.setChecked(tag in self._filter_tags)
 
-    def _add_cfg_action(self, menu: QtWidgets.QMenu, name, label, func):
-        action = menu.addAction(label, func)
+    def _add_cfg_action(self, menu: QtWidgets.QMenu, name, label, default):
+        action = menu.addAction(label, self.toggle_cfg)
         action.setData(name)
         action.setCheckable(True)
-        action.setChecked(self.cfg(name, False))
+        action.setChecked(self.cfg(name, default))
         return action
 
     def clear_filter_tags(self):
@@ -263,8 +263,9 @@ class A2ModuleList(QtWidgets.QWidget):
 
     def toggle_cfg(self):
         action = self.sender()
-        self.set_cfg(action.data(), action.isChecked())
-        self.draw_modules()
+        if isinstance(action, QtGui.QAction):
+            self.set_cfg(action.data(), action.isChecked())
+            self.draw_modules()
 
     def set_item_state(self, module):
         item = self._module_map.get(module.key)
