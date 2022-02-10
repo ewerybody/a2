@@ -123,7 +123,6 @@ class A2ModuleList(QtWidgets.QWidget):
 
         shown_mods, hidden = {}, {}
         for source in self.a2.module_sources.values():
-            shown_mods.clear()
             for mod in source.mods.values():
                 if mod not in select_mods:
                     if self.is_filtered(mod):
