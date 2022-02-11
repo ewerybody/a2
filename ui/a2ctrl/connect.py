@@ -59,7 +59,7 @@ def control_list(controls, cfg, change_signal=None):
 
 def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     """
-    Connects a single control to a name in the given cfg dict
+    Connect a single control to a key in `cfg` dictionary.
 
     :param QWidget ctrl: The Qt object to work on.
     :param str name: The key name to look for in the dict.
@@ -99,9 +99,13 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.value
 
     elif isinstance(ctrl, QtWidgets.QComboBox):
-        ctrl.currentIndexChanged.connect(partial(_update_cfg_data, cfg, name))
+        if trigger_signal is None:
+            trigger_signal = ctrl.currentIndexChanged
+        trigger_signal.connect(partial(_update_cfg_data, cfg, name))
+
         if change_signal is not None:
-            ctrl.currentIndexChanged.connect(change_signal.emit)
+            trigger_signal.connect(change_signal.emit)
+
         if name in cfg:
             ctrl.setCurrentIndex(cfg[name])
         else:
