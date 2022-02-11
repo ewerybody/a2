@@ -118,7 +118,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         """
         label = label if label is not None else value_name.title()
         self.add_row(label, widget)
-        self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
+        self.connect_data_widget(value_name, widget, set_function, change_signal, default_value)
 
     def add_data_widget(
         self, value_name, widget, set_function, change_signal=None, default_value=None
@@ -133,7 +133,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         :param * default_value: Fallback and reference value to check against.
         """
         self.add_row(widget)
-        self._add_data_widget(value_name, widget, set_function, change_signal, default_value)
+        self.connect_data_widget(value_name, widget, set_function, change_signal, default_value)
 
     def add_row(self, *args):
         self.ui.config_layout.addRow(*args)
@@ -146,7 +146,10 @@ class A2ItemEditor(QtWidgets.QWidget):
             'default_value': default_value,
         }
 
-    def _add_data_widget(self, value_name, widget, set_function, trigger_signal, default_value):
+    def connect_data_widget(
+        self, value_name, widget, set_function, trigger_signal=None, default_value=None
+    ):
+        """Hook up widget to be set with according values and trigger changes."""
         self._drawing = True
         self.enlist_widget(value_name, widget, set_function, default_value)
         a2ctrl.connect.control(
@@ -163,9 +166,19 @@ class A2ItemEditor(QtWidgets.QWidget):
         self._drawing = True
         for value_name, widget_dict in self._data_widgets.items():
             value = self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
-            widget_dict['widget'].blockSignals(True)
-            widget_dict['set_function'](value)
-            widget_dict['widget'].blockSignals(False)
+            widget = widget_dict['widget']
+            widget.blockSignals(True)
+            try:
+                widget_dict['set_function'](value)
+            except TypeError:
+                if 'default_value' in widget_dict:
+                    default = widget_dict['default_value']
+                    widget_dict['set_function'](default)
+                    log.warning(f'Could not set "{widget}" to "{value}" setting default: "{default}"!')
+                else:
+                    log.error(f'Could not set "{widget}" to "{value}"!')
+
+            widget.blockSignals(False)
             self._current_data[value_name] = value
 
         self._drawing = False
