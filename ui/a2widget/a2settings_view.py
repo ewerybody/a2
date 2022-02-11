@@ -311,7 +311,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
         self.alert_label = QtWidgets.QLabel('')
         icon_size = self.a2.win.style.get('icon_size_small')
-        self.alert_label.setPixmap(Icons.inst().help.pixmap(icon_size))
+        self.alert_label.setPixmap(Icons.help.pixmap(icon_size))
         self.alert_label.hide()
         layout.addWidget(self.alert_label)
         layout.setStretch(1, 1)

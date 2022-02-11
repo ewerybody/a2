@@ -16,7 +16,7 @@ class A2Window(QtWidgets.QMainWindow):
     a2: a2core.A2Obj
     app: a2app.A2App
     temp_config: typing.Dict[str, typing.Dict]
-    style: a2style.A2StyleBuilder | None
+    style: a2style.A2StyleBuilder
     mod: typing.Optional[a2mod.Mod] = None
     selected: list[a2mod.Mod] = []
 
