@@ -131,3 +131,48 @@ explorer_show(pth) {
 
     Run, %cmd%
 }
+
+; Ask for file name as long that name exists in given directory or user cancels. Return `true` if name is available and accepted and `false` if canceled.
+explorer_create_file_dialog(ByRef file_name, dir_path, extension, file_label, title, subtitle := "", w := 420, h:= 140)
+{
+    if (!dir_path) {
+        MsgBox, No dir_path given!
+        Return
+    }
+
+    extension := Trim(string_prefix(extension, "."))
+    StringLower, extension, extension
+
+    msg := "Please enter a name for the new " file_label ":`n"
+    InputBox, file_name, %title%, %msg%%subtitle%,, 420, 140,,,,, %file_name%
+    if ErrorLevel {
+        Return false
+    }
+
+    file_path := __create_dialog_build_path(dir_path, file_name, extension)
+    while FileExist(file_path){
+        msg := "This file name already exists! Please pick another " file_label " name!`n"
+        InputBox, file_name, %title%, %msg%%subtitle%,, 420, 140,,,,, %file_name%
+        if ErrorLevel {
+            Return false
+        }
+
+        file_path := __create_dialog_build_path(dir_path, file_name, extension)
+    }
+    Return true
+}
+
+__create_dialog_build_path(dir_path, file_name, extension)
+{
+    this_ext := path_split_ext(file_name)[2]
+    if this_ext
+    {
+        StringLower, this_ext, this_ext
+        this_ext := Trim(string_prefix(this_ext, "."))
+
+        if (this_ext == extension) {
+            Return path_join(dir_path, file_name)
+        }
+    }
+    Return path_join(dir_path, file_name extension)
+}
