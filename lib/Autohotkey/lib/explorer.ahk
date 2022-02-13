@@ -150,8 +150,12 @@ explorer_create_file_dialog(ByRef file_name, dir_path, extension, file_label, ti
     }
 
     file_path := __create_dialog_build_path(dir_path, file_name, extension)
-    while FileExist(file_path){
-        msg := "This file name already exists! Please pick another " file_label " name!`n"
+    while (Trim(file_name) == "" OR FileExist(file_path)) {
+        if FileExist(file_path)
+            msg := "This file name already exists! Please pick another " file_label " name!`n"
+        else
+            msg := "Please enter NON-EMPTY name for the new " file_label ":`n"
+
         InputBox, file_name, %title%, %msg%%subtitle%,, 420, 140,,,,, %file_name%
         if ErrorLevel {
             Return false
