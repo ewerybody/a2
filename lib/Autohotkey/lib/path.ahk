@@ -105,3 +105,19 @@ path_neighbor(file_path, neighbor_name) {
     ; Also handy with builtin var `A_LineFile`!
     return path_join(path_dirname(file_path), neighbor_name)
 }
+
+; If already existing add numbers to file name until a free one is found.
+path_get_free_name(dir_path, file_name, ext, separator := "") {
+    ext := string_prefix(Trim(ext), ".")
+    file_path := path_join(dir_path, file_name . ext)
+    if !FileExist(file_path)
+        Return file_name
+
+    index := 1
+    While, FileExist(file_path) {
+        index++
+        base := file_name . index
+        file_path := path_join(dir_path, base . ext)
+    }
+    return base
+}

@@ -1,6 +1,7 @@
 ﻿#Include a2test.ahk
 #Include %A_ScriptDir%\..\
 #Include path.ahk
+#Include string.ahk
 
 p := A_ScriptFullPath
 x := path_dirname(p)
@@ -44,6 +45,20 @@ base_ext := path_split_ext(A_ScriptFullPath)
 sx1 := assertmsg("test_path" == base_ext[1])
 sx2 := assertmsg("ahk" == base_ext[2])
 
+FileAppend, , %A_ScriptDir%\_test_file.txt
+Loop, 3
+{
+    FileAppend, , %A_ScriptDir%\_test_file%A_Index%.txt
+}
+Sleep, 100
+found_name := path_get_free_name(A_ScriptDir, "_test_file", "txt")
+fn := assertmsg(found_name == "_test_file4")
+Loop, 3
+{
+    FileDelete, %A_ScriptDir%\_test_file%A_Index%.txt
+}
+FileDelete, %A_ScriptDir%\_test_file.txt
+
 msg = a path: %p%`npath_dirname: %x%`npath_dirname: %y%`npath_join: %z%`n`n
 msg = %msg%path_normalize: %n%`n!path_is_absolute: %a1% (%sub_dir%)`npath_is_absolute: %a2% (%n%)`n`n
 msg = %msg%path_is_file: %f1% (%p%)`n!path_is_file: %f2% (%z%)`n!path_is_file: %f3% (%x%)`npath_is_file: %f4% (%p2%)`n`n
@@ -51,5 +66,6 @@ msg = %msg%path_is_dir: %d1% (%x%)`n!path_is_dir: %d2% (%n%)`npath_basename: %b1
 msg = %msg%!path_is_empty: %e0% (%A_ScriptDir%)`npath_is_empty: %e1% (%test_dir%)`n`n
 msg = %msg%!path_is_writeable: %w1%`npath_is_writeable: %w2%`n
 msg = %msg%path_expand_env: %x1% %x2%`n
-msg .= "path_split_ext: " sx1 " " sx2 " '" base_ext[1] "' '" base_ext[2] "'"
+msg .= "path_split_ext: " sx1 " " sx2 " '" base_ext[1] "' '" base_ext[2] "'`n"
+msg .= "path_free_name: " fn
 msgbox %msg%
