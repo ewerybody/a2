@@ -58,8 +58,6 @@ Loop, 3
     FileDelete, %A_ScriptDir%\_test_file%A_Index%.txt
 }
 FileDelete, %A_ScriptDir%\_test_file.txt
-found_name := path_get_free_name(A_ScriptDir, "", "")
-fn2 := assertmsg(!found_name)
 
 msg = a path: %p%`npath_dirname: %x%`npath_dirname: %y%`npath_join: %z%`n`n
 msg = %msg%path_normalize: %n%`n!path_is_absolute: %a1% (%sub_dir%)`npath_is_absolute: %a2% (%n%)`n`n
@@ -69,5 +67,5 @@ msg = %msg%!path_is_empty: %e0% (%A_ScriptDir%)`npath_is_empty: %e1% (%test_dir%
 msg = %msg%!path_is_writeable: %w1%`npath_is_writeable: %w2%`n
 msg = %msg%path_expand_env: %x1% %x2%`n
 msg .= "path_split_ext: " sx1 " " sx2 " '" base_ext[1] "' '" base_ext[2] "'`n"
-msg .= "path_free_name: " fn " " fn2
+msg .= "path_free_name: " fn
 msgbox %msg%
