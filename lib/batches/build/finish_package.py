@@ -75,7 +75,7 @@ def update_readme():
     ahk_exe = os.path.join(Paths.lib, 'Autohotkey', 'Autohotkey.exe')
     batches_dir = os.path.join(Paths.lib, 'batches')
     pattern = 'get_%s_version.ahk'
-    names = 'AutoHotkey', 'PySide', 'Python'
+    names = 'AutoHotkey', PYSIDE, 'Python'
     scripts = (
         os.path.join(Paths.lib, 'cmds', pattern % names[0]),
         os.path.join(batches_dir, 'versions', pattern % names[1]),

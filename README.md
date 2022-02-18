@@ -62,5 +62,5 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 
 ## versions in latest build package:
 * AutoHotkey: 1.1.33.10
-* Python: 3.9.7150.1013
-* PySide2: 5.15.2.0
+* Python: 3.10.2150.1013
+* PySide: 6.2.3.0
