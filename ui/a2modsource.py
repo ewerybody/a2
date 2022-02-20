@@ -98,14 +98,14 @@ class ModSource(object):
                 self.mods[mod_name] = a2mod.Mod(self, mod_name)
 
     def refresh(self):
-        """Unload Python modules from within this ModSource and re-fetch modules."""
+        """Unload Python modules from within this ModSource and re-fetch."""
         log.info('Refreshing module package: "%s" ...', self.name)
         # self.a2.paths.modules
         my_mods = []
         for name, pymod in sys.modules.items():
             if not hasattr(pymod, '__file__'):
                 continue
-            if not pymod.__file__.startswith(self.path):
+            if pymod.__file__ is not None and not pymod.__file__.startswith(self.path):
                 continue
             my_mods.append(name)
 
@@ -466,16 +466,12 @@ class ModSourceFetchThread(QtCore.QThread):
         self.status.emit(msg)
 
     def run(self):
-        result = fetch(
-            self.mod_source,
-            self.version,
-            self.url,
-            self.status.emit,
-            self._download_status,
-        )
-        if result:
-            self._error(result)
+        try:
+            fetch(self.mod_source, self.version, self.url, self.status.emit, self._download_status)
+        except Exception as error:
+            self._error(str(error))
             return
+
         self.fetched.emit()
 
 
@@ -489,7 +485,7 @@ def fetch(mod_source, version, url=None, status_cb=None, download_cb=None):
 
     # exit if given version is current version
     if old_version is not None and old_version == version:
-        return ''
+        return
 
     pack_basename = '%s.zip' % version
     temp_packpath = os.path.join(mod_source.backup_path, pack_basename)
@@ -502,34 +498,23 @@ def fetch(mod_source, version, url=None, status_cb=None, download_cb=None):
         os.makedirs(mod_source.backup_path, exist_ok=True)
 
         if update_url.startswith('http') or 'github.com/' in update_url:
-            try:
-                download_update(update_url, pack_basename, temp_packpath, download_cb)
-            except (RuntimeError, Exception) as error:
-                return str(error)
-
+            download_update(update_url, pack_basename, temp_packpath, download_cb)
         else:
-            try:
-                copy_update(update_url, pack_basename, temp_packpath)
-            except (RuntimeError, Exception) as error:
-                return str(error)
+            copy_update(update_url, pack_basename, temp_packpath)
 
         if status_cb is not None:
             status_cb(MSG_UNPACK % (mod_source.name, version))
-        try:
-            new_version_dir = unpack_update(temp_packpath, temp_new_version)
-        except (RuntimeError, Exception) as error:
-            return str(error)
 
-    else:
-        new_version_dir = temp_new_version
+        unpack_update(temp_packpath, temp_new_version)
 
-    # backup current
-    try:
-        if old_version is not None and status_cb is not None:
+    new_version_dir = get_root_path(temp_new_version)
+
+    if old_version is not None:
+        if status_cb is not None:
             status_cb(MSG_BACKUP % old_version)
         backup_version(mod_source, old_version)
-    except RuntimeError as error:
-        return str(error)
+
+    clear_source_path(mod_source, status_cb)
 
     # cleanup
     if status_cb is not None:
@@ -538,28 +523,15 @@ def fetch(mod_source, version, url=None, status_cb=None, download_cb=None):
     if os.path.isdir(temp_new_version):
         shutil.rmtree(temp_new_version)
 
-    return ''
-
 
 def backup_version(mod_source: ModSource, old_version):
-    if old_version is None:
-        for _ in os.listdir(mod_source.path):
-            raise RuntimeError(MSG_NOT_EMPTY_ERROR)
-
-        try:
-            mod_source.remove()
-        except Exception:
-            log.error(traceback.format_exc().strip())
-            raise RuntimeError(MSG_NOT_EMPTY_ERROR)
-
-    else:
-        log.debug(MSG_BACKUP, old_version)
-        try:
-            mod_source.move_to_temp_backup()
-        except Exception as error:
-            # log.error(MSG_BACKUP_ERROR % old_version + '(%s)' % mod_source.path)
-            log.error(traceback.format_exc().strip())
-            raise RuntimeError(MSG_BACKUP_ERROR % old_version)
+    log.debug(MSG_BACKUP, old_version)
+    try:
+        mod_source.move_to_temp_backup()
+    except Exception as error:
+        # log.error(MSG_BACKUP_ERROR % old_version + '(%s)' % mod_source.path)
+        log.error(traceback.format_exc().strip())
+        raise RuntimeError(MSG_BACKUP_ERROR % old_version)
 
 
 def download_update(update_url, pack_basename, temp_packpath, callback=None):
@@ -604,18 +576,18 @@ def unpack_update(temp_packpath, temp_new_version):
         raise RuntimeError('Error Unpacking Update! (%s)' % temp_packpath)
 
     os.remove(temp_packpath)
-    new_version_dir = temp_new_version
-    # if mod_source_config not directly under path search for it
-    if not os.path.isfile(os.path.join(temp_new_version, CONFIG_FILENAME)):
-        new_version_dir = None
-        for this_path, _dirs, this_files in os.walk(temp_new_version):
-            if CONFIG_FILENAME in this_files:
-                new_version_dir = this_path
-                break
-        if new_version_dir is None:
-            raise RuntimeError('Could not find %s in new package!' % CONFIG_FILENAME)
 
-    return new_version_dir
+
+def get_root_path(temp_new_version):
+    """Peek into unzipped folder structure to find config file. Return its dir."""
+    if os.path.isfile(os.path.join(temp_new_version, CONFIG_FILENAME)):
+        return temp_new_version
+
+    for this_path, _, this_files in os.walk(temp_new_version):
+        if CONFIG_FILENAME in this_files:
+            return this_path
+
+    raise RuntimeError('Could not find %s in new package!' % CONFIG_FILENAME)
 
 
 def create_dir(name):
@@ -639,3 +611,13 @@ def create(name, author_name, author_url):
     cfg['maintainer'] = author_name
     cfg['url'] = author_url
     a2util.json_write(os.path.join(path, CONFIG_FILENAME), cfg)
+
+
+def clear_source_path(mod_source: ModSource, status_cb=None):
+    try:
+        mod_source.remove()
+    except PermissionError as error:
+        raise PermissionError(
+            'Cannot clear target package path!\n'
+            f'Please make sure this path is not blocked!\n\n  {mod_source.path}'
+        ) from error

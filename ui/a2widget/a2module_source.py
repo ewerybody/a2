@@ -18,7 +18,7 @@ MSG_UPTODATE = 'You are Up-To-Date!'
 MSG_FETCHING = 'Fetching data ...'
 MSG_UPDATE_AVAILABLE = 'Update to version %s'
 MSG_INSTALL_DISCLAIMER = (
-    'Know about the risks of downloading and executing stuff! '
+    'Know about the risks of downloading and executing stuff!<br>'
     'Install only from trusted sources! <a href="%s">read more</a>'
 )
 MSG_INSTALL_CHECK = 'I understand!'
@@ -255,9 +255,11 @@ class ModSourceWidget(QtWidgets.QWidget):
     def _change_version(self, version):
         self.set_busy()
         if a2core.is_debugging():
-            result = a2modsource.fetch(self.mod_source, version, status_cb=self._show_update_status)
-            if result:
-                self._show_update_error(result)
+            try:
+                a2modsource.fetch(self.mod_source, version, status_cb=self._show_update_status)
+            except Exception as error:
+                self._show_update_error(error)
+                return
             self._show_update_finished()
         else:
             thread = a2modsource.ModSourceFetchThread(
@@ -321,14 +323,15 @@ class BusyIcon(QtWidgets.QLabel):
 
 class AddSourceDialog(a2input_dialog.A2InputDialog):
     def __init__(self, main, url):
-        self.a2 = a2core.A2Obj.inst()
-        self.main = main
         super(AddSourceDialog, self).__init__(
-            self.main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG
+            main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG
         )
         self.setWindowFlags(a2input_dialog.SIZABLE_FLAGS)
-        self.ui.a2ok_button.setEnabled(False)
 
+        self.a2 = a2core.A2Obj.inst()
+        self.main = main
+
+        self.ui.a2ok_button.setEnabled(False)
         self.ui.main_layout.setSpacing(self.main.style.get('spacing') * 3)
         self.h_layout = QtWidgets.QHBoxLayout()
         self.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
@@ -346,13 +349,13 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self._dialog_state = 0
         self.remote_data = {}
         self.repo_url = ''
+        self.ui_text_field.setMinimumWidth(400 * main.style.get('scale'))
 
         # skip input if url passed
         if url:
             self._get_remote_data(url)
         else:
             self.ui.a2ok_button.setEnabled(True)
-        # self.setWindowFlags(a2input_dialog.FIXED_FLAGS)
 
     def check_name(self, name=''):
         """
@@ -376,14 +379,19 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
             self.accept()
 
     def show_error(self, msg):
+        if not isinstance(msg, str):
+            msg = str(msg)
+
         log.error(msg)
-        self.ui.label.setText(msg)
+        if '\n' in msg:
+            msg = msg.replace('\n', '<br>')
+
+        self.ui.label.setText('<b>Error:</b> ' + msg)
         self.busy_icon.set_idle()
-        self.ui.a2ok_button.setText('Error')
-        self.ui.a2ok_button.setEnabled(False)
+        self.ui.a2ok_button.setText('Retry')
+        self.ui.a2ok_button.setEnabled(True)
 
     def _get_remote_data(self, url=None):
-        self.setWindowFlags(a2input_dialog.SIZABLE_FLAGS)
         if url is None:
             url = self.ui_text_field.text()
         else:
@@ -422,16 +430,12 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
             desc = data.get('desc') or data.get('description')
             if desc:
                 text += '"%s"\n\n' % desc
-            self.ui.label.setText(text)
 
         except Exception as error:
             self.show_error('Error reading the fetched data!:\n%s' % error)
             return
-
-        self.clickable_label = QtWidgets.QLabel(MSG_INSTALL_DISCLAIMER % self.a2.urls.security)
-        self.clickable_label.setWordWrap(True)
-        self.clickable_label.setOpenExternalLinks(True)
-        self.ui.main_layout.insertWidget(1, self.clickable_label)
+        text += MSG_INSTALL_DISCLAIMER % self.a2.urls.security
+        self.ui.label.setText(text)
 
         self.checkbox.setChecked(False)
         self.checkbox.setVisible(True)
@@ -439,7 +443,6 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self._dialog_state = 1
 
     def _install_package(self):
-        self.clickable_label.setVisible(False)
         self.checkbox.setVisible(False)
         self.resize_delayed()
 
@@ -448,13 +451,14 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         mod_source = a2modsource.ModSource(self.a2, name)
 
         if a2core.is_debugging():
-            result = a2modsource.fetch(
+            try:
+                a2modsource.fetch(
                 mod_source, self.remote_data['version'], self.repo_url, self.show_status
             )
-            if result:
-                self.show_error(result)
-            else:
-                self.on_install_finished()
+            except Exception as error:
+                self.show_error(error)
+                return
+            self.on_install_finished()
         else:
             self.busy_icon.set_busy()
 
