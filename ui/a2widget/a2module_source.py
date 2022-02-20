@@ -7,7 +7,7 @@ import a2uic
 import a2core
 import a2ctrl
 import a2modsource
-from a2widget import a2input_dialog, hover_widget
+from a2widget import a2input_dialog, hover_widget, busy_icon
 
 
 log = a2core.get_logger(__name__)
@@ -133,7 +133,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             self._ui_body.update_button.clicked.connect(self._on_update_button)
             self._update_to_version = None
 
-            self.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
+            self.busy_icon = busy_icon.BusyIcon(self, self.main.style.get('icon_size'))
             self._ui_body.update_layout.insertWidget(1, self.busy_icon)
 
             # self.version_menu = QtWidgets.QMenu(self)
@@ -285,42 +285,6 @@ class ModSourceWidget(QtWidgets.QWidget):
         dialog.exec_()
 
 
-class BusyIcon(QtWidgets.QLabel):
-    def __init__(self, parent, size=32):
-        super(BusyIcon, self).__init__(parent)
-        self.anim_timer = QtCore.QTimer()
-        self.anim_timer.setInterval(25)
-        self.anim_timer.timeout.connect(self.update_rotation)
-        self.icon = a2ctrl.Icons.reload
-        self.icon_size = size
-        self.rotation_speed = 22
-        self.setMaximumHeight(self.icon_size)
-        self.setMinimumHeight(self.icon_size)
-        self.setMaximumWidth(self.icon_size)
-        self.setMinimumWidth(self.icon_size)
-        self._blank = QtGui.QPixmap()
-
-        self._state = False
-        self._rotation = 0
-
-    def set_busy(self):
-        self.anim_timer.start()
-
-    def set_idle(self):
-        self.setPixmap(self._blank)
-        self.anim_timer.stop()
-
-    def update_rotation(self):
-        self._rotation = self._rotation + self.rotation_speed % 360
-        pixmap = self.icon.pixmap(self.icon_size, self.icon_size)
-        pixmap = pixmap.transformed(
-            QtGui.QTransform().rotate(self._rotation), QtCore.Qt.SmoothTransformation
-        )
-        xoff = (pixmap.width() - self.icon_size) / 2
-        yoff = (pixmap.height() - self.icon_size) / 2
-        self.setPixmap(pixmap.copy(xoff, yoff, self.icon_size, self.icon_size))
-
-
 class AddSourceDialog(a2input_dialog.A2InputDialog):
     def __init__(self, main, url):
         super(AddSourceDialog, self).__init__(
@@ -334,7 +298,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self.ui.a2ok_button.setEnabled(False)
         self.ui.main_layout.setSpacing(self.main.style.get('spacing') * 3)
         self.h_layout = QtWidgets.QHBoxLayout()
-        self.busy_icon = BusyIcon(self, self.main.style.get('icon_size'))
+        self.busy_icon = busy_icon.BusyIcon(self, self.main.style.get('icon_size'))
         self.h_layout.addWidget(self.ui.label)
         self.h_layout.addWidget(self.busy_icon)
         self.ui.main_layout.insertLayout(0, self.h_layout)

@@ -176,7 +176,7 @@ commits</string>
   <customwidget>
    <class>BusyIcon</class>
    <extends>QLabel</extends>
-   <header>a2widget.a2module_source</header>
+   <header>a2widget.busy_icon</header>
   </customwidget>
  </customwidgets>
  <resources/>
