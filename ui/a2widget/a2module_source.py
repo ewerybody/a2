@@ -237,7 +237,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             action.setEnabled(False)
         menu.addSeparator()
         menu.addAction(a2ctrl.Icons.delete, 'Uninstall "%s"' % self.mod_source.name, self.uninstall)
-        if self.main.a2.dev_mode:
+        if self.main.a2.dev_mode and not self.mod_source.is_release():
             menu.addAction(a2ctrl.Icons.edit, 'Edit Meta Data', self._on_edit_meta_data)
 
     def uninstall(self):
