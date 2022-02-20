@@ -1,3 +1,8 @@
+"""
+WIP: I was looking for clues for the error messaging about the dialog could
+not be resized. Turns out if `wordWrap` is turned `True` this will arise!
+So long, let's try to avoid wordWrap in these dialogs.
+"""
 from a2qt import QtCore, QtWidgets
 
 import a2uic
@@ -16,10 +21,10 @@ class A2ConfirmDialog(QtWidgets.QDialog):
 
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
-        # self.setWindowFlags(FIXED_FLAGS)
         a2uic.check_module(a2input_dialog_ui)
         self.ui = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
+
         self.setModal(True)
         self.setWindowTitle(title)
         self._result = False
@@ -45,7 +50,6 @@ class A2ConfirmDialog(QtWidgets.QDialog):
         return self._result
 
     def resize_delayed(self, timout=50):
-        return
         QtCore.QTimer(self).singleShot(timout, self._resize_height)
 
     def _resize_height(self):

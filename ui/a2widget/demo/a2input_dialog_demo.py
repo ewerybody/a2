@@ -3,6 +3,12 @@ from a2qt import QtCore, QtWidgets
 from a2widget import a2input_dialog
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
 
+EXTRA_TEXT = (
+    ' here is be some more text to text expanding the dialog<br>horizontally '
+    'and vertically until line break would occur<br>'
+    'or the boundaries are reached ...'
+)
+
 
 class InputDialogDemo(QtWidgets.QMainWindow):
     def __init__(self):
@@ -14,20 +20,23 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         button = QtWidgets.QPushButton('Call a A2InputDialog')
         layout.addWidget(button)
 
-        self.c = A2InputDialog(
+        # build the dialog right away and show it on button `clicked`-Signal
+        self.input_dialog = A2InputDialog(
             self,
             'a title',
             text='predefined text',
             msg='some text bla blaaa',
             check_func=self.check_func,
         )
-        self.c.okayed.connect(self.ok_func)
-        self.c.yielded.connect(self.yield_func)
-        self.c.canceled.connect(self.cancel_func)
-        self.c.field_changed.connect(self.field_changed)
+        self.input_dialog.okayed.connect(self.ok_func)
+        self.input_dialog.yielded.connect(self.yield_func)
+        self.input_dialog.canceled.connect(self.cancel_func)
+        self.input_dialog.field_changed.connect(self.field_changed)
 
-        button.clicked.connect(self.c.show)
+        button.clicked.connect(self.input_dialog.show)
+        button.clicked.connect(self._change_input_dialog)
 
+        # build the dialog after button is `clicked`
         button2 = QtWidgets.QPushButton('Call a A2ConfirmDialog')
         button2.clicked.connect(self.call_confirm_dialog)
         layout.addWidget(button2)
@@ -69,11 +78,7 @@ class InputDialogDemo(QtWidgets.QMainWindow):
 
     def _add_text(self, dialog):
         current = dialog.ui.label.text()
-        current += (
-            ' here is be some more text to text expanding the dialog<br>horizontally '
-            'and vertically until line break would occur<br>'
-            'or the boundaries are reached ...'
-        )
+        current += EXTRA_TEXT
 
         button = QtWidgets.QPushButton('HHaaallo')
         button.setMinimumHeight(100)
@@ -87,6 +92,12 @@ class InputDialogDemo(QtWidgets.QMainWindow):
     @staticmethod
     def confirm_dialog_canceled():
         print('confirm_dialog_canceled')
+
+    def _change_input_dialog(self):
+        txt = self.input_dialog.ui.label.text()
+        if EXTRA_TEXT in txt:
+            return
+        self.input_dialog.ui.label.setText(f'<b>{txt}</b> {EXTRA_TEXT}')
 
 
 def show():
