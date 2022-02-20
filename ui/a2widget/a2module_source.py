@@ -35,7 +35,7 @@ class ModSourceWidget(QtWidgets.QWidget):
         """
         :param a2modsource.ModSource mod_source: The module source to display.
         """
-        super(ModSourceWidget, self).__init__()
+        super().__init__()
         self.main = main
         self.mod_source = mod_source
         self._update_to_version = None
@@ -287,7 +287,7 @@ class ModSourceWidget(QtWidgets.QWidget):
 
 class AddSourceDialog(a2input_dialog.A2InputDialog):
     def __init__(self, main, url):
-        super(AddSourceDialog, self).__init__(
+        super().__init__(
             main, 'Add Source from URL', self.check_name, msg=MSG_ADD_DIALOG
         )
         self.setWindowFlags(a2input_dialog.SIZABLE_FLAGS)
@@ -351,9 +351,9 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
             msg = msg.replace('\n', '<br>')
 
         self.ui.label.setText('<b>Error:</b> ' + msg)
-        self.busy_icon.set_idle()
         self.ui.a2ok_button.setText('Retry')
         self.ui.a2ok_button.setEnabled(True)
+        QtCore.QTimer(self).singleShot(500, self.busy_icon.set_idle)
 
     def _get_remote_data(self, url=None):
         if url is None:
@@ -407,6 +407,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         self._dialog_state = 1
 
     def _install_package(self):
+        self.busy_icon.set_busy()
         self.checkbox.setVisible(False)
         self.resize_delayed()
 
@@ -417,15 +418,13 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         if a2core.is_debugging():
             try:
                 a2modsource.fetch(
-                mod_source, self.remote_data['version'], self.repo_url, self.show_status
-            )
+                    mod_source, self.remote_data['version'], self.repo_url, self.show_status
+                )
             except Exception as error:
                 self.show_error(error)
                 return
             self.on_install_finished()
         else:
-            self.busy_icon.set_busy()
-
             thread = a2modsource.ModSourceFetchThread(
                 mod_source, self.main, self.remote_data['version'], self.remote_data, self.repo_url
             )
