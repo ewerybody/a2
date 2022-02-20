@@ -50,7 +50,7 @@ from enum import Enum
 from typing import Any, Callable, Optional, Tuple, Type, Union, Sequence, Dict, List, overload
 from a2qt import QtWidgets
 
-__version__: int
+__version__: str
 
 class ClassInfo(object):
     def __init__(self, **info: Dict[str, str]) -> None: ...

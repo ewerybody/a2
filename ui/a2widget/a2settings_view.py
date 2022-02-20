@@ -77,14 +77,13 @@ class A2Settings(QtWidgets.QWidget):
         self.main.settings_changed('hotkeys')
 
     def build_add_source_menu(self):
-        icons = Icons.inst()
         menu = self.add_source_menu
         menu.clear()
 
         if self.a2.dev_mode:
-            menu.addAction(icons.folder_add, 'Create Local', self.main.create_local_source)
+            menu.addAction(Icons.folder_add, 'Create Local', self.main.create_local_source)
 
-        menu.addAction(icons.cloud_download, 'Add From URL', self.add_source_url)
+        menu.addAction(Icons.cloud_download, 'Add From URL', self.add_source_url)
 
         featured_path = os.path.join(self.a2.paths.defaults, 'featured_packages.json')
         featured_packages = a2util.json_read(featured_path)
@@ -92,7 +91,7 @@ class A2Settings(QtWidgets.QWidget):
         if available:
             submenu = menu.addMenu('Featured:')
             for pack_name in available:
-                action = submenu.addAction(icons.file_download, pack_name, self.on_add_featured)
+                action = submenu.addAction(Icons.file_download, pack_name, self.on_add_featured)
                 action.setData(featured_packages[pack_name])
         menu.popup(QtGui.QCursor.pos())
 
@@ -101,7 +100,9 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.db_printout.setText(self.a2.db._get_digest())
 
     def on_add_featured(self):
-        self.add_source_url(self.sender().data())
+        action = self.sender()
+        if isinstance(action, QtGui.QAction):
+            self.add_source_url(action.data())
 
     def add_source_url(self, url=None):
         dialog = a2module_source.AddSourceDialog(self.main, url)
