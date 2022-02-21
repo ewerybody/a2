@@ -3,17 +3,17 @@
 """
 Form generated from reading UI file 'modsource_editor.ui'
 
-Created by: Qt User Interface Compiler version 6.2.0
+Created by: Qt User Interface Compiler version 6.2.3
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QCheckBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton,
+from a2qt.QtWidgets import (QCheckBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, 
     QSizePolicy, QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
 from a2qt.QtCore import QCoreApplication, QMetaObject, Qt
 
-from a2widget.busy_icon import BusyIcon
 from a2widget.a2text_field import A2CodeField
+from a2widget.busy_icon import BusyIcon
 
 class Ui_ModSourceUi:
     def setupUi(self, ModSourceUi):

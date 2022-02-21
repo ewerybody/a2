@@ -47,6 +47,9 @@ def remove_dir(path):
     correctly fail moving to temp if ANY of the containing items is locked.
     So there is no other safeguard needed.
     """
+    if not os.path.isdir(path):
+        return
+
     import shutil
 
     trash_path = temp_path()

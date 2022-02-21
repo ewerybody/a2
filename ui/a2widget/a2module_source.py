@@ -214,7 +214,7 @@ class ModSourceWidget(QtWidgets.QWidget):
             self.ui_body.update_button.setIcon(QtGui.QIcon())
         else:
             self._reset_timer.start(1000)
-            self.ui_body.update_button.setText(msg)
+            self.ui_body.update_button.setText(str(msg))
             self.ui_body.update_button.setEnabled(False)
             if icon is not None:
                 self.ui_body.update_button.setIcon(icon)
