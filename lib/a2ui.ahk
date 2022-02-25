@@ -1,7 +1,7 @@
 #NoTrayIcon
 
 if (a2_startup_tool_tips == "true")
-    tt(a2_title, 0.5)
+    a2tip(a2_title, 0.5)
 
 this_call := a2dev_get_py() " a2app.py"
 ui_path = %A_ScriptDir%\..\ui\

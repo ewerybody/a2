@@ -14,13 +14,11 @@ If (!A_IsCompiled)
     ExitApp
 }
 
-a2_ahk := _init_get_autohotkey_exe()
-
 a2tip("Calling a2 ui ...")
-Run, %a2_ahk% a2ui.ahk, %A_ScriptDir%\lib
+Run, ui\pythonw.exe ui\a2app.py
 sleep, 1000
 ExitApp
 
 Return ; -----------------------------------------------------------------------------
-#include ..\a2init_check.ahk
 #include ..\Autohotkey\lib\a2tip.ahk
+#include ..\Autohotkey\lib\font.ahk
