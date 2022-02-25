@@ -124,6 +124,12 @@ def main():
         import a2output
 
         a2output.get_logwriter()
+
+        # Make sure the Qt platform plugin can be found.
+        _qt_path = sys.modules[QtCore.Qt.__module__].__file__
+        if _qt_path is not None:
+            os.environ['QT_PLUGIN_PATH'] = os.path.abspath(os.path.join(_qt_path, '..', 'plugins'))
+
         app = A2App()
         app.exec()
     # Broad except is expected here!
