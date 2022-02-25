@@ -51,6 +51,8 @@ class Paths:
     distlib_test = join(distlib, 'AutoHotkey', 'lib', 'test')
     dist_portable = join(distroot, 'a2_portable')
 
+    py_packs = join(a2, '_ py_packs')
+
     @classmethod
     def check(cls):
         """Test all the needed paths."""
