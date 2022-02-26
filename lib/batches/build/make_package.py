@@ -4,6 +4,7 @@ before zipping and building the installer executables from it.
 
 Whow! Batch files are such a pain! Better keep them as short as possible...
 """
+import ctypes
 import os
 import sys
 import time
@@ -21,13 +22,17 @@ Paths = _build_package_init.Paths
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
-DESKTOP_INI_CODE = '[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' % DESKTOP_ICO_FILE
-ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
+DESKTOP_INI_CODE = (
+    f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n'
+    '[ViewState]\nMode=\nVid=\nFolderType=Generic'
+)
+ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE', 'README.md'
 LIB_EXCLUDES = (
     'batches',
     '_source',
     'a2ui',
     '_a2ui dev',
+    '_a2ui release',
     'ahklib',
     'a2init_check',
     'a2dev_find_py',
@@ -52,29 +57,23 @@ RM_IMG_FORMATS = ('tiff', 'pdf', 'tga', 'icns')
 
 
 def main():
-    get_py_package()
-    print(Paths.distui)
-
     package_cfg = a2util.json_read(os.path.join(Paths.a2, 'package.json'))
     package_name = f'a2 {package_cfg["version"]} {PACKAGE_SUB_NAME}'
+    print('\n{0} making package: {1} ... {0}'.format(8 * '#', package_name))
 
-
-    # print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
-
-    # if not os.path.isdir(Paths.dist):
-    #     raise FileNotFoundError('No Package found at "%s"!' % Paths.dist)
-
-    # update_readme()
-
-    # copy_files()
+    get_py_package()
+    copy_files()
     # cleanup()
-    # fix_qt()
+    fix_qt()
+    update_readme()
 
-    # config_file = os.path.join(Paths.distlib, 'a2_config.ahk')
-    # a2ahk.set_variable(config_file, 'a2_title', package_name)
+    config_file = os.path.join(Paths.distlib, 'a2_config.ahk')
+    a2ahk.set_variable(config_file, 'a2_title', package_name)
 
-    # with open(os.path.join(Paths.dist, 'desktop.ini'), 'w') as file_obj:
-    #     file_obj.write(DESKTOP_INI_CODE)
+    folder_icon_ini = os.path.join(Paths.dist, 'desktop.ini')
+    with open(folder_icon_ini, 'w') as file_obj:
+        file_obj.write(DESKTOP_INI_CODE)
+    ctypes.windll.kernel32.SetFileAttributesW(folder_icon_ini, 0x02)
 
     print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
 
@@ -136,14 +135,6 @@ def update_readme():
 
 
 def copy_files():
-    app_path = os.path.join(Paths.dist, 'a2app')
-    if not os.path.isdir(app_path):
-        # raise FileNotFoundError(
-        print(f'App Path was not found!\n  {app_path}\n' 'Package already handled?')
-    else:
-        os.rename(app_path, Paths.distui)
-    print('distui: %s' % Paths.distui)
-
     print('copying root files ...')
 
     for item in os.scandir(Paths.a2):
@@ -151,8 +142,7 @@ def copy_files():
             shutil.copy2(item.path, Paths.dist)
 
     print('copying lib files ...')
-    if not os.path.isdir(Paths.distlib):
-        os.mkdir(Paths.distlib)
+    os.makedirs(Paths.distlib, exist_ok=True)
 
     for item in os.scandir(Paths.lib):
         if item.name.startswith('_ '):
@@ -202,17 +192,13 @@ def cleanup():
 
 
 def _ignore_items(path, items):
-    result = []
-    path_low = os.path.normcase(path)
-    for item in items:
-        # ignore temp stuff
-        if item.startswith('_ '):
-            result.append(item)
-            continue
+    # ignore temp stuff right away
+    result = [i for i in items if i.startswith('_ ')]
 
+    for item in [i for i in items if i not in result]:
         item_path = os.path.join(path, item)
         if os.path.isdir(item_path):
-            # ignore autmatically build python 3 cache files
+            # ignore automatically build python 3 cache files
             if item in ['__pycache__']:
                 result.append(item)
                 continue
@@ -221,6 +207,7 @@ def _ignore_items(path, items):
                 ('Autohotkey', 'Compiler'),
                 ('a2widget', 'demo'),
                 ('res', 'work'),
+                ('a2hotkey', 'test'),
                 # lets keep lib/test for implementation examples
                 # ('lib', 'test'),
             ):
@@ -310,6 +297,7 @@ def fix_qt():
 def get_py_package():
     if os.path.isdir(Paths.distui):
         print('Dist-path ui already exists! skipping `get_py_package` ...')
+        return
 
     py_ver = '.'.join(str(i) for i in sys.version_info[:3])
     pack_name = f'python-{py_ver}-embed-amd64'
@@ -329,8 +317,8 @@ def get_py_package():
 
         print(f'  Unzipping "{pack_name}" ...')
         with zipfile.ZipFile(pack_zip_path) as tmp_zip:
-                for filename in tmp_zip.namelist():
-                    tmp_zip.extract(filename, pack_path)
+            for filename in tmp_zip.namelist():
+                tmp_zip.extract(filename, pack_path)
 
     print(f'  Copying ...')
     shutil.copytree(pack_path, Paths.distui)
@@ -357,8 +345,8 @@ class _DownloadFeedback:
             msg = f'downloading "{self._name}" {pct}% of {self._size} ...'
 
             if self._width:
-                backup = "\b" * self._width
-                self.channel.write(backup + " " * self._width + backup)
+                backup = '\b' * self._width
+                self.channel.write(backup + ' ' * self._width + backup)
 
             self.channel.write(msg)
             self.channel.flush()
