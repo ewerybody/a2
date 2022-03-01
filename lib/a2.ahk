@@ -70,7 +70,7 @@ _a2ui_exit() {
 
 a2_explore() {
     ; Open the a2 root directory in the file browser.
-    explorer_show(a2dir)
+    explorer_show(a2.paths.a2)
 }
 
 _a2_check_changes() {
