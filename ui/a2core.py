@@ -203,7 +203,7 @@ class URLs:
 
         variables_dict = a2ahk.get_variables(a2_urls_ahk)
         self.a2 = variables_dict.get('a2_url', 'https://github.com/ewerybody/a2')
-        self.help = variables_dict.get('a2_help', (self.a2 + '#a2--'))
+        self.help = variables_dict.get('a2_help', (self.a2 + '#a2---'))
         self.wiki = self.a2 + '/wiki/'
         self.helpEditCtrl = self.wiki + 'EditCtrls'
         self.helpHotkey = self.wiki + 'Edit-Hotkey-Control'
