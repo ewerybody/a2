@@ -20,6 +20,6 @@ class A2ItemEditor(QtWidgets.QWidget):
         set_function: types.FunctionType,
         change_signal: QtCore.Signal,
         default_value: typing.Any,
-        label: str
+        label: str = ...
     ):
         pass
