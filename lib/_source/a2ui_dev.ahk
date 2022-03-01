@@ -6,7 +6,7 @@
 ;@Ahk2Exe-SetOrigFilename a2ui.exe
 ;@Ahk2Exe-SetProductName a2
 ;@Ahk2Exe-SetVersion 0.4.0
-
+#NoTrayIcon
 #Persistent
 If (!A_IsCompiled) {
     MsgBox, 16, ERROR, a2ui starter should only be run compiled!
