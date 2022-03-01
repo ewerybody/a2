@@ -60,10 +60,8 @@ class A2ModuleView(QtWidgets.QWidget):
 
     def draw_mod(self):
         """
-        from the modules config creates the usual display controls and
-        fills them with the saved settings from the database.
-        On change they trigger writing to the db, collect all include info
-        and restart a2.
+        From module config create display controls,
+        fill them with the saved settings from database.
         """
         self._set_editing(False)
 
@@ -116,14 +114,11 @@ class A2ModuleView(QtWidgets.QWidget):
 
     def update_header(self, author='', version=''):
         """
-        Updates the module settings view to the right of the UI
-        when something different is elected in the module list
+        Update module settings view header when module selection changes.
         """
-        self.ui.mod_check.setTristate(False)
-        self.ui.mod_author.setText(author)
-        self.ui.mod_version.setText(version)
-
         if self.main.mod is None:
+            self.ui.mod_author.setText('')
+            self.ui.mod_version.setText('')
             self.ui.a2mod_view_source_label.setText('')
 
             if not self.main.num_selected:
@@ -141,6 +136,10 @@ class A2ModuleView(QtWidgets.QWidget):
                     self.ui.mod_check.setTristate(True)
                     self.ui.mod_check.setCheckState(QtCore.Qt.PartiallyChecked)
         else:
+            for value, label in (author, self.ui.mod_author), (version, self.ui.mod_version):
+                if value:
+                    label.setText(value)
+
             self.ui.head_widget.setVisible(True)
             self.ui.a2mod_view_source_label.setText(self.main.mod.source.name)
             self.ui.a2_mod_name.setText(self.main.mod.display_name)
