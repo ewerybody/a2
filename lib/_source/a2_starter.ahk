@@ -5,7 +5,7 @@
 ;@Ahk2Exe-SetDescription a2 runtime starter
 ;@Ahk2Exe-SetOrigFilename a2.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.3.0
+;@Ahk2Exe-SetVersion 0.4.0
 
 If (!A_IsCompiled) {
     MsgBox, 16, ERROR, a2_starter should ONLY be run compiled!
@@ -29,11 +29,12 @@ check_load_time_errors(lib_path)
 
 If !FileExist(path_join(root_path, "_ user_data_include")) {
     ; Start the ui by default if there is no include file written yet.
-    Run, "%a2_ahk%" a2ui.ahk, %lib_path%
+    a2ui := path_join(root_path, "a2ui.exe")
+    Run, "%a2ui%"
 }
 
 Return ; -----------------------------------------------------------------------
-#include ..\a2init_check.ahk
+#include ..\_a2init_check.ahk
 #include ..\a2_exceptions.ahk
 #include ..\a2_user_data.ahk
 
