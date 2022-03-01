@@ -4,15 +4,10 @@ before zipping and building the installer executables from it.
 
 Whow! Batch files are such a pain! Better keep them as short as possible...
 """
-import ctypes
 import os
-import sys
-import time
 import shutil
 import codecs
-import zipfile
 import subprocess
-from urllib import request
 
 import _build_package_init
 import a2ahk
@@ -22,18 +17,14 @@ Paths = _build_package_init.Paths
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
-DESKTOP_INI_CODE = (
-    f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n'
-    '[ViewState]\nMode=\nVid=\nFolderType=Generic'
-)
-ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE', 'README.md'
+DESKTOP_INI_CODE = '[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' % DESKTOP_ICO_FILE
+ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
 LIB_EXCLUDES = (
-    'batches',
+    '_batches',
     '_source',
     'a2ui',
     '_a2ui dev',
-    '_a2ui release',
-    'ahklib',
+    '_ahklib',
     'a2init_check',
     'a2dev_find_py',
     'a2init_check',
@@ -59,21 +50,22 @@ RM_IMG_FORMATS = ('tiff', 'pdf', 'tga', 'icns')
 def main():
     package_cfg = a2util.json_read(os.path.join(Paths.a2, 'package.json'))
     package_name = f'a2 {package_cfg["version"]} {PACKAGE_SUB_NAME}'
-    print('\n{0} making package: {1} ... {0}'.format(8 * '#', package_name))
+    print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
 
-    get_py_package()
-    copy_files()
-    # cleanup()
-    fix_qt()
+    if not os.path.isdir(Paths.dist):
+        raise FileNotFoundError('No Package found at "%s"!' % Paths.dist)
+
     update_readme()
+
+    copy_files()
+    cleanup()
+    fix_qt()
 
     config_file = os.path.join(Paths.distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
-    folder_icon_ini = os.path.join(Paths.dist, 'desktop.ini')
-    with open(folder_icon_ini, 'w') as file_obj:
+    with open(os.path.join(Paths.dist, 'desktop.ini'), 'w') as file_obj:
         file_obj.write(DESKTOP_INI_CODE)
-    ctypes.windll.kernel32.SetFileAttributesW(folder_icon_ini, 0x02)
 
     print('{0} {1} finished! {0}\n'.format(18 * '#', package_name))
 
@@ -81,13 +73,12 @@ def main():
 def update_readme():
     # get currently used versions
     ahk_exe = os.path.join(Paths.lib, 'Autohotkey', 'Autohotkey.exe')
-    batches_dir = os.path.join(Paths.lib, 'batches')
     pattern = 'get_%s_version.ahk'
     names = 'AutoHotkey', PYSIDE, 'Python'
     scripts = (
         os.path.join(Paths.lib, 'cmds', pattern % names[0]),
-        os.path.join(batches_dir, 'versions', pattern % names[1]),
-        os.path.join(batches_dir, 'versions', pattern % names[2]),
+        os.path.join(Paths.batches, 'versions', pattern % names[1]),
+        os.path.join(Paths.batches, 'versions', pattern % names[2]),
     )
     versions = {}
     for name, script in zip(names, scripts):
@@ -135,6 +126,14 @@ def update_readme():
 
 
 def copy_files():
+    app_path = os.path.join(Paths.dist, 'a2app')
+    if not os.path.isdir(app_path):
+        # raise FileNotFoundError(
+        print(f'App Path was not found!\n  {app_path}\n' 'Package already handled?')
+    else:
+        os.rename(app_path, Paths.distui)
+    print('distui: %s' % Paths.distui)
+
     print('copying root files ...')
 
     for item in os.scandir(Paths.a2):
@@ -142,7 +141,8 @@ def copy_files():
             shutil.copy2(item.path, Paths.dist)
 
     print('copying lib files ...')
-    os.makedirs(Paths.distlib, exist_ok=True)
+    if not os.path.isdir(Paths.distlib):
+        os.mkdir(Paths.distlib)
 
     for item in os.scandir(Paths.lib):
         if item.name.startswith('_ '):
@@ -192,13 +192,17 @@ def cleanup():
 
 
 def _ignore_items(path, items):
-    # ignore temp stuff right away
-    result = [i for i in items if i.startswith('_ ')]
+    result = []
+    path_low = os.path.normcase(path)
+    for item in items:
+        # ignore temp stuff
+        if item.startswith('_ '):
+            result.append(item)
+            continue
 
-    for item in [i for i in items if i not in result]:
         item_path = os.path.join(path, item)
         if os.path.isdir(item_path):
-            # ignore automatically build python 3 cache files
+            # ignore autmatically build python 3 cache files
             if item in ['__pycache__']:
                 result.append(item)
                 continue
@@ -207,7 +211,6 @@ def _ignore_items(path, items):
                 ('Autohotkey', 'Compiler'),
                 ('a2widget', 'demo'),
                 ('res', 'work'),
-                ('a2hotkey', 'test'),
                 # lets keep lib/test for implementation examples
                 # ('lib', 'test'),
             ):
@@ -292,66 +295,6 @@ def fix_qt():
         dir_path = os.path.dirname(full_path)
         if not os.listdir(dir_path):
             shutil.rmtree(dir_path)
-
-
-def get_py_package():
-    if os.path.isdir(Paths.distui):
-        print('Dist-path ui already exists! skipping `get_py_package` ...')
-        return
-
-    py_ver = '.'.join(str(i) for i in sys.version_info[:3])
-    pack_name = f'python-{py_ver}-embed-amd64'
-    pack_path = os.path.join(Paths.py_packs, pack_name)
-
-    if not os.path.isdir(pack_path):
-        print(f'Getting py package "{pack_name}" ...')
-        os.makedirs(Paths.py_packs, exist_ok=True)
-        pack_zip = pack_name + '.zip'
-        pack_zip_path = os.path.join(Paths.py_packs, pack_zip)
-
-        if not os.path.isfile(pack_zip_path):
-            pack_url = f'https://www.python.org/ftp/python/{py_ver}/{pack_zip}'
-            df = _DownloadFeedback(pack_name)
-            request.FancyURLopener().retrieve(pack_url, pack_zip_path, df.callback)
-            print('done!')
-
-        print(f'  Unzipping "{pack_name}" ...')
-        with zipfile.ZipFile(pack_zip_path) as tmp_zip:
-            for filename in tmp_zip.namelist():
-                tmp_zip.extract(filename, pack_path)
-
-    print(f'  Copying ...')
-    shutil.copytree(pack_path, Paths.distui)
-    print(f'  Ready! ({Paths.distui})')
-
-
-class _DownloadFeedback:
-    def __init__(self, name):
-        self._bytes_received = 0
-        self._last_posted = 0
-        self._name = name
-        self._size = None
-        self._width = 0
-        self.channel = sys.stdout
-
-    def callback(self, blocknum, blocksize, fullsize):
-        self._bytes_received += blocksize
-        if self._size is None:
-            self._size = f'{round(fullsize / (1024 * 1024), 2)}MB'
-
-        now = time.time()
-        if now - self._last_posted > 0.1:
-            pct = round(100 * self._bytes_received / fullsize, 2)
-            msg = f'downloading "{self._name}" {pct}% of {self._size} ...'
-
-            if self._width:
-                backup = '\b' * self._width
-                self.channel.write(backup + ' ' * self._width + backup)
-
-            self.channel.write(msg)
-            self.channel.flush()
-            self._width = len(msg)
-            self._last_posted = now
 
 
 if __name__ == '__main__':

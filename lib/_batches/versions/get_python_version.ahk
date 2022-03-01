@@ -1,4 +1,4 @@
-#include %A_ScriptDir%\..\..\a2dev_find_py.ahk
+#include %A_ScriptDir%\..\..\_a2dev_find_py.ahk
 py := a2dev_get_py()
 if (!FileExist(py))
     MsgBox, No Python Found here`n%py%

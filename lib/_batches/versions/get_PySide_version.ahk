@@ -1,4 +1,4 @@
-#include %A_ScriptDir%\..\..\a2dev_find_py.ahk
+#include %A_ScriptDir%\..\..\_a2dev_find_py.ahk
 pydir := path_dirname(a2dev_get_py())
 if (!pydir) {
     MsgBox 16, Could not get "pydir" from "path_dirname(a2dev_get_py())"
@@ -6,7 +6,7 @@ if (!pydir) {
 }
 
 ; Lists all compatible versions, prefered verison top.
-cores := ["PySide2\Qt5Core.dll", "PySide6\Qt6Core.dll"]
+cores := ["PySide6\Qt6Core.dll", "PySide2\Qt5Core.dll"]
 
 for _, rel_path in cores
 {

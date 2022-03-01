@@ -30,6 +30,7 @@ class Paths:
     package_config = join(a2, 'package.json')
 
     source = join(lib, '_source')
+    batches = join(lib, '_batches')
     # sfx_source_ui = join(source, SEVENZ_DIR, '7zS2.sfx')
     sfx_source_ui = join(source, SEVENZ_DIR, '7zSD.sfx')
     sfx_source_silent = join(source, SEVENZ_DIR, '7zS2con.sfx')
@@ -52,6 +53,9 @@ class Paths:
     dist_portable = join(distroot, 'a2_portable')
 
     py_packs = join(a2, '_ py_packs')
+
+    py_lib = os.path.join(os.path.dirname(sys.executable), 'Lib')
+    py_site_packs = os.path.join(py_lib, 'site-packages')
 
     @classmethod
     def check(cls):
