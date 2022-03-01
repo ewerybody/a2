@@ -5,9 +5,9 @@
 #NoTrayIcon
 
 #include <ahk_functions>
-#include <a2core>
 #include <SQLiteDB>
 
+#include lib\a2_core.ahk
 #include lib\a2_config.ahk
 #include lib\a2_globals.ahk
 #include lib\a2_urls.ahk
@@ -41,14 +41,13 @@ Return ; -----------------------------------------------------------------------
 a2ui() {
     tt_text := "Calling a2 ui ..."
     a2tip(tt_text)
-    a2_win_id := WinExist("a2 ahk_class Qt5152QWindowIcon ahk_exe pythonw.exe")
+    a2_win_id := WinExist("a2 ahk_class Qt623QWindowIcon ahk_exe pythonw.exe")
     if (a2_win_id)
         WinActivate, ahk_id %a2_win_id%
     else {
-        Run, "%A_AhkPath%" "%A_ScriptDir%\a2ui.ahk", %A_ScriptDir%
-        WinWait, a2,, 5
+        ui_starter := path_join(a2.paths.a2, "a2ui.exe")
+        Run, "%ui_starter%"
     }
-    a2tip(tt_text)
 }
 
 a2ui_help() {
