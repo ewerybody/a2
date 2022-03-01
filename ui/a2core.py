@@ -240,7 +240,7 @@ class Paths:
         self.elements = join(self.ui, 'a2element')
 
         self.lib = join(self.a2, 'lib')
-        self.defaults = join(self.lib, '_defaults')
+        self.defaults = join(self.lib, 'defaults')
         self.a2_script = join(self.lib, 'a2.ahk')
         self.a2_urls = join(self.lib, 'a2_urls.ahk')
         self.a2_config = join(self.lib, 'a2_config.ahk')
