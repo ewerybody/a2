@@ -69,7 +69,7 @@
      <x>0</x>
      <y>0</y>
      <width>753</width>
-     <height>29</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -104,6 +104,7 @@
     <addaction name="separator"/>
     <addaction name="actionCreate_New_Element"/>
     <addaction name="actionBuild_A2_Package"/>
+    <addaction name="actionSet_a2_Version"/>
    </widget>
    <widget class="QMenu" name="menuMain">
     <property name="title">
@@ -288,6 +289,11 @@
   <action name="actionChat_on_Telegram">
    <property name="text">
     <string>Chat on Telegram</string>
+   </property>
+  </action>
+  <action name="actionSet_a2_Version">
+   <property name="text">
+    <string>Set a2 Version</string>
    </property>
   </action>
  </widget>

@@ -1,11 +1,13 @@
 """a2 Developer stuff."""
 import os
+import traceback
 from a2qt import QtWidgets, QtCore
 
+import a2ahk
 import a2core
 import a2util
 
-from a2widget.a2input_dialog import A2ConfirmDialog
+from a2widget import a2input_dialog
 
 _TASK_MSG = 'browse for a %s executable'
 _QUEST_MSG = 'Do you want to %s now?'
@@ -21,15 +23,11 @@ MSG_CFG_NEW = (
 )
 
 
-class OkDiffDialog(A2ConfirmDialog):
+class OkDiffDialog(a2input_dialog.A2ConfirmDialog):
     diff_requested = QtCore.Signal()
 
     def __init__(self, parent, title, msg, file_path1=None, file_path2=None):
-        super(OkDiffDialog, self).__init__(
-            parent,
-            title,
-            msg,
-        )
+        super().__init__(parent, title, msg)
 
         self.file_path1 = file_path1
         self.file_path2 = file_path2
@@ -148,4 +146,160 @@ class DevSettings:
                 self.set_var(var_name, exepath)
                 return exepath
 
+        return ''
+
+
+class VersionBumpDialog(a2input_dialog.A2InputDialog):
+    """
+    To have overview and control of the version numbers put in different places.
+    Usually after release we'd bump the development version
+    """
+
+    def __init__(self, parent):
+        a2 = a2core.get()
+
+        self.tmpl8 = '%s <b>%s</b>'
+        self.nothing = 'NOTHING FOUND!'
+        self.ahk_setver = ';@Ahk2Exe-SetVersion'
+        self.mini_ns_tag = '{urn:schemas-microsoft-com:asm.v1}assemblyIdentity'
+        self.error = 'ERROR'
+
+        self._file_package = os.path.join(a2.paths.a2, 'package.json')
+        self._file_config = a2.paths.a2_config
+        source_dir = os.path.join(a2.paths.lib, '_source')
+        self._files_source = (
+            os.path.join(source_dir, 'a2_starter.ahk'),
+            os.path.join(source_dir, 'a2ui_dev.ahk'),
+            os.path.join(source_dir, 'a2ui_release.ahk'),
+            os.path.join(source_dir, 'a2_installer.ahk'),
+            os.path.join(source_dir, 'a2_installer_silent.ahk'),
+            os.path.join(source_dir, 'a2_uninstaller.ahk'),
+        )
+        self._file_manifest = os.path.join(source_dir, 'a2_installer_manifest.xml')
+
+        self._all_set = False
+        try:
+            msg = self.get_versions()
+
+            semver = '<a href="https://semver.org">semver.org-style</a>'
+            msg = f'<div style="margin: 20px">{msg}</div>'
+            msg = f'Currently set versions:{msg}Set another {semver} version:'
+        except Exception:
+            msg = traceback.format_exc().strip()
+            self._orig_ver = self.error
+
+        super().__init__(
+            parent, self.__class__.__name__, self._check, self._orig_ver, msg, self.set_versions
+        )
+
+    def get_versions(self):
+        self._all_set = True
+        msgs = []
+        self._orig_ver = a2util.json_read(self._file_package).get('version')
+        msgs.append(self.tmpl8 % (os.path.basename(self._file_package), self._orig_ver))
+
+        a2_title = a2ahk.get_variables(self._file_config).get('a2_title', '')
+        cfg_ver = a2_title.rsplit(' ', 1)[1]
+        if cfg_ver != self._orig_ver:
+            self._all_set = False
+        msgs.append(self.tmpl8 % (os.path.basename(self._file_config), cfg_ver))
+
+        for pth in self._files_source:
+            msgs.append(self._text_file_get(pth, self.ahk_setver))
+
+        from xml.etree import ElementTree
+
+        xml = ElementTree.parse(self._file_manifest)
+        id_node = xml.find(self.mini_ns_tag)
+        mani_ver = self.nothing if id_node is None else id_node.get('version', self.nothing)
+        if not mani_ver.startswith(self._orig_ver):
+            self._all_set = False
+        msgs.append(self.tmpl8 % (os.path.basename(self._file_manifest), mani_ver))
+
+        return '<br>'.join(msgs)
+
+    def set_versions(self, *arg):
+        package_data = a2util.json_read(self._file_package)
+        package_data['version'] = self.output
+        a2util.json_write(self._file_package, package_data)
+
+        a2_title = a2ahk.get_variables(self._file_config).get('a2_title', '')
+        prefix = a2_title.rsplit(' ', 1)[0]
+        new_value = f'{prefix} {self.output}'
+        if new_value != a2_title:
+            log.info(f'Setting config version: {new_value}')
+            a2ahk.set_variable(self._file_config, 'a2_title', new_value)
+
+        for pth in self._files_source:
+            self._text_file_set(pth, self.ahk_setver)
+
+        # WHAT the XML namespace crap!? I'm out of ideas here.
+        # Lets just parse and set text like in the olden days ... m()
+        # from xml.etree import ElementTree
+        # xml = ElementTree.parse(self._file_manifest)
+        # id_node = xml.find(self.mini_ns_tag)
+        # id_node.set('version', self.output + '.0')
+        # xml.write(self._file_manifest)
+        lines = a2util.load_utf8(self._file_manifest).split('\n')
+        for i, line in enumerate(lines):
+            if '<assemblyIdentity' not in line:
+                continue
+            nextline = lines[i + 1]
+            marker = 'version="'
+            if marker not in nextline:
+                break
+            pre, ver = nextline.split(marker, 1)
+            parts = ver.split('.',3)
+            current = '.'.join(parts[:3])
+            if current == self.output:
+                break
+            lines[i + 1] = f'{pre}{marker}{self.output}.{parts[-1]}'
+            log.info(f'Setting manifest version from:{current} to:{self.output}')
+            a2util.write_utf8(self._file_manifest, '\n'.join(lines))
+            break
+
+    def _text_file_get(self, file_path, startswith):
+        base = os.path.basename(file_path)
+        with open(file_path) as file_obj:
+            for _line in file_obj:
+                line = _line.strip()
+                if ' ' in line and line.startswith(startswith):
+                    this_version = line.rsplit(' ', 1)[1]
+                    if this_version != self._orig_ver:
+                        self._all_set = False
+                    return self.tmpl8 % (base, this_version)
+
+        return self.tmpl8 % (base, self.nothing)
+
+    def _text_file_set(self, file_path, startswith):
+        lines = []
+        with open(file_path) as file_obj:
+            for _line in file_obj:
+                line = _line.strip()
+                if ' ' in line and line.startswith(startswith):
+                    prefix, old = _line.rstrip().rsplit(' ', 1)
+                    if old == self._orig_ver:
+                        # no need to change!
+                        return
+                    log.info(f'Setting {os.path.basename(file_path)} version: {self._orig_ver}')
+                    lines.append(f'{prefix} {self.output}\n')
+                else:
+                    lines.append(_line)
+
+        with open(file_path, 'w') as file_obj:
+            file_obj.write(''.join(lines))
+
+    def _check(self, _text):
+        if self._orig_ver == self.error:
+            return self.error
+        text = _text.strip()
+        if not text:
+            return 'Enter something'
+        if text == self._orig_ver and self._all_set:
+            return 'No change'
+        if not '.' in text:
+            return 'No x.y.z semver style!'
+        nrs = text.split('.')
+        if not len(nrs) == 3 or not all(p.isnumeric() for p in nrs):
+            return 'No x.y.z semver style!'
         return ''

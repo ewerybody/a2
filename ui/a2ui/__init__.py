@@ -121,6 +121,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionCreate_New_Element.setIcon(Icons.folder_add)
         self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
+        self.ui.actionSet_a2_Version.triggered.connect(self.change_version)
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
         self.ui.actionUnload_a2_Runtime.setIcon(Icons.a2x)
@@ -443,6 +444,10 @@ class A2Window(QtWidgets.QMainWindow):
         _result, _pid = a2util.start_process_detached(
             os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path
         )
+
+    def change_version(self):
+        dialog = a2dev.VersionBumpDialog(self)
+        dialog.exec()
 
     def _set_runtime_actions_vis(self):
         live = self._threads['runtime'].is_live

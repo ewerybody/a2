@@ -106,6 +106,8 @@ class Ui_a2MainWindow:
         self.actionChat_on_Gitter.setObjectName(u"actionChat_on_Gitter")
         self.actionChat_on_Telegram = QAction(a2MainWindow)
         self.actionChat_on_Telegram.setObjectName(u"actionChat_on_Telegram")
+        self.actionSet_a2_Version = QAction(a2MainWindow)
+        self.actionSet_a2_Version.setObjectName(u"actionSet_a2_Version")
         self.centralwidget = QWidget(a2MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -128,7 +130,7 @@ class Ui_a2MainWindow:
         a2MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(a2MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 753, 29))
+        self.menubar.setGeometry(QRect(0, 0, 753, 24))
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
         self.menuHelp.setTitle(u"&Help")
@@ -167,6 +169,7 @@ class Ui_a2MainWindow:
         self.menuDev.addSeparator()
         self.menuDev.addAction(self.actionCreate_New_Element)
         self.menuDev.addAction(self.actionBuild_A2_Package)
+        self.menuDev.addAction(self.actionSet_a2_Version)
         self.menuMain.addAction(self.actionA2_settings)
         self.menuMain.addAction(self.actionRefresh_UI)
         self.menuMain.addSeparator()
@@ -187,4 +190,5 @@ class Ui_a2MainWindow:
     def retranslateUi(self, a2MainWindow):
         self.actionChat_on_Gitter.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Gitter", None))
         self.actionChat_on_Telegram.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Telegram", None))
+        self.actionSet_a2_Version.setText(QCoreApplication.translate("a2MainWindow", u"Set a2 Version", None))
         pass
