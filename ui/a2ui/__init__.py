@@ -438,8 +438,8 @@ class A2Window(QtWidgets.QMainWindow):
         return self._style
 
     def build_package(self):
-        batch_path = os.path.join(self.a2.paths.lib, 'batches')
-        batch_name = 'build_py_package.bat'
+        batch_path = os.path.join(self.a2.paths.lib, '_batches')
+        batch_name = '1_build_all.bat'
         _result, _pid = a2util.start_process_detached(
             os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path
         )
