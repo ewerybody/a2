@@ -1,19 +1,19 @@
-{
-    "name": "a2",
-    "version": "0.4.0",
-    "description": "Script managing and developing framework for Autohotkey",
-    "main": "index.js",
-    "dependencies": {},
-    "devDependencies": {
-        "ahk-unit": "^1.0.5"
-    },
-    "scripts": {
-        "test": "ahk-unit ./tests/tests.ahk"
-    },
-    "author": "ewerybody https://github.com/ewerybody",
-    "license": "GPL3",
-    "bugs": {
-        "url": "https://github.com/ewerybody/a2/issues"
-    },
-    "homepage": "https://github.com/ewerybody/a2#readme"
+﻿{
+  "author": "ewerybody https://github.com/ewerybody",
+  "bugs": {
+    "url": "https://github.com/ewerybody/a2/issues"
+  },
+  "dependencies": {},
+  "description": "Script managing and developing framework for Autohotkey",
+  "devDependencies": {
+    "ahk-unit": "^1.0.5"
+  },
+  "homepage": "https://github.com/ewerybody/a2#readme",
+  "license": "GPL3",
+  "main": "index.js",
+  "name": "a2",
+  "scripts": {
+    "test": "ahk-unit ./tests/tests.ahk"
+  },
+  "version": "0.4.1"
 }

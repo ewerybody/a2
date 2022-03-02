@@ -15,7 +15,7 @@
 ;@Ahk2Exe-SetDescription a2 Uninstaller
 ;@Ahk2Exe-SetOrigFilename Uninstall a2.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.4.0
+;@Ahk2Exe-SetVersion 0.4.1
 
 
 complain_if_uncompiled()
