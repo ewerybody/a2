@@ -83,7 +83,7 @@ class A2InputDialog(A2ConfirmDialog):
 
         self.check_func = check_func
 
-        self._output = None
+        self._output = ''
         self._text = text
 
         self.ui_text_field = QtWidgets.QLineEdit(self)
