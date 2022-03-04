@@ -214,6 +214,8 @@ def py_bool_to_ahk_string(py_bool):
 
 
 def py_string_to_ahk_string(py_str):
+    print('py_str in: %s' % py_str)
+    py_str = py_str.replace('`', '``')
     py_str = py_str.replace('\n', '`n')
     py_str = py_str.replace('"', '""')
     return '"%s"' % py_str
