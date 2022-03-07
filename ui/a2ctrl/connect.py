@@ -4,6 +4,7 @@ from functools import partial
 from a2qt import QtWidgets
 
 import a2core
+import a2element.hotkey
 from a2widget.a2button_field import A2ButtonField
 from a2widget.a2coords_field import A2CoordsField
 from a2widget.a2tag_field import A2TagField
@@ -65,7 +66,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     :param str name: The key name to look for in the dict.
     :param dict cfg: The whole config dictionary object to connect to.
     :param QtCore.Signal change_signal: Optional. A signal to emit on change.
-    :param QtCore.Signal trigger_signal: Optional. The signal to get the change event from.
+    :param QtCore.Signal trigger_signal: Optional. Alternative signal to get change event from.
     """
     if isinstance(ctrl, QtWidgets.QCheckBox):
         # checkBox.clicked doesn't send state, so we put the func to check
@@ -73,7 +74,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         # solution: ctrl.clicked[bool] sends the state already!
         ctrl.clicked[bool].connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
-            ctrl.clicked[bool].connect(change_signal.emit)
+            ctrl.clicked.connect(change_signal.emit)
         # set ctrl according to config or set config from ctrl
         if name in cfg:
             ctrl.setChecked(cfg[name])
@@ -162,6 +163,20 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.toPlainText()
 
+    elif isinstance(ctrl, a2element.hotkey.Draw):
+        if trigger_signal is None:
+            trigger_signal = ctrl.changed
+        trigger_signal.connect(partial(_hotkey_update, cfg, name, ctrl))
+
+        if change_signal is not None:
+            trigger_signal.connect(change_signal.emit)
+
+        if name in cfg:
+            ctrl.set_config(cfg[name])
+        else:
+            cfg[name] = ctrl.get_user_dict()
+
+
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!', name, type(ctrl))
 
@@ -189,6 +204,11 @@ def _text_edit_update(cfg, name, ctrl, value=None):
 
 def _text_edit_send(signal, ctrl):
     signal.emit(ctrl.toPlainText())
+
+
+def _hotkey_update(cfg, name, hotkey):
+    # type: (dict, str, a2element.hotkey.Draw) -> None
+    cfg[name] = hotkey.get_user_dict()
 
 
 def control_to_db(widget, database, key, default_value=None):
