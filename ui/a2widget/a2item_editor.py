@@ -18,6 +18,7 @@ dictionary data thats layed out the same way over all values. For example::
 Keys are in a list widget and the values appear in according ui to the right
 for display and modification.
 """
+from copy import deepcopy
 from collections import OrderedDict
 
 from a2qt import QtCore, QtWidgets
@@ -49,7 +50,7 @@ class A2ItemEditor(QtWidgets.QWidget):
     item_changed = QtCore.Signal(tuple)
     item_deleted = QtCore.Signal(str)
     data_changed = QtCore.Signal()
-    _value_changed = QtCore.Signal(str)
+    _value_changed = QtCore.Signal()
     list_menu_called = QtCore.Signal(QtWidgets.QMenu)
 
     data = {}
@@ -136,6 +137,8 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.connect_data_widget(value_name, widget, set_function, change_signal, default_value)
 
     def add_row(self, *args):
+        if isinstance(args, tuple) and len(args) == 1 and isinstance(args[0], str):
+            args = (QtWidgets.QLabel(args[0], self),)
         self.ui.config_layout.addRow(*args)
 
     def enlist_widget(self, value_name, widget, set_function, default_value):
@@ -143,7 +146,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         self._data_widgets[value_name] = {
             'widget': widget,
             'set_function': set_function,
-            'default_value': default_value,
+            'default_value': _get_copy(default_value),
         }
 
     def connect_data_widget(
@@ -165,17 +168,22 @@ class A2ItemEditor(QtWidgets.QWidget):
         """Fill the ui with the data from selected item."""
         self._drawing = True
         for value_name, widget_dict in self._data_widgets.items():
-            value = self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
+            value = _get_copy(
+                self.data.get(item_name, {}).get(value_name, widget_dict['default_value'])
+            )
             widget = widget_dict['widget']
+
             widget.blockSignals(True)
             try:
                 widget_dict['set_function'](value)
             except TypeError:
-                if 'default_value' in widget_dict:
-                    default = widget_dict['default_value']
+                default = _get_copy(widget_dict['default_value'])
+                try:
                     widget_dict['set_function'](default)
-                    log.warning(f'Could not set "{widget}" to "{value}" setting default: "{default}"!')
-                else:
+                    log.warning(
+                        f'Could not set "{widget}" to "{value}" setting default: "{default}"!'
+                    )
+                except Exception:
                     log.error(f'Could not set "{widget}" to "{value}"!')
 
             widget.blockSignals(False)
@@ -195,7 +203,7 @@ class A2ItemEditor(QtWidgets.QWidget):
         for value_name, widget_dict in self._data_widgets.items():
             value = self._current_data.get(value_name)
             if not self.ignore_default_values or value != widget_dict['default_value']:
-                diff_dict[value_name] = value
+                diff_dict[value_name] = _get_copy(value)
 
         if self.data[self.selected_name] != diff_dict:
             self.data[self.selected_name] = diff_dict
@@ -328,6 +336,14 @@ class A2ItemEditor(QtWidgets.QWidget):
     def select(self, names):
         """Select a named item, a list of names or None."""
         self.ui.item_list.select_names(names)
+
+
+def _get_copy(value):
+    """Make sure to pass a proper copy of complex types to avoid
+    changing the base default object."""
+    if isinstance(value, (dict, set, list, tuple)):
+        return deepcopy(value)
+    return value
 
 
 if __name__ == '__main__':
