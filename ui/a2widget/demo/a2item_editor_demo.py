@@ -1,4 +1,6 @@
 import uuid
+
+import a2element.hotkey
 from a2qt import QtWidgets
 from a2widget.a2item_editor import A2ItemEditor
 
@@ -43,14 +45,17 @@ class Demo(QtWidgets.QMainWindow):
         # Now with a changed label: By default the label is taken from key name.
         seed_field = QtWidgets.QLineEdit(self)
         self.editor.add_data_label_widget(
-            'seed',
-            seed_field,
-            seed_field.setText,
-            seed_field.textChanged,
-            '🤷‍♀️',
-            'Seed Appearance',
+            value_name='seed',
+            widget=seed_field,
+            set_function=seed_field.setText,
+            change_signal=seed_field.textChanged,
+            default_value='🤷‍♀️',
+            label='Seed Appearance',
         )
 
+        hotkey_cfg = {}
+        hotkey = a2element.hotkey.Draw(self, hotkey_cfg)
+        self.editor.add_data_widget('hotkey', hotkey, hotkey.set_config, hotkey.changed, hotkey_cfg)
         self.editor.data_changed.connect(self.on_data_change)
 
     def on_data_change(self):
@@ -61,7 +66,7 @@ def show():
     app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':
