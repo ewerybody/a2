@@ -84,7 +84,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
     elif isinstance(ctrl, (QtWidgets.QLineEdit, A2ButtonField)):
         ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
-            ctrl.textChanged[str].connect(change_signal.emit)
+            ctrl.textChanged.connect(change_signal.emit)
         if name in cfg:
             ctrl.setText(cfg[name])
         else:
@@ -155,9 +155,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         trigger_signal.connect(partial(_text_edit_update, cfg, name, ctrl))
 
         if change_signal is not None:
-            # FIXME: Whytf were we passing the ctrl here?!
-            trigger_signal.connect(partial(change_signal.emit, ctrl))
-            # trigger_signal.connect(change_signal.emit)
+            trigger_signal.connect(change_signal.emit)
         if name in cfg:
             ctrl.setPlainText(cfg[name])
         else:
@@ -200,10 +198,6 @@ def _text_edit_update(cfg, name, ctrl, value=None):
     if value is None:
         value = ctrl.toPlainText()
     cfg[name] = value
-
-
-def _text_edit_send(signal, ctrl):
-    signal.emit(ctrl.toPlainText())
 
 
 def _hotkey_update(cfg, name, hotkey):
