@@ -231,6 +231,11 @@ def build_hotkey_menu(menu, button):
 
 def get_settings(module_key, cfg, db_dict, user_cfg):
     key = a2ctrl.get_cfg_value(cfg, user_cfg, 'key')
+    if not key or key == ['']:
+        return
+    if not a2ctrl.get_cfg_value(cfg, user_cfg, 'enabled', bool):
+        return
+
     scope = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope, list)
     scope_mode = a2ctrl.get_cfg_value(cfg, user_cfg, Vars.scope_mode, int)
     code = cfg.get(

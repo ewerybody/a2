@@ -1,4 +1,3 @@
-import time
 import a2core
 from a2element.common import DrawCtrl, EditCtrl, DrawCtrlMixin
 

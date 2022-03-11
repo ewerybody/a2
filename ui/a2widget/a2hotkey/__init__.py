@@ -32,3 +32,5 @@ def get_current_style():
     import a2core
     a2 = a2core.A2Obj.inst()
     return a2.db.get(Vars.dialog_style_setting) or DIALOG_DEFAULT.__name__
+
+
