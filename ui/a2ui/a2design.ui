@@ -37,13 +37,16 @@
     </property>
     <item>
      <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
       <widget class="A2ModuleList" name="module_list" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>500</width>

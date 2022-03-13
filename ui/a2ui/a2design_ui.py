@@ -10,7 +10,7 @@ WARNING! All changes made in this file will be lost when recompiling UI file!
 
 from a2qt.QtGui import QAction, QFont
 from a2qt.QtWidgets import QMenu, QMenuBar, QSplitter, QVBoxLayout, QWidget
-from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
+from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize
 
 from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
@@ -116,10 +116,10 @@ class Ui_a2MainWindow:
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Horizontal)
         self.splitter.setChildrenCollapsible(False)
         self.module_list = A2ModuleList(self.splitter)
         self.module_list.setObjectName(u"module_list")
+        self.module_list.setMinimumSize(QSize(150, 0))
         self.module_list.setMaximumSize(QSize(500, 16777215))
         self.splitter.addWidget(self.module_list)
         self.module_view = A2ModuleView(self.splitter)
