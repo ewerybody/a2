@@ -337,6 +337,10 @@ class A2ItemEditor(QtWidgets.QWidget):
         """Select a named item, a list of names or None."""
         self.ui.item_list.select_names(names)
 
+    def set_list_width(self, value):
+        """Set a maximum width for the item list."""
+        self.ui.list_layout_widget.setMaximumWidth(value)
+
 
 def _get_copy(value):
     """Make sure to pass a proper copy of complex types to avoid
