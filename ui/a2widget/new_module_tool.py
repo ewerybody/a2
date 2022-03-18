@@ -51,7 +51,7 @@ class NewModulueTool(A2InputDialog):
     def check_on_source_change(self, _int):
         self.check()
 
-    def create_module(self, name):
+    def create_module(self):
         """
         Creates path to the new module, makes the dir
         refreshes modules and selects the new one in the list
@@ -61,10 +61,10 @@ class NewModulueTool(A2InputDialog):
         self.a2.db.set('last_module_create_source', source_name)
         source = self.a2.module_sources[source_name]
 
-        module_path = os.path.join(source.path, name)
+        module_path = os.path.join(source.path, self.output)
         os.mkdir(module_path)
         self.a2.fetch_modules()
-        module = self.a2.get_module_obj(source_name, name)
+        module = self.a2.get_module_obj(source_name, self.output)
         self.main.module_list.draw_modules([module])
 
     def check_name(self, name):
