@@ -9,6 +9,7 @@ from a2qt import QtWidgets, QtCore
 import a2uic
 import a2core
 import a2ctrl
+import a2ctrl.connect
 import a2download
 from a2widget import a2input_dialog, modsource_editor_ui
 
@@ -30,10 +31,10 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         self.source_cfg = deepcopy(mod_source.config)
 
         a2uic.check_module(modsource_editor_ui)
-        self.ui.attributes_widget = QtWidgets.QWidget(self)
-        self.ui.main_layout.insertWidget(1, self.ui.attributes_widget)
+        self.attributes_widget = QtWidgets.QWidget(self)
+        self.ui.main_layout.insertWidget(1, self.attributes_widget)
         self.source_ui = modsource_editor_ui.Ui_ModSourceUi()
-        self.source_ui.setupUi(self.ui.attributes_widget)
+        self.source_ui.setupUi(self.attributes_widget)
         self.source_ui.description.setMinimumWidth(600 * self.main.style.get('scale'))
 
         self.source_ui.news.minimum_blocks = 10
@@ -73,9 +74,9 @@ class GithubCommitsChecker(QtCore.QObject):
         self.source_ui = parent.source_ui
 
         self.source_ui.github_commits_btn.clicked.connect(self._fetch_github_commits)
-        self.source_ui.github_commits_btn.setIcon(a2ctrl.Icons.inst().github)
+        self.source_ui.github_commits_btn.setIcon(a2ctrl.Icons.github)
         super(GithubCommitsChecker, self).__init__(parent)
-        self._config = None
+        self._config = {}
 
     @staticmethod
     def has_github_update_url(cfg):
@@ -112,7 +113,8 @@ class GithubCommitsChecker(QtCore.QObject):
         self.parent()._show_error(error)
 
     def _check_result(self, result):
-        self._config = result
+        self._config.clear()
+        self._config.update(result)
         owner, repo = a2download.get_github_owner_repo(result['update_url'])
         main_branch = self.parent().source_cfg.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
         compare_url = a2download.GITHUB_COMPARE_TEMPLATE.format(
