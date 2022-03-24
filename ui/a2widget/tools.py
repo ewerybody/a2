@@ -26,7 +26,8 @@ class BlockSignalContext:
             self.widget.blockSignals(False)
 
 
-def get_screen(geometry: QtCore.QRect | QtCore.QRectF) -> QtGui.QScreen:
+def get_screen(geometry):
+    # type: (QtCore.QRect | QtCore.QRectF) -> QtGui.QScreen
     """Get the screen object a geometry rectangle is on.
     If none is found take the cursor position.
     """
@@ -48,7 +49,8 @@ def get_screen(geometry: QtCore.QRect | QtCore.QRectF) -> QtGui.QScreen:
     return pointer_screen
 
 
-def fit_to_sceen(geometry: QtCore.QRect | QtCore.QRectF):
+def fit_to_sceen(geometry):
+    # type: (QtCore.QRect | QtCore.QRectF) -> None
     """Make sure a window geometry is fully visible on the current screen."""
     screen = get_screen(geometry).geometry()
     # make sure that the titles fit into the screen as well.
