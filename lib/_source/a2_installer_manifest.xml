@@ -2,7 +2,7 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0"> 
    <!-- We need 4 version numbers here!! Otherwise the manifest would be rejected -->
    <assemblyIdentity 
-      version="0.4.1.0"
+      version="0.4.2.0"
       processorArchitecture="X86"
       name="a2 Installer"
       type="win32"
