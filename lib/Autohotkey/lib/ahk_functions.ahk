@@ -213,6 +213,18 @@ StringUpper(ByRef InputVar, T = "") {
     StringUpper, v, InputVar, %T%
     Return, v
 }
+StrLower(ByRef InputVar) {
+    StringLower, v, InputVar
+    Return, v
+}
+StrUpper(ByRef InputVar) {
+    StringUpper, v, InputVar
+    Return, v
+}
+StrTitle(ByRef InputVar) {
+    StringUpper, v, InputVar, T
+    Return, v
+}
 SysGet(Subcommand, Param3 = "") {
     SysGet, v, %Subcommand%, %Param3%
     Return, v
