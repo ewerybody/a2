@@ -11,3 +11,7 @@
 msgbox_error(msg, title := "ERROR") {
     MsgBox, 16, %title%, %msg%
 }
+
+msgbox_info(msg, title := "INFO") {
+    msgBox, 64, %title%, %msg%
+}
