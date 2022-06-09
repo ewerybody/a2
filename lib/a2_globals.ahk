@@ -8,6 +8,7 @@ global WIN_10 := 10.0
 
 global WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
 global A_AppDataLocal := path_join(path_dirname(A_AppData), "Local")
+global PYTHON_SUPPORTED_VERSIONS := ["3.10", "3.9", "3.8", "3.7", "3.6"]
 
 ; groups for explorer classes
 GroupAdd, ExplorerGroup, ahk_class ExploreWClass
