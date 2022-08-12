@@ -45,18 +45,19 @@ base_ext := path_split_ext(A_ScriptFullPath)
 sx1 := assertmsg("test_path" == base_ext[1])
 sx2 := assertmsg("ahk" == base_ext[2])
 
+; Test path_get_free_name
 FileAppend, , %A_ScriptDir%\_test_file.txt
 Loop, 3
-{
     FileAppend, , %A_ScriptDir%\_test_file%A_Index%.txt
-}
 Sleep, 100
 found_name := path_get_free_name(A_ScriptDir, "_test_file", "txt")
 fn := assertmsg(found_name == "_test_file4")
+; test with separator
+found_name := path_get_free_name(A_ScriptDir, "_test_file", "txt", "__")
+fns := assertmsg(found_name == "_test_file__2")
+; cleanup
 Loop, 3
-{
     FileDelete, %A_ScriptDir%\_test_file%A_Index%.txt
-}
 FileDelete, %A_ScriptDir%\_test_file.txt
 found_name := path_get_free_name(A_ScriptDir, "", "")
 fn2 := assertmsg(!found_name)
@@ -69,5 +70,5 @@ msg = %msg%!path_is_empty: %e0% (%A_ScriptDir%)`npath_is_empty: %e1% (%test_dir%
 msg = %msg%!path_is_writeable: %w1%`npath_is_writeable: %w2%`n
 msg = %msg%path_expand_env: %x1% %x2%`n
 msg .= "path_split_ext: " sx1 " " sx2 " '" base_ext[1] "' '" base_ext[2] "'`n"
-msg .= "path_free_name: " fn " " fn2
+msg .= "path_free_name: " fn " " fn2 " " fns
 msgbox %msg%

@@ -119,7 +119,7 @@ path_get_free_name(dir_path, file_name, ext, separator := "") {
     index := 1
     While, FileExist(file_path) {
         index++
-        base := file_name . index
+        base := file_name . separator . index
         file_path := path_join(dir_path, base . ext)
     }
     return base
