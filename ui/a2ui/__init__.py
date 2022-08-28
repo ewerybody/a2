@@ -9,6 +9,7 @@ import a2dev
 import a2core
 import a2util
 import a2mod
+import a2style
 from a2ctrl.icons import Icons
 
 import a2widget.tools
@@ -54,16 +55,36 @@ class A2Window(QtWidgets.QMainWindow):
         self._initial_activation_tries = 0
         self._initial_draw_finished = False
 
-    def _module_selected(self, module_list):
-        self.selected = module_list
-        self.num_selected = len(module_list)
-        if self.num_selected == 1:
-            self.mod = module_list[0]
-        else:
-            self.mod = None
+    def showEvent(self, event):
+        """Override Qt showEvent with window initialization."""
+        if not self._initial_draw_finished:
+            self.setWindowTitle(a2core.NAME)
+            self.setWindowIcon(Icons.a2)
+            widget = QtWidgets.QWidget(self)
+            layout = QtWidgets.QVBoxLayout(widget)
+            label = QtWidgets.QLabel()
+            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setPixmap(Icons.a2tinted.pixmap(256))
+            layout.addWidget(label)
+            self.setCentralWidget(widget)
+            self.restore_ui()
+            self._initial_draw_finished = True
+            QtCore.QTimer(self).singleShot(250, self._finish_initial_draw)
+        return super(A2Window, self).showEvent(event)
 
-        self.check_main_menu_bar()
-        self.module_view.draw_mod()
+    def _finish_initial_draw(self):
+        self._setup_ui()
+        # return
+        self.module_list.draw_modules(self._init_selection)
+        if not self._init_selection:
+            self.module_view.draw_mod()
+        self._restore_splitter()
+        self.setEnabled(True)
+
+        thread = self._run_thread('runtime', WinTitleUpdater)
+        thread.change.connect(self.setWindowTitle)
+
+        log.info('A2Window initialised! (%.3fs)', time.process_time())
 
     def _setup_ui(self):
         from a2ui import a2design_ui
@@ -91,6 +112,14 @@ class A2Window(QtWidgets.QMainWindow):
         self._setup_shortcuts()
 
         self.check_main_menu_bar()
+
+    def _restore_splitter(self, win_prefs=None):
+        if win_prefs is None:
+            win_prefs = self.a2.db.get('windowprefs') or {}
+        splitter_size = win_prefs.get('splitter')
+        if splitter_size is None:
+            splitter_size = (self.width() * 0.25, self.width() * 0.75)
+        self.ui.splitter.setSizes(splitter_size)
 
     def _setup_actions(self):
         self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
@@ -197,6 +226,17 @@ class A2Window(QtWidgets.QMainWindow):
         else:
             self.ui.menubar.insertAction(module_menu_before_action, self.ui.menuModule.menuAction())
 
+    def _module_selected(self, module_list):
+        self.selected = module_list
+        self.num_selected = len(module_list)
+        if self.num_selected == 1:
+            self.mod = module_list[0]
+        else:
+            self.mod = None
+
+        self.check_main_menu_bar()
+        self.module_view.draw_mod()
+
     def edit_submit(self):
         """
         Call module to write `temp_config` to disc.
@@ -216,8 +256,7 @@ class A2Window(QtWidgets.QMainWindow):
 
     def mod_enable(self, state: bool):
         """
-        Handles the module checkbox to enable/disable one or multiple modules.
-
+        Handle module checkbox to enable/disable one or multiple modules.
         :param bool check: Checkbox state incoming from the module view header.
         """
         for mod in self.selected:
@@ -249,57 +288,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.rebuild_css()
         self.module_list.draw_modules()
         self.module_view.draw_mod()
-
-    def escape(self):
-        if self.module_view.editing:
-            if self.module_view.cfg_different():
-                if self.module_view.user_cancels():
-                    return
-                log.debug('Exiting Module edit mode!')
-            self.module_view.draw_mod()
-        else:
-            log.info('Exiting a2 Ui! okithxbye')
-            self.close()
-
-    def explore_mod(self):
-        if self.mod is not None:
-            a2util.explore(self.mod.path)
-        else:
-            self.explore_a2()
-
-    def explore_a2(self):
-        a2util.explore(self.a2.paths.a2)
-
-    def explore_a2data(self):
-        a2util.explore(self.a2.paths.data)
-
-    def closeEvent(self, event):
-        win_geom_str = self.saveGeometry().toBase64().data().decode()
-        self.a2.db.set(
-            'windowprefs',
-            {'splitter': self.ui.splitter.sizes(), 'geometry': win_geom_str},
-        )
-        self.a2.db.set('last_selected', [m.key for m in self.selected])
-
-        from a2qt import shiboken
-
-        for thread in self._threads.values():
-            if thread is None:
-                continue
-            if not shiboken.isValid(thread):
-                continue
-            thread.requestInterruption()
-            tries = 10
-            while thread.isRunning():
-                if tries < 5:
-                    log.info(f'Wating for thread: {thread}')
-                tries -= 1
-                if not tries:
-                    log.error(f'Thread NOT stopped: {thread}')
-                    break
-                time.sleep(0.1)
-
-        QtWidgets.QMainWindow.closeEvent(self, event)
 
     def restore_ui(self):
         """
@@ -367,6 +355,57 @@ class A2Window(QtWidgets.QMainWindow):
         self._initial_activation_tries += 1
         QtCore.QTimer(self).singleShot(50, self._activate_window)
 
+    def escape(self):
+        if self.module_view.editing:
+            if self.module_view.cfg_different():
+                if self.module_view.user_cancels():
+                    return
+                log.debug('Exiting Module edit mode!')
+            self.module_view.draw_mod()
+        else:
+            log.info('Exiting a2 Ui! okithxbye')
+            self.close()
+
+    def explore_mod(self):
+        if self.mod is not None:
+            a2util.explore(self.mod.path)
+        else:
+            self.explore_a2()
+
+    def explore_a2(self):
+        a2util.explore(self.a2.paths.a2)
+
+    def explore_a2data(self):
+        a2util.explore(self.a2.paths.data)
+
+    def closeEvent(self, event):
+        win_geom_str = self.saveGeometry().toBase64().data().decode()
+        self.a2.db.set(
+            'windowprefs',
+            {'splitter': self.ui.splitter.sizes(), 'geometry': win_geom_str},
+        )
+        self.a2.db.set('last_selected', [m.key for m in self.selected])
+
+        from a2qt import shiboken
+
+        for thread in self._threads.values():
+            if thread is None:
+                continue
+            if not shiboken.isValid(thread):
+                continue
+            thread.requestInterruption()
+            tries = 10
+            while thread.isRunning():
+                if tries < 5:
+                    log.info(f'Wating for thread: {thread}')
+                tries -= 1
+                if not tries:
+                    log.error(f'Thread NOT stopped: {thread}')
+                    break
+                time.sleep(0.1)
+
+        QtWidgets.QMainWindow.closeEvent(self, event)
+
     def scroll_to_start(self):
         """Scroll the main view to the top."""
         self._scroll(self.module_view.ui.a2scroll_area, False)
@@ -423,15 +462,13 @@ class A2Window(QtWidgets.QMainWindow):
             self._style = self.rebuild_css()
         return self._style
 
-    def rebuild_css(self, user_scale=None):
+    def rebuild_css(self, user_scale=None) -> a2style.A2StyleBuilder:
         if user_scale is None:
             user_scale = self.a2.db.get('ui_scale') or 1.0
         else:
             self.a2.db.set('ui_scale', user_scale)
 
         if self._style is None:
-            import a2style
-
             self._style = a2style.A2StyleBuilder(self.a2.db.get('ui_theme'))
 
         css_template = self._style.get_style(user_scale)
@@ -491,45 +528,6 @@ class A2Window(QtWidgets.QMainWindow):
         """Find a named element and call its `check` method."""
         self.module_view.check_element(name)
 
-    def _restore_splitter(self, win_prefs=None):
-        if win_prefs is None:
-            win_prefs = self.a2.db.get('windowprefs') or {}
-        splitter_size = win_prefs.get('splitter')
-        if splitter_size is None:
-            splitter_size = (self.width() * 0.25, self.width() * 0.75)
-        self.ui.splitter.setSizes(splitter_size)
-
-    def _finish_initial_draw(self):
-        self._setup_ui()
-        # return
-        self.module_list.draw_modules(self._init_selection)
-        if not self._init_selection:
-            self.module_view.draw_mod()
-        self._restore_splitter()
-        self.setEnabled(True)
-
-        thread = self._run_thread('runtime', RuntimeWatcher)
-        thread.change.connect(self.setWindowTitle)
-
-        log.info('A2Window initialised! (%.3fs)', time.process_time())
-
-    def showEvent(self, event):
-        """Override Qt showEvent with window initialization."""
-        if not self._initial_draw_finished:
-            self.setWindowTitle(a2core.NAME)
-            self.setWindowIcon(Icons.a2)
-            widget = QtWidgets.QWidget(self)
-            layout = QtWidgets.QVBoxLayout(widget)
-            label = QtWidgets.QLabel()
-            label.setAlignment(QtCore.Qt.AlignCenter)
-            label.setPixmap(Icons.a2tinted.pixmap(256))
-            layout.addWidget(label)
-            self.setCentralWidget(widget)
-            self.restore_ui()
-            self._initial_draw_finished = True
-            QtCore.QTimer(self).singleShot(250, self._finish_initial_draw)
-        return super(A2Window, self).showEvent(event)
-
     def on_uninstall_a2(self):
         if os.path.isfile(self.a2.paths.uninstaller):
             a2util.start_process_detached(self.a2.paths.uninstaller)
@@ -571,11 +569,14 @@ class RuntimeCallThread(QtCore.QThread):
         _retval, _pid = a2util.start_process_detached(a2.paths.a2exe, args, working_dir=a2.paths.a2)
 
 
-class RuntimeWatcher(QtCore.QThread):
+class WinTitleUpdater(QtCore.QThread):
+    """
+    Periodically check for running a2 runtime and send title update message in case of change.
+    """
     change = QtCore.Signal(str)
 
     def __init__(self, parent):
-        super(RuntimeWatcher, self).__init__(parent)
+        super(WinTitleUpdater, self).__init__(parent)
         self.is_live = False
         self._lifetime = 0
         self._slept = 0
