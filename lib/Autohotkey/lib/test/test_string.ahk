@@ -45,7 +45,8 @@ msg .= "string_quote:" q2 " " q4 "`n"
 ; test is in array
 i1 := assertmsg(string_is_in_array("b", aabc))
 i2 := assertmsg(!string_is_in_array("B", aabc))
-msg .= "string_is_in_array: " i1 " " i2 "`n"
+i3 := assertmsg(!string_is_in_array("a", aabc, 2))
+msg .= "string_is_in_array: " i1 " " i2 " " i3 "`n"
 
 ; test suffixing
 st := "Free Assange"
