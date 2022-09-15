@@ -141,9 +141,22 @@ string_prefix(string, prefix) {
     return string
 }
 
+; Make back for front flipped version of given string
 string_reverse(byref string) {
     new_string := ""
     Loop, % StrLen(string)
         new_string := SubStr(string, A_Index, 1) new_string
     Return new_string
+}
+
+; Make string of random UPPER case letters with given length.
+string_random(length) {
+    txt := ""
+    offset := 64
+    Loop, %length%
+    {
+        Random, i , 1, 26
+        txt .= Chr(i + offset)
+    }
+    return txt
 }

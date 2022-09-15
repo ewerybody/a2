@@ -68,4 +68,6 @@ s1 := string_reverse(st)
 s2 := assertmsg(st == string_reverse(s1))
 msg .= "string_reverse: " st " " s2 " " s1 "`n"
 
+msg .= "string_random: " string_random(32)
+
 MsgBox, %msg%
