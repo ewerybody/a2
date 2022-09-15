@@ -26,7 +26,13 @@ for _, pth in [ui_path, python, script]
 }
 
 a2tip("Calling a2 ui DEV ...")
-Run, "%python%" "%script%"
+; Run, "%python%" "%script%"
+cmd := """" python """ """ script """"
+shell := ComObjCreate("WScript.Shell")
+exec := shell.Exec(cmd)
+errors := exec.StdErr.ReadAll()
+if (errors)
+    msgbox_error(errors, "ERROR starting a2app")
 sleep, 1000
 ExitApp
 
