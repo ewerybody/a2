@@ -5,7 +5,7 @@
 ;@Ahk2Exe-SetDescription a2 ui starter
 ;@Ahk2Exe-SetOrigFilename a2ui.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.4.1
+;@Ahk2Exe-SetVersion 0.4.2
 #NoTrayIcon
 #Persistent
 If (!A_IsCompiled) {
