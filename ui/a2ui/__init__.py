@@ -84,6 +84,9 @@ class A2Window(QtWidgets.QMainWindow):
         thread = self._run_thread('runtime', WinTitleUpdater)
         thread.change.connect(self.setWindowTitle)
 
+        thread = self._run_thread('UpdatesChecker', UpdatesChecker)
+        thread.change.connect(self._on_updates)
+
         log.info('A2Window initialised! (%.3fs)', time.process_time())
 
     def _setup_ui(self):
@@ -546,6 +549,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_list.setEnabled(not state)
         self.ui.menubar.setEnabled(not state)
 
+    def _on_updates(self):
+        self
+
 
 class RuntimeCallThread(QtCore.QThread):
     def __init__(self, parent, args=None):
@@ -573,10 +579,11 @@ class WinTitleUpdater(QtCore.QThread):
     """
     Periodically check for running a2 runtime and send title update message in case of change.
     """
+
     change = QtCore.Signal(str)
 
     def __init__(self, parent):
-        super(WinTitleUpdater, self).__init__(parent)
+        super().__init__(parent)
         self.is_live = False
         self._lifetime = 0
         self._slept = 0
@@ -625,3 +632,36 @@ class WinTitleUpdater(QtCore.QThread):
             else:
                 self._lifetime = 0
                 self._build_win_title(False)
+
+
+class UpdatesChecker(QtCore.QThread):
+    change = QtCore.Signal(dict)
+
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def run(self):
+        import a2ahk
+
+        a2 = a2core.A2Obj.inst()
+        updates = {}
+
+        if a2.dev_mode:
+            log.info('Checking %s version ...', a2ahk.NAME.title())
+            latest = a2ahk.get_latest_version()
+            current = a2ahk.get_current_version()
+            if current != latest:
+                log.info(
+                    f'There is a new {a2ahk.NAME.title()} version online!\n'
+                    f' Current: {current}\n Latest: {latest}'
+                )
+                updates[a2ahk.NAME] = latest
+
+            # TODO: check for new Python
+            # TODO: check for new PySide
+
+        # TODO: check for new a2 version
+        # TODO: check for new versions of packages
+
+        if updates:
+            self.change.emit(updates)

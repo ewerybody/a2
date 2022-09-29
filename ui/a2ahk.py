@@ -312,6 +312,9 @@ def get_latest_version():
     import a2download
     return a2download.read(LATEST_VERSION_URL)
 
+def get_current_version():
+    return call_lib_cmd('get_AutoHotkey_version')
+
 
 if __name__ == '__main__':
     import unittest
