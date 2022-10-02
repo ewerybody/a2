@@ -51,7 +51,7 @@ class GetJSONThread(QtCore.QThread):
         self.data_fetched.emit(remote_data)
 
 
-def read(url):
+def read(url: str) -> str:
     """
     Read contents from a file at given url.
     """

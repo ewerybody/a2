@@ -1,5 +1,6 @@
 """a2 Developer stuff."""
 import os
+import sys
 import traceback
 from a2qt import QtWidgets, QtCore
 
@@ -234,7 +235,7 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
             self._text_file_set(pth, self.ahk_setver)
 
         # WHAT the XML namespace crap!? I'm out of ideas here.
-        # Lets just parse and set text like in the olden days ... m()
+        # Lets just parse and set text like in the olden days ... m(
         # from xml.etree import ElementTree
         # xml = ElementTree.parse(self._file_manifest)
         # id_node = xml.find(self.mini_ns_tag)
@@ -303,3 +304,22 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         if not len(nrs) == 3 or not all(p.isnumeric() for p in nrs):
             return 'No x.y.z semver style!'
         return ''
+
+
+def check_py_version():
+    import a2download
+
+    versions = []
+    pack_urls = f'https://www.python.org/ftp/python/'
+    for line in a2download.read(pack_urls).split('\r\n'):
+        if not line.startswith('<a href="') or not line[9].isdecimal():
+            continue
+        version_str = line[9:line.find('/"', 9)]
+        version = tuple(int(i) for i in version_str.split('.'))
+        if version > sys.version_info:
+            versions.append(version)
+    return versions
+
+
+if __name__ == '__main__':
+    check_py_version()
