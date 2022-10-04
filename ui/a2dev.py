@@ -7,6 +7,7 @@ from a2qt import QtWidgets, QtCore
 import a2ahk
 import a2core
 import a2util
+import a2download
 
 from a2widget import a2input_dialog
 
@@ -307,19 +308,37 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
 
 
 def check_py_version():
-    import a2download
-
     versions = []
-    pack_urls = f'https://www.python.org/ftp/python/'
-    for line in a2download.read(pack_urls).split('\r\n'):
+    url = 'https://www.python.org/ftp/python/'
+    for line in a2download.read(url).split('\r\n'):
         if not line.startswith('<a href="') or not line[9].isdecimal():
             continue
+
         version_str = line[9:line.find('/"', 9)]
-        version = tuple(int(i) for i in version_str.split('.'))
+        try:
+            version = tuple(int(i) for i in version_str.split('.'))
+        except ValueError:
+            continue
+
         if version > sys.version_info:
+            versions.append(version)
+    return versions
+
+
+def check_pyside_version():
+    url = 'https://pypi.org/pypi/PySide{}/json'.format(QtCore.__version_info__[0])
+    data = a2download.get_remote_data(url)
+    versions = []
+    for version_str in data.get('releases', {}).keys():
+        try:
+            version = tuple(int(i) for i in version_str.split('.'))
+        except ValueError:
+            continue
+        if version > QtCore.__version_info__:
             versions.append(version)
     return versions
 
 
 if __name__ == '__main__':
     check_py_version()
+    check_pyside_version()
