@@ -2,6 +2,7 @@
 a2ui - setup interface for an Autohotkey environment.
 """
 import os
+import sys
 import time
 
 import a2uic
@@ -646,6 +647,12 @@ class UpdatesChecker(QtCore.QThread):
         a2 = a2core.A2Obj.inst()
         updates = {}
 
+        def str_ver(version):
+            return '.'.join(str(i) for i in version)
+
+        # TODO: check for new a2 version
+        # TODO: check for new versions of packages
+
         if a2.dev_mode:
             log.info('Checking %s version ...', a2ahk.NAME.title())
             latest = a2ahk.get_latest_version()
@@ -656,12 +663,19 @@ class UpdatesChecker(QtCore.QThread):
                     f' Current: {current}\n Latest: {latest}'
                 )
                 updates[a2ahk.NAME] = latest
+            else:
+                log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
 
-            # TODO: check for new Python
-            # TODO: check for new PySide
+            log.info('Checking Python version ...')
+            for version in a2dev.check_py_version():
+                if version[:2] == sys.version_info[:2]:
+                    log.info('New patch for current Python version: %s', str_ver(version))
+                else:
+                    log.info('New Python version: %s', str_ver(version))
 
-        # TODO: check for new a2 version
-        # TODO: check for new versions of packages
+            log.info('Checking PySide version ...')
+            for version in a2dev.check_pyside_version():
+                log.info('New PySide version: %s', str_ver(version))
 
         if updates:
             self.change.emit(updates)
