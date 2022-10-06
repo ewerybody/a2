@@ -25,6 +25,7 @@ EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatic
 DATA_PATTERN = '{a2data}'
 SQLDLL = 'sqlite3.dll'
 SQLINI = 'SQLiteDB.ini'
+PACKAGE_CFG = 'package.json'
 
 
 def get():
@@ -191,6 +192,19 @@ class A2Obj:
         assert self._db is not None
         return self._db
 
+    def check_update(self):
+        import a2util
+        import a2download
+
+        owner, repo = a2download.get_github_owner_repo(self.urls.a2)
+        url = a2download.GITHUB_LATEST.format(owner=owner, repo=repo)
+        data = a2download.get_remote_data(url)
+        remote_version = data.get('tag_name')
+        current = a2util.json_read(self.paths.package_cfg).get('version')
+        if remote_version != current:
+            return remote_version
+        return ''
+
 
 class URLs:
     """Internet adresses for various things."""
@@ -248,6 +262,7 @@ class Paths:
         self.python = sys.executable
         self.git = join(self.a2, '.git')
         self.uninstaller = join(self.a2, 'Uninstall a2.exe')
+        self.package_cfg = join(self.a2, PACKAGE_CFG)
 
         # get data dir from user include file in a2 root
         self.default_data = join(self.a2, 'data')
