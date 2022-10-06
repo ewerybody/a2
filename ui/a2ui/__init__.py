@@ -642,40 +642,68 @@ class UpdatesChecker(QtCore.QThread):
         super().__init__(parent)
 
     def run(self):
-        import a2ahk
-
-        a2 = a2core.A2Obj.inst()
-        updates = {}
-
-        def str_ver(version):
-            return '.'.join(str(i) for i in version)
-
-        # TODO: check for new a2 version
-        # TODO: check for new versions of packages
-
-        if a2.dev_mode:
-            log.info('Checking %s version ...', a2ahk.NAME.title())
-            latest = a2ahk.get_latest_version()
-            current = a2ahk.get_current_version()
-            if current != latest:
-                log.info(
-                    f'There is a new {a2ahk.NAME.title()} version online!\n'
-                    f' Current: {current}\n Latest: {latest}'
-                )
-                updates[a2ahk.NAME] = latest
-            else:
-                log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
-
-            log.info('Checking Python version ...')
-            for version in a2dev.check_py_version():
-                if version[:2] == sys.version_info[:2]:
-                    log.info('New patch for current Python version: %s', str_ver(version))
-                else:
-                    log.info('New Python version: %s', str_ver(version))
-
-            log.info('Checking PySide version ...')
-            for version in a2dev.check_pyside_version():
-                log.info('New PySide version: %s', str_ver(version))
-
+        updates = _check_for_updates()
         if updates:
             self.change.emit(updates)
+
+
+def _check_for_updates():
+    a2 = a2core.A2Obj.inst()
+    updates = {}
+
+    new_version = a2.check_update()
+    if new_version:
+        updates['a2'] = new_version
+
+    for source_name, source in a2.module_sources.items():
+        try:
+            data = source.check_update()
+            if source.has_update:
+                version = data.get('version', '')
+                log.info('New "%s" %s module source package', source_name, version)
+                updates.setdefault('sources', {})[source_name] = version
+        except FileNotFoundError:
+            continue
+
+    if a2.dev_mode and os.path.isdir(os.path.join(a2.paths.a2, '.git')):
+        _check_dev_updates(updates)
+
+    return updates
+
+
+def _check_dev_updates(updates: dict):
+    import a2ahk
+
+    def str_ver(version):
+        return '.'.join(str(i) for i in version)
+
+    log.info('Checking %s version ...', a2ahk.NAME.title())
+    latest = a2ahk.get_latest_version()
+    current = a2ahk.get_current_version()
+    if current != latest:
+        log.info(
+            f'New {a2ahk.NAME.title()} version online!\n'
+            f' Current: {current}\n Latest: {latest}'
+        )
+        updates[a2ahk.NAME] = latest
+    else:
+        log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
+
+    log.info('Checking Python version ...')
+    for version in a2dev.check_py_version():
+        updates.setdefault('python', []).append(version)
+        if version[:2] == sys.version_info[:2]:
+            log.info('New patch for current Python version: %s', str_ver(version))
+        else:
+            log.info('New Python version: %s', str_ver(version))
+
+    log.info('Checking PySide version ...')
+    for version in a2dev.check_pyside_version():
+        updates.setdefault('pyside', []).append(version)
+        log.info('New PySide version: %s', str_ver(version))
+
+
+if __name__ == '__main__':
+    a2 = a2core.A2Obj.inst()
+    a2.start_up()
+    _check_for_updates()

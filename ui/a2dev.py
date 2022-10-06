@@ -166,7 +166,7 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         self.mini_ns_tag = '{urn:schemas-microsoft-com:asm.v1}assemblyIdentity'
         self.error = 'ERROR'
 
-        self._file_package = os.path.join(a2.paths.a2, 'package.json')
+        self._file_package = a2.paths.package_cfg
         self._file_config = a2.paths.a2_config
         source_dir = os.path.join(a2.paths.lib, '_source')
         self._files_source = (
