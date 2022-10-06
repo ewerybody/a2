@@ -267,6 +267,9 @@ class ModSource(object):
     def check_update(self):
         """Look up provided update-url for news."""
         update_url = self.config.get('update_url', '')
+        if not update_url:
+            return self._remote_config
+
         main_branch = self.config.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
         self._remote_config = get_remote_cfg(update_url, main_branch)
         return self._remote_config
