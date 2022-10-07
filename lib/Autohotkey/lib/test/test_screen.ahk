@@ -1,4 +1,4 @@
-﻿#Include  %A_ScriptDir%\..\screen.ahk
+﻿#Include %A_ScriptDir%\..\screen.ahk
 screen_get_virtual_size(x,y,w,h)
 msgbox screen_get_virtual_size:`nx, y: %x%, %y%, w, h: %w%, %h%
 
@@ -13,3 +13,10 @@ right := workarea.right
 width := workarea.width
 height := workarea.height
 msgbox top: %top% bottom: %bottom%`nleft: %left% right: %right%`nwidth: %width% height: %height%
+
+SysGet, moni_count, MonitorCount
+Loop, %moni_count%
+{
+    SysGet, moni_stuff, Monitor , %A_Index%
+    MsgBox, Monitor %A_Index%`nLeft: %moni_stuffLeft% Top: %moni_stuffTop% Right: %moni_stuffRight% Bottom %moni_stuffBottom%.
+}
