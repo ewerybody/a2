@@ -5,7 +5,7 @@
 ;@Ahk2Exe-SetDescription a2 ui starter - dev
 ;@Ahk2Exe-SetOrigFilename a2ui.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.4.1
+;@Ahk2Exe-SetVersion 0.4.2
 #NoTrayIcon
 #Persistent
 If (!A_IsCompiled) {
@@ -26,7 +26,13 @@ for _, pth in [ui_path, python, script]
 }
 
 a2tip("Calling a2 ui DEV ...")
-Run, "%python%" "%script%"
+; Run, "%python%" "%script%"
+cmd := """" python """ """ script """"
+shell := ComObjCreate("WScript.Shell")
+exec := shell.Exec(cmd)
+errors := exec.StdErr.ReadAll()
+if (errors)
+    msgbox_error(errors, "ERROR starting a2app")
 sleep, 1000
 ExitApp
 

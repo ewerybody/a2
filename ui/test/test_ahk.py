@@ -112,10 +112,20 @@ class Test(unittest.TestCase):
         for name in illegal_nms:
             self.assertTrue(a2ahk.check_variable_name(name))
 
+    def test_get_version(self):
+        try:
+            version = a2ahk.get_latest_version()
+        except RuntimeError as error:
+            self.skipTest(f'Problem getting version from homepage: {error}')
+            return
+
+        self.assertTrue(isinstance(version, str))
+        self.assertTrue(version.startswith(a2ahk.BASE_VERSION))
+
 
 def _get_test_ahk_path():
     return os.path.join(os.getenv('temp', ''), str(uuid.uuid4()) + a2ahk.EXTENSION)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(verbosity=2)

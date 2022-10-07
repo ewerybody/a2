@@ -1,11 +1,13 @@
 """a2 Developer stuff."""
 import os
+import sys
 import traceback
 from a2qt import QtWidgets, QtCore
 
 import a2ahk
 import a2core
 import a2util
+import a2download
 
 from a2widget import a2input_dialog
 
@@ -164,7 +166,7 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         self.mini_ns_tag = '{urn:schemas-microsoft-com:asm.v1}assemblyIdentity'
         self.error = 'ERROR'
 
-        self._file_package = os.path.join(a2.paths.a2, 'package.json')
+        self._file_package = a2.paths.package_cfg
         self._file_config = a2.paths.a2_config
         source_dir = os.path.join(a2.paths.lib, '_source')
         self._files_source = (
@@ -234,7 +236,7 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
             self._text_file_set(pth, self.ahk_setver)
 
         # WHAT the XML namespace crap!? I'm out of ideas here.
-        # Lets just parse and set text like in the olden days ... m()
+        # Lets just parse and set text like in the olden days ... m(
         # from xml.etree import ElementTree
         # xml = ElementTree.parse(self._file_manifest)
         # id_node = xml.find(self.mini_ns_tag)
@@ -303,3 +305,40 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         if not len(nrs) == 3 or not all(p.isnumeric() for p in nrs):
             return 'No x.y.z semver style!'
         return ''
+
+
+def check_py_version():
+    versions = []
+    url = 'https://www.python.org/ftp/python/'
+    for line in a2download.read(url).split('\r\n'):
+        if not line.startswith('<a href="') or not line[9].isdecimal():
+            continue
+
+        version_str = line[9:line.find('/"', 9)]
+        try:
+            version = tuple(int(i) for i in version_str.split('.'))
+        except ValueError:
+            continue
+
+        if version > sys.version_info:
+            versions.append(version)
+    return versions
+
+
+def check_pyside_version():
+    url = 'https://pypi.org/pypi/PySide{}/json'.format(QtCore.__version_info__[0])
+    data = a2download.get_remote_data(url)
+    versions = []
+    for version_str in data.get('releases', {}).keys():
+        try:
+            version = tuple(int(i) for i in version_str.split('.'))
+        except ValueError:
+            continue
+        if version > QtCore.__version_info__:
+            versions.append(version)
+    return versions
+
+
+if __name__ == '__main__':
+    check_py_version()
+    check_pyside_version()

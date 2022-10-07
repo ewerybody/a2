@@ -5,10 +5,16 @@ import os
 import codecs
 import string
 
-EXECUTABLE_NAME = 'autohotkey.exe'
+NAME = 'autohotkey'
+EXECUTABLE_NAME = NAME + '.exe'
 EXTENSION = '.ahk'
 _LOW_BOOLS = {'true': True, 'false': False}
 ALLOWED_VAR_NAME_CHARS = string.ascii_letters + string.digits + '_'
+# Eventually we go to 2.0. For now:
+BASE_VERSION = '1.1'
+HOMEPAGE = f'https://www.{NAME}.com'
+DOWNLOADS_URL = f'{HOMEPAGE}/download/{BASE_VERSION}'
+LATEST_VERSION_URL = f'{DOWNLOADS_URL}/version.txt'
 
 
 def translate_hotkey(display_string):
@@ -106,7 +112,6 @@ def get_variables(ahk_file):
             continue
         result[_key] = convert_string_to_type(value)
     return result
-
 
 
 def set_variable(ahk_file, key, value, create_key=False):
@@ -301,6 +306,14 @@ KEYS = ([
     + MOUSE_KEYS + NUMPAD_KEYS + ['f%i' % _i for _i in range(1, 25)
 ])
 # fmt: on
+
+
+def get_latest_version():
+    import a2download
+    return a2download.read(LATEST_VERSION_URL)
+
+def get_current_version():
+    return call_lib_cmd('get_AutoHotkey_version')
 
 
 if __name__ == '__main__':

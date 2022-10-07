@@ -51,6 +51,7 @@ from typing import Any, Callable, Optional, Tuple, Type, Union, Sequence, Dict, 
 from a2qt import QtWidgets
 
 __version__: str
+__version_info__: tuple[int]
 
 class ClassInfo(object):
     def __init__(self, **info: Dict[str, str]) -> None: ...

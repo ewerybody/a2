@@ -51,18 +51,16 @@ class GetJSONThread(QtCore.QThread):
         self.data_fetched.emit(remote_data)
 
 
-def get_remote_data(url):
+def read(url: str) -> str:
     """
-    Download JSON data from a url.
-
-    :param str url: Web address to get the JSON data from.
-    :rtype: dict
+    Read contents from a file at given url.
     """
     url = url.lower().strip()
     from urllib import request
 
     try:
-        data = request.urlopen(url).read()
+        req = request.Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
+        data = request.urlopen(req).read()
     except request.HTTPError as error:
         raise RuntimeError('Could not find data at given address!\n%s' % error)
 
@@ -71,7 +69,17 @@ def get_remote_data(url):
     except Exception as error:
         log.error(error)
         raise RuntimeError('Error decoding data from given address!:\n%s' % error)
+    return data
 
+
+def get_remote_data(url):
+    """
+    Download JSON data from a url.
+
+    :param str url: Web address to get the JSON data from.
+    :rtype: dict
+    """
+    data = read(url)
     try:
         remote_data = json.loads(data)
     except Exception as error:

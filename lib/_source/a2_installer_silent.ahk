@@ -7,7 +7,7 @@
 ;@Ahk2Exe-SetDescription a2 install script silent
 ;@Ahk2Exe-SetOrigFilename setup.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.4.1
+;@Ahk2Exe-SetVersion 0.4.2
 
 complain_if_uncompiled()
 check_execution_dir()

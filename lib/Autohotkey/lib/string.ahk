@@ -12,13 +12,14 @@ string_join(byref array_of_strings, byref separator=", ") {
     Return result
 }
 
-string_is_in_array(byref search, byref array) {
+string_is_in_array(byref search, byref array, start := 1) {
     ; look up the items of an array object
     ; returns index of search string if found
     ; returns 0 otherwise
     Loop % array.MaxIndex() {
-        if (search == array[A_Index])
-            Return A_Index
+        idx := A_Index + start - 1
+        if (search == array[idx])
+            Return idx
     }
     Return 0
 }
@@ -140,9 +141,22 @@ string_prefix(string, prefix) {
     return string
 }
 
+; Make back for front flipped version of given string
 string_reverse(byref string) {
     new_string := ""
     Loop, % StrLen(string)
         new_string := SubStr(string, A_Index, 1) new_string
     Return new_string
+}
+
+; Make string of random UPPER case letters with given length.
+string_random(length) {
+    txt := ""
+    offset := 64
+    Loop, %length%
+    {
+        Random, i , 1, 26
+        txt .= Chr(i + offset)
+    }
+    return txt
 }

@@ -70,6 +70,7 @@ class ModSource(object):
         self._cfg_fetched = None
         self._last_config = {}
         self._config_load_error = None
+        self._remote_config = {}
 
     def fetch_modules(self, state=None):
         self._cfg_fetched = None
@@ -189,14 +190,6 @@ class ModSource(object):
         """
         return ModSourceCheckThread(parent, self, url)
 
-    def get_updater(self, parent, version, remote_data):
-        """
-        Provides a thread object for the according Module Source instance.
-
-        :rtype: ModSourceFetchThread
-        """
-        return ModSourceFetchThread(self, parent, version, remote_data)
-
     def get_backup_versions(self):
         """
         Looks up a2s temp storage for versions of the package
@@ -271,6 +264,22 @@ class ModSource(object):
     def backup_path(self) -> str:
         return os.path.join(self.a2.paths.temp, self.name, 'versions')
 
+    def check_update(self):
+        """Look up provided update-url for news."""
+        update_url = self.config.get('update_url', '')
+        if not update_url:
+            return self._remote_config
+
+        main_branch = self.config.get('main_branch', a2download.DEFAULT_MAIN_BRANCH)
+        self._remote_config = get_remote_cfg(update_url, main_branch)
+        return self._remote_config
+
+    @property
+    def has_update(self):
+        if not self._remote_config:
+            return False
+        return self._remote_config.get('version') != self.config.get('version')
+
 
 class ModSourceCheckThread(QtCore.QThread):
     """
@@ -286,7 +295,12 @@ class ModSourceCheckThread(QtCore.QThread):
     data_fetched = QtCore.Signal(dict)
     update_error = QtCore.Signal(str)
 
-    def __init__(self, parent, mod_source=None, check_url=None):
+    def __init__(
+        self,
+        parent: QtCore.QObject,
+        mod_source: ModSource | None = None,
+        check_url: str | None = None
+    ):
         super(ModSourceCheckThread, self).__init__(parent)
         self.mod_source = mod_source
         self.check_url = check_url
