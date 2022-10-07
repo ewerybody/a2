@@ -1,6 +1,8 @@
-/*
-Library for getting info from a specific Explorer window.Length
-If window handle not specified, the currently active window will be used.
+/* Extended a2 Windows File Explorer Library
+for getting info from a specific Explorer window.
+
+Original:
+... If window handle not specified, the currently active window will be used.
 Works with the desktop. Does not currently work with save dialogs and such.
 
 examples:
@@ -12,13 +14,13 @@ Joshua A. Kinnison
 2011-04-27, 16:12
 */
 
+; Get array of paths of selected items via Explorer window handle.
 explorer_get_selected(hwnd="") {
-    ; Get array of paths of selected items via Explorer window handle.
     return explorer_get(hwnd, true)
 }
 
+; Get path of target window's folder.
 explorer_get_path(hwnd="") {
-    ; Get path of target window's folder.
     if !(window := explorer_get_window(hwnd))
         return ErrorLevel := "ERROR"
     if (window="desktop")
@@ -38,14 +40,14 @@ explorer_get_path(hwnd="") {
     return pth
 }
 
+; Get array of paths of ALL items via Explorer window handle.
 explorer_get_all(hwnd="") {
-    ; Get array of paths of ALL items via Explorer window handle.
     return explorer_get(hwnd)
 }
 
+; Get Explorer window COM object from handle.
 explorer_get_window(hwnd="") {
-    ; Get Explorer window COM object from handle.
-    ; thanks to jethrow for some pointers here
+    ; Thanks to jethrow for some pointers here!
     WinGet, proc, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
     if (proc != "explorer.exe")
         return
@@ -62,8 +64,8 @@ explorer_get_window(hwnd="") {
         return
 }
 
+; Get items from an Explorer window via handle.
 explorer_get(hwnd="",selection=false) {
-    ; Get items from an Explorer window via handle.
     if !(window := explorer_get_window(hwnd))
         return ErrorLevel := "ERROR"
 
@@ -95,14 +97,17 @@ explorer_get(hwnd="",selection=false) {
     return result
 }
 
+; Select a file with the given basename.
 explorer_select(basename) {
-    ; Selects a file with the given basename
     if !(window := explorer_get_window(""))
         return ErrorLevel := "ERROR"
     file_found := 0
     for item in window.document.Folder.Items
     {
-        if (item.name == basename)
+        ; Cannot use item.name because of possibly hidden extensions.
+        ; Yep. There is no explicit "item.name_WITH_ext" m(
+        ; https://docs.microsoft.com/en-us/windows/win32/shell/folderitem#properties
+        if (path_basename(item.path) == basename)
         {
             window.document.SelectItem(item, 1)
             file_found := 1
@@ -113,8 +118,8 @@ explorer_select(basename) {
     return file_found
 }
 
+; Open an Explorer with the given directory or file selected.
 explorer_show(pth) {
-    ; Open an Explorer with the given directory or file selected.
     pth := StrReplace(pth, "\\", "\")
     pth := StrReplace(pth, "/", "\")
 
