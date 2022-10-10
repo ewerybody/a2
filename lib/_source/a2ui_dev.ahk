@@ -25,12 +25,18 @@ for _, pth in [ui_path, python, script]
     }
 }
 
-a2tip("Calling a2 ui DEV ...")
 ; Run, "%python%" "%script%"
 cmd := """" python """ """ script """"
 shell := ComObjCreate("WScript.Shell")
 exec := shell.Exec(cmd)
-errors := exec.StdErr.ReadAll()
+; Is this SWITCHED? Why?
+errors := exec.StdOut.ReadAll()
+; For some reason standart-out-messages here come from StdErr!
+; Well, since this is dev. Let's not worry about it too much ;)
+; msg := exec.StdErr.ReadAll()
+; if (msg)
+;     msgbox_info(msg, "messages starting a2app")
+
 if (errors)
     msgbox_error(errors, "ERROR starting a2app")
 sleep, 1000
