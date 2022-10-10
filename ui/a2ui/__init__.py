@@ -11,7 +11,6 @@ import a2core
 import a2util
 import a2mod
 import a2style
-from a2ctrl.icons import Icons
 
 import a2widget.tools
 import a2ui.module_cfg
@@ -59,6 +58,8 @@ class A2Window(QtWidgets.QMainWindow):
     def showEvent(self, event):
         """Override Qt showEvent with window initialization."""
         if not self._initial_draw_finished:
+            from a2ctrl.icons import Icons
+
             self.setWindowTitle(a2core.NAME)
             self.setWindowIcon(Icons.a2)
             widget = QtWidgets.QWidget(self)
@@ -126,6 +127,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.splitter.setSizes(splitter_size)
 
     def _setup_actions(self):
+        from a2ctrl.icons import Icons
+
         self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
         self.ui.actionEdit_module.setIcon(Icons.edit)
 
@@ -400,13 +403,13 @@ class A2Window(QtWidgets.QMainWindow):
             thread.requestInterruption()
             tries = 10
             while thread.isRunning():
-                if tries < 5:
-                    log.info(f'Wating for thread: {thread}')
+                if tries < 15:
+                    log.debug(f'Wating for thread: {thread}')
                 tries -= 1
                 if not tries:
                     log.error(f'Thread NOT stopped: {thread}')
                     break
-                time.sleep(0.1)
+                time.sleep(0.2)
 
         QtWidgets.QMainWindow.closeEvent(self, event)
 
@@ -642,36 +645,45 @@ class UpdatesChecker(QtCore.QThread):
         super().__init__(parent)
 
     def run(self):
-        updates = _check_for_updates()
+        updates = {}
+        for where, data in _check_for_updates():
+            if self.isInterruptionRequested():
+                return
+            if data:
+                updates.setdefault(where, {}).update(data)
+
         if updates:
             self.change.emit(updates)
 
 
 def _check_for_updates():
     a2 = a2core.A2Obj.inst()
-    updates = {}
 
-    new_version = a2.check_update()
-    if new_version:
-        updates['a2'] = new_version
+    # Only check for new a2 release when not dev/no .git present:
+    if not os.path.isdir(a2.paths.git):
+        new_version = a2.check_update()
+        if new_version:
+            yield 'core', {'a2': new_version}
 
+    log.info('Checking module package updates ...')
     for source_name, source in a2.module_sources.items():
         try:
             data = source.check_update()
             if source.has_update:
                 version = data.get('version', '')
                 log.info('New "%s" %s module source package', source_name, version)
-                updates.setdefault('sources', {})[source_name] = version
+                yield 'sources', {source_name: version}
+            else:
+                yield 'sources', None
         except FileNotFoundError:
             continue
 
-    if a2.dev_mode and os.path.isdir(os.path.join(a2.paths.a2, '.git')):
-        _check_dev_updates(updates)
+    if a2.dev_mode and os.path.isdir(a2.paths.git):
+        for name, version in _check_dev_updates():
+            yield 'core', {name: version}
 
-    return updates
 
-
-def _check_dev_updates(updates: dict):
+def _check_dev_updates():
     import a2ahk
 
     def str_ver(version):
@@ -685,25 +697,30 @@ def _check_dev_updates(updates: dict):
             f'New {a2ahk.NAME.title()} version online!\n'
             f' Current: {current}\n Latest: {latest}'
         )
-        updates[a2ahk.NAME] = latest
+        yield a2ahk.NAME, latest
     else:
         log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
 
     log.info('Checking Python version ...')
     for version in a2dev.check_py_version():
-        updates.setdefault('python', []).append(version)
         if version[:2] == sys.version_info[:2]:
             log.info('New patch for current Python version: %s', str_ver(version))
         else:
             log.info('New Python version: %s', str_ver(version))
+        yield 'python', version
 
     log.info('Checking PySide version ...')
     for version in a2dev.check_pyside_version():
-        updates.setdefault('pyside', []).append(version)
+        yield 'pyside', version
         log.info('New PySide version: %s', str_ver(version))
 
 
 if __name__ == '__main__':
     a2 = a2core.A2Obj.inst()
     a2.start_up()
-    _check_for_updates()
+
+    updates = {}
+    for where, data in _check_for_updates():
+        if data:
+            updates.setdefault(where, {}).update(data)
+    print('updates: %s' % updates)
