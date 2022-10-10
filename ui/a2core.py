@@ -127,6 +127,7 @@ class A2Obj:
 
     @property
     def dev_mode(self):
+        """Tell True/False if user dev-mode is enabled."""
         global _IS_DEV
         if _IS_DEV is None:
             _IS_DEV = self.db.get('dev_mode') or False
@@ -364,6 +365,22 @@ class Paths:
 
 
 def get_logger(name: str):
+    # make sure logging is initialized
+    if not logging.root.handlers:
+        logging.basicConfig()
+
+    # make bend name == __main__-runs to actual module name
+    if name == '__main__':
+        try:
+            frame = sys._getframe(1)
+            print('frame.f_code.co_filename: %s' % frame.f_code.co_filename)
+            dirpath, base = os.path.split(frame.f_code.co_filename)
+            name = os.path.splitext(base)[0]
+            if name == '__init__':
+                name = os.path.basename(dirpath)
+        except AttributeError:
+            pass
+
     newlog = logging.getLogger(name)
     newlog.setLevel(LOG_LEVEL)
     return newlog
