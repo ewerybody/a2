@@ -112,11 +112,14 @@ class Ico(QtGui.QIcon):
         return self._tinted
 
 
-class LibIco(Ico):
-    """Ico variant with hardcoded specs."""
+class Uico(Ico):
+    """Ico variant with hardcoded specs.
+    This is mainly for general icons with a default alpha
+    that makes them fit onto random backgrounds and menus.
+    """
 
     def __init__(self, name):
-        super(LibIco, self).__init__(name, 512, DEFAULT_ALPHA)
+        super().__init__(name, 512, DEFAULT_ALPHA)
 
 
 class _Icons:
@@ -150,69 +153,74 @@ class _Icons:
             obj = Ico(_PLACEHOLDER_ICON)
 
         if not name.startswith('_'):
-            if isinstance(obj, bool):
-                if obj is True:
-                    icon = Ico(name)
-                else:
-                    icon = LibIco(name)
-                setattr(self, name, icon)
-                return icon
+            if obj is self._ico_placeholder:
+                icon = Ico(name)
+            elif obj is self._uico_placeholder:
+                icon = Uico(name)
+            else:
+                return obj
+            setattr(self, name, icon)
+            return icon
 
         return obj
 
     def __init__(self):
         if self._instance:
             raise RuntimeError(ICON_OBJ_INST_ERROR)
+        self._ico_placeholder = QtGui.QIcon()
+        self._uico_placeholder = QtGui.QIcon()
 
         # Icons start
-        self.a2 = True
-        self.a2help = True
-        self.a2reload = True
-        self.a2tinted = True
-        self.a2x = True
-        self.autohotkey = True
-        self.github = True
+        self.a2 = self._ico_placeholder
+        self.a2help = self._ico_placeholder
+        self.a2reload = self._ico_placeholder
+        self.a2tinted = self._ico_placeholder
+        self.a2x = self._ico_placeholder
+        self.autohotkey = self._ico_placeholder
+        self.github = self._ico_placeholder
 
-        self.button = False
-        self.check = False
-        self.check_circle = False
-        self.clear = False
-        self.cloud_download = False
-        self.code = False
-        self.combo = False
-        self.copy = False
-        self.cut = False
-        self.delete = False
-        self.down = False
-        self.down_align = False
-        self.down_circle = False
-        self.edit = False
-        self.error = False
-        self.file_download = False
-        self.folder = False
-        self.folder2 = False
-        self.folder_add = False
-        self.gitter = False
-        self.group = False
-        self.help = False
-        self.keyboard = False
-        self.label = False
-        self.label_plus = False
-        self.list_add = False
-        self.locate = False
-        self.more = False
-        self.number = False
-        self.paste = False
-        self.reload = False
-        self.rollback = False
-        self.scope = False
-        self.scope_exclude = False
-        self.scope_global = False
-        self.string = False
-        self.telegram = False
-        self.text = False
-        self.up = False
-        self.up_align = False
+        self.button = self._uico_placeholder
+        self.check = self._uico_placeholder
+        self.check_circle = self._uico_placeholder
+        self.clear = self._uico_placeholder
+        self.cloud_download = self._uico_placeholder
+        self.code = self._uico_placeholder
+        self.combo = self._uico_placeholder
+        self.copy = self._uico_placeholder
+        self.cut = self._uico_placeholder
+        self.delete = self._uico_placeholder
+        self.down = self._uico_placeholder
+        self.down_align = self._uico_placeholder
+        self.down_circle = self._uico_placeholder
+        self.edit = self._uico_placeholder
+        self.error = self._uico_placeholder
+        self.file_download = self._uico_placeholder
+        self.folder = self._uico_placeholder
+        self.folder2 = self._uico_placeholder
+        self.folder_add = self._uico_placeholder
+        self.gitter = self._uico_placeholder
+        self.group = self._uico_placeholder
+        self.help = self._uico_placeholder
+        self.keyboard = self._uico_placeholder
+        self.label = self._uico_placeholder
+        self.label_plus = self._uico_placeholder
+        self.list_add = self._uico_placeholder
+        self.locate = self._uico_placeholder
+        self.more = self._uico_placeholder
+        self.number = self._uico_placeholder
+        self.paste = self._uico_placeholder
+        self.reload = self._uico_placeholder
+        self.rollback = self._uico_placeholder
+        self.scope = self._uico_placeholder
+        self.scope_exclude = self._uico_placeholder
+        self.scope_global = self._uico_placeholder
+        self.string = self._uico_placeholder
+        self.telegram = self._uico_placeholder
+        self.text = self._uico_placeholder
+        self.up = self._uico_placeholder
+        self.up_align = self._uico_placeholder
+        self.volume_down = self._uico_placeholder
+        self.volume_up = self._uico_placeholder
         # Icons end
 
 
@@ -267,12 +275,10 @@ def _update_icon_stub():
 
             indent = ' ' * 8
             for name in sorted(full_color):
-                # lines.append(f"{indent}self.{name} = Ico('{name}')")
-                lines.append(f'{indent}self.{name} = True')
+                lines.append(f'{indent}self.{name} = self._ico_placeholder')
             lines.append('')
             for name in sorted(lib_icons):
-                # lines.append(f"{indent}self.{name} = LibIco('{name}')")
-                lines.append(f'{indent}self.{name} = False')
+                lines.append(f'{indent}self.{name} = self._uico_placeholder')
 
         if line.endswith('# Icons end'):
             in_icons = False
