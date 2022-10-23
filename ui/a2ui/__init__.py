@@ -33,7 +33,6 @@ class A2Window(QtWidgets.QMainWindow):
         self._threads = {}
         self._scroll_anim = None
 
-        self.edit_clipboard = []
         self.selected = []
         self.num_selected = 0
         self.mod = None  # type: a2mod.Mod | None

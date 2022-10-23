@@ -16,6 +16,7 @@ ISSUE_DOUBLE = (
     'in other element "<b>%s</b>" at position %i'
 )
 ISSUE_TAKEN = 'Name taken! Variable "<b>%s</b>" already defined<br>in other module <b>%s</b>'
+_EDIT_CACHE = []
 
 
 class EditView(QtWidgets.QWidget):
@@ -113,8 +114,8 @@ class EditView(QtWidgets.QWidget):
         )
 
         clipboard_count = ''
-        if self.main.edit_clipboard:
-            clipboard_count = ' (%i)' % len(self.main.edit_clipboard)
+        if _EDIT_CACHE:
+            clipboard_count = ' (%i)' % len(_EDIT_CACHE)
 
         if element.cfg.get('typ') == 'group':
             menu_items.insert(-1, ('Paste' + clipboard_count, self.paste, Icons.paste))
@@ -222,14 +223,14 @@ class EditView(QtWidgets.QWidget):
         """
         group, index, parent = self._element_index()
         if isinstance(group, a2element.group.Edit):
-            group.config_list.extend(self.main.edit_clipboard)
-            self.main.edit_clipboard.clear()
+            group.config_list.extend(_EDIT_CACHE)
+            _EDIT_CACHE.clear()
             self._draw()
 
     def cut(self):
         element, index, parent = self._element_index()
 
-        self.main.edit_clipboard.append(deepcopy(element.cfg))
+        _EDIT_CACHE.append(deepcopy(element.cfg))
         parent.config_list.pop(index)
         self._draw()
 
