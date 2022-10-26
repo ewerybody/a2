@@ -251,7 +251,7 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
             if marker not in nextline:
                 break
             pre, ver = nextline.split(marker, 1)
-            parts = ver.split('.',3)
+            parts = ver.split('.', 3)
             current = '.'.join(parts[:3])
             if current == self.output:
                 break
@@ -314,14 +314,30 @@ def check_py_version():
         if not line.startswith('<a href="') or not line[9].isdecimal():
             continue
 
-        version_str = line[9:line.find('/"', 9)]
+        version_str = line[9 : line.find('/"', 9)]
         try:
             version = tuple(int(i) for i in version_str.split('.'))
         except ValueError:
             continue
 
         if version > sys.version_info:
-            versions.append(version)
+            if version[:2] > sys.version_info[:2]:
+                # check for pre-release versions
+                prefix = f'<a href="python-{version_str}'
+                these_versions = [
+                    l[len(prefix) : l.find('">')]
+                    for l in a2download.read(url + version_str).split('\r\n')
+                    if l.startswith(prefix)
+                ]
+                if any(v.startswith('-') for v in these_versions):
+                    # there is a version without attachment: that's a main release
+                    versions.append(version)
+                else:
+                    # append the attachment to this one
+                    for v in set(v.split('-', 1)[0] for v in these_versions if '-' in v):
+                        versions.append((*version, v))
+            else:
+                versions.append(version)
     return versions
 
 
@@ -339,6 +355,43 @@ def check_pyside_version():
     return versions
 
 
-if __name__ == '__main__':
-    check_py_version()
-    check_pyside_version()
+def check_dev_updates():
+    import a2ahk
+
+    def str_ver(version):
+        return '.'.join(str(i) for i in version)
+
+    log.info('Checking %s version ...', a2ahk.NAME.title())
+    latest = a2ahk.get_latest_version()
+    current = a2ahk.get_current_version()
+    if current != latest:
+        log.info(
+            f'New {a2ahk.NAME.title()} version online!\n' f' Current: {current}\n Latest: {latest}'
+        )
+        yield a2ahk.NAME, latest
+    else:
+        log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
+
+    log.info('Checking Python version ...')
+    up_to_date = True
+    for version in check_py_version():
+        if version[:2] == sys.version_info[:2]:
+            log.info('New patch for current Python version: %s', str_ver(version))
+            up_to_date = False
+        elif len(version) > 3:
+            log.info(' new Python pre-release: %s', str_ver(version))
+        else:
+            log.info('New Python version: %s', str_ver(version))
+            up_to_date = False
+        yield 'python', version
+    if up_to_date:
+        log.info('Python is up-to-date at %s', str_ver(sys.version_info))
+
+    log.info('Checking PySide version ...')
+    up_to_date = True
+    for version in check_pyside_version():
+        yield 'pyside', version
+        log.info('New PySide version: %s', str_ver(version))
+        up_to_date = False
+    if up_to_date:
+        log.info('PySide is up-to-date at %s', str_ver(QtCore.__version_info__))

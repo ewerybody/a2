@@ -451,3 +451,33 @@ def tags():
         a2 = A2Obj.inst()
         _A2TAGS.update(a2util.json_read(os.path.join(a2.paths.defaults, 'tags.json')))
     return _A2TAGS
+
+
+
+def check_for_updates():
+    a2 = A2Obj.inst()
+
+    # Only check for new a2 release when not dev/no .git present:
+    if not os.path.isdir(a2.paths.git):
+        new_version = a2.check_update()
+        if new_version:
+            yield 'core', {'a2': new_version}
+
+    log.info('Checking module package updates ...')
+    for source_name, source in a2.module_sources.items():
+        try:
+            data = source.check_update()
+            if source.has_update:
+                version = data.get('version', '')
+                log.info('New "%s" %s module source package', source_name, version)
+                yield 'sources', {source_name: version}
+            else:
+                yield 'sources', None
+        except FileNotFoundError:
+            continue
+
+    if a2.dev_mode and os.path.isdir(a2.paths.git):
+        import a2dev
+
+        for name, version in a2dev.check_dev_updates():
+            yield 'core', {name: version}

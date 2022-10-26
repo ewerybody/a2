@@ -205,9 +205,9 @@ class A2Window(QtWidgets.QMainWindow):
 
         for keys, parent, func in (
             (Qt.Key_Escape, self, self.escape),
-            (Qt.CTRL + Qt.Key_Enter, self, self.edit_submit),
-            (Qt.CTRL + Qt.Key_Return, self, self.edit_submit),
-            (Qt.CTRL + Qt.Key_S, self, self.edit_submit),
+            (Qt.CTRL | Qt.Key_Enter, self, self.edit_submit),
+            (Qt.CTRL | Qt.Key_Return, self, self.edit_submit),
+            (Qt.CTRL | Qt.Key_S, self, self.edit_submit),
             (Qt.Key_Home, scroll_area, self.scroll_to_start),
             (Qt.Key_End, scroll_area, self.scroll_to_end),
             (Qt.Key_F1, self, self.module_view.help),
@@ -342,7 +342,7 @@ class A2Window(QtWidgets.QMainWindow):
         state = self.windowState()
         if state == QtCore.Qt.WindowMinimized:
             self.setWindowState(QtCore.Qt.WindowActive)
-        elif state not in QtCore.Qt.WindowState.values.values():
+        elif state not in QtCore.Qt.WindowState:
             self.setWindowState(QtCore.Qt.WindowActive)
 
         self._initial_activation_tries = 0
@@ -645,7 +645,7 @@ class UpdatesChecker(QtCore.QThread):
 
     def run(self):
         updates = {}
-        for where, data in _check_for_updates():
+        for where, data in a2core.check_for_updates():
             if self.isInterruptionRequested():
                 return
             if data:
@@ -655,71 +655,12 @@ class UpdatesChecker(QtCore.QThread):
             self.change.emit(updates)
 
 
-def _check_for_updates():
-    a2 = a2core.A2Obj.inst()
-
-    # Only check for new a2 release when not dev/no .git present:
-    if not os.path.isdir(a2.paths.git):
-        new_version = a2.check_update()
-        if new_version:
-            yield 'core', {'a2': new_version}
-
-    log.info('Checking module package updates ...')
-    for source_name, source in a2.module_sources.items():
-        try:
-            data = source.check_update()
-            if source.has_update:
-                version = data.get('version', '')
-                log.info('New "%s" %s module source package', source_name, version)
-                yield 'sources', {source_name: version}
-            else:
-                yield 'sources', None
-        except FileNotFoundError:
-            continue
-
-    if a2.dev_mode and os.path.isdir(a2.paths.git):
-        for name, version in _check_dev_updates():
-            yield 'core', {name: version}
-
-
-def _check_dev_updates():
-    import a2ahk
-
-    def str_ver(version):
-        return '.'.join(str(i) for i in version)
-
-    log.info('Checking %s version ...', a2ahk.NAME.title())
-    latest = a2ahk.get_latest_version()
-    current = a2ahk.get_current_version()
-    if current != latest:
-        log.info(
-            f'New {a2ahk.NAME.title()} version online!\n'
-            f' Current: {current}\n Latest: {latest}'
-        )
-        yield a2ahk.NAME, latest
-    else:
-        log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
-
-    log.info('Checking Python version ...')
-    for version in a2dev.check_py_version():
-        if version[:2] == sys.version_info[:2]:
-            log.info('New patch for current Python version: %s', str_ver(version))
-        else:
-            log.info('New Python version: %s', str_ver(version))
-        yield 'python', version
-
-    log.info('Checking PySide version ...')
-    for version in a2dev.check_pyside_version():
-        yield 'pyside', version
-        log.info('New PySide version: %s', str_ver(version))
-
-
 if __name__ == '__main__':
     a2 = a2core.A2Obj.inst()
     a2.start_up()
 
     updates = {}
-    for where, data in _check_for_updates():
+    for where, data in a2core.check_for_updates():
         if data:
             updates.setdefault(where, {}).update(data)
     print('updates: %s' % updates)
