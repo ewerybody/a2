@@ -49,13 +49,14 @@ string_endswith(byref string, byref end) {
     return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
 }
 
-is_whitespace(byref string) {
+string_is_whitespace(byref string) {
     if (string == A_Space OR string == A_Tab OR string == "`n" OR string == "`r")
         return true
     else
         return false
 }
 
+; Trim one or more characters from a string start and end.
 string_trim(byref string, byref chars) {
     return string_trimLeft(string_trimRight(string, chars), chars)
 }
@@ -63,29 +64,37 @@ string_trim(byref string, byref chars) {
 string_trimLeft(string, chars) {
     ; Remove all occurences of trim at the beginning of string
     ; trim can be an array of strings that should be removed.
-    if (!IsObject(chars))
-        chars := [chars]
-    for index, trimString in chars
+    if (IsObject(chars))
+        chars := string_join(chars, "")
+
+    StringLen, slen, string
+    Loop % slen
     {
-        len := StrLen(trimString)
-        while(SubStr(String, 1, len) == trimString)
-            string := SubStr(String, len + 1)
+        If InStr(chars, SubStr(string, 1, 1))
+        {
+            string := SubStr(string, 2)
+            Continue
+        }
+        return string
     }
-    return string
 }
 
 string_trimRight(string, chars) {
     ; Remove all occurences of trim at the end of string
     ; trim can be an array of strings that should be removed.
-    if (!IsObject(chars))
-        chars := [chars]
-    for index, trimString in chars
+    if (IsObject(chars))
+        chars := string_join(chars, "")
+
+    StringLen, slen, string
+    Loop % slen
     {
-        len := strLen(trimString)
-        while(string_endsWith(string, trimString))
-            StringTrimRight, string, string, %len%
+        If InStr(chars, SubStr(string, 0))
+        {
+            string := SubStr(string, 1, slen - A_Index)
+            Continue
+        }
+        return string
     }
-    return string
 }
 
 string_strip(string) {

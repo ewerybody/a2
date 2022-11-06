@@ -1,4 +1,5 @@
 ﻿#Include %A_ScriptDir%\..\string.ahk
+#Include %A_ScriptDir%\..\ahk_functions.ahk
 #Include a2test.ahk
 
 ; test join
@@ -17,7 +18,7 @@ msg = string_join:%j1% test:>%sabc%< control:>%abcs%<`n
 ; Test starts/endswith
 ; This is also case-INsensitive
 sw1 := assertmsg(string_startswith("a#$ NCowehofd", "A#$ "))
-sw2 := assertmsg(!string_startswith(" 3456 NCowehofd", " 3456  "))
+sw2 := assertmsg(!string_startswith(" 3456 NCowehofd", " 3456 "))
 msg .= "string_startswith ' :" sw1 " " sw2 "`n"
 
 ew1 := assertmsg(string_endswith("NCowehofd$#%S", "$#%s"))
@@ -68,6 +69,11 @@ s1 := string_reverse(st)
 s2 := assertmsg(st == string_reverse(s1))
 msg .= "string_reverse: " st " " s2 " " s1 "`n"
 
-msg .= "string_random: " string_random(32)
+msg .= "string_random: " string_random(32) "`n"
+
+; test string_trim
+st := "abc ""><""abc "
+s1 := string_trim(st, " ""abc")
+msg .= "string_trim: " assertmsg(s1 == "><")
 
 MsgBox, %msg%
