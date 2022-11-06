@@ -1,7 +1,7 @@
 a2dev_get_py()
 {
     ; TODO: this needs to be a little bit more dynamic
-    supported_versions := ["3.10", "3.9", "3.8", "3.7", "3.6"]
+    supported_versions := ["3.11", "3.10", "3.9"]
     ;exe_type := {filename: "python.exe", reg_name: "ExecutablePath"}
     exe_type := {filename: "pythonw.exe", reg_name: "WindowedExecutablePath"}
 
