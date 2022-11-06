@@ -6,22 +6,34 @@ if (!pydir) {
 }
 
 ; Lists all compatible versions, prefered verison top.
-cores := ["PySide6\Qt6Core.dll", "PySide2\Qt5Core.dll"]
+; Lets not use `FileGetVersion` on QtCore.dll since they skip the last bits.
+; The whole version is in the shiboken-init script:
+; files := ["PySide6\Qt6Core.dll", "PySide2\Qt5Core.dll"]
+files := ["shiboken6\__init__.py", "shiboken2\__init__.py"]
 
-for _, rel_path in cores
+for _, rel_path in files
 {
-    qtdll_path := pydir . "\Lib\site-packages\" . rel_path
-    if (!FileExist(qtdll_path))
+    file_path := pydir . "\Lib\site-packages\" . rel_path
+    if (!FileExist(file_path))
         Continue
 
-    FileGetVersion, version, %qtdll_path%
+    version := FileReadLine(file_path, 1)
+    version_prefix := "__version__ = "
+    if !string_startswith(version, version_prefix) {
+        msgbox_error("Cannot get version from " rel_path "!`nExpected line: >" version_prefix "<`nFound: " version)
+        ExitApp
+    }
+
+    version := SubStr(version, StringLen(version_prefix))
+    version := string_trim(version, " """)
+
     if version
         Break
 }
 
 if (!version) {
     msg := "Unable to find any of those:`n  "
-    msg .= string_join(cores, "`n  ") . "`n"
+    msg .= string_join(files, "`n  ") . "`n"
     msg .= "Make sure at least one is installed!"
     MsgBox, 16, No PySide Found!, %msg%
 } else
