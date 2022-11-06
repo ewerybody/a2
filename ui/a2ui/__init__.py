@@ -340,10 +340,16 @@ class A2Window(QtWidgets.QMainWindow):
 
         # restore the window from minimized state
         state = self.windowState()
-        if state == QtCore.Qt.WindowMinimized:
-            self.setWindowState(QtCore.Qt.WindowActive)
-        elif state not in QtCore.Qt.WindowState:
-            self.setWindowState(QtCore.Qt.WindowActive)
+        try:
+            if state == QtCore.Qt.WindowMinimized:
+                self.setWindowState(QtCore.Qt.WindowActive)
+            elif state not in QtCore.Qt.WindowState:
+                self.setWindowState(QtCore.Qt.WindowActive)
+        except TypeError as error:
+            if QtCore.__version_info__ < (6, 4):
+                raise TypeError(
+                    f'Update PySide! (yours: {QtCore.__version__}, need: 6.4)'
+                ) from TypeError
 
         self._initial_activation_tries = 0
         self._activate_window()

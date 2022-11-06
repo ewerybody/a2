@@ -342,7 +342,9 @@ def check_py_version():
 
 
 def check_pyside_version():
-    url = 'https://pypi.org/pypi/PySide{}/json'.format(QtCore.__version_info__[0])
+    import a2qt
+
+    url = 'https://pypi.org/pypi/PySide{}/json'.format(a2qt.QT_VERSION)
     data = a2download.get_remote_data(url)
     versions = []
     for version_str in data.get('releases', {}).keys():
@@ -350,13 +352,14 @@ def check_pyside_version():
             version = tuple(int(i) for i in version_str.split('.'))
         except ValueError:
             continue
-        if version > QtCore.__version_info__:
+        if version > a2qt.VERSION:
             versions.append(version)
     return versions
 
 
 def check_dev_updates():
     import a2ahk
+    import a2qt
 
     def str_ver(version):
         return '.'.join(str(i) for i in version)
@@ -394,4 +397,4 @@ def check_dev_updates():
         log.info('New PySide version: %s', str_ver(version))
         up_to_date = False
     if up_to_date:
-        log.info('PySide is up-to-date at %s', str_ver(QtCore.__version_info__))
+        log.info('PySide is up-to-date at %s', str_ver(a2qt.VERSION))

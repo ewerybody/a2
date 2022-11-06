@@ -458,7 +458,10 @@ def check_for_updates():
     a2 = A2Obj.inst()
 
     # Only check for new a2 release when not dev/no .git present:
-    if not os.path.isdir(a2.paths.git):
+    if os.path.isdir(a2.paths.git):
+        log.info('Skipping a2 update check as we\'re in dev.')
+    else:
+        log.info('Checking for a2 updates ...')
         new_version = a2.check_update()
         if new_version:
             yield 'core', {'a2': new_version}
