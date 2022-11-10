@@ -1,5 +1,5 @@
 """
-a2ui - setup interface for an Autohotkey environment.
+a2ui - Setup User Interface for an Autohotkey runtime.
 """
 import os
 import sys
@@ -20,8 +20,9 @@ log = a2core.get_logger(__name__)
 RESTART_DELAY = 300
 RUNTIME_WATCH_INTERVAL = 1000
 DEFAULT_WIN_SIZE = (700, 480)
-TITLE_ONLINE = 'Runtime is Live!'
-TITLE_OFFLINE = 'Runtime is Offline!'
+_TITLE_PREFIX = 'Runtime is'
+TITLE_ONLINE = _TITLE_PREFIX + ' Live!'
+TITLE_OFFLINE = _TITLE_PREFIX + ' Offline!'
 
 
 class A2Window(QtWidgets.QMainWindow):
@@ -189,6 +190,8 @@ class A2Window(QtWidgets.QMainWindow):
         self._make_url_action(self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter)
         self._make_url_action(self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram)
 
+        self.ui.actionInspect_UI.triggered.connect(self._inspect_ui)
+
     def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
         action.setData(url)
         action.setIcon(icon)
@@ -205,9 +208,9 @@ class A2Window(QtWidgets.QMainWindow):
 
         for keys, parent, func in (
             (Qt.Key_Escape, self, self.escape),
-            (Qt.CTRL | Qt.Key_Enter, self, self.edit_submit),
-            (Qt.CTRL | Qt.Key_Return, self, self.edit_submit),
-            (Qt.CTRL | Qt.Key_S, self, self.edit_submit),
+            ('Ctrl+Enter', self, self.edit_submit),
+            ('Ctrl+Return', self, self.edit_submit),
+            ('Ctrl+S', self, self.edit_submit),
             (Qt.Key_Home, scroll_area, self.scroll_to_start),
             (Qt.Key_End, scroll_area, self.scroll_to_end),
             (Qt.Key_F1, self, self.module_view.help),
