@@ -228,15 +228,16 @@ def copy_qt():
             continue
 
     # copy shiboken files
-    pyd = f'{SHIBOKEN.title()}.pyd'
-    shibo_pyd_src = os.path.join(Paths.py_site_packs, shibo_name, pyd)
-    shibo_pyd_dst = os.path.join(Paths.distui, shibo_name, pyd)
-    _copy(shibo_pyd_src, shibo_pyd_dst)
+    for name in f'{SHIBOKEN.title()}.pyd', '__init__.py':
+        src = os.path.join(Paths.py_site_packs, shibo_name, name)
+        dst = os.path.join(Paths.distui, shibo_name, name)
+        _copy(src, dst)
+
     # Pyinstaller copied this one into the root.. *shrug*
     abi = f'{shibo_name}{ABI_DLL}'
-    shibo_abi_src = os.path.join(Paths.py_site_packs, shibo_name, abi)
-    shibo_abi_dst = os.path.join(Paths.distui, abi)
-    _copy(shibo_abi_src, shibo_abi_dst)
+    src = os.path.join(Paths.py_site_packs, shibo_name, abi)
+    dst = os.path.join(Paths.distui, abi)
+    _copy(src, dst)
 
     pyside_dst_dir = os.path.join(Paths.distui, pyside_name)
     for name in QT_LIBS:
