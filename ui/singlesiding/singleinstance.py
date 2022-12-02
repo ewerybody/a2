@@ -64,7 +64,7 @@ class QSingleApplication(QtWidgets.QApplication):
         you *really* wish to use your own string, set ``_app_id``.
     """
 
-    message_received = QtCore.Signal([dict], [list], [bool], [int], [float])
+    message_received = QtCore.Signal((dict, list, bool, int, float))
     composition_changed = QtCore.Signal()
 
     # Public Variables
@@ -132,7 +132,7 @@ class QSingleApplication(QtWidgets.QApplication):
                 message = sys.argv[1:]
             if message:
                 self.send_message(message)
-            exit()
+            sys.exit()
 
         # Still here? Keep being awesome.
 
