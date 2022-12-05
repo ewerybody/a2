@@ -95,7 +95,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
     def _setup_ui(self):
         # css debug shortcut
         shortcut = QtGui.QShortcut(self)
-        shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.ALT | QtCore.Qt.Key_R))
+        shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.Key.Key_Alt | QtCore.Qt.Key.Key_R))
         shortcut.activated.connect(self.refresh_style)
 
         self.ui.keys_layout.addWidget(self.cursor_block_widget)
