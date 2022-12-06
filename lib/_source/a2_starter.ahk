@@ -5,7 +5,7 @@
 ;@Ahk2Exe-SetDescription a2 runtime starter
 ;@Ahk2Exe-SetOrigFilename a2.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.4.4
+;@Ahk2Exe-SetVersion 0.4.6
 
 If (!A_IsCompiled) {
     MsgBox, 16, ERROR, a2_starter should ONLY be run compiled!
