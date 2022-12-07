@@ -118,6 +118,18 @@ explorer_select(basename) {
     return file_found
 }
 
+; Try and retry selecting a file for a couple times.
+explorer_try_select(basename, retries := 10, delay := 500) {
+    Loop, %retries%
+    {
+        if explorer_select(basename)
+            Return 1
+        Sleep, %delay%
+    }
+
+    return 0
+}
+
 ; Open an Explorer with the given directory or file selected.
 explorer_show(pth) {
     pth := StrReplace(pth, "\\", "\")
