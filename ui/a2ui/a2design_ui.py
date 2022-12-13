@@ -3,14 +3,14 @@
 """
 Form generated from reading UI file 'a2design.ui'
 
-Created by: Qt User Interface Compiler version 6.2.3
+Created by: Qt User Interface Compiler version 6.4.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
 from a2qt.QtGui import QAction, QFont
 from a2qt.QtWidgets import QMenu, QMenuBar, QSplitter, QVBoxLayout, QWidget
-from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize
+from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
 
 from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
@@ -108,6 +108,9 @@ class Ui_a2MainWindow:
         self.actionChat_on_Telegram.setObjectName(u"actionChat_on_Telegram")
         self.actionSet_a2_Version = QAction(a2MainWindow)
         self.actionSet_a2_Version.setObjectName(u"actionSet_a2_Version")
+        self.actionInspect_UI = QAction(a2MainWindow)
+        self.actionInspect_UI.setObjectName(u"actionInspect_UI")
+        self.actionInspect_UI.setText(u"Inspect UI")
         self.centralwidget = QWidget(a2MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -116,6 +119,7 @@ class Ui_a2MainWindow:
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.splitter = QSplitter(self.centralwidget)
         self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Horizontal)
         self.splitter.setChildrenCollapsible(False)
         self.module_list = A2ModuleList(self.splitter)
         self.module_list.setObjectName(u"module_list")
@@ -170,6 +174,8 @@ class Ui_a2MainWindow:
         self.menuDev.addAction(self.actionCreate_New_Element)
         self.menuDev.addAction(self.actionBuild_A2_Package)
         self.menuDev.addAction(self.actionSet_a2_Version)
+        self.menuDev.addSeparator()
+        self.menuDev.addAction(self.actionInspect_UI)
         self.menuMain.addAction(self.actionA2_settings)
         self.menuMain.addAction(self.actionRefresh_UI)
         self.menuMain.addSeparator()
@@ -191,4 +197,5 @@ class Ui_a2MainWindow:
         self.actionChat_on_Gitter.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Gitter", None))
         self.actionChat_on_Telegram.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Telegram", None))
         self.actionSet_a2_Version.setText(QCoreApplication.translate("a2MainWindow", u"Set a2 Version", None))
+        self.actionInspect_UI.setShortcut(QCoreApplication.translate("a2MainWindow", u"Ctrl+Shift+C", None))
         pass

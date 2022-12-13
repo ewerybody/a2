@@ -37,6 +37,9 @@
     </property>
     <item>
      <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
       <property name="childrenCollapsible">
        <bool>false</bool>
       </property>
@@ -108,6 +111,8 @@
     <addaction name="actionCreate_New_Element"/>
     <addaction name="actionBuild_A2_Package"/>
     <addaction name="actionSet_a2_Version"/>
+    <addaction name="separator"/>
+    <addaction name="actionInspect_UI"/>
    </widget>
    <widget class="QMenu" name="menuMain">
     <property name="title">
@@ -297,6 +302,14 @@
   <action name="actionSet_a2_Version">
    <property name="text">
     <string>Set a2 Version</string>
+   </property>
+  </action>
+  <action name="actionInspect_UI">
+   <property name="text">
+    <string notr="true">Inspect UI</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
    </property>
   </action>
  </widget>

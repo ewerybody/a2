@@ -190,7 +190,7 @@ class A2Window(QtWidgets.QMainWindow):
         self._make_url_action(self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter)
         self._make_url_action(self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram)
 
-        # self.ui.actionInspect_UI.triggered.connect(self._inspect_ui)
+        self.ui.actionInspect_UI.triggered.connect(self._inspect_ui)
 
     def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
         action.setData(url)
@@ -563,6 +563,10 @@ class A2Window(QtWidgets.QMainWindow):
 
     def _on_updates(self):
         self
+
+    def _inspect_ui(self):
+        import pyside_inspect
+        pyside_inspect.InspectMode(self)
 
 
 class RuntimeCallThread(QtCore.QThread):
