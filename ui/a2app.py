@@ -130,6 +130,9 @@ def main():
         if _qt_path is not None:
             os.environ['QT_PLUGIN_PATH'] = os.path.abspath(os.path.join(_qt_path, '..', 'plugins'))
 
+        # TODO: make a dedicated dark theme
+        # sys.argv.extend(('-platform', 'windows:darkmode=2'))
+
         app = A2App()
         app.exec()
     # Broad except is expected here!
