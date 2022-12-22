@@ -18,12 +18,11 @@ def read(url, progress_callback=None):
 
 
 def read_json(url, progress_callback=None):
-    data = read_raw(url, progress_callback)
-    return json.loads(data)
+    return json.loads(read_raw(url, progress_callback))
 
 
 def read_raw(url, progress_callback=None):
-    app = _check_app()
+    _check_app()
     downloader = QDownload()
     downloader.read_raw(url, progress_callback)
     return downloader.data
@@ -33,7 +32,7 @@ class QDownload(QtCore.QObject):
     progress = QtCore.Signal(int, int)
 
     def __init__(self):
-        super(QDownload, self).__init__()
+        super().__init__()
         self.manager = QtNetwork.QNetworkAccessManager(self)
         self._progress_callback = None
         self._finished = False
@@ -110,10 +109,8 @@ class QDownload(QtCore.QObject):
         self._progress_callback(current, total)
 
     def _backup_report(self, current, total):
-        # if self._progress is None and total != -1:
-            # self._progress = tqdm(total=total, unit='bytes')
-        print('%i/%i' % (current, total))
-
+        if current not in (-1, total):
+            log.debug('%i/%i', current, total)
         if self._progress is not None:
             self._progress.update(current)
 
