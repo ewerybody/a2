@@ -1,5 +1,6 @@
 """test_qdl"""
 import json
+from functools import partial
 import unittest
 import qdl
 
@@ -14,6 +15,12 @@ class Test(unittest.TestCase):
         data = qdl.read(TEST_URL_TEXT)
         self.assertTrue(isinstance(data, str))
 
+    def test_broken_url(self):
+        self.assertRaises(
+            (json.JSONDecodeError, Exception),
+            partial(qdl.read_json, 'http://vVsdfbsdfgbvsdfvdsafvbsdfvgAdDsad'),
+        )
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     unittest.main(verbosity=2)

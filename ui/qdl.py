@@ -18,7 +18,8 @@ def read(url, progress_callback=None):
 
 
 def read_json(url, progress_callback=None):
-    return json.loads(read_raw(url, progress_callback))
+    data = read_raw(url, progress_callback)
+    return json.loads(data)
 
 
 def read_raw(url, progress_callback=None):
