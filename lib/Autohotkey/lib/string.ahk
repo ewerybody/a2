@@ -1,6 +1,6 @@
 ﻿
+; Assemble a single string from a given array of strings.
 string_join(byref array_of_strings, byref separator=", ") {
-    ; Assemble a single string from a given array of strings.
     result := ""
     Loop, % array_of_strings.MaxIndex() - 1
     {
@@ -12,8 +12,8 @@ string_join(byref array_of_strings, byref separator=", ") {
     Return result
 }
 
+; Tell if a search string is in an array object of strings.
 string_is_in_array(byref search, byref array, start := 1) {
-    ; look up the items of an array object
     ; returns index of search string if found
     ; returns 0 otherwise
     Loop % array.MaxIndex() {
@@ -24,8 +24,8 @@ string_is_in_array(byref search, byref array, start := 1) {
     Return 0
 }
 
+; Return true if given string looks like an URL.
 string_is_web_address(string) {
-    ; Return true if given string looks like an URL
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
     else {
@@ -38,14 +38,14 @@ string_is_web_address(string) {
     }
 }
 
+; Determine if a string starts with another string.
 string_startswith(byref string, byref startstr) {
-    ; Determine if a string starts with another string.
     ; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
     return InStr(string, startstr) = 1
 }
 
+; Determine if a string ends with another string
 string_endswith(byref string, byref end) {
-    ; Determine if a string ends with another string
     return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
 }
 
@@ -61,9 +61,8 @@ string_trim(byref string, byref chars) {
     return string_trimLeft(string_trimRight(string, chars), chars)
 }
 
+; Remove all occurences of chars at beginning of string. chars can be array of strings to be removed.
 string_trimLeft(string, chars) {
-    ; Remove all occurences of trim at the beginning of string
-    ; trim can be an array of strings that should be removed.
     if (IsObject(chars))
         chars := string_join(chars, "")
 
@@ -79,9 +78,8 @@ string_trimLeft(string, chars) {
     }
 }
 
+; Remove all occurences of chars at the end of string. chars can be array of strings to be removed.
 string_trimRight(string, chars) {
-    ; Remove all occurences of trim at the end of string
-    ; trim can be an array of strings that should be removed.
     if (IsObject(chars))
         chars := string_join(chars, "")
 
@@ -97,8 +95,8 @@ string_trimRight(string, chars) {
     }
 }
 
+; Strip whitespace from start and end of a string.
 string_strip(string) {
-    ; strip whitespace from start and end of a string:
     ; if first char is space, tab or linefeed, remove it and look again:
     c := SubStr(string, 1, 1)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
@@ -117,15 +115,15 @@ string_strip(string) {
     return string
 }
 
+; Remove quotes from a string if necessary.
 string_unquote(string, quote = """") {
-    ; Remove quotes from a string if necessary.
     if (InStr(string, quote) = 1 && string_endsWith(string, quote))
         string := string_trim(string, quote)
     return string
 }
 
+; Add quotes to a string only if necessary.
 string_quote(string, once = 1, quote = """") {
-    ; Add quotes to a string only if necessary.
     if (once) {
         if (InStr(string, quote) != 1)
             string := quote string
@@ -136,15 +134,15 @@ string_quote(string, once = 1, quote = """") {
     return quote string quote
 }
 
+; Ensure a string to end with a suffix string.
 string_suffix(string, suffix) {
-    ; Ensure a string to end with a suffix string.
     if !string_endswith(string, suffix)
         return string suffix
     return string
 }
 
+; Ensure a string to start with a suffix string.
 string_prefix(string, prefix) {
-    ; Ensure a string to start with a suffix string.
     if !string_startswith(string, prefix)
         return prefix string
     return string
