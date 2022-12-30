@@ -246,7 +246,7 @@ QScrollBar::handle:pressed {
 
 A2CodeField,
 A2InternalName,
-QPlainTextEdit#a2console {
+ConsoleUiHandler#a2console {
 	font-family: "Consolas";
 }
 
