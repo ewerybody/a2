@@ -1,14 +1,12 @@
 """Stuff for downloads from the internets."""
-import json
-from a2qt import QtCore
+from a2qt import QtCore, QtNetwork
 
 import a2core
-
+import qdl
 
 log = a2core.get_logger(__name__)
 
 
-# ERROR_FILE_NOT_FOUND = 'File not found (%s)'
 GITHUB_URL = 'github.com'
 GITHUB_API = 'https://api.github.com/repos/'
 GITHUB_COMPARE_TEMPLATE = GITHUB_API + '{owner}/{repo}/compare/{from_tag}...{to_tag}'
@@ -51,25 +49,7 @@ class GetJSONThread(QtCore.QThread):
         self.data_fetched.emit(remote_data)
 
 
-def read(url: str) -> str:
-    """
-    Read contents from a file at given url.
-    """
-    url = url.lower().strip()
-    from urllib import request
-
-    try:
-        req = request.Request(url, data=None, headers={'User-Agent': 'Mozilla/5.0'})
-        data = request.urlopen(req).read()
-    except request.HTTPError as error:
-        raise RuntimeError('Could not find data at given address!\n%s' % error)
-
-    try:
-        data = data.decode(encoding='utf-8-sig')
-    except Exception as error:
-        log.error(error)
-        raise RuntimeError('Error decoding data from given address!:\n%s' % error)
-    return data
+read = qdl.read
 
 
 def get_remote_data(url):
@@ -79,12 +59,11 @@ def get_remote_data(url):
     :param str url: Web address to get the JSON data from.
     :rtype: dict
     """
-    data = read(url)
     try:
-        remote_data = json.loads(data)
+        remote_data = qdl.read_json(url)
     except Exception as error:
         log.error(error)
-        raise RuntimeError('Error loading JSON from given address!:\n%s' % error)
+        raise RuntimeError(f'Error loading JSON from given address! ({url}):\n{error}')
     return remote_data
 
 
