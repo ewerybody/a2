@@ -15,7 +15,14 @@ a2log_error(msg, module="") {
 }
 
 _a2log(level, module, msg) {
+    static last_logged
+    now := time_unix()
+    if (last_logged != now) {
+        last_logged := now
+        line := "@time " now "`n"
+    }
+
     log_path := path_join(a2.paths.data, "a2.log")
-    line := time_unix_ms() " - " level ":" module ": " msg
+    line .= level ":" module ": " msg
     FileAppend %line%`n, %log_path%
 }
