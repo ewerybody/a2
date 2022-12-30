@@ -109,7 +109,7 @@ class QDownload(QtCore.QObject):
         self._progress_callback(current, total)
 
     def _backup_report(self, current, total):
-        if current not in (-1, total):
+        if current not in (-1, total) and total != -1:
             log.debug('%i/%i', current, total)
         if self._progress is not None:
             self._progress.update(current)
