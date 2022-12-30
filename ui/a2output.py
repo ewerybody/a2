@@ -9,7 +9,7 @@ _SOUT = None
 _SERR = None
 LOG_STD_NAME = 'a2.log'
 SEP = ' - '
-
+TIMESTAMP = '@time'
 
 def connect(write_func):
     """Connect a function to standard output."""
@@ -90,22 +90,30 @@ class A2Logger:
 
         self._data_path = None
         self._path = None
+        self._last_time = 0
         connect(self._write_msg)
         connect_error(self._write_msg)
 
     @staticmethod
     def _now():
-        return round(time.time(), 2)
+        return int(time.time())
 
     def _write_msg(self, msg):
-        if not msg.strip():
+        # don't log empty lines
+        if not msg:
             return
 
-        if not msg.endswith('\n'):
+        # log timestamp only on seconds base
+        this_time = self._now()
+        if this_time != self._last_time:
+            self._last_time = this_time
+            msg = f'{TIMESTAMP} {this_time}\n{msg}'
+        # amend short messages with linebreak if none
+        elif len(msg) > 10 and not msg.endswith('\n'):
             msg += '\n'
 
         with open(self.path, 'a', encoding='utf8') as file_obj:
-            file_obj.write(f'{self._now()}{SEP}{msg}')
+            file_obj.write(msg)
 
     def set_data_path(self, data_path):
         """

@@ -217,8 +217,8 @@ def unroll_seconds(value, decimals=2):
     v = round(current, decimals)
     if decimals == 0:
         v = int(v)
-        if v != 1:
-            name += 's'
+    if v != 1.0:
+        name += 's'
     return '%s %s' % (v, name)
 
 
