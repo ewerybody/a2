@@ -3,6 +3,8 @@ Objects for the the a2 settings tabs.
 """
 import os
 import sys
+import time
+import datetime
 
 from a2qt import QtGui, QtCore, QtWidgets
 
@@ -10,6 +12,7 @@ import a2ahk
 import a2uic
 import a2core
 import a2util
+import a2output
 import a2ctrl.connect
 from a2ctrl import Icons
 from a2widget import a2module_source, a2hotkey
@@ -464,96 +467,125 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.main.check_main_menu_bar()
 
 
-class ConsoleUiHandler(QtCore.QObject):
+class ConsoleUiHandler(QtWidgets.QListWidget):
     def __init__(self, parent, tab_widget, ui, a2):
-        super(ConsoleUiHandler, self).__init__(parent)
+        super(ConsoleUiHandler, self).__init__(tab_widget)
         self.tab_widget = tab_widget
         self.main = parent.main
 
-        self._start_byte = 0
-        self._end_byte = None
+        self._end_byte = 0
         self._lines = []
         self._lines_shown = 0
-        self._sep = None
+        self._log_path = ''
+        self._last_item = None
         self._init_block_size = pow(2, 12)
-        self.a2console = QtWidgets.QPlainTextEdit(self.tab_widget)
         self._setup_ui()
 
     def _setup_ui(self):
         layout = QtWidgets.QVBoxLayout(self.tab_widget)
-        self.a2console.setObjectName('a2console')
-        layout.addWidget(self.a2console)
+        self.setObjectName('a2console')
+        layout.addWidget(self)
+        self.setVerticalScrollMode(QtWidgets.QListWidget.ScrollPerPixel)
+        self.setMouseTracking(True)
+        self.itemEntered.connect(self._on_item_entered)
 
-        import a2output
-
-        logger = a2output.get_logwriter()
-        self._sep = a2output.SEP
-        self._init_readlines(logger.path)
-        self.append_lines()
+        self._log_path = a2output.get_logwriter().path
+        self._init_readlines()
 
         self.log_watcher = QtCore.QFileSystemWatcher(self)
-        self.log_watcher.addPath(logger.path)
-        self.log_watcher.fileChanged.connect(self._log_changed)
+        self.log_watcher.addPath(self._log_path)
+        self.log_watcher.fileChanged.connect(self._on_log_change)
 
         QtCore.QTimer(self).singleShot(100, self._scroll_to_bottom)
 
-    def _log_changed(self, log_path):
-        with open(log_path) as file_obj:
+    def _on_log_change(self):
+        with open(self._log_path) as file_obj:
             file_obj.seek(self._end_byte)
+            this_block = []
             for line in file_obj:
-                self.line_gathered(line)
+                if not line.strip():
+                    continue
+                if line.startswith(a2output.TIMESTAMP) and this_block:
+                    self._lines.append(''.join(this_block))
+                    this_block.clear()
+                this_block.append(line)
+            if this_block:
+                self._lines.append(''.join(this_block))
+                this_block.clear()
             self._end_byte = file_obj.tell()
         self.append_lines()
 
-    def _scroll_to_bottom(self):
-        self.main._scroll(self.a2console, True, 10)
+    def _on_item_entered(self, item):
+        data = item.data(QtCore.Qt.UserRole)
+        if data is None:
+            return
 
-    def line_gathered(self, line):
-        try:
-            timestamp, txt = line.split(self._sep, 1)
-            if len(timestamp) < 11:
-                return False
-            txt = txt.strip()
-            if not txt:
-                return False
-            self._lines.append((float(timestamp), txt))
-        except ValueError:
-            return False
-        return True
+        self._show_time_rel(item)
+        if self._last_item:
+            self._show_time_abs(self._last_item)
+        self._last_item = item
+
+    def _scroll_to_bottom(self):
+        self.main._scroll(self, True, 10)
 
     def append_lines(self):
         start, end = self._lines_shown, len(self._lines)
         if start == end:
             return
 
-        content = '\n'.join('%.2f - %s' % (ftime, txt) for ftime, txt in self._lines[start:end])
-        self.a2console.appendPlainText(content)
         self._lines_shown = end
+        for block in self._lines[start:end]:
+            item = QtWidgets.QListWidgetItem(block.strip())
+            if block.startswith(a2output.TIMESTAMP):
+                line_end = block.find('\n')
+                try:
+                    data = {'t': int(float(block[5:line_end].split(maxsplit=1)[0]))}
+                    item.setData(QtCore.Qt.UserRole, data)
+                    self._show_time_abs(item)
+                except ValueError:
+                    continue
+            self.addItem(item)
 
-    def _init_readlines(self, log_path):
+    def _show_time_abs(self, item: QtWidgets.QListWidgetItem):
+        data = item.data(QtCore.Qt.UserRole)
+        if data is None:
+            return
+
+        text = item.text()
+        line_end = text.find('\n')
+        date = datetime.datetime.fromtimestamp(data['t'])
+        item.setText(f'@{date}:{text[line_end:]}')
+
+    def _show_time_rel(self, item: QtWidgets.QListWidgetItem):
+        data = item.data(QtCore.Qt.UserRole)
+        if data is None:
+            return
+        text = item.text()
+        line_end = text.find('\n')
+        time_ago = a2util.unroll_seconds(time.time() - data['t'])
+        item.setText(f'{time_ago} ago:{text[line_end:]}')
+
+    def _init_readlines(self):
         """
         For immediate display: read last block of `_init_block_size` from log.
         Ignoring anything above.
         """
-        if not os.path.isfile(log_path):
+        if not os.path.isfile(self._log_path):
             return
 
-        with open(log_path) as file_obj:
-            num_bytes = os.path.getsize(log_path)
-            if num_bytes > self._init_block_size:
-                self._start_byte = num_bytes - self._init_block_size
-            else:
-                self._start_byte = 0
-            file_obj.seek(self._start_byte)
-            self._end_byte = num_bytes
+        num_bytes = os.path.getsize(self._log_path)
+        if num_bytes > self._init_block_size:
+            self._end_byte = num_bytes - self._init_block_size
+            self._lines.append('... ')
+        else:
+            self._end_byte = 0
+        self._on_log_change()
 
-            # first line might be incomplete, if so add len to start_byte
-            first_line = file_obj.__next__()
-            if not self.line_gathered(first_line):
-                self._start_byte += len(first_line)
-
-            for line in file_obj:
-                self.line_gathered(line)
+    def leaveEvent(self, event: QtCore.QEvent) -> None:
+        if self._last_item:
+            self._show_time_abs(self._last_item)
+            self._last_item = None
+        return super().leaveEvent(event)
 
 
 class _CmdCheckThread(QtCore.QThread):
