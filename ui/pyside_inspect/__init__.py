@@ -3,24 +3,27 @@ import sys
 import inspect
 from .pyside import QtWidgets, QtCore, QtGui
 
+WA_TRANSP4MOUSE = QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents
+
 
 class InspectMode(QtWidgets.QMainWindow):
     def __init__(self, parent):
         super().__init__(parent)
         self._last_widget = None
-        self._widget = None
+        self._widget = None  # type: None | QtWidgets.QWidget
         self._last_cursor_pos = None
         self._app = parent.a2.app
         self._ui_map = {}
+        self._stack = []
 
         self.setGeometry(parent.geometry())
         # self.setStyleSheet('border: 2px dashed white;' 'background-color: transparent;')
-        # self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
+        # self.setAttribute(WA_TRANSP4MOUSE, True)
         flags = self.windowFlags()
         # flags |= QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint
-        flags |= QtCore.Qt.FramelessWindowHint
+        flags |= QtCore.Qt.WindowType.FramelessWindowHint
         self.setWindowFlags(flags)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground)
 
         self.highlight = Highlight(self)
         self.highlight.clicked.connect(self.highlight_click)
@@ -32,7 +35,7 @@ class InspectMode(QtWidgets.QMainWindow):
         # )
         # self.escape_shortcut.setContext(QtCore.Qt.ApplicationShortcut)
         self.shortcut = QtGui.QShortcut(self)
-        self.shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.Key_Escape))
+        self.shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.Key.Key_Escape))
         self.shortcut.activated.connect(self.close)
 
         self.timer = QtCore.QTimer(self)
@@ -52,24 +55,28 @@ class InspectMode(QtWidgets.QMainWindow):
         # thread.finished.connect(thread.deleteLater)
         # thread.start()
         self._ui_map = get_ui_map()
+        self._ui_map
 
     def disable_click(self):
         if self._enabled:
             self._enabled = False
-            self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
+            self.setAttribute(WA_TRANSP4MOUSE, True)
             self.highlight.set_highlighted(False)
 
     def enable_click(self):
         if not self._enabled:
             self._enabled = True
-            self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
+            self.setAttribute(WA_TRANSP4MOUSE, False)
             self.highlight.set_highlighted(True)
             self.activateWindow()
 
-            test = self.testAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-            print('WA_TransparentForMouseEvents: %s' % test)
+            test = self.testAttribute(WA_TRANSP4MOUSE)
+            print('WA_TRANSP4MOUSE: %s' % test)
 
-            print('highlight under cursor: %s' % (self._app.widgetAt(QtGui.QCursor.pos()) is self.highlight))
+            print(
+                'highlight under cursor: %s'
+                % (self._app.widgetAt(QtGui.QCursor.pos()) is self.highlight)
+            )
 
     # def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
     #     print('event.pos(): %s' % event.pos())
@@ -83,8 +90,8 @@ class InspectMode(QtWidgets.QMainWindow):
     def check(self):
         cursor_pos = QtGui.QCursor.pos()
         if cursor_pos == self._last_cursor_pos:
-            self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
-            self.highlight.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
+            self.setAttribute(WA_TRANSP4MOUSE, False)
+            self.highlight.setAttribute(WA_TRANSP4MOUSE, False)
             self.enable_click()
             self.enable_timer.stop()
             return
@@ -93,7 +100,7 @@ class InspectMode(QtWidgets.QMainWindow):
         widget = self._app.widgetAt(cursor_pos)
         if widget is self or widget is self.highlight:
             print('widget is self')
-            self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, True)
+            self.setAttribute(WA_TRANSP4MOUSE, True)
             return
         if widget is None:
             # print('widget is None')
@@ -118,26 +125,55 @@ class InspectMode(QtWidgets.QMainWindow):
         super().close()
 
     def highlight_click(self):
-        stack = []
+        if self._widget is None:
+            return
+
+        self._stack.clear()
         depth = 0
         obj = self._widget
-        while True:
+        name = self._widget.objectName()
+
+        while obj is not None:
             print('widget: %s' % obj)
             print('  class: %s' % obj.__class__)
-            m = obj.__class__.__module__
-            print('  module: %s' % m)
-            mod = sys.modules[m]
-            if mod.__file__ is None or mod.__file__.endswith('.pyd'):
-                obj = obj.parent()
-                depth += 1
-            else:
-                print('mod.__file__: %s' % mod.__file__)
-                # with open(mod.__file__) as fobj:
-                #     content = fobj.read()
-                break
+            mod_name = obj.__class__.__module__
+            print('  module: %s' % mod_name)
+            mod = sys.modules[mod_name]
+            if mod.__file__ is not None and not mod.__file__.endswith('.pyd'):
+                self._scan_file(mod.__file__, obj)
 
+            self._stack.append(obj)
+            obj = obj.parent()
+
+            depth += 1
             if depth > 100:
                 break
+
+    def _scan_file(self, path, obj):
+        print(f'scanning: {path}...')
+
+        with open(path) as file_obj:
+            mod_lines = file_obj.read().split('\n')
+
+        search_var = ''
+        for i, line in enumerate(mod_lines):
+            if name not in line or line in ('"""', "'''") or line.lstrip().startswith('#'):
+                continue
+            pos = line.find(name)
+            quote = line[pos - 1]
+            if not quote in '\'"' or line[pos + len(name)] != quote:
+                continue
+
+            if 'setObjectName' in line:
+                opos = line.find('setObjectName')
+            else:
+                left = line[: pos - 1].strip()
+                if left[-1] != '=':
+                    continue
+                left = left[:-1].rstrip()
+
+        # with open(mod.__file__) as fobj:
+        #     content = fobj.read()
 
     def update_ui_map(self):
         thread = self.sender()
@@ -148,8 +184,8 @@ class InspectMode(QtWidgets.QMainWindow):
 
     # def _on_highlighter_update(self, under_cursor: bool):
     #     print('under_cursor: %s' % under_cursor)
-    #     self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, not under_cursor)
-    #     # self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents, False)
+    #     self.setAttribute(WA_TRANSP4MOUSE, not under_cursor)
+    #     # self.setAttribute(WA_TRANSP4MOUSE, False)
 
 
 class Highlight(QtWidgets.QPushButton):
@@ -157,7 +193,7 @@ class Highlight(QtWidgets.QPushButton):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        # self.highlight.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        # self.highlight.setAttribute(WA_TRANSP4MOUSE)
         self.setStyleSheet(
             'border: 2px dashed red; border-radius: 5px; background-color: transparent;'
         )
@@ -205,8 +241,13 @@ class UiCrawler(QtCore.QThread):
 
 
 def get_ui_map():
+    from . import pyside
+
+    layouts_mods = {}
+    side_mod_names = [pyside.NAME + '.' + mod for mod in pyside.__all__]
     stdlib = os.path.normcase(os.path.join(os.path.dirname(sys.executable), 'lib'))
-    # prevent RuntimeError: dictionary changed size during iteration
+
+    # loop over list to prevent RuntimeError: dictionary changed size during iteration
     for mod in list(sys.modules.values()):
         if not hasattr(mod, '__spec__'):
             continue
@@ -219,4 +260,9 @@ def get_ui_map():
         for name, member in inspect.getmembers(mod, inspect.isclass):
             if not hasattr(member, 'setupUi'):
                 continue
-            member
+            layouts_mods.setdefault(mod, []).append(member)
+    return layouts_mods
+
+
+if __name__ == '__main__':
+    pass
