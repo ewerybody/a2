@@ -8,6 +8,7 @@
 ;@Ahk2Exe-SetVersion 0.4.6
 #NoTrayIcon
 #Persistent
+#SingleInstance, force
 If (!A_IsCompiled) {
     MsgBox, 16, ERROR, a2ui starter should only be run compiled!
     ExitApp
@@ -25,24 +26,23 @@ for _, pth in [ui_path, python, script]
     }
 }
 
-; Run, "%python%" "%script%"
-cmd := """" python """ """ script """"
-shell := ComObjCreate("WScript.Shell")
-exec := shell.Exec(cmd)
-; Is this SWITCHED? Why?
-errors := exec.StdOut.ReadAll()
-; For some reason standart-out-messages here come from StdErr!
-; Well, since this is dev. Let's not worry about it too much ;)
-; msg := exec.StdErr.ReadAll()
-; if (msg)
-;     msgbox_info(msg, "messages starting a2app")
+startup_log_path := ui_path "\_ startup_error.log"
+if FileExist(startup_log_path)
+    FileDelete, %startup_log_path%
 
-if (errors)
-    msgbox_error(errors, "ERROR starting a2app")
+a2tip("Calling a2 ui ...")
+; We NEED to use `Run` to start detached and cannot collect output from python process!
+; The call would need to wait as long as the ui is open!! This is a no-go!
+; Startup Errors need to be handled by a2app!
+Run, "%python%" "%script%", "%ui_path%"
 sleep, 1000
+if FileExist(startup_log_path) {
+    msgbox_error(FileRead(startup_log_path), "Startup Error")
+}
 ExitApp
 
 Return ; -----------------------------------------------------------------------------
+#include ..\Autohotkey\lib\ahk_functions.ahk
 #include ..\Autohotkey\lib\a2tip.ahk
 #include ..\Autohotkey\lib\font.ahk
 #include ..\Autohotkey\lib\msgbox.ahk
