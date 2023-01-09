@@ -516,10 +516,6 @@ class ConsoleUiHandler(QtWidgets.QListWidget):
         self.append_lines()
 
     def _on_item_entered(self, item):
-        data = item.data(QtCore.Qt.UserRole)
-        if data is None:
-            return
-
         self._show_time_rel(item)
         if self._last_item:
             self._show_time_abs(self._last_item)
