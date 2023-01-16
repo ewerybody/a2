@@ -307,6 +307,11 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         return ''
 
 
+def call_version_bump_dialog(parent):
+    dialog = VersionBumpDialog(parent)
+    dialog.exec()
+
+
 def check_py_version():
     versions = []
     url = 'https://www.python.org/ftp/python/'
@@ -371,30 +376,40 @@ def check_dev_updates():
         log.info(
             f'New {a2ahk.NAME.title()} version online!\n' f' Current: {current}\n Latest: {latest}'
         )
-        yield a2ahk.NAME, latest
+        yield a2ahk.NAME, current, latest
     else:
         log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
+        yield a2ahk.NAME, current, None
 
     log.info('Checking Python version ...')
-    up_to_date = True
+    new_version = None
     for version in check_py_version():
         if version[:2] == sys.version_info[:2]:
-            log.info('New patch for current Python version: %s', str_ver(version))
-            up_to_date = False
+            new_version = str_ver(version)
+            log.info('New patch for current Python version: %s', new_version)
         elif len(version) > 3:
             log.info(' new Python pre-release: %s', str_ver(version))
         else:
-            log.info('New Python version: %s', str_ver(version))
-            up_to_date = False
-        yield 'python', version
-    if up_to_date:
+            new_version = str_ver(version)
+            log.info('New Python version: %s', new_version)
+    if new_version is None:
         log.info('Python is up-to-date at %s', str_ver(sys.version_info))
+    yield 'python', str_ver(sys.version_info), new_version
 
     log.info('Checking PySide version ...')
-    up_to_date = True
+    new_version = None
     for version in check_pyside_version():
-        yield 'pyside', version
-        log.info('New PySide version: %s', str_ver(version))
-        up_to_date = False
-    if up_to_date:
+        new_version = str_ver(version)
+        log.info('New PySide version: %s', new_version)
+    if new_version is None:
         log.info('PySide is up-to-date at %s', str_ver(a2qt.VERSION))
+    yield 'pyside', str_ver(a2qt.VERSION), new_version
+
+
+def build_package():
+    a2 = a2core.get()
+    batch_path = os.path.join(a2.paths.lib, '_batches')
+    batch_name = '1_build_all.bat'
+    _result, _pid = a2util.start_process_detached(
+        os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path
+    )
