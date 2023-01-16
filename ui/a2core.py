@@ -69,6 +69,8 @@ class A2Obj:
         self.urls = URLs(self.paths.a2_urls)
         self.log = a2output.get_logwriter()
         self._db = None
+        self._version = None
+        self._updates = {}
         log.info('A2Obj initialised!')
 
     def start_up(self):
@@ -194,17 +196,81 @@ class A2Obj:
         return self._db
 
     def check_update(self):
-        import a2util
         import a2download
 
         owner, repo = a2download.get_github_owner_repo(self.urls.a2)
         url = a2download.GITHUB_LATEST.format(owner=owner, repo=repo)
         data = a2download.get_remote_data(url)
         remote_version = data.get('tag_name')
-        current = a2util.json_read(self.paths.package_cfg).get('version')
-        if remote_version != current:
+        if remote_version != self.version:
             return remote_version
         return ''
+
+    @property
+    def version(self):
+        if self._version is None:
+            import a2util
+
+            self._version = a2util.json_read(self.paths.package_cfg).get('version')
+        return self._version
+
+    def check_all_updates(self):
+        is_git = os.path.isdir(self.paths.git)
+        self._updates.update({
+            'core': {'a2': [self.version]},
+            'sources': {s: [] for s in self.module_sources},
+            'current': 0,
+            'total': 1 + len(self.module_sources),
+            'git': is_git,
+            'checked': time.time()
+        })
+
+        if self.dev_mode and is_git:
+            self._updates['total'] += 3
+
+        yield self._updates
+
+        # Only check for new a2 release when not dev/no .git present:
+        if is_git:
+            log.info('Skipping a2 update check as we\'re in dev.')
+        else:
+            log.info('Checking for a2 updates ...')
+            try:
+                new_version = self.check_update()
+                if new_version:
+                    self._updates['core']['a2'].append(new_version)
+                    yield self._updates
+            except Exception:
+                log.exception('Error checking for a2 update!')
+
+        self._updates['current'] += 1
+        yield self._updates
+
+        log.info('Checking module package updates ...')
+        for source_name, source in self.module_sources.items():
+            self._updates['sources'][source_name].append(source.config.get('version'))
+            try:
+                data = source.check_update()
+                if source.has_update:
+                    version = data.get('version', '')
+                    log.info('New "%s" %s module source package!', source_name, version)
+                    self._updates['sources'][source_name].append(version)
+
+            except FileNotFoundError:
+                pass
+            except RuntimeError as error:
+                log.error('Checking "%s" resulted in: %s', source_name, error)
+
+            self._updates['current'] += 1
+            yield self._updates
+
+        if self.dev_mode and is_git:
+            import a2dev
+
+            for name, current, latest in a2dev.check_dev_updates():
+                self._updates['core'][name] = [current, latest]
+                self._updates['current'] += 1
+                yield self._updates
 
 
 class URLs:
@@ -451,41 +517,3 @@ def tags():
         a2 = A2Obj.inst()
         _A2TAGS.update(a2util.json_read(os.path.join(a2.paths.defaults, 'tags.json')))
     return _A2TAGS
-
-
-def check_for_updates():
-    a2 = A2Obj.inst()
-
-    # Only check for new a2 release when not dev/no .git present:
-    if os.path.isdir(a2.paths.git):
-        log.info('Skipping a2 update check as we\'re in dev.')
-    else:
-        log.info('Checking for a2 updates ...')
-        try:
-            new_version = a2.check_update()
-            if new_version:
-                yield 'core', {'a2': new_version}
-        except Exception:
-            log.exception('Error checking for a2 update!')
-
-
-    log.info('Checking module package updates ...')
-    for source_name, source in a2.module_sources.items():
-        try:
-            data = source.check_update()
-            if source.has_update:
-                version = data.get('version', '')
-                log.info('New "%s" %s module source package!', source_name, version)
-                yield 'sources', {source_name: version}
-            else:
-                yield 'sources', None
-        except FileNotFoundError:
-            continue
-        except RuntimeError as error:
-            log.error('Checking "%s" resulted in: %s', source_name, error)
-
-    if a2.dev_mode and os.path.isdir(a2.paths.git):
-        import a2dev
-
-        for name, version in a2dev.check_dev_updates():
-            yield 'core', {name: version}
