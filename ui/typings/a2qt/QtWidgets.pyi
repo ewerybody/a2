@@ -52,7 +52,10 @@ from a2qt import QtGui, QtCore
 
 
 class QAbstractButton(QWidget):
-    clicked: QtCore.Signal = ...
+    clicked: QtCore.Signal = ... # (bool)
+    pressed: QtCore.Signal = ... # ()
+    released: QtCore.Signal = ... # ()
+    toggled: QtCore.Signal = ... # (bool)
 
     def __init__(self, parent:Optional[QWidget]=..., icon:QtGui.QIcon=...) -> None: ...
 
@@ -4887,6 +4890,17 @@ class QListView(QAbstractItemView):
 
 
 class QListWidget(QListView):
+    textChanged: QtCore.Signal = ...
+    currentItemChanged: QtCore.Signal = ... # (current, previous)
+    currentRowChanged: QtCore.Signal = ... # (currentRow)
+    currentTextChanged: QtCore.Signal = ... # (currentText)
+    itemActivated: QtCore.Signal = ... # (item)
+    itemChanged: QtCore.Signal = ... # (item)
+    itemClicked: QtCore.Signal = ... # (item)
+    itemDoubleClicked: QtCore.Signal = ... # (item)
+    itemEntered: QtCore.Signal = ... # (item)
+    itemPressed: QtCore.Signal = ... # (item)
+    itemSelectionChanged: QtCore.Signal = ... # ()
 
     def __init__(self, parent:Optional[QWidget]=...) -> None: ...
 
