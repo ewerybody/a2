@@ -3,7 +3,7 @@
 """
 Form generated from reading UI file 'a2design.ui'
 
-Created by: Qt User Interface Compiler version 6.4.0
+Created by: Qt User Interface Compiler version 6.4.1
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
@@ -39,7 +39,6 @@ class Ui_a2MainWindow:
         self.actionExplore_to.setShortcut(u"Alt+E")
         self.actionAbout_Autohotkey = QAction(a2MainWindow)
         self.actionAbout_Autohotkey.setObjectName(u"actionAbout_Autohotkey")
-        self.actionAbout_Autohotkey.setText(u"About Autohotkey")
         self.actionExplore_to_a2_dir = QAction(a2MainWindow)
         self.actionExplore_to_a2_dir.setObjectName(u"actionExplore_to_a2_dir")
         self.actionExplore_to_a2_dir.setText(u"Explore to a2 ...")
@@ -111,6 +110,8 @@ class Ui_a2MainWindow:
         self.actionInspect_UI = QAction(a2MainWindow)
         self.actionInspect_UI.setObjectName(u"actionInspect_UI")
         self.actionInspect_UI.setText(u"Inspect UI")
+        self.actiona2_on_github = QAction(a2MainWindow)
+        self.actiona2_on_github.setObjectName(u"actiona2_on_github")
         self.centralwidget = QWidget(a2MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -160,8 +161,9 @@ class Ui_a2MainWindow:
         self.menuHelp.addAction(self.actionChat_on_Gitter)
         self.menuHelp.addAction(self.actionChat_on_Telegram)
         self.menuHelp.addSeparator()
-        self.menuHelp.addAction(self.actionAbout_a2)
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
+        self.menuHelp.addAction(self.actiona2_on_github)
+        self.menuHelp.addAction(self.actionAbout_a2)
         self.menuDev.addAction(self.actionNew_Module_Dialog)
         self.menuDev.addAction(self.actionEdit_module)
         self.menuDev.addAction(self.actionExplore_to)
@@ -194,8 +196,10 @@ class Ui_a2MainWindow:
         self.retranslateUi(a2MainWindow)
         QMetaObject.connectSlotsByName(a2MainWindow)
     def retranslateUi(self, a2MainWindow):
+        self.actionAbout_Autohotkey.setText(QCoreApplication.translate("a2MainWindow", u"Autohotkey.com", None))
         self.actionChat_on_Gitter.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Gitter", None))
         self.actionChat_on_Telegram.setText(QCoreApplication.translate("a2MainWindow", u"Chat on Telegram", None))
         self.actionSet_a2_Version.setText(QCoreApplication.translate("a2MainWindow", u"Set a2 Version", None))
         self.actionInspect_UI.setShortcut(QCoreApplication.translate("a2MainWindow", u"Ctrl+Shift+C", None))
+        self.actiona2_on_github.setText(QCoreApplication.translate("a2MainWindow", u"a2 on github.com", None))
         pass

@@ -87,8 +87,9 @@
     <addaction name="actionChat_on_Gitter"/>
     <addaction name="actionChat_on_Telegram"/>
     <addaction name="separator"/>
-    <addaction name="actionAbout_a2"/>
     <addaction name="actionAbout_Autohotkey"/>
+    <addaction name="actiona2_on_github"/>
+    <addaction name="actionAbout_a2"/>
    </widget>
    <widget class="QMenu" name="menuDev">
     <property name="title">
@@ -172,7 +173,7 @@
   </action>
   <action name="actionAbout_Autohotkey">
    <property name="text">
-    <string notr="true">About Autohotkey</string>
+    <string>Autohotkey.com</string>
    </property>
   </action>
   <action name="actionExplore_to_a2_dir">
@@ -310,6 +311,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actiona2_on_github">
+   <property name="text">
+    <string>a2 on github.com</string>
    </property>
   </action>
  </widget>

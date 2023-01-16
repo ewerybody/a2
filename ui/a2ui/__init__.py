@@ -29,7 +29,7 @@ class A2Window(QtWidgets.QMainWindow):
     def __init__(self, app):
         super(A2Window, self).__init__(parent=None)
         self.setEnabled(False)
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.app = app
         self._threads = {}
         self._scroll_anim = None
@@ -87,7 +87,7 @@ class A2Window(QtWidgets.QMainWindow):
         thread.change.connect(self.setWindowTitle)
 
         thread = self._run_thread('UpdatesChecker', UpdatesChecker)
-        thread.change.connect(self._on_updates)
+        thread.fetched.connect(self._on_updates)
 
         log.info('A2Window initialised! (%.3fs)', time.process_time())
 
@@ -136,8 +136,11 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionExplore_to.setIcon(Icons.folder)
 
-        self._make_url_action(self.ui.actionAbout_a2, self.a2.urls.help, Icons.a2help)
+        self._make_url_action(self.ui.actiona2_on_github, self.a2.urls.help, Icons.a2help)
         self._make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey)
+
+        self.ui.actionAbout_a2.triggered.connect(self.about)
+        self.ui.actionAbout_a2.setIcon(Icons.a2help)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionExplore_to_a2_dir.setIcon(Icons.folder)
@@ -156,8 +159,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionNew_Module_Dialog.setIcon(Icons.folder_add)
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionCreate_New_Element.setIcon(Icons.folder_add)
-        self.ui.actionBuild_A2_Package.triggered.connect(self.build_package)
-        self.ui.actionSet_a2_Version.triggered.connect(self.change_version)
+        self.ui.actionBuild_A2_Package.triggered.connect(a2dev.build_package)
+        self.ui.actionSet_a2_Version.triggered.connect(a2dev.call_version_bump_dialog)
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
         self.ui.actionUnload_a2_Runtime.setIcon(Icons.a2x)
@@ -490,17 +493,6 @@ class A2Window(QtWidgets.QMainWindow):
         self.app.setStyleSheet(css_template)
         return self._style
 
-    def build_package(self):
-        batch_path = os.path.join(self.a2.paths.lib, '_batches')
-        batch_name = '1_build_all.bat'
-        _result, _pid = a2util.start_process_detached(
-            os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path
-        )
-
-    def change_version(self):
-        dialog = a2dev.VersionBumpDialog(self)
-        dialog.exec()
-
     def _set_runtime_actions_vis(self):
         live = self._threads['runtime'].is_live
         self.ui.actionUnload_a2_Runtime.setVisible(live)
@@ -561,12 +553,30 @@ class A2Window(QtWidgets.QMainWindow):
         self.module_list.setEnabled(not state)
         self.ui.menubar.setEnabled(not state)
 
-    def _on_updates(self):
-        self
+    def _on_updates(self, updates):
+        """"""
+        try:
+            new_version = updates['core']['a2'][1]
+            print(f'TODO: Show a2 updated available msg somehow! ({new_version})')
+        except Exception as error:
+            error
+            pass
+
+        for source_name, versions in updates.get('sources', {}).items():
+            if len(versions) != 2:
+                continue
+            current, latest = versions
+            print(f'TODO: mark "{source_name}" with updated available! ({latest})')
+
 
     def _inspect_ui(self):
         import pyside_inspect
         pyside_inspect.InspectMode(self)
+
+    def about(self):
+        from a2ui import about_dialog
+        dialog = about_dialog.AboutDialog(self)
+        dialog.exec()
 
 
 class RuntimeCallThread(QtCore.QThread):
@@ -651,29 +661,28 @@ class WinTitleUpdater(QtCore.QThread):
 
 
 class UpdatesChecker(QtCore.QThread):
-    change = QtCore.Signal(dict)
+    fetched = QtCore.Signal(dict)
+    progress = QtCore.Signal(dict)
 
     def __init__(self, parent):
         super().__init__(parent)
 
     def run(self):
+        a2 = a2core.get()
         updates = {}
-        for where, data in a2core.check_for_updates():
+        for updates in a2.check_all_updates():
             if self.isInterruptionRequested():
                 return
-            if data:
-                updates.setdefault(where, {}).update(data)
+            self.progress.emit(updates)
 
-        if updates:
-            self.change.emit(updates)
+        self.fetched.emit(updates)
 
 
 if __name__ == '__main__':
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     a2.start_up()
 
     updates = {}
-    for where, data in a2core.check_for_updates():
-        if data:
-            updates.setdefault(where, {}).update(data)
+    for updates in a2.check_all_updates():
+        continue
     print('updates: %s' % updates)
