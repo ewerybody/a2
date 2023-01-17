@@ -217,7 +217,7 @@ class A2Obj:
     def check_all_updates(self):
         is_git = os.path.isdir(self.paths.git)
         self._updates.update({
-            'core': {'a2': [self.version]},
+            'core': {NAME: [self.version]},
             'sources': {s: [] for s in self.module_sources},
             'current': 0,
             'total': 1 + len(self.module_sources),
@@ -238,7 +238,7 @@ class A2Obj:
             try:
                 new_version = self.check_update()
                 if new_version:
-                    self._updates['core']['a2'].append(new_version)
+                    self._updates['core'][NAME].append(new_version)
                     yield self._updates
             except Exception:
                 log.exception('Error checking for a2 update!')
@@ -268,9 +268,18 @@ class A2Obj:
             import a2dev
 
             for name, current, latest in a2dev.check_dev_updates():
-                self._updates['core'][name] = [current, latest]
+                self._updates['core'][name] = [current]
+                if latest is not None:
+                    self._updates['core'][name].append(latest)
                 self._updates['current'] += 1
                 yield self._updates
+        return self._updates
+
+    @property
+    def updates(self):
+        if not self._updates:
+            self.check_all_updates()
+        return self._updates
 
 
 class URLs:

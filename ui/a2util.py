@@ -189,7 +189,7 @@ def explore(path):
     start_process_detached(EXPLORER_PATH, args)
 
 
-def unroll_seconds(value, decimals=2):
+def unroll_seconds(value: float | int, decimals=2):
     """
     Converts a number of seconds to easily readable values like
     2 minutes

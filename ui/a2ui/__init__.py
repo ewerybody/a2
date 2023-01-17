@@ -556,8 +556,9 @@ class A2Window(QtWidgets.QMainWindow):
     def _on_updates(self, updates):
         """"""
         try:
-            new_version = updates['core']['a2'][1]
-            print(f'TODO: Show a2 updated available msg somehow! ({new_version})')
+            new_version = updates['core']['a2'][1:]
+            if new_version:
+                print(f'TODO: Show a2 updated available msg somehow! ({new_version[0]})')
         except Exception as error:
             error
             pass
