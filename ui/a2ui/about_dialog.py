@@ -7,6 +7,11 @@ from a2widget import a2input_dialog
 from a2widget import busy_icon
 from a2qt import QtWidgets, QtCore
 
+_DOWNLOAD_LINK = f'<center><a href=%s>Download {a2core.NAME} %s from github.com ...</a></center>'
+_UPDATE_AVAILABLE = ' - <b>%s</b> <small>update available!</small>'
+_CHECKING = '<small>Checking for updates ...</small>'
+_CHECKED = '<small>Checked %s ago</small>'
+
 class AboutDialog(a2input_dialog.A2ConfirmDialog):
     def __init__(self, parent):
         super().__init__(parent, f'About {a2core.NAME}')
@@ -15,7 +20,7 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
         self.update_layout = QtWidgets.QVBoxLayout()
 
         self.update_button = QtWidgets.QPushButton()
-        self.update_button.setText('Check for Updates *')
+        self.update_button.setText('Check for Updates')
         self.update_button.clicked.connect(self._check_updates)
         self.update_layout.addWidget(self.update_button)
 
@@ -28,11 +33,12 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
         progress_layout.addWidget(self.progress_bar)
         self.update_layout.addWidget(self.progress_widget)
 
-        self.ui.main_layout.insertLayout(1, self.update_layout)
-
         self.sublabel = QtWidgets.QLabel(self)
         self.sublabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.ui.main_layout.insertWidget(2, self.sublabel)
+        self.update_layout.addWidget(self.sublabel)
+
+        self.ui.main_layout.insertLayout(1, self.update_layout)
+        self.ui.main_layout.setStretch(0, 1)
 
         # self.setWindowFlags(a2input_dialog.FIXED_FLAGS)
         # dialog.okayed.connect(self.confirm_dialog_okayed)
@@ -58,15 +64,18 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
         has_update = False
         for core_item, versions in self.a2.updates['core'].items():
             line = f'<b>{core_item}</b> - {versions[0]}'
-            if len(versions) > 1:
-                line += f' - <b>{versions[1]}</b>'
 
             if core_item == a2core.NAME:
                 if self.a2.updates['dev']:
                     line += ' (<i>development version</i>)'
                 line = f'<h3>{line}</h3>'
-                line += '<br>Components:'
+                if len(versions) > 1:
+                    line += _DOWNLOAD_LINK % (self.a2.urls.latest_release, versions[1])
+                if self.a2.updates['dev']:
+                    line += '<br>Components:'
             else:
+                if len(versions) > 1:
+                    line += _UPDATE_AVAILABLE % versions[1]
                 line = f'&#8226; {line}'
             lines.append(line)
 
@@ -75,9 +84,9 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
             for source_item, versions in self.a2.updates['sources'].items():
                 line = f'&#8226; <b>{source_item}</b>'
                 if versions:
-                    line += f'- {versions[0]}'
+                    line += f' - {versions[0]}'
                 if len(versions) > 1:
-                    line += f' - <b>{versions[1]}</b>'
+                    line += _UPDATE_AVAILABLE % versions[1]
                 lines.append(line)
         else:
             lines.append('No Sources to lookup updates for :(')
@@ -91,12 +100,12 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
             self.busy_icon.set_idle()
             self.progress_widget.hide()
             time_ago = a2util.unroll_seconds(time.time() - self.a2.updates.get('checked', 0), 0)
-            self.sublabel.setText(f'Checked {time_ago} ago')
+            self.sublabel.setText(_CHECKED % time_ago)
         else:
             self.progress_widget.show()
             self.update_button.hide()
             self.busy_icon.set_busy()
             self.progress_bar.setValue(current / total * 100)
-            self.sublabel.setText('Checking for updates ...')
+            self.sublabel.setText(_CHECKING)
         self.setEnabled(True)
         self.resize(self.width(), self.minimumSizeHint().height())

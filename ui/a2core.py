@@ -306,6 +306,7 @@ class URLs:
         self.gitter = 'https://gitter.im/ewerybody/a2'
         self.telegram = 'https://t.me/a2script_de'
         self.security = variables_dict.get('a2_security', '')
+        self.latest_release = self.a2 + '/releases/latest'
 
         self.ahk = 'https://autohotkey.com'
         self.ahk_commands = self.ahk + '/docs/commands'
