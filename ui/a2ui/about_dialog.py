@@ -60,8 +60,14 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
             line = f'<b>{core_item}</b> - {versions[0]}'
             if len(versions) > 1:
                 line += f' - <b>{versions[1]}</b>'
-            if core_item == a2core.NAME and self.a2.updates.get('git'):
-                line += ' (git)'
+
+            if core_item == a2core.NAME:
+                if self.a2.updates['dev']:
+                    line += ' (<i>development version</i>)'
+                line = f'<h3>{line}</h3>'
+                line += '<br>Components:'
+            else:
+                line = f'&#8226; {line}'
             lines.append(line)
 
         if self.a2.updates['sources']:
@@ -93,3 +99,4 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
             self.progress_bar.setValue(current / total * 100)
             self.sublabel.setText('Checking for updates ...')
         self.setEnabled(True)
+        self.resize(self.width(), self.minimumSizeHint().height())
