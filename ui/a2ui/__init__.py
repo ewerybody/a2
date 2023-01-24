@@ -2,7 +2,6 @@
 a2ui - Setup User Interface for an Autohotkey runtime.
 """
 import os
-import sys
 import time
 
 import a2uic
@@ -118,16 +117,13 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.check_main_menu_bar()
 
-    def _restore_splitter(self, win_prefs=None):
-        if win_prefs is None:
-            win_prefs = self.a2.db.get('windowprefs') or {}
-        splitter_size = win_prefs.get('splitter')
-        if splitter_size is None:
-            splitter_size = (self.width() * 0.25, self.width() * 0.75)
-        self.ui.splitter.setSizes(splitter_size)
-
     def _setup_actions(self):
         from a2ctrl.icons import Icons
+
+        def _make_url_action(action: QtGui.QAction, url: str, icon: QtGui.QIcon):
+            action.setData(url)
+            action.setIcon(icon)
+            action.triggered.connect(self._on_url_action)
 
         self.ui.actionEdit_module.triggered.connect(self.module_view.edit_mod)
         self.ui.actionEdit_module.setIcon(Icons.edit)
@@ -136,8 +132,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExplore_to.triggered.connect(self.explore_mod)
         self.ui.actionExplore_to.setIcon(Icons.folder)
 
-        self._make_url_action(self.ui.actiona2_on_github, self.a2.urls.help, Icons.a2help)
-        self._make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey)
+        _make_url_action(self.ui.actiona2_on_github, self.a2.urls.help, Icons.a2help)
+        _make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey)
 
         self.ui.actionAbout_a2.triggered.connect(self.about)
         self.ui.actionAbout_a2.setIcon(Icons.a2help)
@@ -152,8 +148,8 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExit_a2ui.setIcon(Icons.clear)
         self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
 
-        self._make_url_action(self.ui.action_report_bug, self.a2.urls.report_bug, Icons.github)
-        self._make_url_action(self.ui.action_report_sugg, self.a2.urls.report_sugg, Icons.github)
+        _make_url_action(self.ui.action_report_bug, self.a2.urls.report_bug, Icons.github)
+        _make_url_action(self.ui.action_report_sugg, self.a2.urls.report_sugg, Icons.github)
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
         self.ui.actionNew_Module_Dialog.setIcon(Icons.folder_add)
@@ -190,20 +186,14 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionHelp_on_Module.triggered.connect(self.module_view.help)
         self.ui.actionHelp_on_Module.setIcon(Icons.help)
 
-        self._make_url_action(self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter)
-        self._make_url_action(self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram)
+        _make_url_action(self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter)
+        _make_url_action(self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram)
 
         self.ui.actionInspect_UI.triggered.connect(self._inspect_ui)
+        self.ui.menuUpdates.menuAction().setVisible(False)
 
-    def _make_url_action(self, action: QtGui.QAction, url: str, icon: QtGui.QIcon):
-        action.setData(url)
-        action.setIcon(icon)
-        action.triggered.connect(self._on_url_action)
-
-    def _on_url_action(self):
-        action = self.sender()
-        if isinstance(action, QtGui.QAction):
-            a2util.surf_to(action.data())
+        self.ui.menuHelp.aboutToShow.connect(self._on_help_menu_show)
+        _make_url_action(self.ui.action_updates, self.a2.urls.latest_release, Icons.github)
 
     def _setup_shortcuts(self):
         Qt = QtCore.Qt
@@ -222,21 +212,23 @@ class A2Window(QtWidgets.QMainWindow):
             shortcut.setKey(QtGui.QKeySequence(keys))
             shortcut.activated.connect(func)
 
+    def _restore_splitter(self, win_prefs=None):
+        if win_prefs is None:
+            win_prefs = self.a2.db.get('windowprefs') or {}
+        splitter_size = win_prefs.get('splitter')
+        if splitter_size is None:
+            splitter_size = (self.width() * 0.25, self.width() * 0.75)
+        self.ui.splitter.setSizes(splitter_size)
+
+    def _on_url_action(self):
+        action = self.sender()
+        if isinstance(action, QtGui.QAction):
+            a2util.surf_to(action.data())
+
     def check_main_menu_bar(self):
         """Handle main menu item visibility."""
-        if self.a2.dev_mode:
-            self.ui.menubar.insertAction(
-                self.ui.menuHelp.menuAction(), self.ui.menuDev.menuAction()
-            )
-            module_menu_before_action = self.ui.menuDev.menuAction()
-        else:
-            self.ui.menubar.removeAction(self.ui.menuDev.menuAction())
-            module_menu_before_action = self.ui.menuHelp.menuAction()
-
-        if self.mod is None:
-            self.ui.menubar.removeAction(self.ui.menuModule.menuAction())
-        else:
-            self.ui.menubar.insertAction(module_menu_before_action, self.ui.menuModule.menuAction())
+        self.ui.menuDev.menuAction().setVisible(self.a2.dev_mode)
+        self.ui.menuModule.menuAction().setVisible(self.mod is not None)
 
     def _module_selected(self, module_list):
         self.selected = module_list
@@ -555,29 +547,53 @@ class A2Window(QtWidgets.QMainWindow):
 
     def _on_updates(self, updates):
         """"""
-        try:
-            new_version = updates['core']['a2'][1:]
-            if new_version:
-                print(f'TODO: Show a2 updated available msg somehow! ({new_version[0]})')
-        except Exception as error:
-            error
-            pass
+        versions = updates['core']['a2']
+        show_menu = False
+        if versions[1:]:
+            show_menu = True
+            log.info(
+                'TODO: Show a2 updated available msg somehow! (%s -> %s)',
+                versions[0],
+                versions[1],
+            )
 
         for source_name, versions in updates.get('sources', {}).items():
             if len(versions) != 2:
                 continue
-            current, latest = versions
-            print(f'TODO: mark "{source_name}" with updated available! ({latest})')
+            show_menu = True
+            log.info(
+                'TODO: mark "%s" with "update available!" (%s -> %s)',
+                source_name,
+                versions[0],
+                versions[1],
+            )
 
+        self.ui.menuUpdates.menuAction().setVisible(show_menu)
 
     def _inspect_ui(self):
         import pyside_inspect
+
         pyside_inspect.InspectMode(self)
 
     def about(self):
         from a2ui import about_dialog
+
         dialog = about_dialog.AboutDialog(self)
         dialog.exec()
+
+    def _on_help_menu_show(self):
+        if self.a2.is_git:
+            self.ui.action_updates.setText('(Development Version)')
+            self.ui.action_updates.setEnabled(False)
+            return
+
+        new_version = self.a2.updates['core']['a2'][1:]
+        if new_version:
+            self.ui.action_updates.setText(f'Get version {new_version[0]} on github.com')
+            self.ui.action_updates.setEnabled(True)
+        else:
+            self.ui.action_updates.setText('a2 is up-to-date')
+            self.ui.action_updates.setEnabled(False)
 
 
 class RuntimeCallThread(QtCore.QThread):

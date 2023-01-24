@@ -12,10 +12,12 @@ _UPDATE_AVAILABLE = ' - <b>%s</b> <small>update available!</small>'
 _CHECKING = '<small>Checking for updates ...</small>'
 _CHECKED = '<small>Checked %s ago</small>'
 
+
 class AboutDialog(a2input_dialog.A2ConfirmDialog):
     def __init__(self, parent):
         super().__init__(parent, f'About {a2core.NAME}')
         self.a2 = a2core.get()
+        self.ui.a2cancel_button.hide()
 
         self.update_layout = QtWidgets.QVBoxLayout()
 
@@ -66,12 +68,12 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
             line = f'<b>{core_item}</b> - {versions[0]}'
 
             if core_item == a2core.NAME:
-                if self.a2.updates['dev']:
+                if self.a2.is_git:
                     line += ' (<i>development version</i>)'
                 line = f'<h3>{line}</h3>'
                 if len(versions) > 1:
                     line += _DOWNLOAD_LINK % (self.a2.urls.latest_release, versions[1])
-                if self.a2.updates['dev']:
+                if self.a2.is_git:
                     line += '<br>Components:'
             else:
                 if len(versions) > 1:

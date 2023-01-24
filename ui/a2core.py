@@ -215,22 +215,20 @@ class A2Obj:
         return self._version
 
     def check_all_updates(self):
-        is_dev = os.path.isdir(self.paths.git) and self.dev_mode
         self._updates.update({
             'core': {NAME: [self.version]},
             'sources': {s: [] for s in self.module_sources},
             'current': 0,
             'total': 1 + len(self.module_sources),
-            'dev': is_dev,
             'checked': time.time()
         })
 
-        if is_dev:
+        if self.is_git:
             self._updates['total'] += 3
 
         yield self._updates
 
-        if is_dev:
+        if self.is_git:
             log.info('Skipping a2 update check as we\'re in dev.')
         else:
             log.info('Checking for a2 updates ...')
@@ -263,7 +261,7 @@ class A2Obj:
             self._updates['current'] += 1
             yield self._updates
 
-        if is_dev:
+        if self.is_git:
             import a2dev
 
             for name, current, latest in a2dev.check_dev_updates():
@@ -279,6 +277,10 @@ class A2Obj:
         if not self._updates:
             self.check_all_updates()
         return self._updates
+
+    @property
+    def is_git(self):
+        return os.path.isdir(self.paths.git)
 
 
 class URLs:

@@ -89,6 +89,8 @@
     <addaction name="separator"/>
     <addaction name="actionAbout_Autohotkey"/>
     <addaction name="actiona2_on_github"/>
+    <addaction name="separator"/>
+    <addaction name="action_updates"/>
     <addaction name="actionAbout_a2"/>
    </widget>
    <widget class="QMenu" name="menuDev">
@@ -140,10 +142,16 @@
     <addaction name="actionExport_Settings"/>
     <addaction name="actionImport_Settings"/>
    </widget>
+   <widget class="QMenu" name="menuUpdates">
+    <property name="title">
+     <string>Update Available!</string>
+    </property>
+   </widget>
    <addaction name="menuMain"/>
    <addaction name="menuModule"/>
    <addaction name="menuDev"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuUpdates"/>
   </widget>
   <action name="actionAbout_a2">
    <property name="text">
@@ -316,6 +324,11 @@
   <action name="actiona2_on_github">
    <property name="text">
     <string>a2 on github.com</string>
+   </property>
+  </action>
+  <action name="action_updates">
+   <property name="text">
+    <string>up-to-dateness</string>
    </property>
   </action>
  </widget>

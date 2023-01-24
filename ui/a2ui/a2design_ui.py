@@ -3,7 +3,7 @@
 """
 Form generated from reading UI file 'a2design.ui'
 
-Created by: Qt User Interface Compiler version 6.4.1
+Created by: Qt User Interface Compiler version 6.4.2
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
@@ -112,6 +112,8 @@ class Ui_a2MainWindow:
         self.actionInspect_UI.setText(u"Inspect UI")
         self.actiona2_on_github = QAction(a2MainWindow)
         self.actiona2_on_github.setObjectName(u"actiona2_on_github")
+        self.action_updates = QAction(a2MainWindow)
+        self.action_updates.setObjectName(u"action_updates")
         self.centralwidget = QWidget(a2MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -151,11 +153,14 @@ class Ui_a2MainWindow:
         self.menuModule = QMenu(self.menubar)
         self.menuModule.setObjectName(u"menuModule")
         self.menuModule.setTitle(u"Module")
+        self.menuUpdates = QMenu(self.menubar)
+        self.menuUpdates.setObjectName(u"menuUpdates")
         a2MainWindow.setMenuBar(self.menubar)
         self.menubar.addAction(self.menuMain.menuAction())
         self.menubar.addAction(self.menuModule.menuAction())
         self.menubar.addAction(self.menuDev.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.menubar.addAction(self.menuUpdates.menuAction())
         self.menuHelp.addAction(self.action_report_bug)
         self.menuHelp.addAction(self.action_report_sugg)
         self.menuHelp.addAction(self.actionChat_on_Gitter)
@@ -163,6 +168,8 @@ class Ui_a2MainWindow:
         self.menuHelp.addSeparator()
         self.menuHelp.addAction(self.actionAbout_Autohotkey)
         self.menuHelp.addAction(self.actiona2_on_github)
+        self.menuHelp.addSeparator()
+        self.menuHelp.addAction(self.action_updates)
         self.menuHelp.addAction(self.actionAbout_a2)
         self.menuDev.addAction(self.actionNew_Module_Dialog)
         self.menuDev.addAction(self.actionEdit_module)
@@ -202,4 +209,6 @@ class Ui_a2MainWindow:
         self.actionSet_a2_Version.setText(QCoreApplication.translate("a2MainWindow", u"Set a2 Version", None))
         self.actionInspect_UI.setShortcut(QCoreApplication.translate("a2MainWindow", u"Ctrl+Shift+C", None))
         self.actiona2_on_github.setText(QCoreApplication.translate("a2MainWindow", u"a2 on github.com", None))
+        self.action_updates.setText(QCoreApplication.translate("a2MainWindow", u"up-to-dateness", None))
+        self.menuUpdates.setTitle(QCoreApplication.translate("a2MainWindow", u"Update Available!", None))
         pass
