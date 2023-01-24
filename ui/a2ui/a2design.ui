@@ -144,8 +144,10 @@
    </widget>
    <widget class="QMenu" name="menuUpdates">
     <property name="title">
-     <string>Update Available!</string>
+     <string notr="true">Update Available!</string>
     </property>
+    <addaction name="action_update_a2"/>
+    <addaction name="action_update_packages"/>
    </widget>
    <addaction name="menuMain"/>
    <addaction name="menuModule"/>
@@ -329,6 +331,16 @@
   <action name="action_updates">
    <property name="text">
     <string>up-to-dateness</string>
+   </property>
+  </action>
+  <action name="action_update_a2">
+   <property name="text">
+    <string>update_a2</string>
+   </property>
+  </action>
+  <action name="action_update_packages">
+   <property name="text">
+    <string>update_packages</string>
    </property>
   </action>
  </widget>

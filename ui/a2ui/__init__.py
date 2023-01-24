@@ -194,6 +194,7 @@ class A2Window(QtWidgets.QMainWindow):
 
         self.ui.menuHelp.aboutToShow.connect(self._on_help_menu_show)
         _make_url_action(self.ui.action_updates, self.a2.urls.latest_release, Icons.github)
+        _make_url_action(self.ui.action_update_a2, self.a2.urls.latest_release, Icons.github)
 
     def _setup_shortcuts(self):
         Qt = QtCore.Qt
@@ -551,16 +552,18 @@ class A2Window(QtWidgets.QMainWindow):
         show_menu = False
         if versions[1:]:
             show_menu = True
+            self.ui.action_update_a2.setText(f'Get version {versions[1]} on github.com')
             log.info(
                 'TODO: Show a2 updated available msg somehow! (%s -> %s)',
                 versions[0],
                 versions[1],
             )
 
+        self.ui.action_update_packages.setVisible(False)
         for source_name, versions in updates.get('sources', {}).items():
             if len(versions) != 2:
                 continue
-            show_menu = True
+            # show_menu = True
             log.info(
                 'TODO: mark "%s" with "update available!" (%s -> %s)',
                 source_name,
