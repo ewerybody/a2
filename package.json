@@ -15,5 +15,5 @@
   "scripts": {
     "test": "ahk-unit ./tests/tests.ahk"
   },
-  "version": "0.4.6"
+  "version": "0.5.1"
 }
