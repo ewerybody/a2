@@ -3,6 +3,7 @@ a2ui - Setup User Interface for an Autohotkey runtime.
 """
 import os
 import time
+from functools import partial
 
 import a2uic
 import a2dev
@@ -156,7 +157,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionCreate_New_Element.setIcon(Icons.folder_add)
         self.ui.actionBuild_A2_Package.triggered.connect(a2dev.build_package)
-        self.ui.actionSet_a2_Version.triggered.connect(a2dev.call_version_bump_dialog)
+        self.ui.actionSet_a2_Version.triggered.connect(partial(a2dev.call_version_bump_dialog, self))
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
         self.ui.actionUnload_a2_Runtime.setIcon(Icons.a2x)
