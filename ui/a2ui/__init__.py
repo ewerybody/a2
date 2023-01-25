@@ -137,7 +137,7 @@ class A2Window(QtWidgets.QMainWindow):
         _make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey)
 
         self.ui.actionAbout_a2.triggered.connect(self.about)
-        self.ui.actionAbout_a2.setIcon(Icons.a2help)
+        self.ui.actionAbout_a2.setIcon(Icons.a2)
 
         self.ui.actionExplore_to_a2_dir.triggered.connect(self.explore_a2)
         self.ui.actionExplore_to_a2_dir.setIcon(Icons.folder)
@@ -586,18 +586,20 @@ class A2Window(QtWidgets.QMainWindow):
         dialog.exec()
 
     def _on_help_menu_show(self):
-        if self.a2.is_git():
-            self.ui.action_updates.setText('(Development Version)')
-            self.ui.action_updates.setEnabled(False)
+        versions = self.a2.updates['core']['a2']
+
+        if not self.a2.is_git() and versions[1:]:
+            self.ui.action_updates.setText(f'Get version {versions[1]} on github.com')
+            self.ui.action_updates.setEnabled(True)
             return
 
-        new_version = self.a2.updates['core']['a2'][1:]
-        if new_version:
-            self.ui.action_updates.setText(f'Get version {new_version[0]} on github.com')
-            self.ui.action_updates.setEnabled(True)
+        if self.a2.is_git():
+            prefix = '(Development Version)'
         else:
-            self.ui.action_updates.setText('a2 is up-to-date')
-            self.ui.action_updates.setEnabled(False)
+            prefix = 'a2 is up-to-date'
+
+        self.ui.action_updates.setText(prefix + f' ({versions[0]})')
+        self.ui.action_updates.setEnabled(False)
 
 
 class RuntimeCallThread(QtCore.QThread):
