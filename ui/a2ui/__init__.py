@@ -585,7 +585,7 @@ class A2Window(QtWidgets.QMainWindow):
         dialog.exec()
 
     def _on_help_menu_show(self):
-        if self.a2.is_git:
+        if self.a2.is_git():
             self.ui.action_updates.setText('(Development Version)')
             self.ui.action_updates.setEnabled(False)
             return

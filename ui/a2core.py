@@ -223,12 +223,12 @@ class A2Obj:
             'checked': time.time()
         })
 
-        if self.is_git:
+        if self.is_git():
             self._updates['total'] += 3
 
         yield self._updates
 
-        if self.is_git:
+        if self.is_git():
             log.info('Skipping a2 update check as we\'re in dev.')
         else:
             log.info('Checking for a2 updates ...')
@@ -246,22 +246,23 @@ class A2Obj:
         log.info('Checking module package updates ...')
         for source_name, source in self.module_sources.items():
             self._updates['sources'][source_name].append(source.config.get('version'))
-            try:
-                data = source.check_update()
-                if source.has_update:
-                    version = data.get('version', '')
-                    log.info('New "%s" %s module source package!', source_name, version)
-                    self._updates['sources'][source_name].append(version)
+            if not source.is_git():
+                try:
+                    data = source.check_update()
+                    if source.has_update:
+                        version = data.get('version', '')
+                        log.info('New "%s" %s module source package!', source_name, version)
+                        self._updates['sources'][source_name].append(version)
 
-            except FileNotFoundError:
-                pass
-            except RuntimeError as error:
-                log.error('Checking "%s" resulted in: %s', source_name, error)
+                except FileNotFoundError:
+                    pass
+                except RuntimeError as error:
+                    log.error('Checking "%s" resulted in: %s', source_name, error)
 
             self._updates['current'] += 1
             yield self._updates
 
-        if self.is_git:
+        if self.is_git():
             import a2dev
 
             for name, current, latest in a2dev.check_dev_updates():
@@ -278,7 +279,6 @@ class A2Obj:
             self.check_all_updates()
         return self._updates
 
-    @property
     def is_git(self):
         return os.path.isdir(self.paths.git)
 
