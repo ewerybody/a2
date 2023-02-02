@@ -75,7 +75,7 @@
      <x>0</x>
      <y>0</y>
      <width>753</width>
-     <height>24</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -183,7 +183,7 @@
   </action>
   <action name="actionAbout_Autohotkey">
    <property name="text">
-    <string>Autohotkey.com</string>
+    <string notr="true">Autohotkey.com</string>
    </property>
   </action>
   <action name="actionExplore_to_a2_dir">
@@ -226,24 +226,18 @@
    <property name="text">
     <string notr="true">Build A2 Package</string>
    </property>
-   <property name="shortcut">
-    <string notr="true"/>
-   </property>
   </action>
   <action name="actionCreate_New_Element">
    <property name="text">
     <string notr="true">Create New Element</string>
    </property>
    <property name="shortcut">
-    <string notr="true"/>
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
   <action name="actionHelp_on_Module">
    <property name="text">
     <string notr="true">Help on Module</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true"/>
    </property>
   </action>
   <action name="actionRevert_Settings">
@@ -251,7 +245,7 @@
     <string notr="true">Revert Settings</string>
    </property>
    <property name="shortcut">
-    <string notr="true"/>
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
   <action name="actionReload_a2_Runtime">
@@ -259,7 +253,7 @@
     <string notr="true">Reload a2 Runtime</string>
    </property>
    <property name="shortcut">
-    <string notr="true"/>
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
   <action name="actionUnload_a2_Runtime">
@@ -275,9 +269,6 @@
   <action name="actionExplore_to_a2_data_dir">
    <property name="text">
     <string notr="true">Explore to a2 data ...</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true"/>
    </property>
   </action>
   <action name="actionUninstall_a2">
@@ -302,17 +293,17 @@
   </action>
   <action name="actionChat_on_Gitter">
    <property name="text">
-    <string>Chat on Gitter</string>
+    <string notr="true">Chat on Gitter</string>
    </property>
   </action>
   <action name="actionChat_on_Telegram">
    <property name="text">
-    <string>Chat on Telegram</string>
+    <string notr="true">Chat on Telegram</string>
    </property>
   </action>
   <action name="actionSet_a2_Version">
    <property name="text">
-    <string>Set a2 Version</string>
+    <string notr="true">Set a2 Version</string>
    </property>
   </action>
   <action name="actionInspect_UI">
@@ -320,27 +311,27 @@
     <string notr="true">Inspect UI</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+C</string>
+    <string notr="true">Ctrl+Shift+C</string>
    </property>
   </action>
   <action name="actiona2_on_github">
    <property name="text">
-    <string>a2 on github.com</string>
+    <string notr="true">a2 on github.com</string>
    </property>
   </action>
   <action name="action_updates">
    <property name="text">
-    <string>up-to-dateness</string>
+    <string notr="true">up-to-dateness</string>
    </property>
   </action>
   <action name="action_update_a2">
    <property name="text">
-    <string>update_a2</string>
+    <string notr="true">update_a2</string>
    </property>
   </action>
   <action name="action_update_packages">
    <property name="text">
-    <string>update_packages</string>
+    <string notr="true">update_packages</string>
    </property>
   </action>
  </widget>
