@@ -156,6 +156,7 @@ class InspectMode(QtWidgets.QMainWindow):
             mod_lines = file_obj.read().split('\n')
 
         search_var = ''
+        name = obj.objectName()
         for i, line in enumerate(mod_lines):
             if name not in line or line in ('"""', "'''") or line.lstrip().startswith('#'):
                 continue
