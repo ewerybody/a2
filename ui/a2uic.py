@@ -34,7 +34,6 @@ def check_module(module, force=False):
     pyfile = module.__file__
     folder, pybase = os.path.split(pyfile)
     uiname = os.path.splitext(pybase)[0]
-    uibase = None
 
     if uiname.endswith(UI_FILE_SUFFIX):
         uibase = uiname[: -len(UI_FILE_SUFFIX)] + '.ui'
@@ -43,7 +42,8 @@ def check_module(module, force=False):
 
     if uibase is None:
         raise RuntimeError(
-            'Could not get source ui file from module:\n %s\n  ' 'Not a ui file module??!' % module
+            f'Could not get source ui file from module:\n {module}\n  '
+            'Not a ui file module??!'
         )
 
     uifile = os.path.join(folder, uibase)
@@ -97,7 +97,7 @@ class UIPatcher:
     def __init__(self, uiname, pyfile):
         self.uiname = uiname
         self.pyfile = pyfile
-        _get_QMEMBERS()
+        _get_qmembers()
 
         with open(pyfile, encoding='utf8') as pyfobj:
             self.lines = pyfobj.readlines()
@@ -328,7 +328,7 @@ class UIPatcher:
 def _get_ui_basename_from_header(py_ui_path):
     """TODO: This is kinda ugly I don't think we need it."""
     uibase = None
-    with open(py_ui_path) as fobj:
+    with open(py_ui_path, encoding='utf8') as fobj:
         line = fobj.readline()
         while line and uibase is not None:
             line = line.strip()
@@ -341,13 +341,13 @@ def _get_ui_basename_from_header(py_ui_path):
     return uibase
 
 
-def _get_QMEMBERS():
+def _get_qmembers():
     if QMEMBERS:
         return
 
     for mod in (QtCore, QtGui, QtWidgets, QtSvg):
         name = mod.__name__.split('.')[1]
-        QMEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != 'a2qt']
+        QMEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != PYSIDE_REPLACE]
         for member in QMEMBERS[name]:
             if member in MEMBERSQ:
                 # print(f'{member} already listed in {MEMBERSQ[member]}!!')
