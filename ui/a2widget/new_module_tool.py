@@ -10,26 +10,11 @@ from a2widget.a2input_dialog import A2InputDialog
 
 
 class NewModulueTool(A2InputDialog):
-    def __init__(self, main, module_source=None):
+    def __init__(self, main, source_dict, module_source=None):
         self.a2 = a2core.A2Obj.inst()
         self.main = main
         self._module_list = []
-
-        if not self.a2.module_sources:
-            title = 'No Module Source!'
-            msg = (
-                'There is no <b>module source</b> to create a module in!\n'
-                'Would you like to create a local one?'
-            )
-            reply = QtWidgets.QMessageBox.question(
-                None, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
-            )
-
-            if reply is QtWidgets.QMessageBox.Yes:
-                self.main.create_local_source()
-            return
-
-        self.source_dict = self._init_source_dict(module_source)
+        self.source_dict = source_dict
 
         super(NewModulueTool, self).__init__(
             self.main,
@@ -81,16 +66,57 @@ class NewModulueTool(A2InputDialog):
         self._module_list = self.source_dict['names'][source]
         return a2util.standard_name_check(name, self._module_list, 'Module name "%s" is in use!')
 
-    def _init_source_dict(self, module_source):
-        sources = [s.name for s in self.a2.module_sources.values() if s.enabled and not s.is_release()]
-        source_dict = {'sources': sources, 'names': {}}
-        if module_source is None:
-            last_source = self.a2.db.get('last_module_create_source')
-            if last_source and last_source in source_dict['sources']:
-                module_source = last_source
-            else:
-                module_source = source_dict['sources'][0]
 
-        source_dict['selected_source'] = module_source
+def show(parent, module_source=None):
+    a2 = a2core.get()
+    if not a2.module_sources:
+        _handle_no_module_source(parent)
+        return
+
+    source_dict = _init_source_dict(a2, module_source)
+
+    if not source_dict['sources']:
+        _handle_no_active_source(parent)
+        return
+
+    dialog = NewModulueTool(parent, source_dict, module_source)
+    dialog.show()
+
+
+def _handle_no_module_source(parent):
+    title = 'No Module Source!'
+    msg = (
+        'There is no <b>module source</b> to create a module in!\n'
+        'Would you like to create a local one?'
+    )
+    reply = QtWidgets.QMessageBox.question(
+        parent, title, msg, QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+    )
+
+    if reply is QtWidgets.QMessageBox.Yes:
+        parent.create_local_source()
+
+
+def _init_source_dict(a2, module_source):
+    sources = [s.name for s in a2.module_sources.values() if s.enabled and not s.is_release()]
+    source_dict = {'sources': sources, 'names': {}}
+    if module_source is None:
+        last_source = a2.db.get('last_module_create_source')
+        if last_source and last_source in source_dict['sources']:
+            module_source = last_source
+        elif source_dict['sources']:
+            module_source = source_dict['sources'][0]
+
+    source_dict['selected_source'] = module_source
+    if module_source is not None:
         source_dict['source_index'] = source_dict['sources'].index(module_source)
-        return source_dict
+    return source_dict
+
+
+def _handle_no_active_source(parent):
+    title = 'No Active Module Source!'
+    msg = (
+        'There are <b>module source</b> packages but <b>none</b> is activated!\n'
+        'Please go to the main settings view and activate one before adding modules.'
+    )
+    QtWidgets.QMessageBox.information(parent, title, msg)

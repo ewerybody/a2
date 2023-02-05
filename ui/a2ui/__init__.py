@@ -30,6 +30,7 @@ class A2Window(QtWidgets.QMainWindow):
         super(A2Window, self).__init__(parent=None)
         self.setEnabled(False)
         self.a2 = a2core.get()
+
         self.app = app
         self._threads = {}
         self._scroll_anim = None
@@ -451,7 +452,7 @@ class A2Window(QtWidgets.QMainWindow):
     def create_new_module(self):
         from a2widget import new_module_tool
 
-        new_module_tool.NewModulueTool(self).show()
+        new_module_tool.show(self)
 
     def create_local_source(self):
         from a2widget import new_module_source_tool
