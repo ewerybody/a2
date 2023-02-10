@@ -199,7 +199,7 @@ def _text_edit_update(cfg, name, ctrl, change_signal, value=None):
     if value is None:
         value = ctrl.toPlainText()
     if change_signal is not None:
-        change_signal.emit(value)
+        change_signal.emit()
     cfg[name] = value
 
 
