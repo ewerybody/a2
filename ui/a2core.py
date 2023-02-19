@@ -282,6 +282,10 @@ class A2Obj:
     def is_git(self):
         return os.path.isdir(self.paths.git)
 
+    def db_check(self):
+        for table in self.db.tables():
+            self.db.check(table)
+
 
 class URLs:
     """Internet adresses for various things."""
