@@ -103,6 +103,9 @@ class Test(unittest.TestCase):
         os.remove(temp_db_path)
         self.assertFalse(os.path.exists(temp_db_path))
 
+    def test_check(self):
+        self.fail('implement check test')
+
 
 if __name__ == "__main__":
     unittest.main()

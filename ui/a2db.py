@@ -305,7 +305,7 @@ class A2db:
             statement = f'select value from "{table}" where key=?'
             log.info('Cleaning up duplicate db entries in table "%s" ...', table)
             for key in duplicates:
-                values = self._fetch(statement, (key,))
+                values = json.loads(self._fetch(statement, (key,)))
                 first_entry = values[0]
                 for entry in values[1:]:
                     if entry != first_entry:
