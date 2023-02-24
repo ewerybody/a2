@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 
-from a2qt import QtWidgets
+from a2qt import QtWidgets, QtCore
 
 import a2core
 import a2element.hotkey
@@ -72,7 +72,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
         # solution: ctrl.clicked[bool] sends the state already!
-        ctrl.clicked[bool].connect(partial(_update_cfg_data, cfg, name))
+        ctrl.toggled.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.clicked.connect(change_signal.emit)
         # set ctrl according to config or set config from ctrl
@@ -82,10 +82,10 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.isChecked()
 
     elif isinstance(ctrl, (QtWidgets.QLineEdit, A2ButtonField)):
-        ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
-        if change_signal is not None:
-            ctrl.textChanged.connect(change_signal.emit)
-        # ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
+        if trigger_signal is not None:
+            trigger_signal = ctrl.textChanged
+        trigger_signal.connect(partial(_line_edit_update, cfg, name, ctrl, change_signal))
+
         if name in cfg:
             value =cfg[name]
             if not isinstance(value, str):
@@ -196,12 +196,20 @@ def _radio_update(cfg, name, value, state):
         cfg[name] = value
 
 
+def _line_edit_update(cfg, name, ctrl, change_signal, value=None):
+    if value is None:
+        value = ctrl.text()
+    cfg[name] = value
+    if change_signal is not None:
+        change_signal.emit()
+
+
 def _text_edit_update(cfg, name, ctrl, change_signal, value=None):
     if value is None:
         value = ctrl.toPlainText()
+    cfg[name] = value
     if change_signal is not None:
         change_signal.emit()
-    cfg[name] = value
 
 
 def _hotkey_update(cfg, name, hotkey):
