@@ -52,7 +52,8 @@ from a2qt import QtGui, QtCore
 
 
 class QAbstractButton(QWidget):
-    clicked: QtCore.Signal = ... # (bool)
+    clicked: QtCore.Signal = ... # ()
+    stateChanged: QtCore.Signal = ... # (QtCore.Qt.CheckState)
     pressed: QtCore.Signal = ... # ()
     released: QtCore.Signal = ... # ()
     toggled: QtCore.Signal = ... # (bool)
