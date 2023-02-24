@@ -85,6 +85,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.textChanged.connect(change_signal.emit)
+        # ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
         if name in cfg:
             value =cfg[name]
             if not isinstance(value, str):
