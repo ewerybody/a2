@@ -75,7 +75,7 @@
      <x>0</x>
      <y>0</y>
      <width>753</width>
-     <height>29</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -231,9 +231,6 @@
    <property name="text">
     <string notr="true">Create New Element</string>
    </property>
-   <property name="shortcut">
-    <string notr="true">Ctrl+S</string>
-   </property>
   </action>
   <action name="actionHelp_on_Module">
    <property name="text">
@@ -243,9 +240,6 @@
   <action name="actionRevert_Settings">
    <property name="text">
     <string notr="true">Revert Settings</string>
-   </property>
-   <property name="shortcut">
-    <string notr="true">Ctrl+S</string>
    </property>
   </action>
   <action name="actionReload_a2_Runtime">
