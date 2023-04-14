@@ -7,7 +7,7 @@
 ; * install to a2 dir
 ; * run a2 ui
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
-;@Ahk2Exe-SetVersion 0.5.2
+;@Ahk2Exe-SetVersion 0.5.3
 
 complain_if_uncompiled()
 check_execution_dir()
