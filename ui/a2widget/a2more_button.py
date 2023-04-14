@@ -3,13 +3,17 @@ from a2qt import QtGui, QtCore, QtWidgets
 import a2ctrl
 
 
-class MenuMixin(object):
+class A2MoreButton(QtWidgets.QToolButton):
     menu_called = QtCore.Signal(QtWidgets.QMenu)
 
-    def __init__(self):
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self._menu = QtWidgets.QMenu(self)
         self._actions_added = False
         self.clicked.connect(self._on_menu_call)
+
+        self.setAutoRaise(True)
+        self.setIcon(a2ctrl.Icons.inst().more)
 
     @property
     def menu(self):
@@ -63,14 +67,6 @@ class MenuMixin(object):
         """
         self._actions_added = True
         return self._menu.addMenu(*args)
-
-
-class A2MoreButton(QtWidgets.QToolButton, MenuMixin):
-    def __init__(self, parent=None):
-        super(A2MoreButton, self).__init__(parent)
-        MenuMixin.__init__(self)
-        self.setAutoRaise(True)
-        self.setIcon(a2ctrl.Icons.inst().more)
 
 
 if __name__ == '__main__':
