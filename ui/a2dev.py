@@ -370,16 +370,25 @@ def check_dev_updates():
         return '.'.join(str(i) for i in version)
 
     log.info('Checking %s version ...', a2ahk.NAME.title())
-    latest = a2ahk.get_latest_version()
     current = a2ahk.get_current_version()
-    if current != latest:
-        log.info(
-            f'New {a2ahk.NAME.title()} version online!\n' f' Current: {current}\n Latest: {latest}'
-        )
-        yield a2ahk.NAME, current, latest
-    else:
-        log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
-        yield a2ahk.NAME, current, None
+    try:
+        latest = a2ahk.get_latest_version()
+
+        if current != latest:
+            log.info(
+                f'New {a2ahk.NAME.title()} version online!\n' f' Current: {current}\n Latest: {latest}'
+            )
+            yield a2ahk.NAME, current, latest
+        else:
+            log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
+            yield a2ahk.NAME, current, None
+
+    except RuntimeError as error:
+        if str(error).startswith(a2ahk.LATEST_VERSION_ERROR):
+            log.error(error)
+        else:
+            log.info('Could NOT check %s version online!\n%s', a2ahk.NAME.title(), error)
+        yield a2ahk.NAME, current, 'ERROR'
 
     log.info('Checking Python version ...')
     new_version = None

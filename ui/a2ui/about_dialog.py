@@ -8,7 +8,8 @@ from a2widget import busy_icon
 from a2qt import QtWidgets, QtCore
 
 _DOWNLOAD_LINK = f'<center><a href=%s>Download {a2core.NAME} %s from github.com ...</a></center>'
-_UPDATE_AVAILABLE = ' - <b>%s</b> <small>update available!</small>'
+_BOLD = ' - <b>%s</b>'
+_UPDATE_AVAILABLE = _BOLD + ' <small>update available!</small>'
 _CHECKING = '<small>Checking for updates ...</small>'
 _CHECKED = '<small>Checked %s ago</small>'
 
@@ -77,7 +78,10 @@ class AboutDialog(a2input_dialog.A2ConfirmDialog):
                     line += '<br>Components:'
             else:
                 if len(versions) > 1:
-                    line += _UPDATE_AVAILABLE % versions[1]
+                    if 'error' in versions[1].lower():
+                        line += _BOLD % versions[1]
+                    else:
+                        line += _UPDATE_AVAILABLE % versions[1]
                 line = f'&#8226; {line}'
             lines.append(line)
 

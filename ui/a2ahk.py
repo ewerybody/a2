@@ -15,6 +15,7 @@ BASE_VERSION = '1.1'
 HOMEPAGE = f'https://www.{NAME}.com'
 DOWNLOADS_URL = f'{HOMEPAGE}/download/{BASE_VERSION}'
 LATEST_VERSION_URL = f'{DOWNLOADS_URL}/version.txt'
+LATEST_VERSION_ERROR = f'Error checking latest Autohotkey {BASE_VERSION} version online! '
 
 
 def translate_hotkey(display_string):
@@ -310,7 +311,21 @@ KEYS = ([
 
 def get_latest_version():
     import qdl
-    return qdl.read(LATEST_VERSION_URL)
+    version = qdl.read(LATEST_VERSION_URL, size=32).strip()
+    # Validate if there are dots and some numbers.
+    # (there could also be letters (v for version, b for beta))
+    if '.' in version and sum(c.isdecimal() for c in version) > 3:
+        return version
+
+    if version.startswith('<'):
+        version = version.replace('\n', ' ')
+        raise RuntimeError(
+            f'{LATEST_VERSION_ERROR}\n'
+            f'There is some HTML code inside? "{version} ..."\n'
+            f'Please check in browser:\n  {LATEST_VERSION_URL}'
+        )
+    raise RuntimeError(f'{LATEST_VERSION_ERROR}\n  {LATEST_VERSION_URL}')
+
 
 def get_current_version():
     return call_lib_cmd('get_AutoHotkey_version')
