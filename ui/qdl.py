@@ -13,18 +13,18 @@ log = logging.getLogger(NAME)
 log.setLevel(10)
 
 
-def read(url, progress_callback=None):
-    return read_raw(url, progress_callback).decode()
+def read(url, progress_callback=None, size=None):
+    return read_raw(url, progress_callback, size).decode()
 
 
 def read_json(url, progress_callback=None):
     return json.loads(read_raw(url, progress_callback))
 
 
-def read_raw(url, progress_callback=None):
+def read_raw(url, progress_callback=None, size=None):
     _check_app()
     downloader = QDownload()
-    downloader.read_raw(url, progress_callback)
+    downloader.read_raw(url, progress_callback, size)
     return downloader.data
 
 
@@ -45,11 +45,16 @@ class QDownload(QtCore.QObject):
     def data(self):
         return self._data
 
-    def read_raw(self, url, progress_callback=None):
+    def read_raw(self, url, progress_callback=None, size=None):
         """Get raw binary contents from given url into memory."""
         reply = self._prepare_request(url, progress_callback)
         self.wait()
-        self._data = reply.readAll().data()
+        if size is None:
+            self._data = reply.readAll().data()
+        elif isinstance(size, int):
+            self._data = reply.read(size).data()
+        else:
+            raise RuntimeError('Value `size` needs to be Integer!')
         return self._data
 
     def download(self, url, target_path, overwrite=False, progress_callback=None):
@@ -59,7 +64,6 @@ class QDownload(QtCore.QObject):
 
         if os.path.isfile(target_path) and not overwrite:
             raise FileExistsError('The target file path alredy exists!')
-
 
         tmp_file = os.path.join(os.getenv('TEMP'), f'_{PROJECT}_tmp_dl_{version}.zip')
         if not os.path.isfile(tmp_file):
