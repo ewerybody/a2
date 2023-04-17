@@ -91,7 +91,8 @@ class QDownload(QtCore.QObject):
         self._progress_callback = progress_callback
 
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-        request.setRawHeader(b'User-Agent', b'MyOwnBrowser 1.0')
+        # request.setRawHeader(b'User-Agent', b'MyOwnBrowser 1.0')
+        request.setRawHeader(b'User-Agent', b'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0')
 
         reply = self.manager.get(request)
         reply.finished.connect(self._on_finish)
