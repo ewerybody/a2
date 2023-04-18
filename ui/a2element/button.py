@@ -1,3 +1,4 @@
+import traceback
 from a2qt import QtWidgets
 
 import a2uic
@@ -5,7 +6,7 @@ import a2ctrl
 import a2ctrl.connect
 from a2element import DrawCtrl, EditCtrl, button_edit_ui
 from a2core import get_logger
-from a2widget import local_script
+from a2widget import local_script, a2error_dialog
 
 
 log = get_logger(__name__)
@@ -42,8 +43,17 @@ class Draw(DrawCtrl):
         self.button_layout.addWidget(self.button)
 
     def call_code(self):
-        file_name = local_script.build_file_name(self.cfg.get('script_name'), BUTTON_SCRIPT_PREFIX)
-        self.mod.call_python_script(file_name)
+        script_name = self.cfg.get('script_name')
+        file_name = local_script.build_file_name(script_name, BUTTON_SCRIPT_PREFIX)
+        try:
+            self.mod.call_python_script(file_name)
+        except Exception as error:
+            a2error_dialog.A2ErrorDialog(
+                traceback.format_exc().strip(),
+                f'There was an error trying to execute the script "{script_name}":',
+                error,
+                self
+            )
 
 
 class Edit(EditCtrl):
