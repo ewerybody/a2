@@ -130,6 +130,6 @@ class A2InputDialog(A2ConfirmDialog):
 
 
 if __name__ == '__main__':
-    import a2widget.demo.a2input_dialog_demo
+    from a2widget.demo import a2dialog_demo
 
-    a2widget.demo.a2input_dialog_demo.show()
+    a2dialog_demo.show()
