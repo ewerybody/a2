@@ -1,5 +1,4 @@
 import time
-from functools import partial
 
 import a2util
 import a2core
