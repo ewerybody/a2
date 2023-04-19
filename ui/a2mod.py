@@ -159,16 +159,16 @@ class Mod:
     def create_script(self, script_name, author_name):
         script_name = script_name.strip()
         if not script_name:
-            return
+            return ''
         if script_name != a2ahk.ensure_ahk_ext(script_name):
-            raise NameError('The script needs to have an "%s" extension!!' % a2ahk.EXTENSION)
+            raise NameError(f'The script needs to have an "{a2ahk.EXTENSION}" extension!!')
 
         script_path = os.path.join(self.path, script_name)
         if not os.path.isfile(script_path):
-            with open(script_path, 'w') as file_obj:
-                content = '; %s - %s\n' % (self.name, script_name)
-                content += '; author: %s\n' % author_name
-                content += '; created: %s\n\n' % a2util.get_date()
+            with open(script_path, 'w', encoding='utf8') as file_obj:
+                content = f'; {self.name} - {script_name}\n'
+                content += f'; author: {author_name}\n'
+                content += f'; created: {a2util.get_date()}\n\n'
                 file_obj.write(content)
         return script_name
 
@@ -349,23 +349,18 @@ class Mod:
         if base in sys.modules:
             del sys.modules[base]
 
-        try:
-            script_module = import_module(base)
-        except ImportError:
-            log.error(traceback.format_exc().strip())
-            log.error('Could not import local script_module! "%s"', script_name)
+        script_module = import_module(base)
 
         try:
             script_module.main(self.a2, self)
-        except Exception:
-            tb = traceback.format_exc().strip()
-
+        except Exception as error:
+            trace_report = traceback.format_exc().strip()
             if base in sys.modules:
                 log.info('unloading module "%s" ...', base)
                 del sys.modules[base]
 
-            log.error('\n  Error executing main() of script_module "%s"\n'
-                      '%s\n  path: %s', script_name, tb, path)
+            log.error(trace_report)
+            raise error
 
         if self.path in sys.path:
             sys.path.remove(self.path)
