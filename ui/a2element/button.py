@@ -48,7 +48,7 @@ class Draw(DrawCtrl):
         try:
             self.mod.call_python_script(file_name)
         except Exception as error:
-            a2error_dialog.A2ErrorDialog(
+            a2error_dialog.show(
                 traceback.format_exc().strip(),
                 f'There was an error trying to execute the script "{script_name}":',
                 error,
