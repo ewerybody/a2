@@ -1,4 +1,4 @@
-from a2qt import QtCore, QtWidgets
+from a2qt import QtWidgets
 from a2widget import a2text_field
 
 
@@ -30,6 +30,12 @@ class A2ErrorDialog(QtWidgets.QDialog):
         self.a2ok_button.setObjectName("a2ok_button")
         self.a2ok_button.clicked.connect(self.accept)
         layout.addWidget(self.a2ok_button)
+
+
+def show(error, message=None, title=None, parent=None):
+    dialog = A2ErrorDialog(error, message, title, parent)
+    dialog.show()
+    return dialog
 
 
 if __name__ == '__main__':
