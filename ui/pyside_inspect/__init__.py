@@ -34,9 +34,9 @@ class InspectMode(QtWidgets.QMainWindow):
         #     QtGui.QKeySequence(QtCore.Qt.Key_Dow), self, self.close
         # )
         # self.escape_shortcut.setContext(QtCore.Qt.ApplicationShortcut)
-        self.shortcut = QtGui.QShortcut(self)
-        self.shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.Key.Key_Escape))
-        self.shortcut.activated.connect(self.close)
+        shortcut = QtGui.QShortcut(self)
+        shortcut.setKey(QtGui.QKeySequence(QtCore.Qt.Key.Key_Escape))
+        shortcut.activated.connect(self.close)
 
         self.timer = QtCore.QTimer(self)
         self.timer.setInterval(100)
@@ -157,21 +157,23 @@ class InspectMode(QtWidgets.QMainWindow):
 
         search_var = ''
         name = obj.objectName()
-        for i, line in enumerate(mod_lines):
-            if name not in line or line in ('"""', "'''") or line.lstrip().startswith('#'):
-                continue
-            pos = line.find(name)
-            quote = line[pos - 1]
-            if not quote in '\'"' or line[pos + len(name)] != quote:
-                continue
 
-            if 'setObjectName' in line:
-                opos = line.find('setObjectName')
-            else:
-                left = line[: pos - 1].strip()
-                if left[-1] != '=':
+        for i, line in enumerate(mod_lines):
+            if name:
+                if name not in line or line in ('"""', "'''") or line.lstrip().startswith('#'):
                     continue
-                left = left[:-1].rstrip()
+                pos = line.find(name)
+                quote = line[pos - 1]
+                if not quote in '\'"' or line[pos + len(name)] != quote:
+                    continue
+
+                if 'setObjectName' in line:
+                    opos = line.find('setObjectName')
+                else:
+                    left = line[: pos - 1].strip()
+                    if left[-1] != '=':
+                        continue
+                    left = left[:-1].rstrip()
 
         # with open(mod.__file__) as fobj:
         #     content = fobj.read()
