@@ -1,9 +1,11 @@
 import os
 import sys
 import inspect
-from .pyside import QtWidgets, QtCore, QtGui
+import logging
+from .pyside import QtWidgets, QtCore, QtGui, qt_docs_url
 
 WA_TRANSP4MOUSE = QtCore.Qt.WidgetAttribute.WA_TransparentForMouseEvents
+log = logging.getLogger(__name__)
 
 
 class InspectMode(QtWidgets.QMainWindow):
@@ -128,19 +130,29 @@ class InspectMode(QtWidgets.QMainWindow):
         if self._widget is None:
             return
 
+        self._enabled = False
+        self.timer.stop()
+        menu = QtWidgets.QMenu(self)
+
         self._stack.clear()
         depth = 0
         obj = self._widget
         name = self._widget.objectName()
+        qt_classes = []
 
         while obj is not None:
             print('widget: %s' % obj)
             print('  class: %s' % obj.__class__)
             mod_name = obj.__class__.__module__
+            obj_class = obj.__class__.__name__
             print('  module: %s' % mod_name)
             mod = sys.modules[mod_name]
             if mod.__file__ is not None and not mod.__file__.endswith('.pyd'):
                 self._scan_file(mod.__file__, obj)
+            if mod in (QtWidgets, QtGui):
+                class_name = '%s.%s' % (mod.__name__.split('.')[-1], obj_class)
+                if class_name not in qt_classes:
+                    qt_classes.append(class_name)
 
             self._stack.append(obj)
             obj = obj.parent()
@@ -148,6 +160,18 @@ class InspectMode(QtWidgets.QMainWindow):
             depth += 1
             if depth > 100:
                 break
+
+        for class_name in qt_classes:
+            module_short_name, obj_class = class_name.split('.', 1)
+            action = menu.addAction(f'Browse "{obj_class}" Qt for Python docs', self._browse_qt_docs)
+            action.setData((module_short_name, obj_class))
+
+        if menu.isEmpty():
+            log.error('Nothing in the highligter menu!')
+            return
+
+        self.close()
+        menu.popup(QtGui.QCursor.pos())
 
     def _scan_file(self, path, obj):
         print(f'scanning: {path}...')
@@ -184,6 +208,15 @@ class InspectMode(QtWidgets.QMainWindow):
             return
         self._ui_map.clear()
         self._ui_map.update(thread.get_ui_map())
+
+    def _browse_qt_docs(self):
+        action = self.sender()
+        if not isinstance(action, QtGui.QAction):
+            return
+        import webbrowser
+
+        module_name, class_name = action.data()
+        webbrowser.open(qt_docs_url.format(mod=module_name, cls=class_name))
 
     # def _on_highlighter_update(self, under_cursor: bool):
     #     print('under_cursor: %s' % under_cursor)
