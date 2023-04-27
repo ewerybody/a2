@@ -40,7 +40,7 @@ PYSIDE_VERSION = 6
 QT_VERSION = 6
 # The Qt dlls we need! For some reason Qml is indispensable :/
 QT_LIBS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg'
-QT_DLLS = QT_LIBS + ('Qml',)
+QT_DLLS = QT_LIBS # + ('Qml',)
 QT_DLL = 'Qt%i%s.dll'
 QT_PYD = 'Qt%s.pyd'
 SHIBOKEN = 'shiboken'
