@@ -7,7 +7,7 @@ SetWorkingDir, %A_ScriptDir%
 ; Move a file or directory, tell true/false 1/0 if it worked.
 secure_move(from_path, to_path) {
     attrs := FileExist(from_path)
-    if (attrs == ""):
+    if (attrs == "")
         return false
 
     if (InStr(attrs, "D")) {
