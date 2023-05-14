@@ -22,13 +22,13 @@ if FileExist(test_dir) {
 FileCreateDir, %test_dir%
 test_dir2 := test_dir "5"
 
-result := secure_move(test_dir, test_dir2)
+result := move_secure(test_dir, test_dir2)
 report := "simple move dir: " assertmsg(result == 1 AND !FileExist(test_dir) AND FileExist(test_dir2)) "`n"
 
-result := secure_move(test_dir, test_dir2)
+result := move_secure(test_dir, test_dir2)
 report .= "fail when already exists: " assertmsg(result == 0)
 FileRemoveDir, %test_dir2%
 
-
+move_catched()
 
 MsgBox report: %report%
