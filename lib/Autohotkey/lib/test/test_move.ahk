@@ -39,10 +39,10 @@ test_move_catched() {
     FileCreateDir, %blocked_dir%
     FILE1 := "_file1.txt"
     test_file1 := path_join(test_dir, FILE1)
-    FileAppend, "Text", %test_file1%
+    FileAppend, Text, %test_file1%
     FILE2 := "XJHVDSJHV.md"
     test_file2 := path_join(test_dir, FILE2)
-    FileAppend, "# Text", %test_file2%
+    FileAppend, # Text, %test_file2%
     target_dir := test_dir . "5"
     FileCreateDir, %target_dir%
 
@@ -51,9 +51,7 @@ test_move_catched() {
     Run, %ComSpec% , %blocked_dir%, hide, OutputVarPID
     result := move_catched(test_dir, target_dir, file_list1)
 
-    ; msgbox_info(string_join(file_list1) "`n`n" string_join(file_list2))
     report := "dir blocked/rolled back: " . assertmsg(result == false)
-
     file_list2 := _listdir(test_dir)
     report .= assertmsg(string_join(file_list1) == string_join(file_list2)) . "`n"
 
@@ -65,16 +63,18 @@ test_move_catched() {
     report .= assertmsg(path_is_empty(test_dir)) "`n"
 
     ; try blocking by opening a file/setting it read-only:
-    locked_file := path_join(test_dir, FILE2)
+    locked_file := path_join(target_dir, FILE1)
     file := FileOpen(locked_file, "w")
-    result := move_catched(test_dir, target_dir, file_list1)
-    report .= "opened file/rolled back: " . assertmsg(result == false)
-    report .= assertmsg(path_is_empty(target_dir))
-    msgbox_error(locked_file)
-    file.Close()
+    file.Write("Some new string ...")
 
-    path_set_readonly(locked_file)
     result := move_catched(target_dir, test_dir, file_list1)
+    report .= "opened file does not block: " . assertmsg(result == true)
+    file.Close()
+    report .= assertmsg(path_is_empty(target_dir)) . assertmsg(!path_is_file(locked_file)) "`n"
+
+    locked_file := path_join(test_dir, FILE2)
+    path_set_readonly(locked_file)
+    result := move_catched(test_dir, target_dir, file_list1)
     report .= "locked file does not block: " . assertmsg(result == true)
 
     FileRemoveDir, %test_dir%, 1

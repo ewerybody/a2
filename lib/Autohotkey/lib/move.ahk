@@ -15,8 +15,8 @@ move_secure(from_path, to_path) {
     } else {
         FileMove, %from_path%, %to_path%
     }
-    If ErrorLEvel
-        MsgBox ErrorLEvel: %ErrorLEvel%
+    ; If ErrorLEvel
+    ;     MsgBox ErrorLEvel: %ErrorLEvel% %from_path%
 
     if (!FileExist(from_path) AND FileExist(to_path))
         return true
