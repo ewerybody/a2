@@ -23,6 +23,7 @@ complain_if_uncompiled()
 run_silent := check_silent()
 A2DIR := get_a2dir()
 NAME := "a2 Uninstaller"
+
 items := gather_items()
 outro(items)
 ask_for_user_data_deletion(items)
@@ -173,8 +174,8 @@ delete_items(items) {
     }
 }
 
+; - Assemble simple windows batch code
 create_deleter_batch(path) {
-    ; - Assemble simple windows batch code
     ;   * cd into Temp dir
     ;   * delete running executable (If compiled)
     ;   * try a couple times
