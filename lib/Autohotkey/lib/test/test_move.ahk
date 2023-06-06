@@ -9,7 +9,7 @@ SetWorkingDir, %A_ScriptDir%
 #Include path.ahk
 #Include msgbox.ahk
 
-; report := test_move_secure()
+report := test_move_secure()
 report .= test_move_catched()
 MsgBox report: %report%
 
@@ -51,13 +51,13 @@ test_move_catched() {
     Run, %ComSpec% , %blocked_dir%, hide, OutputVarPID
     result := move_catched(test_dir, target_dir, file_list1)
 
-    report := "dir blocked/rolled back: " . assertmsg(result == false)
+    report := "dir blocked/rolled back: " . assertmsg(result != "")
     file_list2 := _listdir(test_dir)
     report .= assertmsg(string_join(file_list1) == string_join(file_list2)) . "`n"
 
     Process, Close , %OutputVarPID%
     result := move_catched(test_dir, target_dir, file_list1)
-    report .= "unblocked/retry: " . assertmsg(result == true)
+    report .= "unblocked/retry: " . assertmsg(result == "")
     file_list2 := _listdir(target_dir)
     report .= assertmsg(string_join(file_list1) == string_join(file_list2))
     report .= assertmsg(path_is_empty(test_dir)) "`n"
@@ -68,14 +68,14 @@ test_move_catched() {
     file.Write("Some new string ...")
 
     result := move_catched(target_dir, test_dir, file_list1)
-    report .= "opened file does not block: " . assertmsg(result == true)
+    report .= "opened file does not block: " . assertmsg(result == "")
     file.Close()
     report .= assertmsg(path_is_empty(target_dir)) . assertmsg(!path_is_file(locked_file)) "`n"
 
     locked_file := path_join(test_dir, FILE2)
     path_set_readonly(locked_file)
     result := move_catched(test_dir, target_dir, file_list1)
-    report .= "locked file does not block: " . assertmsg(result == true)
+    report .= "locked file does not block: " . assertmsg(result == "")
 
     FileRemoveDir, %test_dir%, 1
     FileRemoveDir, %target_dir%, 1

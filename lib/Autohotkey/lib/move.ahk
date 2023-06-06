@@ -24,7 +24,7 @@ move_secure(from_path, to_path) {
         return false
 }
 
-; Try moving a list of items. Rollback everything if it breaks.
+; Try moving a list of items. Rollback everything if it breaks. ; Return "" on success. Otherwise breaking source and target paths separated by linebreak
 move_catched(source_dir, target_dir, relative_paths) {
     done_items := []
     for i, rel_path in relative_paths
@@ -38,8 +38,8 @@ move_catched(source_dir, target_dir, relative_paths) {
             ; msgbox_error("Could not move " rel_path " from/to:`n" source_dir "`n" target_dir)
             rollback_result := move_catched(target_dir, source_dir, done_items)
             ; MsgBox rollback_result: %rollback_result%
-            return false
+            return source "`n" target
         }
     }
-    return true
+    return ""
 }
