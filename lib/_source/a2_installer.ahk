@@ -8,6 +8,7 @@
 ; * run a2 ui
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
 ;@Ahk2Exe-SetVersion 0.5.4
+#NoTrayIcon
 
 complain_if_uncompiled()
 check_execution_dir()
