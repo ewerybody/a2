@@ -16,6 +16,13 @@ RCEDIT_EXE = 'rcedit-x64.exe'
 SEVENZ_DIR = '7zr'
 SEVENZ_EXE = '7zr.exe'
 
+PYSIDE = 'PySide'
+PYSIDE_VERSION = 6
+QT_VERSION = 6
+PYSIDE_NAME = f'{PYSIDE}{PYSIDE_VERSION}'
+SHIBOKEN = 'shiboken'
+SHIBOKEN_NAME = f'{SHIBOKEN}{PYSIDE_VERSION}'
+
 
 class Paths:
     """Path holder object."""
@@ -54,8 +61,11 @@ class Paths:
 
     py_packs = join(a2, '_ py_packs')
 
+    # Note: This points to the Python packages of the RUNNING python
+    # Not necessarily the one that we ship a2 with!
     py_lib = os.path.join(os.path.dirname(sys.executable), 'Lib')
     py_site_packs = os.path.join(py_lib, 'site-packages')
+    pyside = os.path.join(py_site_packs, PYSIDE_NAME)
 
     @classmethod
     def check(cls):

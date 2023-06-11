@@ -37,10 +37,12 @@ EXE_NFO = {
 CHKMK = b'\xe2\x9c\x94'.decode()
 EXMRK = b'\xe2\x9c\x96'.decode()
 _prnt = sys.stdout.write
+_TIMINGS = {}
 
 
 def main():
     """Main process entrypoint."""
+    t00 = time.time()
     Paths.check()
     if not os.path.isdir(Paths.distroot):
         raise FileNotFoundError(ERROR_NO_PACKAGE)
@@ -53,12 +55,36 @@ def main():
     version_label = (
         version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
     )
+    t_mainchecks = time.time() - t00
 
+    t0 = time.time()
     _create_fresh_sfx_files()
+    t_create_fresh_sfx_files = time.time() - t0
+
+    t0 = time.time()
     _update_manifest(version_string)
+    t_update_manifest = time.time() - t0
+
+    t0 = time.time()
     _pack_installer_archive()
+    t_pack_installer_archive = time.time() - t0
+
+    t0 = time.time()
     _copy_together_installer_binary(package_cfg['version'])
+    t_copy_together_installer_binary = time.time() - t0
+
+    t0 = time.time()
     _make_portable()
+    t_make_portable = time.time() - t0
+
+    print('%s took %.3fs' % ('main checks', time.time() - t0))
+    print('t_mainchecks: %s' % t_mainchecks)
+    print('t_create_fresh_sfx_files: %s' % t_create_fresh_sfx_files)
+    print('t_update_manifest: %s' % t_update_manifest)
+    print('t_pack_installer_archive: %s' % t_pack_installer_archive)
+    print('t_copy_together_installer_binary: %s' % t_copy_together_installer_binary)
+    print('t_make_portable: %s' % t_make_portable)
+    print('t_all_in_all: %s' % (time.time() - t00))
 
 
 def _set_rc_nfo(target_path: str, nfo: dict[str, str]):
@@ -298,8 +324,8 @@ def _create_fresh_sfx_files():
 
 def _make_portable():
     """
-    a2 is now portable by default! This is just preparing a zip without an
-    uninstaller. That's all. Voila!
+    a2 is now portable by default! This is just preparing a zip without a
+    setup executable. That's all. Voila!
     """
     print('Making portable package ...')
     _prnt('  copying ... ')
@@ -311,7 +337,7 @@ def _make_portable():
         print(f'{CHKMK} done')
 
     # remove unwanted files if present
-    for name in 'setup', 'Uninstall a2':
+    for name in 'setup',:
         path = os.path.join(Paths.dist_portable, name + '.exe')
         if os.path.isfile(path):
             os.unlink(path)

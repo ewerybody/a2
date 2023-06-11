@@ -16,6 +16,9 @@ import a2ahk
 import a2util
 
 Paths = _build_package_init.Paths
+from _build_package_init import (
+    PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME, SHIBOKEN, SHIBOKEN_NAME
+)
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
@@ -35,15 +38,11 @@ UI_IGNORES = (
     ('ui', 'test'),
 )
 
-PYSIDE = 'PySide'
-PYSIDE_VERSION = 6
-QT_VERSION = 6
 # The Qt dlls we need! For some reason Qml is indispensable :/
 QT_LIBS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg'
 QT_DLLS = QT_LIBS # + ('Qml',)
 QT_DLL = 'Qt%i%s.dll'
 QT_PYD = 'Qt%s.pyd'
-SHIBOKEN = 'shiboken'
 IMG_FORMATS = ('jpeg', 'ico', 'svg')
 ABI_DLL = '.abi3.dll'
 # fmt: off
@@ -207,14 +206,10 @@ def copy_qt():
     * selected qt plugins
     """
     print('copying Qt files ...')
-    pyside_name = f'{PYSIDE}{PYSIDE_VERSION}'
-    shibo_name = f'{SHIBOKEN}{PYSIDE_VERSION}'
-    pyside_path = os.path.join(Paths.py_site_packs, pyside_name)
-
     include = [QT_DLL % (QT_VERSION, base) for base in QT_DLLS]
     include.append(f'{PYSIDE.lower()}{PYSIDE_VERSION}{ABI_DLL}')
 
-    for qitem in os.scandir(pyside_path):
+    for qitem in os.scandir(Paths.pyside):
         if qitem.is_dir():
             continue
 
@@ -228,19 +223,19 @@ def copy_qt():
 
     # copy shiboken files
     for name in f'{SHIBOKEN.title()}.pyd', '__init__.py':
-        src = os.path.join(Paths.py_site_packs, shibo_name, name)
-        dst = os.path.join(Paths.distui, shibo_name, name)
+        src = os.path.join(Paths.py_site_packs, SHIBOKEN_NAME, name)
+        dst = os.path.join(Paths.distui, SHIBOKEN_NAME, name)
         _copy(src, dst)
 
     # Pyinstaller copied this one into the root.. *shrug*
-    abi = f'{shibo_name}{ABI_DLL}'
-    src = os.path.join(Paths.py_site_packs, shibo_name, abi)
+    abi = f'{SHIBOKEN_NAME}{ABI_DLL}'
+    src = os.path.join(Paths.py_site_packs, SHIBOKEN_NAME, abi)
     dst = os.path.join(Paths.distui, abi)
     _copy(src, dst)
 
-    pyside_dst_dir = os.path.join(Paths.distui, pyside_name)
+    pyside_dst_dir = os.path.join(Paths.distui, PYSIDE_NAME)
     for name in QT_LIBS:
-        src = os.path.join(pyside_path, QT_PYD % name)
+        src = os.path.join(Paths.pyside, QT_PYD % name)
         dst = os.path.join(pyside_dst_dir, QT_PYD % name)
         _copy(src, dst)
 
@@ -248,7 +243,7 @@ def copy_qt():
         dst = os.path.join(pyside_dst_dir, 'plugins', dirname)
         if os.path.isdir(dst):
             continue
-        src = os.path.join(pyside_path, 'plugins', dirname)
+        src = os.path.join(Paths.pyside, 'plugins', dirname)
         shutil.copytree(src, dst, ignore=_qt_ignore)
 
 
