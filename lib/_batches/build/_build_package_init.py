@@ -8,7 +8,8 @@ A2PATH = os.path.abspath(join(THIS_PATH, '..', '..', '..'))
 UIPATH = join(A2PATH, 'ui')
 sys.path.append(UIPATH)
 
-NAME = 'a2_installer'
+A2 = 'a2'
+NAME = A2 + '_installer'
 PACKAGE_SUB_NAME = 'alpha'
 MANIFEST_NAME = NAME + '_manifest.xml'
 SRC_SFX = NAME + '.sfx.exe'
@@ -22,6 +23,7 @@ QT_VERSION = 6
 PYSIDE_NAME = f'{PYSIDE}{PYSIDE_VERSION}'
 SHIBOKEN = 'shiboken'
 SHIBOKEN_NAME = f'{SHIBOKEN}{PYSIDE_VERSION}'
+TMP_NAME = A2 + '_temp_buildpath'
 
 
 class Paths:
@@ -66,6 +68,7 @@ class Paths:
     py_lib = os.path.join(os.path.dirname(sys.executable), 'Lib')
     py_site_packs = os.path.join(py_lib, 'site-packages')
     pyside = os.path.join(py_site_packs, PYSIDE_NAME)
+    temp_build = os.path.join(os.environ['TEMP'], TMP_NAME)
 
     @classmethod
     def check(cls):
