@@ -16,6 +16,7 @@
 ;@Ahk2Exe-SetOrigFilename Uninstall a2.exe
 ;@Ahk2Exe-SetProductName a2
 ;@Ahk2Exe-SetVersion 0.5.4
+#NoTrayIcon
 
 A2DIR := A_ScriptDir
 NAME := "a2 Uninstaller"
