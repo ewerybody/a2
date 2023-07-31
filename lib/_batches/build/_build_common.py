@@ -1,6 +1,7 @@
 # adding a2 paths for imports
 import os
 import sys
+import subprocess
 from os.path import join
 
 THIS_PATH = os.path.dirname(__file__)
@@ -24,6 +25,35 @@ PYSIDE_NAME = f'{PYSIDE}{PYSIDE_VERSION}'
 SHIBOKEN = 'shiboken'
 SHIBOKEN_NAME = f'{SHIBOKEN}{PYSIDE_VERSION}'
 TMP_NAME = A2 + '_temp_buildpath'
+SEVEN_FLAGS = (
+    '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
+)
+AUTOHOTKEY = 'AutoHotkey'
+PYTHON = 'Python'
+# to gather versions in use:
+VERSIONS = {
+    PYSIDE: '',
+    AUTOHOTKEY: '',
+    PYTHON: ''
+}
+
+
+def _get_versions(lib_dir, batches_path, ahk_path):
+    """Get currently used versions."""
+    pattern = 'get_%s_version.ahk'
+    names = AUTOHOTKEY, PYSIDE, PYTHON
+    scripts = (
+        os.path.join(lib_dir, 'cmds', pattern % names[0]),
+        os.path.join(batches_path, 'versions', pattern % names[1]),
+        os.path.join(batches_path, 'versions', pattern % names[2]),
+    )
+    for name, script in zip(names, scripts):
+        if not VERSIONS[name]:
+            cwd = os.path.dirname(os.path.dirname(script))
+            version_str = subprocess.check_output([ahk_path, script], cwd=cwd).decode()
+            print(f'{name}: {version_str}')
+            VERSIONS[name] = version_str
+    return VERSIONS
 
 
 class Paths:
@@ -33,8 +63,8 @@ class Paths:
     lib = join(a2, 'lib')
     ui = UIPATH
     a2icon = join(ui, 'res', 'a2.ico')
-    ahk2exe = join(lib, 'AutoHotkey', 'Compiler', 'Ahk2Exe.exe')
-    ahkexe = join(lib, 'AutoHotkey', 'AutoHotkey.exe')
+    ahk2exe = join(lib, AUTOHOTKEY, 'Compiler', 'Ahk2Exe.exe')
+    ahkexe = join(lib, AUTOHOTKEY, AUTOHOTKEY + '.exe')
 
     package_config = join(a2, 'package.json')
 
@@ -58,7 +88,7 @@ class Paths:
     dist = join(distroot, 'a2')
     distlib = join(dist, 'lib')
     distui = join(dist, 'ui')
-    distlib_test = join(distlib, 'AutoHotkey', 'lib', 'test')
+    distlib_test = join(distlib, AUTOHOTKEY, 'lib', 'test')
     dist_portable = join(distroot, 'a2_portable')
 
     py_packs = join(a2, '_ py_packs')
@@ -69,6 +99,10 @@ class Paths:
     py_site_packs = os.path.join(py_lib, 'site-packages')
     pyside = os.path.join(py_site_packs, PYSIDE_NAME)
     temp_build = os.path.join(os.environ['TEMP'], TMP_NAME)
+
+    _get_versions(lib, batches, ahkexe)
+    qt_dir = os.path.join(temp_build, 'qt')
+    qt_temp = os.path.join(qt_dir, VERSIONS[PYSIDE])
 
     @classmethod
     def check(cls):

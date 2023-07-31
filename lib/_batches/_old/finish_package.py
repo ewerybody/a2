@@ -9,11 +9,11 @@ import shutil
 import codecs
 import subprocess
 
-import _build_package_init
+import _build_common
 import a2ahk
 import a2util
 
-Paths = _build_package_init.Paths
+Paths = _build_common.Paths
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'

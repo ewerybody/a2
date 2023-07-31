@@ -10,20 +10,15 @@ import shutil
 import codecs
 import subprocess
 
-import _build_package_init
+import _build_common
 import a2core
 import a2util
+from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, Paths
 
-Paths = _build_package_init.Paths
-PACKAGE_SUB_NAME = _build_package_init.PACKAGE_SUB_NAME
-TMP_NAME = a2core.NAME + '_temp_buildpath'
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
 INSTALLER_CFG = f';!@Install@!UTF-8!\nRunProgram="{SETUP_EXE}"\n;!@InstallEnd@!'
 ERROR_NO_PACKAGE = 'No package? No need to build an installer :/ build a package first!'
-SEVEN_FLAGS = (
-    '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
-)
 COMPANY = 'github.com/ewerybody/a2'
 COPYRIGHT = f'GPLv3 ({COMPANY})'
 EXE_NFO = {
@@ -37,6 +32,7 @@ EXE_NFO = {
 CHKMK = b'\xe2\x9c\x94'.decode()
 EXMRK = b'\xe2\x9c\x96'.decode()
 _prnt = sys.stdout.write
+USE_PREZIPPED_QT = True
 _TIMINGS = {}
 
 
@@ -78,14 +74,14 @@ def main():
     t_make_portable = time.time() - t0
 
     print('%s took %.3fs' % ('main checks', time.time() - t0))
-    print('t_mainchecks: %s' % t_mainchecks)
-    print('t_create_fresh_sfx_files: %s' % t_create_fresh_sfx_files)
-    print('t_update_manifest: %s' % t_update_manifest)
-    print('t_pack_installer_archive: %s' % t_pack_installer_archive)
-    print('t_copy_together_installer_binary: %s' % t_copy_together_installer_binary)
-    print('t_make_portable: %s' % t_make_portable)
-    print('t_all_in_all: %s' % (time.time() - t00))
-
+    print('t_mainchecks: %.3fs' % t_mainchecks)
+    print('t_create_fresh_sfx_files: %.3fs' % t_create_fresh_sfx_files)
+    print('t_update_manifest: %.3fs' % t_update_manifest)
+    print('t_pack_installer_archive: %.3fs' % t_pack_installer_archive)
+    print('t_copy_together_installer_binary: %.3fs' % t_copy_together_installer_binary)
+    print('t_make_portable: %.3fs' % t_make_portable)
+    print('t_all_in_all: %.3fs' % (time.time() - t00))
+    t0 = time.time()
 
 def _set_rc_nfo(target_path: str, nfo: dict[str, str]):
     for key, value in nfo.items():
@@ -181,12 +177,20 @@ def _apply_manifest(sfx_target):
 
 
 def _pack_installer_archive():
-    # "%sevenx%" a "%archive%" "%distpath%" -m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19
-    # -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx
-    if _need_rezipping():
-        t0 = time.time()
-        subprocess.call([Paths.sevenz_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
-        print('packing archive took: %.2fsec' % (time.time() - t0))
+    if not _need_rezipping():
+        return
+
+    if os.path.isfile(Paths.archive_target):
+        os.unlink(Paths.archive_target)
+
+    t0 = time.time()
+    if USE_PREZIPPED_QT:
+        shutil.copyfile(Paths.qt_temp + '.7z', Paths.archive_target)
+    else:
+        shutil.copytree(Paths.qt_temp, Paths.distui, dirs_exist_ok=True)
+
+    subprocess.call([Paths.sevenz_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
+    print('packing archive took: %.2fsec' % (time.time() - t0))
 
 
 def _need_rezipping():
@@ -198,10 +202,9 @@ def _need_rezipping():
         print('Re-zip: TRUE :: No Archive yet!')
         result = True
 
-    tmp_dir = os.path.join(os.environ['TEMP'], TMP_NAME)
-    if not os.path.isdir(tmp_dir):
-        os.makedirs(tmp_dir)
-    digest_path = os.path.join(tmp_dir, 'archive_digest.json')
+    if not os.path.isdir(Paths.temp_build):
+        os.makedirs(Paths.temp_build)
+    digest_path = os.path.join(Paths.temp_build, 'archive_digest.json')
     if _diff_digest(digest_path):
         t0 = time.time()
         digest_map = _create_digest()
@@ -263,7 +266,7 @@ def _copy_together_installer_binary(version_label):
         set installerx=%distroot%\\a2_installer.exe
         copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
     """
-    name = f'{_build_package_init.NAME}_{version_label}_{PACKAGE_SUB_NAME}'
+    name = f'{_build_common.NAME}_{version_label}_{PACKAGE_SUB_NAME}'
     name_ui = name + '.exe'
     name_silent = name + '_silent.exe'
 
@@ -329,21 +332,27 @@ def _make_portable():
     """
     print('Making portable package ...')
     _prnt('  copying ... ')
-    if os.path.exists(Paths.dist_portable):
-        print(f'{CHKMK} Already done')
-        # shutil.rmtree(Paths.dist_portable, ignore_errors=True)
-    else:
-        shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
-        print(f'{CHKMK} done')
+    # if os.path.exists(Paths.dist_portable):
+    #     print(f'{CHKMK} Already done')
+    #     # shutil.rmtree(Paths.dist_portable, ignore_errors=True)
+    # else:
+    #     shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
+    #     print(f'{CHKMK} done')
+    for item in os.scandir(Paths.qt_temp):
+        trg_path = os.path.join(Paths.distui, item.name)
+        if item.is_dir() and not os.path.isdir(trg_path):
+            shutil.copytree(item.path, trg_path)
+        elif item.is_file() and not os.path.isfile(trg_path):
+            shutil.copyfile(item.path, trg_path)
 
     # remove unwanted files if present
     for name in 'setup',:
-        path = os.path.join(Paths.dist_portable, name + '.exe')
+        path = os.path.join(Paths.dist, name + '.exe')
         if os.path.isfile(path):
             os.unlink(path)
 
     _prnt('  zipping ... ')
-    name = os.path.basename(Paths.dist_portable)
+    name = os.path.basename(Paths.dist)
     package_cfg = a2util.json_read(Paths.package_config)
     portable_name = f'{name}_{package_cfg["version"]}_{PACKAGE_SUB_NAME}.zip'
     portable_path = os.path.join(Paths.distroot, portable_name)
@@ -351,7 +360,7 @@ def _make_portable():
         print(f'{CHKMK} Already done')
     else:
         tar = os.path.join(os.getenv('WINDIR', ''), 'System32', 'tar.exe')
-        subprocess.call([tar, '-a', '-c', '-f', portable_path, '*'], cwd=Paths.dist_portable)
+        subprocess.call([tar, '-a', '-c', '-f', portable_path, '*'], cwd=Paths.dist)
         print(f'{CHKMK} done')
 
 

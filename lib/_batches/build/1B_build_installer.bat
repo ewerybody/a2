@@ -1,4 +1,4 @@
-rem This actually ONLY calls the Python installer builder!
+rem Kick off calling the installer builder (Python).
 @echo off
 set here=%~dp0
 set a2path=%here%..\..\..
