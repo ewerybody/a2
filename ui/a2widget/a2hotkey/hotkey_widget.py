@@ -1,5 +1,4 @@
 """Home of the mighty a2Hotkey widget."""
-# pylint: disable=C0103,C0111
 
 from a2qt import QtCore, QtWidgets
 

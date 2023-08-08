@@ -249,7 +249,17 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             self.ui.a2ok_button.setText(button_text)
             self.ui.a2ok_button.setEnabled(button_enable)
         else:
-            self.scope._scope_data
+            for scope_string in self.scope.data.get('scope', ()):
+                in_this_scope = _include_hks.get(scope_string)
+                if in_this_scope is None:
+                    continue
+                if not self.checked_modifier:
+                    for key, command_tuples in in_this_scope.get('', {}).items():
+                        a2_shortcuts.setdefault(key, []).extend(command_tuples)
+                else:
+                    in_this_scope.get(modifier_string, {})
+                    for key, command_tuples in in_this_scope.get(modifier_string, {}).items():
+                        a2_shortcuts.setdefault(key, []).extend(command_tuples)
 
         self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
 
@@ -259,7 +269,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 continue
 
             name = name.lower()
-            a2_shortcuts = dict([(k.lower(), v) for k, v in a2_shortcuts.items()])
+            lowered_shortcuts = {key.lower(): set(calls) for key, calls in a2_shortcuts.items()}
             tooltip = []
             style_sheet = self._ui_styles.get('default', '')
 
@@ -271,9 +281,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                     style_sheet = self._ui_styles.get('win_button', '')
                     tooltip.append('Windows Shortcut: %s' % win_shortcuts[name])
 
-                if name in a2_shortcuts:
+                if name in lowered_shortcuts:
                     style_sheet = self._ui_styles.get('a2_button', '')
-                    for command, module in a2_shortcuts[name]:
+                    for command, module in lowered_shortcuts[name]:
                         if module is None:
                             tooltip.append('a2: %s' % command)
                         else:
@@ -453,9 +463,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
 class Scope(object):
     def __init__(self, scope_data):
-        self._scope_data = scope_data
+        self.data = scope_data
 
-        self.scope_mode = self._scope_data.get(hotkey_common.Vars.scope_mode)
+        self.scope_mode = self.data.get(hotkey_common.Vars.scope_mode)
         self.is_global = self.scope_mode == 0
         self.is_include = self.scope_mode == 1
         self.is_exclude = self.scope_mode == 2
@@ -524,14 +534,14 @@ def load_css(name):
 
 
 def win_standard_keys():
-    global _WIN_STANDARD_KEYS
     if not _WIN_STANDARD_KEYS:
-        _WIN_STANDARD_KEYS = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
+        _WIN_STANDARD_KEYS.update(a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE)))
     return _WIN_STANDARD_KEYS
 
 
 def get_current_hotkeys():
     import a2runtime
+
     global_hks, include_hks, exclude_hks = a2runtime.collect_hotkeys()
     modifiers_global = _sort_hotkey_modifiers(global_hks)
 
