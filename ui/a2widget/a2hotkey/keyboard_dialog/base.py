@@ -218,8 +218,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 else:
                     button_enable = False
                     button_text = GLOBAL_NO_MOD_WARNING
-                    self.ui.i_know_checkbox.setVisible(True)
+                self.ui.i_know_checkbox.setVisible(True)
             else:
+                self.ui.i_know_checkbox.setVisible(False)
 
             self.ui.a2ok_button.setText(button_text)
             self.ui.a2ok_button.setEnabled(button_enable)
