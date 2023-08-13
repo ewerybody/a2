@@ -207,13 +207,12 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         global_hks, _include_hks, _exclude_hks = get_current_hotkeys()
         parent_modifier = hotkey_common.parent_modifier_string(modifier_string)
         win_shortcuts, a2_shortcuts = {}, {}
+        win_globals = win_standard_keys()
 
         if self.scope.is_global:
-            win_globals = win_standard_keys()
             button_text = 'OK'
             button_enable = True
             if not self.checked_modifier:
-                win_shortcuts, a2_shortcuts = win_globals.get('', {}), global_hks.get('', {})
                 if self.user_knows_what_he_is_doing:
                     button_text = 'OK (%s)' % GLOBAL_NO_MOD_WARNING
                 else:
@@ -221,16 +220,6 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                     button_text = GLOBAL_NO_MOD_WARNING
                     self.ui.i_know_checkbox.setVisible(True)
             else:
-                if parent_modifier != modifier_string:
-                    if parent_modifier in win_globals:
-                        win_shortcuts = win_globals[parent_modifier]
-                    if parent_modifier in global_hks:
-                        a2_shortcuts = global_hks[parent_modifier]
-
-                if modifier_string in win_globals:
-                    win_shortcuts.update(win_globals[modifier_string])
-                if modifier_string in global_hks:
-                    a2_shortcuts.update(global_hks[modifier_string])
 
             self.ui.a2ok_button.setText(button_text)
             self.ui.a2ok_button.setEnabled(button_enable)
@@ -239,13 +228,27 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 in_this_scope = _include_hks.get(scope_string)
                 if in_this_scope is None:
                     continue
-                if not self.checked_modifier:
-                    for key, command_tuples in in_this_scope.get('', {}).items():
-                        a2_shortcuts.setdefault(key, []).extend(command_tuples)
-                else:
-                    in_this_scope.get(modifier_string, {})
+                if self.checked_modifier:
                     for key, command_tuples in in_this_scope.get(modifier_string, {}).items():
                         a2_shortcuts.setdefault(key, []).extend(command_tuples)
+                else:
+                    for key, command_tuples in in_this_scope.get('', {}).items():
+                        a2_shortcuts.setdefault(key, []).extend(command_tuples)
+
+        if self.checked_modifier:
+            if parent_modifier != modifier_string:
+                if parent_modifier in win_globals:
+                    win_shortcuts.update(win_globals[parent_modifier])
+                if parent_modifier in global_hks:
+                    a2_shortcuts.update(global_hks[parent_modifier])
+
+            if modifier_string in win_globals:
+                win_shortcuts.update(win_globals[modifier_string])
+            if modifier_string in global_hks:
+                a2_shortcuts.update(global_hks[modifier_string])
+        else:
+            win_shortcuts.update(win_globals.get('', {}))
+            a2_shortcuts.update(global_hks.get('', {}))
 
         self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
 
