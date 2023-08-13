@@ -198,21 +198,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             self.checked_key = button.a2key
 
     def update_ui(self):
-        new_key_list = []
-        handled = []
-        for modkeyname in self.checked_modifier:
-            if modkeyname in handled:
-                continue
-
-            modkey = self.key_dict[modkeyname]
-            if modkey.a2buddy in self.checked_modifier:
-                handled.append(modkey.a2buddy)
-                new_key_list.append(modkey.a2modifier)
-            else:
-                new_key_list.append(modkeyname)
-
-        new_key_list.append(self.checked_key)
-
+        new_key_list = self._get_new_key_list()
         modifier_string, trigger_key = hotkey_common.get_parts_from_list(new_key_list)
         self.key = hotkey_common.build_string(modifier_string, trigger_key)
         self.ui.key_field.setText(self.key)
@@ -262,6 +248,23 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                         a2_shortcuts.setdefault(key, []).extend(command_tuples)
 
         self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
+
+    def _get_new_key_list(self):
+        new_key_list = []
+        handled = []
+        for modkeyname in self.checked_modifier:
+            if modkeyname in handled:
+                continue
+
+            modkey = self.key_dict[modkeyname]
+            if modkey.a2buddy in self.checked_modifier:
+                handled.append(modkey.a2buddy)
+                new_key_list.append(modkey.a2modifier)
+            else:
+                new_key_list.append(modkeyname)
+
+        new_key_list.append(self.checked_key)
+        return new_key_list
 
     def _highlight_keys(self, win_shortcuts, a2_shortcuts, trigger_key):
         for name, button in self.key_dict.items():
