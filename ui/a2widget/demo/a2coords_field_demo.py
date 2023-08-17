@@ -5,8 +5,6 @@ from a2widget.a2coords_field import A2CoordsField
 
 
 class CoordsFieldDemo(QtWidgets.QMainWindow):
-    dict_changed = QtCore.Signal(tuple)
-
     def __init__(self):
         super(CoordsFieldDemo, self).__init__()
         w = QtWidgets.QWidget(self)
@@ -14,7 +12,7 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
         vlay = QtWidgets.QVBoxLayout(w)
 
         self.c = A2CoordsField()
-        self.c.changed.connect(self.change_received)
+        self.c.changed_to.connect(self.change_received)
 
         self.c2 = A2CoordsField()
 
@@ -25,8 +23,8 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
 
         self.some_dict = {'some_coords': (23, 42), 'something_else': 'blaaa'}
         self.c3 = A2CoordsField()
-        a2ctrl.connect.control(self.c3, 'some_coords', self.some_dict, self.dict_changed)
-        self.dict_changed.connect(self.show_dict_change)
+        a2ctrl.connect.control(self.c3, 'some_coords', self.some_dict)
+        self.c3.changed.connect(self.show_dict_change)
 
         for l, w in [
             ('Simple field:', self.c),
@@ -40,8 +38,8 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
         self.c2.set_value(QtGui.QCursor.pos())
 
     @staticmethod
-    def change_received(coords):
-        print('coords change_received: %s' % str(coords))
+    def change_received(coords: tuple[int, int]):
+        print('coords change_received: %i/%i' % (coords[0], coords[1]))
 
     def show_dict_change(self):
         pprint(self.some_dict)

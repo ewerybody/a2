@@ -10,7 +10,8 @@ log = a2core.get_logger(__name__)
 
 
 class A2CoordsField(QtWidgets.QWidget):
-    changed = QtCore.Signal(list)
+    changed = QtCore.Signal()
+    changed_to = QtCore.Signal(tuple)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -87,7 +88,8 @@ class A2CoordsField(QtWidgets.QWidget):
             menu.addAction(icon, func.__name__.title() + ' Coordinates', func)
 
     def change_triggered(self):
-        self.changed.emit([self.x, self.y])
+        self.changed.emit()
+        self.changed_to.emit((self.x, self.y))
 
     def copy(self):
         QtWidgets.QApplication.clipboard().setText('%i, %i' % (self.x, self.y))

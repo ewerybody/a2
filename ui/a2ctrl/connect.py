@@ -94,7 +94,16 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.text()
 
-    elif isinstance(ctrl, (A2CoordsField, A2TagField, A2PathField)):
+    elif isinstance(ctrl, A2CoordsField):
+        ctrl.changed_to.connect(partial(_update_cfg_data, cfg, name))
+        if change_signal is not None:
+            ctrl.changed.connect(change_signal.emit)
+        if name in cfg:
+            ctrl.value = cfg[name]
+        else:
+            cfg[name] = ctrl.value
+
+    elif isinstance(ctrl, (A2TagField, A2PathField)):
         ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
