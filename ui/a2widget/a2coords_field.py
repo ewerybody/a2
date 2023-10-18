@@ -88,8 +88,8 @@ class A2CoordsField(QtWidgets.QWidget):
             menu.addAction(icon, func.__name__.title() + ' Coordinates', func)
 
     def change_triggered(self):
-        self.changed.emit()
         self.changed_to.emit((self.x, self.y))
+        self.changed.emit()
 
     def copy(self):
         QtWidgets.QApplication.clipboard().setText('%i, %i' % (self.x, self.y))
