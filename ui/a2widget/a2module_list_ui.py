@@ -3,7 +3,7 @@
 """
 Form generated from reading UI file 'a2module_list.ui'
 
-Created by: Qt User Interface Compiler version 6.2.3
+Created by: Qt User Interface Compiler version 6.4.2
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
@@ -18,41 +18,41 @@ from a2widget.a2more_button import A2MoreButton
 class Ui_ModuleList:
     def setupUi(self, ModuleList):
         if not ModuleList.objectName():
-            ModuleList.setObjectName(u"ModuleList")
-        ModuleList.setWindowTitle(u"Form")
+            ModuleList.setObjectName('ModuleList')
+        ModuleList.setWindowTitle('Form')
         self.module_list_layout = QVBoxLayout(ModuleList)
-        self.module_list_layout.setObjectName(u"module_list_layout")
+        self.module_list_layout.setObjectName('module_list_layout')
         self.module_list_layout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setSpacing(5)
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setObjectName('horizontalLayout')
         self.horizontalLayout.setContentsMargins(-1, -1, -1, 0)
         self.search_field = QLineEdit(ModuleList)
-        self.search_field.setObjectName(u"search_field")
+        self.search_field.setObjectName('search_field')
         self.horizontalLayout.addWidget(self.search_field)
         self.a2search_x_button = QPushButton(ModuleList)
-        self.a2search_x_button.setObjectName(u"a2search_x_button")
+        self.a2search_x_button.setObjectName('a2search_x_button')
         self.a2search_x_button.setFlat(True)
         self.horizontalLayout.addWidget(self.a2search_x_button)
         self.filter_menu_button = A2MoreButton(ModuleList)
-        self.filter_menu_button.setObjectName(u"filter_menu_button")
+        self.filter_menu_button.setObjectName('filter_menu_button')
         self.horizontalLayout.addWidget(self.filter_menu_button)
         self.module_list_layout.addLayout(self.horizontalLayout)
         self.a2modlist_label_group = QGroupBox(ModuleList)
-        self.a2modlist_label_group.setObjectName(u"a2modlist_label_group")
-        self.a2modlist_label_group.setStyleSheet(u"b")
+        self.a2modlist_label_group.setObjectName('a2modlist_label_group')
+        self.a2modlist_label_group.setStyleSheet('b')
         self.verticalLayout = QVBoxLayout(self.a2modlist_label_group)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setObjectName('verticalLayout')
         self.label = QLabel(self.a2modlist_label_group)
-        self.label.setObjectName(u"label")
-        self.label.setText(u"")
+        self.label.setObjectName('label')
+        self.label.setText('')
         self.verticalLayout.addWidget(self.label)
         self.module_list_layout.addWidget(self.a2modlist_label_group)
         self.a2module_list_widget = A2ModList(ModuleList)
         __qtreewidgetitem = QTreeWidgetItem()
         __qtreewidgetitem.setText(0, u"1");
         self.a2module_list_widget.setHeaderItem(__qtreewidgetitem)
-        self.a2module_list_widget.setObjectName(u"a2module_list_widget")
+        self.a2module_list_widget.setObjectName('a2module_list_widget')
         self.a2module_list_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.a2module_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.a2module_list_widget.setProperty("showDropIndicator", False)
@@ -67,4 +67,3 @@ class Ui_ModuleList:
         QMetaObject.connectSlotsByName(ModuleList)
     def retranslateUi(self, ModuleList):
         self.a2modlist_label_group.setTitle("")
-        pass
