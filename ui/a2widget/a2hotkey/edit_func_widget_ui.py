@@ -62,6 +62,4 @@ class Ui_FuncWidget:
         self.run_url.setObjectName('run_url')
         self.horizontalLayout.addWidget(self.run_url)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.retranslateUi(FuncWidget)
         QMetaObject.connectSlotsByName(FuncWidget)
-    def retranslateUi(self, FuncWidget):
