@@ -3,12 +3,14 @@ Handle Qt Designer file updating, compilation and patching.
 """
 import os
 import sys
-import a2core
 from importlib import reload
+
+import a2core
 from a2qt import QtCore, QtGui, QtWidgets, QtSvg
 
 log = a2core.get_logger(__name__)
 
+ROOT_PATH = os.path.abspath(os.path.join(a2core.__file__, '..', '..'))
 UI_FILE_SUFFIX = '_ui'
 PYSIDE_REPLACE = 'a2qt'
 OLDSCHOOL_CLASS = '(object):\n'
@@ -31,50 +33,60 @@ def check_module(module, force=False):
         # log.info('frozen! no need to compile %s' % module)
         return
 
-    pyfile = module.__file__
-    folder, pybase = os.path.split(pyfile)
-    uiname = os.path.splitext(pybase)[0]
+    py_file_path = module.__file__
+    ui_file_path = get_ui_file_path(module.__file__)
+    if not ui_file_path or not os.path.isfile(ui_file_path):
+        return
 
-    if uiname.endswith(UI_FILE_SUFFIX):
-        uibase = uiname[: -len(UI_FILE_SUFFIX)] + '.ui'
+    time_diff = os.path.getmtime(py_file_path) - os.path.getmtime(ui_file_path)
+    if not force and os.path.getsize(py_file_path) and time_diff > 0:
+        return
+
+    log.debug('%s needs compile! (age: %is)', ui_file_path, time_diff)
+    call_uic(ui_file_path, py_file_path)
+
+    UIPatcher(ui_file_path, py_file_path)
+
+    reload(module)
+
+
+def get_ui_file_path(py_file_path):
+    """Get the `.ui` file path from an already compiled `..._ui.py` file.
+    """
+    dir_path, py_base = os.path.split(py_file_path)
+    ui_name = os.path.splitext(py_base)[0]
+
+    if ui_name.endswith(UI_FILE_SUFFIX):
+        ui_base = ui_name[: -len(UI_FILE_SUFFIX)] + '.ui'
     else:
-        uibase = _get_ui_basename_from_header(pyfile)
+        ui_base = _get_ui_basename_from_header(py_file_path)
 
-    if uibase is None:
+    if not ui_base:
         raise RuntimeError(
-            f'Could not get source ui file from module:\n {module}\n  '
+            f'Could not get source ui file from module:\n {py_file_path}\n  '
             'Not a ui file module??!'
         )
 
-    uifile = os.path.join(folder, uibase)
-    if not uibase or not os.path.isfile(uifile):
-        return
+    return os.path.join(dir_path, ui_base)
 
-    diff = os.path.getmtime(pyfile) - os.path.getmtime(uifile)
-    if not force and os.path.getsize(pyfile) and diff > 0:
-        return
 
-    log.debug('%s needs compile! (age: %is)', uibase, diff)
-
-    # Make paths in compiled files project related, not from current user.
-    parent_path = os.path.abspath(os.path.join(a2core.__file__, '..', '..'))
-
+def call_uic(ui_file_path, py_file_path):
+    """Call the original Qt ui compiler in Python mode in proper path project
+    relation.
+    """
     # Newer uic seems to just put the basename in the header... however.
-    ui_relative = os.path.relpath(uifile, parent_path)
+    # Make paths in compiled files project related, not from current user.
     curr_cwd = os.getcwd()
-    os.chdir(parent_path)
+    ui_relative = os.path.relpath(ui_file_path, ROOT_PATH)
+    os.chdir(ROOT_PATH)
 
     import subprocess
     import a2qt
 
     uic_path = os.path.join(a2qt.QT_PATH, 'uic.exe')
-    subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', pyfile])
+    subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', py_file_path])
 
     os.chdir(curr_cwd)
-
-    UIPatcher(uiname, pyfile)
-
-    reload(module)
 
 
 class UIPatcher:
@@ -94,12 +106,12 @@ class UIPatcher:
         (I'd rather leave this to black/brunette itself, but maybe in a separate
         (process that auto-checks for updated ui-files.)
     """
-    def __init__(self, uiname, pyfile):
+    def __init__(self, uiname, py_file_path):
         self.uiname = uiname
-        self.pyfile = pyfile
+        self.py_file_path = py_file_path
         _get_qmembers()
 
-        with open(pyfile, encoding='utf8') as pyfobj:
+        with open(py_file_path, encoding='utf8') as pyfobj:
             self.lines = pyfobj.readlines()
 
         self.doc_block = self._fix_doc_string()
@@ -110,13 +122,13 @@ class UIPatcher:
         self._id_len = len(self.translate_id)
         self.translate_fix = f"{TRANSLATE}'{self.obj_name}', "
 
-        self.submods_used = {}
+        self.submods_used: dict[str, dict | set] = {}
         self.translate_lines: list[None | int] = [None, None]
         self._fix_main_block()
         self._fix_translate_block()
 
         new_lines = self._assemble_new_lines()
-        with open(pyfile, 'w') as pyfobj:
+        with open(py_file_path, 'w', encoding='utf8') as pyfobj:
             pyfobj.write(''.join(new_lines))
 
     def _fix_doc_string(self):
@@ -196,7 +208,7 @@ class UIPatcher:
             elif line.startswith('#'):
                 self.lines[i] = ''
 
-            # remove translation func if empty
+            # to remove translation func if empty
             elif line.startswith('self.retranslateUi('):
                 self.translate_lines[1] = i
             elif line.startswith('def retranslateUi(self, '):
@@ -209,18 +221,22 @@ class UIPatcher:
         """
         look for unnecessary `pass` at the end of translate block
         """
-        start_line, call_line = self.translate_lines
-        if start_line is None:
+        def_line, call_line = self.translate_lines
+        if def_line is None:
             return
 
-        if self.lines[start_line + 1].strip() == 'pass' and call_line is not None:
-            self.lines[start_line] = ''
-            self.lines[start_line + 1] = ''
-            self.lines[call_line] = ''
-            return
+        for i in range(def_line + 1, len(self.lines)):
+            line = self.lines[i].strip()
+            if not line:
+                continue
+            if line == 'pass' and call_line is not None:
+                self.lines[def_line] = ''
+                self.lines[i] = ''
+                self.lines[call_line] = ''
+                return
 
-        start_line += 1
-        for i, _line in enumerate(self.lines[start_line:], start_line):
+        def_line += 1
+        for i, _line in enumerate(self.lines[def_line:], def_line):
             if _line.startswith('    def '):
                 break
             if _line.strip() == 'pass':
@@ -234,7 +250,7 @@ class UIPatcher:
                 if line[line.find(word) + len(word)] in '(.':
                     self.submods_used.setdefault(mod, set()).add(word)
                 else:
-                    log.debug(f'Word "{word}" found in line but not handled!\n> {line}')
+                    log.debug('Word "%s" found in line but not handled!\n> %s', word, line)
 
     def _fix_string_quotes(self, line, i):
         if not line or not self.lines[i]:
@@ -285,23 +301,23 @@ class UIPatcher:
 
     def _gather_new_imports(self):
         new_import_lines = []
-        for mod in self.submods_used:
-            members = sorted(self.submods_used[mod])
+        for mod, member_set in self.submods_used.items():
+            member_names = sorted(member_set)
             line = f'from {PYSIDE_REPLACE}.{mod} import '
 
-            rest = ', '.join(members)
+            rest = ', '.join(member_names)
             if len(line + rest) <= 95:
                 new_import_lines.append(line + rest)
                 continue
 
             line += '('
-            for word in members[:-1]:
+            for word in member_names[:-1]:
                 if len(line + word) <= 95:
                     line += word + ', '
                     continue
                 new_import_lines.append(line)
                 line = '    ' + word + ', '
-            line += members[-1] + ')'
+            line += member_names[-1] + ')'
             new_import_lines.append(line)
         return new_import_lines
 
@@ -355,7 +371,16 @@ def _get_qmembers():
             MEMBERSQ[member] = name
 
 
+def _test():
+    # import a2ui.a2design_ui
+    # check_module(a2ui.a2design_ui, force=True)
+    # import a2widget.a2hotkey.edit_func_widget_ui
+    # check_module(a2widget.a2hotkey.edit_func_widget_ui, force=True)
+    py_file_path = os.path.join(ROOT_PATH, r'ui\a2widget\a2hotkey\edit_func_widget_ui.py')
+    ui_file_path = get_ui_file_path(py_file_path)
+    call_uic(ui_file_path, py_file_path)
+    UIPatcher(ui_file_path, py_file_path)
+
+
 if __name__ == '__main__':
-    # test:
-    import a2ui.a2design_ui
-    check_module(a2ui.a2design_ui, force=True)
+    _test()
