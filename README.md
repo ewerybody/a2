@@ -1,6 +1,6 @@
 # a2 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0bc56698a44144e68ff191105f97215d)](https://app.codacy.com/app/ewerybody/a2?utm_source=github.com&utm_medium=referral&utm_content=ewerybody/a2&utm_campaign=badger) [![Join the chat at https://gitter.im/ewerybody/a2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ewerybody/a2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Join the chat on Telegram](ui/res/telegram_join.svg)](https://t.me/a2script_de)
 
-[**Autohotkey**](http://ahkscript.org) is an awesome little scripting language to automate and simplify all things Windows.\
+[**Autohotkey**]([http://ahkscript.org](https://github.com/AutoHotkey/AutoHotkey)) is an awesome little scripting language to automate and simplify all things Windows.\
 (See [Tom Scott ranting about it on YouTube](https://youtu.be/lIFE7h3m40U))\
 **a2** helps getting, updating scripts and developing your own.
 
