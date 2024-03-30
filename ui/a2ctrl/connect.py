@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 
-from a2qt import QtWidgets, QtCore
+from a2qt import QtWidgets
 
 import a2core
 import a2element.hotkey
@@ -173,21 +173,25 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.toPlainText()
 
     elif isinstance(ctrl, a2element.hotkey.Draw):
-        if trigger_signal is None:
-            trigger_signal = ctrl.changed
-        trigger_signal.connect(partial(_hotkey_update, cfg, name, ctrl))
-
-        if change_signal is not None:
-            trigger_signal.connect(change_signal.emit)
-
-        if name in cfg:
-            ctrl.set_config(cfg[name])
-        else:
-            cfg[name] = ctrl.get_user_dict()
-
+        connect_hotkey(ctrl, name, cfg, change_signal, trigger_signal)
 
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!', name, type(ctrl))
+
+
+def connect_hotkey(widget, name: str, cfg: dict, change_signal=None, trigger_signal=None):
+    if trigger_signal is None:
+        trigger_signal = widget.changed
+    trigger_signal.connect(partial(_hotkey_update, cfg, name, widget))
+
+    if change_signal is not None:
+        trigger_signal.connect(change_signal.emit)
+
+    if name in cfg:
+        widget.set_config(cfg[name])
+    else:
+        cfg[name] = widget.ctrl.get_user_dict()
+
 
 
 def _update_cfg_data(cfg, name, value):
@@ -221,9 +225,9 @@ def _text_edit_update(cfg, name, ctrl, change_signal, value=None):
         change_signal.emit()
 
 
-def _hotkey_update(cfg, name, hotkey):
+def _hotkey_update(cfg, name, widget):
     # type: (dict, str, a2element.hotkey.Draw) -> None
-    cfg[name] = hotkey.get_user_dict()
+    cfg[name] = widget.ctrl.get_user_dict()
 
 
 def control_to_db(widget, database, key, default_value=None):
