@@ -542,10 +542,10 @@ def backup_version(mod_source: ModSource, old_version):
     log.debug(MSG_BACKUP, old_version)
     try:
         mod_source.move_to_temp_backup()
-    except Exception as error:
+    except Exception:
         # log.error(MSG_BACKUP_ERROR % old_version + '(%s)' % mod_source.path)
         log.error(traceback.format_exc().strip())
-        raise RuntimeError(MSG_BACKUP_ERROR % old_version)
+        raise RuntimeError(MSG_BACKUP_ERROR % old_version) from Exception
 
 
 def download_update(update_url, pack_basename, temp_packpath, callback=None):
