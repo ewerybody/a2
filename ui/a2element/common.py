@@ -136,7 +136,7 @@ class DrawCtrlMixin:
         self.change('variables')
 
 
-class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
+class DrawCtrl(QtWidgets.QWidget):
     """
     Display widget to host everything that you want to show to the
     user for him to set up on your module.
@@ -144,7 +144,8 @@ class DrawCtrl(QtWidgets.QWidget, DrawCtrlMixin):
 
     def __init__(self, main, cfg, mod=None, user_cfg=None):
         super(DrawCtrl, self).__init__(parent=main)
-        DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
+        # DrawCtrlMixin.__init__(self, main, cfg, mod, user_cfg)
+        self.ctrl = DrawCtrlMixin(main, cfg, mod, user_cfg)
 
 
 class EditCtrl(QtWidgets.QGroupBox):

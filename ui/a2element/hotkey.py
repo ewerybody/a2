@@ -45,7 +45,7 @@ class Draw(DrawCtrl):
         self._setup_ui()
 
     def _setup_hotkey(self):
-        user_dict = self.get_user_dict()
+        user_dict = self.ctrl.get_user_dict()
         self.hotkey_button.set_config(user_dict)
 
     def _setup_ui(self):
@@ -56,12 +56,12 @@ class Draw(DrawCtrl):
         self.labelBoxLayout.setContentsMargins(0, 0, 0, 0)
         self.labelLayout = QtWidgets.QHBoxLayout()
 
-        if self.cfg.get('disablable', True):
-            state = self.get_user_value(bool, 'enabled', True)
+        if self.ctrl.cfg.get('disablable', True):
+            state = self.ctrl.get_user_value(bool, 'enabled', True)
             self.checkbox = QtWidgets.QCheckBox(self)
 
             try:
-                size = self.main.style.get('icon_size')
+                size = self.ctrl.main.style.get('icon_size')
             except AttributeError:
                 size = 35
 
@@ -72,7 +72,7 @@ class Draw(DrawCtrl):
             self.checkbox.clicked.connect(self.hotkey_check)
             self.labelLayout.addWidget(self.checkbox)
 
-        self.label = QtWidgets.QLabel(self.cfg.get('label') or '', self)
+        self.label = QtWidgets.QLabel(self.ctrl.cfg.get('label') or '', self)
         self.label.setWordWrap(True)
         self.labelLayout.addWidget(self.label)
         self.labelBoxLayout.addLayout(self.labelLayout)
@@ -97,26 +97,26 @@ class Draw(DrawCtrl):
 
     def hotkey_check(self):
         state = self.checkbox.isChecked()
-        self.set_user_value(state, 'enabled')
-        self.change('hotkeys')
+        self.ctrl.set_user_value(state, 'enabled')
+        self.ctrl.change('hotkeys')
         self.changed.emit()
 
     def hotkey_change(self, new_keys):
-        self.set_user_value(new_keys, 'key')
-        self.change('hotkeys')
+        self.ctrl.set_user_value(new_keys, 'key')
+        self.ctrl.change('hotkeys')
         self.changed.emit()
 
     def scope_change(self, scope, scope_mode):
-        self.set_user_value(scope, 'scope')
-        self.set_user_value(scope_mode, 'scopeMode')
-        self.change('hotkeys')
+        self.ctrl.set_user_value(scope, 'scope')
+        self.ctrl.set_user_value(scope_mode, 'scopeMode')
+        self.ctrl.change('hotkeys')
         self.changed.emit()
 
     def build_hotkey_options_menu(self, menu):
-        if self.has_user_cfg():
-            menu.addAction('Revert to Default', self.clear_user_cfg)
+        if self.ctrl.has_user_cfg():
+            menu.addAction('Revert to Default', self.ctrl.clear_user_cfg)
 
-        if self.cfg.get(Vars.key_change, True):
+        if self.ctrl.cfg.get(Vars.key_change, True):
             build_hotkey_menu(menu, self.hotkey_button)
 
         menu.addSeparator()
