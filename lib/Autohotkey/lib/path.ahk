@@ -1,34 +1,33 @@
 ﻿;a2 Autohotkey path library.
-#include ahk_functions.ahk
 
-path_is_absolute(byref path) {
+path_is_absolute(path) {
     ; Return true/false according to if given path is absolute or relative.
-    SplitPath, path ,,,,, OutDrive
+    SplitPath path ,,,,, &OutDrive
     if (OutDrive == "")
         return false
     else
         return true
 }
 
-path_dirname(byref path) {
+path_dirname(path) {
     ; Return the parent directory to the path.
-    SplitPath, path,, OutDir
+    SplitPath path,, &OutDir
     Return OutDir
 }
 
-path_basename(byref path) {
+path_basename(path) {
     ; Return the short-name of a given path without its path.
-    SplitPath, path, OutFileName
+    SplitPath path, &OutFileName
     Return OutFileName
 }
 
-path_split_ext(byref path) {
+path_split_ext(path) {
     ; Return No-extension file name and extension in a list.
-    SplitPath, path,,, OutExtension, OutNameNoExt
+    SplitPath path,,, &OutExtension, &OutNameNoExt
     Return [OutNameNoExt, OutExtension]
 }
 
-path_is_dir(byref path) {
+path_is_dir(path) {
     ; Return true/false according to if the given path exists and is a directory.
     if (InStr(FileExist(path), "D"))
         return true
@@ -36,7 +35,7 @@ path_is_dir(byref path) {
         return false
 }
 
-path_is_file(byref path) {
+path_is_file(path) {
     ; Return true/false according to if the given path exists and is a file.
     attrs := FileExist(path)
     if (attrs != "" && !InStr(attrs, "D"))
@@ -45,45 +44,47 @@ path_is_file(byref path) {
         return false
 }
 
-path_join(byref base_path, byref items*) {
+path_join(base_path, items*) {
     ; Append two paths together and treat possibly double or missing backslashes
     ; Now Variadic! https://www.autohotkey.com/docs/Functions.htm#Variadic
     path := RTrim(base_path, "\")
-    Loop % items.Length()
+    Loop(items.Length)
         path .= "\" Trim(items[A_Index], "\")
     return path
 }
 
-path_normalize(byref path) {
+path_normalize(path) {
     ; From the documentation - https://www.autohotkey.com/docs/misc/LongPaths.htm
     cc := DllCall("GetFullPathName", "str", path, "uint", 0, "ptr", 0, "ptr", 0, "uint")
-    VarSetCapacity(buf, cc*2)
+    ; buf := Buffer(cc*2)
+    VarSetStrCapacity(&buf, cc*2)
+    ; buf := ""
     DllCall("GetFullPathName", "str", path, "uint", cc, "str", buf, "ptr", 0)
     return buf
 }
 
-path_is_empty(byref path) {
+path_is_empty(path) {
     ; tell if the given path contains anything
-    Loop, Files, %path%\*.*, FD
+    Loop Files, path "\*.*", "FD"
         return false
     return true
 }
 
-path_is_writeable(byref path) {
+path_is_writeable(path) {
     if InStr(FileGetAttrib(path), "R")
         return false
     return true
 }
 
-path_set_writable(byref path) {
-    FileSetAttrib, -R, %path%
+path_set_writable(path) {
+    FileSetAttrib("-R", path)
 }
 
-path_set_readonly(ByRef path) {
-    FileSetAttrib, +R, %path%
+path_set_readonly(path) {
+    FileSetAttrib("+R", path)
 }
 
-path_expand_env(byref path) {
+path_expand_env(path) {
     ; Find environment %variables% in a path,
     ; Return expanded path string.
     if !InStr(path, "%")
@@ -117,7 +118,7 @@ path_get_free_name(dir_path, file_name, ext, separator := "") {
         Return file_name
 
     index := 1
-    While, FileExist(file_path) {
+    While FileExist(file_path) {
         index++
         base := file_name . separator . index
         file_path := path_join(dir_path, base . ext)

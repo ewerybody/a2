@@ -1,4 +1,5 @@
-﻿#Include a2test.ahk
+﻿#Include ..\..\..\a2_globals.ahk
+#Include a2test.ahk
 #Include %A_ScriptDir%\..\
 #Include path.ahk
 #Include string.ahk
@@ -23,18 +24,18 @@ b1 := path_basename(p)
 
 e0 := assertmsg(!path_is_empty(A_ScriptDir))
 test_dir := A_ScriptDir "\_ emptytest39yfh32oufh"
-FileCreateDir, %test_dir%
+DirCreate(test_dir)
 e1 := assertmsg(path_is_empty(test_dir))
-FileRemoveDir, %test_dir%
+DirDelete(test_dir)
 
 write_test_file := path_join(A_ScriptDir, "write_test_file")
 path_set_writable(write_test_file)
-FileAppend, write_test_file, %write_test_file%
+FileAppend(write_test_file, write_test_file)
 path_set_readonly(write_test_file)
 w1 := assertmsg(!path_is_writeable(write_test_file))
 path_set_writable(write_test_file)
 w2 := assertmsg(path_is_writeable(write_test_file))
-FileDelete, %write_test_file%
+FileDelete(write_test_file)
 
 epth := "%SystemRoot%\System32\imageres.dll"
 npth := path_expand_env(epth)
@@ -46,29 +47,29 @@ sx1 := assertmsg("test_path" == base_ext[1])
 sx2 := assertmsg("ahk" == base_ext[2])
 
 ; Test path_get_free_name
-FileAppend, , %A_ScriptDir%\_test_file.txt
-Loop, 3
-    FileAppend, , %A_ScriptDir%\_test_file%A_Index%.txt
-Sleep, 100
+FileAppend("", A_ScriptDir . "\_test_file.txt")
+Loop(3)
+    FileAppend("", A_ScriptDir . "\_test_file" . A_Index . ".txt")
+Sleep(100)
 found_name := path_get_free_name(A_ScriptDir, "_test_file", "txt")
 fn := assertmsg(found_name == "_test_file4")
 ; test with separator
 found_name := path_get_free_name(A_ScriptDir, "_test_file", "txt", "__")
 fns := assertmsg(found_name == "_test_file__2")
 ; cleanup
-Loop, 3
-    FileDelete, %A_ScriptDir%\_test_file%A_Index%.txt
-FileDelete, %A_ScriptDir%\_test_file.txt
+Loop(3)
+    FileDelete(A_ScriptDir . "\_test_file" . A_Index . ".txt")
+FileDelete(A_ScriptDir . "\_test_file.txt")
 found_name := path_get_free_name(A_ScriptDir, "", "")
 fn2 := assertmsg(!found_name)
 
-msg = a path: %p%`npath_dirname: %x%`npath_dirname: %y%`npath_join: %z%`n`n
-msg = %msg%path_normalize: %n%`n!path_is_absolute: %a1% (%sub_dir%)`npath_is_absolute: %a2% (%n%)`n`n
-msg = %msg%path_is_file: %f1% (%p%)`n!path_is_file: %f2% (%z%)`n!path_is_file: %f3% (%x%)`npath_is_file: %f4% (%p2%)`n`n
-msg = %msg%path_is_dir: %d1% (%x%)`n!path_is_dir: %d2% (%n%)`npath_basename: %b1% (%p%)`n`n
-msg = %msg%!path_is_empty: %e0% (%A_ScriptDir%)`npath_is_empty: %e1% (%test_dir%)`n`n
-msg = %msg%!path_is_writeable: %w1%`npath_is_writeable: %w2%`n
-msg = %msg%path_expand_env: %x1% %x2%`n
+msg := "a path: " p "`npath_dirname: " x "`npath_dirname: " y "`npath_join: " z "`n`n"
+msg .= "path_normalize: " n "`n!path_is_absolute: " a1 "(" sub_dir ")`npath_is_absolute: " a2 "(" n ")`n`n"
+msg .= "path_is_file: " f1 "(" p ")`n!path_is_file: " f2 "(" z ")`n!path_is_file: " f3 "(" x ")`npath_is_file: " f4 "(" p2 ")`n`n"
+msg .= "path_is_dir: " d1 " (" x ")`n!path_is_dir: " d2 " (" n ")`npath_basename: " b1 " (" p ")`n`n"
+msg .= "!path_is_empty: " e0 " (" A_ScriptDir ")`npath_is_empty: " e1 " (" test_dir ")`n`n"
+msg .= "!path_is_writeable: " w1 "`npath_is_writeable: " w2 "`n"
+msg .= "path_expand_env: " x1 " " x2 "`n"
 msg .= "path_split_ext: " sx1 " " sx2 " '" base_ext[1] "' '" base_ext[2] "'`n"
 msg .= "path_free_name: " fn " " fn2 " " fns
-msgbox %msg%
+msgbox(msg)
