@@ -1,4 +1,4 @@
-window_is_resizable(win_id="") {
+window_is_resizable(win_id:="") {
     if !win_id
         win_id := WinExist("A")
 
@@ -9,7 +9,7 @@ window_is_resizable(win_id="") {
         return 0
 }
 
-window_toggle_maximize(win_id="") {
+window_toggle_maximize(win_id:="") {
     win_id := _ensure_win_active(win_id)
 
     If !window_is_resizable(win_id)
@@ -33,65 +33,81 @@ window_toggle_maximize(win_id="") {
     }
 }
 
-window_toggle_maximize_width(win_id="") {
+window_toggle_maximize_width(win_id:="") {
     win_id := _ensure_win_active(win_id)
-    static memory := {}
-
     If !window_is_resizable(win_id)
         Return
 
-    workarea := new Screen_WorkArea(screen_get_index(win_id))
+    static memory := Map()
+
+    workarea := Screen_WorkArea(screen_get_index(win_id))
     ; WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
-    window_get_rect(wc_X, wc_Y, wc_Width, wc_Height, win_id)
-    ; WinGet, wc_Max, MinMax, ahk_id %win_id%
+    ; wc_X := 0, wc_Y := 0, wc_Width := 0, wc_Height := 0
+    window_get_rect(&wc_X, &wc_Y, &wc_Width, &wc_Height, win_id)
+    wc_Max := WinGetMinMax("ahk_id " . win_id)
     ; maximize
-    If (wc_Width <> workarea.width)
+    If (wc_Width != workarea.width)
     {
         ; left := workarea.left
         ; right := workarea.width
         ; WinMove, ahk_id %win_id%,, %left%, %wc_Y%, % %right%, %wc_Height%
         window_set_rect(workarea.left, wc_Y, workarea.width, wc_Height, win_id)
         ; remember values for back toggling
-        If (memory[win_id]["lastw"] <> wc_Width OR memory[win_id]["lasth"] <> wc_Height)
+        If (!memory.HasOwnProp(win_id) OR (memory[win_id]["lastw"] !== wc_Width OR memory[win_id]["lasth"] !== wc_Height)) {
             memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
+        }
+
         memory[win_id]["lastw"] := workarea.width
         memory[win_id]["lasth"] := wc_Height
     } Else
-    _window_toggle_maximize_reset(win_id, memory)
+        _window_toggle_maximize_reset(win_id, memory)
 }
 
-window_toggle_maximize_height(win_id="") {
+window_toggle_maximize_height(win_id:="") {
     win_id := _ensure_win_active(win_id)
-    static memory := {}
+    static memory := Map()
 
     If !window_is_resizable(win_id)
         Return
 
-    workarea := new Screen_WorkArea(screen_get_index(win_id))
+    workarea := Screen_WorkArea(screen_get_index(win_id))
     ; WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
-    window_get_rect(wc_X, wc_Y, wc_Width, wc_Height, win_id)
-    ; WinGet, wc_Max, MinMax, ahk_id %win_id%
+    ; wc_X := 0, wc_Y := 0, wc_Width := 0, wc_Height := 0
+    window_get_rect(&wc_X, &wc_Y, &wc_Width, &wc_Height, win_id)
+    wc_Max := WinGetMinMax("ahk_id " . win_id)
     ; maximize
-    If (wc_Height <> workarea.height)
+    If (wc_Height !== workarea.height)
     {
         top := workarea.top
         bottom := workarea.height
         ; WinMove, ahk_id %win_id%,, %wc_X%, %top%, % %wc_Width%, %bottom%
         window_set_rect(wc_X, top, wc_Width, bottom, win_id)
         ; remember values for back toggling
-        If (memory[win_id]["lastw"] <> wc_Width OR memory[win_id]["lasth"] <> wc_Height)
-            memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
+        if memory.has(win_id)
+        {
+            if (memory[win_id]["lastw"] !== wc_Width OR memory[win_id]["lasth"] !== wc_Height)
+            {
+                this_win := Map("x", wc_X, "y", wc_Y, "w", wc_Width, "h", wc_Height, "minmax", wc_Max)
+                memory.set(win_id, this_win)
+                ; memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
+            }
+        } else {
+            this_win := Map("x", wc_X, "y", wc_Y, "w", wc_Width, "h", wc_Height, "minmax", wc_Max)
+            memory.set(win_id, this_win)
+        }
+            ; memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
+
         memory[win_id]["lastw"] := wc_Width
         memory[win_id]["lasth"] := workarea.height
     } Else
-    _window_toggle_maximize_reset(win_id, memory)
+        _window_toggle_maximize_reset(win_id, memory)
 }
 
-_window_toggle_maximize_reset(byref win_id, byref memory) {
-    If (memory[win_id]["h"] <> "" AND memory[win_id]["w"] <> "")
+_window_toggle_maximize_reset(&win_id, & memory) {
+    If (memory[win_id]["h"] !== "" AND memory[win_id]["w"] !== "")
     {
         If memory[win_id]["minmax"] = 1
-            WinMaximize, ahk_id %win_id%
+            WinMaximize("ahk_id " . win_id)
         Else
         {
             window_set_rect(memory[win_id]["x"], memory[win_id]["y"], memory[win_id]["w"], memory[win_id]["h"], win_id)
@@ -100,27 +116,33 @@ _window_toggle_maximize_reset(byref win_id, byref memory) {
     }
 }
 
+; Make sure a window with hwnd `win_id` is activated.
+; Activate it if needed, wait for `seconds`.
+; To wait forever set `seconds` to 0.
 window_activate(win_id, seconds := 5) {
-    ; Make sure a window with hwnd `win_id` is activated.
-    ; Activate it if needed, wait for `seconds`.
-    ; To wait forever set `seconds` to 0.
-    IfWinNotActive, ahk_id %win_id%
+    ahk_id := "ahk_id " win_id
+    If !WinActive(ahk_id)
     {
-        WinActivate, ahk_id %win_id%
+        WinActivate(ahk_id)
         if (seconds)
-            WinWaitActive, ahk_id %win_id%,, %seconds%
+            WinWaitActive(ahk_id,,seconds)
         else
-            WinWaitActive, ahk_id %win_id%,
+            WinWaitActive(ahk_id)
     }
 }
 
 window_activate_on_mouse_input() {
-    If A_ThisHotkey contains MButton,LButton,RButton,XButton1,XButton2
+    buttons := 'MButton,LButton,RButton,XButton1,XButton2'
+    Loop parse, buttons, ","
     {
-        MouseGetPos,,, win_id
-        window_activate(win_id)
-        return win_id
+        If (A_ThisHotkey = A_LoopField)
+        {
+            MouseGetPos , , &win_id
+            window_activate(win_id)
+            return win_id
+        }
     }
+
 }
 
 _ensure_win_active(win_id) {
@@ -135,10 +157,10 @@ _ensure_win_active(win_id) {
     return win_id
 }
 
-window_get_rect(byref x, byref y, byref width, byref height, win_id="") {
+window_get_rect(&x, &y, &width, &height, win_id:="") {
     if (!win_id)
         win_id := WinExist("A")
-    WinGetPos, _x, _y, _w, _h, ahk_id %win_id%
+    WinGetPos &_x, &_y, &_w, &_h, "ahk_id " . win_id
     x := _x + WIN_FRAME_WIDTH - 1
     y := _y
     width := _w - (WIN_FRAME_WIDTH - 1) * 2
@@ -147,7 +169,7 @@ window_get_rect(byref x, byref y, byref width, byref height, win_id="") {
     ; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%, WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
 }
 
-window_set_rect(byref x, byref y, byref width, byref height, win_id="") {
+window_set_rect(x, y, width, height, win_id:="") {
     if (!win_id)
         win_id := WinExist("A")
     _x := x - WIN_FRAME_WIDTH + 1
@@ -156,7 +178,7 @@ window_set_rect(byref x, byref y, byref width, byref height, win_id="") {
 
     ; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%,
     ; txt = %txt% WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
-    WinMove, ahk_id %win_id%,, %_x%, %y%, %_w%, %_h%
+    WinMove(_x, y, _w, _h, "ahk_id " . win_id)
 }
 
 window_get_geometry(hwnd) {
@@ -168,13 +190,16 @@ window_get_geometry(hwnd) {
     ; geo.x, geo.y   : Top-left corner of the window
     ; geo.w, geo.h   : Extends of the window in width & height
     ; geo.x2, geo.y2   : Bottom-right corner of the window
-    size := VarSetCapacity(rect, 16, 0)
+    ; size := VarSetCapacity(&rect, 16, 0)
+    size := Buffer(16)
+    ; size := Number(16)
+    rect := Buffer(24, 0)
     error := DllCall("dwmapi\DwmGetWindowAttribute"
         , "UPtr", hWnd ; HWND  hwnd
         , "UInt", 9 ; DWORD dwAttribute (DWMWA_EXTENDED_FRAME_BOUNDS)
-        , "UPtr", &rect ; PVOID pvAttribute
-        , "UInt", size ; DWORD cbAttribute
-    , "UInt") ; HRESULT
+        , "Ptr", rect ; PVOID pvAttribute
+        , "UInt", 16 ; DWORD cbAttribute
+        , "UInt") ; HRESULT
 
     If error {
         DllCall("GetWindowRect", "UPtr", hwnd, "UPtr", &rect, "UInt")
@@ -207,34 +232,32 @@ window_cut_hole(hwnd, inner, outer := "") {
     inner_str := top_left2 " " inner.x2 "-" inner.y " "
     inner_str .= inner.x2 "-" inner.y2 " " inner.x "-" inner.y2 " " top_left2
     ; a2tip(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nx2:" inner.x2 "`ny2:" inner.y2)
-    WinSet, Region, %outer_str% %inner_str%, ahk_id %hwnd%
+    WinSetRegion(outer_str . inner_str, "ahk_id " . hwnd)
 }
 
-window_list(hidden=0, process_name="", class_name="") {
-    ; Create list of window objects with range of information.
-    current_detect_state := DetectHiddenWindows()
+; Create list of window objects with range of information.
+window_list(hidden:=0, process_name:="", class_name:="") {
+    current_detect_state := A_DetectHiddenWindows
     if (current_detect_state != hidden) {
         DetectHiddenWindows(hidden)
     }
 
     windows := []
-    WinGet, win_ids, list
-    loop %win_ids% {
-        winid := win_ids%A_Index%
-        ahkid := "ahk_id " winid
-        WinGet, proc, ProcessName, %ahkid%
-        if (process_name && proc != process_name)
-            continue
-
-        WinGetClass, clss, %ahkid%
+    for win_id in WinGetlist() {
+        ahkid := "ahk_id " . win_id
+        clss := WinGetClass(ahkid)
         if (class_name && clss != class_name)
             continue
 
-        WinGetTitle, title, %ahkid%
-        WinGet, min_max, MinMax, %ahkid%
-        WinGet, pid, PID, %ahkid%
+        proc := WinGetProcessName(ahkid)
+        if (process_name && proc != process_name)
+            continue
 
-        windows.push(new _Window(proc, title, clss, winid, min_max, pid))
+        title := WinGetTitle(ahkid)
+        min_max := WinGetMinMax(ahkid)
+        pid := WinGetPID(ahkid)
+
+        windows.push(_Window(proc, title, clss, win_id, min_max, pid))
     }
 
     if (current_detect_state != hidden)
@@ -243,8 +266,8 @@ window_list(hidden=0, process_name="", class_name="") {
     return windows
 }
 
+; Abstract window information object.
 class _Window {
-    ; Abstract window information object.
     __New(proc_name, win_title, win_class, id, minmax, pid) {
         this.proc_name := proc_name
         this.title := win_title
@@ -259,22 +282,22 @@ class _Window {
     }
 }
 
-window_is_aot(win_id="") {
+window_is_aot(win_id:="") {
     ; Get a windows Always On Top state.
     if !win_id
         win_id := WinExist("A")
 
-    WinGet, wc_ExStyle, ExStyle, ahk_id %win_id%
+    wc_ExStyle := WinGetExStyle("ahk_id " . win_id)
     if (wc_ExStyle & 0x8)
         return 1
     else
         return 0
 }
 
-window_set_aot(state, win_id = "") {
+window_set_aot(state, win_id := "") {
     ; Set a windows Always On Top state.
     if !win_id
         win_id := WinExist("A")
 
-    WinSet, AlwaysOnTop, %state%, ahk_id %win_id%
+    WinSetAlwaysOnTop(state, "ahk_id " . win_id)
 }

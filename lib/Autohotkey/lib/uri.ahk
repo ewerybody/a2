@@ -8,24 +8,43 @@ uri_url_encode(url) { ; keep ":/;?@,&=+$#."
 uri_decode(uri) {
     ; Find percentage encoding and turn it back to readable characters.
     ; "https%3A%2F%2F" -> "https://"
-    Pos := 1
-    While Pos := RegExMatch(uri, "i)(%[\da-f]{2})+", Code, Pos)
+    Loop
     {
-        VarSetCapacity(Var, StrLen(Code) // 3, 0), Code := SubStr(Code,2)
-        Loop, Parse, Code, `%
-            NumPut("0x" A_LoopField, Var, A_Index-1, "UChar")
-        Decoded := StrGet(&Var, "UTF-8")
-        uri := SubStr(uri, 1, Pos-1) . Decoded . SubStr(uri, Pos+StrLen(Code)+1)
-        Pos += StrLen(Decoded)+1
+        ; find "%20" patterns. That's 2 hex digits after a %
+        RegExMatch(uri, "i)(?<=%)[\da-f]{1,2}", &match)
+        If (!match)
+            Break
+        uri := StrReplace(uri, "%" . match[0], Chr("0x" . match[0]))
     }
-    Return, uri
+    Return uri
+
+    ; Pos := 1
+    ; While Pos := RegExMatch(uri, "i)(%[\da-f]{2})+", &Code, Pos)
+    ; {
+    ;     ; VarSetCapacity(Var, StrLen(Code) // 3, 0), Code := SubStr(Code,2)
+    ;     VarSetStrCapacity(&Var, StrLen(Code[1]) // 3)
+    ;     Loop Parse Code, "%"
+    ;         NumPut("0x" A_LoopField, Var, A_Index-1, "UChar")
+    ;     msgbox(Var)
+    ;     Decoded := StrGet(&Var, "UTF-8")
+    ;     uri := SubStr(uri, 1, Pos-1) . Decoded . SubStr(uri, Pos+StrLen(Code)+1)
+    ;     Pos += StrLen(Decoded)+1
+    ; }
+    ; Return uri
 }
 
 
-uri_encode(uri, RE="[0-9A-Za-z]") {
+uri_encode(uri, RE:="[0-9A-Za-z]") {
     ; Turn special characters to percentage encoding.
-    VarSetCapacity(Var, StrPut(uri, "UTF-8"), 0), StrPut(uri, &Var, "UTF-8")
+    ; VarSetCapacity(Var, StrPut(uri, "UTF-8"), 0)
+    ; VarSetStrCapacity(&Var, StrPut(uri, "UTF-8"))
+    ; StrPut(uri, Var, "UTF-8")
+
+    var := Buffer(StrPut(uri, "UTF-8"))
+    StrPut(uri, var, "UTF-8")
+
+    Res := ""
     While Code := NumGet(Var, A_Index - 1, "UChar")
-        Res .= (Chr:=Chr(Code)) ~= RE ? Chr : Format("%{:02X}", Code)
-    Return, Res
+        Res .= (C:=Chr(Code)) ~= RE ? C : Format("%{:02X}", Code)
+    Return Res
 }
