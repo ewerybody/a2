@@ -1,24 +1,26 @@
 ﻿
 ; Assemble a single string from a given array of strings.
-string_join(byref array_of_strings, byref separator=", ") {
+string_join(array_of_strings, separator:=", ") {
     result := ""
-    Loop, % array_of_strings.MaxIndex() - 1
+    Loop(array_of_strings.Length - 1)
     {
         this_item := array_of_strings[A_Index]
         result .= this_item . separator
     }
-    last_item := array_of_strings[array_of_strings.MaxIndex()]
+    last_item := array_of_strings[array_of_strings.Length]
     result .= last_item
     Return result
 }
 
 ; Tell if a search string is in an array object of strings.
-string_is_in_array(byref search, byref array, start := 1) {
+string_is_in_array(search, string_list, start := 1) {
     ; returns index of search string if found
     ; returns 0 otherwise
-    Loop % array.MaxIndex() {
+    Loop(string_list.Length) {
         idx := A_Index + start - 1
-        if (search == array[idx])
+        if idx > string_list.Length
+            Return 0
+        if (search == string_list[idx])
             Return idx
     }
     Return 0
@@ -29,7 +31,7 @@ string_is_web_address(string) {
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
     else {
-        Loop, % WEB_TLDS.MaxIndex() {
+        Loop(WEB_TLDS.Length) {
             ext := WEB_TLDS[A_Index]
             sub := SubStr(string, - StrLen(ext))
             if (sub == "." ext)
@@ -39,17 +41,17 @@ string_is_web_address(string) {
 }
 
 ; Determine if a string starts with another string.
-string_startswith(byref string, byref startstr) {
+string_startswith(string, startstr) {
     ; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
     return InStr(string, startstr) = 1
 }
 
 ; Determine if a string ends with another string
-string_endswith(byref string, byref end) {
-    return strlen(end) <= strlen(string) && Substr(string, -strlen(end) + 1) = end
+string_endswith(string, end) {
+    return StrLen(end) <= StrLen(string) && Substr(string, -StrLen(end)) = end
 }
 
-string_is_whitespace(byref string) {
+string_is_whitespace(string) {
     if (string == A_Space OR string == A_Tab OR string == "`n" OR string == "`r")
         return true
     else
@@ -57,7 +59,7 @@ string_is_whitespace(byref string) {
 }
 
 ; Trim one or more characters from a string start and end.
-string_trim(byref string, byref chars) {
+string_trim(string, chars) {
     return string_trimLeft(string_trimRight(string, chars), chars)
 }
 
@@ -66,8 +68,7 @@ string_trimLeft(string, chars) {
     if (IsObject(chars))
         chars := string_join(chars, "")
 
-    StringLen, slen, string
-    Loop % slen
+    Loop(StrLen(string))
     {
         If InStr(chars, SubStr(string, 1, 1))
         {
@@ -83,10 +84,10 @@ string_trimRight(string, chars) {
     if (IsObject(chars))
         chars := string_join(chars, "")
 
-    StringLen, slen, string
-    Loop % slen
+    slen := StrLen(string)
+    Loop(slen)
     {
-        If InStr(chars, SubStr(string, 0))
+        If InStr(chars, SubStr(string, -1))
         {
             string := SubStr(string, 1, slen - A_Index)
             Continue
@@ -101,14 +102,14 @@ string_strip(string) {
     c := SubStr(string, 1, 1)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
     {
-        StringTrimLeft, string, string, 1
+        string := LTrim(string)
         string := string_strip(string)
     }
     ; now last character:
     c := SubStr(string, 0)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
     {
-        StringTrimRight, string, string, 1
+        string := RTrim(string)
         string := string_strip(string)
     }
 
@@ -116,14 +117,14 @@ string_strip(string) {
 }
 
 ; Remove quotes from a string if necessary.
-string_unquote(string, quote = """") {
+string_unquote(string, quote := '"') {
     if (InStr(string, quote) = 1 && string_endsWith(string, quote))
         string := string_trim(string, quote)
     return string
 }
 
 ; Add quotes to a string only if necessary.
-string_quote(string, once = 1, quote = """") {
+string_quote(string, once := 1, quote := '"') {
     if (once) {
         if (InStr(string, quote) != 1)
             string := quote string
@@ -149,9 +150,9 @@ string_prefix(string, prefix) {
 }
 
 ; Make back for front flipped version of given string
-string_reverse(byref string) {
+string_reverse(string) {
     new_string := ""
-    Loop, % StrLen(string)
+    Loop(StrLen(string))
         new_string := SubStr(string, A_Index, 1) new_string
     Return new_string
 }
@@ -160,9 +161,9 @@ string_reverse(byref string) {
 string_random(length) {
     txt := ""
     offset := 64
-    Loop, %length%
+    Loop(length)
     {
-        Random, i , 1, 26
+        i := Random(1, 26)
         txt .= Chr(i + offset)
     }
     return txt

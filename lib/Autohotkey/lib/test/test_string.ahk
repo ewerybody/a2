@@ -1,4 +1,6 @@
-﻿#Include %A_ScriptDir%\..\string.ahk
+﻿#Include %A_ScriptDir%\..\path.ahk
+#Include %A_ScriptDir%\..\..\..\a2_globals.ahk
+#Include %A_ScriptDir%\..\string.ahk
 #Include a2test.ahk
 
 ; test join
@@ -9,11 +11,11 @@ joint := string_join(aabc, "||")
 sabc := string_join(aabc, "")
 arr := StrSplit(joint, "||")
 res := ""
-Loop, % arr.MaxIndex()
+Loop(arr.Length)
     res .= arr[A_Index]
 j1 := assertmsg(sabc == abcs)
 j2 := assertmsg(sabc == res)
-msg = string_join:%j1% test:>%sabc%< control:>%abcs%<`n
+msg := "string_join:" . j1 . "test:>" . sabc . "< control:>" . abcs . "<`n"
 ; Test starts/endswith
 ; This is also case-INsensitive
 sw1 := assertmsg(string_startswith("a#$ NCowehofd", "A#$ "))
@@ -35,11 +37,11 @@ u1 := assertmsg(string_startswith(un, "X"))
 u2 := assertmsg(string_endswith(un, "X"))
 
 p := A_ScriptFullPath
-pq := """" . p . """"
+pq := '"' . p . '"'
 up := string_unquote(p)
 ups := assertmsg(p == up)
 msg .= "string_unquote ' :" u1 " " u2 "`n"
-msg .= "string_unquote "" :" ups "`n"
+msg .= 'string_unquote "" :' ups "`n"
 msg .= "string_quote:" q2 " " q4 "`n"
 
 ; test is in array
@@ -71,8 +73,8 @@ msg .= "string_reverse: " st " " s2 " " s1 "`n"
 msg .= "string_random: " string_random(32) "`n"
 
 ; test string_trim
-st := "abc ""><""abc "
-s1 := string_trim(st, " ""abc")
+st := 'abc "><"abc '
+s1 := string_trim(st, ' "abc')
 msg .= "string_trim: " assertmsg(s1 == "><")
 
-MsgBox, %msg%
+MsgBox(msg)
