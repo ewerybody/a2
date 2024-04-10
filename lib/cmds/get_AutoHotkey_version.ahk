@@ -1,1 +1,1 @@
-FileAppend, %A_AhkVersion%, *
+FileAppend A_AhkVersion, "*"

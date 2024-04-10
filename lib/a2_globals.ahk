@@ -1,4 +1,4 @@
-global WinVer := windows_get_version()
+; global WinVer := windows_get_version()
 global WIN_XP := 5.1
 global WIN_XP64 := 5.2
 global WIN_VISTA := 6.0
@@ -11,15 +11,15 @@ global A_AppDataLocal := path_join(path_dirname(A_AppData), "Local")
 global PYTHON_SUPPORTED_VERSIONS := ["3.11", "3.10", "3.9"]
 
 ; groups for explorer classes
-GroupAdd, ExplorerGroup, ahk_class ExploreWClass
-GroupAdd, ExplorerGroup, ahk_class CabinetWClass
-GroupAdd, DesktopGroup, ahk_class WorkerW
-GroupAdd, DesktopGroup, ahk_class Progman ;Progman for older windows versions <Vista
-GroupAdd, TaskbarGroup, ahk_class Shell_TrayWnd
-GroupAdd, TaskbarGroup, ahk_class BaseBar
-GroupAdd, TaskbarGroup, ahk_class DV2ControlHost
-GroupAdd, TaskbarDesktopGroup, ahk_group DesktopGroup
-GroupAdd, TaskbarDesktopGroup, ahk_group TaskbarGroup
+GroupAdd "ExplorerGroup", "ahk_class ExploreWClass"
+GroupAdd "ExplorerGroup", "ahk_class CabinetWClass"
+GroupAdd "DesktopGroup", "ahk_class WorkerW"
+GroupAdd "DesktopGroup", "ahk_class Progman" ;Progman for older windows versions <Vista
+GroupAdd "TaskbarGroup", "ahk_class Shell_TrayWnd"
+GroupAdd "TaskbarGroup", "ahk_class BaseBar"
+GroupAdd "TaskbarGroup", "ahk_class DV2ControlHost"
+GroupAdd "TaskbarDesktopGroup", "ahk_group DesktopGroup"
+GroupAdd "TaskbarDesktopGroup", "ahk_group TaskbarGroup"
 
 ; mouse cursor image constants
 global IDC_APPSTARTING := 32650
@@ -40,7 +40,7 @@ global IDC_WAIT := 32514
 global IDC_HELP := 32651
 
 ;Invisible border size. Usually Autohotkey methods apply to the inner size
-SysGet, WIN_FRAME_WIDTH, 32
-SysGet, WIN_FRAME_HEIGHT, 33
+WIN_FRAME_WIDTH := SysGet(32)
+WIN_FRAME_HEIGHT := SysGet(33)
 global WIN_FRAME_WIDTH
 global WIN_FRAME_HEIGHT
