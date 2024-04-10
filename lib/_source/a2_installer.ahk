@@ -7,7 +7,8 @@
 ; * install to a2 dir
 ; * run a2 ui
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
-;@Ahk2Exe-SetVersion 0.4.6
+;@Ahk2Exe-SetVersion 0.5.4
+#NoTrayIcon
 
 complain_if_uncompiled()
 check_execution_dir()
@@ -31,7 +32,9 @@ Return
 #Include, _installib.ahk
 #include, %A_ScriptDir%\..\Autohotkey\lib
 #Include, jxon.ahk
+#Include, move.ahk
 
+; Prepare the user with info about already installed versions and get OKs.
 intro() {
     global install_ver, run_silent, PACKAGE_DIR
 
@@ -85,6 +88,7 @@ read_version(path) {
         return ""
 }
 
+; Tell if there are a2 files or folders existing.
 has_a2_stuff() {
     global A2STUFF, A2DIR
     for i, thing in A2STUFF {
@@ -94,6 +98,7 @@ has_a2_stuff() {
     return 0
 }
 
+; Move current version things out of the way. Keep user things in place.
 backup() {
     global A2DIR, install_ver, backup_dir_name
     if (!install_ver)
@@ -128,24 +133,18 @@ backup() {
     }
 
     FileCreateDir, %backup_dir%
-    for i, item in backup_items {
-        this_path := path_join(A2DIR, item)
-        back_path := path_join(backup_dir, item)
-        if path_is_dir(this_path) {
-            logmsg(" backing up dir: " . item)
-            FileMoveDir, %this_path%, %back_path%
-        } else if path_is_file(this_path) {
-            logmsg(" backing up file: '" . item)
-            FileMove, %this_path%, %back_path%
-        }
-    }
+    result := move_catched(A2DIR, backup_dir, backup_items)
+    if result == ""
+        return
 
-    ; In case the version was already backed up, remove the temp backup.
-    if delete_later
-        FileRemoveDir, %backup_dir%
-    else
-        remove_if_empty(backup_dir)
+    src_trg_paths := StrSplit(result, "\n")
+    msg := "The current version could not be moved away before the update!`n"
+    msg .= "Some file or folder is blocking!:`n" . src_trg_paths[1]
+    msg .= "Please make sure nothing is blocking and retry."
+    log_error("Backup failed!", msg)
+    ExitApp
 }
+
 
 install() {
     global A2DIR, PACKAGE_DIR
@@ -164,6 +163,7 @@ install() {
     dll_path := path_join(A2DIR, "ui", sqldll)
     if (!FileExist(dll_path))
         log_error(sqldll " missing?!", "The """ sqldll " "" must exist here:`n" dll_path "`n!`nWhere is it?")
+
     ini_path := path_join(A2DIR, "lib", "SQLiteDB.ini")
     ini_code := "[Main]`nDllPath=" dll_path
     FileAppend, %ini_code%, %ini_path%
@@ -202,6 +202,7 @@ _remove_if_empty(path) {
     return empty
 }
 
+; Check for running processes from under the install dir.
 check_running() {
     global A2DIR, run_silent
     processes := find_processes_running_under(A2DIR)

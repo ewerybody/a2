@@ -5,7 +5,7 @@ Common hotkey things.
 import unittest
 
 
-SEND_MODES = ('sendraw', 'sendinput', 'sendplay', 'sendevent', 'send')
+SEND_MODES = ('Send', 'SendRaw', 'SendInput', 'SendPlay', 'SendEvent')
 MOD_KEYS = ('! - Alt', '^ - Control', '+ - Shift', '# - Win')
 DISPLAY_MODIFIERS = {
     'ctrl': 'Ctrl',
@@ -151,8 +151,9 @@ def parent_modifier_string(modifier_string):
 def strip_mode(code, modes):
     """Find and remove `mode` from a Hotkey code snippet.
     Return stripped code and found mode in tuple."""
+    _code = code.lower()
     for mode in modes:
-        if code.lower().startswith(mode):
+        if _code.startswith(f'{mode.lower()},'):
             return code[len(mode) :].lstrip(' ,'), mode
     return code, modes[0]
 

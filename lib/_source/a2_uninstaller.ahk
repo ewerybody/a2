@@ -15,14 +15,16 @@
 ;@Ahk2Exe-SetDescription a2 Uninstaller
 ;@Ahk2Exe-SetOrigFilename Uninstall a2.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.4.6
+;@Ahk2Exe-SetVersion 0.5.4
+#NoTrayIcon
 
+A2DIR := A_ScriptDir
+NAME := "a2 Uninstaller"
 
-complain_if_uncompiled()
+if complain_if_uncompiled() OR complain_if_dev()
+    ExitApp
 
 run_silent := check_silent()
-A2DIR := get_a2dir()
-NAME := "a2 Uninstaller"
 items := gather_items()
 outro(items)
 ask_for_user_data_deletion(items)
@@ -173,8 +175,8 @@ delete_items(items) {
     }
 }
 
+; - Assemble simple windows batch code
 create_deleter_batch(path) {
-    ; - Assemble simple windows batch code
     ;   * cd into Temp dir
     ;   * delete running executable (If compiled)
     ;   * try a couple times
@@ -233,4 +235,15 @@ check_processes() {
         if (proc.ExecutablePath != A_ScriptFullPath)
         resulting_procs.push(proc)
     return resulting_procs
+}
+
+
+complain_if_dev() {
+    global NAME
+    dot_git_dir := path_join(A_ScriptDir, ".git")
+    if path_is_dir(dot_git_dir) {
+        log_error(NAME, "This seems to be a development directory! (.git)`nStopping uninstall!")
+        return 1
+    }
+    return 0
 }

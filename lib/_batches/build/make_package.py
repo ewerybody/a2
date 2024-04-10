@@ -1,5 +1,9 @@
 """
-New a2 package assembly to prepare deployment without pyinstaller.
+a2 package assembly to prepare deployment without pyinstaller.
+This now copies OUR code and Qt stuff separately.
+To be able to zip OUR stuff ONTO a pre-packed Qt package this will leave the
+new package dir UNFINISHED! It will need to be copied together afterwards to
+create the portable zip package.
 """
 import os
 import sys
@@ -11,11 +15,14 @@ import zipfile
 import subprocess
 from urllib import request
 
-import _build_package_init
+import _build_common
 import a2ahk
 import a2util
 
-Paths = _build_package_init.Paths
+Paths = _build_common.Paths
+from _build_common import (
+    PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME, SHIBOKEN, SHIBOKEN_NAME
+)
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
@@ -23,6 +30,7 @@ DESKTOP_INI_CODE = (
     f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n'
     '[ViewState]\nMode=\nVid=\nFolderType=Generic'
 )
+FILE_ATTR_HIDDEN = 0x02
 ROOT_FILES = ('package.json', 'a2 on github.com.URL', 'LICENSE', 'README.md')
 LIB_IGNORES = (('Autohotkey', 'Compiler'),)
 # Lets keep lib/test for implementation examples in release!
@@ -35,15 +43,11 @@ UI_IGNORES = (
     ('ui', 'test'),
 )
 
-PYSIDE = 'PySide'
-PYSIDE_VERSION = 6
-QT_VERSION = 6
 # The Qt dlls we need! For some reason Qml is indispensable :/
 QT_LIBS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg'
-QT_DLLS = QT_LIBS + ('Qml',)
+QT_DLLS = QT_LIBS # + ('Qml',)
 QT_DLL = 'Qt%i%s.dll'
 QT_PYD = 'Qt%s.pyd'
-SHIBOKEN = 'shiboken'
 IMG_FORMATS = ('jpeg', 'ico', 'svg')
 ABI_DLL = '.abi3.dll'
 # fmt: off
@@ -63,36 +67,20 @@ def main():
     get_py_package()
     patch_sqlite()
     copy_files()
-    copy_qt()
+
+    prepare_qt()
     update_readme()
 
     config_file = os.path.join(Paths.distlib, 'a2_config.ahk')
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
-    folder_icon_ini = os.path.join(Paths.dist, 'desktop.ini')
-    if not os.path.isfile(folder_icon_ini):
-        with open(folder_icon_ini, 'w') as file_obj:
-            file_obj.write(DESKTOP_INI_CODE)
-        ctypes.windll.kernel32.SetFileAttributesW(folder_icon_ini, 0x02)
+    make_desktop_ini()
 
     print('{0} {1} finished! {0}\n'.format(8 * '#', package_name))
 
 
-def update_readme():
-    # get currently used versions
-    pattern = 'get_%s_version.ahk'
-    names = 'AutoHotkey', PYSIDE, 'Python'
-    scripts = (
-        os.path.join(Paths.lib, 'cmds', pattern % names[0]),
-        os.path.join(Paths.batches, 'versions', pattern % names[1]),
-        os.path.join(Paths.batches, 'versions', pattern % names[2]),
-    )
-    versions = {}
-    for name, script in zip(names, scripts):
-        cwd = os.path.dirname(os.path.dirname(script))
-        version_str = subprocess.check_output([Paths.ahkexe, script], cwd=cwd).decode()
-        versions[name] = version_str
 
+def update_readme():
     # get versions in readme:
     readme_path = os.path.join(Paths.a2, 'README.md')
     lines = []
@@ -110,6 +98,7 @@ def update_readme():
     if not linebreak:
         raise RuntimeError('Linebreak could not be determined from readme file!!!')
 
+    versions = _build_common.VERSIONS
     print('Versions:\n')
     for name, version_str in versions.items():
         print('* %s: %s' % (name, version_str))
@@ -169,8 +158,8 @@ def _lib_ignore(path, items):
             for base, name in LIB_IGNORES:
                 if this_base == base and item == name:
                     result.append(item)
-    if result:
-        print('IGNORING lib items: %s' % result)
+    # if result:
+    #     print('IGNORING lib items: %s' % result)
     return result
 
 
@@ -190,13 +179,13 @@ def _ui_ignore(path, items):
             # TODO: handle ui files
             result.append(item)
 
-    if result:
-        print('IGNORING ui items: %s' % result)
+    # if result:
+    #     print('IGNORING ui items: %s' % result)
 
     return result
 
 
-def copy_qt():
+def prepare_qt():
     """
     Instead of fixing pyinstallers greedy take-all, we copy ONLY
     the things we need to the target dir.
@@ -207,18 +196,26 @@ def copy_qt():
     * selected qt plugins
     """
     print('copying Qt files ...')
-    pyside_name = f'{PYSIDE}{PYSIDE_VERSION}'
-    shibo_name = f'{SHIBOKEN}{PYSIDE_VERSION}'
-    pyside_path = os.path.join(Paths.py_site_packs, pyside_name)
+    _assemble_qt()
+    _zip_qt()
+    # shutil.copytree(tmp_qt, Paths.distui)
+
+
+def _assemble_qt():
+    if os.path.isdir(Paths.qt_temp):
+        print(f'Qt for Python already assembled!\n  {Paths.qt_temp}')
+        return
 
     include = [QT_DLL % (QT_VERSION, base) for base in QT_DLLS]
     include.append(f'{PYSIDE.lower()}{PYSIDE_VERSION}{ABI_DLL}')
 
-    for qitem in os.scandir(pyside_path):
+    # qtcore_dll_path = os.path.join(Paths.pyside, include[0])
+
+    for qitem in os.scandir(Paths.pyside):
         if qitem.is_dir():
             continue
 
-        dst_path = os.path.join(Paths.distui, qitem.name)
+        dst_path = os.path.join(Paths.qt_temp, qitem.name)
         if qitem.name in include:
             _copy(qitem.path, dst_path)
             continue
@@ -228,19 +225,19 @@ def copy_qt():
 
     # copy shiboken files
     for name in f'{SHIBOKEN.title()}.pyd', '__init__.py':
-        src = os.path.join(Paths.py_site_packs, shibo_name, name)
-        dst = os.path.join(Paths.distui, shibo_name, name)
+        src = os.path.join(Paths.py_site_packs, SHIBOKEN_NAME, name)
+        dst = os.path.join(Paths.qt_temp, SHIBOKEN_NAME, name)
         _copy(src, dst)
 
     # Pyinstaller copied this one into the root.. *shrug*
-    abi = f'{shibo_name}{ABI_DLL}'
-    src = os.path.join(Paths.py_site_packs, shibo_name, abi)
-    dst = os.path.join(Paths.distui, abi)
+    abi = f'{SHIBOKEN_NAME}{ABI_DLL}'
+    src = os.path.join(Paths.py_site_packs, SHIBOKEN_NAME, abi)
+    dst = os.path.join(Paths.qt_temp, abi)
     _copy(src, dst)
 
-    pyside_dst_dir = os.path.join(Paths.distui, pyside_name)
+    pyside_dst_dir = os.path.join(Paths.qt_temp, PYSIDE_NAME)
     for name in QT_LIBS:
-        src = os.path.join(pyside_path, QT_PYD % name)
+        src = os.path.join(Paths.pyside, QT_PYD % name)
         dst = os.path.join(pyside_dst_dir, QT_PYD % name)
         _copy(src, dst)
 
@@ -248,8 +245,25 @@ def copy_qt():
         dst = os.path.join(pyside_dst_dir, 'plugins', dirname)
         if os.path.isdir(dst):
             continue
-        src = os.path.join(pyside_path, 'plugins', dirname)
+        src = os.path.join(Paths.pyside, 'plugins', dirname)
         shutil.copytree(src, dst, ignore=_qt_ignore)
+
+
+def _zip_qt():
+    zip_path = Paths.qt_temp + '.7z'
+    if os.path.isfile(zip_path):
+        print(f'Qt for Python already zipped!\n  {zip_path}')
+        return
+
+    tmp_dirname = os.path.join(Paths.qt_dir, _build_common.A2)
+    os.mkdir(tmp_dirname)
+    tmp_ui = os.path.join(tmp_dirname, 'ui')
+    os.rename(Paths.qt_temp, tmp_ui)
+
+    subprocess.call([Paths.sevenz_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS)
+
+    os.rename(tmp_ui, Paths.qt_temp)
+    os.rmdir(tmp_dirname)
 
 
 def _qt_ignore(path, items):
@@ -345,7 +359,7 @@ def patch_sqlite():
     ).decode()
     current = tuple(int(v) for v in current_version.split('.'))
     if current >= latest:
-        print(f'  SQLite3 Updated!')
+        print('  SQLite3 Updated!')
         return
     print(f'  ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}')
 
@@ -391,6 +405,31 @@ def _copy(src, dst):
         os.makedirs(dir_path)
     shutil.copy2(src, dst)
     print(f'  copied {os.path.basename(dst)}')
+
+
+def _get_versions():
+    """Get currently used versions."""
+    pattern = 'get_%s_version.ahk'
+    names = 'AutoHotkey', PYSIDE, 'Python'
+    scripts = (
+        os.path.join(Paths.lib, 'cmds', pattern % names[0]),
+        os.path.join(Paths.batches, 'versions', pattern % names[1]),
+        os.path.join(Paths.batches, 'versions', pattern % names[2]),
+    )
+    versions = {}
+    for name, script in zip(names, scripts):
+        cwd = os.path.dirname(os.path.dirname(script))
+        version_str = subprocess.check_output([Paths.ahkexe, script], cwd=cwd).decode()
+        versions[name] = version_str
+    return versions
+
+
+def make_desktop_ini():
+    folder_icon_ini = os.path.join(Paths.dist, 'desktop.ini')
+    if not os.path.isfile(folder_icon_ini):
+        with open(folder_icon_ini, 'w') as file_obj:
+            file_obj.write(DESKTOP_INI_CODE)
+        ctypes.windll.kernel32.SetFileAttributesW(folder_icon_ini, FILE_ATTR_HIDDEN)
 
 
 if __name__ == '__main__':

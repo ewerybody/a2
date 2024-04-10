@@ -72,7 +72,7 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         # checkBox.clicked doesn't send state, so we put the func to check
         # checkBox.stateChanged does! But sends int: 0, 1, 2 for off, tri, on
         # solution: ctrl.clicked[bool] sends the state already!
-        ctrl.clicked[bool].connect(partial(_update_cfg_data, cfg, name))
+        ctrl.toggled.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.clicked.connect(change_signal.emit)
         # set ctrl according to config or set config from ctrl
@@ -82,9 +82,10 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.isChecked()
 
     elif isinstance(ctrl, (QtWidgets.QLineEdit, A2ButtonField)):
-        ctrl.textChanged.connect(partial(_update_cfg_data, cfg, name))
-        if change_signal is not None:
-            ctrl.textChanged.connect(change_signal.emit)
+        if trigger_signal is None:
+            trigger_signal = ctrl.textChanged
+        trigger_signal.connect(partial(_line_edit_update, cfg, name, ctrl, change_signal))
+
         if name in cfg:
             value =cfg[name]
             if not isinstance(value, str):
@@ -93,7 +94,16 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
         else:
             cfg[name] = ctrl.text()
 
-    elif isinstance(ctrl, (A2CoordsField, A2TagField, A2PathField)):
+    elif isinstance(ctrl, A2CoordsField):
+        ctrl.changed_to.connect(partial(_update_cfg_data, cfg, name))
+        if change_signal is not None:
+            ctrl.changed.connect(change_signal.emit)
+        if name in cfg:
+            ctrl.value = cfg[name]
+        else:
+            cfg[name] = ctrl.value
+
+    elif isinstance(ctrl, (A2TagField, A2PathField)):
         ctrl.changed.connect(partial(_update_cfg_data, cfg, name))
         if change_signal is not None:
             ctrl.changed.connect(change_signal.emit)
@@ -163,21 +173,25 @@ def control(ctrl, name, cfg, change_signal=None, trigger_signal=None):
             cfg[name] = ctrl.toPlainText()
 
     elif isinstance(ctrl, a2element.hotkey.Draw):
-        if trigger_signal is None:
-            trigger_signal = ctrl.changed
-        trigger_signal.connect(partial(_hotkey_update, cfg, name, ctrl))
-
-        if change_signal is not None:
-            trigger_signal.connect(change_signal.emit)
-
-        if name in cfg:
-            ctrl.set_config(cfg[name])
-        else:
-            cfg[name] = ctrl.get_user_dict()
-
+        connect_hotkey(ctrl, name, cfg, change_signal, trigger_signal)
 
     else:
         log.error('Cannot handle widget "%s"!\n  type "%s" NOT covered yet!', name, type(ctrl))
+
+
+def connect_hotkey(widget, name: str, cfg: dict, change_signal=None, trigger_signal=None):
+    if trigger_signal is None:
+        trigger_signal = widget.changed
+    trigger_signal.connect(partial(_hotkey_update, cfg, name, widget))
+
+    if change_signal is not None:
+        trigger_signal.connect(change_signal.emit)
+
+    if name in cfg:
+        widget.set_config(cfg[name])
+    else:
+        cfg[name] = widget.ctrl.get_user_dict()
+
 
 
 def _update_cfg_data(cfg, name, value):
@@ -195,17 +209,25 @@ def _radio_update(cfg, name, value, state):
         cfg[name] = value
 
 
+def _line_edit_update(cfg, name, ctrl, change_signal, value=None):
+    if value is None:
+        value = ctrl.text()
+    cfg[name] = value
+    if change_signal is not None:
+        change_signal.emit()
+
+
 def _text_edit_update(cfg, name, ctrl, change_signal, value=None):
     if value is None:
         value = ctrl.toPlainText()
-    if change_signal is not None:
-        change_signal.emit(value)
     cfg[name] = value
+    if change_signal is not None:
+        change_signal.emit()
 
 
-def _hotkey_update(cfg, name, hotkey):
+def _hotkey_update(cfg, name, widget):
     # type: (dict, str, a2element.hotkey.Draw) -> None
-    cfg[name] = hotkey.get_user_dict()
+    cfg[name] = widget.ctrl.get_user_dict()
 
 
 def control_to_db(widget, database, key, default_value=None):

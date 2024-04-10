@@ -31,7 +31,7 @@ class FuncWidget(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super(FuncWidget, self).__init__(parent)
-        self._config_dict = None
+        self._config_dict = {}
 
         # update check done in parent widget for proper order
         self.ui = edit_func_widget_ui.Ui_FuncWidget()
@@ -39,6 +39,8 @@ class FuncWidget(QtWidgets.QWidget):
 
         self.ui.function_text.text_changed.connect(self.on_input)
         self.ui.run_url.changed.connect(self.on_input)
+        self.ui.function_send_mode.clear()
+        self.ui.function_send_mode.addItems(SEND_MODES)
         self.ui.function_send_mode.currentIndexChanged.connect(self.on_send_mode_change)
 
         self.ui.a2option_button.menu_called.connect(self.build_menu)
@@ -148,26 +150,27 @@ class FuncWidget(QtWidgets.QWidget):
         else:
             self.ui.function_text.setText(text)
 
-    def _strip_mode(self, text, current):
+    def _strip_mode(self, text, current_func):
         """
         Remove `Run, ` or `Send*, ` to put it into the input field.
         """
+        if current_func not in (FuncTypes.open, FuncTypes.send):
+            return text
+
         modes = {
             FuncTypes.open: ('run',),
             FuncTypes.send: SEND_MODES,
         }
+        text, mode = strip_mode(text, modes[current_func])
+        if current_func != FuncTypes.send:
+            return text
 
-        if current in (FuncTypes.open, FuncTypes.send):
-            text, mode = strip_mode(text, modes[current])
-
-            # set the send mode combobox
-            if current == FuncTypes.send:
-                for i in range(self.ui.function_send_mode.count()):
-                    if self.ui.function_send_mode.itemText(i).lower() == mode:
-                        self.ui.function_send_mode.setCurrentIndex(i)
-                        break
+        self.ui.function_send_mode.blockSignals(True)
+        self.ui.function_send_mode.setCurrentIndex(SEND_MODES.index(mode))
+        self.ui.function_send_mode.blockSignals(False)
         return text
 
+    # pylint: disable=C0103:invalid-name
     def showEvent(self, *args, **kwargs):
         self.set_function_text()
         self.ui.cfg_functionMode.currentTextChanged.connect(self.set_function_text)

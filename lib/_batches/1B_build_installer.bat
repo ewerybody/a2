@@ -1,3 +1,3 @@
-CALL build\_build_installer.bat
+CALL build\1B_build_installer.bat
 
 pause

@@ -215,30 +215,27 @@ class A2Obj:
         return self._version
 
     def check_all_updates(self):
-        is_git = os.path.isdir(self.paths.git)
         self._updates.update({
-            'core': {'a2': [self.version]},
+            'core': {NAME: [self.version]},
             'sources': {s: [] for s in self.module_sources},
             'current': 0,
             'total': 1 + len(self.module_sources),
-            'git': is_git,
             'checked': time.time()
         })
 
-        if self.dev_mode and is_git:
+        if self.is_git():
             self._updates['total'] += 3
 
         yield self._updates
 
-        # Only check for new a2 release when not dev/no .git present:
-        if is_git:
+        if self.is_git():
             log.info('Skipping a2 update check as we\'re in dev.')
         else:
             log.info('Checking for a2 updates ...')
             try:
                 new_version = self.check_update()
                 if new_version:
-                    self._updates['core']['a2'].append(new_version)
+                    self._updates['core'][NAME].append(new_version)
                     yield self._updates
             except Exception:
                 log.exception('Error checking for a2 update!')
@@ -249,28 +246,46 @@ class A2Obj:
         log.info('Checking module package updates ...')
         for source_name, source in self.module_sources.items():
             self._updates['sources'][source_name].append(source.config.get('version'))
-            try:
-                data = source.check_update()
-                if source.has_update:
-                    version = data.get('version', '')
-                    log.info('New "%s" %s module source package!', source_name, version)
-                    self._updates['sources'][source_name].append(version)
+            if not source.is_git():
+                try:
+                    data = source.check_update()
+                    if source.has_update:
+                        version = data.get('version', '')
+                        log.info('New "%s" %s module source package!', source_name, version)
+                        self._updates['sources'][source_name].append(version)
 
-            except FileNotFoundError:
-                pass
-            except RuntimeError as error:
-                log.error('Checking "%s" resulted in: %s', source_name, error)
+                except FileNotFoundError:
+                    pass
+                except RuntimeError as error:
+                    log.error('Checking "%s" resulted in: %s', source_name, error)
 
             self._updates['current'] += 1
             yield self._updates
 
-        if self.dev_mode and is_git:
+        if self.is_git():
             import a2dev
 
             for name, current, latest in a2dev.check_dev_updates():
-                self._updates['core'][name] = [current, latest]
+                self._updates['core'][name] = [current]
+                if latest is not None:
+                    self._updates['core'][name].append(latest)
                 self._updates['current'] += 1
                 yield self._updates
+        return self._updates
+
+    @property
+    def updates(self):
+        if not self._updates:
+            self.check_all_updates()
+        return self._updates
+
+    def is_git(self):
+        return os.path.isdir(self.paths.git)
+
+    def db_check(self):
+        """Check every db table for bad data."""
+        for table in self.db.tables():
+            self.db.check(table)
 
 
 class URLs:
@@ -298,6 +313,7 @@ class URLs:
         self.gitter = 'https://gitter.im/ewerybody/a2'
         self.telegram = 'https://t.me/a2script_de'
         self.security = variables_dict.get('a2_security', '')
+        self.latest_release = self.a2 + '/releases/latest'
 
         self.ahk = 'https://autohotkey.com'
         self.ahk_commands = self.ahk + '/docs/commands'

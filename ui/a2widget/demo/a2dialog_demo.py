@@ -2,6 +2,7 @@ from functools import partial
 from a2qt import QtCore, QtWidgets
 from a2widget import a2input_dialog
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
+from a2widget.a2error_dialog import A2ErrorDialog
 
 EXTRA_TEXT = (
     ' here is be some more text to text expanding the dialog<br>horizontally '
@@ -10,14 +11,14 @@ EXTRA_TEXT = (
 )
 
 
-class InputDialogDemo(QtWidgets.QMainWindow):
+class DialogDemo(QtWidgets.QMainWindow):
     def __init__(self):
-        super(InputDialogDemo, self).__init__()
+        super().__init__()
         self.setWindowTitle(self.__class__.__name__)
         widget = QtWidgets.QWidget(self)
         self.setCentralWidget(widget)
         layout = QtWidgets.QVBoxLayout(widget)
-        button = QtWidgets.QPushButton('Call a A2InputDialog')
+        button = QtWidgets.QPushButton('Call an A2InputDialog')
         layout.addWidget(button)
 
         # build the dialog right away and show it on button `clicked`-Signal
@@ -37,9 +38,14 @@ class InputDialogDemo(QtWidgets.QMainWindow):
         button.clicked.connect(self._change_input_dialog)
 
         # build the dialog after button is `clicked`
-        button2 = QtWidgets.QPushButton('Call a A2ConfirmDialog')
+        button2 = QtWidgets.QPushButton('Call an A2ConfirmDialog')
         button2.clicked.connect(self.call_confirm_dialog)
         layout.addWidget(button2)
+
+        button3 = QtWidgets.QPushButton('Call an A2ErrorDialog')
+        button3.clicked.connect(self.call_error_dialog)
+        layout.addWidget(button3)
+
 
     @staticmethod
     def check_func(text):
@@ -99,10 +105,20 @@ class InputDialogDemo(QtWidgets.QMainWindow):
             return
         self.input_dialog.ui.label.setText(f'<b>{txt}</b> {EXTRA_TEXT}')
 
+    def call_error_dialog(self):
+        import traceback
+
+        try:
+            import asasfnclhjclahfhaksha
+        except Exception as error:
+            report = traceback.format_exc().strip()
+            dialog = A2ErrorDialog(report, f'There was a demo error thrown:\n{error}', error, self)
+            dialog.show()
+
 
 def show():
     app = QtWidgets.QApplication([])
-    win = InputDialogDemo()
+    win = DialogDemo()
     win.show()
     app.exec()
 

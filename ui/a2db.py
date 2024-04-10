@@ -295,6 +295,27 @@ class A2db:
                     result[value_name] = set_value
         return result
 
+    def check(self, table=_DEFAULTTABLE):
+        """
+        Test a table for bad data. Such as double entries ...
+        """
+        keys = self.keys(table)
+        duplicates = set(k for k in keys if keys.count(k) > 1)
+        if duplicates:
+            statement = f'select value from "{table}" where key=?'
+            log.info('Cleaning up duplicate db entries in table "%s" ...', table)
+            for key in duplicates:
+                values = json.loads(self._fetch(statement, (key,)))
+                first_entry = values[0]
+                for entry in values[1:]:
+                    if entry != first_entry:
+                        log.warning('Removing duplicate db entry with varying data!\n  %s', entry)
+                self.pop(key, table)
+                self.set(key, first_entry, table)
+            log.info('  Done.')
+
+        # eventually perform other tests ...
+
 
 if __name__ == '__main__':
     import unittest

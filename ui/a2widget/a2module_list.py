@@ -69,7 +69,11 @@ class A2ModuleList(QtWidgets.QWidget):
                 list_items.append(self._module_map.get(item.key))
 
             elif isinstance(item, str):
-                list_items.append(self._module_map.get(item))
+                module = self._module_map.get(item)
+                if module is None:
+                    continue
+                list_items.append(module)
+
                 try:
                     srcname, modname = item.split('|', 1)
                     mod = self.a2.module_sources[srcname].mods[modname]

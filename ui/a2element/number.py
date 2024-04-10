@@ -29,10 +29,11 @@ class Draw(DrawCtrl):
 
         if self.cfg.get('slider'):
             self.slider = A2Slider(self)
-            self.slider.value = self.value
             self.slider.minmax = (self.cfg.get('min', 0), self.cfg.get('max', 100))
+            self.slider.setDecimals(self.cfg.get('decimals', 1))
             self.slider.setSingleStep(self.cfg.get('step_len', 1))
             self.slider.editing_finished.connect(self.delayed_check)
+            self.slider.value = self.value
             self.main_layout.addWidget(self.slider)
             if self.cfg.get('suffix'):
                 self.slider.main_layout.insertWidget(1, self.suffix_label)

@@ -1,4 +1,5 @@
 @echo off
+rem kick off copying togeher the initial package.
 set here=%~dp0
 set a2path=%here%..\..\..
 set source_path=%a2path%\lib\_source

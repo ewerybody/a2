@@ -116,8 +116,7 @@ class Test(unittest.TestCase):
         try:
             version = a2ahk.get_latest_version()
         except RuntimeError as error:
-            self.skipTest(f'Problem getting version from homepage: {error}')
-            return
+            self.skipTest(f'Problem getting version from homepage:\n{error}')
 
         self.assertTrue(isinstance(version, str))
         self.assertTrue(version.startswith(a2ahk.BASE_VERSION))

@@ -198,6 +198,62 @@ class KeyboardDialogBase(QtWidgets.QDialog):
             self.checked_key = button.a2key
 
     def update_ui(self):
+        new_key_list = self._get_new_key_list()
+        modifier_string, trigger_key = hotkey_common.get_parts_from_list(new_key_list)
+        self.key = hotkey_common.build_string(modifier_string, trigger_key)
+        self.ui.key_field.setText(self.key)
+
+        # TODO this might be kicked of delayed after dialog popup
+        global_hks, _include_hks, _exclude_hks = get_current_hotkeys()
+        parent_modifier = hotkey_common.parent_modifier_string(modifier_string)
+        win_shortcuts, a2_shortcuts = {}, {}
+        win_globals = win_standard_keys()
+
+        if self.scope.is_global:
+            button_text = 'OK'
+            button_enable = True
+            if not self.checked_modifier:
+                if self.user_knows_what_he_is_doing:
+                    button_text = 'OK (%s)' % GLOBAL_NO_MOD_WARNING
+                else:
+                    button_enable = False
+                    button_text = GLOBAL_NO_MOD_WARNING
+                self.ui.i_know_checkbox.setVisible(True)
+            else:
+                self.ui.i_know_checkbox.setVisible(False)
+
+            self.ui.a2ok_button.setText(button_text)
+            self.ui.a2ok_button.setEnabled(button_enable)
+        else:
+            for scope_string in self.scope.data.get('scope', ()):
+                in_this_scope = _include_hks.get(scope_string)
+                if in_this_scope is None:
+                    continue
+                if self.checked_modifier:
+                    for key, command_tuples in in_this_scope.get(modifier_string, {}).items():
+                        a2_shortcuts.setdefault(key, []).extend(command_tuples)
+                else:
+                    for key, command_tuples in in_this_scope.get('', {}).items():
+                        a2_shortcuts.setdefault(key, []).extend(command_tuples)
+
+        if self.checked_modifier:
+            if parent_modifier != modifier_string:
+                if parent_modifier in win_globals:
+                    win_shortcuts.update(win_globals[parent_modifier])
+                if parent_modifier in global_hks:
+                    a2_shortcuts.update(global_hks[parent_modifier])
+
+            if modifier_string in win_globals:
+                win_shortcuts.update(win_globals[modifier_string])
+            if modifier_string in global_hks:
+                a2_shortcuts.update(global_hks[modifier_string])
+        else:
+            win_shortcuts.update(win_globals.get('', {}))
+            a2_shortcuts.update(global_hks.get('', {}))
+
+        self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
+
+    def _get_new_key_list(self):
         new_key_list = []
         handled = []
         for modkeyname in self.checked_modifier:
@@ -212,46 +268,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 new_key_list.append(modkeyname)
 
         new_key_list.append(self.checked_key)
-
-        modifier_string, trigger_key = hotkey_common.get_parts_from_list(new_key_list)
-        self.key = hotkey_common.build_string(modifier_string, trigger_key)
-        self.ui.key_field.setText(self.key)
-
-        # TODO this might be kicked of delayed after dialog popup
-        global_hks, _include_hks, _exclude_hks = get_current_hotkeys()
-        parent_modifier = hotkey_common.parent_modifier_string(modifier_string)
-        win_shortcuts, a2_shortcuts = {}, {}
-
-        if self.scope.is_global:
-            win_globals = win_standard_keys()
-            button_text = 'OK'
-            button_enable = True
-            if not self.checked_modifier:
-                win_shortcuts, a2_shortcuts = win_globals.get('', {}), global_hks.get('', {})
-                if self.user_knows_what_he_is_doing:
-                    button_text = 'OK (%s)' % GLOBAL_NO_MOD_WARNING
-                else:
-                    button_enable = False
-                    button_text = GLOBAL_NO_MOD_WARNING
-                    self.ui.i_know_checkbox.setVisible(True)
-            else:
-                if parent_modifier != modifier_string:
-                    if parent_modifier in win_globals:
-                        win_shortcuts = win_globals[parent_modifier]
-                    if parent_modifier in global_hks:
-                        a2_shortcuts = global_hks[parent_modifier]
-
-                if modifier_string in win_globals:
-                    win_shortcuts.update(win_globals[modifier_string])
-                if modifier_string in global_hks:
-                    a2_shortcuts.update(global_hks[modifier_string])
-
-            self.ui.a2ok_button.setText(button_text)
-            self.ui.a2ok_button.setEnabled(button_enable)
-        else:
-            self.scope._scope_data
-
-        self._highlight_keys(win_shortcuts, a2_shortcuts, trigger_key)
+        return new_key_list
 
     def _highlight_keys(self, win_shortcuts, a2_shortcuts, trigger_key):
         for name, button in self.key_dict.items():
@@ -259,7 +276,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                 continue
 
             name = name.lower()
-            a2_shortcuts = dict([(k.lower(), v) for k, v in a2_shortcuts.items()])
+            lowered_shortcuts = {key.lower(): set(calls) for key, calls in a2_shortcuts.items()}
             tooltip = []
             style_sheet = self._ui_styles.get('default', '')
 
@@ -271,9 +288,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
                     style_sheet = self._ui_styles.get('win_button', '')
                     tooltip.append('Windows Shortcut: %s' % win_shortcuts[name])
 
-                if name in a2_shortcuts:
+                if name in lowered_shortcuts:
                     style_sheet = self._ui_styles.get('a2_button', '')
-                    for command, module in a2_shortcuts[name]:
+                    for command, module in lowered_shortcuts[name]:
                         if module is None:
                             tooltip.append('a2: %s' % command)
                         else:
@@ -453,9 +470,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
 class Scope(object):
     def __init__(self, scope_data):
-        self._scope_data = scope_data
+        self.data = scope_data
 
-        self.scope_mode = self._scope_data.get(hotkey_common.Vars.scope_mode)
+        self.scope_mode = self.data.get(hotkey_common.Vars.scope_mode)
         self.is_global = self.scope_mode == 0
         self.is_include = self.scope_mode == 1
         self.is_exclude = self.scope_mode == 2
@@ -524,14 +541,14 @@ def load_css(name):
 
 
 def win_standard_keys():
-    global _WIN_STANDARD_KEYS
     if not _WIN_STANDARD_KEYS:
-        _WIN_STANDARD_KEYS = a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE))
+        _WIN_STANDARD_KEYS.update(a2util.json_read(os.path.join(_HERE, WIN_STANDARD_FILE)))
     return _WIN_STANDARD_KEYS
 
 
 def get_current_hotkeys():
     import a2runtime
+
     global_hks, include_hks, exclude_hks = a2runtime.collect_hotkeys()
     modifiers_global = _sort_hotkey_modifiers(global_hks)
 

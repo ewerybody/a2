@@ -181,10 +181,12 @@ class A2ItemEditor(QtWidgets.QWidget):
                 try:
                     widget_dict['set_function'](default)
                     log.warning(
-                        f'Could not set "{widget}" to "{value}" setting default: "{default}"!'
+                        'Could not set "%s" to "%s" setting default: "%s"!', widget, value, default
                     )
+                # This should work or break for a variety of widgets.
+                # pylint: disable=broad-exception-caught
                 except Exception:
-                    log.error(f'Could not set "{widget}" to "{value}"!')
+                    log.error('Could not set "%s" to "%s"!', widget, value)
 
             widget.blockSignals(False)
             self._current_data[value_name] = value
