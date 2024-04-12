@@ -1,11 +1,11 @@
-screen_get_virtual_size(ByRef x, ByRef y, ByRef w, ByRef h) {
+screen_get_virtual_size(&x, &y, &w, &h) {
     ; Get width of all screens combined.
     ; NOTE: Single screens may have different vertical resolutions so some parts of
     ; the area returned here might not belong to any screens!
-    SysGet, x, 76
-    SysGet, y, 77
-    SysGet, w, 78
-    SysGet, h, 79
+    x := SysGet(76)
+    y := SysGet(77)
+    w := SysGet(78)
+    h := SysGet(79)
 }
 
 screen_get_index(hwnd) {
@@ -20,52 +20,54 @@ screen_get_index(hwnd) {
     ; Starts with 1.
     monitorIndex := 1
 
-    VarSetCapacity(monitorInfo, 40)
-    NumPut(40, monitorInfo)
+    monitorHandle := DllCall("MonitorFromWindow", "uint", hwnd, "uint", 0x2)
+    if !monitorHandle
+        return monitorIndex
 
-    if (monitorHandle := DllCall("MonitorFromWindow", "uint", hwnd, "uint", 0x2))
-        && DllCall("GetMonitorInfo", "uint", monitorHandle, "uint", &monitorInfo)
+    monitorInfo := Buffer(40)
+    NumPut("uint", 40, monitorInfo)
+
+    DllCall("GetMonitorInfo", "uint", monitorHandle, "ptr", monitorInfo)
+
+    monitorLeft := NumGet(monitorInfo, 4, "Int")
+    monitorTop := NumGet(monitorInfo, 8, "Int")
+    monitorRight := NumGet(monitorInfo, 12, "Int")
+    monitorBottom := NumGet(monitorInfo, 16, "Int")
+
+    Loop(MonitorGetCount())
     {
-        monitorLeft := NumGet(monitorInfo, 4, "Int")
-        monitorTop := NumGet(monitorInfo, 8, "Int")
-        monitorRight := NumGet(monitorInfo, 12, "Int")
-        monitorBottom := NumGet(monitorInfo, 16, "Int")
+        ; tempMon := SysGet , Monitor, %%
+        MonitorGet(A_Index, &Left, &Top, &Right, &Bottom)
 
-        SysGet, monitorCount, MonitorCount
-
-        Loop, %monitorCount%
+        ; Compare location to determine the monitor index.
+        if ((monitorLeft = Left) and (monitorTop = Top)
+            and (monitorRight = Right) and (monitorBottom = Bottom))
         {
-            SysGet, tempMon, Monitor, %A_Index%
-
-            ; Compare location to determine the monitor index.
-            if ((monitorLeft = tempMonLeft) and (monitorTop = tempMonTop)
-                and (monitorRight = tempMonRight) and (monitorBottom = tempMonBottom))
-            {
-                monitorIndex := A_Index
-                break
-            }
+            monitorIndex := A_Index
+            break
         }
     }
 
-    return %monitorIndex%
+    return monitorIndex
 }
 
 class Screen_Workarea {
-    __new(index=1) {
-        SysGet, WorkArea, MonitorWorkArea, %index%
-        this.left := WorkAreaLeft
+    __new(index:=1) {
+        ; SysGet WorkArea, MonitorWorkArea, %index%
+        MonitorGetWorkArea(index, &Left, &Top, &Right, &Bottom)
+        this.left := Left
         this.x := this.left
-        this.right := WorkAreaRight
+        this.right := Right
         this.x2 := this.right
 
-        this.top := WorkAreaTop
+        this.top := Top
         this.y := this.top
-        this.bottom	:= WorkAreaBottom
+        this.bottom	:= Bottom
         this.y2 := this.bottom
 
-        this.width := WorkAreaRight - WorkAreaLeft
+        this.width := Right - Left
         this.w := this.width
-        this.height := WorkAreaBottom - WorkAreaTop
+        this.height := Bottom - Top
         this.h := this.height
     }
 }
@@ -76,6 +78,6 @@ screen_get_work_area(monitor_index := -1) {
     if (monitor_index == -1) {
         monitor_index := screen_get_index(WinExist("A"))
     }
-    area := new Screen_WorkArea(monitor_index)
+    area := Screen_WorkArea(monitor_index)
     return area
 }
