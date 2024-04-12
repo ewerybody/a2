@@ -15,12 +15,12 @@ Joshua A. Kinnison
 */
 
 ; Get array of paths of selected items via Explorer window handle.
-explorer_get_selected(hwnd="") {
+explorer_get_selected(hwnd:="") {
     return explorer_get(hwnd, true)
 }
 
 ; Get path of target window's folder.
-explorer_get_path(hwnd="") {
+explorer_get_path(hwnd:="") {
     if !(window := explorer_get_window(hwnd))
         return ErrorLevel := "ERROR"
     if (window="desktop")
@@ -31,30 +31,33 @@ explorer_get_path(hwnd="") {
     ; thanks to polyethene
     Loop
     {
-        ; What the hell?!? This is to replace percentage notation, right?
-        If RegExMatch(pth, "i)(?<=%)[\da-f]{1,2}", hex)
-            StringReplace, pth, pth, `%%hex%, % Chr("0x" . hex), All
-        Else
+        ; find "%20" patterns. That's 2 hex digits after a %
+        RegExMatch(pth, "i)(?<=%)[\da-f]{1,2}", &match)
+        If (!match)
             Break
+        pth := StrReplace(pth, "%" . match[0], Chr("0x" . match[0]))
     }
     return pth
 }
 
 ; Get array of paths of ALL items via Explorer window handle.
-explorer_get_all(hwnd="") {
+explorer_get_all(hwnd:="") {
     return explorer_get(hwnd)
 }
 
 ; Get Explorer window COM object from handle.
-explorer_get_window(hwnd="") {
+explorer_get_window(hwnd:="") {
     ; Thanks to jethrow for some pointers here!
-    WinGet, proc, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
-    if (proc != "explorer.exe")
+    ; WinGet proc, processName, "ahk_id " hwnd := hwnd? hwnd:
+    if not hwnd
+        hwnd := WinExist("A")
+
+    if (WinGetProcessName("ahk_id " . hwnd) != "explorer.exe")
         return
 
-    WinGetClass clss, ahk_id %hwnd%
+    clss := WinGetClass("ahk_id " . hwnd)
     if (clss ~= "(Cabinet|Explore)WClass") {
-        for window in ComObjCreate("Shell.Application").Windows
+        for window in ComObject("Shell.Application").Windows
             Try if (window.hwnd==hwnd)
             return window
     }
@@ -65,23 +68,30 @@ explorer_get_window(hwnd="") {
 }
 
 ; Get items from an Explorer window via handle.
-explorer_get(hwnd="",selection=false) {
+explorer_get(hwnd:="",selection:=false) {
     if !(window := explorer_get_window(hwnd))
         return ErrorLevel := "ERROR"
 
     result := []
-    if (window="desktop")
+    if (window=="desktop")
     {
-        ControlGet, hwWindow, HWND,, SysListView321, ahk_class Progman
+        hwWindow := ControlGetHwnd("SysListView321", "ahk_class Progman")
         if !hwWindow ; #D mode
-            ControlGet, hwWindow, HWND,, SysListView321, A
-        ControlGet, files, List, % ( selection ? "Selected":"") "Col1",,ahk_id %hwWindow%
+            hwWindow := ControlGetHwnd("SysListView321", "A")
+
+        ctrl := "Col1"
+        if selection
+            ctrl := "Selected" . ctrl
+
+        ; ControlGet files, List, ( selection ? "Selected":"") "Col1",,%
+        files := ControlGetItems(ctrl, "ahk_id " . hwWindow)
         base := SubStr(A_Desktop,0,1)=="\" ? SubStr(A_Desktop,1,-1) : A_Desktop
-        Loop, Parse, files, `n, `r
+        for item in files
+        ; Loop Parse, files, '`n', '`r'
         {
-            pth := base "\" A_LoopField
-            IfExist %pth% ; ignore special icons like Computer (at least for now)
-                result.Push(pth)
+            path := base "\" item
+            if FileExist(path) ; ignore special icons like Computer (at least for now)
+                result.Push(path)
         }
     }
     else
@@ -120,11 +130,11 @@ explorer_select(basename) {
 
 ; Try and retry selecting a file for a couple times.
 explorer_try_select(basename, retries := 10, delay := 500) {
-    Loop, %retries%
+    Loop retries
     {
         if explorer_select(basename)
             Return 1
-        Sleep, %delay%
+        Sleep delay
     }
 
     return 0
@@ -137,35 +147,35 @@ explorer_show(pth) {
 
     explorer_path := path_join(A_WinDir, "explorer.exe")
     if path_is_file(pth)
-        cmd := """" explorer_path """ /select, """ pth """"
+        cmd := '"' explorer_path '" /select, "' pth '"'
     else if path_is_dir(pth)
-        cmd := """" explorer_path """ """ pth """"
+        cmd := '"' explorer_path '" "' pth '"'
     else if (pth == "") {
-        cmd := """" explorer_path """"
+        cmd := '"' explorer_path '"'
     }
     else
-        MsgBox, No such path to explorer to!`n %pth%
+        msgbox_error("No such path to explorer to!`n " . pth)
 
-    Run, %cmd%
+    Run %cmd%
 }
 
 ; Ask for file name as long that name exists in given directory or user cancels. Return `true` if name is available and accepted and `false` if canceled.
-explorer_create_file_dialog(ByRef file_name, dir_path, extension, file_label, title, subtitle := "", w := 420, h:= 140)
+explorer_create_file_dialog(&file_name, dir_path, extension, file_label, title, subtitle := "", w := 420, h:= 140)
 {
     if (!dir_path) {
-        MsgBox, No dir_path given!
+        msgbox_error("No dir_path given!")
         Return
     }
 
     extension := Trim(string_prefix(extension, "."))
-    StringLower, extension, extension
+    extension := StrLower(extension)
 
     msg := "Please enter a name for the new " file_label ":`n"
-    InputBox, file_name, %title%, %msg%%subtitle%,, 420, 140,,,,, %file_name%
-    if ErrorLevel {
+    ibx := InputBox(msg . subtitle, title, "w420 h140", file_name)
+    if ibx.Result = "Cancel"
         Return false
-    }
 
+    file_name := ibx.value
     file_path := __create_dialog_build_path(dir_path, file_name, extension)
     while (Trim(file_name) == "" OR FileExist(file_path)) {
         if FileExist(file_path)
@@ -173,12 +183,11 @@ explorer_create_file_dialog(ByRef file_name, dir_path, extension, file_label, ti
         else
             msg := "Please enter NON-EMPTY name for the new " file_label ":`n"
 
-        InputBox, file_name, %title%, %msg%%subtitle%,, 420, 140,,,,, %file_name%
-        if ErrorLevel {
+        ibx := InputBox(msg . subtitle, title, "w420 h140", file_name)
+        if ibx.Result = "Cancel"
             Return false
-        }
 
-        file_path := __create_dialog_build_path(dir_path, file_name, extension)
+        file_path := __create_dialog_build_path(dir_path, ibx.value, extension)
     }
     Return true
 }
@@ -188,7 +197,7 @@ __create_dialog_build_path(dir_path, file_name, extension)
     this_ext := path_split_ext(file_name)[2]
     if this_ext
     {
-        StringLower, this_ext, this_ext
+        this_ext := StrLower(this_ext)
         this_ext := Trim(string_prefix(this_ext, "."))
 
         if (this_ext == extension) {
