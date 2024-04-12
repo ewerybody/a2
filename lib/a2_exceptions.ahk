@@ -60,7 +60,7 @@ a2_on_startup_exception(popup_text, root_script_path) {
         for i, line in lines {
             msg .= i " " line "`n"
         }
-        MsgBox % "Unhandled Startup Error:`n" msg
+        msgbox_error("Unhandled Startup Error:`n" . msg)
     }
 
     _a2_exceptions_handle("a2 Startup Error", exception)
@@ -83,58 +83,79 @@ _a2_exceptions_handle(title, exception) {
     code_lines := _get_neighbor_lines(exception.File, exception.Line, 3)
 
     msg := "There was an exception thrown:`n`n" A_Tab exception.Message "`n`n"
-    if exception.Extra {
-        msg .= "command: """ exception.What """`n"
-        msg .= "value: """ exception.Extra """`n`n"
+    if (exception.Extra) {
+        msg .= 'command: "' exception.What  '"`n'
+        msg .= 'value: "' . exception.Extra . '"`n`n'
     }
     else
-        msg .= "what: """ exception.What """`n`n"
+        msg .= 'what: "' exception.What '"`n`n'
     msg .= "file: " path_basename(exception.File) ", Line: " exception.Line ":`n`n"
     msg .= code_lines "`n`n"
     msg .= "file path: " exception.File
     title := title ": " exception.Message
+    _a2ui_on_error_change_buttons(title)
 
-    SetTimer, _a2ui_on_error_change_buttons, 50
+    SetTimer _a2ui_on_error_change_buttons, 50
     cursor_reset()
-    MsgBox, 19, %title%, %msg%
+    result := msgbox_yesnocancel(msg, title)
     ; MsgBox, 16403, %title%, %msg%
 
-    IfMsgBox, Yes
+    If (result == "Yes")
     {
         editor := a2.cfg.code_editor
         base := path_basename(editor)
         if !editor OR !base
-            MsgBox editor: %editor%`nbase: %base%
+            MsgBox("editor: " . editor . "`nbase: " . base)
         file_line := exception.File ":" exception.Line
-        Run, "%editor%" --reuse-window --goto "%file_line%"
+        Run('"' . editor . '" --reuse-window --goto "' . file_line . '"')
     }
-    IfMsgBox, No
+    If (result == "No")
     {
+
         ui_func := "a2ui"
-        if IsFunc(ui_func)
+        if IsObject(ui_func)
             %ui_func%()
     }
 
-    _a2ui_on_error_change_buttons:
-        IfWinNotExist, %title%
-            return ; Keep waiting.
-        SetTimer, _a2ui_on_error_change_buttons, Off
-        WinActivate
-        ControlSetText, Button1, Edit Code
-        ControlSetText, Button2, Open UI
-        ControlSetText, Button4, ...
-    Return
+}
+
+_a2ui_on_error_change_buttons(_init_title := "") {
+    static title
+    if (_init_title !== "") {
+        title := _init_title
+        Return
+    }
+
+    If (!WinExist(title))
+        return ; Keep waiting.
+    SetTimer , 0
+    WinActivate
+    ControlSetText "Button1", "Edit Code"
+    ControlSetText "Button2", "Open UI"
+    ControlSetText "Button4", "..."
 }
 
 _get_neighbor_lines(file_path, line_nr, num_neighbor_lines) {
     start_line := line_nr - num_neighbor_lines - 1
-    Loop, % num_neighbor_lines * 2 + 1
+    end_line := line_nr + num_neighbor_lines
+    lines := []
+    file_obj := FileOpen(file_path, "r")
+    Loop(end_line)
+    {
+        this_line := file_obj.ReadLine()
+        if (A_Index >= start_line and A_Index <= end_line)
+            lines.push(this_line)
+    }
+    file_obj.close()
+
+    ; Loop(num_neighbor_lines * 2 + 1)
+    for this_line in lines
     {
         this_nr := start_line + A_Index
-        this_line := FileReadLine(file_path, this_nr)
+        ; this_line := file_obj.ReadLine()
         if !this_line
             Continue
-        this_line := StringReplace(this_line, A_Tab, "    ")
+        this_line := StrReplace(this_line, A_Tab, "    ")
 
         new_line := ""
         ; Optinal line number? But looks actually way better!

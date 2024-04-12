@@ -9,7 +9,8 @@ _init_get_lib_path() {
         if path_is_dir(lib_path)
             return lib_path
         else
-            MsgBox, Where am I?!?, _init_get_lib_path() should either be in _source or in the root and have a lib subdir :/
+            msgbox_error("_init_get_lib_path() should either be in _source or in the root and have a lib subdir :/"
+                , "Where am I?!?")
     }
 }
 
@@ -17,6 +18,6 @@ _init_get_lib_path() {
 _init_get_autohotkey_exe() {
     ; returns default Autohotkey.exe in lib
     lib_path := _init_get_lib_path()
-    ahk_exe = %lib_path%\Autohotkey\Autohotkey.exe
+    ahk_exe := path_join(lib_path, "Autohotkey", "Autohotkey.exe")
     Return ahk_exe
 }

@@ -1,3 +1,4 @@
+#include <Class_SQLiteDB>
 /**
  * a2 global object definition
 */
@@ -33,7 +34,7 @@ class A2Core_Class
         this.cfg := {}
 
         this._check_sqlite()
-        this.db := new this.Ca2DB(data_path)
+        this.db := this.Ca2DB(data_path)
     }
 
     /**
@@ -63,7 +64,7 @@ class A2Core_Class
                 db_file.Close()
             }
 
-            this.dbObject := new SQLiteDB
+            this.dbObject := SQLiteDB()
         }
 
         /**
@@ -173,10 +174,10 @@ class A2Core_Class
          * @param   integer step        Amount to increase the value by
          * @return  integer             Value after adding the amount
         */
-        increment(modulePack, moduleName, key, step = 1)
+        increment(modulePack, moduleName, key, step := 1)
         {
-            if step is not number
-                return -1
+            ; if step is not number
+            ;     return -1
 
             moduleTable := this.__moduleTable(modulePack, moduleName)
 
@@ -184,8 +185,8 @@ class A2Core_Class
 
             currentValue := this.__get(moduleTable, key)
 
-            if currentValue is not number
-                return -2
+            ; if currentValue is not number
+            ;     return -2
 
             value := ((currentValue) ? currentValue : 0) + step
 
@@ -215,10 +216,12 @@ class A2Core_Class
             this.dbObject.Query(sql, recordSet) ; no error handle
 
             if (recordSet.HasRows)
-                Loop % recordSet.HasRows
             {
-                recordSet.next(row)
-                result := row[1]
+                Loop(recordSet.HasRows)
+                {
+                    recordSet.next(row)
+                    result := row[1]
+                }
             }
             recordSet.Free()
 
@@ -243,7 +246,7 @@ class A2Core_Class
 
             sql := "INSERT INTO '" moduleTable "' ('key', 'value') VALUES ('" key "', '" value "')"
             if (!this.dbObject.Exec(sql))
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
             ; Close connection to DB to unlock the file
             this.__closeConnection()
@@ -264,7 +267,7 @@ class A2Core_Class
 
             sql := "UPDATE '" moduleTable "' set value = '" value "' WHERE key = '" key "'"
             if (!this.dbObject.Exec(sql))
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
             ; Close connection to DB to unlock the file
             this.__closeConnection()
@@ -284,7 +287,7 @@ class A2Core_Class
 
             sql := "DELETE FROM '" moduleTable "' WHERE key = '" key "'"
             if (!this.dbObject.Exec(sql))
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
             ; Close connection to DB to unlock the file
             this.__closeConnection()
@@ -308,7 +311,7 @@ class A2Core_Class
             parts := StrSplit(line_file, "\")
             num_parts := parts.Length()
             if num_parts < 3
-                throw Exception("Unusable path input! Cannot find db entry from """ line_file """!", -1)
+                throw Error('Unusable path input! Cannot find db entry from "' line_file '"!', -1)
             return this.__moduleTable(parts[num_parts - 2], parts[num_parts - 1])
         }
 
@@ -326,7 +329,7 @@ class A2Core_Class
             sql := "SELECT COUNT(*) FROM '" moduleTable "'"
             table := ""
             if (!this.dbObject.getTable(sql, table))
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
             ; Close connection to DB to unlock the file
             this.__closeConnection()
@@ -341,7 +344,7 @@ class A2Core_Class
             if (this.dbObject._Handle) ; connection is already open
                 Return
 
-            Loop, 5
+            Loop(5)
             {
                 if (this.dbObject.OpenDB(this.path))
                     break
@@ -350,7 +353,7 @@ class A2Core_Class
             }
 
             if (!this.dbObject._Handle)
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
         /**
@@ -360,7 +363,7 @@ class A2Core_Class
         __closeConnection()
         {
             if (!this.dbObject.CloseDB())
-                throw Exception("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+                throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
         }
 
     }
@@ -375,12 +378,12 @@ class A2Core_Class
         dll_path := path_join(this.paths.ui, sqldll)
 
         if (!FileExist(dll_path)) {
-            msg := "The """ sqldll " "" must exist here:`n" dll_path "!`n`nWhere is it?"
-            MsgBox, 16, %sqldll% missing?!, %msg%
+            msg := 'The "' sqldll '" must exist here:`n' dll_path '!`n`nWhere is it?'
+            msgbox_error(msg, sqldll ' missing?!')
             Return
         }
 
         ini_code := "[Main]`nDllPath=" dll_path
-        FileAppend, %ini_code%, %ini_path%
+        FileAppend(ini_code, ini_path)
     }
 }
