@@ -9,9 +9,18 @@
 ; ... who wants to remember these!?!
 
 msgbox_error(msg, title := "ERROR") {
-    MsgBox, 16, %title%, %msg%
+    MsgBox(msg, title, 16) ; Iconx
 }
 
 msgbox_info(msg, title := "INFO") {
-    msgBox, 64, %title%, %msg%
+    MsgBox(msg, title, 64) ; Iconi
+}
+
+msgbox_yesnocancel(msg, title) {
+    return MsgBox(msg, title, 19)
+}
+
+msgbox_accepted(msg, title) {
+    result := msgbox(msg, title, 33)
+    return result == "OK"
 }
