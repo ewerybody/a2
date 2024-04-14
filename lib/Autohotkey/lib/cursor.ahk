@@ -5,7 +5,7 @@
 ; https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-loadcursora
 ;
 
-cursor_set(target_id, system_id = 0) {
+cursor_set(target_id, system_id := 0) {
     if (system_id == 0)
         system_id := A_Cursor == "IBeam" ? 32513 : 32512
     DllCall("SetSystemCursor", "Uint", target_id, "Int", system_id)
@@ -13,7 +13,7 @@ cursor_set(target_id, system_id = 0) {
 
 cursor_set_cross() {
     win_cross := A_WinDir . "\cursors\" . "cross_rl.cur"
-    IfExist, %win_cross%
+    If FileExist(win_cross)
         cursor_id := cursor_load_file(win_cross)
     Else
         cursor_id := cursor_load_id(IDC_CROSS)
@@ -27,15 +27,15 @@ cursor_reset() {
     ; frozen window and the main loop got stuck.
     ; Well. This solves it pretty nicely! And it seems to be really fast!
     SPI_SETCURSORS := 0x57
-    DllCall("SystemParametersInfo", UInt, SPI_SETCURSORS, UInt, 0, UInt, 0, UInt, 0)
+    DllCall("SystemParametersInfo", "UInt", SPI_SETCURSORS, "UInt", 0, "UInt", 0, "UInt", 0)
 }
 
 cursor_load_id(cursor_id) {
-    result_id := DllCall("LoadCursor", "UInt", NULL, "Int", cursor_id)
+    result_id := DllCall("LoadCursor", "UInt", 0, "Int", cursor_id)
     Return result_id
 }
 
 cursor_load_file(path) {
-    result_id := DllCall("LoadCursorFromFile", Str, path)
+    result_id := DllCall("LoadCursorFromFile", "Str", path)
     return result_id
 }

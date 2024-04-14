@@ -40,8 +40,8 @@ icon_from_type(extension) {
     icon := RegRead(path_join("HKCR", def_icon_pth))
     if (!icon) {
         icon := RegRead(path_join("HKCR", path_join(typ, "shell\open\command")))
-        if string_startswith(icon, """") {
-            icon := SubStr(icon, 2, InStr(icon, """" ,, 2) - 2)
+        if string_startswith(icon, '"') {
+            icon := SubStr(icon, 2, InStr(icon, '"' ,, 2) - 2)
         }
     }
     return icon

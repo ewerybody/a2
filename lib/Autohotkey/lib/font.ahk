@@ -17,7 +17,7 @@ font_set(win_id, font_params) {
     RegExMatch(font_params, "(?<=[S|s])(\d{1,2})(?=[ ,])", height)
     if (height = "")
         height := 10
-    RegRead, LogPixels, HKEY_LOCAL_MACHINE, SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontDPI, LogPixels
+    LogPixels := RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontDPI", "LogPixels")
     height := -DllCall("MulDiv", "int", height, "int", LogPixels, "int", 72)
 
     ; get the font face
@@ -30,8 +30,8 @@ font_set(win_id, font_params) {
     ; create font
     h_font := DllCall("CreateFont", "int", height, "int", 0, "int", 0, "int", 0
     ,"int", weight, "uint", italic, "uint", underline, "uint", strikeOut
-    , "uint", n_char_set, "uint", 0, "uint", 0, "uint", 0, "uint", 0, "str", font_face)
+    , "uint", &n_char_set, "uint", 0, "uint", 0, "uint", 0, "uint", 0, "str", font_face)
 
-    SendMessage, WM_SETFONT, h_font, TRUE,, ahk_id %win_id%
-    return ErrorLevel
+    SendMessage WM_SETFONT, h_font, TRUE,, "ahk_id " win_id
+    return 0
 }
