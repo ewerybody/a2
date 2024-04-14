@@ -26,9 +26,9 @@ a2_get_user_data_path(a2dir) {
 
 a2_get_user_config(a2data) {
     ; Parse the a2.cfg in the user data dir and equip global a2cfg with values
-    a2cfg := {}
+    a2cfg := Map()
     config_path := path_join(a2data, "a2.cfg")
-    Loop Read, %config_path%
+    Loop Read, config_path
     {
         parts := StrSplit(A_LoopReadLine, " ",,3)
         varname := Trim(parts[1])

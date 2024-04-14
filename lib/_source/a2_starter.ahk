@@ -32,12 +32,12 @@ a2.cfg := a2_get_user_config(a2data)
 
 if (A_Args.Length) {
     args := _gather_args()
-    Run "%a2_ahk%" "%lib_path%\a2.ahk" %args%, %root_path%
+    Run '"' a2_ahk '" "' lib_path '\a2.ahk" ' args, root_path
 }
 else
-    Run "%a2_ahk%" "%lib_path%\a2.ahk", %root_path%
+    Run '"' a2_ahk '" "' lib_path '\a2.ahk"', root_path
 
-check_load_time_errors(lib_path)
+; check_load_time_errors(lib_path)
 
 If !FileExist(path_join(root_path, "_ user_data_include")) {
     ; Start the ui by default if there is no include file written yet.
