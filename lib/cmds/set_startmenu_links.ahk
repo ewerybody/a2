@@ -9,9 +9,9 @@ If num_args != 2
 a2dir = %1%
 state = %2%
 
-IfNotExist %a2dir%
+If (!DirExist(a2dir))
 {
-    MsgBox a2dir: %a2dir% ??
+    MsgBox("a2dir: " . a2dir . " ??")
     Return
 }
 
@@ -23,19 +23,19 @@ link_names := ["Start a2 Runtime", "Open a2 UI", "Uninstall a2", "Explore a2 Dir
 ; msgbox a2dir: %a2dir%`nstate: %state%`nstart_menu_dir: %start_menu_dir%
 
 if (state) {
-    FileCreateDir, %start_menu_dir%
+    DirCreate(start_menu_dir)
     for i, target in a2_targets {
         this_path := a2dir "\" target
         link_path := start_menu_dir . link_names[i] . ".lnk"
-        FileCreateShortcut, %this_path%, %link_path%, %a2dir%
+        FileCreateShortcut(this_path, link_path, a2dir)
         ; msgbox create link:`nthis_path: %this_path%`nlink_path: %link_path%`nErrorLevel: %ErrorLevel%
     }
 }
 Else {
     for i, link_name in link_names {
         link_path := start_menu_dir . link_name . ".lnk"
-        FileDelete, %link_path%
+        FileDelete(link_path)
     }
     if path_is_empty(start_menu_dir)
-        FileRemoveDir, %start_menu_dir%
+        DirRemove(start_menu_dir)
 }
