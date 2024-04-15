@@ -156,7 +156,7 @@ explorer_show(pth) {
     else
         msgbox_error("No such path to explorer to!`n " . pth)
 
-    Run %cmd%
+    Run cmd
 }
 
 ; Ask for file name as long that name exists in given directory or user cancels. Return `true` if name is available and accepted and `false` if canceled.
