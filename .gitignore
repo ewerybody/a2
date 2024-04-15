@@ -35,3 +35,4 @@ thumbs.db
 pyside2uic/
 lib/a2_portable.ahk
 lib/SQLiteDB.ini
+lib/Autohotkey/lib/SQLiteDB.ini
