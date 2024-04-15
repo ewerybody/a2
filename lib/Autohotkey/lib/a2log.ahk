@@ -15,7 +15,7 @@ a2log_error(msg, module:="") {
 }
 
 _a2log(level, module, msg) {
-    static last_logged
+    static last_logged := 0
     now := A_NowUTC
     if (last_logged != now) {
         last_logged := now
