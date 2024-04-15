@@ -5,6 +5,7 @@
 ;@Ahk2Exe-SetDescription a2 runtime starter
 ;@Ahk2Exe-SetOrigFilename a2.exe
 ;@Ahk2Exe-SetProductName a2
+;@Ahk2Exe-Base ..\..\Autohotkey\AutoHotkey.exe
 ;@Ahk2Exe-SetVersion 0.5.4
 
 #include ..\Autohotkey\lib\path.ahk

@@ -12,6 +12,7 @@ set executable=%a2path%\a2.exe
 echo Calling %Ahk2Exe%
 echo    /in: %script%
 echo   /out: %executable%
+echo  /base: %AhkExe%
 echo ...
 
-"%Ahk2Exe%" /in "%script%" /out "%executable%" /compress 0 /ahk "%AhkExe%"
+"%Ahk2Exe%" /in "%script%" /out "%executable%" /compress 0
