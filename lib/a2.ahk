@@ -2,7 +2,7 @@
 ; main file! This gathers all the runtime resources
 #SingleInstance force
 Persistent
-#NoTrayIcon
+; #NoTrayIcon
 
 #include <Class_SQLiteDB>
 #include <path>
@@ -30,21 +30,21 @@ SetWorkingDir a2.paths.a2
 _a2_check_arguments()
 _a2_build_tray_menu(a2_title)
 
-if !a2.cfg.no_startup_tooltip
+if !a2.cfg.get("no_startup_tooltip", 0)
     a2tip(a2_title)
 
-if a2.cfg.auto_reload
+if a2.cfg.get("auto_reload", 1)
     SetTimer _a2_check_changes, 1000
 
-OnExit("a2ui_exit")
-OnError("a2_on_runtime_exception")
+OnExit(a2ui_exit)
+; OnError("a2_on_runtime_exception")
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
 #include *i _ user_data_include
 Return ; -----------------------------------------------------------------------
 
-a2ui() {
+a2ui(*) {
     tt_text := "Calling a2 ui ..."
     a2tip(tt_text)
     a2_win_id := WinExist("a2 ahk_class Qt623QWindowIcon ahk_exe pythonw.exe")
@@ -56,25 +56,22 @@ a2ui() {
     }
 }
 
-a2ui_help() {
+a2ui_help(*) {
     Run a2_help
 }
 
-a2ui_reload() {
+a2ui_reload(*) {
     Reload
 }
 
-a2ui_exit() {
+a2ui_exit(*) {
     exit_func := "a2_exit_calls"
     if IsObject(exit_func)
         %exit_func%()
     ExitApp
 }
-_a2ui_exit() {
-    ExitApp
-}
 
-a2_explore() {
+a2_explore(*) {
     ; Open the a2 root directory in the file browser.
     explorer_show(a2.paths.a2)
 }
@@ -86,7 +83,6 @@ _a2_check_changes() {
     for _, libdir in [a2.paths.lib, a2.paths.ahklib] {
         Loop Files, string_suffix(libdir, "\") "*.ahk"
         {
-            num_files++
             If InStr(A_LoopFileAttrib, "A") {
                 do_reload := true
                 FileSetAttrib "-A", A_LoopFileFullpath
@@ -125,26 +121,30 @@ _a2_check_arguments() {
 
 _a2_build_tray_menu(a2_title) {
     ; Build the tray icon menu.
-    ; a2ui_res := a2.paths.resources
+    a2ui_res := a2.paths.resources
     TraySetIcon(path_join(a2.paths.resources, "a2.ico"))
-    ; A_TrayMenu.Add
+    A_TrayMenu.Delete()
+    A_TrayMenu.ClickCount := 1
+    ; A_TrayMenu.SetColor(0x222222)
+    ; A_TrayMenu.Add()
     ; Menu Tray, Icon, %a2ui_res%a2.ico, , 1
     ; Menu Tray, Icon
     ; Gui 1:Destroy
 
     ; Menu Tray, NoStandard
     ; Menu Tray, DeleteAll
-    ; Menu Tray, Tip, %a2_title%
-    ; Menu Tray, Click, 1
-    ; Menu Tray, add, Open a2 User Interface, a2ui
-    ; Menu Tray, icon, Open a2 User Interface, %a2ui_res%a2.ico
-    ; Menu Tray, default, Open a2 User Interface
-    ; Menu Tray, add, Open a2 Directory, a2_explore
-    ; Menu Tray, icon, Open a2 Directory, %a2ui_res%a2.ico
-    ; Menu Tray, add, Reload a2 Runtime, a2ui_reload
-    ; Menu Tray, icon, Reload a2 Runtime, %a2ui_res%a2reload.ico
-    ; Menu Tray, add, Help on a2, a2ui_help
-    ; Menu Tray, icon, Help on a2, %a2ui_res%a2help.ico
-    ; Menu Tray, add, Quit a2 Runtime, _a2ui_exit
-    ; Menu Tray, icon, Quit a2 Runtime, %a2ui_res%a2x.ico
+    ; Menu Tray, Tip, %%
+    A_IconTip := a2_title
+
+    A_TrayMenu.Add("Open a2 User Interface", a2ui)
+    A_TrayMenu.SetIcon("Open a2 User Interface", a2ui_res "a2.ico")
+    A_TrayMenu.Add("Open a2 Directory", a2_explore)
+    A_TrayMenu.SetIcon("Open a2 Directory", a2ui_res "a2.ico")
+    A_TrayMenu.Add("Reload a2 Runtime", a2ui_reload)
+    A_TrayMenu.SetIcon("Reload a2 Runtime", a2ui_res "a2reload.ico")
+    A_TrayMenu.Add("Help on a2", a2ui_help)
+    A_TrayMenu.SetIcon("Help on a2", a2ui_res "a2help.ico")
+    A_TrayMenu.Add("Quit a2 Runtime", a2ui_exit)
+    A_TrayMenu.SetIcon("Quit a2 Runtime", a2ui_res "a2x.ico")
+    A_TrayMenu.Default := "Open a2 User Interface"
 }
