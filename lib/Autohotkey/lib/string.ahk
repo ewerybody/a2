@@ -31,6 +31,7 @@ string_is_web_address(string) {
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
     else {
+        WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
         Loop(WEB_TLDS.Length) {
             ext := WEB_TLDS[A_Index]
             sub := SubStr(string, - StrLen(ext))

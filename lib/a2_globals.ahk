@@ -6,7 +6,6 @@ global WIN_7 := 6.1
 global WIN_8 := 6.2
 global WIN_10 := 10.0
 
-global WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
 global A_AppDataLocal := path_join(path_dirname(A_AppData), "Local")
 global PYTHON_SUPPORTED_VERSIONS := ["3.11", "3.10", "3.9"]
 
