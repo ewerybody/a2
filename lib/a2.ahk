@@ -39,9 +39,17 @@ if a2.cfg.get("auto_reload", 1)
 OnExit(a2ui_exit)
 ; OnError("a2_on_runtime_exception")
 
+; Snippet from: https://github.com/kdalanon/ChatGPT-AutoHotkey-Utility
+; Class DarkMode {
+;     Static __New(Mode := 1) => ( ; Mode: Dark = 1, Default (Light) = 0
+;         DllCall(DllCall("GetProcAddress", "ptr", DllCall("GetModuleHandle", "str", "uxtheme", "ptr"), "ptr", 135, "ptr"), "int", mode),
+;         DllCall(DllCall("GetProcAddress", "ptr", DllCall("GetModuleHandle", "str", "uxtheme", "ptr"), "ptr", 136, "ptr"))
+;     )
+; }
+
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
-#include *i _ user_data_include
+#include *i "_ user_data_include"
 Return ; -----------------------------------------------------------------------
 
 a2ui(*) {
@@ -124,17 +132,6 @@ _a2_build_tray_menu(a2_title) {
     a2ui_res := a2.paths.resources
     TraySetIcon(path_join(a2.paths.resources, "a2.ico"))
     A_TrayMenu.Delete()
-    A_TrayMenu.ClickCount := 1
-    ; A_TrayMenu.SetColor(0x222222)
-    ; A_TrayMenu.Add()
-    ; Menu Tray, Icon, %a2ui_res%a2.ico, , 1
-    ; Menu Tray, Icon
-    ; Gui 1:Destroy
-
-    ; Menu Tray, NoStandard
-    ; Menu Tray, DeleteAll
-    ; Menu Tray, Tip, %%
-    A_IconTip := a2_title
 
     A_TrayMenu.Add("Open a2 User Interface", a2ui)
     A_TrayMenu.SetIcon("Open a2 User Interface", a2ui_res "a2.ico")
@@ -146,5 +143,8 @@ _a2_build_tray_menu(a2_title) {
     A_TrayMenu.SetIcon("Help on a2", a2ui_res "a2help.ico")
     A_TrayMenu.Add("Quit a2 Runtime", a2ui_exit)
     A_TrayMenu.SetIcon("Quit a2 Runtime", a2ui_res "a2x.ico")
+
+    A_IconTip := a2_title
+    A_TrayMenu.ClickCount := 1
     A_TrayMenu.Default := "Open a2 User Interface"
 }
