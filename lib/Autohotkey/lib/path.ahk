@@ -1,4 +1,5 @@
 ﻿;a2 Autohotkey path library.
+#include <string>
 
 path_is_absolute(path) {
     ; Return true/false according to if given path is absolute or relative.
