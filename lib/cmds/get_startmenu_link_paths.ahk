@@ -8,6 +8,9 @@ target_paths := []
 
 for _, link_name in link_names {
     link_path := start_menu_dir . link_name . ".lnk"
+    if !path_is_file(link_path)
+        continue
+
     FileGetShortcut link_path, &target_path
     If path_is_file(target_path)
         target_path := path_dirname(target_path)
