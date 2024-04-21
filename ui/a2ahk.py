@@ -248,13 +248,13 @@ def py_list_to_ahk_string(list_obj):
 
 
 def py_dict_to_ahk_string(dict_obj):
-    result = '{'
+    result = 'Map('
     for key, value in dict_obj.items():
-        result += '"%s": ' % key + py_value_to_ahk_string(value) + ', '
-
-    if result.endswith(', '):
-        result = result[:-2]
-    return result + '}'
+        result += '"%s", %s, ' % (key, py_value_to_ahk_string(value))
+    result = result.rstrip(', ')
+    # if result.endswith(', '):
+    #     result = result[:-2]
+    return result + ')'
 
 
 def check_variable_name(name):

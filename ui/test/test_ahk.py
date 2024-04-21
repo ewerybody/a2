@@ -89,6 +89,7 @@ class Test(unittest.TestCase):
             (0.333, '0.333'),
             (1337, '1337'),
             (['something', 42, 13.37], '["something", 42, 13.37]'),
+            ({'abc': 123, 'def': 'poop'}, 'Map("abc", 123, "def", "poop")')
         ]:
             converted = a2ahk.py_value_to_ahk_string(item)
             self.assertEqual(converted, result)
