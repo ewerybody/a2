@@ -609,7 +609,8 @@ class RuntimeCallThread(QtCore.QThread):
     def run(self):
         self.msleep(RESTART_DELAY)
 
-        args = []
+        a2 = a2core.A2Obj.inst()
+        args = [a2.paths.a2_script]
         if self._args is None:
             pass
         elif isinstance(self._args, str):
@@ -619,8 +620,8 @@ class RuntimeCallThread(QtCore.QThread):
         else:
             raise TypeError('Unable to handle arguments type "%s"' % type(self._args))
 
-        a2 = a2core.A2Obj.inst()
-        _retval, _pid = a2util.start_process_detached(a2.paths.a2exe, args, working_dir=a2.paths.a2)
+        # _retval, _pid = a2util.start_process_detached(a2.paths.a2exe, args, working_dir=a2.paths.a2)
+        _retval, _pid = a2util.start_process_detached(a2.paths.autohotkey, args, working_dir=a2.paths.lib)
 
 
 class WinTitleUpdater(QtCore.QThread):
