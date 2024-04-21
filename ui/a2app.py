@@ -12,7 +12,7 @@ import traceback
 from ctypes import windll
 
 import a2qt
-from a2qt import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 from singlesiding import QSingleApplication
 
 
@@ -131,7 +131,7 @@ def main():
             os.environ['QT_PLUGIN_PATH'] = os.path.abspath(os.path.join(_qt_path, '..', 'plugins'))
 
         # TODO: make a dedicated dark theme
-        # sys.argv.extend(('-platform', 'windows:darkmode=2'))
+        sys.argv.extend(('-platform', 'windows:darkmode=0'))
 
         app = A2App()
         app.exec()

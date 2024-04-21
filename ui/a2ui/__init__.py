@@ -14,7 +14,7 @@ import a2style
 
 import a2widget.tools
 import a2ui.module_cfg
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 log = a2core.get_logger(__name__)
 RESTART_DELAY = 300
@@ -235,7 +235,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuDev.menuAction().setVisible(self.a2.dev_mode)
         self.ui.menuModule.menuAction().setVisible(self.mod is not None)
 
-    def _module_selected(self, module_list):
+    def _module_selected(self, module_list: list[a2mod.Mod]):
         self.selected = module_list
         self.num_selected = len(module_list)
         if self.num_selected == 1:
@@ -310,9 +310,7 @@ class A2Window(QtWidgets.QMainWindow):
             self.reset_window_geometry()
         else:
             try:
-                success = self.restoreGeometry(
-                    QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8'))
-                )
+                success = self.restoreGeometry(QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8')))
                 if not success:
                     self.reset_window_geometry()
             except Exception as error:
@@ -350,9 +348,7 @@ class A2Window(QtWidgets.QMainWindow):
                 self.setWindowState(QtCore.Qt.WindowActive)
         except TypeError as error:
             if QtCore.__version_info__ < (6, 4):
-                raise TypeError(
-                    f'Update PySide! (yours: {QtCore.__version__}, need: 6.4)'
-                ) from TypeError
+                raise TypeError(f'Update PySide! (yours: {QtCore.__version__}, need: 6.4)') from TypeError
 
         self._initial_activation_tries = 0
         self._activate_window()
