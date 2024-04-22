@@ -5,6 +5,7 @@ Everything thats needed by but itself has no constrains to the user interface.
 Such as paths and os tweaks. Mainly this is to thin out the ui module but also
 to make functionality available without passing the main ui object.
 """
+
 import os
 import sys
 import time
@@ -53,15 +54,14 @@ class A2Obj:
     def __init__(self):
         if A2Obj._instance is not None:
             raise RuntimeError(
-                'Singleton A2Obj has already been initialized!\n'
-                '  Use A2Obj.inst() to get the instance!'
+                'Singleton A2Obj has already been initialized!\n' '  Use A2Obj.inst() to get the instance!'
             )
 
         import a2output
 
         self.app = None
         self.win = None
-        self.module_sources = {} # type: dict[str, a2modsource.ModSource]
+        self.module_sources = {}  # type: dict[str, a2modsource.ModSource]
         self._modules_fetched = 0.0
         self._enabled = None
 
@@ -215,13 +215,15 @@ class A2Obj:
         return self._version
 
     def check_all_updates(self):
-        self._updates.update({
-            'core': {NAME: [self.version]},
-            'sources': {s: [] for s in self.module_sources},
-            'current': 0,
-            'total': 1 + len(self.module_sources),
-            'checked': time.time()
-        })
+        self._updates.update(
+            {
+                'core': {NAME: [self.version]},
+                'sources': {s: [] for s in self.module_sources},
+                'current': 0,
+                'total': 1 + len(self.module_sources),
+                'checked': time.time(),
+            }
+        )
 
         if self.is_git():
             self._updates['total'] += 3
@@ -229,7 +231,7 @@ class A2Obj:
         yield self._updates
 
         if self.is_git():
-            log.info('Skipping a2 update check as we\'re in dev.')
+            log.info("Skipping a2 update check as we're in dev.")
         else:
             log.info('Checking for a2 updates ...')
             try:
@@ -398,7 +400,7 @@ class Paths:
         with open(os.path.join(self.defaults, USER_INCLUDES_NAME)) as src_file_obj:
             write_if_changed(
                 os.path.join(self.data, USER_INCLUDES_NAME),
-                src_file_obj.read().format(a2data=self.data),
+                src_file_obj.read().format(a2data_includes=os.path.join(self.data, 'includes')),
             )
 
     def get_data_path(self):
@@ -435,9 +437,7 @@ class Paths:
         tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
         with open(tmpl8_path) as file_obj:
             tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
-        write_if_changed(
-            os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME), tmpl8.format(data_path=data_path)
-        )
+        write_if_changed(os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME), tmpl8.format(data_path=data_path))
 
         dll_path = os.path.join(self.ui, SQLDLL)
         if not os.path.isfile(dll_path):

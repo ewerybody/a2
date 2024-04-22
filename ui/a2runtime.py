@@ -220,7 +220,7 @@ class IncludesCollection(_Collection):
                 self.include_paths.append(os.path.join(include_dir, include))
 
     def get_content(self):
-        return '\n'.join(['#include %s' % p for p in self.include_paths])
+        return '#include ..\n' + '\n'.join(['#include %s' % p for p in self.include_paths])
 
     @property
     def has_content(self):
@@ -309,7 +309,7 @@ class HotkeysCollection(_Collection):
             command_code = '\n\t'.join(cmd for cmd, _ in commands)
             # to gather more than 1 command in a code block
             if '\n' in command_code:
-                code += '\n\t' + command_code.replace('\n', '\n\t') + '\nreturn\n'
+                code += '{\n ' + command_code.replace('\n', '\n ') + '\n}\n'
             # or just inline
             else:
                 code += command_code + '\n'

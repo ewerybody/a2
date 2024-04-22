@@ -49,7 +49,7 @@ OnExit(a2ui_exit)
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
-#include *i "_ user_data_include"
+#include "..\_ user_data_include"
 Return ; -----------------------------------------------------------------------
 
 a2ui(*) {
