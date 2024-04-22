@@ -1,7 +1,7 @@
 ﻿; get_coordinates
 #Persistent
 msg := "`nLeft Mouse Button To Pick`nEscape To Cancel"
-tt(msg)
+a2tip(msg)
 cursor_set_cross()
 CoordMode, Mouse, Screen
 
@@ -32,7 +32,7 @@ PickCoordinates:
     data := get_coords_str()
     FileAppend, %data%, *
     eZttText := data
-    tt(data, 0.5,, 1)
+    a2tip(data, 0.5,, 1)
 Return
 
 Exit:

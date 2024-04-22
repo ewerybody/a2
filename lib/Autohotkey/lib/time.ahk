@@ -11,7 +11,7 @@ time_unix() {
 }
 
 ; Tell current time in miliseconds.
-time_unix_ms(decimals=2) {
+time_unix_ms(decimals:=2) {
     T := time_unix()
     T += A_MSec / 1000
     T := Round(T, decimals)

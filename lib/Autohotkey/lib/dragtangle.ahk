@@ -76,7 +76,7 @@ dragtangle(drag_func := ""
 dragtangle_off() {
     ; WIP: Currently unsure this is triggered at all.
     ; msgbox, dragtangle_off!
-    ; tt("dragtangle_off", 1)
+    ; a2tip("dragtangle_off", 1)
     Hotkey, Esc, dragtangle_off, Off
     return
 }

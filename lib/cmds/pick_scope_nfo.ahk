@@ -1,8 +1,9 @@
 ﻿; pick_scope_nfo
 #Persistent
-tt("Left Mouse Button To Pick")
-CoordMode, Mouse, Screen
-SetTimer, WatchCursor, 50
+#include <a2tip>
+a2tip("Left Mouse Button To Pick")
+CoordMode "Mouse", "Screen"
+SetTimer WatchCursor, 50
 
 Escape::ExitApp
 RButton::ExitApp
@@ -18,20 +19,21 @@ WatchCursor:
 return
 
 get_scope_info() {
-    MouseGetPos,,, window_id
-	WinGetTitle, this_title, ahk_id %window_id%
-	WinGetClass, this_class, ahk_id %window_id%
-	WinGet, this_process, ProcessName, ahk_id %window_id%
+    MouseGetPos ,, &window_id
+    ahkid := "ahk_id " . window_id
+	this_title := WinGetTitle(ahkid)
+	this_class := WinGetClass(ahkid)
+	this_process := WinGetProcessName(ahkid)
     return [this_title, this_class, this_process]
 }
 
 
 PickInfo:
-    SetTimer, WatchCursor, Off
+    SetTimer WatchCursor, Off
     global eZttText
     winfo := get_scope_info()
     data := winfo[1] "`n" winfo[2] "`n" winfo[3]
-    FileAppend, %data%, *
+    FileAppend(data, "*")
     eZttText := data
-    tt(data, 0.5,, 1)
+    a2tip(data, 0.5,, 1)
 Return

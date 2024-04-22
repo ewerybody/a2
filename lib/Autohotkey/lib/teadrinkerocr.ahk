@@ -4,10 +4,10 @@
 ; https://www.autohotkey.com/boards/viewtopic.php?t=72674
 
 ;Standalone part
-If (A_Args.Length() == 5) {
+If (A_Args.Length == 5) {
     rect := {x: A_Args.1, y: A_Args.2, w: A_Args.3, h: A_Args.4}
     text := teadrinkerocr(rect, A_Args.5)
-    FileAppend, %Text%, *
+    FileAppend(text, "*")
 }
 
 ; Library part
@@ -37,12 +37,12 @@ teadrinkerocr_get_available_languages() {
     DllCall(NumGet(NumGet(LanguageList+0)+7*A_PtrSize), "ptr", LanguageList, "int*", count) ; count
 
     lang_list := []
-    loop % count
+    loop(count)
     {
         DllCall(NumGet(NumGet(LanguageList+0)+6*A_PtrSize), "ptr", LanguageList, "int", A_Index-1, "ptr*", hString) ; get_Item
         DllCall(NumGet(NumGet(LanguageFactory+0)+6*A_PtrSize), "ptr", LanguageFactory, "ptr", hString, "ptr*", LanguageTest) ; CreateLanguage
         DllCall(NumGet(NumGet(OcrEngineStatics+0)+8*A_PtrSize), "ptr", OcrEngineStatics, "ptr", LanguageTest, "int*", bool) ; IsLanguageSupported
-        if (bool = 1) {
+        if (bool == 1) {
             DllCall(NumGet(NumGet(LanguageTest+0)+6*A_PtrSize), "ptr", LanguageTest, "ptr*", hText)
             buffer := DllCall("Combase.dll\WindowsGetStringRawBuffer", "ptr", hText, "uint*", length, "ptr")
             lang_list.push(StrGet(buffer, "UTF-16"))
@@ -74,17 +74,17 @@ HBitmapToRandomAccessStream(hBitmap) {
 
     VarSetCapacity(PICTDESC, sz := 8 + A_PtrSize*2, 0)
     NumPut(sz, PICTDESC), NumPut(PICTYPE_BITMAP, PICTDESC, 4), NumPut(hBitmap, PICTDESC, 8)
-    riid := CLSIDFromString(IID_IPicture, GUID1)
+    riid := CLSIDFromString(IID_IPicture, &GUID1)
     DllCall("OleAut32\OleCreatePictureIndirect", "Ptr", &PICTDESC, "Ptr", riid, "UInt", false, "PtrP", pIPicture, "UInt")
     ; IPicture::SaveAsFile
     DllCall(NumGet(NumGet(pIPicture+0) + A_PtrSize*15), "Ptr", pIPicture, "Ptr", pIStream, "UInt", true, "UIntP", size, "UInt")
-    riid := CLSIDFromString(IID_IRandomAccessStream, GUID2)
+    riid := CLSIDFromString(IID_IRandomAccessStream, &GUID2)
     DllCall("ShCore\CreateRandomAccessStreamOverStream", "Ptr", pIStream, "UInt", BSOS_DEFAULT, "Ptr", riid, "PtrP", pIRandomAccessStream, "UInt")
     ObjRelease(pIPicture), ObjRelease(pIStream)
     Return pIRandomAccessStream
 }
 
-CLSIDFromString(IID, ByRef CLSID) {
+CLSIDFromString(IID, &CLSID) {
     VarSetCapacity(CLSID, 16, 0)
     if res := DllCall("ole32\CLSIDFromString", "WStr", IID, "Ptr", &CLSID, "UInt")
         throw Exception("CLSIDFromString failed. Error: " . Format("{:#x}", res))
@@ -116,7 +116,7 @@ ocr(IRandomAccessStream, lang := "FirstFromAvailableLanguages")
             DllCall(NumGet(NumGet(OcrEngineStatics+0)+9*A_PtrSize), "ptr", OcrEngineStatics, ptr, Language, "ptr*", OcrEngine) ; TryCreateFromLanguage
         }
         if (OcrEngine = 0) {
-            msgbox Can not use language "%lang%" for OCR, please install language pack.
+            msgbox 'Can not use language "' . lang .'" for OCR, please install language pack.'
                 ExitApp
         }
         CurrentLanguage := lang
@@ -128,7 +128,7 @@ ocr(IRandomAccessStream, lang := "FirstFromAvailableLanguages")
     DllCall(NumGet(NumGet(BitmapFrame+0)+12*A_PtrSize), "ptr", BitmapFrame, "uint*", width) ; get_PixelWidth
     DllCall(NumGet(NumGet(BitmapFrame+0)+13*A_PtrSize), "ptr", BitmapFrame, "uint*", height) ; get_PixelHeight
     if (width > MaxDimension) or (height > MaxDimension) {
-        msgbox Image is to big - %width%x%height%.`nIt should be maximum - %MaxDimension% pixels
+        msgbox "Image is to big - " width "x" height ".`nIt should be maximum - " MaxDimension " pixels!"
         ExitApp
     }
     BitmapFrameWithSoftwareBitmap := ComObjQuery(BitmapDecoder, IBitmapFrameWithSoftwareBitmap := "{FE287C9A-420C-4963-87AD-691436E08383}")
@@ -163,11 +163,11 @@ CreateClass(string, interface, ByRef Class) {
     result := DllCall("Combase.dll\RoGetActivationFactory", "ptr", hString, "ptr", &GUID, "ptr*", Class)
     if (result != 0) {
         if (result = 0x80004002)
-            msgbox No such interface supported
+            msgbox "No such interface supported"
         else if (result = 0x80040154)
-            msgbox Class not registered
+            msgbox "Class not registered"
         else
-            msgbox error: %result%
+            msgbox "error: " . result
         ExitApp
     }
     DeleteHString(hString)
@@ -190,7 +190,7 @@ WaitForAsync(ByRef Object) {
         if (status != 0) {
             if (status != 1) {
                 DllCall(NumGet(NumGet(AsyncInfo+0)+8*A_PtrSize), "ptr", AsyncInfo, "uint*", ErrorCode) ; IAsyncInfo.ErrorCode
-                msgbox AsyncInfo status error: %ErrorCode%
+                msgbox "AsyncInfo status error: " ErrorCode
                 ExitApp
             }
             ObjRelease(AsyncInfo)

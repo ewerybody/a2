@@ -79,7 +79,7 @@ clipboard_get_files() {
         if FileExist(line)
             files.push(line)
     }
-    if (files.length())
+    if (files.length)
         return files
 }
 

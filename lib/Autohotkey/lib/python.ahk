@@ -3,7 +3,7 @@
 python_get_output(py_file, args := "") {
     py_exe := python_get_console_path()
     cmd = "%py_exe%" "%py_file%" %args%
-    shell := ComObjCreate("WScript.Shell")
+    shell := ComObject("WScript.Shell")
     exec := shell.Exec(cmd)
     errors := exec.StdErr.ReadAll()
     if (errors)
