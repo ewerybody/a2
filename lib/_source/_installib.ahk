@@ -61,7 +61,7 @@ find_processes_running_under(path) {
 
 _find_processes_get_wmic_output(args) {
     cmd = wmic process %args%
-    shell := ComObjCreate("WScript.Shell")
+    shell := ComObject("WScript.Shell")
     exec := shell.Exec(ComSpec " /C " cmd)
     result := exec.StdOut.ReadAll()
     return result

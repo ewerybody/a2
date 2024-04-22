@@ -15,7 +15,7 @@
 ;@Ahk2Exe-SetDescription a2 Uninstaller
 ;@Ahk2Exe-SetOrigFilename Uninstall a2.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetVersion 0.5.4
+;@Ahk2Exe-SetVersion 0.6.0
 #NoTrayIcon
 
 A2DIR := A_ScriptDir
@@ -42,19 +42,19 @@ Return
 outro(items) {
     global run_silent, NAME
 
-    if (!items.Length()) {
+    if (!items.Length) {
         msg := "There is nothing to Uninstall!"
         log_info(NAME, msg)
         ExitApp
     }
 
     processes := check_processes()
-    if (processes.Length()) {
+    if (processes.Length) {
         process_msg := "There are still processes running from the installation ("
-        process_msg .= processes.Length() . ").`n"
+        process_msg .= processes.Length . ").`n"
         process_msg .= "Either you shut them down yourself or they'd be terminated.`n"
     }
-    uninstall_msg := "This will Uninstall a2 for user """ . A_UserName . """.`n"
+    uninstall_msg := 'This will Uninstall a2 for user "' . A_UserName . '".`n'
     continue_msg := "`nDo you want to continue?"
     if (!run_silent) {
         MsgBox, 33, %NAME%, %uninstall_msg%%process_msg%%continue_msg%
@@ -146,7 +146,7 @@ ask_for_user_data_deletion(ByRef items) {
 delete_items(items) {
     global A2DIR, run_silent
 
-    num_items := items.Length()
+    num_items := items.Length
     if (!run_silent)
         Progress, r0-%num_items% w500 cb36EC95, ...,, %NAME%, Small Fonts
 
@@ -192,7 +192,7 @@ create_deleter_batch(path) {
     batch_sleep := "ping 127.0.0.1 -n 1 > nul`n"
 
     content := "@echo off`n"
-    content .= "cd """ . A_Temp . """`n"
+    content .= 'cd "' . A_Temp . '"`n'
     ; wait for the Uninstaller executable to shut down before deleting it
     content .= batch_sleep
     content .= "set trg_dir=" . path . "`n"
@@ -220,7 +220,7 @@ create_deleter_batch(path) {
     content .= ":finalize`n"
     content .= batch_sleep
     ; content .= "pause`n"
-    content .= "(goto) 2>nul & del ""%~f0"""
+    content .= '(goto) 2>nul & del "%~f0"'
 
     FileDelete %batch_path%
     FileAppend, %content%, %batch_path%

@@ -7,7 +7,7 @@
 ; * install to a2 dir
 ; * run a2 ui
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
-;@Ahk2Exe-SetVersion 0.5.4
+;@Ahk2Exe-SetVersion 0.6.0
 #NoTrayIcon
 
 complain_if_uncompiled()
@@ -25,7 +25,7 @@ check_running()
 backup()
 install()
 
-Run, a2.exe, %A2DIR%
+Run a2.exe, %A2DIR%
 
 ; --------------------------------------------------------
 Return
@@ -118,7 +118,7 @@ backup() {
         backup_items.Push(A_LoopFileName)
     }
 
-    if (!backup_items.Length()) {
+    if (!backup_items.Length) {
         logmsg("Nothing to backup!")
         Return
     }
@@ -162,11 +162,10 @@ install() {
     sqldll := "SQLite3.dll"
     dll_path := path_join(A2DIR, "ui", sqldll)
     if (!FileExist(dll_path))
-        log_error(sqldll " missing?!", "The """ sqldll " "" must exist here:`n" dll_path "`n!`nWhere is it?")
-
+        log_error(sqldll " missing?!", 'The "' sqldll '" must exist here:`n' dll_path '`n!`nWhere is it?')
     ini_path := path_join(A2DIR, "lib", "SQLiteDB.ini")
     ini_code := "[Main]`nDllPath=" dll_path
-    FileAppend, %ini_code%, %ini_path%
+    FileAppend %ini_code%, %ini_path%
 
     ; If there is no db-file yet, make sure there is an empty one.
     data_path := path_join(A2DIR, "data")
@@ -175,7 +174,7 @@ install() {
     db_path := path_join(data_path, "a2.db")
     if (!FileExist(db_path)) {
         txt := ""
-        FileAppend, %txt%, %db_path%
+        FileAppend %txt%, %db_path%
     }
 }
 
@@ -184,8 +183,8 @@ remove_if_empty(path) {
     if !_remove_if_empty(path)
         return
 
-    SplitPath, path ,, OutDir
-    SplitPath, OutDir , OutFileName
+    SplitPath path ,, OutDir
+    SplitPath OutDir , OutFileName
     if (OutFileName == backup_dir_name)
         _remove_if_empty(OutDir)
 }
@@ -214,7 +213,7 @@ check_running() {
         if (proc.name = "Autohotkey.exe" && string_endswith(proc.CommandLine, " lib\a2.ahk"))
             runs_a2runtime := true
     }
-    if (names.length()) {
+    if (names.length) {
         name_string := string_join(names)
         msg := "Some a2 applications are currently running!`n"
         msg .= "To savely continue the installation I'd suggest to shutdown these processes ("
@@ -223,7 +222,7 @@ check_running() {
 
         if (run_silent) {
             logmsg("a2 Applications running!" . msg)
-            Sleep, 1000
+            Sleep 1000
         } else {
             MsgBox 49, a2 Applications running ..., %msg%
             IfMsgBox Cancel

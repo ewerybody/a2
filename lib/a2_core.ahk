@@ -334,7 +334,7 @@ class _Ca2DB
 
     __moduleTableFromFile(line_file) {
         parts := StrSplit(line_file, "\")
-        num_parts := parts.Length()
+        num_parts := parts.Length
         if num_parts < 3
             throw Error('Unusable path input! Cannot find db entry from "' line_file '"!', -1)
         return this.__moduleTable(parts[num_parts - 2], parts[num_parts - 1])
