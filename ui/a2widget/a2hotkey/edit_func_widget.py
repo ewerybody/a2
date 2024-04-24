@@ -123,13 +123,13 @@ class FuncWidget(QtWidgets.QWidget):
     def on_input(self, code):
         current = self.ui.cfg_functionMode.currentText()
         if current == FuncTypes.open:
-            code = 'Run, ' + code
+            code = f'Run "{code}"'
 
         elif current == FuncTypes.send:
             # If `code` is empty we SHOULD strip the whole thing but we also
             # detect the Send mode from it :/ This has to happen somewhere else!
             send_mode = self.ui.function_send_mode.currentText()
-            code = '%s, %s' % (send_mode, code)
+            code = f'{send_mode} "{code}"'
 
         self._config_dict[FUNCTIONS[current]] = code
         self.changed.emit()

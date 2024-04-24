@@ -1,6 +1,7 @@
 """
 Functionality all around managing the Autohotkey runtime of a2.
 """
+
 import os
 import enum
 import subprocess
@@ -273,32 +274,29 @@ class HotkeysCollection(_Collection):
                         for key in iter_str_or_list(hotkeys):
                             if not key:
                                 continue
-                            self._scope_types[scope_type][scope_string].setdefault(key, []).append(
-                                (command, mod)
-                            )
+                            self._scope_types[scope_type][scope_string].setdefault(key, []).append((command, mod))
 
     def get_content(self):
-        scope_modes = {Scope.incl: '#IfWinActive', Scope.excl: '#IfWinNotActive'}
+        scope_prefix = '#HotIf'
+        scope_modes = {
+            Scope.incl: f'\n{scope_prefix} WinActive',
+            Scope.excl: f'\n{scope_prefix} !WinActive'
+        }
 
         # write global hotkey text
-        content = scope_modes[Scope.incl] + ',\n'
+        content = f'{scope_prefix}\n'
         content += self._create_hotkey_code(self.hotkeys_global)
         # write the scoped stuff
         for mode, scope_dict in self._scope_types.items():
             for scope, hotkey_data in scope_dict.items():
-                content += '\n%s, %s\n' % (scope_modes[mode], scope)
+                content += f'{scope_modes[mode]}("{scope}")\n'
                 content += self._create_hotkey_code(hotkey_data)
 
         return content
 
     @property
     def has_content(self):
-        return any(
-            [
-                d != {}
-                for d in [self.hotkeys_global, self.hotkeys_scope_incl, self.hotkeys_scope_excl]
-            ]
-        )
+        return any([d != {} for d in [self.hotkeys_global, self.hotkeys_scope_incl, self.hotkeys_scope_excl]])
 
     @staticmethod
     def _create_hotkey_code(hotkey_data):

@@ -2,9 +2,6 @@
 Common hotkey things.
 """
 
-import unittest
-
-
 SEND_MODES = ('Send', 'SendRaw', 'SendInput', 'SendPlay', 'SendEvent')
 MOD_KEYS = ('! - Alt', '^ - Control', '+ - Shift', '# - Win')
 DISPLAY_MODIFIERS = {
@@ -153,12 +150,16 @@ def strip_mode(code, modes):
     Return stripped code and found mode in tuple."""
     _code = code.lower()
     for mode in modes:
-        if _code.startswith(f'{mode.lower()},'):
-            return code[len(mode) :].lstrip(' ,'), mode
+        _mode = mode.lower()
+        if _code.startswith(f'{_mode} '):
+            return code[len(mode) :].strip('" '), mode
+        if _code.startswith(f'{_mode},'):
+            return code[len(mode) + 1:].strip('" '), mode
     return code, modes[0]
 
 
 if __name__ == '__main__':
+    import unittest
     from a2widget.a2hotkey.test import test_common
 
     unittest.main(test_common, verbosity=2)
