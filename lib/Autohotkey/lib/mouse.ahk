@@ -10,13 +10,13 @@ mouse_wheel_delta(value, mousex := "", mousey := "", win_id := "", modifiers := 
     ; AND make sure that interfering modifiers are not pressed anymore. Liek `Send {Shift Up}`
 
     if (mousex == "")
-        MouseGetPos, mouse_x1, mouse_y1, _mouse_win_id
+        MouseGetPos &mouse_x1, &mouse_y1, &_mouse_win_id
 
     if (win_id == "") {
         if (_mouse_win_id != "")
             win_id := _mouse_win_id
         else
-            MouseGetPos,,, win_id
+            MouseGetPos ,, &win_id
     }
 
     if (modifiers == "") {
@@ -27,5 +27,5 @@ mouse_wheel_delta(value, mousex := "", mousey := "", win_id := "", modifiers := 
 
     wparam := value << 16 | modifiers
     lparam := mousey << 16 | mousex
-    PostMessage, 0x20A, %wparam%, %lparam% ,, ahk_id %win_id%
+    PostMessage 0x20A, wparam, lparam ,, "ahk_id " . win_id
 }
