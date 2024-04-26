@@ -2,10 +2,10 @@ LC_Version := "0.0.21.01"
 
 LC_ASCII2Bin(s,pretty:=0) {
 	r:=""
-	Loop, % l:=StrLen(s)
+	Loop l:=StrLen(s)
 	{
 		z:=Asc(SubStr(s,A_Index,1)),y:="",p:=1
-		Loop, 8
+		Loop 8
 			b:=!!(z&p),y:=b y,p:=p<<1
 		r.=y
 		if (pretty && (A_Index<l))
@@ -16,14 +16,14 @@ LC_ASCII2Bin(s,pretty:=0) {
 
 LC_Ascii2Bin2(Ascii) {
 	for each, Char in StrSplit(Ascii)
-	Loop, 8
+	Loop 8
 		Out .= !!(Asc(Char) & 1 << 8-A_Index)
 	return Out
 }
- 
+
 LC_Bin2Ascii(Bin) {
 	Bin := RegExReplace(Bin, "[^10]")
-	Loop, % StrLen(Bin) / 8
+	Loop(StrLen(Bin) / 8)
 	{
 		for each, Bit in StrSplit(SubStr(Bin, A_Index*8-7, 8))
 			Asc += Asc + Bit
@@ -32,19 +32,20 @@ LC_Bin2Ascii(Bin) {
 	return Out
 }
 
-LC_BinStr_EncodeText(Text, Pretty=False, Encoding="UTF-8") {
-	VarSetCapacity(Bin, StrPut(Text, Encoding))
+LC_BinStr_EncodeText(Text, Pretty:=False, Encoding:="UTF-8") {
+	; VarSetCapacity(Bin, StrPut(Text, Encoding))
+    VarSetStrCapacity(&Bin, StrPut(Text, Encoding))
 	LC_BinStr_Encode(BinStr, Bin, StrPut(Text, &Bin, Encoding)-1, Pretty)
 	return BinStr
 }
 
-LC_BinStr_DecodeText(Text, Encoding="UTF-8") {
+LC_BinStr_DecodeText(Text, Encoding:="UTF-8") {
 	Len := LC_BinStr_Decode(Bin, Text)
 	return StrGet(&Bin, Len, Encoding)
 }
 
-LC_BinStr_Encode(ByRef Out, ByRef In, InLen, Pretty=False) {
-	Loop, % InLen
+LC_BinStr_Encode(ByRef Out, ByRef In, InLen, Pretty:=False) {
+	Loop InLen
 	{
 		Byte := NumGet(In, A_Index-1, "UChar")
 		Loop, 8
@@ -71,7 +72,8 @@ LC_BinStr_Decode(ByRef Out, ByRef In) {
 
 LC_Base64_EncodeText(Text,Encoding="UTF-8")
 {
-	VarSetCapacity(Bin, StrPut(Text, Encoding))
+	; VarSetCapacity(Bin, StrPut(Text, Encoding))
+    VarSetStrCapacity(&Bin, StrPut(Text, Encoding))
 	LC_Base64_Encode(Base64, Bin, StrPut(Text, &Bin, Encoding)-1)
 	return Base64
 }
@@ -123,7 +125,7 @@ LC_Str2Bin(ByRef Out, ByRef In, Flags)
 	return OutLen
 }
 
-; 
+;
 ; Version: 2014.03.06-1518, jNizM
 ; see https://en.wikipedia.org/wiki/Caesar_cipher
 ; ===================================================================================
@@ -310,7 +312,7 @@ LC_Numvert(num,from,to) { ; from joedf : http://ahkscript.org/boards/viewtopic.p
 ; Script Function:
 ;	Function Library to Encrypt / Decrypt in Div2 (by Joe DF)
 ;	Div2 was invented with a friend for fun, back in ~2010.
-;	The string is "divided" in 2 during encryption. It is a 
+;	The string is "divided" in 2 during encryption. It is a
 ;	simple reordering of the characters in a string. The was
 ; 	to have a human-readable/decryptable message.
 ;
@@ -351,14 +353,14 @@ LC_Div2_decode(input, WithAutoTrim:=1, numproc:=1) {
 	{
 		i := 1, final:="", inputlen := StrLen(input)
 		loop, % loopc := ceil(inputlen * (1/2))
-		{	
+		{
 			if (i <= inputlen)
 				final .= SubStr(input,i,1)
 			i += 2
 		}
 		i := inputlen
 		loop, %loopc%
-		{		
+		{
 			if (i <= inputlen) {
 				if (mod(SubStr(i,0,1)+0,2)==1) {
 					if (i != 1)
@@ -632,7 +634,7 @@ LC_Rot18(string) {
 }
 
 ; adapted from http://langref.org/fantom+java+scala/strings/reversing-a-string/simple-substitution-cipher
-; from decimal 33 '!' through 126 '~', 94 
+; from decimal 33 '!' through 126 '~', 94
 LC_Rot47(string) {
 	Loop Parse, string
 	{
@@ -656,7 +658,7 @@ LC_RSHash(str) {
 
 LC_SecureSalted(salt, message, algo := "md5") {
 	hash := ""
-	saltedHash := %algo%(message . salt) 
+	saltedHash := %algo%(message . salt)
 	saltedHashR := %algo%(salt . message)
 	len := StrLen(saltedHash)
 	loop % len / 2
@@ -754,7 +756,7 @@ LC_UrlDecode(url) {
 	return LC_UriDecode(url)
 }
 
-; 
+;
 ; Version: 2014.03.06-1518, jNizM
 ; see https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher
 ; ===================================================================================
@@ -845,7 +847,7 @@ LC_VxE_Crypt( key, byref message, direction = 1, options="" ) { ; --------------
    w := StrLen( key ) << !!A_IsUnicode
    ; 'w' holds the derived key, which is a 32-bit integer based on the key.
    ; Although this doesn't seem very entropic, remember that the map is also derived from the key.
-   
+
    If (UseVxE89) ; using the smaller map allows text-friendly encrypting since the small map is
       Loop 126 ; composed only of low-ascii printable characters
          If ( A_Index >= 32 && A_Index != 34 && A_Index != 39 && A_Index != 44
