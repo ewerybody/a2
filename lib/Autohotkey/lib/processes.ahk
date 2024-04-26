@@ -1,5 +1,5 @@
 
-processes_list_ids(process_name="") {
+processes_list_ids(process_name:="") {
     ; Gather list of PIDs from all running processes via COM.
     ; https://www.autohotkey.com/docs/commands/Process.htm#ListCom
     ; These COM objects have a multitude of interesting member variables:

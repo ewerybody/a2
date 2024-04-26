@@ -52,8 +52,9 @@ _a2tip_off() {
     ; _a2_tip_id :=
     ; ToolTip()
     ; _a2tip_off
-    WinClose "ahk_id " _a2_tip_id
     SetTimer , 0
+    if WinExist("ahk_id " . _a2_tip_id)
+        WinClose("ahk_id " . _a2_tip_id)
 }
 
 ; a2tip_add(msg, timeout := "") {

@@ -1,3 +1,5 @@
+#include <screen>
+
 window_is_resizable(win_id:="") {
     if !win_id
         win_id := WinExist("A")
