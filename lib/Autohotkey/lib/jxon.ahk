@@ -1,203 +1,208 @@
-; from cocobelgica
+﻿;;;; AHK v2
+; Example ===================================================================================
+; ===========================================================================================
+
+; Msgbox "The idea here is to create several nested arrays, save to text with jxon_dump(), and then reload the array with jxon_load().  The resulting array should be the same.`r`n`r`nThis is what this example shows."
+; a := Map(), b := Map(), c := Map(), d := Map(), e := Map(), f := Map() ; Object() is more technically correct than {} but both will work.
+
+; d["g"] := 1, d["h"] := 2, d["i"] := ["purple","pink","pippy red"]
+; e["g"] := 1, e["h"] := 2, e["i"] := Map("1","test1","2","test2","3","test3")
+; f["g"] := 1, f["h"] := 2, f["i"] := [1,2,Map("a",1.0009,"b",2.0003,"c",3.0001)]
+
+; a["test1"] := "test11", a["d"] := d
+; b["test3"] := "test33", b["e"] := e
+; c["test5"] := "test55", c["f"] := f
+
+; myObj := Map()
+; myObj["a"] := a, myObj["b"] := b, myObj["c"] := c, myObj["test7"] := "test77", myObj["test8"] := "test88"
+
+; g := ["blue","green","red"], myObj["h"] := g ; add linear array for testing
+
+; q := Chr(34)
+; textData2 := Jxon_dump(myObj,4) ; ===> convert array to JSON
+; msgbox "JSON output text:`r`n===========================================`r`n(Should match second output.)`r`n`r`n" textData2
+
+; newObj := Jxon_load(&textData2) ; ===> convert json back to array
+
+; textData3 := Jxon_dump(newObj,4) ; ===> break down array into 2D layout again, should be identical
+; msgbox "Second output text:`r`n===========================================`r`n(should be identical to first output)`r`n`r`n" textData3
+
+; msgbox "textData2 = textData3:  " ((textData2=textData3) ? "true" : "false")
+
+; ===========================================================================================
+; End Example ; =============================================================================
+; ===========================================================================================
+
+; originally posted by user coco on AutoHotkey.com
 ; https://github.com/cocobelgica/AutoHotkey-JSON
 
-Jxon_Load(ByRef src, args*) {
-    static q := Chr(34)
+Jxon_Load(&src, args*) {
+	key := "", is_key := false
+	stack := [ tree := [] ]
+	next := '"{[01234567890-tfn'
+	pos := 0
+	
+	while ( (ch := SubStr(src, ++pos, 1)) != "" ) {
+		if InStr(" `t`n`r", ch)
+			continue
+		if !InStr(next, ch, true) {
+			testArr := StrSplit(SubStr(src, 1, pos), "`n")
+			
+			ln := testArr.Length
+			col := pos - InStr(src, "`n",, -(StrLen(src)-pos+1))
 
-    key := "", is_key := false
-    stack := [ tree := [] ]
-    is_arr := { (tree): 1 }
-    next := q . "{[01234567890-tfn"
-    pos := 0
-    while ( (ch := SubStr(src, ++pos, 1)) != "" ) {
-        if InStr(" `t`n`r", ch)
-            continue
-        if !InStr(next, ch, true) {
-            ln := ObjLength(StrSplit(SubStr(src, 1, pos), "`n"))
-            col := pos - InStr(src, "`n",, -(StrLen(src)-pos+1))
+			msg := Format("{}: line {} col {} (char {})"
+			,   (next == "")      ? ["Extra data", ch := SubStr(src, pos)][1]
+			  : (next == "'")     ? "Unterminated string starting at"
+			  : (next == "\")     ? "Invalid \escape"
+			  : (next == ":")     ? "Expecting ':' delimiter"
+			  : (next == '"')     ? "Expecting object key enclosed in double quotes"
+			  : (next == '"}')    ? "Expecting object key enclosed in double quotes or object closing '}'"
+			  : (next == ",}")    ? "Expecting ',' delimiter or object closing '}'"
+			  : (next == ",]")    ? "Expecting ',' delimiter or array closing ']'"
+			  : [ "Expecting JSON value(string, number, [true, false, null], object or array)"
+			    , ch := SubStr(src, pos, (SubStr(src, pos)~="[\]\},\s]|$")-1) ][1]
+			, ln, col, pos)
 
-            msg := Format("{}: line {} col {} (char {})"
-            , (next == "") ? ["Extra data", ch := SubStr(src, pos)][1]
-            : (next == "'") ? "Unterminated string starting at"
-            : (next == "\") ? "Invalid \escape"
-            : (next == ":") ? "Expecting ':' delimiter"
-            : (next == q) ? "Expecting object key enclosed in double quotes"
-            : (next == q . "}") ? "Expecting object key enclosed in double quotes or object closing '}'"
-            : (next == ",}") ? "Expecting ',' delimiter or object closing '}'"
-            : (next == ",]") ? "Expecting ',' delimiter or array closing ']'"
-            : [ "Expecting JSON value(string, number, [true, false, null], object or array)"
-            , ch := SubStr(src, pos, (SubStr(src, pos)~="[\]\},\s]|$")-1) ][1]
-            , ln, col, pos)
+			throw Error(msg, -1, ch)
+		}
+		
+		obj := stack[1]
+        is_array := (obj is Array)
+		
+		if i := InStr("{[", ch) { ; start new object / map?
+			val := (i = 1) ? Map() : Array()	; ahk v2
+			
+			is_array ? obj.Push(val) : obj[key] := val
+			stack.InsertAt(1,val)
+			
+			next := '"' ((is_key := (ch == "{")) ? "}" : "{[]0123456789-tfn")
+		} else if InStr("}]", ch) {
+			stack.RemoveAt(1)
+            next := (stack[1]==tree) ? "" : (stack[1] is Array) ? ",]" : ",}"
+		} else if InStr(",:", ch) {
+			is_key := (!is_array && ch == ",")
+			next := is_key ? '"' : '"{[0123456789-tfn'
+		} else { ; string | number | true | false | null
+			if (ch == '"') { ; string
+				i := pos
+				while i := InStr(src, '"',, i+1) {
+					val := StrReplace(SubStr(src, pos+1, i-pos-1), "\\", "\u005C")
+					if (SubStr(val, -1) != "\")
+						break
+				}
+				if !i ? (pos--, next := "'") : 0
+					continue
 
-            throw Exception(msg, -1, ch)
-        }
+				pos := i ; update pos
 
-        is_array := is_arr[obj := stack[1]]
+				val := StrReplace(val, "\/", "/")
+				val := StrReplace(val, '\"', '"')
+				, val := StrReplace(val, "\b", "`b")
+				, val := StrReplace(val, "\f", "`f")
+				, val := StrReplace(val, "\n", "`n")
+				, val := StrReplace(val, "\r", "`r")
+				, val := StrReplace(val, "\t", "`t")
 
-        if i := InStr("{[", ch) { ;
-            val := (proto := args[i]) ? new proto : {}
-            is_array? ObjPush(obj, val) : obj[key] := val
-            ObjInsertAt(stack, 1, val)
+				i := 0
+				while i := InStr(val, "\",, i+1) {
+					if (SubStr(val, i+1, 1) != "u") ? (pos -= StrLen(SubStr(val, i)), next := "\") : 0
+						continue 2
 
-            is_arr[val] := !(is_key := ch == "{")
-            next := q . (is_key ? "}" : "{[]0123456789-tfn")
-        }
-
-        else if InStr("}]", ch) {
-            ObjRemoveAt(stack, 1)
-            next := stack[1]==tree ? "" : is_arr[stack[1]] ? ",]" : ",}"
-        }
-
-        else if InStr(",:", ch) {
-            is_key := (!is_array && ch == ",")
-            next := is_key ? q : q . "{[0123456789-tfn"
-        }
-
-        else { ; string | number | true | false | null
-            if (ch == q) { ; string
-                i := pos
-                while i := InStr(src, q,, i+1) {
-                    val := StrReplace(SubStr(src, pos+1, i-pos-1), "\\", "\u005C")
-                    static end := A_AhkVersion<"2" ? 0 : -1
-                    if (SubStr(val, end) != "\")
-                        break
-                }
-                if !i ? (pos--, next := "'") : 0
-                    continue
-
-                pos := i ; update pos
-
-                val := StrReplace(val, "\/", "/")
-                , val := StrReplace(val, "\" . q, q)
-                , val := StrReplace(val, "\b", "`b")
-                , val := StrReplace(val, "\f", "`f")
-                , val := StrReplace(val, "\n", "`n")
-                , val := StrReplace(val, "\r", "`r")
-                , val := StrReplace(val, "\t", "`t")
-
-                i := 0
-                while i := InStr(val, "\",, i+1) {
-                    if (SubStr(val, i+1, 1) != "u") ? (pos -= StrLen(SubStr(val, i)), next := "\") : 0
-                        continue 2
-
-                    ; \uXXXX - JSON unicode escape sequence
-                    xxxx := Abs("0x" . SubStr(val, i+2, 4))
-                    if (A_IsUnicode || xxxx < 0x100)
-                        val := SubStr(val, 1, i-1) . Chr(xxxx) . SubStr(val, i+6)
-                }
-
-                if is_key {
-                    key := val, next := ":"
-                    continue
-                }
-            }
-            else { ; number | true | false | null
-                val := SubStr(src, pos, i := RegExMatch(src, "[\]\},\s]|$",, pos)-pos)
-
-                ; For numerical values, numerify integers and keep floats as is.
-                ; I'm not yet sure if I should numerify floats in v2.0-a ...
-                static number := "number", integer := "integer"
-                if val is %number%
-                {
-                    if val is %integer%
-                        val += 0
-                }
-                ; in v1.1, true,false,A_PtrSize,A_IsUnicode,A_Index,A_EventInfo,
-                ; SOMETIMES return strings due to certain optimizations. Since it
-                ; is just 'SOMETIMES', numerify to be consistent w/ v2.0-a
+					xxxx := Abs("0x" . SubStr(val, i+2, 4)) ; \uXXXX - JSON unicode escape sequence
+					if (xxxx < 0x100)
+						val := SubStr(val, 1, i-1) . Chr(xxxx) . SubStr(val, i+6)
+				}
+				
+				if is_key {
+					key := val, next := ":"
+					continue
+				}
+			} else { ; number | true | false | null
+				val := SubStr(src, pos, i := RegExMatch(src, "[\]\},\s]|$",, pos)-pos)
+				
+                if IsInteger(val)
+                    val += 0
+                else if IsFloat(val)
+                    val += 0
                 else if (val == "true" || val == "false")
-                    val := %value% + 0
-                ; AHK_H has built-in null, can't do 'val := %value%' where value == "null"
-                ; as it would raise an exception in AHK_H(overriding built-in var)
+                    val := (val == "true")
                 else if (val == "null")
                     val := ""
-                ; any other values are invalid, continue to trigger error
-                else if (pos--, next := "#")
+                else if is_key {
+                    pos--, next := "#"
                     continue
-
-                pos += i-1
-            }
-
-            is_array? ObjPush(obj, val) : obj[key] := val
-            next := obj==tree ? "" : is_array ? ",]" : ",}"
-        }
-    }
-    return tree[1]
+                }
+				
+				pos += i-1
+			}
+			
+			is_array ? obj.Push(val) : obj[key] := val
+			next := obj == tree ? "" : is_array ? ",]" : ",}"
+		}
+	}
+	
+	return tree[1]
 }
 
 Jxon_Dump(obj, indent:="", lvl:=1) {
-    static q := Chr(34)
+	if IsObject(obj) {
+        If !(obj is Array || obj is Map || obj is String || obj is Number)
+			throw Error("Object type not supported.", -1, Format("<Object at 0x{:p}>", ObjPtr(obj)))
+		
+		if IsInteger(indent)
+		{
+			if (indent < 0)
+				throw Error("Indent parameter must be a postive integer.", -1, indent)
+			spaces := indent, indent := ""
+			
+			Loop spaces ; ===> changed
+				indent .= " "
+		}
+		indt := ""
+		
+		Loop indent ? lvl : 0
+			indt .= indent
+        
+        is_array := (obj is Array)
+        
+		lvl += 1, out := "" ; Make #Warn happy
+		for k, v in obj {
+			if IsObject(k) || (k == "")
+				throw Error("Invalid object key.", -1, k ? Format("<Object at 0x{:p}>", ObjPtr(obj)) : "<blank>")
+			
+			if !is_array ;// key ; ObjGetCapacity([k], 1)
+				out .= (ObjGetCapacity([k]) ? Jxon_Dump(k) : escape_str(k)) (indent ? ": " : ":") ; token + padding
+			
+			out .= Jxon_Dump(v, indent, lvl) ; value
+				.  ( indent ? ",`n" . indt : "," ) ; token + indent
+		}
 
-    if IsObject(obj) {
-        static Type := Func("Type")
-        if Type ? (Type.Call(obj) != "Object") : (ObjGetCapacity(obj) == "")
-            throw Exception("Object type not supported.", -1, Format("<Object at 0x{:p}>", &obj))
-
-        is_array := 0
-        for k in obj
-            is_array := k == A_Index
-        until !is_array
-
-        static integer := "integer"
-        if indent is %integer%
-        {
-            if (indent < 0)
-                throw Exception("Indent parameter must be a postive integer.", -1, indent)
-            spaces := indent, indent := ""
-            Loop % spaces
-                indent .= " "
-        }
-        indt := ""
-        Loop, % indent ? lvl : 0
-            indt .= indent
-
-        lvl += 1, out := "" ; Make #Warn happy
-        for k, v in obj
-        {
-            if IsObject(k) || (k == "")
-                throw Exception("Invalid object key.", -1, k ? Format("<Object at 0x{:p}>", &obj) : "<blank>")
-
-            if !is_array
-                out .= ( ObjGetCapacity([k], 1) ? Jxon_Dump(k) : q . k . q ) ;// key
-            . ( indent ? ": " : ":" ) ; token + padding
-            out .= Jxon_Dump(v, indent, lvl) ; value
-            . ( indent ? ",`n" . indt : "," ) ; token + indent
-        }
-
-        if (out != "") {
-            out := Trim(out, ",`n" . indent)
-            if (indent != "")
-                out := "`n" . indt . out . "`n" . SubStr(indt, StrLen(indent)+1)
-        }
-
-        return is_array ? "[" . out . "]" : "{" . out . "}"
-    }
-
-    ; Number
-    else if (ObjGetCapacity([obj], 1) == "")
+		if (out != "") {
+			out := Trim(out, ",`n" . indent)
+			if (indent != "")
+				out := "`n" . indt . out . "`n" . SubStr(indt, StrLen(indent)+1)
+		}
+		
+		return is_array ? "[" . out . "]" : "{" . out . "}"
+	
+    } Else If (obj is Number)
         return obj
-
-    ; String (null -> not supported by AHK)
-    if (obj != "") {
-        obj := StrReplace(obj, "\", "\\")
-        , obj := StrReplace(obj, "/", "\/")
-        , obj := StrReplace(obj, q, "\" . q)
-        , obj := StrReplace(obj, "`b", "\b")
-        , obj := StrReplace(obj, "`f", "\f")
-        , obj := StrReplace(obj, "`n", "\n")
-        , obj := StrReplace(obj, "`r", "\r")
-        , obj := StrReplace(obj, "`t", "\t")
-
-        static needle := (A_AhkVersion<"2" ? "O)" : "") . "[^\x20-\x7e]"
-        while RegExMatch(obj, needle, m)
-            obj := StrReplace(obj, m[0], Format("\u{:04X}", Ord(m[0])))
+    
+    Else ; String
+        return escape_str(obj)
+	
+    escape_str(obj) {
+        obj := StrReplace(obj,"\","\\")
+        obj := StrReplace(obj,"`t","\t")
+        obj := StrReplace(obj,"`r","\r")
+        obj := StrReplace(obj,"`n","\n")
+        obj := StrReplace(obj,"`b","\b")
+        obj := StrReplace(obj,"`f","\f")
+        obj := StrReplace(obj,"/","\/")
+        obj := StrReplace(obj,'"','\"')
+        
+        return '"' obj '"'
     }
-
-    return q . obj . q
 }
 
-; directly json data read from filename
-jxon_read(Byref path, args*) {
-    FileRead, OutputVar, %path%
-    return jxon_load(OutputVar)
-}
