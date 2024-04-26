@@ -1,17 +1,17 @@
-﻿#Include, <WinClip>
-#Include, <WinClipAPI>
+﻿#Include <WinClip>
+#Include <WinClipAPI>
 
 
-clipboard_get(clipWaitTime=0.5) {
+clipboard_get(clipWaitTime:=0.5) {
     ; Use the clipboard to get selected text.
     ;
     ; Basically stores current clipboard, fires Ctrl+C, gets variable
     ; from clipboard, restores clipboard and returns variable. Voila!
 
-    wc := new WinClip
+    wc := WinClip()
     wc.iCopy(clipWaitTime)
     selection := wc.iGetText()
-    wc :=
+    wc := 0
     return selection
 
     ; SavedClipboard := ClipboardAll
@@ -57,7 +57,7 @@ clipboard_get(clipWaitTime=0.5) {
     ; Return Selection
 }
 
-clipboard_paste( byref inputString, sleepTime=50 ) {
+clipboard_paste( inputString, sleepTime:=50 ) {
     WinClip.Paste(inputString)
     ; Use the clipboard to paste given text.
     ; SavedClipboard := ClipboardAll
@@ -72,7 +72,7 @@ clipboard_paste( byref inputString, sleepTime=50 ) {
 clipboard_get_files() {
     ; Parse lines in clipboard, return list of existing file paths.
     files := []
-    for i, line in StrSplit(Clipboard, "`r`n")
+    for i, line in StrSplit(A_Clipboard, "`r`n")
     {
         if string_startswith(line, "//")
             continue
@@ -85,12 +85,12 @@ clipboard_get_files() {
 
 clipboard_empty() {
     ; make sure the clipboard is empty
-    Loop, 10
+    Loop 10
     {
-        if (Clipboard == "")
+        if (A_Clipboard == "")
             return
-        Clipboard := ""
-        Sleep, 20
+        A_Clipboard := ""
+        Sleep 20
     }
-    MsgBox, Could not empty the clipboard after 10 tries :/ (clipboard: "%clipboard%")
+    msgbox_error("Could not empty the clipboard after 10 tries :/ (clipboard: '" . A_Clipboard . "'')")
 }

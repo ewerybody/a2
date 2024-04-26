@@ -10,7 +10,7 @@
  * @param   integer IconSize    Resolution of the icon
  * @return  bitmap
 */
-icon_extract(Filename, IconNumber = 0, IconSize = 64) {
+icon_extract(Filename, IconNumber := 0, IconSize := 64) {
     ; LoadImage is not used..
     ; ..with exe/dll files because:
     ;   it only works with modules loaded by the current process,
@@ -23,11 +23,15 @@ icon_extract(Filename, IconNumber = 0, IconSize = 64) {
     ; , IconSize, "int", IconSize, "Ptr*", h_icon, "PTR*", 0, "uint", 1, "uint", 0, "int")
     ; if !ErrorLevel
     ;    return h_icon
-    r := DllCall("Shell32.dll\SHExtractIconsW", "str", Filename, "int", IconNumber-1, "int"
-    , IconSize, "int", IconSize, "Ptr*", h_icon, "Ptr*", pIconId, "uint", 1, "uint", 0, "int")
-    If (!ErrorLevel && r != 0)
-        return h_icon
-    return 0
+    try {
+        r := DllCall("Shell32.dll\SHExtractIconsW", "str", Filename, "int", IconNumber-1, "int"
+        , IconSize, "int", IconSize, "Ptr*", &h_icon, "Ptr*", &pIconId, "uint", 1, "uint", 0, "int")
+        if r != 0
+            return h_icon
+        return 0
+    } catch Error {
+        return 0
+    }
 }
 
 icon_from_type(extension) {

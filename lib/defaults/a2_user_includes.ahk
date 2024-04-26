@@ -1,5 +1,5 @@
 ﻿#include includes\variables.ahk
-if IsFunc("a2_init_calls")
+if IsObject("a2_init_calls")
     a2_init_calls()
 #include includes\source_libs.ahk
 #include {a2data_includes}
