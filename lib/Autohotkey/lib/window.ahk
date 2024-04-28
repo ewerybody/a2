@@ -43,69 +43,42 @@ window_toggle_maximize_width(win_id:="") {
     static memory := Map()
 
     workarea := Screen_WorkArea(screen_get_index(win_id))
-    ; WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
-    ; wc_X := 0, wc_Y := 0, wc_Width := 0, wc_Height := 0
     window_get_rect(&wc_X, &wc_Y, &wc_Width, &wc_Height, win_id)
     wc_Max := WinGetMinMax("ahk_id " . win_id)
-    ; maximize
-    If (wc_Width != workarea.width)
-    {
-        ; left := workarea.left
-        ; right := workarea.width
-        ; WinMove, ahk_id %win_id%,, %left%, %wc_Y%, % %right%, %wc_Height%
-        window_set_rect(workarea.left, wc_Y, workarea.width, wc_Height, win_id)
-        ; remember values for back toggling
-        If (!memory.HasOwnProp(win_id) OR (memory[win_id]["lastw"] !== wc_Width OR memory[win_id]["lasth"] !== wc_Height)) {
-            memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
-        }
+    If (wc_Width == workarea.width) {
+        _window_toggle_maximize_reset(win_id, &memory)
+        Return
+    }
 
-        memory[win_id]["lastw"] := workarea.width
-        memory[win_id]["lasth"] := wc_Height
-    } Else
-        _window_toggle_maximize_reset(win_id, memory)
+    window_set_rect(workarea.left, wc_Y, workarea.width, wc_Height, win_id)
+    _window_toggle_maximize_set_mem(&memory, win_id, wc_Width, wc_Height, wc_X, wc_Y, wc_Max)
+
+    memory[win_id]["lastw"] := workarea.width
+    memory[win_id]["lasth"] := wc_Height
 }
 
 window_toggle_maximize_height(win_id:="") {
     win_id := _ensure_win_active(win_id)
-    static memory := Map()
-
     If !window_is_resizable(win_id)
         Return
 
+    static memory := Map()
     workarea := Screen_WorkArea(screen_get_index(win_id))
-    ; WinGetPos, wc_X, wc_Y, wc_Width, wc_Height, ahk_id %win_id%
-    ; wc_X := 0, wc_Y := 0, wc_Width := 0, wc_Height := 0
     window_get_rect(&wc_X, &wc_Y, &wc_Width, &wc_Height, win_id)
     wc_Max := WinGetMinMax("ahk_id " . win_id)
-    ; maximize
-    If (wc_Height !== workarea.height)
-    {
-        top := workarea.top
-        bottom := workarea.height
-        ; WinMove, ahk_id %win_id%,, %wc_X%, %top%, % %wc_Width%, %bottom%
-        window_set_rect(wc_X, top, wc_Width, bottom, win_id)
-        ; remember values for back toggling
-        if memory.has(win_id)
-        {
-            if (memory[win_id]["lastw"] !== wc_Width OR memory[win_id]["lasth"] !== wc_Height)
-            {
-                this_win := Map("x", wc_X, "y", wc_Y, "w", wc_Width, "h", wc_Height, "minmax", wc_Max)
-                memory.set(win_id, this_win)
-                ; memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
-            }
-        } else {
-            this_win := Map("x", wc_X, "y", wc_Y, "w", wc_Width, "h", wc_Height, "minmax", wc_Max)
-            memory.set(win_id, this_win)
-        }
-            ; memory[win_id] := {x: wc_X, y: wc_Y, w: wc_Width, h: wc_Height, minmax: wc_Max}
+    If (wc_Height == workarea.height) {
+        _window_toggle_maximize_reset(win_id, &memory)
+        Return
+    }
 
-        memory[win_id]["lastw"] := wc_Width
-        memory[win_id]["lasth"] := workarea.height
-    } Else
-        _window_toggle_maximize_reset(win_id, memory)
+    window_set_rect(wc_X, workarea.top, wc_Width, workarea.height, win_id)
+    _window_toggle_maximize_set_mem(&memory, win_id, wc_Width, wc_Height, wc_X, wc_Y, wc_Max)
+
+    memory[win_id]["lastw"] := wc_Width
+    memory[win_id]["lasth"] := workarea.height
 }
 
-_window_toggle_maximize_reset(&win_id, & memory) {
+_window_toggle_maximize_reset(win_id, &memory) {
     If (memory[win_id]["h"] !== "" AND memory[win_id]["w"] !== "")
     {
         If memory[win_id]["minmax"] = 1
@@ -115,6 +88,13 @@ _window_toggle_maximize_reset(&win_id, & memory) {
             window_set_rect(memory[win_id]["x"], memory[win_id]["y"], memory[win_id]["w"], memory[win_id]["h"], win_id)
             memory.Delete(win_id)
         }
+    }
+}
+
+; remember values for back toggling
+_window_toggle_maximize_set_mem(&memory, win_id, wc_Width, wc_Height, wc_X, wc_Y, wc_Max) {
+    If (!memory.has(win_id) OR (memory[win_id]["lastw"] !== wc_Width OR memory[win_id]["lasth"] !== wc_Height)) {
+        memory[win_id] := Map("x", wc_X, "y", wc_Y, "w", wc_Width, "h", wc_Height, "minmax", wc_Max)
     }
 }
 
