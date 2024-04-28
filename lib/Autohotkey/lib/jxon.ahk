@@ -41,13 +41,13 @@ Jxon_Load(&src, args*) {
 	stack := [ tree := [] ]
 	next := '"{[01234567890-tfn'
 	pos := 0
-	
+
 	while ( (ch := SubStr(src, ++pos, 1)) != "" ) {
 		if InStr(" `t`n`r", ch)
 			continue
 		if !InStr(next, ch, true) {
 			testArr := StrSplit(SubStr(src, 1, pos), "`n")
-			
+
 			ln := testArr.Length
 			col := pos - InStr(src, "`n",, -(StrLen(src)-pos+1))
 
@@ -66,16 +66,16 @@ Jxon_Load(&src, args*) {
 
 			throw Error(msg, -1, ch)
 		}
-		
+
 		obj := stack[1]
         is_array := (obj is Array)
-		
+
 		if i := InStr("{[", ch) { ; start new object / map?
 			val := (i = 1) ? Map() : Array()	; ahk v2
-			
+
 			is_array ? obj.Push(val) : obj[key] := val
 			stack.InsertAt(1,val)
-			
+
 			next := '"' ((is_key := (ch == "{")) ? "}" : "{[]0123456789-tfn")
 		} else if InStr("}]", ch) {
 			stack.RemoveAt(1)
@@ -113,14 +113,14 @@ Jxon_Load(&src, args*) {
 					if (xxxx < 0x100)
 						val := SubStr(val, 1, i-1) . Chr(xxxx) . SubStr(val, i+6)
 				}
-				
+
 				if is_key {
 					key := val, next := ":"
 					continue
 				}
 			} else { ; number | true | false | null
 				val := SubStr(src, pos, i := RegExMatch(src, "[\]\},\s]|$",, pos)-pos)
-				
+
                 if IsInteger(val)
                     val += 0
                 else if IsFloat(val)
@@ -133,15 +133,15 @@ Jxon_Load(&src, args*) {
                     pos--, next := "#"
                     continue
                 }
-				
+
 				pos += i-1
 			}
-			
+
 			is_array ? obj.Push(val) : obj[key] := val
 			next := obj == tree ? "" : is_array ? ",]" : ",}"
 		}
 	}
-	
+
 	return tree[1]
 }
 
@@ -149,31 +149,31 @@ Jxon_Dump(obj, indent:="", lvl:=1) {
 	if IsObject(obj) {
         If !(obj is Array || obj is Map || obj is String || obj is Number)
 			throw Error("Object type not supported.", -1, Format("<Object at 0x{:p}>", ObjPtr(obj)))
-		
+
 		if IsInteger(indent)
 		{
 			if (indent < 0)
 				throw Error("Indent parameter must be a postive integer.", -1, indent)
 			spaces := indent, indent := ""
-			
+
 			Loop spaces ; ===> changed
 				indent .= " "
 		}
 		indt := ""
-		
+
 		Loop indent ? lvl : 0
 			indt .= indent
-        
+
         is_array := (obj is Array)
-        
+
 		lvl += 1, out := "" ; Make #Warn happy
 		for k, v in obj {
 			if IsObject(k) || (k == "")
 				throw Error("Invalid object key.", -1, k ? Format("<Object at 0x{:p}>", ObjPtr(obj)) : "<blank>")
-			
+
 			if !is_array ;// key ; ObjGetCapacity([k], 1)
 				out .= (ObjGetCapacity([k]) ? Jxon_Dump(k) : escape_str(k)) (indent ? ": " : ":") ; token + padding
-			
+
 			out .= Jxon_Dump(v, indent, lvl) ; value
 				.  ( indent ? ",`n" . indt : "," ) ; token + indent
 		}
@@ -183,15 +183,15 @@ Jxon_Dump(obj, indent:="", lvl:=1) {
 			if (indent != "")
 				out := "`n" . indt . out . "`n" . SubStr(indt, StrLen(indent)+1)
 		}
-		
+
 		return is_array ? "[" . out . "]" : "{" . out . "}"
-	
+
     } Else If (obj is Number)
         return obj
-    
+
     Else ; String
         return escape_str(obj)
-	
+
     escape_str(obj) {
         obj := StrReplace(obj,"\","\\")
         obj := StrReplace(obj,"`t","\t")
@@ -201,8 +201,13 @@ Jxon_Dump(obj, indent:="", lvl:=1) {
         obj := StrReplace(obj,"`f","\f")
         obj := StrReplace(obj,"/","\/")
         obj := StrReplace(obj,'"','\"')
-        
+
         return '"' obj '"'
     }
 }
 
+; directly json data read from filename
+jxon_read(path, args*) {
+    json_str := FileRead(path)
+    return jxon_load(&json_str)
+}
