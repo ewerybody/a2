@@ -58,7 +58,8 @@ clipboard_get(clipWaitTime:=0.5) {
 }
 
 clipboard_paste( inputString, sleepTime:=50 ) {
-    WinClip.Paste(inputString)
+    wc := WinClip()
+    wc.Paste(inputString)
     ; Use the clipboard to paste given text.
     ; SavedClipboard := ClipboardAll
     ; clipboard_empty()
