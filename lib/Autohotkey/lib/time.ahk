@@ -4,10 +4,7 @@
 ; Tell current time in seconds.
 time_unix() {
     ; T := A_Now
-    T := A_NowUTC
-    T -= 19700101000000,seconds
-
-    return T
+    Return DateDiff("", 19700101000000, "seconds")
 }
 
 ; Tell current time in miliseconds.
