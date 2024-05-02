@@ -3,7 +3,6 @@
 
 ; Tell current time in seconds.
 time_unix() {
-    ; T := A_Now
     Return DateDiff("", 19700101000000, "seconds")
 }
 
