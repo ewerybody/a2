@@ -5,8 +5,8 @@
 ; http://www.autohotkey.net/~Deo/index.html
 
 
-class WinClip extends WinClip_base
-{
+class WinClip extends WinClip_base {
+
     ClipboardFormats := { CF_BITMAP : 2 ;A handle to a bitmap (HBITMAP).
                                 ,CF_DIB : 8  ;A memory object containing a BITMAPINFO structure followed by the bitmap bits.
                                 ,CF_DIBV5 : 17 ;A memory object containing a BITMAPV5HEADER structure followed by the bitmap color space information and the bitmap bits.
@@ -77,14 +77,14 @@ class WinClip extends WinClip_base
                                 ,13 : "CF_UNICODETEXT"
                                 ,12 : "CF_WAVE" }
 
-    __New()
-    {
+    __New() {
+
         this.isinstance := 1
         this.allData := ""
     }
 
-    _toclipboard( &data, size )
-    {
+    _toclipboard( &data, size ) {
+
         if !WinClipAPI.OpenClipboard()
             return 0
         offset := 0
@@ -232,7 +232,7 @@ class WinClip extends WinClip_base
         If (Type(this.allData) != "Buffer")
             return 0
         data := Buffer( this.allData.size, 0 )
-        WinClipAPI.memcopy( &data, this.allData.ptr, this.allData.size )
+        WinClipAPI.memcopy( data, this.allData.ptr, this.allData.size )
         return this.allData.size
     }
 
@@ -746,8 +746,8 @@ class WinClip extends WinClip_base
         return this._getFiles( out_data )
     }
 
-    iGetFiles()
-    {
+    iGetFiles() {
+
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( &clipData ) )
             return ""
@@ -756,8 +756,8 @@ class WinClip extends WinClip_base
         return this._getFiles( out_data )
     }
 
-    _getFormatData( &out_data, &data, size, needleFormat )
-    {
+    _getFormatData( &out_data, &data, size, needleFormat ) {
+
         needleFormat := (WinClipAPI.IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat ))
         if !needleFormat
             return 0

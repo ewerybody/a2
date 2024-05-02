@@ -7,11 +7,11 @@
             ;return WinClip_base[ aTarget ].( this, aParams* )
         throw Error( "Unknown function '" aTarget "' requested from object '" this.__Class "'", -1 )
     }
-    
+
     Static Err( msg ) {
         throw Error( this.__Class " : " msg ( (A_LastError != 0) ? "`n" this.ErrorFormat( A_LastError ) : "" ), -2 )
     }
-    
+
     Static ErrorFormat( error_id ) {
         msg := Buffer(1000,0)
         if !len := DllCall("FormatMessageW"
@@ -40,7 +40,7 @@ class WinClipAPI extends WinClip_base
 {
     static u := StrLen(Chr(0xFFFF)) ; IsUnicode
     static m := (this.u)?2:1        ; Unicode/Ansi str buffer multiplier
-    
+
     Static memcopy( dest, src, size ) {
         return DllCall( "msvcrt\memcpy", "ptr", dest, "ptr", src, "uint", size )
     }
@@ -66,7 +66,7 @@ class WinClipAPI extends WinClip_base
         return DllCall( "SetClipboardData", "Uint", format, "Ptr", hMem )
     }
     Static GetClipboardData( format ) {
-        return DllCall( "GetClipboardData", "Uint", format ) 
+        return DllCall( "GetClipboardData", "Uint", format )
     }
     Static EmptyClipboard() {
         return DllCall( "EmptyClipboard" )
@@ -111,14 +111,14 @@ class WinClipAPI extends WinClip_base
     Static IsInteger( var ) {
         ; if (var+0 == var) && (Floor(var) == var) ;test for integer while remaining v1 and v2 compatible
             ; return True
-        ; else 
+        ; else
             ; return False
         return IsInteger(var)
     }
     Static LoadDllFunction( file, function ) {
             if !hModule := DllCall( "GetModuleHandleW", "Wstr", file, "UPtr" )
                     hModule := DllCall( "LoadLibraryW", "Wstr", file, "UPtr" )
-            
+
             ret := DllCall("GetProcAddress", "Ptr", hModule, "AStr", function, "UPtr")
             return ret
     }
@@ -156,7 +156,7 @@ class WinClipAPI extends WinClip_base
         ;~ LONG  biYPelsPerMeter;     28
         ;~ DWORD biClrUsed;           32
         ;~ DWORD biClrImportant;      36
-        
+
         bmi := DIB.ptr  ;BITMAPINFOHEADER  pointer from DIB
         biSize := numget( bmi+0, 0, "UInt" )
         ;~ return bmi + biSize
@@ -178,7 +178,7 @@ class WinClipAPI extends WinClip_base
     Static Gdip_Startup() {
         if !DllCall( "GetModuleHandleW", "Wstr", "gdiplus", "UPtr" )
                     DllCall( "LoadLibraryW", "Wstr", "gdiplus", "UPtr" )
-        
+
         GdiplusStartupInput := Buffer( 3*A_PtrSize, 0), NumPut("UInt",1,GdiplusStartupInput ,0) ; GdiplusVersion = 1
         DllCall("gdiplus\GdiplusStartup", "Ptr*", &pToken:=0, "Ptr", GdiplusStartupInput.ptr, "Ptr", 0)
         return pToken
