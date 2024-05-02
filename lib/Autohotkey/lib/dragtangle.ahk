@@ -29,7 +29,7 @@ dragtangle(drag_func := ""
 
     Loop
     {
-        if (GetKeyState("Escape", "p") == "D") {
+        if (GetKeyState("Escape", "p")) {
             if IsFunc(escape_func)
                 %escape_func%(data)
             cursor_reset()
@@ -42,7 +42,7 @@ dragtangle(drag_func := ""
         data.mx := mx
         data.my := my
 
-        if (GetKeyState("LButton", "p") == "D") {
+        if (GetKeyState("LButton", "p")) {
             if (!data.started) {
                 data.started := true
                 data.start_x := mx
