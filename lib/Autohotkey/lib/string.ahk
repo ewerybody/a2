@@ -30,15 +30,15 @@ string_is_in_array(search, string_list, start := 1) {
 string_is_web_address(string) {
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
-    else {
-        WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
-        Loop(WEB_TLDS.Length) {
-            ext := WEB_TLDS[A_Index]
-            sub := SubStr(string, - StrLen(ext))
-            if (sub == "." ext)
-                return true
-        }
+
+    WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
+    Loop(WEB_TLDS.Length) {
+        ext := "." . WEB_TLDS[A_Index]
+        sub := SubStr(string, - StrLen(ext))
+        if (sub == ext)
+            return true
     }
+    return false
 }
 
 ; Determine if a string starts with another string.
