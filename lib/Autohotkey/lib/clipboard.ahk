@@ -9,8 +9,8 @@ clipboard_get(clipWaitTime:=0.5) {
     ; from clipboard, restores clipboard and returns variable. Voila!
 
     wc := WinClip()
-    wc.iCopy(clipWaitTime)
-    selection := wc.iGetText()
+    wc.Copy(clipWaitTime)
+    selection := wc.GetText()
     wc := 0
     return selection
 

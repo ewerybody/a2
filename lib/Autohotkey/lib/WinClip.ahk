@@ -232,7 +232,7 @@ class WinClip extends WinClip_base {
         If (Type(this.allData) != "Buffer")
             return 0
         data := Buffer( this.allData.size, 0 )
-        WinClipAPI.memcopy( data, this.allData.ptr, this.allData.size )
+        WinClipAPI.memcopy( &data, this.allData.ptr, this.allData.size )
         return this.allData.size
     }
 
