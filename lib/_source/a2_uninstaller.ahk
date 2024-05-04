@@ -127,7 +127,7 @@ gather_items() {
     return items
 }
 
-ask_for_user_data_deletion(ByRef items) {
+ask_for_user_data_deletion(items) {
     global A2DIR, run_silent
     if run_silent
         return

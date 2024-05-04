@@ -1,13 +1,10 @@
 ﻿#Include <WinClip>
 #Include <WinClipAPI>
 
-
+; Use the clipboard to get selected text.
+; Basically stores current clipboard, fires Ctrl+C, gets variable
+; from clipboard, restores clipboard and returns variable. Voila!
 clipboard_get(clipWaitTime:=0.5) {
-    ; Use the clipboard to get selected text.
-    ;
-    ; Basically stores current clipboard, fires Ctrl+C, gets variable
-    ; from clipboard, restores clipboard and returns variable. Voila!
-
     wc := WinClip()
     wc.Copy(clipWaitTime)
     selection := wc.GetText()
@@ -70,8 +67,8 @@ clipboard_paste( inputString, sleepTime:=50 ) {
     ; Clipboard := SavedClipboard
 }
 
+; Parse lines in clipboard, return list of existing file paths.
 clipboard_get_files() {
-    ; Parse lines in clipboard, return list of existing file paths.
     files := []
     for i, line in StrSplit(A_Clipboard, "`r`n")
     {
@@ -84,8 +81,8 @@ clipboard_get_files() {
         return files
 }
 
+; make sure the clipboard is empty
 clipboard_empty() {
-    ; make sure the clipboard is empty
     Loop 10
     {
         if (A_Clipboard == "")
