@@ -61,19 +61,6 @@ else
 
 window_set_rect(_x, _y, _w, _h, win_id)
 ; window_toggle_maximize()
-MsgBox("cutting a hole test ...")
-
-geo := window_get_geometry(win_id)
-geo_str := geo.x " " geo.y " " geo.w " " geo.h
-border := 150
-; rect := {x: geo.x + border, y: geo.y + border, x2: geo.w - border, y2: geo.h - border}
-rect := {x: border, y: border, x2: geo.w - border, y2: geo.h - border}
-rect_str := rect.x " " rect.y " " rect.w " " rect.h
-
-window_cut_hole(win_id, rect)
-msgbox("resetting ...")
-WinSetRegion(, ahk_id)
-window_set_rect(_x, _y, _w, _h, win_id)
 
 
 win_list1 := window_list(0)

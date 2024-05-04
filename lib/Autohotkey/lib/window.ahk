@@ -197,7 +197,7 @@ window_get_geometry(hwnd) {
 
 window_cut_hole(hwnd, inner, outer := "") {
     ; Cut a rectangle into a window. But from rectangle-object
-    ; rather than this huge coordinates string.
+    ; rather than this dash-gallore-gobblygook.
     ;
     ; hwnd:     Window handle.
     ; inner:    Rectangle object with .x .y .x2 .y2 member attributes.
@@ -208,7 +208,7 @@ window_cut_hole(hwnd, inner, outer := "") {
     If (!IsObject(outer))
         outer := window_get_geometry(hwnd)
     outer_str := "0-0 " outer.w "-0 "
-    outer_str .= outer.w "-" outer.h " 0-" outer.h " 0-0"
+    outer_str .= outer.w "-" outer.h " 0-" outer.h " 0-0 "
 
     top_left2 := inner.x "-" inner.y
     inner_str := top_left2 " " inner.x2 "-" inner.y " "
