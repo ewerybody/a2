@@ -1,13 +1,15 @@
 ﻿
 ; Assemble a single string from a given array of strings.
-string_join(array_of_strings, separator:=", ") {
+string_join(array_of_strings, separator:=", ", default:="") {
     result := ""
     Loop(array_of_strings.Length - 1)
     {
-        this_item := array_of_strings[A_Index]
+        this_item := array_of_strings.get(A_Index, default)
+        if !this_item
+            Continue
         result .= this_item . separator
     }
-    last_item := array_of_strings[array_of_strings.Length]
+    last_item := array_of_strings.get(array_of_strings.Length, default)
     result .= last_item
     Return result
 }
