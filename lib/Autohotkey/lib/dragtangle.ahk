@@ -25,30 +25,30 @@ dragtangle(drag_func := ""
     ; Hotkey, *Esc, dragtangle_off, On P100
 
     cursor_set_cross()
-    CoordMode, Mouse, Screen
+    CoordMode "Mouse", "Screen"
 
     Loop
     {
-        if (GetKeyState("Escape", "p")) {
-            if IsFunc(escape_func)
+        if (GetKeyState("Escape")) {
+            if IsObject(escape_func)
                 %escape_func%(data)
             cursor_reset()
             data.escaped := true
             Return data
         }
 
-        cursor_set_cross()
-        MouseGetPos, mx, my
+        ; cursor_set_cross()
+        MouseGetPos &mx, &my
         data.mx := mx
         data.my := my
 
-        if (GetKeyState("LButton", "p")) {
+        if (GetKeyState("LButton")) {
             if (!data.started) {
                 data.started := true
                 data.start_x := mx
                 data.start_y := my
-                if IsFunc(start_func)
-                    %start_func%(data)
+                if IsObject(start_func)
+                    start_func(data)
             } else {
                 data.w := Abs(data.start_x - mx)
                 data.h := Abs(data.start_y - my)
@@ -57,17 +57,17 @@ dragtangle(drag_func := ""
                 data.x2 := data.x + data.w
                 data.y2 := data.y + data.h
                 data.dist := Sqrt(data.w**2 + data.h**2)
-                if IsFunc(drag_func)
-                    %drag_func%(data)
+                if IsObject(drag_func)
+                    drag_func(data)
             }
         } else if (data.started) {
-            if IsFunc(finished_func)
-                %finished_func%(data)
+            if IsObject(finished_func)
+                finished_func(data)
             cursor_reset()
             data.done := true
             Return data
         }
-        Sleep, %loop_delay%
+        Sleep loop_delay
     }
 
     Return data
@@ -77,6 +77,6 @@ dragtangle_off() {
     ; WIP: Currently unsure this is triggered at all.
     ; msgbox, dragtangle_off!
     ; a2tip("dragtangle_off", 1)
-    Hotkey, Esc, dragtangle_off, Off
+    Hotkey "Esc", dragtangle_off, "Off"
     return
 }
