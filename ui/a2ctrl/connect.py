@@ -190,7 +190,7 @@ def connect_hotkey(widget, name: str, cfg: dict, change_signal=None, trigger_sig
     if name in cfg:
         widget.set_config(cfg[name])
     else:
-        cfg[name] = widget.ctrl.get_user_dict()
+        cfg[name] = widget.get_user_dict()
 
 
 
