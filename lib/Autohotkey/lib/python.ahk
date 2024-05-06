@@ -2,7 +2,7 @@
 
 python_get_output(py_file, args := "") {
     py_exe := python_get_console_path()
-    cmd = "%py_exe%" "%py_file%" %args%
+    cmd := '"' py_exe '" "' py_file '" ' args
     shell := ComObject("WScript.Shell")
     exec := shell.Exec(cmd)
     errors := exec.StdErr.ReadAll()
@@ -29,28 +29,27 @@ _py_get_path(exe_type) {
     if (pypath != "")
         Return pypath
 
-    versions_string := string_join(python_supported_versions)
-    MsgBox, 16, No Matching Python Version!, Could not find a Python installation!`nSupported versions include: %versions_string%!
+    MsgBox_error("Could not find a Python installation!`nSupported versions include: " string_join(python_supported_versions)
+        , "No Matching Python Version!")
 }
 
 
 python_check_registry(exe_type) {
-    reg_name := exe_type["reg_name"]
     for i, version in python_supported_versions
     {
-        py_key = HKEY_CURRENT_USER\Software\Python\PythonCore\%version%\InstallPath
-        RegRead, pypath, %py_key%, %reg_name%
+        py_key := "HKEY_CURRENT_USER\Software\Python\PythonCore\" version "\InstallPath"
+        pypath := RegRead(py_key, exe_type.reg_name)
 
         if !string_endswith(pypath, exe_type.filename)
         {
-            py_key = HKEY_LOCAL_MACHINE\Software\Python\PythonCore\%version%\InstallPath
-            RegRead, pypath, %py_key%, %reg_name%
+            py_key := "HKEY_LOCAL_MACHINE\Software\Python\PythonCore\" version "\InstallPath"
+            pypath := RegRead(py_key, exe_type.reg_name)
         }
 
-        IfExist, %pypath%
+        If FileExist(pypath)
         {
             global a2_PY_VERSION_SHORT := version
-            Return, pypath
+            Return pypath
         }
     }
 }
