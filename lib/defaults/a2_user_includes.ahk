@@ -1,6 +1,7 @@
 ﻿#include includes\variables.ahk
-if IsObject("a2_init_calls")
+try {{
     a2_init_calls()
+}}
 #include includes\source_libs.ahk
 #include {a2data_includes}
 #include includes.ahk
