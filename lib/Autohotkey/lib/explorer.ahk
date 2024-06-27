@@ -107,10 +107,12 @@ explorer_get(hwnd:="",selection:=false) {
     return result
 }
 
-; Select a file with the given basename.
+; Select a file or folder with the given basename.or path in the current explorer
 explorer_select(basename) {
     if !(window := explorer_get_window(""))
         return ErrorLevel := "ERROR"
+
+    basename := path_basename(basename)
     file_found := 0
     for item in window.document.Folder.Items
     {
@@ -130,6 +132,7 @@ explorer_select(basename) {
 
 ; Try and retry selecting a file for a couple times.
 explorer_try_select(basename, retries := 10, delay := 500) {
+
     Loop retries
     {
         if explorer_select(basename)
