@@ -192,7 +192,7 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
         cfg_name = a2util.get_cfg_default_name(element_cfg)
         user_cfg = module_user_cfg.get(cfg_name, {})
         # pass if there is an 'enabled' entry and it's False
-        if not get_cfg_value(element_cfg, user_cfg, 'enabled', default=True):
+        if element_cfg.get('disablable', True) and not get_cfg_value(element_cfg, user_cfg, 'enabled', default=True):
             continue
 
         if module_path is None and element_cfg['typ'] == LOCAL_ELEMENT_ID:
