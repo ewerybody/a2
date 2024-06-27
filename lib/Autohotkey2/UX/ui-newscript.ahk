@@ -37,7 +37,7 @@ class NewScriptGui extends AutoHotkeyUxGui {
         lv.OnEvent('ContextMenu', 'RightClicked')
         
         deft := GetDefaultTemplate()
-        lv.Add(deft = "" ? 'Select' : '', "Empty", "Clean slate")
+        lv.Add(deft = "" ? 'Select Focus' : '', "Empty", "Clean slate")
         for ,t in this.Templates := GetScriptTemplates() {
             if ConfigRead('New\HideTemplate', t.name, false)
                 continue
@@ -71,9 +71,9 @@ class NewScriptGui extends AutoHotkeyUxGui {
             static VK_DOWN := 0x28
             if !(wParam = VK_UP || wParam = VK_DOWN)
                 return
-            g := GuiFromHwnd(hwnd, true)
-            if g is NewScriptGui && g.FocusedCtrl is Gui.Edit {
-                PostMessage nmsg, wParam, lParam, g['LV']
+            gc := GuiCtrlFromHwnd(hwnd)
+            if gc.Gui is NewScriptGui && gc is Gui.Edit {
+                PostMessage nmsg, wParam, lParam, gc.Gui['LV']
                 return true
             }
         }

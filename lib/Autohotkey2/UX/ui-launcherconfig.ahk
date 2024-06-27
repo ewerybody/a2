@@ -8,9 +8,13 @@
 
 GetVersions() {
     vmap := Map(1, Map(), 2, Map())
+    vmap.UIA := false ; Just detect whether any are present for now, to cover the most common cases (UIA supported by all or none).
     for ,f in GetUsableAutoHotkeyExes() {
-        try
+        try {
             vmap[GetMajor(f.Version)][f.Version] := true
+            if SubStr(f.Path, -8) = "_UIA.exe"
+                vmap.UIA := true
+        }
         catch as e
             trace "-[Launcher] " type(e) " checking file " A_LoopFileName ": " e.message
     }
@@ -49,13 +53,13 @@ class LauncherConfigGui extends AutoHotkeyUxGui {
         .OnEvent('Change', "ChangedVersion")
         this.AddComboBox('vBuild1 yp w150', ["Unicode 64-bit", "Unicode 32-bit", "ANSI 32-bit"])
         .OnEvent('Change', 'ChangedBuild')
-        this.AddCheckBox('vUIA1 x+m yp+2', "UI Access")
+        this.AddCheckBox('vUIA1 x+m yp+2 Disabled' (!versions.UIA), "UI Access")
         .OnEvent('Click', 'ChangedUIA')
         this.AddDDL('vVersion2 xs w110 Choose1', ["Latest 2.x", versions[2]*])
         .OnEvent('Change', 'ChangedVersion')
         this.AddComboBox('vBuild2 yp w150', ["64-bit", "32-bit"])
         .OnEvent('Change', 'ChangedBuild')
-        this.AddCheckBox('vUIA2 x+m yp+2', "UI Access")
+        this.AddCheckBox('vUIA2 x+m yp+2 Disabled' (!versions.UIA), "UI Access")
         .OnEvent('Click', 'ChangedUIA')
         this.AddText('xs y+m+8', "When detection fails")
         this.AddDDL('vFallback y+3 w110 Choose3', ["Use v1.x", "Use v2.x", "Ask the user"])
@@ -167,15 +171,23 @@ class LauncherConfigGui extends AutoHotkeyUxGui {
                 return
             if !FileExist(exe)
                 throw
-            cmd := Format('"{1}" {2}"%1" %*', exe, this['CustomUTF8'].Value ? '/cp65001 ' : '')
+            exe_uia := SubStr(exe, 1, -4) "_UIA.exe"
+            switches := this['CustomUTF8'].Visible && this['CustomUTF8'].Value ? '/cp65001 ' : ''
+            cmd := Format('"{1}" {2}"%1" %*', exe, switches)
             ; Deleting FriendlyAppName from HKCU won't work if the installer uses HKLM,
             ; so explicitly set it to the file's description
             appname := GetExeInfo(exe).Description
         }
         RegWrite appname, 'REG_SZ', key 'Open', 'FriendlyAppName'
         RegWrite cmd, 'REG_SZ', key 'Open\Command'
-        if RegRead('HKCR\AutoHotkeyScript\Shell\RunAs',, '')
-            RegWrite cmd, 'REG_SZ', key 'RunAs\Command'
+        RegWrite cmd, 'REG_SZ', key 'RunAs\Command'
+        if RegRead('HKCR\AutoHotkeyScript\Shell\UIAccess\Command',, '') {
+            if IsSet(exe_uia) && FileExist(exe_uia)
+                cmd := StrReplace(cmd, exe, exe_uia)
+            else
+                cmd := Format('"{1}" "{2}\launcher.ahk" /runwith UIA "%1" %*', A_AhkPath, A_ScriptDir)
+            RegWrite cmd, 'REG_SZ', key 'UIAccess\Command'
+        }
     }
 }
 

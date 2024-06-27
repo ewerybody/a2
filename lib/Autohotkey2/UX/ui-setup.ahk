@@ -82,15 +82,13 @@ class InstallGui extends AutoHotkeyUxGui {
     ModeChange(p*) {
         if !this.CheckAlreadyInstalled(p.Length = 0, true) {
             ; Ensure InstallDir makes sense for the new mode
-            static DefaultAllDir := (EnvGet('ProgramW6432') || A_ProgramFiles) '\AutoHotkey'
-            static DefaultUserDir := EnvGet('LocalAppData') '\Programs\AutoHotkey'
             installDir := this['InstallDir'].Value
             if this['ModeAll'].Value {
-                if installDir = '' || installDir = DefaultUserDir
-                    this['InstallDir'].Value := DefaultAllDir, this['InstallDir'].Opt('-ReadOnly')
+                if installDir = '' || installDir = InstallUtil.DefaultUserDir
+                    this['InstallDir'].Value := InstallUtil.DefaultAllDir, this['InstallDir'].Opt('-ReadOnly')
             } else
                 if installDir = '' || IsInProgramFiles(installDir)
-                    this['InstallDir'].Value := DefaultUserDir, this['InstallDir'].Opt('-ReadOnly')
+                    this['InstallDir'].Value := InstallUtil.DefaultUserDir, this['InstallDir'].Opt('-ReadOnly')
         }
         this.UpdateShield()
     }
@@ -162,6 +160,12 @@ class InstallGui extends AutoHotkeyUxGui {
             ExitApp
         }
     }
+}
+
+class InstallUtil {
+    static DefaultAllDir := (EnvGet('ProgramW6432') || A_ProgramFiles) '\AutoHotkey'
+    static DefaultUserDir := EnvGet('LocalAppData') '\Programs\AutoHotkey'
+    static DefaultDir := A_IsAdmin ? this.DefaultAllDir : this.DefaultUserDir
 }
 
 IsInProgramFiles(path) {

@@ -6,8 +6,10 @@
 
 keyname := "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.ahk\UserChoice"
 initial_progid := RegRead(keyname, "ProgId", "")
+legacy_key := "HKCU\Software\Classes\.ahk"
+legacy_assoc := RegRead(legacy_key,, "AutoHotkeyScript")
 if A_Args.Length && A_Args[1] = '/check' {
-    if initial_progid = "" || initial_progid = "AutoHotkeyScript"
+    if (initial_progid = "" || initial_progid = "AutoHotkeyScript") && legacy_assoc = "AutoHotkeyScript"
         || MsgBox("It looks like you've used an unsupported method to set the default program for .ahk files. "
             . "This will prevent the standard context menu and launcher (version auto-detect) functionality "
             . "from working. Would you like this setting to be reset for you?", "AutoHotkey", "Icon! y/n") != "yes"
@@ -19,6 +21,8 @@ FileOpen(reg_file_path, "w").Write("Windows Registry Editor Version 5.00`n"
 EnvSet "__COMPAT_LAYER", "RunAsInvoker"
 RunWait 'regedit.exe /S "' reg_file_path '"'
 EnvSet "__COMPAT_LAYER", ""
+if legacy_assoc != "AutoHotkeyScript"
+    RegWrite "AutoHotkeyScript", "REG_SZ", legacy_key
 DllCall("shell32\SHChangeNotify", "uint", 0x08000000, "uint", 0, "int", 0, "int", 0) ; SHCNE_ASSOCCHANGED
 FileDelete reg_file_path
 new_progid := RegRead(keyname, "ProgId", "")
@@ -26,7 +30,7 @@ if (new_progid != "" || A_LastError != 2)
     MsgBox "Something went wrong and the reset probably "
         . "didn't work.`n`nCurrent association: "
         . (new_progid = "" ? "(unknown)" : new_progid), "AutoHotkey", "Icon!"
-else if (initial_progid != "")
+else if (initial_progid != "" || legacy_assoc != "AutoHotkeyScript")
     MsgBox "Association of .ahk files for the current user has been reset.", "AutoHotkey", "Iconi"
 else
     MsgBox "It looks as though the current user's settings "
