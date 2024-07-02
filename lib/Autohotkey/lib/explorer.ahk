@@ -112,14 +112,21 @@ explorer_select(basename) {
     if !(window := explorer_get_window(""))
         return ErrorLevel := "ERROR"
 
-    basename := path_basename(basename)
+    basenames := []
+    if !IsObject(basename)
+        basenames.push(path_basename(basename))
+    else {
+        for name in basename
+            basenames.push(path_basename(name))
+    }
+
     file_found := 0
     for item in window.document.Folder.Items
     {
         ; Cannot use item.name because of possibly hidden extensions.
         ; Yep. There is no explicit "item.name_WITH_ext" m(
         ; https://docs.microsoft.com/en-us/windows/win32/shell/folderitem#properties
-        if (path_basename(item.path) == basename)
+        if (string_is_in_array(path_basename(item.path), basenames))
         {
             window.document.SelectItem(item, 1)
             file_found := 1
