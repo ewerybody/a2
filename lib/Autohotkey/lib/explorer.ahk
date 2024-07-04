@@ -113,11 +113,11 @@ explorer_select(basename) {
         return ErrorLevel := "ERROR"
 
     basenames := []
-    if !IsObject(basename)
-        basenames.push(path_basename(basename))
-    else {
+    if IsObject(basename) {
         for name in basename
             basenames.push(path_basename(name))
+    } else {
+        basenames.push(path_basename(basename))
     }
 
     file_found := 0
