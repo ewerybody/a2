@@ -45,9 +45,9 @@ class EditorSelectionGui extends AutoHotkeyUxGui {
     
     ShowHelpEditors(*) {
         if FileExist(chm := ROOT_DIR '\v2\AutoHotkey.chm')
-            Run 'hh.exe "ms-its:' chm '::docs/lib/Edit.htm#Editors"'
+            Run 'hh.exe "ms-its:' chm '::docs/misc/Editors.htm"'
         else
-            Run 'https://www.autohotkey.com/docs/v2/lib/Edit.htm#Editors'
+            Run 'https://www.autohotkey.com/docs/v2/misc/Editors.htm'
     }
     
     Browse(*) {

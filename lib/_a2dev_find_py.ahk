@@ -23,12 +23,12 @@ check_registry(supported_versions) {
     {
         this_version := supported_versions[A_Index]
         py_key := "HKEY_CURRENT_USER\Software\Python\PythonCore\" . this_version . "\InstallPath"
-        pypath := RegRead(py_key, reg_name)
+        pypath := RegRead(py_key, reg_name, "")
 
         if !string_endswith(pypath, exe_type.filename)
         {
             py_key := "HKEY_LOCAL_MACHINE\Software\Python\PythonCore\" . this_version . "\InstallPath"
-            pypath := RegRead(py_key, reg_name)
+            pypath := RegRead(py_key, reg_name, "")
         }
 
         If FileExist(pypath)

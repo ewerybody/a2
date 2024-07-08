@@ -107,17 +107,26 @@ explorer_get(hwnd:="",selection:=false) {
     return result
 }
 
-; Select a file with the given basename.
+; Select a file or folder with the given basename.or path in the current explorer
 explorer_select(basename) {
     if !(window := explorer_get_window(""))
         return ErrorLevel := "ERROR"
+
+    basenames := []
+    if IsObject(basename) {
+        for name in basename
+            basenames.push(path_basename(name))
+    } else {
+        basenames.push(path_basename(basename))
+    }
+
     file_found := 0
     for item in window.document.Folder.Items
     {
         ; Cannot use item.name because of possibly hidden extensions.
         ; Yep. There is no explicit "item.name_WITH_ext" m(
         ; https://docs.microsoft.com/en-us/windows/win32/shell/folderitem#properties
-        if (path_basename(item.path) == basename)
+        if (string_is_in_array(path_basename(item.path), basenames))
         {
             window.document.SelectItem(item, 1)
             file_found := 1
@@ -130,6 +139,7 @@ explorer_select(basename) {
 
 ; Try and retry selecting a file for a couple times.
 explorer_try_select(basename, retries := 10, delay := 500) {
+
     Loop retries
     {
         if explorer_select(basename)

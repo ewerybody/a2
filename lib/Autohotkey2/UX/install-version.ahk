@@ -33,7 +33,7 @@ InstallAutoHotkey(version) {
         if req.status != 200
             throw Error(req.status ' - ' req.statusText, -1)
         currentVersion := req.responseText
-        if VerCompare(currentVersion, baseVersion) < 0 || VerCompare(currentVersion, Round(baseVersion + 1)) >= 0
+        if !(currentVersion ~= '^\Q' baseVersion '\E\b')
             abort "An error occurred while trying to identify the latest available version. The downloaded version.txt was invalid.", currentVersion
         version := currentVersion
     }

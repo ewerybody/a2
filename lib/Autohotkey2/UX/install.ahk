@@ -17,7 +17,7 @@ if A_LineFile = A_ScriptFullPath
 
 Install_Main() {
     try {
-        inst := Installation()
+        Installation.Instance := inst := Installation()
         method := 'InstallFull'
         params := []
         while A_Index <= A_Args.Length {
@@ -45,11 +45,8 @@ Install_Main() {
         inst.%method%(params*)
     }
     catch as e {
-        DllCall(CallbackCreate(errBox.Bind(e)))
+        inst.ErrorBox(e, "&Exit")
         ExitApp 1
-    }
-    errBox(e) {
-        throw e
     }
 }
 
@@ -87,11 +84,10 @@ class Installation {
         if hadInstallDir := this.HasProp('InstallDir')
             DirCreate installDir := this.InstallDir
         else
-            installDir := A_ScriptDir '\..'
+            installDir := IsSet(InstallUtil) ? InstallUtil.DefaultDir : A_ScriptDir '\..'
         Loop Files installDir, 'D'
-            this.InstallDir := installDir := A_LoopFileFullPath
-        else
-            throw ValueError("Invalid target directory",, installDir)
+            installDir := A_LoopFileFullPath
+        this.InstallDir := installDir
         SetRegView 64
         installDirs := []
         for rootKey in ['HKLM', 'HKCU']
@@ -107,8 +103,18 @@ class Installation {
             if installDirs[this.UserInstall?2:1]
                 this.InstallDir := installDirs[this.UserInstall?2:1]
             ; Default to the location and mode of any other existing installation
-            else if installDirs[this.UserInstall?1:2]
+            else if installDirs[this.UserInstall?1:2] {
+                if !A_IsAdmin && this.UserInstall {
+                    ; Use the existing all-user installation only if elevation is successful
+                    try
+                        RunWait '*runas ' DllCall('GetCommandLine', 'str')
+                    catch
+                        return ; Presume user cancelled; continue as user
+                    else
+                        ExitApp
+                }
                 this.InstallDir := installDirs[this.UserInstall?1:2], this.UserInstall := !this.UserInstall
+            }
         }
     }
     
@@ -177,7 +183,10 @@ class Installation {
         
         ; Execute post-install actions
         for item in this.PostAction
-            item(this)
+            try
+                item(this)
+            catch as e
+                this.ErrorBox(e, "&Continue")
         
         ; Write file list to disk
         if this.Hashes.Count
@@ -361,9 +370,11 @@ class Installation {
         ; Close scripts and help files
         this.PreUninstallChecks files
         
-        ; Remove from registry only if being fully uninstalled
-        if versions = ''
+        ; Remove registry key and certificate only if being fully uninstalled
+        if versions = '' {
             this.UninstallRegistry
+            try EnableUIAccess_DeleteCertAndKey("AutoHotkey")
+        }
         
         ; Remove files
         SetWorkingDir this.InstallDir
@@ -775,6 +786,25 @@ class Installation {
         ExitApp 1
     }
     
+    ErrorBox(err, abortText?) { ; Show a standard error dialog with stack trace etc.
+        OnMessage(0xBAAD, newthread, -2),
+        PostMessage(0xBAAD, 0, 0, A_ScriptHwnd),
+        SendMessage(0xBAAD, ObjPtr(err), 0, A_ScriptHwnd),
+        OnMessage(0xBAAD, newthread, 0)
+        newthread(ep, *) {
+            if ep
+                throw ObjFromPtrAddRef(ep)
+            if ep ; This line prevents an "unreachable" warning in v2.0.
+                return 0 ; This line prevents continuation of the function in v2.1-alpha.3+ (if user selects Continue).
+            DetectHiddenWindows true
+            WinExist "ahk_class #32770 ahk_pid " ProcessExist()
+            Loop 5
+                ControlHide "Button" A_Index+1
+            ControlSetText abortText, "Button1"
+            return 0
+        }
+    }
+    
     GetTargetUX() {
         try {
             ; For registered installations, InstallCommand allows for future changes.
@@ -841,8 +871,10 @@ class Installation {
     }
     
     CreateStartShortcut() {
+        if this.Hashes.Has(this.StartFolder '\AutoHotkey.lnk')
+            try FileDelete this.StartFolder '\AutoHotkey.lnk'
         CreateAppShortcut(
-            lnk := this.StartFolder '\AutoHotkey.lnk', {
+            lnk := this.StartFolder '\AutoHotkey Dash.lnk', {
                 target: this.Interpreter,
                 args: Format('"{1}\UX\ui-dash.ahk"', this.InstallDir),
                 desc: "AutoHotkey Dash",
@@ -880,30 +912,35 @@ class Installation {
     MakeUIA(baseFile) {
         SplitPath baseFile,, &baseDir,, &baseName
         baseDir := baseDir = '.' ? '' : baseDir '\'
-        FileCopy baseFile, newPath := baseDir baseName '_UIA.exe', true
+        newPath := baseDir baseName '_UIA.exe'
         static abort := false  ; Let "Abort" disable MakeUIA calls, but let other PostActions complete.
         while !abort {
+            FileCopy baseFile, newPath, true
             try {
                 EnableUIAccess newPath
                 break
             }
             catch as e {
                 try FileDelete newPath
-                if e.What != "EndUpdateResource"
-                    throw
+                if e.What != "EndUpdateResource" {
+                    abort := true
+                    this.WarnBox "An error occurred while generating files to support the `"Run with UI access`" option. An error dialog will be shown with additional information, then setup will continue."
+                    throw e
+                }
                 if this.Silent {
                     if A_Index > 4
                         break
                     Sleep 500
                 }
-                switch MsgBox("Unable to create " baseName ". Try adding an exclusion in your antivirus software. If that doesn't work, please report the issue.`n`nError: " e.Message
-                    ,, "a/r/i") {
+                switch MsgBox("Unable to create " baseName "_UIA.exe. Try adding an exclusion in your antivirus software. If that doesn't work, please report the issue.`n`nError: " e.Message
+                    , this.DialogTitle, "Icon! a/r/i") {
                 case "Abort": abort := true
                 case "Ignore": break
                 }
             }
         }
-        this.AddFileHash newPath, '' ; For uninstall
+        if FileExist(newPath)
+            this.AddFileHash newPath, '' ; For uninstall
     }
     
     IsTrustedLocation(path) { ; http://msdn.com/library/bb756929
@@ -934,6 +971,9 @@ class Installation {
         if ConfigRead('Launcher\v1', 'UTF8', '') = ''
             && InStr(RegRead('HKCR\' this.ScriptProgId '\Shell\Open\Command',, ''), '/cp65001 ')
             ConfigWrite(true, 'Launcher\v1', 'UTF8')
+        
+        if FileExist('Compiler\Ahk2Exe.exe')
+            this.CreateCompilerShortcut
     
         ; Record these for Uninstall
         add 'AutoHotkey{1}.exe', '', 'A32', 'U32', 'U64', 'A32_UIA', 'U32_UIA', 'U64_UIA'

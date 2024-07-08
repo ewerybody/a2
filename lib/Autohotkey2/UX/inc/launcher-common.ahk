@@ -17,7 +17,7 @@ GetExeInfo(exe) {
         else throw OSError()
     if InStr(exe, '_UIA')
         prop.Description .= ' UIA'
-    prop.Version := RegExReplace(prop.Version, 'i)[a-z]{2,}\K(?=\d)|, ', '.') ; Hack-fix for erroneous version numbers (AutoHotkey_H v2.0-beta3-H...)
+    prop.Version := RegExReplace(prop.Version, 'i)-[a-z]{4,}\K(?=\d)|, ', '.') ; Hack-fix for erroneous version numbers (AutoHotkey_H v2.0-beta3-H...)
     return prop
 }
 

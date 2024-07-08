@@ -13,7 +13,7 @@ EnableUIAccess(ExePath) {
             , "uint", 0, "uint", 0x80007 ; FIND_SUBJECT_STR
             , "wstr", CertName, "ptr", cert.ptr, "ptr"))
         && !(DllCall("Crypt32\CryptAcquireCertificatePrivateKey"
-            , "ptr", cert, "uint", 1 ; CRYPT_ACQUIRE_CACHE_FLAG
+            , "ptr", cert, "uint", 5 ; CRYPT_ACQUIRE_CACHE_FLAG|CRYPT_ACQUIRE_COMPARE_KEY_FLAG
             , "ptr", 0, "ptr*", 0, "uint*", &keySpec:=0, "ptr", 0)
             && (keySpec & 2)) { ; AT_SIGNATURE
         ; Keep looking for a certificate with a private key.
@@ -33,8 +33,12 @@ EnableUIAccess_SetManifest(ExePath) {
     xml.setProperty("SelectionNamespaces"
         , "xmlns:v1='urn:schemas-microsoft-com:asm.v1' "
         . "xmlns:v3='urn:schemas-microsoft-com:asm.v3'")
-    if !xml.load("res://" ExePath "/#24/#1") ; Load current manifest
-        throw Error("File or manifest not found",, ExePath)
+    try
+        if !xml.loadXML(EnableUIAccess_ReadManifest(ExePath))
+            throw Error("Invalid manifest")
+    catch as e
+        throw Error("Error loading manifest from " ExePath,, e.Message "`n  @ " e.File ":" e.Line)
+    
     
     node := xml.selectSingleNode("/v1:assembly/v3:trustInfo/v3:security"
                     . "/v3:requestedPrivileges/v3:requestedExecutionLevel")
@@ -63,6 +67,23 @@ EnableUIAccess_SetManifest(ExePath) {
     throw OSError(A_LastError, "EndUpdateResource")
 }
 
+EnableUIAccess_ReadManifest(ExePath) {
+	if !(hmod := DllCall("LoadLibraryEx", "str", ExePath, "ptr", 0, "uint", 2, "ptr"))
+		throw OSError()
+	try {
+		if !(hres := DllCall("FindResource", "ptr", hmod, "ptr", 1, "ptr", 24, "ptr"))
+			throw OSError()
+		size := DllCall("SizeofResource", "ptr", hmod, "ptr", hres, "uint")
+		if !(hglb := DllCall("LoadResource", "ptr", hmod, "ptr", hres, "ptr"))
+			throw OSError()
+		if !(pres := DllCall("LockResource", "ptr", hglb, "ptr"))
+			throw OSError()
+		return StrGet(pres, size, "utf-8")
+	}
+	finally
+		DllCall("FreeLibrary", "ptr", hmod)
+}
+
 EnableUIAccess_CreateCert(Name, hStore) {
     ; Here Name is used as the key container name.
     prov := CryptContext()
@@ -88,13 +109,47 @@ EnableUIAccess_CreateCert(Name, hStore) {
     }
     cnb := Buffer(2*A_PtrSize), NumPut("ptr", cbName, "ptr", pbName, cnb)
 
-    endTime := Buffer(16)
-    DllCall("GetSystemTime", "ptr", endTime)
-    NumPut("ushort", NumGet(endTime, "ushort") + 10, endTime) ; += 10 years
+    ; Set expiry to 9999-01-01 12pm +0.
+    NumPut("short", 9999, "sort", 1, "short", 5, "short", 1, "short", 12, endTime := Buffer(16, 0))
+
+    StrPut("2.5.29.4", szOID_KEY_USAGE_RESTRICTION := Buffer(9),, "cp0")
+    StrPut("2.5.29.37", szOID_ENHANCED_KEY_USAGE := Buffer(10),, "cp0")
+    StrPut("1.3.6.1.5.5.7.3.3", szOID_PKIX_KP_CODE_SIGNING := Buffer(18),, "cp0")
+
+    ; CERT_KEY_USAGE_RESTRICTION_INFO key_usage;
+    key_usage := Buffer(6*A_PtrSize, 0)
+    NumPut('ptr', 0, 'ptr', 0, 'ptr', 1, 'ptr', key_usage.ptr + 5*A_PtrSize, 'ptr', 0
+        , 'uchar', (CERT_DATA_ENCIPHERMENT_KEY_USAGE := 0x10)
+                 | (CERT_DIGITAL_SIGNATURE_KEY_USAGE := 0x80), key_usage)
+
+    ; CERT_ENHKEY_USAGE enh_usage;
+    enh_usage := Buffer(3*A_PtrSize)
+    NumPut("ptr", 1, "ptr", enh_usage.ptr + 2*A_PtrSize, "ptr", szOID_PKIX_KP_CODE_SIGNING.ptr, enh_usage)
+
+    key_usage_data := EncodeObject(szOID_KEY_USAGE_RESTRICTION, key_usage)
+    enh_usage_data := EncodeObject(szOID_ENHANCED_KEY_USAGE, enh_usage)
+
+    EncodeObject(structType, structInfo) {
+        encoder := DllCall.Bind("Crypt32\CryptEncodeObject", "uint", X509_ASN_ENCODING := 1
+            , "ptr", structType, "ptr", structInfo)
+        if !encoder("ptr", 0, "uint*", &enc_size := 0)
+            throw OSError()
+        enc_data := Buffer(enc_size)
+        if !encoder("ptr", enc_data, "uint*", &enc_size)
+            throw OSError()
+        enc_data.Size := enc_size
+        return enc_data
+    }
+
+    ; CERT_EXTENSION extension[2]; CERT_EXTENSIONS extensions;
+    NumPut("ptr", szOID_KEY_USAGE_RESTRICTION.ptr, "ptr", true, "ptr", key_usage_data.size, "ptr", key_usage_data.ptr
+        ,  "ptr", szOID_ENHANCED_KEY_USAGE.ptr,    "ptr", true, "ptr", enh_usage_data.size, "ptr", enh_usage_data.ptr
+        , extension := Buffer(8*A_PtrSize))
+    NumPut("ptr", 2, "ptr", extension.ptr, extensions := Buffer(2*A_PtrSize))
 
     if !hCert := DllCall("Crypt32\CertCreateSelfSignCertificate"
         , "ptr", prov, "ptr", cnb, "uint", 0, "ptr", 0
-        , "ptr", 0, "ptr", 0, "ptr", endTime, "ptr", 0, "ptr")
+        , "ptr", 0, "ptr", 0, "ptr", endTime, "ptr", extensions, "ptr")
         throw OSError()
     cert := CertContext(hCert)
 

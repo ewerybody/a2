@@ -11,7 +11,7 @@
 #include inc\launcher-common.ahk
 #include inc\ui-base.ahk
 
-if A_ScriptFullPath == A_LineFile {
+if A_ScriptFullPath == A_LineFile || A_LineFile == '*#1' {
     SetWorkingDir A_InitialWorkingDir
     Main
 }
@@ -39,7 +39,7 @@ Main() {
         case '/Which':
             A_Args.which := true
             if trace.Enabled
-                trace.DefineProp 'call', {call: (this, s) => OutputDebug(s)} ; Don't use stdout.
+                trace.DefineProp 'call', {call: (this, s) => OutputDebug(s "`n")} ; Don't use stdout.
         case '/iLib', '/include':
             switches.push(arg)
             switches.push(nextArgValue())
@@ -50,12 +50,8 @@ Main() {
     }
     if !IsSet(ScriptPath)
         && !FileExist(ScriptPath := A_ScriptDir "\AutoHotkey.ahk")
-        && !FileExist(ScriptPath := A_MyDocuments "\AutoHotkey.ahk") {
-        ; TODO: something more useful?
-        if FileExist(A_ScriptDir "\AutoHotkey.chm")
-            Run 'hh.exe "ms-its:' A_ScriptDir '\AutoHotkey.chm::/docs/Welcome.htm"',, 'Max'
-        else
-            Run 'https://lexikos.github.io/v2/docs/Welcome.htm'
+        && !FileExist(ScriptPath := A_MyDocuments "\AutoHotkey.ahk")
+        && !FileExist(ScriptPath := A_ScriptDir "\ui-dash.ahk") {
         ExitApp
     }
     if ScriptPath = '*'
@@ -65,35 +61,82 @@ Main() {
 
 GetLaunchParameters(ScriptPath, interactive:=false) {
     code := FileRead(ScriptPath, 'UTF-8')
-    if RegExMatch(code, 'im)^[ `t]*#Requires[ `t]+AutoHotkey[ `t]+(.*)', &m) {
-        ; Replace "; prefer x." with "x" and remove other comments
-        prefer := RegExReplace(m.1, 'i);\s*prefer([ `t]+[^;`r`n\.]+)|;.*', '$1')
-        ; Extract version requirement
-        if RegExMatch(prefer, '(?<!\S)(?:>=)?v(\d\S+)', &m)
-            v := m.1, prefer := SubStr(prefer, 1, m.Pos-1) . SubStr(prefer, m.Pos + m.Len)
-        ; Insert commas as needed
-        prefer := RegExReplace(prefer, '[^\s,]\K\s+(?!$)', ",")
+    require := prefer := rule := exe := ""
+    if RegExMatch(code, 'im)^[ `t]*#Requires[ `t]+AutoHotkey[ `t]+([^;`r`n]*?)[ `t]*(?:;[ `t]*prefer[ `t]+([^;`r`n\.]+))?(?:$|;)', &m) {
+        trace "![Launcher] " m.0
+        require := RegExReplace(m.1, '[^\s,]\K\s+(?!$)', ",")
+        prefer := RegExReplace(m.2, '[^\s,]\K\s+(?!$)', ",")
+        rule := "#Requires"
     }
-    if IsSet(v)
-        i := {v: v, r: "#Requires"}
-    else if ConfigRead('Launcher', 'Identify', true)
+    else if ConfigRead('Launcher', 'Identify', true) {
         i := IdentifyBySyntax(code)
+        trace "![Launcher] syntax says version " (i.v || "unknown") " -- " i.r
+        if i.v
+            require := String(i.v)
+        rule := i.r
+        if rule = "error"
+            MsgBox "Syntax detection has failed due to an error in the launcher.`n`n" Type(i.err) ": " i.err.Message " " i.err.Extra "`n`n"
+                . "Character index " i.pos "`n" SubStr(code, i.pos, 50) "`n...`n`n"
+                . "Please report this on the forums, with sample code that triggers the error.", "AutoHotkey Launcher", "icon!"
+    }
+    else {
+        trace "![Launcher] version unknown - syntax-checking is disabled"
+    }
+    if !(hasv := RegExMatch(require, '(^|,)\s*(?!(32|64)-bit)[<>=]*v?\d')) {
+        ; No version specified or detected
+        if hasv := v := ConfigRead('Launcher', 'Fallback', "") {
+            require .= (require=''?'':',') v
+            trace "![Launcher] using fallback version " v
+        }
+    }
+    v := GetVersionToInstall(require) ; Currently used for multiple purposes
+    if !hasv
+        exe := interactive ? PromptMajorVersion(ScriptPath, require, prefer) : ""
     else
-        i := {v: 0, r: "syntax-checking is disabled"}
-    v := i.v || ConfigRead('Launcher', 'Fallback', "")
-    trace "![Launcher] version " (v || "unknown") " -- " i.r
-    if !v
-        exe := interactive ? PromptMajorVersion(ScriptPath) : ""
-    else
-        if !exe := GetRequiredOrPreferredExe(v, prefer ?? '')
-            if interactive
-                exe := TryToInstallVersion(v, i.v ? i.r : '', ScriptPath)
-    lp := {exe: exe, id: i, v: v, switches: []}
+        if !exe := GetRequiredOrPreferredExe(require, prefer)
+            if interactive {
+                if v && !LocateExeByVersion(v, '')
+                    exe := TryToInstallVersion(v, rule, ScriptPath, require, prefer)
+                else
+                    RequirementNotMetMsgBox require, ScriptPath
+            }
+    lp := {exe: exe, id: exe ? GetMajor(exe.Version) : GetLikelyMajor(require), v: v, switches: []}
     if exe {
         if GetMajor(exe.Version) = 1 && ConfigRead('Launcher\v1', 'UTF8', false)
             lp.switches.Push('/CP65001')
     }
     return lp
+}
+
+ParseRequiresVersion(s) {
+    return RegExMatch(s, 'i)^(?!(?:32|64)-bit$)(?<op>[<>=]*)v?(?<version>(?<major>\d+)\b\S*)', &m) ? m : 0
+}
+
+GetLikelyMajor(r) {
+    if IsNumber(r)
+        return Integer(r)
+    ; Usually there would be either a version number with no operator
+    ; or a range where the lower and upper bound have the same major.
+    Loop Parse r, ",", " `t"
+        if (m := ParseRequiresVersion(A_LoopField)) && m.op != '<'
+            return m.major
+    return ''
+}
+
+GetVersionToInstall(r) {
+    ; TryToInstallVersion currently only supports the latest bug-fix release,
+    ; so don't try to install if there's a complex version requirement.
+    if IsNumber(r)
+        return r
+    v := ""
+    Loop Parse r, ",", " `t" {
+        if (m := ParseRequiresVersion(A_LoopField)) {
+            if m.op
+                return ''
+            v := m.version
+        }
+    }
+    return v
 }
 
 IdentifyAndLaunch(ScriptPath, args, switches) {
@@ -102,7 +145,7 @@ IdentifyAndLaunch(ScriptPath, args, switches) {
         try FileAppend(lp.v "`n"
             (lp.exe ? lp.exe.Path : "") "`n"
             (lp.switches.Length ? lp.switches[1] : "") "`n", '*', 'UTF-8-RAW')
-        ExitApp lp.id.v ? GetMajor(lp.id.v) : 0
+        ExitApp lp.id
     }
     if !lp.exe
         ExitApp 2
@@ -110,22 +153,23 @@ IdentifyAndLaunch(ScriptPath, args, switches) {
     ExitApp LaunchScript(lp.exe.Path, ScriptPath, args, switches)
 }
 
-TryToInstallVersion(v, r, ScriptPath) {
+TryToInstallVersion(v, r, ScriptPath, require, prefer) {
+    ; This is currently designed only for downloading the latest bug-fix of a given minor version.
     SplitPath ScriptPath, &name
-    m := ' script you are trying to run requires AutoHotkey v' v ', which is not installed.`n`nScript:`t' name
-    m := !(r && r != '#Requires') ? 'The' m : 'It looks like the' m '`nRule:`t' r
+    m := ' script you are trying to run requires AutoHotkey v' v ', which is not installed.'
+    m := !(r && r != '#Requires') ? 'The' m '`n`nScript:`t' name : 'It looks like the' m '`nIf the version has been misidentified, please add a #Requires directive to your script file.`n`nScript:`t' name '`nRule:`t' r
     if downloadable := IsNumber(v) || VerCompare(v, '1.1.24.02') >= 0 {
         ; Get current version compatible with v.
         bv := v = 1 ? '1.1' : IsInteger(v) ? v '.0' : RegExReplace(v, '^\d+(?:\.\d+)?\b\K.*')
         req := ComObject('Msxml2.XMLHTTP')
         req.open('GET', Format('https://www.autohotkey.com/download/{}/version.txt', bv), false)
-        req.send()
+        try req.send()
         if req.status = 200 && RegExMatch(cv := req.responseText, '^\d+\.[\w\+\-\.]+$') && VerCompare(cv, v) >= 0
             m .= '`n`nWe can try to download and install AutoHotkey v' cv ' for you, while retaining the ability to use the versions already installed.`n`nDownload and install AutoHotkey v' cv '?'
         else
             downloadable := false
     }
-    if !A_IsAdmin && RegRead('HKLM\SOFTWARE\AutoHotkey', 'InstallDir', "") = ROOT_DIR
+    if downloadable && !A_IsAdmin && RegRead('HKLM\SOFTWARE\AutoHotkey', 'InstallDir', "") = ROOT_DIR
         SetTimer(() => (
             WinExist('ahk_class #32770 ahk_pid ' ProcessExist()) &&
             SendMessage(0x160C,, true, 'Button1') ; BCM_SETSHIELD := 0x160C
@@ -134,33 +178,59 @@ TryToInstallVersion(v, r, ScriptPath) {
         return false
     if RunWait(Format('"{}" /script "{}\install-version.ahk" "{}"', A_AhkPath, A_ScriptDir, cv)) != 0
         return false
-    return exe := GetRequiredOrPreferredExe(v)
+    return exe := GetRequiredOrPreferredExe(require, prefer)
 }
 
-GetRequiredOrPreferredExe(v, prefer:='') {
-    section := 'Launcher\v' GetMajor(v)
-    userv := ConfigRead(section, 'Version', "")
-    prefer := (A_Args.HasProp('runwith') ? A_Args.runwith ',' : '') . prefer
-    prefer .= ',' (ConfigRead(section, 'Build', (A_Is64bitOS ? "64," : "") "!ANSI"))
-    prefer .= ',' (ConfigRead(section, 'UIA', false) ? 'UIA' : '!UIA')
-    if vexact := (userv != "" && (IsInteger(v) || VerCompare(v, userv) < 0))
-        v := userv
-    return LocateExeByVersion(v, vexact, Trim(prefer, ','))
+RequirementNotMetMsgBox(require, ScriptPath) {
+    SplitPath ScriptPath, &name
+    MsgBox 'Unable to locate the appropriate interpreter to run this script.`n`nScript:`t' name '`nRequires: ' StrReplace(require, ',', ' '), 'AutoHotkey', 'Icon!'
 }
 
-LocateExeByVersion(v, vexact:=false, prefer:='!UIA, 64, !ANSI') {
-    trace '![Launcher] Attempting to locate v' v '; prefer ' prefer
-    majorVer := GetMajor(v), best := '', bestscore := 0
-    IsInteger(v) && v .= '-' ; Allow pre-release versions.
+GetRequiredOrPreferredExe(require, prefer:='') {
+    if A_Args.HasProp('runwith')
+        prefer := A_Args.runwith ',' prefer
+    return LocateExeByVersion(require, Trim(prefer, ','))
+}
+
+LocateExeByVersion(require, prefer:='!UIA, 64, !ANSI') {
+    trace '![Launcher] locating exe: require ' require (prefer='' ? '' : '; prefer ' prefer)
+    best := '', bestscore := 0, cPrefMap := Map()
     for ,f in GetUsableAutoHotkeyExes() {
         try {
-            relation := VerCompare(f.Version, v)
-            if vexact ? relation != 0 : (relation < 0 || GetMajor(f.Version) > majorVer) {
-                ; trace '![Launcher] Skipping v' f.Version ': ' f.Path
-                continue
+            ; Check requirements first
+            fMajor := GetMajor(f.Version)
+            Loop Parse require, ",", " " {
+                if A_LoopField = ""
+                    continue
+                if m := ParseRequiresVersion(A_LoopField) {
+                    if !VerCompare(f.Version, (m.op ? '' : '>=') A_LoopField) {
+                        ; trace '![Launcher] ' f.Version ' ' (m.op ? '' : '>=') A_LoopField ' = false'
+                        continue 2
+                    }
+                    if !m.op && fMajor > m.major { ; No operator implies it must be same major version
+                        ; trace '![Launcher] major ' f.Version ' > ' m.version
+                        continue 2
+                    }
+                }
+                else if !matchPref(f.Description, A_LoopField) {
+                    ; trace '![Launcher] no match for "' A_LoopField '" in ' f.Description
+                    continue 2
+                }
             }
+            ; Determine additional user preferences based on major version
+            if !(cPref := cPrefMap.Get(fMajor, 0)) {
+                section := 'Launcher\v' fMajor
+                cPref := ConfigRead(section, 'Version', "")
+                cPref := {
+                    V: cPref ? '=' cPref ',' : '<0,',
+                    D: ',' (ConfigRead(section, 'Build', (A_Is64bitOS ? "64," : "") "!ANSI"))
+                    .  ',' (ConfigRead(section, 'UIA', false) ? 'UIA' : '!UIA')
+                }
+                cPrefMap.Set(fMajor, cPref)
+            }
+            ; Calculate preference score
             fscore := 0
-            Loop Parse prefer, ",", " " {
+            Loop Parse cPref.V prefer cPref.D, ",", " " {
                 if A_LoopField = ""
                     continue
                 fscore <<= 1
@@ -170,10 +240,10 @@ LocateExeByVersion(v, vexact:=false, prefer:='!UIA, 64, !ANSI') {
                 fscore |= 1
             }
             ; trace '![Launcher] ' fscore ' v' f.Version ' ' f.Path
-            ; Prefer later version if all else matches.  If version also matches, prefer later
-            ; files enumeration order is generally AutoHotkey.exe, ..A32.exe, ..U32.exe, ..U64.exe.
+            ; Prefer later version if all else matches.  If version also matches, prefer later files,
+            ; as enumeration order is generally AutoHotkey.exe, ..A32.exe, ..U32.exe, ..U64.exe.
             if bestscore < fscore
-                || bestscore = fscore && (vexact || VerCompare(f.Version, best.Version) > 0)
+                || bestscore = fscore && VerCompare(f.Version, best.Version) >= 0
                 bestscore := fscore, best := f
         }
         catch as e {
@@ -185,8 +255,11 @@ LocateExeByVersion(v, vexact:=false, prefer:='!UIA, 64, !ANSI') {
     matchPref(desc, pref) => SubStr(pref,1,1) != "!" ? InStr(desc, pref) : !InStr(desc, SubStr(pref,2))
 }
 
-PromptMajorVersion(ScriptPath:="") {
-    majors := LocateMajorVersions()
+PromptMajorVersion(ScriptPath, require:='', prefer:='') {
+    majors := Map()
+    Loop 2
+        if f := GetRequiredOrPreferredExe(A_Index ',' require, prefer)
+            majors[A_Index] := f
     switch majors.Count {
     case 1:
         for , f in majors
@@ -206,14 +279,6 @@ PromptMajorVersion(ScriptPath:="") {
         ExitApp
     }
     return prompt.selection
-}
-
-LocateMajorVersions(filePattern:='', fileLoopOpt:='R') {
-    majors := Map()
-    Loop 2
-        if f := GetRequiredOrPreferredExe(A_Index)
-            majors[A_Index] := f
-    return majors
 }
 
 class Handle {
@@ -346,7 +411,9 @@ class VersionSelectGui extends AutoHotkeyUxGui {
     }
     
     Confirm(*) {
-        this.selection := this.files[this['List'].GetNext()]
+        if !(i := this['List'].GetNext())
+            return
+        this.selection := this.files[i]
         this.Hide()
     }
     

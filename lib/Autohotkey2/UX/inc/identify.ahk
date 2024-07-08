@@ -3,7 +3,7 @@
 IdentifyBySyntax(code) {
     static identify_regex := get_identify_regex()
     p := 1, count_1 := count_2 := 0, version := marks := ''
-    while (p := RegExMatch(code, identify_regex, &m, p)) {
+    try while (p := RegExMatch(code, identify_regex, &m, p)) {
         p += m.Len()
         if SubStr(m.mark,1,1) = 'v' {
             switch SubStr(m.mark,2,1) {   
@@ -14,6 +14,8 @@ IdentifyBySyntax(code) {
                 marks .= m.mark ' '
         }
     }
+    catch as e
+        return {v: 0, r: "error", err: e, pos: p}
     if !(count_1 || count_2)
         return {v: 0, r: "no tell-tale matches"}
     ; Use a simple, cautious approach for now: select a version only if there were
