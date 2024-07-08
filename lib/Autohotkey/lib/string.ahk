@@ -2,6 +2,9 @@
 ; Assemble a single string from a given array of strings.
 string_join(array_of_strings, separator:=", ", default:="") {
     result := ""
+    if not array_of_strings.Length
+        Return result
+
     Loop(array_of_strings.Length - 1)
     {
         this_item := array_of_strings.get(A_Index, default)
