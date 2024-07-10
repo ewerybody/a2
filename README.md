@@ -38,23 +38,20 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 
 
 ## news:
-* Thanks to [rcedit](https://github.com/electron/rcedit) from the **electron** project we now have fully automated package building, zipping and versioning. 🚀 Before I actually opened up Visual Studio 2017 and hacked in the updated version numbers into the sfx file for building the installer executable...
-* The humongous ["new structure" branch](https://github.com/ewerybody/a2/issues/152) was finally merged back to master ↪ and the issues in the endless [road-to-release-project](https://github.com/ewerybody/a2/projects/1) are thinning out. So we have the package builder back up and running, the structure is much nicer and maintainable 👍, local python snippets are now files and finally debugable!
-* **PySide2 ✔**!! And **Python 3.6.5 ✔**!! Whow! The [first release project](https://github.com/ewerybody/a2/projects/1) is coming closer! We also reached > **1000 commits** already and on [4. of July](https://github.com/ewerybody/a2/commit/71031e49299a2e1189a30405380581b02c28c5c9) **a2 will turn 5** on github!
-* **Hotkey widgets** now show the scope right away and users can edit if they desire. Some shots in the [gallery](http://imgur.com/a/fkD8u)
-* Package **download** and **update** checker threads are implemented!! 🎊 yay 🥂 This is quite a big deal for this project.
-* Quite some stuff: **New Element Dialog** can now add to local module or globally and enlist in the display list.
- **Unicode HotStrings** start to work a bit. Keep crossing fingers! **New Label element**. I added some stuff to the [gallery](http://imgur.com/a/fkD8u)
-* **animated gifs ftw!** I created a [gallery on imgur](http://imgur.com/a/fkD8u) to make latest changes a little more visual. Something between a video and just writing a proper commit msg. I know I need to make videos! Please be patient! :]
-* **package building** :package: works now! Using [PyInstaller](https://github.com/pyinstaller/pyinstaller) and some batch and py scripting we can now build self-containing a2 packages with no further dependencies. To do that of course there is now one more dependency: `pip install PyInstaller`. [The milestone](https://github.com/ewerybody/a2/milestones/alpha%20preview) is coming closer!!
-* since there is no option for a default issue view [**backlog**](https://github.com/ewerybody/a2/issues?q=label%3Abacklog) and [**wontfix**](https://github.com/ewerybody/a2/issues?q=label%3Awontfix) issues have been "closed" for better overview (and looking like there is less todo). They are still there! That's why I put the links. When such an issue is tackled it will be opened again. When closed the wontfix or backlog label will be removed.
-* **a2/a2.modules separation complete!** There are still a lot of features to add but the main functionality is implemented: One can have multiple module sources and enable/disable them individually. You see there is a lot less [Autohotkey code here](https://github.com/ewerybody/a2/search?l=autohotkey) now. See [the **a2.modules** project](https://github.com/ewerybody/a2.modules) for the standard ones.
+* Apologies for the long silence here. But there are some nice big updates cooking :)
+  * The AHK2 conversion is almost complete! Like [speculated in my blogpost]([url](https://goodsoul.de/blog/a2works4me/)) I jumped into [the Autohotkey 2 task]([url](https://github.com/ewerybody/a2/issues/266)) right away. There are now `ahk2` branches [in here]([url](https://github.com/ewerybody/a2/tree/ahk2)), [a2.modules]([url](https://github.com/ewerybody/a2.modules/tree/ahk2)) as well as [a2.modlab]([url](https://github.com/a2script/a2.modlab/tree/ahk2)) with over 140 commits!
+  * What needs to be done now aren't just the other things I blogged, sadly. First the dev experience needs to be improved a bit! There will be some tooling, helping ahk1 workspaces to adapt to the changes. Some of that will also be valid for the releases. Like making custom changes fit for ahk2. I think I'll do another blog post about the general conversion soon there are some handfull of insights but not too many.
+  * then the build scripts and install loop need some love
+  * then we'll have a new release!
+Really looking forward to this one :) I actually kind of forced myself to do this by no longer improving on anything ahk1. So if I wanna dogfeed the thing to me it HAS to be with the ahk2 stuff!
 
+  
 ## a2 main loop layout:
 ![](https://i.imgur.com/zyv1mUb.gif)
 
 ## blog posts:
-* [a2 – the first humble steps](http://goodsoul.de/?p=780)
+* [a2 – works for me](https://goodsoul.de/blog/a2works4me/)
+* [a2 – the first humble steps]([http://goodsoul.de/?p=780](https://goodsoul.de/wp/?p=780))
 
 ## <a name="dev-team"></a>Authors/Contributors
 * [Eric Werner (ewerybody)](https://github.com/ewerybody)
