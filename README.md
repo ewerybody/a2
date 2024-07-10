@@ -36,16 +36,8 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 * streamlined github driven deployment
 * ...
 
+"News" have been moved. There is now [an a2 Announcements discussion](https://github.com/ewerybody/a2/discussions/281)
 
-## news:
-* Apologies for the long silence here. But there are some nice big updates cooking :)
-  * The AHK2 conversion is almost complete! Like [speculated in my blogpost]([url](https://goodsoul.de/blog/a2works4me/)) I jumped into [the Autohotkey 2 task]([url](https://github.com/ewerybody/a2/issues/266)) right away. There are now `ahk2` branches [in here]([url](https://github.com/ewerybody/a2/tree/ahk2)), [a2.modules]([url](https://github.com/ewerybody/a2.modules/tree/ahk2)) as well as [a2.modlab]([url](https://github.com/a2script/a2.modlab/tree/ahk2)) with over 140 commits!
-  * What needs to be done now aren't just the other things I blogged, sadly. First the dev experience needs to be improved a bit! There will be some tooling, helping ahk1 workspaces to adapt to the changes. Some of that will also be valid for the releases. Like making custom changes fit for ahk2. I think I'll do another blog post about the general conversion soon there are some handfull of insights but not too many.
-  * then the build scripts and install loop need some love
-  * then we'll have a new release!
-Really looking forward to this one :) I actually kind of forced myself to do this by no longer improving on anything ahk1. So if I wanna dogfeed the thing to me it HAS to be with the ahk2 stuff!
-
-  
 ## a2 main loop layout:
 ![](https://i.imgur.com/zyv1mUb.gif)
 
