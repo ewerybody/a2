@@ -64,8 +64,8 @@ class Test(unittest.TestCase):
 
             key, value = str(uuid.uuid4()).replace('-', ''), str(uuid.uuid4())
             a2ahk.set_variable(test_file, key, value, create_key=True)
-            ahkvars = a2ahk.get_variables(test_file)
-            self.assertEqual(ahkvars[key], value)
+            ahk_vars = a2ahk.get_variables(test_file)
+            self.assertEqual(ahk_vars[key], value)
 
     def test_string_convert(self):
         result = a2ahk.convert_string_to_type('string')
@@ -85,7 +85,7 @@ class Test(unittest.TestCase):
             (True, 'true'),
             (False, 'false'),
             ('String', '"String"'),
-            ('escaped "String"', '"escaped ""String"""'),
+            ('escaped "String"', "'escaped \"String\"'"),
             (0.333, '0.333'),
             (1337, '1337'),
             (['something', 42, 13.37], '["something", 42, 13.37]'),

@@ -102,9 +102,9 @@ def get_variables(ahk_file):
     Ignores any indented ones.
     Returns a dict with the variables.
     """
-    with codecs.open(ahk_file, encoding='utf-8-sig') as fobj:
-        lines = [l.split('=', 1) for l in fobj.read().split('\n') if l]
-    lines = [(l[0], l[1].strip('" \r')) for l in lines if len(l) == 2]
+    with codecs.open(ahk_file, encoding='utf-8-sig') as file_obj:
+        lines = [i.split('=', 1) for i in file_obj.read().split('\n') if i]
+    lines = [(i[0], i[1].strip('" \r')) for i in lines if len(i) == 2]
     result = {}
     for key, value in lines:
         _key = key.strip(': ')
@@ -130,8 +130,8 @@ def set_variable(ahk_file, key, value, create_key=False):
         raise KeyError(result)
 
     try:
-        with open(ahk_file) as fobj:
-            lines = [l for l in fobj.read().split('\n')]
+        with open(ahk_file) as file_obj:
+            lines = [i for i in file_obj.read().split('\n')]
 
         write_line_nr = 0
         write = False
@@ -200,7 +200,7 @@ def convert_string_to_type(string):
                 return string
 
 
-def py_value_to_ahk_string(py_obj):
+def py_value_to_ahk_string(py_obj) -> str:
     if isinstance(py_obj, bool):
         return py_bool_to_ahk_string(py_obj)
     elif isinstance(py_obj, str):
@@ -213,28 +213,30 @@ def py_value_to_ahk_string(py_obj):
         return py_list_to_ahk_string(py_obj)
     elif isinstance(py_obj, dict):
         return py_dict_to_ahk_string(py_obj)
+    return ''
 
 
-def py_bool_to_ahk_string(py_bool):
+def py_bool_to_ahk_string(py_bool) -> str:
     return str(py_bool).lower()
 
 
-def py_string_to_ahk_string(py_str):
+def py_string_to_ahk_string(py_str) -> str:
     py_str = py_str.replace('`', '``')
     py_str = py_str.replace('\n', '`n')
-    py_str = py_str.replace('"', '""')
-    return '"%s"' % py_str
+    if '"' in py_str:
+        return f"'{py_str}'"
+    return f'"{py_str}"'
 
 
-def py_float_to_ahk_string(py_float, decimals=None):
+def py_float_to_ahk_string(py_float: float, decimals: int | None =None) -> str:
     template = '%f'
     if decimals is not None:
         template = '%.' + str(decimals) + 'f'
     return (template % py_float).rstrip('0')
 
 
-def py_int_to_ahk_string(py_int):
-    return '%i' % py_int
+def py_int_to_ahk_string(py_int) -> str:
+    return f'{py_int}'
 
 
 def py_list_to_ahk_string(list_obj):
@@ -252,8 +254,6 @@ def py_dict_to_ahk_string(dict_obj):
     for key, value in dict_obj.items():
         result += '"%s", %s, ' % (key, py_value_to_ahk_string(value))
     result = result.rstrip(', ')
-    # if result.endswith(', '):
-    #     result = result[:-2]
     return result + ')'
 
 
@@ -267,11 +267,11 @@ def check_variable_name(name):
     if not name:
         return 'Variable name cannot be empty!'
 
-    if not all((l in ALLOWED_VAR_NAME_CHARS) for l in name):
+    if not all((i in ALLOWED_VAR_NAME_CHARS) for i in name):
         return 'Variable name can only have letters, digits and "_"!'
-    if any((l in string.whitespace) for l in name):
-        return 'Variable name cannot have whitespace! Use "_" insead!'
-    if all(l.isnumeric() for l in name):
+    if any((i in string.whitespace) for i in name):
+        return 'Variable name cannot have whitespace! Use "_" instead!'
+    if all(i.isnumeric() for i in name):
         return 'Variable name cannot be all Numbers!'
     if name.lower().startswith('a_'):
         return 'Variable name cannot start with Autohotkey-reserved "A_"!'
