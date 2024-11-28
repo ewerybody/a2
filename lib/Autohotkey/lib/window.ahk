@@ -1,5 +1,6 @@
 #include <screen>
 
+; Tell true/false 1/0 if the active or given window can be resized.
 window_is_resizable(win_id:="") {
     if !win_id
         win_id := WinExist("A")
@@ -11,6 +12,7 @@ window_is_resizable(win_id:="") {
         return 0
 }
 
+; Maximize a floating window or restore a maximized one.
 window_toggle_maximize(win_id:="") {
     win_id := _ensure_win_active(win_id)
 
@@ -35,6 +37,7 @@ window_toggle_maximize(win_id:="") {
     }
 }
 
+; Maximize a window horizontally or restore its previous width.
 window_toggle_maximize_width(win_id:="") {
     win_id := _ensure_win_active(win_id)
     If !window_is_resizable(win_id)
@@ -57,6 +60,7 @@ window_toggle_maximize_width(win_id:="") {
     memory[win_id]["lasth"] := wc_Height
 }
 
+; Maximize a window vertically or restore its previous height.
 window_toggle_maximize_height(win_id:="") {
     win_id := _ensure_win_active(win_id)
     If !window_is_resizable(win_id)
@@ -139,6 +143,7 @@ _ensure_win_active(win_id) {
     return win_id
 }
 
+; Get a windows top-left position and dimensions into passed in arguments x, y, width, height.
 window_get_rect(&x, &y, &width, &height, win_id:="") {
     if (!win_id)
         win_id := WinExist("A")
@@ -151,6 +156,7 @@ window_get_rect(&x, &y, &width, &height, win_id:="") {
     ; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%, WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
 }
 
+; Set a windows top-left position and dimensions from passed in arguments x, y, width, height.
 window_set_rect(x, y, width, height, win_id:="") {
     if (!win_id)
         win_id := WinExist("A")
@@ -163,8 +169,9 @@ window_set_rect(x, y, width, height, win_id:="") {
     WinMove(_x, y, _w, _h, "ahk_id " . win_id)
 }
 
+
+; Find a window's visible boundaries W10 compatible.
 window_get_geometry(hwnd) {
-    ; Find a window's visible boundaries W10 compatible.
     ; From GeekDude:
     ; https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
     ; Modified by Marius Șucan to return an array where:
@@ -195,10 +202,8 @@ window_get_geometry(hwnd) {
     Return r
 }
 
+; Cut a rectangle into a window. But from rectangle-objects rather than this dash-galore-gobbledygook.
 window_cut_hole(hwnd, inner, outer := "") {
-    ; Cut a rectangle into a window. But from rectangle-object
-    ; rather than this dash-gallore-gobblygook.
-    ;
     ; hwnd:     Window handle.
     ; inner:    Rectangle object with .x .y .x2 .y2 member attributes.
     ;           Where xy is the upper left and x2y2 the lower bottom corner.
@@ -264,8 +269,8 @@ class _Window {
     }
 }
 
+; Get a windows Always On Top state.
 window_is_aot(win_id:="") {
-    ; Get a windows Always On Top state.
     if !win_id
         win_id := WinExist("A")
 
@@ -276,8 +281,8 @@ window_is_aot(win_id:="") {
         return 0
 }
 
+; Set a windows Always On Top state.
 window_set_aot(state, win_id := "") {
-    ; Set a windows Always On Top state.
     if !win_id
         win_id := WinExist("A")
 
