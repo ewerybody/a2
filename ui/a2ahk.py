@@ -10,8 +10,7 @@ EXECUTABLE_NAME = NAME + '.exe'
 EXTENSION = '.ahk'
 _LOW_BOOLS = {'true': True, 'false': False}
 ALLOWED_VAR_NAME_CHARS = string.ascii_letters + string.digits + '_'
-# Eventually we go to 2.0. For now:
-BASE_VERSION = '1.1'
+BASE_VERSION = '2.0'
 HOMEPAGE = f'https://www.{NAME}.com'
 DOWNLOADS_URL = f'{HOMEPAGE}/download/{BASE_VERSION}'
 LATEST_VERSION_URL = f'{DOWNLOADS_URL}/version.txt'
