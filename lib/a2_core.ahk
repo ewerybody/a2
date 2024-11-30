@@ -47,12 +47,12 @@ class A2Core_Class
         if (FileExist(ini_path))
             Return
 
-        sqldll := "SQLite3.dll"
-        dll_path := path_join(this.paths.ui, sqldll)
+        sql_dll := "SQLite3.dll"
+        dll_path := path_join(this.paths.ui, sql_dll)
 
         if (!FileExist(dll_path)) {
-            msg := 'The "' sqldll '" must exist here:`n' dll_path '!`n`nWhere is it?'
-            msgbox_error(msg, sqldll ' missing?!')
+            msg := 'The "' sql_dll '" must exist here:`n' dll_path '!`n`nWhere is it?'
+            msgbox_error(msg, sql_dll ' missing?!')
             Return
         }
 
@@ -63,7 +63,7 @@ class A2Core_Class
 
 
 /**
- * API for modules to inteact with the DB
+ * API for modules to interact with the DB
 */
 class _Ca2DB
 {
@@ -191,7 +191,7 @@ class _Ca2DB
      * Increment the value of a key by a specific amount
      * - Value MUST be numeric/integer
      * - Amount can be negative
-     * - If the key was non-existing, it will be creted with value = amount
+     * - If the key was non-existing, it will be created with value = amount
      *
      * @param   string  modulePack  Name of the Module Pack that called the method
      * @param   string  moduleName  Name of the Module that called the method
