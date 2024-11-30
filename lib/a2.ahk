@@ -11,6 +11,7 @@ Persistent
 #include <cursor>
 #include <a2tip>
 #include <a2log>
+#include <python>
 #include <explorer>
 
 #include a2_core.ahk
@@ -53,15 +54,28 @@ OnExit(a2ui_exit)
 Return ; -----------------------------------------------------------------------
 
 a2ui(*) {
-    tt_text := "Calling a2 ui ..."
-    a2tip(tt_text)
+    a2tip("Calling a2 ui ...")
     a2_win_id := WinExist("a2 ahk_class Qt623QWindowIcon ahk_exe pythonw.exe")
-    if (a2_win_id)
+    if (a2_win_id) {
         WinActivate "ahk_id " a2_win_id
-    else {
-        ui_starter := path_join(a2.paths.a2, "a2ui.exe")
-        Run ui_starter
+        return
     }
+
+    show_console := false
+    if show_console
+        py_exe := path_join(a2.paths.a2, "python.exe")
+    else
+        py_exe := path_join(a2.paths.ui, "pythonw.exe")
+
+    if !FileExist(py_exe) {
+        if show_console
+            py_exe := python_get_console_path()
+        else
+            py_exe := python_get_path()
+    }
+    ui_script := path_join(a2.paths.ui, "a2app.py")
+
+    Run('"' py_exe '" "' ui_script '"', a2.paths.ui)
 }
 
 a2ui_help(*) {
