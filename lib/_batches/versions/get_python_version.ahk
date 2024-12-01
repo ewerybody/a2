@@ -8,4 +8,4 @@ if (!FileExist(py))
 version := FileGetVersion(py)
 if (!version)
     MsgBox("No Python Version found!`n" . py)
-FileAppend version, "*"
+FileAppend(version, "*")

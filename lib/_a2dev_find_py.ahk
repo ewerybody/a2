@@ -3,7 +3,7 @@ a2dev_get_py()
     ; TODO: this needs to be a little bit more dynamic
     supported_versions := ["3.12", "3.11", "3.10", "3.9"]
     ; First: Try to read python path from registry in either CURRENT_USER or LOCAL_MACHINE domain
-    found_versions := check_registry(supported_versions)
+    found_versions := a2dev_get_registry_pythons(supported_versions)
     if found_versions.length
         return found_versions[1].path
 
@@ -14,7 +14,7 @@ a2dev_get_py()
 }
 
 ; Give Array of found python versions as objects with `path` and `version` properties.
-check_registry(supported_versions) {
+a2dev_get_registry_pythons(supported_versions) {
     ;exe_type := {filename: "python.exe", reg_name: "ExecutablePath"}
     exe_type := {filename: "pythonw.exe", reg_name: "WindowedExecutablePath"}
     reg_name := exe_type.reg_name
