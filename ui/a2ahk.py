@@ -15,6 +15,7 @@ HOMEPAGE = f'https://www.{NAME}.com'
 DOWNLOADS_URL = f'{HOMEPAGE}/download/{BASE_VERSION}'
 LATEST_VERSION_URL = f'{DOWNLOADS_URL}/version.txt'
 LATEST_VERSION_ERROR = f'Error checking latest Autohotkey {BASE_VERSION} version online! '
+LATEST_VERSION_GITHUB = f'https://api.github.com/repos/{NAME}/{NAME}/releases/latest'
 
 
 def translate_hotkey(display_string):
@@ -317,12 +318,20 @@ def get_latest_version():
         return version
 
     if version.startswith('<'):
+        # cloudflare puts sume 'aRe YOu huMaN?' test page in front of this m(
+        # let's back up with github:
+        info = qdl.read_json(LATEST_VERSION_GITHUB)
+        if 'tag_name' in info:
+            return info.get('tag_name', '').lstrip('v')
+
         version = version.replace('\n', ' ')
         raise RuntimeError(
             f'{LATEST_VERSION_ERROR}\n'
             f'There is some HTML code inside? "{version} ..."\n'
             f'Please check in browser:\n  {LATEST_VERSION_URL}'
         )
+
+
     raise RuntimeError(f'{LATEST_VERSION_ERROR}\n  {LATEST_VERSION_URL}')
 
 
