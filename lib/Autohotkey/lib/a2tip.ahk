@@ -2,7 +2,7 @@
 ; https://www.autohotkey.com/docs/commands/ToolTip.htm
 ; when moved and disappearing by default.
 ; a2tip("help!")
-#include <font>
+#include font.ahk
 
 a2tip(msg := "", timeout := "") {
     Global _a2tip_message, _a2_tip_id

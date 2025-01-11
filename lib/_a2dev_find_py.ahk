@@ -1,7 +1,7 @@
 a2dev_get_py()
 {
     ; TODO: this needs to be a little bit more dynamic
-    supported_versions := ["3.12", "3.11", "3.10", "3.9"]
+    supported_versions := ["3.13", "3.12", "3.11", "3.10", "3.9"]
     ; First: Try to read python path from registry in either CURRENT_USER or LOCAL_MACHINE domain
     found_versions := a2dev_get_registry_pythons(supported_versions)
     if found_versions.length
