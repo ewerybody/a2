@@ -310,7 +310,7 @@ def patch_sqlite():
     import qdl
 
     download_page = qdl.read(SQLITE_URL + 'download.html')
-    pos = download_page.find('/sqlite-dll-win64-x64-')
+    pos = download_page.find('/sqlite-dll-win-x64-')
     if pos == -1:
         print('  Error! Could not find version on sqlite website!')
         return
