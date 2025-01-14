@@ -233,27 +233,17 @@ class _Ca2DB
     {
         this.__openConnection()
 
-        row := ""
         result := ""
-        recordSet := ""
-
+        Table := ""
         sql := "SELECT value FROM '" moduleTable "' WHERE key = '" key "'"
-        this.dbObject.Query(sql, recordSet) ; no error handle
-
-        if (recordSet.HasRows)
-        {
-            Loop(recordSet.HasRows)
-            {
-                recordSet.next(row)
-                result := row[1]
-            }
-        }
-        recordSet.Free()
+        If !this.dbObject.GetTable(SQL, &Table)
+            msgbox_error("Msg:`t" . this.dbObject.ErrorMsg . "`nCode:`t" . this.dbObject.ErrorCode, "SQLite Error")
+        If (Table.HasRows)
+            result := Table.Rows[1][1]
 
         ; Close connection to DB to unlock the file
         this.__closeConnection()
-
-        return (result) ? result : false
+        Return (result) ? result : false
     }
 
     /**
