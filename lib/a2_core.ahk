@@ -222,7 +222,7 @@ class _Ca2DB
 
     /**
      * Private Method
-     *     Get value from Table row
+     *     Get single value from Table row
      *     Only supports 1 entry
      *
      * @param   string  moduleTable     Name of the Table
@@ -343,8 +343,8 @@ class _Ca2DB
 
         sql := "SELECT COUNT(*) FROM '" moduleTable "'"
         table := ""
-        if (!this.dbObject.getTable(sql, table))
-            throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        If (!this.dbObject.getTable(sql, &table))
+            Throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
         ; Close connection to DB to unlock the file
         this.__closeConnection()
