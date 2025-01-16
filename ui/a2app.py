@@ -37,13 +37,12 @@ class A2App(QSingleApplication):
         self.message_received.connect(self.app_msg_get)
         self.lastWindowClosed.connect(self.last_window_closed)
 
-        # adding PySide plugin paths. e.g. to make all the imageformats available
+        # adding PySide plugin paths. e.g. to make all the image formats available
         pyside_plugin_path = os.path.join(a2qt.QT_PATH, 'plugins')
         self.addLibraryPath(pyside_plugin_path)
 
-        winfo = platform.uname()
         self.info(
-            f'initialised!\n  Python: {sys.version}\n  Windows: {str(winfo)[31:-1]}\n'
+            f'initialized!\n  Python: {sys.version}\n  Windows: {str(platform.uname())[31:-1]}\n'
             f'  Qt: {QtCore.__version__}',
         )
 
@@ -131,7 +130,7 @@ def main():
             os.environ['QT_PLUGIN_PATH'] = os.path.abspath(os.path.join(_qt_path, '..', 'plugins'))
 
         # TODO: make a dedicated dark theme
-        # sys.argv.extend(('-platform', 'windows:darkmode=0'))
+        sys.argv.extend(('-platform', 'windows:darkmode=0'))
 
         app = A2App()
         app.exec()
@@ -141,8 +140,8 @@ def main():
         error_msg = traceback.format_exc().strip()
         print(error_msg)
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        with open(os.path.join(this_dir, '_ startup_error.log'), 'w') as fobj:
-            fobj.write(error_msg)
+        with open(os.path.join(this_dir, '_ startup_error.log'), 'w') as file_obj:
+            file_obj.write(error_msg)
 
 
 if __name__ == '__main__':
