@@ -214,7 +214,10 @@ def _line_edit_update(cfg, name, ctrl, change_signal, value=None):
         value = ctrl.text()
     cfg[name] = value
     if change_signal is not None:
-        change_signal.emit()
+        try:
+            change_signal.emit()
+        except TypeError:
+            change_signal.emit(value)
 
 
 def _text_edit_update(cfg, name, ctrl, change_signal, value=None):
