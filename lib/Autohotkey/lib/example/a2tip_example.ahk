@@ -7,6 +7,7 @@ SetWorkingDir(A_ScriptDir)
 a2tip("hallo")
 
 A2TipUI := Gui("+DPIScale +Resize +MinSize500x180")
+A2TipUI.OnEvent("Escape", A2TipUI.Destroy)
 show_btn := A2TipUI.AddButton("xm Section", "Show a2tip")
 show_btn.OnEvent("Click", show_tip)
 text_field := A2TipUI.AddEdit("ys w400 Multi", "Hello,`nNew World!")
