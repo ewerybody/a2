@@ -1,7 +1,6 @@
-﻿#SingleInstance Force
-Persistent
-SendMode("Input")
-SetWorkingDir(A_ScriptDir)
+﻿; Example Tool to test and showcase the `a2tip` capabilities.
+#SingleInstance Force
+#NoTrayIcon
 #Include <a2tip>
 
 a2tip("hallo")
