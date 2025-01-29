@@ -13,7 +13,7 @@ import subprocess
 import _build_common
 import a2core
 import a2util
-from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, Paths
+from _build_common import A2, SEVEN_FLAGS, PACKAGE_SUB_NAME, CHKMK, EXMRK, Paths, make_ahkexe
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
@@ -29,8 +29,6 @@ EXE_NFO = {
     'CompanyName': COMPANY,
     'LegalCopyright': COPYRIGHT,
 }
-CHKMK = b'\xe2\x9c\x94'.decode()
-EXMRK = b'\xe2\x9c\x96'.decode()
 _prnt = sys.stdout.write
 USE_PREZIPPED_QT = True
 _TIMINGS = {}
@@ -82,6 +80,7 @@ def main():
     print('t_make_portable: %.3fs' % t_make_portable)
     print('t_all_in_all: %.3fs' % (time.time() - t00))
     t0 = time.time()
+
 
 def _set_rc_nfo(target_path: str, nfo: dict[str, str]):
     for key, value in nfo.items():
@@ -364,23 +363,7 @@ def _make_portable():
         print(f'{CHKMK} done')
 
 
-def make_ahkexe(script, outpath, nfo=None):
-    if not os.path.isfile(script):
-        raise RuntimeError('No such Script File!! (%s)' % script)
 
-    cmd = [Paths.ahk2exe, '/in', script, '/out', outpath, '/compress', '0', '/ahk', Paths.ahkexe]
-    subprocess.call(cmd, cwd=Paths.lib)
-    if not os.path.isfile(outpath):
-        print('cmd: %s' % cmd)
-        print('Paths.lib: %s' % Paths.lib)
-        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, outpath))
-
-    if nfo is not None:
-        if not nfo.get('OriginalFilename'):
-            nfo['OriginalFilename'] = os.path.basename(outpath)
-        _set_rc_nfo(outpath, nfo)
-
-    return outpath
 
 
 if __name__ == '__main__':
