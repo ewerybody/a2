@@ -1,17 +1,17 @@
-﻿#SingleInstance, Force
-SendMode, Input
-SetWorkingDir, %A_ScriptDir%
+﻿#SingleInstance Force
+SendMode("Input")
+SetWorkingDir(A_ScriptDir)
 
 #Include a2test.ahk
 #Include %A_ScriptDir%\..\
-#Include move.ahk
-#Include string.ahk
-#Include path.ahk
-#Include msgbox.ahk
+#Include <move>
+#Include <string>
+#Include <path>
+#Include <msgbox>
 
 report := test_move_secure()
 report .= test_move_catched()
-MsgBox report: %report%
+msgbox_info("report: " . report)
 
 
 Return ; --------------------------------------------
@@ -25,7 +25,7 @@ test_move_secure() {
 
     result := move_secure(test_dir, test_dir2)
     report .= "fail when already exists: " assertmsg(result == 0) "`n"
-    FileRemoveDir, %test_dir2%
+    DirDelete(test_dir2)
 
     return report
 }
@@ -36,26 +36,26 @@ test_move_catched() {
     test_dir := _make_test_dir()
     DIR_NAME := "blocked_dir"
     blocked_dir := path_join(test_dir, DIR_NAME)
-    FileCreateDir, %blocked_dir%
+    DirCreate(blocked_dir)
     FILE1 := "_file1.txt"
     test_file1 := path_join(test_dir, FILE1)
-    FileAppend, Text, %test_file1%
+    FileAppend("Text", test_file1)
     FILE2 := "XJHVDSJHV.md"
     test_file2 := path_join(test_dir, FILE2)
-    FileAppend, # Text, %test_file2%
+    FileAppend("# Text", test_file2)
     target_dir := test_dir . "5"
-    FileCreateDir, %target_dir%
+    DirCreate(target_dir)
 
     file_list1 := _listdir(test_dir)
     ; BLOCK a directory with a process, NOT by file attributes
-    Run, %ComSpec% , %blocked_dir%, hide, OutputVarPID
+    Run A_ComSpec, blocked_dir, "Hide", &OutputVarPID
     result := move_catched(test_dir, target_dir, file_list1)
 
     report := "dir blocked/rolled back: " . assertmsg(result != "")
     file_list2 := _listdir(test_dir)
     report .= assertmsg(string_join(file_list1) == string_join(file_list2)) . "`n"
 
-    Process, Close , %OutputVarPID%
+    ProcessClose(OutputVarPID)
     result := move_catched(test_dir, target_dir, file_list1)
     report .= "unblocked/retry: " . assertmsg(result == "")
     file_list2 := _listdir(target_dir)
@@ -77,8 +77,8 @@ test_move_catched() {
     result := move_catched(test_dir, target_dir, file_list1)
     report .= "locked file does not block: " . assertmsg(result == "")
 
-    FileRemoveDir, %test_dir%, 1
-    FileRemoveDir, %target_dir%, 1
+    DirDelete(test_dir, 1)
+    DirDelete(target_dir, 1)
 
     return "test_move_catched ...`n" . report
 }
@@ -86,7 +86,7 @@ test_move_catched() {
 
 _listdir(dir_path) {
     item_list := []
-    Loop, %dir_path%\*, 1
+    Loop Files dir_path . "\*", "FD"
         item_list.Push(A_LoopFileName)
     return item_list
 }
@@ -95,13 +95,13 @@ _listdir(dir_path) {
 _make_test_dir(name := "_a2_move_test_1234") {
     test_dir := path_join(A_Temp, name)
     if FileExist(test_dir) {
-        FileRemoveDir, %test_dir%, 1
+        DirDelete(test_dir, 1)
         if FileExist(test_dir) {
             msgbox_error("Cannot remove test dir! Aborting ...")
             ExitApp
         }
     }
 
-    FileCreateDir, %test_dir%
+    DirCreate(test_dir)
     return test_dir
 }

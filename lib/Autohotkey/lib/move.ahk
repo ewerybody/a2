@@ -1,9 +1,3 @@
-#NoEnv
-#SingleInstance, Force
-SendMode, Input
-SetBatchLines, -1
-SetWorkingDir, %A_ScriptDir%
-
 ; Move a file or directory, tell true/false 1/0 if it worked.
 move_secure(from_path, to_path) {
     attrs := FileExist(from_path)
@@ -11,12 +5,17 @@ move_secure(from_path, to_path) {
         return false
 
     if (InStr(attrs, "D")) {
-        FileMoveDir, %from_path%, %to_path%
+        try
+            DirMove(from_path, to_path)
+        catch
+            Return false
+
     } else {
-        FileMove, %from_path%, %to_path%
+        try
+            FileMove(from_path, to_path)
+        catch
+            return false
     }
-    ; If ErrorLEvel
-    ;     MsgBox ErrorLEvel: %ErrorLEvel% %from_path%
 
     if (!FileExist(from_path) AND FileExist(to_path))
         return true
@@ -37,7 +36,6 @@ move_catched(source_dir, target_dir, relative_paths) {
         {
             ; msgbox_error("Could not move " rel_path " from/to:`n" source_dir "`n" target_dir)
             rollback_result := move_catched(target_dir, source_dir, done_items)
-            ; MsgBox rollback_result: %rollback_result%
             return source "`n" target
         }
     }
