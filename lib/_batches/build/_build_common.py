@@ -36,6 +36,8 @@ VERSIONS = {
     AUTOHOTKEY: '',
     PYTHON: ''
 }
+CHKMK = b'\xe2\x9c\x94'.decode()
+EXMRK = b'\xe2\x9c\x96'.decode()
 
 
 def _get_versions(lib_dir, batches_path, ahk_path):
@@ -140,3 +142,27 @@ class Paths:
             if cls._ignore_name(name):
                 continue
             yield name, cls.__dict__[name]
+
+
+def make_ahkexe(script, outpath, nfo=None):
+    if not os.path.isfile(script):
+        raise RuntimeError('No such Script File!! (%s)' % script)
+
+    if os.path.isfile(outpath):
+        os.unlink(outpath)
+
+    cmd = [Paths.ahk2exe, '/in', script, '/out', outpath, '/compress', '0', '/ahk', Paths.ahkexe]
+    subprocess.call(cmd, cwd=Paths.lib)
+    if not os.path.isfile(outpath):
+        print('cmd: %s' % cmd)
+        print('Paths.lib: %s' % Paths.lib)
+        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, outpath))
+
+    print(f'{CHKMK} AHK Executable generated: {os.path.basename(outpath)}')
+
+    if nfo is not None:
+        if not nfo.get('OriginalFilename'):
+            nfo['OriginalFilename'] = os.path.basename(outpath)
+        _set_rc_nfo(outpath, nfo)
+
+    return outpath

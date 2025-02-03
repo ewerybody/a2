@@ -1,25 +1,25 @@
 ; Things we need for both the un- and installer!
-#Include, ..\Autohotkey\lib
-#Include, ahk_functions.ahk
-#Include, string.ahk
-#Include, path.ahk
+#Include ..\Autohotkey\lib
+#Include <string>
+#Include <msgbox>
+#Include <path>
 
 logmsg(msg) {
-    FileAppend, %msg%`n, *
+    FileAppend(msg . "`n", "*")
 }
 
 log_info(title, msg, timeout := 2147483) {
     if check_silent()
-        logmsg(title . " " . msg), *
+        logmsg(title . " " . msg)
     else
-        MsgBox, 0, %title%, %msg%, %timeout%
+        msgbox_info(msg, title)
 }
 
 log_error(title, msg) {
     if check_silent()
         logmsg("ERROR: " . title . " " . msg)
     else
-        MsgBox, 16, %title%, %msg%
+        msgbox_error(msg, title)
     ExitApp
 }
 
@@ -31,19 +31,17 @@ complain_if_uncompiled() {
 get_a2dir() {
     ;builds default a2 dir in User\AppData\Local
     ;from roaming but without the dots "..\"
-    SplitPath, A_AppData ,, OutDir
-    a2dir := OutDir "\Local\a2"
+    a2dir := path_join(path_dirname(A_AppData), "Local", "a2")
     return a2dir
 }
 
 find_processes_running_under(path) {
     attr_list := ["ExecutablePath", "ProcessId", "CommandLine", "Name"]
     attr_ex_path := attr_list[1]
-    attrs := string_join(attr_list)
     path_len := StrLen(path)
 
     ; command =  where name='Autohotkey.exe' get %attrs% /format:list
-    command = get %attrs% /format:list
+    command := "get " . string_join(attr_list) . " /format:list"
     result := _find_processes_get_wmic_output(command)
 
     processes := []
@@ -53,16 +51,16 @@ find_processes_running_under(path) {
         if !data[attr_ex_path]
             continue
         sub_path := SubStr(data[attr_ex_path], 1, path_len)
-        if sub_path = %path%
+        if sub_path = path
             processes.push(data)
     }
     return processes
 }
 
 _find_processes_get_wmic_output(args) {
-    cmd = wmic process %args%
+    cmd := "wmic process " . args
     shell := ComObject("WScript.Shell")
-    exec := shell.Exec(ComSpec " /C " cmd)
+    exec := shell.Exec(A_ComSpec " /C " cmd)
     result := exec.StdOut.ReadAll()
     return result
 }
@@ -82,7 +80,7 @@ _find_processes_get_blocks(string) {
 
 _find_processes_get_key_values(string_block) {
     lines := StrSplit(string_block, "`r`r`n")
-    results := {}
+    results := Map()
     for i, line in lines
     {
         line := Trim(line, " `n`r")

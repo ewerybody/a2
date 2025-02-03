@@ -1,67 +1,82 @@
-; A ToolTip automatically following the mouse cursor
+; A simple mouse cursor following, self removing ToolTip.
 ; https://www.autohotkey.com/docs/commands/ToolTip.htm
-; when moved and disappearing by default.
-; a2tip("help!")
-#include font.ahk
+; a2tip("Hello, World!")
+
+; TODO: repair the font stuff
+; #include font.ahk
 
 a2tip(msg := "", timeout := "") {
-    Global _a2tip_message, _a2_tip_id
+    Global _a2tip_message := ""
+    Global _a2tip_id := 0, a2tip_refresh, a2tip_offset_x, a2tip_offset_y
+
+    if !msg {
+        ToolTip("")
+        Return
+    }
 
     if (timeout == "") {
         timeout := 1
+    } else if timeout <= 0 {
+        ToolTip("")
+        Return
     }
     timeout *= 1000
-
-    _a2_tip_id := ToolTip(msg)
     SetTimer _a2tip_off, -timeout
-    ; refresh_delay := 50
 
-    ; _a2tip_message := msg
+    if !IsSet(a2tip_refresh)
+        a2tip_refresh := 50
 
+    if !IsSet(a2tip_offset_x)
+        a2tip_offset_x := 30
+    if !IsSet(a2tip_offset_y)
+        a2tip_offset_y := 0
 
-    ; if (timeout != 0) {
-    ;     ms_timeout := timeout * 1000
-    ;     SetTimer _a2tip_off, -ms_timeout
-    ; }
+    _a2tip_message := msg
 
-    ; if (!WinExist("ahk_id " _a2_tip_id)) {
-    ;     ; Tooltip("ttID") ;create tooltip and give it something to find it
-    ;     ; _a2_tip_id := WinExist("ttID ahk_class tooltips_class32") ;get ID from it
-    ;     _a2_tip_id := Tooltip(msg)
-    ;     font_set(_a2_tip_id, "s11, Arial")
-    ;     SetTimer _a2tip_timer, refresh_delay
-    ; }
-
+    if (!WinExist("ahk_id " _a2tip_id)) {
+        _a2tip_id := _a2tip_draw()
+        ; font_set(_a2tip_id, "s11, Arial")
+        SetTimer _a2tip_draw, a2tip_refresh
+    }
 }
 
-; _a2tip_timer() {
-;     CoordMode "Mouse", "Screen"
-;     MouseGetPos &mx_new, &my_new
-;     ; if pos and text is the same, do not redraw
-;     if (mx_new == mx AND my_new == my AND msg == msg_old)
-;         return
+_a2tip_draw() {
+    Global _a2tip_id
+    CoordMode "Mouse", "Screen"
+    MouseGetPos &mx_new, &my_new
+    Static mx := 0, my := 0
+    Static msg_old := ""
+    ; if pos and text is the same, do not redraw
+    if (mx_new == mx AND my_new == my AND _a2tip_message == msg_old)
+        return
+    if _a2tip_id == 0 {
+        SetTimer _a2tip_draw, 0
+        Return
+    }
 
-;     Tooltip(_a2tip_message)
-;     mx := mx_new
-;     my := my_new
-;     msg_old := msg
-; }
+    ; Since AHK2.0 we now have the direct tooltip handle and could use `WinMove`
+    ; to not redraw the tooltip and "just" move it! But there are multiple
+    ; drawbacks: 1st: It actually seems to be slower!, 2nd: WinMove makes the
+    ; tooltip intransparent to clicks and thus prevents clickthrough.
+    CoordMode "ToolTip", "Screen"
+    _a2tip_id := Tooltip(_a2tip_message, mx_new + a2tip_offset_x, my_new + a2tip_offset_y)
+    mx := mx_new
+    my := my_new
+    msg_old := _a2tip_message
+    Return _a2tip_id
+}
 
 _a2tip_off() {
-    ; _a2tip_message :=
-    ; _a2_tip_id :=
-    ; ToolTip()
-    ; _a2tip_off
-    SetTimer , 0
-    if WinExist("ahk_id " . _a2_tip_id)
-        WinClose("ahk_id " . _a2_tip_id)
+    SetTimer _a2tip_draw, 0
+    if WinExist("ahk_id " . _a2tip_id)
+        WinClose("ahk_id " . _a2tip_id)
 }
 
-; a2tip_add(msg, timeout := "") {
-;     Global _a2tip_message
-;     if (_a2tip_message)
-;         _a2tip_message .= "`n" msg
-;     else
-;         _a2tip_message := msg
-;     a2tip(_a2tip_message, timeout)
-; }
+a2tip_add(msg, timeout := "") {
+    Global _a2tip_message
+    if (_a2tip_message)
+        _a2tip_message .= "`n" msg
+    else
+        _a2tip_message := msg
+    a2tip(_a2tip_message, timeout)
+}

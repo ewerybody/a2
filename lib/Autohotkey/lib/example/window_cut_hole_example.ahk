@@ -1,5 +1,6 @@
 #Requires AutoHotkey v2.0
 #include <window>
+#include <msgbox>
 WIN_FRAME_WIDTH := SysGet(32)
 WIN_FRAME_HEIGHT := SysGet(33)
 global WIN_FRAME_WIDTH
