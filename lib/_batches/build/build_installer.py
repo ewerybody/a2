@@ -3,8 +3,8 @@ a2 installer build helper script.
 Called AFTER the PyInstaller package was built via _build_py_package.bat
 And after the package was handled by _finish_py_package.bat and finish_package.py.
 """
+
 import os
-import sys
 import time
 import shutil
 import codecs
@@ -13,7 +13,7 @@ import subprocess
 import _build_common
 import a2core
 import a2util
-from _build_common import A2, SEVEN_FLAGS, PACKAGE_SUB_NAME, CHKMK, EXMRK, Paths, make_ahkexe
+from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHKMK, EXMRK, Paths, make_ahkexe
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
@@ -29,7 +29,6 @@ EXE_NFO = {
     'CompanyName': COMPANY,
     'LegalCopyright': COPYRIGHT,
 }
-_prnt = sys.stdout.write
 USE_PREZIPPED_QT = True
 _TIMINGS = {}
 
@@ -46,9 +45,7 @@ def main():
     print('\n{0} building installer: {1} ... {0}'.format(15 * '#', package_name))
 
     version_string = _check_version(package_cfg['version'])
-    version_label = (
-        version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
-    )
+    version_label = version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
     t_mainchecks = time.time() - t00
 
     t0 = time.time()
@@ -64,7 +61,7 @@ def main():
     t_pack_installer_archive = time.time() - t0
 
     t0 = time.time()
-    _copy_together_installer_binary(package_cfg['version'])
+    _copy_together_installer_binaries(package_cfg['version'])
     t_copy_together_installer_binary = time.time() - t0
 
     t0 = time.time()
@@ -80,55 +77,6 @@ def main():
     print('t_make_portable: %.3fs' % t_make_portable)
     print('t_all_in_all: %.3fs' % (time.time() - t00))
     t0 = time.time()
-
-
-def _set_rc_nfo(target_path: str, nfo: dict[str, str]):
-    for key, value in nfo.items():
-        _set_rc_key(target_path, key, value)
-
-
-def _set_rc_key(target_path, key, value_string):
-    """
-    --set-version-string <key> <value>         Set version string
-    --get-version-string <key>                 Print version string
-    --set-file-version <version>               Set FileVersion
-    --set-product-version <version>            Set ProductVersion
-    --set-icon <path-to-icon>                  Set file icon
-    --set-requested-execution-level <level>    Pass nothing to see usage
-    --application-manifest <path-to-file>      Set manifest file
-    --set-resource-string <key> <value>        Set resource string
-    --get-resource-string <key>                Get resource string
-
-    For key names have a look at the `string-name` section under:
-    https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource#parameters
-    FileDescription, ProductName, LegalCopyright, OriginalFilename, CompanyName
-    """
-    try:
-        current = subprocess.check_output(
-            [Paths.rcedit, target_path, '--get-version-string', key]
-        ).decode()
-    except subprocess.CalledProcessError:
-        current = ''
-
-    if current == value_string:
-        return
-
-    _prnt('Set "%s" on "%s"...' % (key, os.path.basename(target_path)))
-    if key == 'FileVersion':
-        subprocess.call([Paths.rcedit, target_path, '--set-file-version', value_string])
-    elif key == 'ProductVersion':
-        subprocess.call([Paths.rcedit, target_path, '--set-product-version', value_string])
-    else:
-        subprocess.call([Paths.rcedit, target_path, '--set-version-string', key, value_string])
-
-    # check if things were changed correctly
-    current = subprocess.check_output(
-        [Paths.rcedit, target_path, '--get-version-string', key]
-    ).decode()
-    if current == value_string:
-        print(' %s %s' % (CHKMK, value_string))
-    else:
-        print(' %s "%s" is "%s" NOT "%s"!' % (EXMRK, key, current, value_string))
 
 
 def _check_version(version):
@@ -256,7 +204,7 @@ def _diff_digest(digest_path):
     return False
 
 
-def _copy_together_installer_binary(version_label):
+def _copy_together_installer_binaries(version_label):
     """To Replace the batch copy stuff.
     Binary copy together works in Python like a charm too!
     The original batch script was::
@@ -284,7 +232,7 @@ def _copy_together_installer_binary(version_label):
         nfo = vnfo.copy()
         nfo['FileDescription'] = NFO_DESCRIPTION
         nfo['OriginalFilename'] = target_name
-        _set_rc_nfo(target_sfx, nfo)
+        _build_common.set_rc_nfo(target_sfx, nfo)
         _apply_manifest(target_sfx)
 
         target_path = os.path.join(Paths.distroot, target_name)
@@ -329,8 +277,7 @@ def _make_portable():
     a2 is now portable by default! This is just preparing a zip without a
     setup executable. That's all. Voila!
     """
-    print('Making portable package ...')
-    _prnt('  copying ... ')
+    print('Making portable package ...\n  copying ...', end='')
     # if os.path.exists(Paths.dist_portable):
     #     print(f'{CHKMK} Already done')
     #     # shutil.rmtree(Paths.dist_portable, ignore_errors=True)
@@ -345,25 +292,22 @@ def _make_portable():
             shutil.copyfile(item.path, trg_path)
 
     # remove unwanted files if present
-    for name in 'setup',:
+    for name in ('setup',):
         path = os.path.join(Paths.dist, name + '.exe')
         if os.path.isfile(path):
             os.unlink(path)
 
-    _prnt('  zipping ... ')
+    print(f'\b\b\b{CHKMK}\n  zipping ...', end='')
     name = os.path.basename(Paths.dist)
     package_cfg = a2util.json_read(Paths.package_config)
     portable_name = f'{name}_{package_cfg["version"]}_{PACKAGE_SUB_NAME}.zip'
     portable_path = os.path.join(Paths.distroot, portable_name)
     if os.path.isfile(portable_path):
-        print(f'{CHKMK} Already done')
+        print(f'\b\b\b{CHKMK} Already done!')
     else:
         tar = os.path.join(os.getenv('WINDIR', ''), 'System32', 'tar.exe')
         subprocess.call([tar, '-a', '-c', '-f', portable_path, '*'], cwd=Paths.dist)
-        print(f'{CHKMK} done')
-
-
-
+        print(f'\b\b\b{CHKMK} Done!')
 
 
 if __name__ == '__main__':

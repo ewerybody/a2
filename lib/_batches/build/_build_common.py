@@ -148,6 +148,8 @@ def make_ahkexe(script, outpath, nfo=None):
     if not os.path.isfile(script):
         raise RuntimeError('No such Script File!! (%s)' % script)
 
+    print(f'Generating AHK executable "{os.path.basename(outpath)}" ...', end='')
+
     if os.path.isfile(outpath):
         os.unlink(outpath)
 
@@ -158,11 +160,61 @@ def make_ahkexe(script, outpath, nfo=None):
         print('Paths.lib: %s' % Paths.lib)
         raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, outpath))
 
-    print(f'{CHKMK} AHK Executable generated: {os.path.basename(outpath)}')
+    print(f'\b\b\b{CHKMK}  ')
 
     if nfo is not None:
         if not nfo.get('OriginalFilename'):
             nfo['OriginalFilename'] = os.path.basename(outpath)
-        _set_rc_nfo(outpath, nfo)
+        set_rc_nfo(outpath, nfo)
 
     return outpath
+
+
+def set_rc_nfo(target_path: str, nfo: dict[str, str]):
+    print(f'Setting Details on "{os.path.basename(target_path)}" ...')
+    for key, value in nfo.items():
+        _set_rc_key(target_path, key, value)
+
+
+def _set_rc_key(target_path, key, value_string):
+    """
+    --set-version-string <key> <value>         Set version string
+    --get-version-string <key>                 Print version string
+    --set-file-version <version>               Set FileVersion
+    --set-product-version <version>            Set ProductVersion
+    --set-icon <path-to-icon>                  Set file icon
+    --set-requested-execution-level <level>    Pass nothing to see usage
+    --application-manifest <path-to-file>      Set manifest file
+    --set-resource-string <key> <value>        Set resource string
+    --get-resource-string <key>                Get resource string
+
+    For key names have a look at the `string-name` section under:
+    https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource#parameters
+    FileDescription, ProductName, LegalCopyright, OriginalFilename, CompanyName
+    """
+    try:
+        current = subprocess.check_output(
+            [Paths.rcedit, target_path, '--get-version-string', key]
+        ).decode()
+    except subprocess.CalledProcessError:
+        current = ''
+
+    if current == value_string:
+        return
+
+    print(f'  {key}: "{value_string}" ', end='')
+    if key == 'FileVersion':
+        subprocess.call([Paths.rcedit, target_path, '--set-file-version', value_string])
+    elif key == 'ProductVersion':
+        subprocess.call([Paths.rcedit, target_path, '--set-product-version', value_string])
+    else:
+        subprocess.call([Paths.rcedit, target_path, '--set-version-string', key, value_string])
+
+    # check if things were changed correctly
+    current = subprocess.check_output(
+        [Paths.rcedit, target_path, '--get-version-string', key]
+    ).decode()
+    if current == value_string:
+        print(f'{CHKMK}')
+    else:
+        print(f'{EXMRK} "{key}" is "{current}" NOT "{value_string}"!')
