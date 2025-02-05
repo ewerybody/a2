@@ -24,13 +24,6 @@ global NAME := "a2 Uninstaller"
 if complain_if_uncompiled() OR complain_if_dev()
     ExitApp
 
-Class DarkMode {
-    Static __New(Mode := 1) => ( ; Mode: Dark = 1, Default (Light) = 0
-        DllCall(DllCall("GetProcAddress", "ptr", DllCall("GetModuleHandle", "str", "uxtheme", "ptr"), "ptr", 135, "ptr"), "int", mode),
-        DllCall(DllCall("GetProcAddress", "ptr", DllCall("GetModuleHandle", "str", "uxtheme", "ptr"), "ptr", 136, "ptr"))
-    )
-}
-
 global run_silent := check_silent()
 items := gather_items()
 outro(items)

@@ -6,11 +6,23 @@
 ; * backup an installed version
 ; * install to a2 dir
 ; * run a2 ui
+;@Ahk2Exe-SetCompanyName a2
+;@Ahk2Exe-SetCopyright GPLv3
+;@Ahk2Exe-SetDescription a2 Installer
+;@Ahk2Exe-SetOrigFilename setup.exe
+;@Ahk2Exe-SetProductName a2
 ;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
 ;@Ahk2Exe-SetVersion 0.6.0
-#NoTrayIcon
 
-complain_if_uncompiled()
+#NoTrayIcon
+#Include _installib.ahk
+#Include <jxon>
+#Include <move>
+#Include <msgbox>
+
+
+if complain_if_uncompiled()
+    ExitApp
 check_execution_dir()
 
 A2DIR := get_a2dir()
@@ -25,64 +37,49 @@ check_running()
 backup()
 install()
 
-Run a2.exe, %A2DIR%
+Run("a2.exe", A2DIR)
+ExitApp ; --------------------------------------------------------
 
-; --------------------------------------------------------
-Return
-#Include, _installib.ahk
-#include, %A_ScriptDir%\..\Autohotkey\lib
-#Include, jxon.ahk
-#Include, move.ahk
 
 ; Prepare the user with info about already installed versions and get OKs.
 intro() {
     global install_ver, run_silent, PACKAGE_DIR
 
     new_version := read_version(PACKAGE_DIR)
-    title = a2 - %new_version% Installation
+    title := "a2 - " . new_version . " Installation"
     install_msg := "This will install a2 version " . new_version . " for user " . A_UserName . ".`n"
     continue_msg := "`nDo you want to continue? "
 
-    if !has_a2_stuff()
-    {
+    if !has_a2_stuff() {
         if (!run_silent) {
-            MsgBox, 33, %title%, %install_msg%%continue_msg%
-            IfMsgBox Cancel
-            {
+            if !msgbox_accepted(install_msg . continue_msg, title)
                 ExitApp
-            }
-        } else {
+        } else
             logmsg(install_msg)
-        }
     } else {
         if install_ver {
             if (install_ver == new_version)
-                about_current = Such a version is already installed`n
+                about_current := "Such a version is already installed!`n"
             else
-                about_current = There is currently version "%install_ver%" installed`n
+                about_current := "There is currently version " . install_ver . " installed!`n"
         } else
-        about_current = There is currently some version installed`n
+            about_current := "There is currently some version installed`n"
         about_current .= "it would be replaced.`n"
 
         if (!run_silent) {
-            MsgBox, 33, %title%, %install_msg%%about_current%%continue_msg%
-            IfMsgBox Cancel
-            {
+            IF !msgbox_accepted(install_msg . about_current . continue_msg, title)
                 ExitApp
-            }
-        } else {
+        } else
             logmsg(install_msg . about_current)
-        }
     }
 }
 
 read_version(path) {
-    package_path = %path%\package.json
-    if FileExist(package_path)
-    {
+    package_path := path . "\package.json"
+    if FileExist(package_path) {
         data := jxon_read(package_path)
         v := data["version"]
-        return %v%
+        return v
     }
     else
         return ""
@@ -105,13 +102,13 @@ backup() {
         install_ver := A_Now
 
     backup_items := []
-    Loop, Files, %A2DIR%\*, D
+    Loop Files, A2DIR "\*", "D"
     {
         If (A_LoopFileName == "data")
             continue
         backup_items.Push(A_LoopFileName)
     }
-    Loop, Files, %A2DIR%\*, F
+    Loop Files, A2DIR "\*", "F"
     {
         if (A_LoopFileName == "_ user_data_include")
             continue
@@ -124,22 +121,22 @@ backup() {
     }
 
     delete_later := false
-    backup_dir = %A2DIR%\data\temp\%backup_dir_name%\%install_ver%
+    backup_dir := path_join(A2DIR, "data", "temp", backup_dir_name, install_ver)
     logmsg("backing up '" . install_ver . "': " . backup_dir)
     if FileExist(backup_dir) {
-        backup_dir = %A_Temp%\%backup_dir_name%\%A_Now%
+        backup_dir := path_join(A_Temp, backup_dir_name, A_Now)
         logmsg(" version already backed up!: moving to temp:" . backup_dir)
         delete_later := true
     }
 
-    FileCreateDir, %backup_dir%
+    DirCreate(backup_dir)
     result := move_catched(A2DIR, backup_dir, backup_items)
     if result == ""
         return
 
     src_trg_paths := StrSplit(result, "\n")
     msg := "The current version could not be moved away before the update!`n"
-    msg .= "Some file or folder is blocking!:`n" . src_trg_paths[1]
+    msg .= "Some file or folder is blocking!:`n`n" . src_trg_paths[1] . "`n`n"
     msg .= "Please make sure nothing is blocking and retry."
     log_error("Backup failed!", msg)
     ExitApp
@@ -153,10 +150,10 @@ install() {
     if (!FileExist(PACKAGE_DIR))
         log_error("Package dir missing?!", "The package dir must exist!`n'" . PACKAGE_DIR . "'!!?")
 
-    Loop, Files, %PACKAGE_DIR%\*, D
-        FileMoveDir, %A_LoopFilePath%, %A2DIR%\%A_LoopFileName%
-    Loop, Files, %PACKAGE_DIR%\*, F
-        FileMove, %A_LoopFilePath%, %A2DIR%\%A_LoopFileName%
+    Loop Files, PACKAGE_DIR "\*", "D"
+        DirMove(A_LoopFilePath, path_join(A2DIR, A_LoopFileName))
+    Loop Files, PACKAGE_DIR "\*", "F"
+        FileMove(A_LoopFilePath, path_join(A2DIR, A_LoopFileName))
 
     ; make sure the SQLlite-dll can be found
     sqldll := "SQLite3.dll"
@@ -165,16 +162,16 @@ install() {
         log_error(sqldll " missing?!", 'The "' sqldll '" must exist here:`n' dll_path '`n!`nWhere is it?')
     ini_path := path_join(A2DIR, "lib", "SQLiteDB.ini")
     ini_code := "[Main]`nDllPath=" dll_path
-    FileAppend %ini_code%, %ini_path%
+    FileAppend(ini_code, ini_path)
 
     ; If there is no db-file yet, make sure there is an empty one.
     data_path := path_join(A2DIR, "data")
     if (!FileExist(data_path))
-        FileCreateDir, %data_path%
+        DirCreate(data_path)
     db_path := path_join(data_path, "a2.db")
     if (!FileExist(db_path)) {
         txt := ""
-        FileAppend %txt%, %db_path%
+        FileAppend(txt, db_path)
     }
 }
 
@@ -183,21 +180,20 @@ remove_if_empty(path) {
     if !_remove_if_empty(path)
         return
 
-    SplitPath path ,, OutDir
-    SplitPath OutDir , OutFileName
-    if (OutFileName == backup_dir_name)
-        _remove_if_empty(OutDir)
+    dir_name := path_dirname(path)
+    if (path_basename(dir_name) == backup_dir_name)
+        _remove_if_empty(dir_name)
 }
 
 _remove_if_empty(path) {
     empty := true
-    Loop, Files, %path%\*, FD
+    Loop Files, path "\*", "FD"
     {
         empty := false
         return empty
     }
     if empty
-        FileRemoveDir, %path%
+        DirDelete(path)
     return empty
 }
 
@@ -209,8 +205,8 @@ check_running() {
     names := []
     for i, proc in processes
     {
-        names.push(proc.name)
-        if (proc.name = "Autohotkey.exe" && string_endswith(proc.CommandLine, " lib\a2.ahk"))
+        names.push(proc["Name"])
+        if (proc["Name"] == "Autohotkey.exe" && string_endswith(proc["CommandLine"], " lib\a2.ahk"))
             runs_a2runtime := true
     }
     if (names.length) {
@@ -222,20 +218,15 @@ check_running() {
 
         if (run_silent) {
             logmsg("a2 Applications running!" . msg)
-            Sleep 1000
+            Sleep(1000)
         } else {
-            MsgBox 49, a2 Applications running ..., %msg%
-            IfMsgBox Cancel
-            {
+            if !msgbox_accepted(msg, "a2 Applications running ...")
                 ExitApp
-            }
         }
 
         for i, proc in processes
-        {
-            pid := proc.ProcessId
-            Process, Close, %pid%
-        }
+            ProcessClose(proc["ProcessId"])
+
         runs_a2runtime := check_running()
     }
 

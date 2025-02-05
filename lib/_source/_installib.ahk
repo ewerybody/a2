@@ -4,8 +4,11 @@
 #Include <msgbox>
 #Include <path>
 
+/*
+Log something to stdout. This would fail on non-console apps like our setup.exe installer
+*/
 logmsg(msg) {
-    FileAppend(msg . "`n", "*")
+    try FileAppend(msg . "`n", "*")
 }
 
 log_info(title, msg, timeout := 2147483) {
