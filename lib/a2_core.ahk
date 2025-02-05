@@ -1,22 +1,20 @@
-#include Autohotkey\lib\Class_SQliteDB.ahk
+#include <Class_SQliteDB>
 /**
  * a2 global object definition
-*/
-class A2Core_Class
-{
+ */
+Class A2Core_Class {
     /**
      * Title of the a2 instance
      *
      * @type string
-    */
+     */
     static title := ""
 
     /**
      * Constructor
      *     Creates an object for the DB of the a2 instance
-    */
-    __New(data_path)
-    {
+     */
+    __New(data_path) {
         this.title := "a2"
 
         if (A_ScriptName = "a2.exe")
@@ -33,7 +31,7 @@ class A2Core_Class
             ,modules: data_path "modules\"
             ,module_data: data_path "module_data\"
             ,temp: data_path "temp\"
-        ,includes: data_path "includes\includes.ahk"}
+            ,includes: data_path "includes\includes.ahk"}
 
         this.cfg := {}
 
@@ -64,26 +62,23 @@ class A2Core_Class
 
 /**
  * API for modules to interact with the DB
-*/
-class _Ca2DB
-{
+ */
+Class _Ca2DB {
     /**
      * Path to the DB file of the a2 instance
      *
      * @type string
-    */
+     */
     static path := ""
 
     /**
      * Constructor
      *     Opens connection to the DB
-    */
-    __New(data_path)
-    {
+     */
+    __New(data_path) {
         this.path := data_path "a2.db"
         ; Ensure the DB file does exist
-        if (!FileExist(this.path))
-        {
+        if (!FileExist(this.path)) {
             db_file := FileOpen(this.path, "w")
             db_file.Write("")
             db_file.Close()
@@ -95,9 +90,8 @@ class _Ca2DB
     /**
      * Destructor
      *     Closes the connection to the DB
-    */
-    __Delete()
-    {
+     */
+    __Delete() {
         this.dbObject.CloseDB()
     }
 
@@ -109,22 +103,21 @@ class _Ca2DB
      * @param  string   moduleName  Name of the Module that called the method
      * @param  string   key         Name of the key in the Table
      * @return string
-    */
-    get(modulePack, moduleName, key)
-    {
+     */
+    get(modulePack, moduleName, key) {
         moduleTable := this.__moduleTable(modulePack, moduleName)
         this.__validateTable(moduleTable) ; will throw an error if invalid
         return this.__get(moduleTable, key)
     }
 
-     /**
+    /**
      * From a A_LineFile path build the module key and fetch the wanted value.
      * Entry in DB is a key/value pair.
      *
      * @param  string   line_file  Path to a file in a module directory.
      * @param  string   key        Name of the key in the Table.
      * @return string
-    */
+     */
     find(line_file, key) {
         moduleTable := this.__moduleTableFromFile(line_file)
         this.__validateTable(moduleTable)
@@ -139,9 +132,8 @@ class _Ca2DB
      * @param  string   moduleName  Name of the Module that called the method
      * @param  string   key         Name of the key in the Table
      * @param  string   value       Value to be set in the Table
-    */
-    set(modulePack, moduleName, key, value)
-    {
+     */
+    set(modulePack, moduleName, key, value) {
         moduleTable := this.__moduleTable(modulePack, moduleName)
 
         this.__validateTable(moduleTable) ; will throw an error if invalid
@@ -160,7 +152,7 @@ class _Ca2DB
      * @param  string   key        Name of the key in table.
      * @param  string   value      Value to be set in table.
      * @return string
-    */
+     */
     find_set(line_file, key, value) {
         moduleTable := this.__moduleTableFromFile(line_file)
         this.__validateTable(moduleTable)
@@ -177,9 +169,8 @@ class _Ca2DB
      * @param   string  modulePack  Name of the Module Pack that called the method
      * @param   string  moduleName  Name of the Module that called the method
      * @param   string  key         Name of the key in the Table
-    */
-    delete(modulePack, moduleName, key)
-    {
+     */
+    delete(modulePack, moduleName, key) {
         moduleTable := this.__moduleTable(modulePack, moduleName)
 
         this.__validateTable(moduleTable) ; will throw an error if invalid
@@ -198,9 +189,8 @@ class _Ca2DB
      * @param   string  key         Name of the key in the Table
      * @param   integer step        Amount to increase the value by
      * @return  integer             Value after adding the amount
-    */
-    increment(modulePack, moduleName, key, step := 1)
-    {
+     */
+    increment(modulePack, moduleName, key, step := 1) {
         ; if step is not number
         ;     return -1
 
@@ -228,9 +218,8 @@ class _Ca2DB
      * @param   string  moduleTable     Name of the Table
      * @param   string  key             Value in column "key"
      * @return  string
-    */
-    __get(moduleTable, key)
-    {
+     */
+    __get(moduleTable, key) {
         this.__openConnection()
 
         result := ""
@@ -254,9 +243,8 @@ class _Ca2DB
      * @param   string  moduleTable     Name of the Table
      * @param   string  key             Value for column "key"
      * @param   string  value           Value for column "value"
-    */
-    __insert(moduleTable, key, value)
-    {
+     */
+    __insert(moduleTable, key, value) {
         this.__openConnection()
 
         sql := "INSERT INTO '" moduleTable "' ('key', 'value') VALUES ('" key "', '" value "')"
@@ -275,9 +263,8 @@ class _Ca2DB
      * @param   string  moduleTable     Name of the Table
      * @param   string  key             Value in column "key"
      * @param   string  value           Value for column "value"
-    */
-    __update(moduleTable, key, value)
-    {
+     */
+    __update(moduleTable, key, value) {
         this.__openConnection()
 
         sql := "UPDATE '" moduleTable "' set value = '" value "' WHERE key = '" key "'"
@@ -295,9 +282,8 @@ class _Ca2DB
      *
      * @param   string  moduleTable     Name of the Table
      * @param   string  key             Value in column "key"
-    */
-    __remove(moduleTable, key)
-    {
+     */
+    __remove(moduleTable, key) {
         this.__openConnection()
 
         sql := "DELETE FROM '" moduleTable "' WHERE key = '" key "'"
@@ -316,9 +302,8 @@ class _Ca2DB
      * @param   string  modulePack  Name of the Module Pack that called the method
      * @param   string  moduleName  Name of the Module that called the method
      * @return  string
-    */
-    __moduleTable(modulePack, moduleName)
-    {
+     */
+    __moduleTable(modulePack, moduleName) {
         return modulePack "|" moduleName
     }
 
@@ -336,9 +321,8 @@ class _Ca2DB
      *     Throws a terminating Exception if it doesn't
      *
      * @param   string  moduleTable     Name of the Table
-    */
-    __validateTable(moduleTable)
-    {
+     */
+    __validateTable(moduleTable) {
         this.__openConnection()
 
         sql := "SELECT COUNT(*) FROM '" moduleTable "'"
@@ -353,14 +337,12 @@ class _Ca2DB
     /**
      * Private Method
      *     Handles the establishing of the connection to the DB
-    */
-    __openConnection()
-    {
+     */
+    __openConnection() {
         if (this.dbObject._Handle) ; connection is already open
             Return
 
-        Loop(5)
-        {
+        Loop(5) {
             if (this.dbObject.OpenDB(this.path))
                 break
             else
@@ -374,9 +356,8 @@ class _Ca2DB
     /**
      * Private Method
      *     Handles the terminate of the connection to the DB
-    */
-    __closeConnection()
-    {
+     */
+    __closeConnection() {
         if (!this.dbObject.CloseDB())
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
     }
