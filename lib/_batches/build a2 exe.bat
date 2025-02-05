@@ -15,4 +15,4 @@ echo   /out: %executable%
 echo  /base: %AhkExe%
 echo ...
 
-"%Ahk2Exe%" /in "%script%" /out "%executable%" /compress 0
+"%Ahk2Exe%" /in "%script%" /out "%executable%" /compress 0 /ahk "%AhkExe%" /silent
