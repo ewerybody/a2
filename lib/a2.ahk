@@ -2,9 +2,7 @@
 ; main file! This gathers all the runtime resources
 #SingleInstance force
 Persistent
-; #NoTrayIcon
 
-#include <Class_SQLiteDB>
 #include <path>
 #include <string>
 #include <msgbox>
