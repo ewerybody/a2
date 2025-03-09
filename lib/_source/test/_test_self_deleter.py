@@ -11,8 +11,8 @@ So what do we test:
   * create folder with exe + extra stuff
     * check if it deletes itself and keeps other files
 """
+
 import os
-import sys
 import time
 from os.path import join
 import shutil
@@ -53,10 +53,10 @@ def main():
                 with open(EXTRA_FILE, 'w', encoding='utf8') as fileobj:
                     fileobj.write(CHKMK * 50)
 
-            _prnt('Compiling ... ')
+            print('Compiling ... ', end='')
 
             subprocess.call(
-                [COMPILER, '/in', TEST_SCRIPT, '/out', TEST_EXE, '/ahk', AHK_EXE], cwd=SOURCE_DIR
+                [COMPILER, '/in', TEST_SCRIPT, '/out', TEST_EXE, '/ahk', os.path.join(AHK_DIR, AHK_EXE)], cwd=SOURCE_DIR
             )
 
             if os.path.isfile(TEST_EXE):
@@ -65,14 +65,14 @@ def main():
                 print(f'{EXMRK} Failed! - {TEST_EXE}')
                 return
 
-            _prnt('Calling executable ... ')
+            print('Calling executable ... ', end='')
             pid = subprocess.Popen(args).pid
             print(f'{CHKMK} done - {pid}')
 
             print('waiting for deletion ...\n')
             waited = 0
             while os.path.isfile(TEST_EXE):
-                _prnt('.')
+                print('.', end='')
                 time.sleep(WAIT_STEP)
                 waited += WAIT_STEP
                 if waited > MAX_WAIT:
@@ -100,9 +100,6 @@ def main():
         print(f'\n{EXMRK} FAILED!')
     else:
         print(f'\n{CHKMK} Test PASSED! ({successes})')
-
-
-_prnt = sys.stdout.write
 
 
 if __name__ == '__main__':
