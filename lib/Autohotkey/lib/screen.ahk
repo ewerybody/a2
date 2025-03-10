@@ -8,16 +8,19 @@ screen_get_virtual_size(&x, &y, &w, &h) {
     h := SysGet(79)
 }
 
+/**
+* Return the MonitorID where the specified window is located on. Starts with 1.
+* https://autohotkey.com/board/topic/69464-how-to-determine-a-window-is-in-which-monitor/#entry440355
+* @param {(Integer)} hwnd
+* Handle of the window to be found.
+* @returns {(Integer)}
+* @author shnywong
+* @example
+*   
+*     screen_get_index(WinExist("A"))
+*     
+**/
 screen_get_index(hwnd) {
-    ; Return the MonitorID where the specified window is located on
-    ; @author shnywong
-    ; @docu
-    ;     https://autohotkey.com/board/topic/69464-how-to-determine-a-window-is-in-which-monitor/#entry440355
-    ; @sample
-    ;     screen_get_index(WinExist("A"))
-    ; @param   HWND     hwnd     Handler of the window to be found
-    ; @return  integer
-    ; Starts with 1.
     monitorIndex := 1
 
     monitorHandle := DllCall("MonitorFromWindow", "uint", hwnd, "uint", 0x2)

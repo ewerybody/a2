@@ -297,7 +297,7 @@ window_is_fullscreen(win_id := "") {
 
     screen_area := screen_get_work_area(screen_get_index(win_id))
     win_area := window_get_geometry(win_id)
-    msgbox_info("screen:  " screen_area.x "|" screen_area.y "|" screen_area.x2 "|" screen_area.y2 "`nwindow:" win_area.x "|" win_area.y "|" win_area.x2 "|" win_area.y2)
+    ; msgbox_info("screen:  " screen_area.x "|" screen_area.y "|" screen_area.x2 "|" screen_area.y2 "`nwindow:" win_area.x "|" win_area.y "|" win_area.x2 "|" win_area.y2)
     if win_area.x > screen_area.x
         return false
     if win_area.y > screen_area.y
