@@ -40,6 +40,17 @@ explorer_get_path(hwnd:="") {
     return pth
 }
 
+; Set the path of the target Explorer window.
+explorer_set_path(path, hwnd:="") {
+    if !(window := explorer_get_window(hwnd))
+        return ErrorLevel := "ERROR"
+    if (window == "desktop" OR !path_is_dir(path))
+        return
+
+    window.Navigate(path)
+}
+
+
 ; Get array of paths of ALL items via Explorer window handle.
 explorer_get_all(hwnd:="") {
     return explorer_get(hwnd)
@@ -55,15 +66,15 @@ explorer_get_window(hwnd:="") {
     if (WinGetProcessName("ahk_id " . hwnd) != "explorer.exe")
         return
 
-    clss := WinGetClass("ahk_id " . hwnd)
-    if (clss ~= "(Cabinet|Explore)WClass") {
+    this_class := WinGetClass("ahk_id " . hwnd)
+    if (this_class ~= "(Cabinet|Explore)WClass") {
         for window in ComObject("Shell.Application").Windows
             Try if (window.hwnd==hwnd)
             return window
     }
-    else if (clss ~= "Progman|WorkerW")
+    else if (this_class ~= "Progman|WorkerW")
         return "desktop" ; desktop found
-    else if (clss == "Shell_TrayWnd")
+    else if (this_class == "Shell_TrayWnd")
         return
 }
 
@@ -169,7 +180,19 @@ explorer_show(pth) {
     Run cmd
 }
 
-; Ask for file name as long that name exists in given directory or user cancels. Return `true` if name is available and accepted and `false` if canceled.
+/**
+ * Ask for file name as long that name exists in given directory or user cancels.
+ * Return `true` if name is available and accepted and `false` if canceled.
+ *
+ * @param file_name
+ * @param dir_path
+ * @param extension
+ * @param file_label
+ * @param title
+ * @param subtitle
+ * @param w
+ * @param h
+ */
 explorer_create_file_dialog(&file_name, dir_path, extension, file_label, title, subtitle := "", w := 420, h:= 140)
 {
     if (!dir_path) {
