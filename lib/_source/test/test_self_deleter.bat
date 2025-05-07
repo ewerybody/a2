@@ -1,8 +1,8 @@
+@echo off
 rem Test batch script to run the self deleter on its own.
 rem literally just finds local Autohotkey.exe,
 rem runs ahk script to find latest Python.
 rem runs python test script. I'm sorry :/ but it works.
-@echo off
 set here=%~dp0
 echo here: %here%
 set ahkbin=%here%..\..\AutoHotkey

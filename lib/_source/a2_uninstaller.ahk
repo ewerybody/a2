@@ -9,7 +9,6 @@
 ; * run uninstall deleter batch
 ; * exit
 ;@Ahk2Exe-ConsoleApp
-;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2x.ico
 ;@Ahk2Exe-SetCompanyName a2
 ;@Ahk2Exe-SetCopyright GPLv3
 ;@Ahk2Exe-SetDescription a2 Uninstaller
