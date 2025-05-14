@@ -21,15 +21,13 @@ import a2ahk
 import a2util
 
 from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
-from _build_common import CHKMK, EXMRK, SHIBOKEN, SHIBOKEN_NAME, make_ahkexe
+from _build_common import CHKMK, EXMRK, SHIBOKEN, SHIBOKEN_NAME, make_ahk_exe
 
 Paths = _build_common.Paths
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
-DESKTOP_INI_CODE = (
-    f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
-)
+DESKTOP_INI_CODE = f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
 FILE_ATTR_HIDDEN = 0x02
 ROOT_FILES = ('package.json', f'{A2} on github.com.URL', 'LICENSE', 'README.md')
 LIB_IGNORES = (('Autohotkey', 'Compiler'),)
@@ -66,14 +64,15 @@ def main():
 
     prepare_package()
 
-    for name, source_name in (
-        (A2, 'a2_starter'),
-        (f'{A2}ui', 'a2ui_release'),
-        (f'Uninstall {A2}', 'a2_uninstaller'),
+    for name, source_name, icon in (
+        (A2, 'a2_starter', None),
+        (f'{A2}ui', 'a2ui_release', None),
+        (f'Uninstall {A2}', 'a2_uninstaller', 'a2x'),
     ):
-        make_ahkexe(
+        make_ahk_exe(
             os.path.join(Paths.source, f'{source_name}.ahk'),
             os.path.join(Paths.dist, f'{name}.exe'),
+            icon,
         )
 
     get_py_package()
@@ -285,7 +284,9 @@ def _zip_qt():
     tmp_ui = os.path.join(tmp_dirname, 'ui')
     os.rename(Paths.qt_temp, tmp_ui)
 
-    subprocess.call([Paths.sevenz_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS)
+    subprocess.call(
+        [Paths.sevenz_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS
+    )
 
     os.rename(tmp_ui, Paths.qt_temp)
     os.rmdir(tmp_dirname)
@@ -355,7 +356,9 @@ def patch_sqlite():
     script = os.path.join(Paths.batches, 'versions', 'get_version.ahk')
     script_wd = os.path.dirname(os.path.dirname(script))
     if os.path.isfile(sqlpath):
-        current_version = subprocess.check_output([Paths.ahkexe, script, sqlpath], cwd=script_wd).decode()
+        current_version = subprocess.check_output(
+            [Paths.ahkexe, script, sqlpath], cwd=script_wd
+        ).decode()
         current = tuple(int(v) for v in current_version.split('.'))
         if current >= latest:
             print(f'  {CHKMK} SQLite3 already up-to-date! ({current_version})')
@@ -377,12 +380,16 @@ def patch_sqlite():
                 tmp_zip.extract(filename, Paths.distui)
                 break
 
-    current_version = subprocess.check_output([Paths.ahkexe, script, sqlpath], cwd=script_wd).decode()
+    current_version = subprocess.check_output(
+        [Paths.ahkexe, script, sqlpath], cwd=script_wd
+    ).decode()
     current = tuple(int(v) for v in current_version.split('.'))
     if current >= latest:
         print(f'  {CHKMK} SQLite3 Updated!')
         return
-    print(f'  {EXMRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}')
+    print(
+        f'  {EXMRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}'
+    )
 
 
 class _DownloadFeedback:
