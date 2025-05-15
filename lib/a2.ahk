@@ -71,8 +71,12 @@ a2ui(*) {
         else
             py_exe := python_get_path()
     }
-    ui_script := path_join(a2.paths.ui, "a2app.py")
+    if !FileExist(py_exe) {
+        msgbox_error("There is no Python runtime to execute the UI with!`n", "a2UI Startup Error")
+        Return
+    }
 
+    ui_script := path_join(a2.paths.ui, "a2app.py")
     Run('"' py_exe '" "' ui_script '"', a2.paths.ui)
 }
 
@@ -98,7 +102,7 @@ a2_explore(*) {
 
 _a2_check_changes() {
     ; Check library & module scripts for changes via archive file attribute.
-    ; Removes the attribute from all files and returns true if any was found
+    ; Removes the attribute from ALL files and reloads if any was found.
     do_reload := false
     for _, libdir in [a2.paths.lib, a2.paths.ahklib] {
         Loop Files, string_suffix(libdir, "\") "*.ahk"
@@ -117,6 +121,8 @@ _a2_check_changes() {
             Continue
 
         path := path_join(a2.paths.data, SubStr(A_LoopReadLine, 10))
+        if !FileExist(path)
+            Continue
         if InStr(FileGetAttrib(path), "A") {
             do_reload := true
             a2log_debug("Changed include file: " path)
