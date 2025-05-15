@@ -24,11 +24,12 @@ THIS_DIR = os.path.abspath(THIS_DIR)
 SOURCE_DIR = os.path.dirname(THIS_DIR)
 
 TEST_DIR = join(THIS_DIR, f'_ {NAME}')
-EXTRA_FILE = join(TEST_DIR, 'random_test_name_4favafvar4var.ext')
+EXTRA_FILE = join(TEST_DIR, 'random_test_name_45234af45r4var.ext')
 TMP_EXE = join(THIS_DIR, f'{NAME}.exe')
 TEST_EXE = join(TEST_DIR, f'{NAME}.exe')
 AHK_DIR = os.path.abspath(join(THIS_DIR, '..', '..', 'Autohotkey'))
-AHK_EXE = join('Autohotkey.exe')
+AHK_EXE = 'Autohotkey.exe'
+AHK_PATH = os.path.join(AHK_DIR, AHK_EXE)
 COMPILER = join(AHK_DIR, 'Compiler', 'Ahk2Exe.exe')
 TEST_SCRIPT = join(THIS_DIR, NAME + '.ahk')
 CHKMK = b'\xe2\x9c\x94'.decode()
@@ -53,11 +54,19 @@ def main():
                 with open(EXTRA_FILE, 'w', encoding='utf8') as fileobj:
                     fileobj.write(CHKMK * 50)
 
+            compile_args = [
+                COMPILER,
+                '/in', TEST_SCRIPT,
+                '/out', TEST_EXE,
+                '/compress', '0',
+                '/ahk', AHK_PATH,
+                '/silent',
+            ]
+            print(f'compile_args:\n{compile_args}')
             print('Compiling ... ', end='')
-
-            subprocess.call(
-                [COMPILER, '/in', TEST_SCRIPT, '/out', TEST_EXE, '/ahk', os.path.join(AHK_DIR, AHK_EXE)], cwd=SOURCE_DIR
-            )
+            subprocess.call(compile_args, cwd=SOURCE_DIR)
+            # batches_path = os.path.join(os.path.dirname(SOURCE_DIR), '_batches')
+            # subprocess.call(args, cwd=batches_path)
 
             if os.path.isfile(TEST_EXE):
                 print(f'{CHKMK} done - {TEST_EXE}')

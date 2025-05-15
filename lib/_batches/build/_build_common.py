@@ -25,17 +25,11 @@ PYSIDE_NAME = f'{PYSIDE}{PYSIDE_VERSION}'
 SHIBOKEN = 'shiboken'
 SHIBOKEN_NAME = f'{SHIBOKEN}{PYSIDE_VERSION}'
 TMP_NAME = A2 + '_temp_buildpath'
-SEVEN_FLAGS = (
-    '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
-)
+SEVEN_FLAGS = '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
 AUTOHOTKEY = 'AutoHotkey'
 PYTHON = 'Python'
 # to gather versions in use:
-VERSIONS = {
-    PYSIDE: '',
-    AUTOHOTKEY: '',
-    PYTHON: ''
-}
+VERSIONS = {PYSIDE: '', AUTOHOTKEY: '', PYTHON: ''}
 CHKMK = b'\xe2\x9c\x94'.decode()
 EXMRK = b'\xe2\x9c\x96'.decode()
 
@@ -144,30 +138,39 @@ class Paths:
             yield name, cls.__dict__[name]
 
 
-def make_ahkexe(script, outpath, nfo=None):
+def make_ahk_exe(script, out_path, nfo=None, icon=None):
     if not os.path.isfile(script):
         raise RuntimeError('No such Script File!! (%s)' % script)
 
-    print(f'Generating AHK executable "{os.path.basename(outpath)}" ...', end='')
+    print(f'Generating AHK executable "{os.path.basename(out_path)}" ...', end='')
 
-    if os.path.isfile(outpath):
-        os.unlink(outpath)
+    if os.path.isfile(out_path):
+        os.unlink(out_path)
 
-    cmd = [Paths.ahk2exe, '/in', script, '/out', outpath, '/compress', '0', '/ahk', Paths.ahkexe]
+    cmd = [
+        Paths.ahk2exe,
+        '/in', script,
+        '/out', out_path,
+        '/compress', '0',
+        '/ahk', Paths.ahkexe,
+    ]
+    if isinstance(icon, str) and os.path.isfile(icon):
+        cmd.extend(['/icon', icon])
+
     subprocess.call(cmd, cwd=Paths.lib)
-    if not os.path.isfile(outpath):
+    if not os.path.isfile(out_path):
         print('cmd: %s' % cmd)
         print('Paths.lib: %s' % Paths.lib)
-        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, outpath))
+        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, out_path))
 
     print(f'\b\b\b{CHKMK}  ')
 
     if nfo is not None:
         if not nfo.get('OriginalFilename'):
-            nfo['OriginalFilename'] = os.path.basename(outpath)
-        set_rc_nfo(outpath, nfo)
+            nfo['OriginalFilename'] = os.path.basename(out_path)
+        set_rc_nfo(out_path, nfo)
 
-    return outpath
+    return out_path
 
 
 def set_rc_nfo(target_path: str, nfo: dict[str, str]):
@@ -206,9 +209,13 @@ def _set_rc_key(target_path, key, value_string):
     if key == 'FileVersion':
         subprocess.call([Paths.rcedit, target_path, '--set-file-version', value_string])
     elif key == 'ProductVersion':
-        subprocess.call([Paths.rcedit, target_path, '--set-product-version', value_string])
+        subprocess.call(
+            [Paths.rcedit, target_path, '--set-product-version', value_string]
+        )
     else:
-        subprocess.call([Paths.rcedit, target_path, '--set-version-string', key, value_string])
+        subprocess.call(
+            [Paths.rcedit, target_path, '--set-version-string', key, value_string]
+        )
 
     # check if things were changed correctly
     current = subprocess.check_output(

@@ -13,7 +13,7 @@ import subprocess
 import _build_common
 import a2core
 import a2util
-from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHKMK, EXMRK, Paths, make_ahkexe
+from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHKMK, EXMRK, Paths, make_ahk_exe
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
@@ -244,7 +244,7 @@ def _copy_together_installer_binaries(version_label):
         shutil.copyfile(Paths.archive_target, this_archive)
 
         # add setup executable to archive
-        exe_path = make_ahkexe(script, os.path.join(Paths.distroot, SETUP_EXE), nfo)
+        exe_path = make_ahk_exe(script, os.path.join(Paths.distroot, SETUP_EXE), nfo)
         subprocess.call([Paths.sevenz_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
         os.unlink(exe_path)
 

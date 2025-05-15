@@ -11,4 +11,3 @@ ExitApp
 Return ;-----------------------------------------------------------------------
 #Include %A_ScriptDir%\..
 #Include a2_uninstaller.ahk
-;@Ahk2Exe-SetMainIcon ..\..\..\ui\res\a2x.ico
