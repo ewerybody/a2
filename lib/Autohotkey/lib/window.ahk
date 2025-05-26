@@ -291,11 +291,13 @@ window_set_aot(state, win_id := "") {
 
 ; Tell if a window extends to the borders of it's screen.
 ; Works for maximized, F11 full-screen mode or just dragging the window big.
-window_is_fullscreen(win_id := "") {
+window_is_fullscreen(win_id := "", screen_area := "") {
     if !win_id
         win_id := WinExist("A")
 
-    screen_area := screen_get_work_area(screen_get_index(win_id))
+    if screen_area == ""
+        screen_area := screen_get_work_area(screen_get_index(win_id))
+
     win_area := window_get_geometry(win_id)
     ; msgbox_info("screen:  " screen_area.x "|" screen_area.y "|" screen_area.x2 "|" screen_area.y2 "`nwindow:" win_area.x "|" win_area.y "|" win_area.x2 "|" win_area.y2)
     if win_area.x > screen_area.x
