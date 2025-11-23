@@ -7,6 +7,10 @@ dc := uri_decode(ec)
 e2 := uri_encode(dc)
 e3 := uri_url_encode(dc)
 e4 := uri_encode(dc, "[0-9a-zA-Z;?@,&=+$#.]")
+
 msg .= "ec: " ec "`nuri_decode(ec): " dc "`nuri_encode(dc): " e2
 msg .= "`nuri_url_encode(dc): " e3 "`nuri_encode 2: " assertmsg(ec == e4) "`n" e4
+
+test_linebreak := "text`nwith`nlinebreaks"
+msg .= "`ntest_linebreak: " test_linebreak "`nuri_decoded: " uri_encode(test_linebreak)
 MsgBox(msg)

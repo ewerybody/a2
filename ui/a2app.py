@@ -89,10 +89,8 @@ class A2App(QSingleApplication):
             )
             raise RuntimeError(msg)
 
-    def app_msg_get(self, msg):
-        """
-        Handle received messeges with.
-        """
+    def app_msg_get(self, msg: str):
+        """Handle received messages."""
         if '--close' in msg:
             self.exit()
 

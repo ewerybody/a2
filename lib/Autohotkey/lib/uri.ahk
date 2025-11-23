@@ -5,9 +5,9 @@ uri_url_encode(url) { ; keep ":/;?@,&=+$#."
 }
 
 
+; Find percentage encoding and turn it back to readable characters.
+; "https%3A%2F%2F" -> "https://"
 uri_decode(uri) {
-    ; Find percentage encoding and turn it back to readable characters.
-    ; "https%3A%2F%2F" -> "https://"
     Loop
     {
         ; find "%20" patterns. That's 2 hex digits after a %
@@ -34,8 +34,8 @@ uri_decode(uri) {
 }
 
 
+; Turn special characters to percentage encoding.
 uri_encode(uri, RE:="[0-9A-Za-z]") {
-    ; Turn special characters to percentage encoding.
     ; VarSetCapacity(Var, StrPut(uri, "UTF-8"), 0)
     ; VarSetStrCapacity(&Var, StrPut(uri, "UTF-8"))
     ; StrPut(uri, Var, "UTF-8")
