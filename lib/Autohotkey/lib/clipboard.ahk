@@ -5,30 +5,20 @@
 ; Basically stores current clipboard, fires Ctrl+C, gets variable
 ; from clipboard, restores clipboard and returns variable. Voila!
 clipboard_get(clipWaitTime:=0.5) {
-    wc := WinClip()
-    wc.Copy(clipWaitTime)
-    selection := wc.GetText()
-    wc := 0
-    return selection
+    ; wc := WinClip()
+    ; wc.Copy(clipWaitTime)
+    ; selection := wc.GetText()
+    ; wc := 0
+    ; return selection
 
-    ; SavedClipboard := ClipboardAll
-    ; clipboard_empty()
-    ; Sleep, 0
+    saved_clipboard := ClipboardAll()
+    clipboard_empty()
 
     ; ; also watch for the process-executable instead of just window title:
     ; WinGetClass, Class, A
     ; WinGet, this_process, ProcessName, ahk_class %Class%
 
-    ; ; Sending `Ctrl+C` in Maya may cause a "scene clipboard save" which can be heavy!
-    ; ; To avoid this we make sure we're not on the main window of Maya.
-    ; if (this_process == "maya.exe")
-    ; {
-    ;     WinGetTitle, this_title, A
-    ;     if (string_startswith(this_title, "Autodesk Maya "))
-    ;         Return ""
-    ; }
-
-    ; ;Send, {Blind}%resetModifiers%^c%restoreModifiers%
+    ; Send{Blind}%resetModifiers%^c%restoreModifiers%
     ; if (this_process == "Photoshop.exe")
     ; {
     ;     SetKeyDelay, 20, 20
@@ -37,34 +27,54 @@ clipboard_get(clipWaitTime:=0.5) {
     ; Else If Class in PuTTY,ConsoleWindowClass,ytWindow
     ;     Send, {ENTER}
     ; Else
-    ;     Send, {Ctrl down}^c{Ctrl up}
+    Send("{Ctrl down}^c{Ctrl up}")
 
-    ; If clipWaitTime <>
-    ; {
-    ;     If copyAsText = 0
-    ;         ClipWait, %clipWaitTime%, 1
-    ;     Else
-    ;         ClipWait, %clipWaitTime%
-    ; }
-    ; Sleep,0
+    If clipWaitTime
+    {
+        ClipWait(clipWaitTime)
+    }
+    Sleep(0)
 
-    ; Selection := Clipboard
-    ; Clipboard := SavedClipboard
+    Selection := A_Clipboard
+    A_Clipboard := saved_clipboard
 
-    ; Return Selection
+    Return Selection
 }
 
-clipboard_paste( inputString, sleepTime:=50 ) {
-    wc := WinClip()
-    wc.Paste(inputString)
-    ; Use the clipboard to paste given text.
-    ; SavedClipboard := ClipboardAll
+
+; Use the clipboard to paste given text.
+clipboard_paste(input_string) {
+    clipbackup := ClipboardAll()
+    ; Set new data to clipboard
+    A_Clipboard := input_string
+    ; Send the default paste command
+    Send('^v')
+    ; Check repeatedly to see if the clipboard is still open
+    Loop
+        ; If more than 20 tries
+        if (A_Index > 20)
+            ; Stop trying and notify of failure
+            return TrayTip(A_ThisFunc ' failed to restore clipboard contents.')
+        ; Otherwise, wait another 100ms
+        else Sleep(100)
+    ; Stop when clipboard window isn't in use
+    Until !DllCall('GetOpenClipboardWindow', 'Ptr')
+    ; Restore original clipboard contents
+    A_Clipboard := clipbackup
+
+    ; wc := WinClip()
+    ; wc.Paste(inputString)
+    ; saved_clipboard := ClipboardAll()
     ; clipboard_empty()
-    ; Clipboard := inputString
-    ; ClipWait, 1
-    ; Send, {Ctrl down}^v{Ctrl up}
-    ; Sleep, 20
-    ; Clipboard := SavedClipboard
+    ; clip_now := A_Clipboard
+    ; a2tip("A_Clipboard: " . clip_now . "`nsaved: " . saved_clipboard.)
+    ; Sleep(400)
+    ; A_Clipboard := input_string
+    ; ClipWait(1)
+    ; Send("{Ctrl down}{Insert}{Ctrl up}")
+
+    ; Sleep(20)
+    ; A_Clipboard := saved_clipboard
 }
 
 ; Parse lines in clipboard, return list of existing file paths.
