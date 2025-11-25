@@ -18,7 +18,7 @@ PACKAGE_LIB = '.lib'
 EDIT_DISCLAIMER = a2core.EDIT_DISCLAIMER
 ERROR_DUP_VALUE = 'Value name already collected!!\n  module: %s\n  value name: %s'
 ERROR_EMPTYNAME = 'Empty variable name!!\n  module: %s\n  value name: %s'
-
+SCOPE_PREFIX = '\n#HotIf'
 
 class Scope:
     glob = '0'
@@ -261,35 +261,45 @@ class HotkeysCollection(_Collection):
                             continue
                         self.hotkeys_global.setdefault(key, []).append((command, mod))
 
-                # '1' & '2' are include/exclude scopes
-                # gather per type (0) hotkeys (1) and commands (2)
                 else:
-                    scopes, hotkeys, command = hotkey_data
-                    if not command:
-                        continue
-                    for scope_string in scopes:
-                        # make sure there is a hotkey dict for this scope
-                        self._scope_types[scope_type].setdefault(scope_string, {})
-                        # now append the command under hotkeys
-                        for key in iter_str_or_list(hotkeys):
-                            if not key:
-                                continue
-                            self._scope_types[scope_type][scope_string].setdefault(key, []).append((command, mod))
+                    self._gather_scoped(scope_type, hotkey_data, mod)
+
+    def _gather_scoped(self, scope_type, hotkey_data, mod):
+        """
+        '1' & '2' are include/exclude scopes.
+        Gather per type (0) hotkeys (1) and commands (2).
+        """
+        scopes, hotkeys, command = hotkey_data
+        if not command:
+            return
+
+        # assemble the parts
+        win_func = 'WinActive("'
+        bool_op = 'OR'
+        if scope_type is Scope.excl:
+            win_func = f'!{win_func}'
+            bool_op = 'AND'
+        end = '")'
+        joiner = f'{end} {bool_op} {win_func}'
+        scope_string = f'{SCOPE_PREFIX} {win_func}{joiner.join(scopes)}{end}'
+
+        # make sure there is a hotkey dict for this scope
+        self._scope_types[scope_type].setdefault(scope_string, {})
+        # now append the command under hotkeys
+        for key in iter_str_or_list(hotkeys):
+            if not key:
+                continue
+            self._scope_types[scope_type][scope_string].setdefault(key, []).append((command, mod))
+
 
     def get_content(self):
-        scope_prefix = '#HotIf'
-        scope_modes = {
-            Scope.incl: f'\n{scope_prefix} WinActive',
-            Scope.excl: f'\n{scope_prefix} !WinActive'
-        }
-
         # write global hotkey text
-        content = f'{scope_prefix}\n'
+        content = f'{SCOPE_PREFIX}\n'
         content += self._create_hotkey_code(self.hotkeys_global)
         # write the scoped stuff
         for mode, scope_dict in self._scope_types.items():
             for scope, hotkey_data in scope_dict.items():
-                content += f'{scope_modes[mode]}("{scope}")\n'
+                content += f'{scope}\n'
                 content += self._create_hotkey_code(hotkey_data)
 
         return content
