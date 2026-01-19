@@ -75,6 +75,9 @@ msg .= "string_random: " string_random(32) "`n"
 ; test string_trim
 st := 'abc "><"abc '
 s1 := string_trim(st, ' "abc')
-msg .= "string_trim: " assertmsg(s1 == "><")
+msg .= "string_trim: " assertmsg(s1 == "><") "`n"
 
+st := "hello, world!"
+s1 := string_strip(st . " `n")
+msg .= "string_strip: " assertmsg(s1 == st)
 MsgBox(msg)

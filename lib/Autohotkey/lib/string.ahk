@@ -69,7 +69,7 @@ string_trim(string, chars) {
     return string_trimLeft(string_trimRight(string, chars), chars)
 }
 
-; Remove all occurences of chars at beginning of string. chars can be array of strings to be removed.
+; Remove all occurrences of chars at beginning of string. chars can be array of strings to be removed.
 string_trimLeft(string, chars) {
     if (IsObject(chars))
         chars := string_join(chars, "")
@@ -85,17 +85,17 @@ string_trimLeft(string, chars) {
     }
 }
 
-; Remove all occurences of chars at the end of string. chars can be array of strings to be removed.
+; Remove all occurrences of chars at the end of string. chars can be array of strings to be removed.
 string_trimRight(string, chars) {
     if (IsObject(chars))
         chars := string_join(chars, "")
 
-    slen := StrLen(string)
-    Loop(slen)
+    len := StrLen(string)
+    Loop(len)
     {
         If InStr(chars, SubStr(string, -1))
         {
-            string := SubStr(string, 1, slen - A_Index)
+            string := SubStr(string, 1, len - A_Index)
             Continue
         }
         return string
@@ -108,14 +108,14 @@ string_strip(string) {
     c := SubStr(string, 1, 1)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
     {
-        string := LTrim(string)
+        string := SubStr(string, 2)
         string := string_strip(string)
     }
     ; now last character:
-    c := SubStr(string, 0)
+    c := SubStr(string, -1)
     if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
     {
-        string := RTrim(string)
+        string := SubStr(string, 1, StrLen(string) - 1)
         string := string_strip(string)
     }
 
