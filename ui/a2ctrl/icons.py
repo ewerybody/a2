@@ -23,7 +23,7 @@ _IGNORE_ICONS = ('_ *', 'telegram_join', 'css_*', 'logo_*', _PLACEHOLDER_ICON)
 class Ico(QtGui.QIcon):
     """
     Handy QIcon that:
-    * regognizes names in our resources dir,
+    * recognizes names in our resources dir,
     * can directly render from svg,
     * have a tinted version if needed.
     """
