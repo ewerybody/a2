@@ -62,7 +62,7 @@ class HoverWidget(QtWidgets.QWidget):
     def mousePressEvent(self, event):
         self.mouse_pressed.emit()
         if self._hover_widget is not None:
-            if self._hover_widget.isEnabled() and event.button() == QtCore.Qt.LeftButton:
+            if self._hover_widget.isEnabled() and event.button() == QtCore.Qt.MouseButton.LeftButton:
                 self._hover_widget.setDown(True)
 
                 if self._rich_text_label_clicked(event):
