@@ -47,9 +47,9 @@ string_is_web_address(string) {
 }
 
 ; Determine if a string starts with another string.
-string_startswith(string, startstr) {
-    ; NOTE: It's a bit faster to simply use InStr(string, startstr) = 1
-    return InStr(string, startstr) = 1
+string_startswith(string, start_str) {
+    ; NOTE: It's a bit faster to simply use InStr(string, start_str) = 1
+    return InStr(string, start_str) = 1
 }
 
 ; Determine if a string ends with another string
