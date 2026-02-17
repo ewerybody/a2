@@ -72,7 +72,7 @@ def main():
         make_ahk_exe(
             os.path.join(Paths.source, f'{source_name}.ahk'),
             os.path.join(Paths.dist, f'{name}.exe'),
-            icon,
+            icon=icon,
         )
 
     get_py_package()
