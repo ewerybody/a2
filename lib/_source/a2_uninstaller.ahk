@@ -30,7 +30,7 @@ ask_for_user_data_deletion(items)
 delete_items(items)
 
 batch_path := create_deleter_batch(A2DIR)
-logmsg(" calling installer deleter...")
+log_msg(" calling installer deleter...")
 Run(batch_path,,"Min")
 ExitApp
 
@@ -60,11 +60,11 @@ outro(items) {
         if result == "Cancel"
             ExitApp
     } else
-        logmsg(uninstall_msg)
+        log_msg(uninstall_msg)
 
     ; shut down processes
     for i, proc in processes {
-        logmsg(" closing process: " . proc.ProcessId . "...")
+        log_msg(" closing process: " . proc.ProcessId . "...")
         ProcessClose(proc.ProcessId)
     }
 }
@@ -158,7 +158,7 @@ delete_items(items) {
             progtext.Text  := path
 
         if path_is_dir(path) {
-            logmsg(" deleting dir: " . path)
+            log_msg(" deleting dir: " . path)
             DirDelete(path, true)
         } else if path_is_file(path) {
             FileDelete(path)

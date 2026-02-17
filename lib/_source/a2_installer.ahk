@@ -55,7 +55,7 @@ intro() {
             if !msgbox_accepted(install_msg . continue_msg, title)
                 ExitApp
         } else
-            logmsg(install_msg)
+            log_msg(install_msg)
     } else {
         if install_ver {
             if (install_ver == new_version)
@@ -70,7 +70,7 @@ intro() {
             IF !msgbox_accepted(install_msg . about_current . continue_msg, title)
                 ExitApp
         } else
-            logmsg(install_msg . about_current)
+            log_msg(install_msg . about_current)
     }
 }
 
@@ -116,16 +116,16 @@ backup() {
     }
 
     if (!backup_items.Length) {
-        logmsg("Nothing to backup!")
+        log_msg("Nothing to backup!")
         Return
     }
 
     delete_later := false
     backup_dir := path_join(A2DIR, "data", "temp", backup_dir_name, install_ver)
-    logmsg("backing up '" . install_ver . "': " . backup_dir)
+    log_msg("backing up '" . install_ver . "': " . backup_dir)
     if FileExist(backup_dir) {
         backup_dir := path_join(A_Temp, backup_dir_name, A_Now)
-        logmsg(" version already backed up!: moving to temp:" . backup_dir)
+        log_msg(" version already backed up!: moving to temp:" . backup_dir)
         delete_later := true
     }
 
@@ -217,7 +217,7 @@ check_running() {
         msg .= "Or you hit Cancel, do it by yourself and start the installation again."
 
         if (run_silent) {
-            logmsg("a2 Applications running!" . msg)
+            log_msg("a2 Applications running!" . msg)
             Sleep(1000)
         } else {
             if !msgbox_accepted(msg, "a2 Applications running ...")

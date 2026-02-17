@@ -30,5 +30,5 @@ check_running()
 backup()
 install()
 
-logmsg("Starting a2 ...")
+log_msg("Starting a2 ...")
 Run("a2.exe", A2DIR)

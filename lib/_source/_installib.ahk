@@ -7,20 +7,20 @@
 /*
 Log something to stdout. This would fail on non-console apps like our setup.exe installer
 */
-logmsg(msg) {
+log_msg(msg) {
     try FileAppend(msg . "`n", "*")
 }
 
 log_info(title, msg, timeout := 2147483) {
     if check_silent()
-        logmsg(title . " " . msg)
+        log_msg(title . " " . msg)
     else
         msgbox_info(msg, title)
 }
 
 log_error(title, msg) {
     if check_silent()
-        logmsg("ERROR: " . title . " " . msg)
+        log_msg("ERROR: " . title . " " . msg)
     else
         msgbox_error(msg, title)
     ExitApp
