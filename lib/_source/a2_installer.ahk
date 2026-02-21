@@ -77,7 +77,7 @@ intro() {
 read_version(path) {
     package_path := path . "\package.json"
     if FileExist(package_path) {
-        data := jxon_read(package_path)
+        data := Jxon_Read(package_path)
         v := data["version"]
         return v
     }
@@ -156,10 +156,10 @@ install() {
         FileMove(A_LoopFilePath, path_join(A2DIR, A_LoopFileName))
 
     ; make sure the SQLlite-dll can be found
-    sqldll := "SQLite3.dll"
-    dll_path := path_join(A2DIR, "ui", sqldll)
+    sql_dll := "SQLite3.dll"
+    dll_path := path_join(A2DIR, "ui", sql_dll)
     if (!FileExist(dll_path))
-        log_error(sqldll " missing?!", 'The "' sqldll '" must exist here:`n' dll_path '`n!`nWhere is it?')
+        log_error(sql_dll " missing?!", 'The "' sql_dll '" must exist here:`n' dll_path '`n!`nWhere is it?')
     ini_path := path_join(A2DIR, "lib", "SQLiteDB.ini")
     ini_code := "[Main]`nDllPath=" dll_path
     FileAppend(ini_code, ini_path)
@@ -212,7 +212,7 @@ check_running() {
     if (names.length) {
         name_string := string_join(names)
         msg := "Some a2 applications are currently running!`n"
-        msg .= "To savely continue the installation I'd suggest to shutdown these processes ("
+        msg .= "To safely continue the installation I'd suggest to shutdown these processes ("
         msg .= name_string . ").`n`n"
         msg .= "Or you hit Cancel, do it by yourself and start the installation again."
 

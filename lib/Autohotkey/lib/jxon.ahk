@@ -207,7 +207,7 @@ Jxon_Dump(obj, indent:="", lvl:=1) {
 }
 
 ; directly json data read from filename
-jxon_read(path, args*) {
+Jxon_Read(path, args*) {
     json_str := FileRead(path)
-    return jxon_load(&json_str)
+    return Jxon_Load(&json_str)
 }
