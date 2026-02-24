@@ -37,37 +37,38 @@
 ; https://github.com/cocobelgica/AutoHotkey-JSON
 
 Jxon_Load(&src, args*) {
-	key := "", is_key := false
-	stack := [ tree := [] ]
-	next := '"{[01234567890-tfn'
-	pos := 0
+    key := "", is_key := false
+    stack := [tree := []]
+    next := '"{[01234567890-tfn'
+    pos := 0
 
-	while ( (ch := SubStr(src, ++pos, 1)) != "" ) {
-		if InStr(" `t`n`r", ch)
-			continue
-		if !InStr(next, ch, true) {
-			testArr := StrSplit(SubStr(src, 1, pos), "`n")
+    while ((ch := SubStr(src, ++pos, 1)) != "") {
+        if InStr(" `t`n`r", ch)
+            continue
+        if !InStr(next, ch, true) {
+            testArr := StrSplit(SubStr(src, 1, pos), "`n")
 
-			ln := testArr.Length
-			col := pos - InStr(src, "`n",, -(StrLen(src)-pos+1))
+            ln := testArr.Length
+            col := pos - InStr(src, "`n", , -(StrLen(src) - pos + 1))
 
-			msg := Format("{}: line {} col {} (char {})"
-			,   (next == "")      ? ["Extra data", ch := SubStr(src, pos)][1]
-			  : (next == "'")     ? "Unterminated string starting at"
-			  : (next == "\")     ? "Invalid \escape"
-			  : (next == ":")     ? "Expecting ':' delimiter"
-			  : (next == '"')     ? "Expecting object key enclosed in double quotes"
-			  : (next == '"}')    ? "Expecting object key enclosed in double quotes or object closing '}'"
-			  : (next == ",}")    ? "Expecting ',' delimiter or object closing '}'"
-			  : (next == ",]")    ? "Expecting ',' delimiter or array closing ']'"
-			  : [ "Expecting JSON value(string, number, [true, false, null], object or array)"
-			    , ch := SubStr(src, pos, (SubStr(src, pos)~="[\]\},\s]|$")-1) ][1]
-			, ln, col, pos)
+            msg := Format("{}: line {} col {} (char {})"
+                , (next == "") ? ["Extra data", ch := SubStr(src, pos)][1]
+                : (next == "'") ? "Unterminated string starting at"
+                : (next == "\") ? "Invalid \escape"
+                : (next == ":") ? "Expecting ':' delimiter"
+                : (next == '"') ? "Expecting object key enclosed in double quotes"
+                : (next == '"}') ? "Expecting object key enclosed in double quotes or object closing '}'"
+                : (next == ",}") ? "Expecting ',' delimiter or object closing '}'"
+                : (next == ",]") ? "Expecting ',' delimiter or array closing ']'"
+                : ["Expecting JSON value(string, number, [true, false, null], object or array)"
+                ,ch := SubStr(src, pos, (SubStr(src, pos) ~= "[\]\},\s]|$") - 1)][1]
+                , ln, col, pos
+            )
 
-			throw Error(msg, -1, ch)
-		}
+            throw Error(msg, -1, ch)
+        }
 
-		obj := stack[1]
+        obj := stack[1]
         is_array := (obj is Array)
 
         if i := InStr("{[", ch) { ; start new object / map?
