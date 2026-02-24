@@ -70,56 +70,56 @@ Jxon_Load(&src, args*) {
 		obj := stack[1]
         is_array := (obj is Array)
 
-		if i := InStr("{[", ch) { ; start new object / map?
-			val := (i = 1) ? Map() : Array()	; ahk v2
+        if i := InStr("{[", ch) { ; start new object / map?
+            val := (i = 1) ? Map() : Array()	; ahk v2
 
-			is_array ? obj.Push(val) : obj[key] := val
-			stack.InsertAt(1,val)
+            is_array ? obj.Push(val) : obj[key] := val
+            stack.InsertAt(1, val)
 
-			next := '"' ((is_key := (ch == "{")) ? "}" : "{[]0123456789-tfn")
-		} else if InStr("}]", ch) {
-			stack.RemoveAt(1)
-            next := (stack[1]==tree) ? "" : (stack[1] is Array) ? ",]" : ",}"
-		} else if InStr(",:", ch) {
-			is_key := (!is_array && ch == ",")
-			next := is_key ? '"' : '"{[0123456789-tfn'
-		} else { ; string | number | true | false | null
-			if (ch == '"') { ; string
-				i := pos
-				while i := InStr(src, '"',, i+1) {
-					val := StrReplace(SubStr(src, pos+1, i-pos-1), "\\", "\u005C")
-					if (SubStr(val, -1) != "\")
-						break
-				}
-				if !i ? (pos--, next := "'") : 0
-					continue
+            next := '"' ((is_key := (ch == "{")) ? "}" : "{[]0123456789-tfn")
+        } else if InStr("}]", ch) {
+            stack.RemoveAt(1)
+            next := (stack[1] == tree) ? "" : (stack[1] is Array) ? ",]" : ",}"
+        } else if InStr(",:", ch) {
+            is_key := (!is_array && ch == ",")
+            next := is_key ? '"' : '"{[0123456789-tfn'
+        } else { ; string | number | true | false | null
+            if (ch == '"') { ; string
+                i := pos
+                while i := InStr(src, '"', , i + 1) {
+                    val := StrReplace(SubStr(src, pos + 1, i - pos - 1), "\\", "\u005C")
+                    if (SubStr(val, -1) != "\")
+                        break
+                }
+                if !i ? (pos--, next := "'") : 0
+                    continue
 
-				pos := i ; update pos
+                pos := i ; update pos
 
-				val := StrReplace(val, "\/", "/")
-				val := StrReplace(val, '\"', '"')
-				, val := StrReplace(val, "\b", "`b")
-				, val := StrReplace(val, "\f", "`f")
-				, val := StrReplace(val, "\n", "`n")
-				, val := StrReplace(val, "\r", "`r")
-				, val := StrReplace(val, "\t", "`t")
+                val := StrReplace(val, "\/", "/")
+                val := StrReplace(val, '\"', '"')
+                , val := StrReplace(val, "\b", "`b")
+                , val := StrReplace(val, "\f", "`f")
+                , val := StrReplace(val, "\n", "`n")
+                , val := StrReplace(val, "\r", "`r")
+                , val := StrReplace(val, "\t", "`t")
 
-				i := 0
-				while i := InStr(val, "\",, i+1) {
-					if (SubStr(val, i+1, 1) != "u") ? (pos -= StrLen(SubStr(val, i)), next := "\") : 0
-						continue 2
+                i := 0
+                while i := InStr(val, "\", , i + 1) {
+                    if (SubStr(val, i + 1, 1) != "u") ? (pos -= StrLen(SubStr(val, i)), next := "\") : 0
+                        continue 2
 
-					xxxx := Abs("0x" . SubStr(val, i+2, 4)) ; \uXXXX - JSON unicode escape sequence
-					if (xxxx < 0x100)
-						val := SubStr(val, 1, i-1) . Chr(xxxx) . SubStr(val, i+6)
-				}
+                    xxxx := Abs("0x" . SubStr(val, i + 2, 4)) ; \uXXXX - JSON unicode escape sequence
+                    if (xxxx < 0x100)
+                        val := SubStr(val, 1, i - 1) . Chr(xxxx) . SubStr(val, i + 6)
+                }
 
-				if is_key {
-					key := val, next := ":"
-					continue
-				}
-			} else { ; number | true | false | null
-				val := SubStr(src, pos, i := RegExMatch(src, "[\]\},\s]|$",, pos)-pos)
+                if is_key {
+                    key := val, next := ":"
+                    continue
+                }
+            } else { ; number | true | false | null
+                val := SubStr(src, pos, i := RegExMatch(src, "[\]\},\s]|$", , pos) - pos)
 
                 if IsInteger(val)
                     val += 0
@@ -134,80 +134,97 @@ Jxon_Load(&src, args*) {
                     continue
                 }
 
-				pos += i-1
-			}
+                pos += i - 1
+            }
 
-			is_array ? obj.Push(val) : obj[key] := val
-			next := obj == tree ? "" : is_array ? ",]" : ",}"
-		}
-	}
+            is_array ? obj.Push(val) : obj[key] := val
+            next := obj == tree ? "" : is_array ? ",]" : ",}"
+        }
+    }
 
-	return tree[1]
+    return tree[1]
 }
 
-Jxon_Dump(obj, indent:="", lvl:=1) {
-	if IsObject(obj) {
-        If !(obj is Array || obj is Map || obj is String || obj is Number)
-			throw Error("Object type not supported.", -1, Format("<Object at 0x{:p}>", ObjPtr(obj)))
+Jxon_Dump(obj, indent := "", lvl := 1) {
+    if IsObject(obj) {
+        if !(obj is Array || obj is Map || obj is String || obj is Number)
+            throw Error("Object type not supported.", -1, Format("<Object at 0x{:p}>", ObjPtr(obj)))
 
-		if IsInteger(indent)
-		{
-			if (indent < 0)
-				throw Error("Indent parameter must be a postive integer.", -1, indent)
-			spaces := indent, indent := ""
+        if IsInteger(indent) {
+            if (indent < 0)
+                throw Error("Indent parameter must be a postive integer.", -1, indent)
+            spaces := indent, indent := ""
 
-			Loop spaces ; ===> changed
-				indent .= " "
-		}
-		indt := ""
+            loop spaces ; ===> changed
+                indent .= " "
+        }
+        indt := ""
 
-		Loop indent ? lvl : 0
-			indt .= indent
+        loop indent ? lvl : 0
+            indt .= indent
 
         is_array := (obj is Array)
 
-		lvl += 1, out := "" ; Make #Warn happy
-		for k, v in obj {
-			if IsObject(k) || (k == "")
-				throw Error("Invalid object key.", -1, k ? Format("<Object at 0x{:p}>", ObjPtr(obj)) : "<blank>")
+        lvl += 1, out := "" ; Make #Warn happy
+        for k, v in obj {
+            if IsObject(k) || (k == "")
+                throw Error("Invalid object key.", -1, k ? Format("<Object at 0x{:p}>", ObjPtr(obj)) : "<blank>")
 
-			if !is_array ;// key ; ObjGetCapacity([k], 1)
-				out .= (ObjGetCapacity([k]) ? Jxon_Dump(k) : escape_str(k)) (indent ? ": " : ":") ; token + padding
+            if !is_array ;// key ; ObjGetCapacity([k], 1)
+                out .= (ObjGetCapacity([k]) ? Jxon_Dump(k) : escape_str(k)) (indent ? ": " : ":") ; token + padding
 
-			out .= Jxon_Dump(v, indent, lvl) ; value
-				.  ( indent ? ",`n" . indt : "," ) ; token + indent
-		}
+            out .= Jxon_Dump(v, indent, lvl) ; value
+            . (indent ? ",`n" . indt : ",") ; token + indent
+        }
 
-		if (out != "") {
-			out := Trim(out, ",`n" . indent)
-			if (indent != "")
-				out := "`n" . indt . out . "`n" . SubStr(indt, StrLen(indent)+1)
-		}
+        if (out != "") {
+            out := Trim(out, ",`n" . indent)
+            if (indent != "")
+                out := "`n" . indt . out . "`n" . SubStr(indt, StrLen(indent) + 1)
+        }
 
-		return is_array ? "[" . out . "]" : "{" . out . "}"
+        return is_array ? "[" . out . "]" : "{" . out . "}"
 
-    } Else If (obj is Number)
+    } else if (obj is Number)
         return obj
-
-    Else ; String
+    else ; String
         return escape_str(obj)
 
     escape_str(obj) {
-        obj := StrReplace(obj,"\","\\")
-        obj := StrReplace(obj,"`t","\t")
-        obj := StrReplace(obj,"`r","\r")
-        obj := StrReplace(obj,"`n","\n")
-        obj := StrReplace(obj,"`b","\b")
-        obj := StrReplace(obj,"`f","\f")
-        obj := StrReplace(obj,"/","\/")
-        obj := StrReplace(obj,'"','\"')
+        obj := StrReplace(obj, "\", "\\")
+        obj := StrReplace(obj, "`t", "\t")
+        obj := StrReplace(obj, "`r", "\r")
+        obj := StrReplace(obj, "`n", "\n")
+        obj := StrReplace(obj, "`b", "\b")
+        obj := StrReplace(obj, "`f", "\f")
+        obj := StrReplace(obj, "/", "\/")
+        obj := StrReplace(obj, '"', '\"')
 
         return '"' obj '"'
     }
 }
 
-; directly json data read from filename
-Jxon_Read(path, args*) {
-    json_str := FileRead(path)
+/**
+ * Read json data directly from given file path.
+ * @param {(String)} file_name
+ * @param args
+ * @returns {(String)}
+ */
+Jxon_Read(file_name, args*) {
+    json_str := FileRead(file_name)
     return Jxon_Load(&json_str)
+}
+
+/**
+ * Write json data directly to given file path.
+ * @param {(Object)} obj
+ * Object to write as JSON data.
+ * @param {(String)} file_name
+ * @param args
+ * @returns {(String)}
+ */
+Jxon_Write(obj, file_path, indent := "", lvl := 1) {
+    file_obj := FileOpen(file_path, 'w', "UTF-8")
+    file_obj.Write(Jxon_Dump(obj, indent, lvl))
+    file_obj.Close()
 }
