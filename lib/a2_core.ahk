@@ -70,17 +70,19 @@ Class _Ca2DB {
     /**
      * Path to the DB file of the a2 instance
      *
-     * @type string
+     * @type {(String)}
      */
     static path := ""
 
     /**
      * Constructor
-     *     Opens connection to the DB
+     *     Open connection to the DB.
+     * @param {(String)} data_path
+     * Sting path to the database file.
      */
     __New(data_path) {
         this.path := data_path "a2.db"
-        ; Ensure the DB file does exist
+        ; Ensure DB file exists.
         if (!FileExist(this.path)) {
             db_file := FileOpen(this.path, "w")
             db_file.Write("")
@@ -92,93 +94,106 @@ Class _Ca2DB {
 
     /**
      * Destructor
-     *     Closes the connection to the DB
+     *     Close connection to DB.
      */
     __Delete() {
         this.dbObject.CloseDB()
     }
 
     /**
-     * Get the value of key from the DB
-     * Entry in DB is a key/value pair
-     *
-     * @param  string   modulePack  Name of the Module Pack that called the method
-     * @param  string   moduleName  Name of the Module that called the method
-     * @param  string   key         Name of the key in the Table
-     * @return string
-     */
-    get(modulePack, moduleName, key) {
-        moduleTable := this.__moduleTable(modulePack, moduleName)
-        this.__validateTable(moduleTable) ; will throw an error if invalid
-        return this.__get(moduleTable, key)
-    }
-
-    /**
      * From a A_LineFile path build the module key and fetch the wanted value.
      * Entry in DB is a key/value pair.
      *
-     * @param  string   line_file  Path to a file in a module directory.
-     * @param  string   key        Name of the key in the Table.
-     * @return string
+     * @param {(String)} line_file
+     * Path to a file in a module directory.
+     * @param {(String)} key
+     * Name of the key in the table.
+     * @returns {(String)}
      */
     find(line_file, key) {
-        moduleTable := this.__moduleTableFromFile(line_file)
-        this.__validateTable(moduleTable)
-        return this.__get(moduleTable, key)
-    }
-
-    /**
-     * Set a new value to a key from the DB
-     * Entry in DB is a key/value pair
-     *
-     * @param  string   modulePack  Name of the Module Pack that called the method
-     * @param  string   moduleName  Name of the Module that called the method
-     * @param  string   key         Name of the key in the Table
-     * @param  string   value       Value to be set in the Table
-     */
-    set(modulePack, moduleName, key, value) {
-        moduleTable := this.__moduleTable(modulePack, moduleName)
-
-        this.__validateTable(moduleTable) ; will throw an error if invalid
-
-        if (this.get(modulePack, moduleName, key))
-            this.__update(moduleTable, key, value)
-        else
-            this.__insert(moduleTable, key, value)
+        table_name := this.__moduleTableFromFile(line_file)
+        this.__validateTable(table_name)
+        return this.__get(table_name, key)
     }
 
     /**
      * From a A_LineFile path build the module key and set the according value.
      * Entry in DB is a key/value pair.
      *
-     * @param  string   line_file  Path to a file in a module directory.
-     * @param  string   key        Name of the key in table.
-     * @param  string   value      Value to be set in table.
-     * @return string
+     * @param {(String)} line_file
+     * Path to a file in a module directory.
+     * @param {(String)} key
+     * Name of the key in table.
+     * @param {(String)} value
+     * Value to be set in table.
+     * @return {(String)}
      */
     find_set(line_file, key, value) {
-        moduleTable := this.__moduleTableFromFile(line_file)
-        this.__validateTable(moduleTable)
-        if (this.__get(moduleTable, key))
-            this.__update(moduleTable, key, value)
+        table_name := this.__moduleTableFromFile(line_file)
+        this.__validateTable(table_name)
+        if (this.__get(table_name, key))
+            this.__update(table_name, key, value)
         else
-            this.__insert(moduleTable, key, value)
+            this.__insert(table_name, key, value)
     }
+
+    /**
+     * Get single value of key from the DB.
+     * Entry in DB is a key/value pair.
+     *
+     * @param {(String)} key
+     * Name of the key in the table.
+     * @param {(String)} module_pack
+     * Name of the Module Pack that called the method.
+     * @param {(String)} module_name
+     * Name of the Module that called the method.
+     * @return {(String)}
+     */
+    get(key, module_pack, module_name := "") {
+        table_name := this.__moduleTable(module_pack, module_name)
+        this.__validateTable(table_name)
+        return this.__get(table_name, key)
+    }
+
+    /**
+     * Set a single value to a key from the DB.
+     * Entry in DB is a key/value pair.
+     *
+     * @param {(String)} key
+     * Name of the key in the table.
+     * @param {(String)} value
+     * Value to be set in the table.
+     * @param {(String)} module_pack
+     * Name of the Module Pack that called the method.
+     * @param {(String)} [module_name]
+     * Name of the Module that called the method.
+     */
+    set(key, value, module_pack, module_name := "") {
+        table_name := this.__moduleTable(module_pack, module_name)
+        this.__validateTable(table_name) ; will throw an error if invalid
+        if (this.get(table_name, key))
+            this.__update(table_name, key, value)
+        else
+            this.__insert(table_name, key, value)
+    }
+
+
 
     /**
      * Delete a row from the table in the DB
      * based on the key name
      *
-     * @param   string  modulePack  Name of the Module Pack that called the method
-     * @param   string  moduleName  Name of the Module that called the method
-     * @param   string  key         Name of the key in the Table
+     * @param {(String)} key
+     * Name of the key in the table.
+     * @param {(String)} module_pack
+     * Name of the Module Pack that called the method.
+     * @param {(String)} [module_name]
+     * Name of the Module that called the method.
      */
-    delete(modulePack, moduleName, key) {
-        moduleTable := this.__moduleTable(modulePack, moduleName)
-
-        this.__validateTable(moduleTable) ; will throw an error if invalid
-
-        this.__remove(moduleTable, key)
+    delete(key, module_pack, module_name := "") {
+        table_name := this.__moduleTable(module_pack, module_name)
+        this.__validateTable(table_name) ; will throw an error if invalid
+        this.__remove(table_name, key)
     }
 
     /**
@@ -187,42 +202,43 @@ Class _Ca2DB {
      * - Amount can be negative
      * - If the key was non-existing, it will be created with value = amount
      *
-     * @param   string  modulePack  Name of the Module Pack that called the method
-     * @param   string  moduleName  Name of the Module that called the method
-     * @param   string  key         Name of the key in the Table
-     * @param   integer step        Amount to increase the value by
-     * @return  integer             Value after adding the amount
+     * @param {(String)} module_pack
+     * Name of the Module Pack that called the method.
+     * @param {(String)} [module_name]
+     * Name of the Module that called the method.
+     * @param {(String)} key
+     * Name of the key in the table.
+     * @param {(Integer)} step
+     * Amount to increase the value by.
+     * @return {(Integer)}              Value after adding the amount
      */
-    increment(modulePack, moduleName, key, step := 1) {
+    increment(key, module_pack, module_name := "", step := 1) {
         ; if step is not number
         ;     return -1
 
-        moduleTable := this.__moduleTable(modulePack, moduleName)
-
-        this.__validateTable(moduleTable) ; will throw an error if invalid
-
-        currentValue := this.__get(moduleTable, key)
+        table_name := this.__moduleTable(module_pack, module_name)
+        this.__validateTable(table_name) ; will throw an error if invalid
+        currentValue := this.__get(table_name, key)
 
         ; if currentValue is not number
         ;     return -2
 
         value := ((currentValue) ? currentValue : 0) + step
-
-        this.set(modulePack, moduleName, key, value)
-
+        this.set(module_pack, module_name, key, value)
         return value
     }
 
     /**
      * Get the list of tables available in the database.
-     * @return  list - List of string table names.
+     * @return {(Array)}
+     * List of string table names.
      */
     tables() {
         this.__openConnection()
         sql := "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
 
         If !this.dbObject.GetTable(sql, &TB)  {
-            msgbox_error("Could not do a2.db.get_tables:`n" this.dbObject.ErrorMsg, "SQLite Error")
+            msgbox_error("Could not perform a2.db.tables:`n" this.dbObject.ErrorMsg, "SQLite Error")
             Return []
         }
 
@@ -231,24 +247,25 @@ Class _Ca2DB {
             If TB.GetRow(A_Index, &Row)
                 tables.Push(Row[1])
         }
+        this.__closeConnection()
         return tables
     }
 
     /**
-     * Private Method
-     *     Get single value from Table row
-     *     Only supports 1 entry
+     * Get single value from table row.
      *
-     * @param   string  moduleTable     Name of the Table
-     * @param   string  key             Value in column "key"
-     * @return  string
+     * @param {(String)} table_name
+     * Name of the table.
+     * @param {(String)} key
+     * Value in column "key".
+     * @return {(String)}
      */
-    __get(moduleTable, key) {
+    __get(table_name, key) {
         this.__openConnection()
 
         result := ""
         Table := ""
-        sql := "SELECT value FROM '" moduleTable "' WHERE key = '" key "'"
+        sql := "SELECT value FROM '" table_name "' WHERE key = '" key "'"
         If !this.dbObject.GetTable(SQL, &Table)
             msgbox_error("Msg:`t" . this.dbObject.ErrorMsg . "`nCode:`t" . this.dbObject.ErrorCode, "SQLite Error")
         If (Table.HasRows)
@@ -259,18 +276,19 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Set value to Table row
-     *     Only supports 1 entry
+     * Set single value to table row.
      *
-     * @param   string  moduleTable     Name of the Table
-     * @param   string  key             Value for column "key"
-     * @param   string  value           Value for column "value"
+     * @param {(String)} table_name
+     * Name of the table.
+     * @param {(String)} key
+     * Value for column "key".
+     * @param {(String)} value
+     * Value for column "value".
      */
-    __insert(moduleTable, key, value) {
+    __insert(table_name, key, value) {
         this.__openConnection()
 
-        sql := "INSERT INTO '" moduleTable "' ('key', 'value') VALUES ('" key "', '" value "')"
+        sql := "INSERT INTO '" table_name "' ('key', 'value') VALUES ('" key "', '" value "')"
         if (!this.dbObject.Exec(sql))
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
@@ -278,18 +296,19 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Update value in Table row
-     *     Only supports 1 entry
+     * Update single value in table row.
      *
-     * @param   string  moduleTable     Name of the Table
-     * @param   string  key             Value in column "key"
-     * @param   string  value           Value for column "value"
+     * @param {(String)} table_name
+     * Name of the table.
+     * @param {(String)} key
+     * Value in column "key".
+     * @param {(String)} value
+     * Value for column "value".
      */
-    __update(moduleTable, key, value) {
+    __update(table_name, key, value) {
         this.__openConnection()
 
-        sql := "UPDATE '" moduleTable "' set value = '" value "' WHERE key = '" key "'"
+        sql := "UPDATE '" table_name "' set value = '" value "' WHERE key = '" key "'"
         if (!this.dbObject.Exec(sql))
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
@@ -297,17 +316,18 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Delete row from Table
-     *     Renamed, as __delete() is the destructor
+     * Delete single row from table.
+     * Renamed, as __delete() is the destructor.
      *
-     * @param   string  moduleTable     Name of the Table
-     * @param   string  key             Value in column "key"
+     * @param {(String)} table_name
+     * Name of the table.
+     * @param {(String)} key
+     * Value in column "key".
      */
-    __remove(moduleTable, key) {
+    __remove(table_name, key) {
         this.__openConnection()
 
-        sql := "DELETE FROM '" moduleTable "' WHERE key = '" key "'"
+        sql := "DELETE FROM '" table_name "' WHERE key = '" key "'"
         if (!this.dbObject.Exec(sql))
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
@@ -315,18 +335,26 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Generate the Table name based on the module
-     *     that called the method
+     * Generate the table name based on the module package and module name.
      *
-     * @param   string  modulePack  Name of the Module Pack that called the method
-     * @param   string  moduleName  Name of the Module that called the method
-     * @return  string
+     * @param {(String)} module_pack
+     * Name of the Module Package.
+     * @param {(String)} module_name
+     * Name of the Module.
+     * @return {(String)}
      */
-    __moduleTable(modulePack, moduleName) {
-        return modulePack "|" moduleName
+    __moduleTable(module_pack, module_name := "") {
+        if module_name == ""
+            return module_pack
+        return module_pack "|" module_name
     }
 
+    /**
+     * Build table-name from incoming line_file path.
+     * @param {(String)} line_file
+     * String path of calling script file.
+     * @returns {(String)}
+     */
     __moduleTableFromFile(line_file) {
         parts := StrSplit(line_file, "\")
         num_parts := parts.Length
@@ -336,16 +364,16 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Ensures the Table exists in the DB
-     *     Throws a terminating Exception if it doesn't
+     * Ensure the table exists in the DB.
+     * Throw a terminating Exception if it doesn't.
      *
-     * @param   string  moduleTable     Name of the Table
+     * @param {(String)} table_name
+     * Name of the table.
      */
-    __validateTable(moduleTable) {
+    __validateTable(table_name) {
         this.__openConnection()
 
-        sql := "SELECT COUNT(*) FROM '" moduleTable "'"
+        sql := "SELECT COUNT(*) FROM '" table_name "'"
         table := ""
         If (!this.dbObject.getTable(sql, &table))
             Throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
@@ -354,11 +382,11 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Handles the establishing of the connection to the DB
+     * Handle establishing connection to DB.
      */
     __openConnection() {
-        if (this.dbObject._Handle) ; connection is already open
+        if (this.dbObject._Handle)
+            ; connection is already open
             Return
 
         Loop(5) {
@@ -373,8 +401,7 @@ Class _Ca2DB {
     }
 
     /**
-     * Private Method
-     *     Handles the terminate of the connection to the DB
+     * Handle connection termination to DB.
      */
     __closeConnection() {
         if (!this.dbObject.CloseDB())
