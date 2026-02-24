@@ -23,6 +23,7 @@
 ;                   Encoding of SQLite DBs is assumed to be UTF-8
 ;                   Minimum supported SQLite3.dll version is 3.6
 ;                   Download the current version of SQLite3.dll (and also SQlite3.exe) from www.sqlite.org
+; Source:           https://www.autohotkey.com/boards/viewtopic.php?f=83&t=95389
 ; ======================================================================================================================
 ; This software is provided 'as-is', without any express or implied warranty.
 ; In no event will the authors be held liable for any damages arising from the
@@ -78,7 +79,7 @@ Class SQLiteDB {
    ; ===================================================================================================================
    ; Properties
    ; ===================================================================================================================
-    ErrorMsg := ""              ; Error message                           (String) 
+    ErrorMsg := ""              ; Error message                           (String)
     ErrorCode := 0              ; SQLite error code / ErrorLevel          (Variant)
     Changes := 0                ; Changes made by last call of Exec()     (Integer)
     SQL := ""                   ; Last executed SQL statement             (String)
@@ -184,7 +185,7 @@ Class SQLiteDB {
    ;                                     The address of the current SQL string is passed in A_EventInfo.
    ;                                     If the callback function returns non-zero, DB.Exec() returns SQLITE_ABORT
    ;                                     without invoking the callback again and without running any subsequent
-   ;                                     SQL statements.  
+   ;                                     SQL statements.
    ; Return values:        On success  - True, the number of changed rows is given in property Changes
    ;                       On failure  - False, ErrorMsg / ErrorCode contain additional information
    ; ===================================================================================================================

@@ -40,12 +40,15 @@ Class A2Core_Class {
     }
 
     _check_sqlite() {
+        sql_dll := "SQLite3.dll"
+        if (FileExist(path_join(this.paths.lib, sql_dll)))
+            Return
+
         ; make sure the SQLlite-dll can be found
         ini_path := path_join(this.paths.lib, "SQLiteDB.ini")
         if (FileExist(ini_path))
             Return
 
-        sql_dll := "SQLite3.dll"
         dll_path := path_join(this.paths.ui, sql_dll)
 
         if (!FileExist(dll_path)) {
@@ -211,6 +214,27 @@ Class _Ca2DB {
     }
 
     /**
+     * Get the list of tables available in the database.
+     * @return  list - List of string table names.
+     */
+    tables() {
+        this.__openConnection()
+        sql := "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
+
+        If !this.dbObject.GetTable(sql, &TB)  {
+            msgbox_error("Could not do a2.db.get_tables:`n" this.dbObject.ErrorMsg, "SQLite Error")
+            Return []
+        }
+
+        tables := []
+        Loop TB.RowCount {
+            If TB.GetRow(A_Index, &Row)
+                tables.Push(Row[1])
+        }
+        return tables
+    }
+
+    /**
      * Private Method
      *     Get single value from Table row
      *     Only supports 1 entry
@@ -230,7 +254,6 @@ Class _Ca2DB {
         If (Table.HasRows)
             result := Table.Rows[1][1]
 
-        ; Close connection to DB to unlock the file
         this.__closeConnection()
         Return (result) ? result : false
     }
@@ -251,7 +274,6 @@ Class _Ca2DB {
         if (!this.dbObject.Exec(sql))
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
-        ; Close connection to DB to unlock the file
         this.__closeConnection()
     }
 
@@ -271,7 +293,6 @@ Class _Ca2DB {
         if (!this.dbObject.Exec(sql))
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
-        ; Close connection to DB to unlock the file
         this.__closeConnection()
     }
 
@@ -290,7 +311,6 @@ Class _Ca2DB {
         if (!this.dbObject.Exec(sql))
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
-        ; Close connection to DB to unlock the file
         this.__closeConnection()
     }
 
@@ -330,7 +350,6 @@ Class _Ca2DB {
         If (!this.dbObject.getTable(sql, &table))
             Throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
 
-        ; Close connection to DB to unlock the file
         this.__closeConnection()
     }
 
@@ -361,5 +380,4 @@ Class _Ca2DB {
         if (!this.dbObject.CloseDB())
             throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
     }
-
 }
