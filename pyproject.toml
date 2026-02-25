@@ -1,0 +1,18 @@
+[project]
+name = "a2"
+version = "0.6.0"
+description = "Script managing and developing framework for Autohotkey"
+authors = [{ name = "ewerybody", url = "https://github.com/ewerybody" }]
+license = { text = "GPL-3.0" }
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "PySide6",
+]
+
+[project.urls]
+Homepage = "https://github.com/ewerybody/a2#readme"
+Issues = "https://github.com/ewerybody/a2/issues"
+
+[tool.uv]
+package = false
