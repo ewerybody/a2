@@ -11,14 +11,12 @@ import sys
 import time
 import shutil
 import ctypes
-import codecs
 import zipfile
 import subprocess
 from urllib import request
 
 import _build_common
 import a2ahk
-import a2util
 
 from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
 from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME, make_ahk_exe
@@ -113,7 +111,7 @@ def update_readme():
     readme_path = os.path.join(Paths.a2, 'README.md')
     lines = []
     linebreak = ''
-    with codecs.open(readme_path, encoding='utf8') as fileobj:
+    with open(readme_path, encoding='utf8') as fileobj:
         for line in fileobj:
             lines.append(line)
 
@@ -171,7 +169,7 @@ def copy_files():
             if not os.path.isdir(this_dest):
                 shutil.copytree(item.path, this_dest, ignore=_lib_ignore)
 
-    print(f'\b\b\b{CHK_MK}\nCopying ui files ...', end='')
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopying ui files ...', end='')
     shutil.copytree(Paths.ui, Paths.dist_ui, ignore=_ui_ignore, dirs_exist_ok=True)
     print(f'\b\b\b{CHK_MK}  ')
 
@@ -238,18 +236,18 @@ def _assemble_qt():
     include = [QT_DLL % (QT_VERSION, base) for base in QT_DLLS]
     include.append(f'{PYSIDE.lower()}{PYSIDE_VERSION}{ABI_DLL}')
 
-    # qtcore_dll_path = os.path.join(Paths.pyside, include[0])
+    # qt_core_dll_path = os.path.join(Paths.pyside, include[0])
 
-    for qitem in os.scandir(Paths.pyside):
-        if qitem.is_dir():
+    for q_item in os.scandir(Paths.pyside):
+        if q_item.is_dir():
             continue
 
-        dst_path = os.path.join(Paths.qt_temp, qitem.name)
-        if qitem.name in include:
-            _copy(qitem.path, dst_path)
+        dst_path = os.path.join(Paths.qt_temp, q_item.name)
+        if q_item.name in include:
+            _copy(q_item.path, dst_path)
             continue
-        if qitem.name.lower().startswith('msvcp') and qitem.name.endswith('.dll'):
-            _copy(qitem.path, dst_path)
+        if q_item.name.lower().startswith('msvcp') and q_item.name.endswith('.dll'):
+            _copy(q_item.path, dst_path)
             continue
 
     # copy shiboken files
@@ -290,7 +288,7 @@ def _zip_qt():
     os.rename(Paths.qt_temp, tmp_ui)
 
     subprocess.call(
-        [Paths.sevenz_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS
+        [Paths.seven_zip_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS
     )
 
     os.rename(tmp_ui, Paths.qt_temp)
@@ -356,13 +354,13 @@ def patch_sqlite():
         return
 
     latest = tuple(int(v) for v in latest_version.split('.'))
-    sqlpath = os.path.join(Paths.dist_ui, 'sqlite3.dll')
+    sql_path = os.path.join(Paths.dist_ui, 'sqlite3.dll')
 
     script = os.path.join(Paths.batches, 'versions', 'get_version.ahk')
     script_wd = os.path.dirname(os.path.dirname(script))
-    if os.path.isfile(sqlpath):
+    if os.path.isfile(sql_path):
         current_version = subprocess.check_output(
-            [Paths.ahkexe, script, sqlpath], cwd=script_wd
+            [Paths.ahk_exe, script, sql_path], cwd=script_wd
         ).decode()
         current = tuple(int(v) for v in current_version.split('.'))
         if current >= latest:
@@ -386,7 +384,7 @@ def patch_sqlite():
                 break
 
     current_version = subprocess.check_output(
-        [Paths.ahkexe, script, sqlpath], cwd=script_wd
+        [Paths.ahk_exe, script, sql_path], cwd=script_wd
     ).decode()
     current = tuple(int(v) for v in current_version.split('.'))
     if current >= latest:
@@ -406,14 +404,14 @@ class _DownloadFeedback:
         self._width = 0
         self.channel = sys.stdout
 
-    def callback(self, blocknum, blocksize, fullsize):
-        self._bytes_received += blocksize
+    def callback(self, block_num, block_size, full_size):
+        self._bytes_received += block_size
         if self._size is None:
-            self._size = f'{round(fullsize / (1024 * 1024), 2)}MB'
+            self._size = f'{round(full_size / (1024 * 1024), 2)}MB'
 
         now = time.time()
         if now - self._last_posted > 0.1:
-            pct = round(100 * self._bytes_received / fullsize, 2)
+            pct = round(100 * self._bytes_received / full_size, 2)
             msg = f'downloading "{self._name}" {pct}% of {self._size} ...'
 
             if self._width:
@@ -452,7 +450,7 @@ def _get_versions():
     versions = {}
     for name, script in zip(names, scripts):
         cwd = os.path.dirname(os.path.dirname(script))
-        version_str = subprocess.check_output([Paths.ahkexe, script], cwd=cwd).decode()
+        version_str = subprocess.check_output([Paths.ahk_exe, script], cwd=cwd).decode()
         versions[name] = version_str
     return versions
 

@@ -16,8 +16,8 @@ PACKAGE_SUB_NAME = 'alpha'
 MANIFEST_NAME = NAME + '_manifest.xml'
 SRC_SFX = NAME + '.sfx.exe'
 RCEDIT_EXE = 'rcedit-x64.exe'
-SEVENZ_DIR = '7zr'
-SEVENZ_EXE = '7zr.exe'
+SEVEN_ZIP_DIR = '7zr'
+SEVEN_ZIP_EXE = '7zr.exe'
 
 PYSIDE = 'PySide'
 PYSIDE_VERSION = 6
@@ -25,7 +25,7 @@ QT_VERSION = 6
 PYSIDE_NAME = f'{PYSIDE}{PYSIDE_VERSION}'
 SHIBOKEN = 'shiboken'
 SHIBOKEN_NAME = f'{SHIBOKEN}{PYSIDE_VERSION}'
-TMP_NAME = A2 + '_temp_buildpath'
+TMP_NAME = A2 + '_temp_build_path'
 SEVEN_FLAGS = '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
 AUTOHOTKEY = 'AutoHotkey'
 PYTHON = 'Python'
@@ -61,16 +61,16 @@ class Paths:
     ui = UI_PATH
     a2icon = join(ui, 'res', 'a2.ico')
     ahk2exe = join(lib, AUTOHOTKEY, 'Compiler', 'Ahk2Exe.exe')
-    ahkexe = join(lib, AUTOHOTKEY, AUTOHOTKEY + '.exe')
+    ahk_exe = join(lib, AUTOHOTKEY, AUTOHOTKEY + '.exe')
 
     package_config = join(a2, 'pyproject.toml')
 
     source = join(lib, '_source')
     batches = join(lib, '_batches')
-    # sfx_source_ui = join(source, SEVENZ_DIR, '7zS2.sfx')
-    sfx_source_ui = join(source, SEVENZ_DIR, '7zSD.sfx')
-    sfx_source_silent = join(source, SEVENZ_DIR, '7zS2con.sfx')
-    sevenz_exe = join(source, SEVENZ_DIR, SEVENZ_EXE)
+    # sfx_source_ui = join(source, SEVEN_ZIP_DIR, '7zS2.sfx')
+    sfx_source_ui = join(source, SEVEN_ZIP_DIR, '7zSD.sfx')
+    sfx_source_silent = join(source, SEVEN_ZIP_DIR, '7zS2con.sfx')
+    seven_zip_exe = join(source, SEVEN_ZIP_DIR, SEVEN_ZIP_EXE)
     rcedit = join(source, RCEDIT_EXE)
     manifest = join(source, MANIFEST_NAME)
     installer_script = join(source, NAME + '.ahk')
@@ -97,7 +97,7 @@ class Paths:
     pyside = os.path.join(py_site_packs, PYSIDE_NAME)
     temp_build = os.path.join(os.environ['TEMP'], TMP_NAME)
 
-    _get_versions(lib, batches, ahkexe)
+    _get_versions(lib, batches, ahk_exe)
     qt_dir = os.path.join(temp_build, 'qt')
     qt_temp = os.path.join(qt_dir, VERSIONS[PYSIDE])
 
@@ -153,7 +153,7 @@ def make_ahk_exe(script, out_path, nfo=None, icon=None):
         '/in', script,
         '/out', out_path,
         '/compress', '0',
-        '/ahk', Paths.ahkexe,
+        '/ahk', Paths.ahk_exe,
     ]
     if isinstance(icon, str) and os.path.isfile(icon):
         cmd.extend(['/icon', icon])

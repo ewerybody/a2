@@ -3,7 +3,7 @@
 """
 Form generated from reading UI file 'a2design.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.10.2
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
@@ -88,9 +88,9 @@ class Ui_a2MainWindow:
         self.actionUninstall_a2 = QAction(a2MainWindow)
         self.actionUninstall_a2.setObjectName('actionUninstall_a2')
         self.actionUninstall_a2.setText('Uninstall a2')
-        self.action_report_sugg = QAction(a2MainWindow)
-        self.action_report_sugg.setObjectName('action_report_sugg')
-        self.action_report_sugg.setText('Suggest a feature')
+        self.action_report_suggestion = QAction(a2MainWindow)
+        self.action_report_suggestion.setObjectName('action_report_suggestion')
+        self.action_report_suggestion.setText('Suggest a feature')
         self.actionExport_Settings = QAction(a2MainWindow)
         self.actionExport_Settings.setObjectName('actionExport_Settings')
         self.actionExport_Settings.setText('Export Settings')
@@ -171,7 +171,7 @@ class Ui_a2MainWindow:
         self.menubar.addAction(self.menuHelp.menuAction())
         self.menubar.addAction(self.menuUpdates.menuAction())
         self.menuHelp.addAction(self.action_report_bug)
-        self.menuHelp.addAction(self.action_report_sugg)
+        self.menuHelp.addAction(self.action_report_suggestion)
         self.menuHelp.addAction(self.actionChat_on_Gitter)
         self.menuHelp.addAction(self.actionChat_on_Telegram)
         self.menuHelp.addSeparator()

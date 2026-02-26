@@ -1,6 +1,7 @@
 """
 a2ui - Setup User Interface for an Autohotkey runtime.
 """
+
 import os
 import time
 from functools import partial
@@ -90,7 +91,7 @@ class A2Window(QtWidgets.QMainWindow):
         thread = self._run_thread('UpdatesChecker', UpdatesChecker)
         thread.fetched.connect(self._on_updates)
 
-        log.info('A2Window initialised! (%.3fs)', time.process_time())
+        log.info('A2Window initialized! (%.3fs)', time.process_time())
 
         QtCore.QTimer(self).singleShot(5000, self.a2.db_check)
 
@@ -137,7 +138,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExplore_to.setIcon(Icons.folder)
 
         _make_url_action(self.ui.actiona2_on_github, self.a2.urls.help, Icons.a2help)
-        _make_url_action(self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey)
+        _make_url_action(
+            self.ui.actionAbout_Autohotkey, self.a2.urls.ahk, Icons.autohotkey
+        )
 
         self.ui.actionAbout_a2.triggered.connect(self.about)
         self.ui.actionAbout_a2.setIcon(Icons.a2)
@@ -152,15 +155,23 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionExit_a2ui.setIcon(Icons.clear)
         self.ui.actionRefresh_UI.triggered.connect(self.load_runtime_and_ui)
 
-        _make_url_action(self.ui.action_report_bug, self.a2.urls.report_bug, Icons.github)
-        _make_url_action(self.ui.action_report_sugg, self.a2.urls.report_sugg, Icons.github)
+        _make_url_action(
+            self.ui.action_report_bug, self.a2.urls.report_bug, Icons.github
+        )
+        _make_url_action(
+            self.ui.action_report_suggestion,
+            self.a2.urls.report_suggestion,
+            Icons.github,
+        )
 
         self.ui.actionNew_Module_Dialog.triggered.connect(self.create_new_module)
         self.ui.actionNew_Module_Dialog.setIcon(Icons.folder_add)
         self.ui.actionCreate_New_Element.triggered.connect(self.create_new_element)
         self.ui.actionCreate_New_Element.setIcon(Icons.folder_add)
         self.ui.actionBuild_A2_Package.triggered.connect(a2dev.build_package)
-        self.ui.actionSet_a2_Version.triggered.connect(partial(a2dev.call_version_bump_dialog, self))
+        self.ui.actionSet_a2_Version.triggered.connect(
+            partial(a2dev.call_version_bump_dialog, self)
+        )
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
         self.ui.actionUnload_a2_Runtime.setIcon(Icons.a2x)
@@ -170,7 +181,9 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.menuMain.aboutToShow.connect(self._set_runtime_actions_vis)
 
         self.ui.menuDev.aboutToShow.connect(self.on_dev_menu_build)
-        self.ui.menuRollback_Changes.aboutToShow.connect(self.mod_cfg.build_rollback_menu)
+        self.ui.menuRollback_Changes.aboutToShow.connect(
+            self.mod_cfg.build_rollback_menu
+        )
         self.ui.menuRollback_Changes.setIcon(Icons.rollback)
         self.ui.actionRevert_Settings.triggered.connect(self.mod_cfg.revert)
         self.ui.actionRevert_Settings.setIcon(Icons.rollback)
@@ -190,15 +203,23 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionHelp_on_Module.triggered.connect(self.module_view.help)
         self.ui.actionHelp_on_Module.setIcon(Icons.help)
 
-        _make_url_action(self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter)
-        _make_url_action(self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram)
+        _make_url_action(
+            self.ui.actionChat_on_Gitter, self.a2.urls.gitter, Icons.gitter
+        )
+        _make_url_action(
+            self.ui.actionChat_on_Telegram, self.a2.urls.telegram, Icons.telegram
+        )
 
         self.ui.actionInspect_UI.triggered.connect(self._inspect_ui)
         self.ui.menuUpdates.menuAction().setVisible(False)
 
         self.ui.menuHelp.aboutToShow.connect(self._on_help_menu_show)
-        _make_url_action(self.ui.action_updates, self.a2.urls.latest_release, Icons.github)
-        _make_url_action(self.ui.action_update_a2, self.a2.urls.latest_release, Icons.github)
+        _make_url_action(
+            self.ui.action_updates, self.a2.urls.latest_release, Icons.github
+        )
+        _make_url_action(
+            self.ui.action_update_a2, self.a2.urls.latest_release, Icons.github
+        )
 
     def _setup_shortcuts(self):
         Qt = QtCore.Qt
@@ -310,7 +331,9 @@ class A2Window(QtWidgets.QMainWindow):
             self.reset_window_geometry()
         else:
             try:
-                success = self.restoreGeometry(QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8')))
+                success = self.restoreGeometry(
+                    QtCore.QByteArray().fromBase64(bytes(geometry, 'utf8'))
+                )
                 if not success:
                     self.reset_window_geometry()
             except Exception as error:
@@ -322,7 +345,9 @@ class A2Window(QtWidgets.QMainWindow):
         # create a default geometry
         scale = self.style.get('scale', 1)
         geometry = self.geometry()
-        geometry.setSize(QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale))
+        geometry.setSize(
+            QtCore.QSize(DEFAULT_WIN_SIZE[0] * scale, DEFAULT_WIN_SIZE[1] * scale)
+        )
         # set to center of active screen
         screen = a2widget.tools.get_screen(geometry)
         geometry.moveCenter(screen.geometry().center())
@@ -348,7 +373,9 @@ class A2Window(QtWidgets.QMainWindow):
                 self.setWindowState(QtCore.Qt.WindowActive)
         except TypeError as error:
             if QtCore.__version_info__ < (6, 4):
-                raise TypeError(f'Update PySide! (yours: {QtCore.__version__}, need: 6.4)') from TypeError
+                raise TypeError(
+                    f'Update PySide! (yours: {QtCore.__version__}, need: 6.4)'
+                ) from TypeError
 
         self._initial_activation_tries = 0
         self._activate_window()
@@ -621,7 +648,9 @@ class RuntimeCallThread(QtCore.QThread):
             raise TypeError('Unable to handle arguments type "%s"' % type(self._args))
 
         # _retval, _pid = a2util.start_process_detached(a2.paths.a2exe, args, working_dir=a2.paths.a2)
-        _retval, _pid = a2util.start_process_detached(a2.paths.autohotkey, args, working_dir=a2.paths.lib)
+        _retval, _pid = a2util.start_process_detached(
+            a2.paths.autohotkey, args, working_dir=a2.paths.lib
+        )
 
 
 class WinTitleUpdater(QtCore.QThread):
@@ -654,7 +683,9 @@ class WinTitleUpdater(QtCore.QThread):
         if os.path.isdir(a2.paths.git):
             import a2ahk
 
-            self._win_title = a2ahk.get_variables(a2.paths.a2_config).get('a2_title', a2core.NAME)
+            self._win_title = a2ahk.get_variables(a2.paths.a2_config).get(
+                'a2_title', a2core.NAME
+            )
         else:
             self._win_title = a2core.NAME
 

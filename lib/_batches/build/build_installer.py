@@ -7,7 +7,6 @@ And after the package was handled by _finish_py_package.bat and finish_package.p
 import os
 import time
 import shutil
-import codecs
 import subprocess
 
 import _build_common
@@ -47,7 +46,7 @@ def main():
 
     version_string = _check_version(version)
     # version_label = version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
-    t_mainchecks = time.time() - t00
+    t_main_checks = time.time() - t00
 
     t0 = time.time()
     _create_fresh_sfx_files()
@@ -70,14 +69,13 @@ def main():
     t_make_portable = time.time() - t0
 
     print('%s took %.3fs' % ('main checks', time.time() - t0))
-    print('t_mainchecks: %.3fs' % t_mainchecks)
-    print('t_create_fresh_sfx_files: %.3fs' % t_create_fresh_sfx_files)
-    print('t_update_manifest: %.3fs' % t_update_manifest)
-    print('t_pack_installer_archive: %.3fs' % t_pack_installer_archive)
-    print('t_copy_together_installer_binary: %.3fs' % t_copy_together_installer_binary)
-    print('t_make_portable: %.3fs' % t_make_portable)
-    print('t_all_in_all: %.3fs' % (time.time() - t00))
-    t0 = time.time()
+    print('  main_checks: %.3fs' % t_main_checks)
+    print('  create_fresh_sfx_files: %.3fs' % t_create_fresh_sfx_files)
+    print('  update_manifest: %.3fs' % t_update_manifest)
+    print('  pack_installer_archive: %.3fs' % t_pack_installer_archive)
+    print('  copy_together_installer_binary: %.3fs' % t_copy_together_installer_binary)
+    print('  make_portable: %.3fs' % t_make_portable)
+    print('  all_in_all: %.3fs' % (time.time() - t00))
 
 
 def _check_version(version):
@@ -99,8 +97,8 @@ def _update_manifest(version_string):
     write new file to target location.
     """
     content = ''
-    with codecs.open(Paths.manifest, encoding=a2util.UTF8_CODEC) as fobj:
-        for line in fobj:
+    with open(Paths.manifest, encoding='utf8') as file_obj:
+        for line in file_obj:
             line = line.strip()
             if not line:
                 continue
@@ -116,7 +114,8 @@ def _update_manifest(version_string):
                 line += ' '
             content += line
 
-    a2util.write_utf8(Paths.manifest_target, content)
+    with open(Paths.manifest_target, 'w', encoding='utf8') as file_obj:
+        file_obj.write(content)
     print('manifest written: %s' % Paths.manifest_target)
 
 
@@ -125,7 +124,7 @@ def _apply_manifest(sfx_target):
 
 
 def _pack_installer_archive():
-    if not _need_rezipping():
+    if not _need_re_zipping():
         return
 
     if os.path.isfile(Paths.archive_target):
@@ -137,13 +136,13 @@ def _pack_installer_archive():
     else:
         shutil.copytree(Paths.qt_temp, Paths.dist_ui, dirs_exist_ok=True)
 
-    subprocess.call([Paths.sevenz_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
-    print('packing archive took: %.2fsec' % (time.time() - t0))
+    subprocess.call([Paths.seven_zip_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
+    print(f'packing archive took: {time.time() - t0:.2f}sec')
 
 
-def _need_rezipping():
+def _need_re_zipping():
     """
-    If there are any changes in the distpath: Return True
+    If there are any changes in the dist-path: Return True
     """
     result = False
     if not os.path.isfile(Paths.archive_target):
@@ -157,7 +156,7 @@ def _need_rezipping():
         t0 = time.time()
         digest_map = _create_digest()
         a2util.json_write(digest_path, digest_map)
-        print('creating digest took: %.2fsec' % (time.time() - t0))
+        print(f'creating digest took: {time.time() - t0:.2f}sec')
         result = True
     return result
 
@@ -211,8 +210,8 @@ def _copy_together_installer_binaries(version_label):
     The original batch script was::
 
         echo finishing installer executable ...
-        set installerx=%dist_root%\\a2_installer.exe
-        copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
+        set installer=%dist_root%\\a2_installer.exe
+        copy /b "%sfx%" + "%config%" + "%archive%" "%installer%"
     """
     name = f'{_build_common.NAME}_{version_label}_{PACKAGE_SUB_NAME}'
     name_ui = name + '.exe'
@@ -222,15 +221,15 @@ def _copy_together_installer_binaries(version_label):
     with open(os.path.join(target_cfg), 'w') as file_obj:
         file_obj.write(INSTALLER_CFG)
 
-    vnfo = EXE_NFO.copy()
-    vnfo['FileVersion'] = version_label
-    vnfo['ProductVersion'] = version_label
+    version_nfo = EXE_NFO.copy()
+    version_nfo['FileVersion'] = version_label
+    version_nfo['ProductVersion'] = version_label
 
     for target_name, target_sfx, script in (
         (name_ui, Paths.sfx_target_ui, Paths.installer_script),
         (name_silent, Paths.sfx_target_silent, Paths.installer_script_silent),
     ):
-        nfo = vnfo.copy()
+        nfo = version_nfo.copy()
         nfo['FileDescription'] = NFO_DESCRIPTION
         nfo['OriginalFilename'] = target_name
         _build_common.set_rc_nfo(target_sfx, nfo)
@@ -246,7 +245,7 @@ def _copy_together_installer_binaries(version_label):
 
         # add setup executable to archive
         exe_path = make_ahk_exe(script, os.path.join(Paths.dist_root, SETUP_EXE), nfo)
-        subprocess.call([Paths.sevenz_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
+        subprocess.call([Paths.seven_zip_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
         os.unlink(exe_path)
 
         # copy together
@@ -279,12 +278,6 @@ def _make_portable():
     setup executable. That's all. Voila!
     """
     print('Making portable package ...\n  copying ...', end='')
-    # if os.path.exists(Paths.dist_portable):
-    #     print(f'{CHK_MK} Already done')
-    #     # shutil.rmtree(Paths.dist_portable, ignore_errors=True)
-    # else:
-    #     shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
-    #     print(f'{CHK_MK} done')
     for item in os.scandir(Paths.qt_temp):
         trg_path = os.path.join(Paths.dist_ui, item.name)
         if item.is_dir() and not os.path.isdir(trg_path):

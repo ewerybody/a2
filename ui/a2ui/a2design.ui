@@ -83,7 +83,7 @@
      <string notr="true">&amp;Help</string>
     </property>
     <addaction name="action_report_bug"/>
-    <addaction name="action_report_sugg"/>
+    <addaction name="action_report_suggestion"/>
     <addaction name="actionChat_on_Gitter"/>
     <addaction name="actionChat_on_Telegram"/>
     <addaction name="separator"/>
@@ -270,7 +270,7 @@
     <string notr="true">Uninstall a2</string>
    </property>
   </action>
-  <action name="action_report_sugg">
+  <action name="action_report_suggestion">
    <property name="text">
     <string notr="true">Suggest a feature</string>
    </property>
