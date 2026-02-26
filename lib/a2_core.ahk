@@ -89,7 +89,7 @@ Class _Ca2DB {
             db_file.Close()
         }
 
-        this.dbObject := SQLiteDB()
+        this.db_object := SQLiteDB()
     }
 
     /**
@@ -97,7 +97,7 @@ Class _Ca2DB {
      *     Close connection to DB.
      */
     __Delete() {
-        this.dbObject.CloseDB()
+        this.db_object.CloseDB()
     }
 
     /**
@@ -111,8 +111,8 @@ Class _Ca2DB {
      * @returns {(String)}
      */
     find(line_file, key) {
-        table_name := this.__moduleTableFromFile(line_file)
-        this.__validateTable(table_name)
+        table_name := this.__module_tableFromFile(line_file)
+        this.__validate_table(table_name)
         return this.__get(table_name, key)
     }
 
@@ -129,8 +129,8 @@ Class _Ca2DB {
      * @return {(String)}
      */
     find_set(line_file, key, value) {
-        table_name := this.__moduleTableFromFile(line_file)
-        this.__validateTable(table_name)
+        table_name := this.__module_tableFromFile(line_file)
+        this.__validate_table(table_name)
         if (this.__get(table_name, key))
             this.__update(table_name, key, value)
         else
@@ -150,8 +150,8 @@ Class _Ca2DB {
      * @return {(String)}
      */
     get(key, module_pack, module_name := "") {
-        table_name := this.__moduleTable(module_pack, module_name)
-        this.__validateTable(table_name)
+        table_name := this.__module_table(module_pack, module_name)
+        this.__validate_table(table_name)
         return this.__get(table_name, key)
     }
 
@@ -169,15 +169,13 @@ Class _Ca2DB {
      * Name of the Module that called the method.
      */
     set(key, value, module_pack, module_name := "") {
-        table_name := this.__moduleTable(module_pack, module_name)
-        this.__validateTable(table_name) ; will throw an error if invalid
+        table_name := this.__module_table(module_pack, module_name)
+        this.__validate_table(table_name) ; will throw an error if invalid
         if (this.get(table_name, key))
             this.__update(table_name, key, value)
         else
             this.__insert(table_name, key, value)
     }
-
-
 
     /**
      * Delete a row from the table in the DB
@@ -191,8 +189,8 @@ Class _Ca2DB {
      * Name of the Module that called the method.
      */
     delete(key, module_pack, module_name := "") {
-        table_name := this.__moduleTable(module_pack, module_name)
-        this.__validateTable(table_name) ; will throw an error if invalid
+        table_name := this.__module_table(module_pack, module_name)
+        this.__validate_table(table_name) ; will throw an error if invalid
         this.__remove(table_name, key)
     }
 
@@ -216,8 +214,8 @@ Class _Ca2DB {
         ; if step is not number
         ;     return -1
 
-        table_name := this.__moduleTable(module_pack, module_name)
-        this.__validateTable(table_name) ; will throw an error if invalid
+        table_name := this.__module_table(module_pack, module_name)
+        this.__validate_table(table_name) ; will throw an error if invalid
         currentValue := this.__get(table_name, key)
 
         ; if currentValue is not number
@@ -234,11 +232,11 @@ Class _Ca2DB {
      * List of string table names.
      */
     tables() {
-        this.__openConnection()
+        this.__open_connection()
         sql := "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
 
-        If !this.dbObject.GetTable(sql, &TB)  {
-            msgbox_error("Could not perform a2.db.tables:`n" this.dbObject.ErrorMsg, "SQLite Error")
+        If !this.db_object.GetTable(sql, &TB)  {
+            msgbox_error("Could not perform a2.db.tables:`n" this.db_object.ErrorMsg, "SQLite Error")
             Return []
         }
 
@@ -247,7 +245,7 @@ Class _Ca2DB {
             If TB.GetRow(A_Index, &Row)
                 tables.Push(Row[1])
         }
-        this.__closeConnection()
+        this.__close_connection()
         return tables
     }
 
@@ -261,17 +259,17 @@ Class _Ca2DB {
      * @return {(String)}
      */
     __get(table_name, key) {
-        this.__openConnection()
+        this.__open_connection()
 
         result := ""
         Table := ""
         sql := "SELECT value FROM '" table_name "' WHERE key = '" key "'"
-        If !this.dbObject.GetTable(SQL, &Table)
-            msgbox_error("Msg:`t" . this.dbObject.ErrorMsg . "`nCode:`t" . this.dbObject.ErrorCode, "SQLite Error")
+        If !this.db_object.GetTable(SQL, &Table)
+            msgbox_error("Msg:`t" . this.db_object.ErrorMsg . "`nCode:`t" . this.db_object.ErrorCode, "SQLite Error")
         If (Table.HasRows)
             result := Table.Rows[1][1]
 
-        this.__closeConnection()
+        this.__close_connection()
         Return (result) ? result : false
     }
 
@@ -286,13 +284,13 @@ Class _Ca2DB {
      * Value for column "value".
      */
     __insert(table_name, key, value) {
-        this.__openConnection()
+        this.__open_connection()
 
         sql := "INSERT INTO '" table_name "' ('key', 'value') VALUES ('" key "', '" value "')"
-        if (!this.dbObject.Exec(sql))
-            throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        if (!this.db_object.Exec(sql))
+            throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
 
-        this.__closeConnection()
+        this.__close_connection()
     }
 
     /**
@@ -306,13 +304,13 @@ Class _Ca2DB {
      * Value for column "value".
      */
     __update(table_name, key, value) {
-        this.__openConnection()
+        this.__open_connection()
 
         sql := "UPDATE '" table_name "' set value = '" value "' WHERE key = '" key "'"
-        if (!this.dbObject.Exec(sql))
-            throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        if (!this.db_object.Exec(sql))
+            throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
 
-        this.__closeConnection()
+        this.__close_connection()
     }
 
     /**
@@ -325,13 +323,13 @@ Class _Ca2DB {
      * Value in column "key".
      */
     __remove(table_name, key) {
-        this.__openConnection()
+        this.__open_connection()
 
         sql := "DELETE FROM '" table_name "' WHERE key = '" key "'"
-        if (!this.dbObject.Exec(sql))
-            throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        if (!this.db_object.Exec(sql))
+            throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
 
-        this.__closeConnection()
+        this.__close_connection()
     }
 
     /**
@@ -343,7 +341,7 @@ Class _Ca2DB {
      * Name of the Module.
      * @return {(String)}
      */
-    __moduleTable(module_pack, module_name := "") {
+    __module_table(module_pack, module_name := "") {
         if module_name == ""
             return module_pack
         return module_pack "|" module_name
@@ -355,12 +353,12 @@ Class _Ca2DB {
      * String path of calling script file.
      * @returns {(String)}
      */
-    __moduleTableFromFile(line_file) {
+    __module_tableFromFile(line_file) {
         parts := StrSplit(line_file, "\")
         num_parts := parts.Length
         if num_parts < 3
             throw Error('Unusable path input! Cannot find db entry from "' line_file '"!', -1)
-        return this.__moduleTable(parts[num_parts - 2], parts[num_parts - 1])
+        return this.__module_table(parts[num_parts - 2], parts[num_parts - 1])
     }
 
     /**
@@ -370,41 +368,41 @@ Class _Ca2DB {
      * @param {(String)} table_name
      * Name of the table.
      */
-    __validateTable(table_name) {
-        this.__openConnection()
+    __validate_table(table_name) {
+        this.__open_connection()
 
         sql := "SELECT COUNT(*) FROM '" table_name "'"
         table := ""
-        If (!this.dbObject.getTable(sql, &table))
-            Throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        If (!this.db_object.getTable(sql, &table))
+            Throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
 
-        this.__closeConnection()
+        this.__close_connection()
     }
 
     /**
      * Handle establishing connection to DB.
      */
-    __openConnection() {
-        if (this.dbObject._Handle)
+    __open_connection() {
+        if (this.db_object._Handle)
             ; connection is already open
             Return
 
         Loop(5) {
-            if (this.dbObject.OpenDB(this.path))
+            if (this.db_object.OpenDB(this.path))
                 break
             else
                 sleep 50
         }
 
-        if (!this.dbObject._Handle)
-            throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+        if (!this.db_object._Handle)
+            throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
     }
 
     /**
      * Handle connection termination to DB.
      */
-    __closeConnection() {
-        if (!this.dbObject.CloseDB())
-            throw Error("[" this.dbObject.ErrorCode "] " this.dbObject.ErrorMsg, -1)
+    __close_connection() {
+        if (!this.db_object.CloseDB())
+            throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
     }
 }
