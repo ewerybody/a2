@@ -4,6 +4,7 @@ a2app backend hosting only the QApplication.
 Tries making sure it's only running once through the 'singlesiding' package
 and enables sending messages to the main app instance.
 """
+
 import os
 import sys
 import logging
@@ -80,7 +81,7 @@ class A2App(QSingleApplication):
             # TODO: provide more detailed startup error report
             # error_class, error_msg, trace_back = sys.exc_info()
             title = 'a2app: Error on "init_a2_win()"!'
-            msg = 'Could not call A2Window! Error:\n%s\n' 'Traceback:%s' % (
+            msg = 'Could not call A2Window! Error:\n%s\nTraceback:%s' % (
                 error,
                 traceback.format_exc().strip(),
             )
@@ -125,7 +126,9 @@ def main():
         # Make sure the Qt platform plugin can be found.
         _qt_path = sys.modules[QtCore.Qt.__module__].__file__
         if _qt_path is not None:
-            os.environ['QT_PLUGIN_PATH'] = os.path.abspath(os.path.join(_qt_path, '..', 'plugins'))
+            os.environ['QT_PLUGIN_PATH'] = os.path.abspath(
+                os.path.join(_qt_path, '..', 'plugins')
+            )
 
         # TODO: make a dedicated dark theme
         sys.argv.extend(('-platform', 'windows:darkmode=0'))

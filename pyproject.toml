@@ -27,3 +27,6 @@ package = false
 test-py  = "pytest ui/test"
 test-ahk = "python lib/Autohotkey/lib/test/run_ahk_tests.py"
 test     = ["test-py", "test-ahk"]
+
+[tool.ruff.format]
+quote-style = "single"

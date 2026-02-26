@@ -24,9 +24,9 @@ ENTRYPOINT_FILENAME = 'user_data_include'
 USER_INCLUDES_NAME = 'a2_user_includes.ahk'
 EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatically!\n"
 DATA_PATTERN = '{a2data}'
-SQLDLL = 'sqlite3.dll'
-SQLINI = 'SQLiteDB.ini'
-PACKAGE_CFG = 'package.json'
+SQL_DLL = 'sqlite3.dll'
+SQL_INI = 'SQLiteDB.ini'
+PACKAGE_CFG = 'pyproject.toml'
 
 
 def get():
@@ -54,7 +54,8 @@ class A2Obj:
     def __init__(self):
         if A2Obj._instance is not None:
             raise RuntimeError(
-                'Singleton A2Obj has already been initialized!\n' '  Use A2Obj.inst() to get the instance!'
+                'Singleton A2Obj has already been initialized!\n'
+                '  Use A2Obj.inst() to get the instance!'
             )
 
         import a2output
@@ -113,7 +114,9 @@ class A2Obj:
             raise RuntimeError(f'No module source named "{source_name}"!')
         module = source.mods.get(module_name)
         if module is None:
-            raise RuntimeError(f'Module source "{source_name}" has no module "{module_name}"!')
+            raise RuntimeError(
+                f'Module source "{source_name}" has no module "{module_name}"!'
+            )
         return module
 
     @property
@@ -157,21 +160,21 @@ class A2Obj:
         Where 'user', 'pass' and 'port' might be optional!
         """
         if self.db.get('proxy_enabled') or False:
-            settins = self.db.get('proxy_settings') or {}
-            server = settins.get('server')
+            settings = self.db.get('proxy_settings') or {}
+            server = settings.get('server')
             if server:
                 from urllib import request
 
-                http_mode = settins.get('http', '')
+                http_mode = settings.get('http', '')
                 proxy_str = http_mode + '://'
 
-                usr, pwd = settins.get('user'), settins.get('pass')
+                usr, pwd = settings.get('user'), settings.get('pass')
                 if usr and pwd:
                     proxy_str += usr + ':' + pwd + '@'
 
                 proxy_str += server
 
-                port = settins.get('port')
+                port = settings.get('port')
                 if port is not None:
                     proxy_str += ':' + port
 
@@ -209,9 +212,10 @@ class A2Obj:
     @property
     def version(self):
         if self._version is None:
-            import a2util
+            import tomllib
 
-            self._version = a2util.json_read(self.paths.package_cfg).get('version')
+            with open(self.paths.package_cfg, 'rb') as file_obj:
+                self._version = tomllib.load(file_obj)['project']['version']
         return self._version
 
     def check_all_updates(self):
@@ -253,7 +257,9 @@ class A2Obj:
                     data = source.check_update()
                     if source.has_update:
                         version = data.get('version', '')
-                        log.info('New "%s" %s module source package!', source_name, version)
+                        log.info(
+                            'New "%s" %s module source package!', source_name, version
+                        )
                         self._updates['sources'][source_name].append(version)
 
                 except FileNotFoundError:
@@ -311,7 +317,7 @@ class URLs:
         self.help_number = self.wiki + 'Edit-Number'
         self.help_path = self.wiki + 'Edit-Path'
         self.report_bug = self.a2 + '/issues/new/?labels=bug'
-        self.report_sugg = self.a2 + '/issues/new/?labels=improvement'
+        self.report_suggestion = self.a2 + '/issues/new/?labels=improvement'
         self.gitter = 'https://gitter.im/ewerybody/a2'
         self.telegram = 'https://t.me/a2script_de'
         self.security = variables_dict.get('a2_security', '')
@@ -377,7 +383,9 @@ class Paths:
         main_items = [self.a2_script, self.lib, self.ui]
         missing = [p for p in main_items if not os.path.exists(p)]
         if missing:
-            raise RuntimeError('a2ui start interrupted! %s Not found in main dir!' % missing)
+            raise RuntimeError(
+                'a2ui start interrupted! %s Not found in main dir!' % missing
+            )
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
             raise RuntimeError('a2ui start interrupted! %s inaccessable!' % self.data)
 
@@ -400,7 +408,9 @@ class Paths:
         with open(os.path.join(self.defaults, USER_INCLUDES_NAME)) as src_file_obj:
             write_if_changed(
                 os.path.join(self.data, USER_INCLUDES_NAME),
-                src_file_obj.read().format(a2data_includes=os.path.join(self.data, 'includes')),
+                src_file_obj.read().format(
+                    a2data_includes=os.path.join(self.data, 'includes')
+                ),
             )
 
     def get_data_path(self):
@@ -434,16 +444,19 @@ class Paths:
         except ValueError:
             data_path = self.data
 
-        tmpl8_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
-        with open(tmpl8_path) as file_obj:
-            tmpl8 = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
-        write_if_changed(os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME), tmpl8.format(data_path=data_path))
+        template_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
+        with open(template_path) as file_obj:
+            template = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
+        write_if_changed(
+            os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME),
+            template.format(data_path=data_path),
+        )
 
-        dll_path = os.path.join(self.ui, SQLDLL)
+        dll_path = os.path.join(self.ui, SQL_DLL)
         if not os.path.isfile(dll_path):
-            dll_path = os.path.join(os.path.dirname(self.python), 'DLLs', SQLDLL)
+            dll_path = os.path.join(os.path.dirname(self.python), 'DLLs', SQL_DLL)
         assert os.path.isfile(dll_path)
-        write_if_changed(os.path.join(self.lib, SQLINI), f'[Main]\nDllPath={dll_path}')
+        write_if_changed(os.path.join(self.lib, SQL_INI), f'[Main]\nDllPath={dll_path}')
 
 
 def get_logger(name: str):
@@ -463,9 +476,9 @@ def get_logger(name: str):
         except AttributeError:
             pass
 
-    newlog = logging.getLogger(name)
-    newlog.setLevel(LOG_LEVEL)
-    return newlog
+    new_log = logging.getLogger(name)
+    new_log.setLevel(LOG_LEVEL)
+    return new_log
 
 
 def set_loglevel(debug: bool = False):
@@ -478,7 +491,11 @@ def set_loglevel(debug: bool = False):
                 log.info('"%s" Log level INFO: active', name)
             except AttributeError as error:
                 if not isinstance(logger, logging.PlaceHolder):
-                    log.info('Could not set log level on logger object "%s": %s', name, str(logger))
+                    log.info(
+                        'Could not set log level on logger object "%s": %s',
+                        name,
+                        str(logger),
+                    )
                     log.error(error)
 
 
