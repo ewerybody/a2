@@ -16,7 +16,7 @@ import subprocess
 from urllib import request
 
 import _build_common
-import a2ahk
+import a2ahk  # ty:ignore[unresolved-import]
 
 from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
 from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME, make_ahk_exe
@@ -28,7 +28,7 @@ DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
 FILE_ATTR_HIDDEN = 0x02
 ROOT_FILES = (
-    _build_common.Paths.package_config,
+    _build_common.PACKAGE_CFG_NAME,
     f'{A2} on github.com.URL',
     'LICENSE',
     'README.md',
@@ -58,6 +58,7 @@ QT_PLUGIN_DIRS = (
 )
 # fmt: on
 SQLITE_URL = 'https://www.sqlite.org/'
+PY_PACK_URL = 'https://www.python.org/ftp/python/{}/{}'
 
 
 def main():
@@ -154,7 +155,7 @@ def copy_files():
         if item.is_file() and item.name in ROOT_FILES:
             shutil.copy2(item.path, Paths.dist)
 
-    print(f'\b\b\b{CHK_MK}\nCopying lib files ...', end='')
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopying lib files ...', end='')
     os.makedirs(Paths.distlib, exist_ok=True)
 
     for item in os.scandir(Paths.lib):
@@ -171,7 +172,10 @@ def copy_files():
 
     print(f'\b\b\b{CHK_MK}  \b\b\nCopying ui files ...', end='')
     shutil.copytree(Paths.ui, Paths.dist_ui, ignore=_ui_ignore, dirs_exist_ok=True)
-    print(f'\b\b\b{CHK_MK}  ')
+
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopying i18n files ...', end='')
+    shutil.copytree(Paths.i18n, Paths.dist_i18n, dirs_exist_ok=True)
+    print(f'\b\b\b{CHK_MK}  \b\b')
 
 
 def _lib_ignore(path, items):
@@ -319,9 +323,10 @@ def get_py_package():
         pack_zip_path = os.path.join(Paths.py_packs, pack_zip)
 
         if not os.path.isfile(pack_zip_path):
-            pack_url = f'https://www.python.org/ftp/python/{py_ver}/{pack_zip}'
             df = _DownloadFeedback(pack_name)
-            request.urlretrieve(pack_url, pack_zip_path, df.callback)
+            request.urlretrieve(
+                PY_PACK_URL.format(py_ver, pack_zip), pack_zip_path, df.callback
+            )
             print('done!')
 
         print(f'  Unzipping "{pack_name}" ...')
@@ -335,10 +340,8 @@ def get_py_package():
 
 
 def patch_sqlite():
-    print('Checking for latest sqlite ...')
-    import qdl
-
-    download_page = qdl.read(SQLITE_URL + 'download.html')
+    print('Checking for sqlite to be up-to-date in dist ui ...')
+    download_page = request.urlopen(SQLITE_URL + 'download.html').read().decode()
     pos = download_page.find('/sqlite-dll-win-x64-')
     if pos == -1:
         print(f'  {EX_MRK} Error! Could not find version on sqlite website!')
@@ -369,11 +372,12 @@ def patch_sqlite():
     else:
         current_version = '?'
 
-    print(f'  Updating SQLite3 to latest: {latest} ...')
+    print(f'  Updating SQLite3 from {current} to latest: {latest} ...')
     zip_path = os.path.join(Paths.py_packs, os.path.basename(path))
     if not os.path.isfile(zip_path):
         print('  Downloading ...')
-        new_sqlite_data = qdl.read_raw(SQLITE_URL + path)
+        new_sqlite_data = request.urlopen(SQLITE_URL + path).read()
+        # new_sqlite_data = qdl.read_raw(SQLITE_URL + path)
         with open(zip_path, 'wb') as file_obj:
             file_obj.write(new_sqlite_data)
 

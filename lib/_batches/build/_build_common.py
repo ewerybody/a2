@@ -29,11 +29,12 @@ TMP_NAME = A2 + '_temp_build_path'
 SEVEN_FLAGS = '-m0=BCJ2 -m1=LZMA:d25:fb255 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3 -mx'.split()
 AUTOHOTKEY = 'AutoHotkey'
 PYTHON = 'Python'
+PACKAGE_CFG_NAME = 'pyproject.toml'
 # to gather versions in use:
 VERSIONS = {PYSIDE: '', AUTOHOTKEY: '', PYTHON: ''}
 CHK_MK = b'\xe2\x9c\x94'.decode()
 EX_MRK = b'\xe2\x9c\x96'.decode()
-
+I18N = 'i18n'
 
 def _get_versions(lib_dir, batches_path, ahk_path):
     """Get currently used versions."""
@@ -59,11 +60,12 @@ class Paths:
     a2 = A2PATH
     lib = join(a2, 'lib')
     ui = UI_PATH
+    i18n = join(a2, I18N)
     a2icon = join(ui, 'res', 'a2.ico')
     ahk2exe = join(lib, AUTOHOTKEY, 'Compiler', 'Ahk2Exe.exe')
     ahk_exe = join(lib, AUTOHOTKEY, AUTOHOTKEY + '.exe')
 
-    package_config = join(a2, 'pyproject.toml')
+    package_config = join(a2, PACKAGE_CFG_NAME)
 
     source = join(lib, '_source')
     batches = join(lib, '_batches')
@@ -87,12 +89,16 @@ class Paths:
     dist_ui = join(dist, 'ui')
     distlib_test = join(distlib, AUTOHOTKEY, 'lib', 'test')
     dist_portable = join(dist_root, 'a2_portable')
+    dist_i18n = join(dist, I18N)
 
     py_packs = join(a2, '_ py_packs')
 
     # Note: This points to the Python packages of the RUNNING python
     # Not necessarily the one that we ship a2 with!
-    py_lib = os.path.join(os.path.dirname(sys.executable), 'Lib')
+    if sys.executable.endswith(os.path.join('.venv', 'Scripts', 'python.exe')):
+        py_lib = os.path.join(os.path.dirname(os.path.dirname(sys.executable)), 'Lib')
+    else:
+        py_lib = os.path.join(os.path.dirname(sys.executable), 'Lib')
     py_site_packs = os.path.join(py_lib, 'site-packages')
     pyside = os.path.join(py_site_packs, PYSIDE_NAME)
     temp_build = os.path.join(os.environ['TEMP'], TMP_NAME)

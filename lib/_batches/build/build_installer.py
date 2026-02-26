@@ -10,8 +10,8 @@ import shutil
 import subprocess
 
 import _build_common
-import a2core
-import a2util
+import a2core  # ty:ignore[unresolved-import]
+import a2util  # ty:ignore[unresolved-import]
 from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHK_MK, EX_MRK, Paths, make_ahk_exe
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
