@@ -1,9 +1,31 @@
-﻿assertmsg(things) {
-    if things
-        return "✔"
-    Return "❌"
+; a2test.ahk - AHK v2 unit test runner library
+;
+; Provides A2Test(name, fn) used by run_ahk_tests.py generated scripts.
+; run_ahk_tests.py parses *.test.ahk source to discover test methods and
+; generates explicit A2Test() calls — no AHK runtime reflection needed.
+;
+; Test convention (AHKUnit-compatible):
+;   - Tests are methods in a class; throw Error = fail, return = pass.
+;   - Methods starting with _ are skipped.
+;
+#Requires AutoHotkey v2.0
+
+; Run a single named test (a zero-arg callable).
+; Prints result to stdout. Returns 0 (pass) or 1 (fail).
+A2Test(name, fn, indentation) {
+    try {
+        fn.Call()
+        FileAppend(indentation "✔️  " name "`n", "*", "UTF-8")
+        return 0
+    } catch Error as e {
+        msg := indentation "❌ " name " FAILED!`n"
+        msg .= indentation "   " e.Message "`n"
+        msg .= indentation "   " e.File " (" e.Line ")`n"
+        FileAppend(msg, "*", "UTF-8")
+        return 1
+    }
 }
 
-; msg := assertmsg("cafawe" != 32232)
-; msg .= assertmsg(132 != 132)
-; MsgBox, msg:%msg%
+A2TestClass(name, indentation) {
+    FileAppend(indentation "• " name "`n", "*", "UTF-8")
+}

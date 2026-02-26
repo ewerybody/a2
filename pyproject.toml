@@ -14,5 +14,16 @@ dependencies = [
 Homepage = "https://github.com/ewerybody/a2#readme"
 Issues = "https://github.com/ewerybody/a2/issues"
 
+[dependency-groups]
+dev = [
+    "pytest",
+    "poethepoet",
+]
+
 [tool.uv]
 package = false
+
+[tool.poe.tasks]
+test-py  = "pytest ui/test"
+test-ahk = "python lib/Autohotkey/lib/test/run_ahk_tests.py"
+test     = ["test-py", "test-ahk"]
