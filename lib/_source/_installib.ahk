@@ -1,7 +1,7 @@
 ; Things we need for both the un- and installer!
 #Include ..\Autohotkey\lib
 #Include <string>
-#Include <msgbox>
+#Include <a2dlg>
 #Include <path>
 
 /*
@@ -15,14 +15,14 @@ log_info(title, msg, timeout := 2147483) {
     if check_silent()
         log_msg(title . " " . msg)
     else
-        msgbox_info(msg, title)
+        a2dlg_info(msg, title)
 }
 
 log_error(title, msg) {
     if check_silent()
         log_msg("ERROR: " . title . " " . msg)
     else
-        msgbox_error(msg, title)
+        a2dlg_error(msg, title)
     ExitApp
 }
 
@@ -39,62 +39,63 @@ get_a2dir() {
 }
 
 find_processes_running_under(path) {
-    attr_list := ["ExecutablePath", "ProcessId", "CommandLine", "Name"]
-    attr_ex_path := attr_list[1]
     path_len := StrLen(path)
-
-    ; command =  where name='Autohotkey.exe' get %attrs% /format:list
-    command := "get " . string_join(attr_list) . " /format:list"
-    result := _find_processes_get_wmic_output(command)
-
     processes := []
-    for i, block in _find_processes_get_blocks(result)
-    {
-        data := _find_processes_get_key_values(block)
-        if !data[attr_ex_path]
-            continue
-        sub_path := SubStr(data[attr_ex_path], 1, path_len)
-        if sub_path = path
-            processes.push(data)
+
+    ; Toolhelp32 snapshot — no subprocess, typically <20 ms
+    ; TH32CS_SNAPPROCESS = 0x2
+    hSnap := DllCall("CreateToolhelp32Snapshot", "UInt", 0x2, "UInt", 0, "Ptr")
+    if (hSnap = -1)
+        return processes
+
+    ; PROCESSENTRY32W layout (x64):
+    ;   0  DWORD  dwSize
+    ;   4  DWORD  cntUsage
+    ;   8  DWORD  th32ProcessID
+    ;  12  (4-byte pad)
+    ;  16  ULONG_PTR th32DefaultHeapID
+    ;  24  DWORD  th32ModuleID
+    ;  28  DWORD  cntThreads
+    ;  32  DWORD  th32ParentProcessID
+    ;  36  LONG   pcPriClassBase
+    ;  40  DWORD  dwFlags
+    ;  44  WCHAR  szExeFile[MAX_PATH]   (520 bytes)
+    ;  total = 564, padded to 568
+    pe := Buffer(568, 0)
+    NumPut("UInt", 568, pe, 0)
+
+    if !DllCall("Process32FirstW", "Ptr", hSnap, "Ptr", pe) {
+        DllCall("CloseHandle", "Ptr", hSnap)
+        return processes
     }
+
+    loop {
+        pid := NumGet(pe, 8, "UInt")
+        ; PROCESS_QUERY_LIMITED_INFORMATION = 0x1000 (no admin needed for most processes)
+        hProc := DllCall("OpenProcess", "UInt", 0x1000, "Int", 0, "UInt", pid, "Ptr")
+        if (hProc) {
+            buf  := Buffer(1040, 0)   ; 520 wide chars
+            size := Buffer(4)
+            NumPut("UInt", 520, size, 0)
+            if DllCall("QueryFullProcessImageNameW", "Ptr", hProc,
+                    "UInt", 0, "Ptr", buf, "Ptr", size) {
+                exe_path := StrGet(buf, "UTF-16")
+                if (SubStr(exe_path, 1, path_len) = path) {
+                    data := Map()
+                    data["ExecutablePath"] := exe_path
+                    data["ProcessId"]      := pid
+                    data["Name"]           := StrGet(pe.Ptr + 44, 260, "UTF-16")
+                    processes.push(data)
+                }
+            }
+            DllCall("CloseHandle", "Ptr", hProc)
+        }
+        if !DllCall("Process32NextW", "Ptr", hSnap, "Ptr", pe)
+            break
+    }
+
+    DllCall("CloseHandle", "Ptr", hSnap)
     return processes
-}
-
-_find_processes_get_wmic_output(args) {
-    cmd := "wmic process " . args
-    shell := ComObject("WScript.Shell")
-    exec := shell.Exec(A_ComSpec " /C " cmd)
-    result := exec.StdOut.ReadAll()
-    return result
-}
-
-_find_processes_get_blocks(string) {
-    blocks := StrSplit(string, "`r`r`n`r`r`n")
-    results := []
-    for i, block in blocks
-    {
-        block := Trim(block, " `n`r")
-        if !block
-            continue
-        results.push(block)
-    }
-    return results
-}
-
-_find_processes_get_key_values(string_block) {
-    lines := StrSplit(string_block, "`r`r`n")
-    results := Map()
-    for i, line in lines
-    {
-        line := Trim(line, " `n`r")
-        if !line
-            continue
-        cut_pos := InStr(line, "=") + 1
-        key := SubStr(line, 1, cut_pos - 2)
-        value := SubStr(line, cut_pos)
-        results[key] := value
-    }
-    return results
 }
 
 check_silent() {
@@ -114,11 +115,11 @@ check_execution_dir() {
 
     if (dir_name == "_ source") {
         msg := "Running from source dir!? " . msg
-        log_error("Wrong dir?!?!", msg)
+        a2dlg_error("Wrong dir?!?!", msg)
     }
 
     if (!FileExist(parent_dir)) {
         msg := "Not running from 'a2' tmp installation dir!? " . msg
-        log_error("Wrong dir?!?!", msg)
+        a2dlg_error("Wrong dir?!?!", msg)
     }
 }
