@@ -5,8 +5,7 @@ string_join(array_of_strings, separator:=", ", default:="") {
     if not array_of_strings.Length
         Return result
 
-    Loop(array_of_strings.Length - 1)
-    {
+    Loop(array_of_strings.Length - 1) {
         this_item := array_of_strings.get(A_Index, default)
         if !this_item
             Continue
