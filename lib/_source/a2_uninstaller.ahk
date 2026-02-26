@@ -16,6 +16,7 @@
 ;@Ahk2Exe-SetProductName a2
 ;@Ahk2Exe-SetVersion 0.6.0
 #NoTrayIcon
+#Include _installib.ahk
 
 global A2DIR := A_ScriptDir
 global NAME := "a2 Uninstaller"
@@ -36,7 +37,6 @@ ExitApp
 
 ; --------------------------------------------------------
 Return
-#Include _installib.ahk
 
 outro(items) {
     if (!items.Length) {
