@@ -45,9 +45,9 @@ class I18nTests {
     class Domain {
         load_correct_string() {
             t := i18n_domain("i18n",, _language := "en")
-            expect := "translation"
+            expect := "translatiaon"
             if (t["translation"] != expect)
-                throw Error("Expected " expect ", got: " t["translation"])
+                throw Error('Expected "' expect '", got: "' t["translation"] '"')
         }
 
         fall_back_to_english() {
