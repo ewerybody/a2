@@ -21,7 +21,7 @@ import a2ahk
 import a2util
 
 from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
-from _build_common import CHKMK, EXMRK, SHIBOKEN, SHIBOKEN_NAME, make_ahk_exe
+from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME, make_ahk_exe
 
 Paths = _build_common.Paths
 
@@ -29,7 +29,12 @@ PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
 FILE_ATTR_HIDDEN = 0x02
-ROOT_FILES = ('package.json', f'{A2} on github.com.URL', 'LICENSE', 'README.md')
+ROOT_FILES = (
+    _build_common.Paths.package_config,
+    f'{A2} on github.com.URL',
+    'LICENSE',
+    'README.md',
+)
 LIB_IGNORES = (('Autohotkey', 'Compiler'),)
 # Lets keep lib/test for implementation examples in release!
 LIB_INCLUDES = ('_Struct.ahk',)
@@ -58,8 +63,8 @@ SQLITE_URL = 'https://www.sqlite.org/'
 
 
 def main():
-    package_cfg = a2util.json_read(os.path.join(Paths.a2, 'package.json'))
-    package_name = f'{A2} {package_cfg["version"]} {PACKAGE_SUB_NAME}'
+    package_cfg = _build_common.get_package_cfg()
+    package_name = f'{A2} {package_cfg["project"]["version"]} {PACKAGE_SUB_NAME}'
     print('\n{0} Making package: {1} ... {0}'.format(8 * '#', package_name))
 
     prepare_package()
@@ -96,10 +101,10 @@ def prepare_package():
         shutil.rmtree(Paths.dist)
 
     if os.path.isdir(Paths.dist):
-        print(f'\b\b\b{EXMRK}  ')
+        print(f'\b\b\b{EX_MRK}  ')
         print('\nOld package still in place?')
     else:
-        print(f'\b\b\b{CHKMK}  ')
+        print(f'\b\b\b{CHK_MK}  ')
         os.makedirs(Paths.dist)
 
 
@@ -151,7 +156,7 @@ def copy_files():
         if item.is_file() and item.name in ROOT_FILES:
             shutil.copy2(item.path, Paths.dist)
 
-    print(f'\b\b\b{CHKMK}\nCopying lib files ...', end='')
+    print(f'\b\b\b{CHK_MK}\nCopying lib files ...', end='')
     os.makedirs(Paths.distlib, exist_ok=True)
 
     for item in os.scandir(Paths.lib):
@@ -166,9 +171,9 @@ def copy_files():
             if not os.path.isdir(this_dest):
                 shutil.copytree(item.path, this_dest, ignore=_lib_ignore)
 
-    print(f'\b\b\b{CHKMK}\nCopying ui files ...', end='')
-    shutil.copytree(Paths.ui, Paths.distui, ignore=_ui_ignore, dirs_exist_ok=True)
-    print(f'\b\b\b{CHKMK}  ')
+    print(f'\b\b\b{CHK_MK}\nCopying ui files ...', end='')
+    shutil.copytree(Paths.ui, Paths.dist_ui, ignore=_ui_ignore, dirs_exist_ok=True)
+    print(f'\b\b\b{CHK_MK}  ')
 
 
 def _lib_ignore(path, items):
@@ -211,7 +216,7 @@ def _ui_ignore(path, items):
 
 def prepare_qt():
     """
-    Instead of fixing pyinstallers greedy take-all, we copy ONLY
+    Instead of fixing PyInstallers greedy take-all, we copy ONLY
     the things we need to the target dir.
 
     * shiboken dll
@@ -222,12 +227,12 @@ def prepare_qt():
     print('Checking Qt files ...')
     _assemble_qt()
     _zip_qt()
-    # shutil.copytree(tmp_qt, Paths.distui)
+    # shutil.copytree(tmp_qt, Paths.dist_ui)
 
 
 def _assemble_qt():
     if os.path.isdir(Paths.qt_temp):
-        print(f'  {CHKMK} Qt for Python already assembled!\n  {Paths.qt_temp}')
+        print(f'  {CHK_MK} Qt for Python already assembled!\n  {Paths.qt_temp}')
         return
 
     include = [QT_DLL % (QT_VERSION, base) for base in QT_DLLS]
@@ -276,7 +281,7 @@ def _assemble_qt():
 def _zip_qt():
     zip_path = Paths.qt_temp + '.7z'
     if os.path.isfile(zip_path):
-        print(f'  {CHKMK} Qt for Python already zipped!\n  {zip_path}')
+        print(f'  {CHK_MK} Qt for Python already zipped!\n  {zip_path}')
         return
 
     tmp_dirname = os.path.join(Paths.qt_dir, _build_common.A2)
@@ -301,7 +306,7 @@ def _qt_ignore(path, items):
 
 
 def get_py_package():
-    if os.path.isdir(Paths.distui):
+    if os.path.isdir(Paths.dist_ui):
         print('Dist-path ui already exists! skipping `get_py_package` ...')
         return
 
@@ -318,7 +323,7 @@ def get_py_package():
         if not os.path.isfile(pack_zip_path):
             pack_url = f'https://www.python.org/ftp/python/{py_ver}/{pack_zip}'
             df = _DownloadFeedback(pack_name)
-            request.FancyURLopener().retrieve(pack_url, pack_zip_path, df.callback)
+            request.urlretrieve(pack_url, pack_zip_path, df.callback)
             print('done!')
 
         print(f'  Unzipping "{pack_name}" ...')
@@ -327,8 +332,8 @@ def get_py_package():
                 tmp_zip.extract(filename, pack_path)
 
     print('Copying Python package ...', end='')
-    shutil.copytree(pack_path, Paths.distui)
-    print(f'\b\b\b{CHKMK} ({Paths.distui})')
+    shutil.copytree(pack_path, Paths.dist_ui)
+    print(f'\b\b\b{CHK_MK} ({Paths.dist_ui})')
 
 
 def patch_sqlite():
@@ -338,7 +343,7 @@ def patch_sqlite():
     download_page = qdl.read(SQLITE_URL + 'download.html')
     pos = download_page.find('/sqlite-dll-win-x64-')
     if pos == -1:
-        print(f'  {EXMRK} Error! Could not find version on sqlite website!')
+        print(f'  {EX_MRK} Error! Could not find version on sqlite website!')
         return
 
     line_start = download_page.rfind('PRODUCT,', pos - 100, pos)
@@ -347,11 +352,11 @@ def patch_sqlite():
     try:
         latest_version, path, size, checksum = line.split(',')[1:]
     except ValueError:
-        print(f'  {EXMRK} Error! Could not read line from sqlite website:\n"{line}"')
+        print(f'  {EX_MRK} Error! Could not read line from sqlite website:\n"{line}"')
         return
 
     latest = tuple(int(v) for v in latest_version.split('.'))
-    sqlpath = os.path.join(Paths.distui, 'sqlite3.dll')
+    sqlpath = os.path.join(Paths.dist_ui, 'sqlite3.dll')
 
     script = os.path.join(Paths.batches, 'versions', 'get_version.ahk')
     script_wd = os.path.dirname(os.path.dirname(script))
@@ -361,7 +366,7 @@ def patch_sqlite():
         ).decode()
         current = tuple(int(v) for v in current_version.split('.'))
         if current >= latest:
-            print(f'  {CHKMK} SQLite3 already up-to-date! ({current_version})')
+            print(f'  {CHK_MK} SQLite3 already up-to-date! ({current_version})')
             return
     else:
         current_version = '?'
@@ -377,7 +382,7 @@ def patch_sqlite():
     with zipfile.ZipFile(zip_path) as tmp_zip:
         for filename in tmp_zip.namelist():
             if filename == 'sqlite3.dll':
-                tmp_zip.extract(filename, Paths.distui)
+                tmp_zip.extract(filename, Paths.dist_ui)
                 break
 
     current_version = subprocess.check_output(
@@ -385,10 +390,10 @@ def patch_sqlite():
     ).decode()
     current = tuple(int(v) for v in current_version.split('.'))
     if current >= latest:
-        print(f'  {CHKMK} SQLite3 Updated!')
+        print(f'  {CHK_MK} SQLite3 Updated!')
         return
     print(
-        f'  {EXMRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}'
+        f'  {EX_MRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}'
     )
 
 

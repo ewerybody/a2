@@ -2,7 +2,7 @@ rem Kick off calling the installer builder (Python).
 @echo off
 set here=%~dp0
 set a2path=%here%..\..\..
-set distroot=%a2path%\_ package
+set dist_root=%a2path%\_ package
 
 rem getting latest python path
 set ahk_exe=%here%..\..\Autohotkey\Autohotkey.exe
@@ -14,7 +14,7 @@ del "%tmp_txt%"
 echo pypath: %pypath%
 
 echo ### building a2 installer packed executable ###
-echo distroot: %distroot%
+echo dist_root: %dist_root%
 
 echo running build assistant script ...
 %pypath%\python.exe %here%build_installer.py

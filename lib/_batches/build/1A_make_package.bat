@@ -3,8 +3,8 @@ rem kick off copying together the initial package.
 set here=%~dp0
 set a2path=%here%..\..\..
 set source_path=%a2path%\lib\_source
-set distroot=%a2path%\_ package
-set distpath=%distroot%\a2
+set dist_root=%a2path%\_ package
+set distpath=%dist_root%\a2
 
 set ahkbin=%here%..\..\AutoHotkey
 set Ahk2Exe=%ahkbin%\Compiler\Ahk2Exe.exe

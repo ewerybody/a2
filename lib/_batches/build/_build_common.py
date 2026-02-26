@@ -1,13 +1,14 @@
 # adding a2 paths for imports
 import os
 import sys
+import typing
 import subprocess
 from os.path import join
 
 THIS_PATH = os.path.dirname(__file__)
 A2PATH = os.path.abspath(join(THIS_PATH, '..', '..', '..'))
-UIPATH = join(A2PATH, 'ui')
-sys.path.append(UIPATH)
+UI_PATH = join(A2PATH, 'ui')
+sys.path.append(UI_PATH)
 
 A2 = 'a2'
 NAME = A2 + '_installer'
@@ -30,8 +31,8 @@ AUTOHOTKEY = 'AutoHotkey'
 PYTHON = 'Python'
 # to gather versions in use:
 VERSIONS = {PYSIDE: '', AUTOHOTKEY: '', PYTHON: ''}
-CHKMK = b'\xe2\x9c\x94'.decode()
-EXMRK = b'\xe2\x9c\x96'.decode()
+CHK_MK = b'\xe2\x9c\x94'.decode()
+EX_MRK = b'\xe2\x9c\x96'.decode()
 
 
 def _get_versions(lib_dir, batches_path, ahk_path):
@@ -57,12 +58,12 @@ class Paths:
 
     a2 = A2PATH
     lib = join(a2, 'lib')
-    ui = UIPATH
+    ui = UI_PATH
     a2icon = join(ui, 'res', 'a2.ico')
     ahk2exe = join(lib, AUTOHOTKEY, 'Compiler', 'Ahk2Exe.exe')
     ahkexe = join(lib, AUTOHOTKEY, AUTOHOTKEY + '.exe')
 
-    package_config = join(a2, 'package.json')
+    package_config = join(a2, 'pyproject.toml')
 
     source = join(lib, '_source')
     batches = join(lib, '_batches')
@@ -75,17 +76,17 @@ class Paths:
     installer_script = join(source, NAME + '.ahk')
     installer_script_silent = join(source, NAME + '_silent.ahk')
 
-    distroot = join(a2, '_ package')
-    sfx_target_ui = join(distroot, '_ ' + SRC_SFX)
-    sfx_target_silent = join(distroot, '_ silent_' + SRC_SFX)
-    manifest_target = join(distroot, '_ ' + MANIFEST_NAME)
-    archive_target = join(distroot, '_ archive.7z')
+    dist_root = join(a2, '_ package')
+    sfx_target_ui = join(dist_root, '_ ' + SRC_SFX)
+    sfx_target_silent = join(dist_root, '_ silent_' + SRC_SFX)
+    manifest_target = join(dist_root, '_ ' + MANIFEST_NAME)
+    archive_target = join(dist_root, '_ archive.7z')
 
-    dist = join(distroot, 'a2')
+    dist = join(dist_root, 'a2')
     distlib = join(dist, 'lib')
-    distui = join(dist, 'ui')
+    dist_ui = join(dist, 'ui')
     distlib_test = join(distlib, AUTOHOTKEY, 'lib', 'test')
-    dist_portable = join(distroot, 'a2_portable')
+    dist_portable = join(dist_root, 'a2_portable')
 
     py_packs = join(a2, '_ py_packs')
 
@@ -161,9 +162,9 @@ def make_ahk_exe(script, out_path, nfo=None, icon=None):
     if not os.path.isfile(out_path):
         print('cmd: %s' % cmd)
         print('Paths.lib: %s' % Paths.lib)
-        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EXMRK, out_path))
+        raise RuntimeError('%s FAIL!: "%s" was not created!\n' % (EX_MRK, out_path))
 
-    print(f'\b\b\b{CHKMK}  ')
+    print(f'\b\b\b{CHK_MK}  ')
 
     if nfo is not None:
         if not nfo.get('OriginalFilename'):
@@ -222,6 +223,13 @@ def _set_rc_key(target_path, key, value_string):
         [Paths.rcedit, target_path, '--get-version-string', key]
     ).decode()
     if current == value_string:
-        print(f'{CHKMK}')
+        print(f'{CHK_MK}')
     else:
-        print(f'{EXMRK} "{key}" is "{current}" NOT "{value_string}"!')
+        print(f'{EX_MRK} "{key}" is "{current}" NOT "{value_string}"!')
+
+
+def get_package_cfg() -> dict[str, typing.Any]:
+    import tomllib
+
+    with open(Paths.package_config, 'rb') as file_obj:
+        return tomllib.load(file_obj)

@@ -13,7 +13,7 @@ import subprocess
 import _build_common
 import a2core
 import a2util
-from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHKMK, EXMRK, Paths, make_ahk_exe
+from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHK_MK, EX_MRK, Paths, make_ahk_exe
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
@@ -29,7 +29,7 @@ EXE_NFO = {
     'CompanyName': COMPANY,
     'LegalCopyright': COPYRIGHT,
 }
-USE_PREZIPPED_QT = True
+USE_PRE_ZIPPED_QT = True
 _TIMINGS = {}
 
 
@@ -37,15 +37,16 @@ def main():
     """Main process entrypoint."""
     t00 = time.time()
     Paths.check()
-    if not os.path.isdir(Paths.distroot):
+    if not os.path.isdir(Paths.dist_root):
         raise FileNotFoundError(ERROR_NO_PACKAGE)
 
-    package_cfg = a2util.json_read(Paths.package_config)
-    package_name = f'{a2core.NAME} {PACKAGE_SUB_NAME} {package_cfg["version"]}'
+    package_cfg = _build_common.get_package_cfg()
+    version = package_cfg['project']["version"]
+    package_name = f'{a2core.NAME} {PACKAGE_SUB_NAME} {version}'
     print('\n{0} building installer: {1} ... {0}'.format(15 * '#', package_name))
 
-    version_string = _check_version(package_cfg['version'])
-    version_label = version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
+    version_string = _check_version(version)
+    # version_label = version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
     t_mainchecks = time.time() - t00
 
     t0 = time.time()
@@ -61,7 +62,7 @@ def main():
     t_pack_installer_archive = time.time() - t0
 
     t0 = time.time()
-    _copy_together_installer_binaries(package_cfg['version'])
+    _copy_together_installer_binaries(version)
     t_copy_together_installer_binary = time.time() - t0
 
     t0 = time.time()
@@ -131,10 +132,10 @@ def _pack_installer_archive():
         os.unlink(Paths.archive_target)
 
     t0 = time.time()
-    if USE_PREZIPPED_QT:
+    if USE_PRE_ZIPPED_QT:
         shutil.copyfile(Paths.qt_temp + '.7z', Paths.archive_target)
     else:
-        shutil.copytree(Paths.qt_temp, Paths.distui, dirs_exist_ok=True)
+        shutil.copytree(Paths.qt_temp, Paths.dist_ui, dirs_exist_ok=True)
 
     subprocess.call([Paths.sevenz_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
     print('packing archive took: %.2fsec' % (time.time() - t0))
@@ -210,14 +211,14 @@ def _copy_together_installer_binaries(version_label):
     The original batch script was::
 
         echo finishing installer executable ...
-        set installerx=%distroot%\\a2_installer.exe
+        set installerx=%dist_root%\\a2_installer.exe
         copy /b "%sfx%" + "%config%" + "%archive%" "%installerx%"
     """
     name = f'{_build_common.NAME}_{version_label}_{PACKAGE_SUB_NAME}'
     name_ui = name + '.exe'
     name_silent = name + '_silent.exe'
 
-    target_cfg = os.path.join(Paths.distroot, '_ config.cfg')
+    target_cfg = os.path.join(Paths.dist_root, '_ config.cfg')
     with open(os.path.join(target_cfg), 'w') as file_obj:
         file_obj.write(INSTALLER_CFG)
 
@@ -235,16 +236,16 @@ def _copy_together_installer_binaries(version_label):
         _build_common.set_rc_nfo(target_sfx, nfo)
         _apply_manifest(target_sfx)
 
-        target_path = os.path.join(Paths.distroot, target_name)
+        target_path = os.path.join(Paths.dist_root, target_name)
         if os.path.isfile(target_path):
             os.unlink(target_path)
 
         # copy archive
-        this_archive = os.path.join(Paths.distroot, f'_ {target_name}.7z')
+        this_archive = os.path.join(Paths.dist_root, f'_ {target_name}.7z')
         shutil.copyfile(Paths.archive_target, this_archive)
 
         # add setup executable to archive
-        exe_path = make_ahk_exe(script, os.path.join(Paths.distroot, SETUP_EXE), nfo)
+        exe_path = make_ahk_exe(script, os.path.join(Paths.dist_root, SETUP_EXE), nfo)
         subprocess.call([Paths.sevenz_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
         os.unlink(exe_path)
 
@@ -255,9 +256,9 @@ def _copy_together_installer_binaries(version_label):
                     trg_file.write(source_file.read())
 
         if os.path.isfile(target_path):
-            print('\n%s Success!: "%s" written!\n' % (CHKMK, target_name))
+            print('\n%s Success!: "%s" written!\n' % (CHK_MK, target_name))
         else:
-            raise FileNotFoundError('%s Installer "%s" was not written!' % (EXMRK, target_name))
+            raise FileNotFoundError('%s Installer "%s" was not written!' % (EX_MRK, target_name))
 
 
 def _create_fresh_sfx_files():
@@ -279,13 +280,13 @@ def _make_portable():
     """
     print('Making portable package ...\n  copying ...', end='')
     # if os.path.exists(Paths.dist_portable):
-    #     print(f'{CHKMK} Already done')
+    #     print(f'{CHK_MK} Already done')
     #     # shutil.rmtree(Paths.dist_portable, ignore_errors=True)
     # else:
     #     shutil.copytree(Paths.dist, Paths.dist_portable, copy_function=shutil.copyfile)
-    #     print(f'{CHKMK} done')
+    #     print(f'{CHK_MK} done')
     for item in os.scandir(Paths.qt_temp):
-        trg_path = os.path.join(Paths.distui, item.name)
+        trg_path = os.path.join(Paths.dist_ui, item.name)
         if item.is_dir() and not os.path.isdir(trg_path):
             shutil.copytree(item.path, trg_path)
         elif item.is_file() and not os.path.isfile(trg_path):
@@ -297,17 +298,17 @@ def _make_portable():
         if os.path.isfile(path):
             os.unlink(path)
 
-    print(f'\b\b\b{CHKMK}\n  zipping ...', end='')
+    print(f'\b\b\b{CHK_MK}\n  zipping ...', end='')
     name = os.path.basename(Paths.dist)
-    package_cfg = a2util.json_read(Paths.package_config)
-    portable_name = f'{name}_{package_cfg["version"]}_{PACKAGE_SUB_NAME}.zip'
-    portable_path = os.path.join(Paths.distroot, portable_name)
+    package_cfg = _build_common.get_package_cfg()
+    portable_name = f'{name}_{package_cfg["project"]["version"]}_{PACKAGE_SUB_NAME}.zip'
+    portable_path = os.path.join(Paths.dist_root, portable_name)
     if os.path.isfile(portable_path):
-        print(f'\b\b\b{CHKMK} Already done!')
+        print(f'\b\b\b{CHK_MK} Already done!')
     else:
         tar = os.path.join(os.getenv('WINDIR', ''), 'System32', 'tar.exe')
         subprocess.call([tar, '-a', '-c', '-f', portable_path, '*'], cwd=Paths.dist)
-        print(f'\b\b\b{CHKMK} Done!')
+        print(f'\b\b\b{CHK_MK} Done!')
 
 
 if __name__ == '__main__':

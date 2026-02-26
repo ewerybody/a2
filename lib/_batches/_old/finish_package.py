@@ -18,7 +18,7 @@ Paths = _build_common.Paths
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
 DESKTOP_INI_CODE = '[.ShellClassInfo]\nIconResource=%s\nIconIndex=0\n' % DESKTOP_ICO_FILE
-ROOT_FILES = 'package.json', 'a2 on github.com.URL', 'LICENSE'
+ROOT_FILES = 'pyproject.toml', 'a2 on github.com.URL', 'LICENSE'
 LIB_EXCLUDES = (
     '_batches',
     '_source',
@@ -48,7 +48,7 @@ RM_IMG_FORMATS = ('tiff', 'pdf', 'tga', 'icns')
 
 
 def main():
-    package_cfg = a2util.json_read(os.path.join(Paths.a2, 'package.json'))
+    package_cfg = _build_common.get_package_cfg()
     package_name = f'a2 {package_cfg["version"]} {PACKAGE_SUB_NAME}'
     print('\n{0} finishing: {1} ... {0}'.format(15 * '#', package_name))
 
@@ -131,8 +131,8 @@ def copy_files():
         # raise FileNotFoundError(
         print(f'App Path was not found!\n  {app_path}\n' 'Package already handled?')
     else:
-        os.rename(app_path, Paths.distui)
-    print('distui: %s' % Paths.distui)
+        os.rename(app_path, Paths.dist_ui)
+    print('dist_ui: %s' % Paths.dist_ui)
 
     print('copying root files ...')
 
@@ -168,7 +168,7 @@ def copy_files():
 
     print('copying ui files ...')
     for folder in UI_FOLDERS:
-        this_dest = os.path.join(Paths.distui, folder)
+        this_dest = os.path.join(Paths.dist_ui, folder)
         if os.path.isdir(this_dest):
             print(f'  dir already copied: {os.path.relpath(this_dest, Paths.dist)}')
             continue
@@ -183,10 +183,10 @@ def copy_files():
 def cleanup():
     print('cleaning up package ...')
     for dirname in UI_REMOVE_DIRS:
-        path = os.path.join(Paths.distui, dirname)
+        path = os.path.join(Paths.dist_ui, dirname)
         shutil.rmtree(path, ignore_errors=True)
     for filename in UI_REMOVE_FILES:
-        path = os.path.join(Paths.distui, filename)
+        path = os.path.join(Paths.dist_ui, filename)
         if os.path.isfile(path):
             os.remove(path)
 
@@ -239,7 +239,7 @@ def fix_qt():
     * make sure right plugin dir is present/remove other
     """
     wanted_dlls = [QT_DLL % (QT_VERSION, base) for base in QT_HAVE_DLLS]
-    for item in os.scandir(Paths.distui):
+    for item in os.scandir(Paths.dist_ui):
         if item.is_file():
             if not item.name.endswith('.dll'):
                 continue
@@ -268,14 +268,14 @@ def fix_qt():
                         assert not os.path.isdir(item.path)
 
     # throw away the translations dir
-    trans_path = os.path.join(Paths.distui, f'{PYSIDE}{PYSIDE_VERSION}', 'translations')
+    trans_path = os.path.join(Paths.dist_ui, f'{PYSIDE}{PYSIDE_VERSION}', 'translations')
     if os.path.isdir(trans_path):
         shutil.rmtree(trans_path)
         assert not os.path.isdir(trans_path)
 
     # ensure the plugins dir is available at all
     plugins_rel = os.path.join(f'{PYSIDE}{PYSIDE_VERSION}', 'plugins')
-    plugins_path = os.path.join(Paths.distui, plugins_rel)
+    plugins_path = os.path.join(Paths.dist_ui, plugins_rel)
     if not os.path.isdir(plugins_path):
         import sysconfig
 
