@@ -18,7 +18,7 @@ a2_on_startup_exception(popup_text, root_script_path) {
     exception := {}
     If string_startswith(lines[1], INCL_ERROR) {
         path := SubStr(lines[1], StrLen(INCL_ERROR) + 1)
-        exception.File := string_unquote(string_trimRight(string_strip(path), ":"))
+        exception.File := string_unquote(string_strip_right(string_strip(path), ":"))
         exception.Message := string_strip(lines[2])
         _exception_search_lines(lines, exception)
     }
@@ -27,7 +27,7 @@ a2_on_startup_exception(popup_text, root_script_path) {
         nr_end := InStr(lines[1], IN_INCL,, len_mrk)
         exception.Line := string_strip(SubStr(lines[1], len_mrk, nr_end - len_mrk))
         file := string_strip(SubStr(lines[1], nr_end + StrLen(IN_INCL)))
-        exception.File := string_unquote(string_trimRight(file, "."))
+        exception.File := string_unquote(string_strip_right(file, "."))
 
         for i, line in lines {
             if string_startswith(line, ERR ":")

@@ -5,12 +5,8 @@ string_join(array_of_strings, separator:=", ", default:="") {
     if not array_of_strings.Length
         Return result
 
-    Loop(array_of_strings.Length - 1) {
-        this_item := array_of_strings.get(A_Index, default)
-        if !this_item
-            Continue
-        result .= this_item . separator
-    }
+    Loop(array_of_strings.Length - 1)
+        result .= array_of_strings.get(A_Index, default) . separator
     last_item := array_of_strings.get(array_of_strings.Length, default)
     result .= last_item
     Return result
@@ -35,9 +31,9 @@ string_is_web_address(string) {
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
 
-    WEB_TLDS := ["html", "com", "de", "net", "org", "co.uk"]
-    Loop(WEB_TLDS.Length) {
-        ext := "." . WEB_TLDS[A_Index]
+    web_suffixes := ["html", "com", "de", "net", "org", "co.uk"]
+    Loop(web_suffixes.Length) {
+        ext := "." . web_suffixes[A_Index]
         sub := SubStr(string, - StrLen(ext))
         if (sub == ext)
             return true
@@ -56,75 +52,29 @@ string_endswith(string, end) {
     return StrLen(end) <= StrLen(string) && Substr(string, -StrLen(end)) = end
 }
 
-string_is_whitespace(string) {
-    if (string == A_Space OR string == A_Tab OR string == "`n" OR string == "`r")
-        return true
-    else
-        return false
+; Strip or trim whitespace from start and end of a string.
+string_strip(string, omit_chars := "") {
+    if omit_chars == ""
+        omit_chars := " `t`n`r"
+    return Trim(string, omit_chars)
 }
 
-; Trim one or more characters from a string start and end.
-string_trim(string, chars) {
-    return string_trimLeft(string_trimRight(string, chars), chars)
+string_strip_right(string, omit_chars := "") {
+    if omit_chars == ""
+        omit_chars := " `t`n`r"
+    return RTrim(string, omit_chars)
 }
 
-; Remove all occurrences of chars at beginning of string. chars can be array of strings to be removed.
-string_trimLeft(string, chars) {
-    if (IsObject(chars))
-        chars := string_join(chars, "")
-
-    Loop(StrLen(string))
-    {
-        If InStr(chars, SubStr(string, 1, 1))
-        {
-            string := SubStr(string, 2)
-            Continue
-        }
-        return string
-    }
-}
-
-; Remove all occurrences of chars at the end of string. chars can be array of strings to be removed.
-string_trimRight(string, chars) {
-    if (IsObject(chars))
-        chars := string_join(chars, "")
-
-    len := StrLen(string)
-    Loop(len)
-    {
-        If InStr(chars, SubStr(string, -1))
-        {
-            string := SubStr(string, 1, len - A_Index)
-            Continue
-        }
-        return string
-    }
-}
-
-; Strip whitespace from start and end of a string.
-string_strip(string) {
-    ; if first char is space, tab or linefeed, remove it and look again:
-    c := SubStr(string, 1, 1)
-    if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
-    {
-        string := SubStr(string, 2)
-        string := string_strip(string)
-    }
-    ; now last character:
-    c := SubStr(string, -1)
-    if (c == A_Space OR c == A_Tab OR c == "`n" OR c == "`r")
-    {
-        string := SubStr(string, 1, StrLen(string) - 1)
-        string := string_strip(string)
-    }
-
-    return string
+string_strip_left(string, omit_chars := "") {
+    if omit_chars == ""
+        omit_chars := " `t`n`r"
+    return LTrim(string, omit_chars)
 }
 
 ; Remove quotes from a string if necessary.
 string_unquote(string, quote := '"') {
     if (InStr(string, quote) = 1 && string_endsWith(string, quote))
-        string := string_trim(string, quote)
+        string := string_strip(string, quote)
     return string
 }
 

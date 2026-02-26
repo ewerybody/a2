@@ -26,35 +26,42 @@ class StringTests {
             if (result != "")
                 throw Error("Empty array should return empty string, got '" result "'")
         }
+
+        preserves_empty_items() {
+            expect := "a||||c"
+            result := string_join(["a", "", "c"], "||")
+            if (result != expect)
+                throw Error("Expected '" expect "', got '" result "'")
+        }
     }
 
     class StartsWith {
         matches_case_insensitive() {
-            if (!string_startswith("a#$ NCowehofd", "A#$ "))
+            if (!string_startswith("a#$ Bumble-buts", "A#$ "))
                 throw Error("Should match start case-insensitively")
         }
 
         no_match() {
-            if (string_startswith(" 3456 NCowehofd", " 3457 "))
+            if (string_startswith(" 3456 Bumble-buts", " 3457 "))
                 throw Error("Should not match differing start")
         }
     }
 
     class EndsWith {
         matches_case_insensitive() {
-            if (!string_endswith("NCowehofd$#%S", "$#%s"))
+            if (!string_endswith("NBumble-buts$#%S", "$#%s"))
                 throw Error("Should match end case-insensitively")
         }
 
         no_match() {
-            if (string_endswith("NCowehofd$#%", "9fh3"))
+            if (string_endswith("NBumble-buts$#%", "9fh3"))
                 throw Error("Should not match differing end")
         }
     }
 
     class Quote {
         round_trip_single_quote() {
-            s := "'XfgfsgsdfgX'"
+            s := "'XKermitX'"
             un := string_unquote(s, "'")
             q := string_quote(un,, quote := "'")
             if (s != q)
@@ -62,7 +69,7 @@ class StringTests {
         }
 
         unquote_removes_quotes() {
-            un := string_unquote("'XfgfsgsdfgX'", "'")
+            un := string_unquote("'XFiddlesticksX'", "'")
             if (!string_startswith(un, "X"))
                 throw Error("Unquoted string should start with X, got '" un "'")
             if (!string_endswith(un, "X"))
@@ -76,7 +83,7 @@ class StringTests {
         }
 
         quote_once_no_duplicate() {
-            s := "'XfgfsgsdfgX'"
+            s := "'XAutohotkeyX'"
             un := string_unquote(s, "'")
             q := string_quote(un, once := 1, quote := "'")
             if (s != q)
@@ -164,38 +171,37 @@ class StringTests {
         }
     }
 
-    class Trim {
-        trims_chars_both_ends() {
-            result := string_trim('abc "><"abc ', ' "abc')
+    class Strip {
+        strip_chars_both_ends() {
+            result := string_strip('abc "><"abc ', ' "abc')
             if (result != "><")
                 throw Error("Expected '><', got '" result "'")
         }
 
-        trim_left() {
-            result := string_trimLeft("xxxhello", "x")
+        strips_left() {
+            result := string_strip_left("xxx" "hello", "x")
             if (result != "hello")
                 throw Error("Expected 'hello', got '" result "'")
         }
 
-        trim_right() {
-            result := string_trimRight("helloyyy", "y")
+        strips_right() {
+            result := string_strip_right("hello" "yyy", "y")
             if (result != "hello")
-                throw Error("Expected 'hello', got '" result "'")
+                throw Error("Expected 'hello', got '" result "'!")
         }
-    }
 
-    class Strip {
         strips_trailing_whitespace() {
             st := "hello, world!"
-            result := string_strip(st . " `n")
+            result := string_strip(st " `n")
             if (result != st)
-                throw Error("Expected '" st "', got '" result "'")
+                throw Error("Expected '" st "', got '" result "'!")
         }
 
         strips_leading_whitespace() {
-            result := string_strip("  hello")
+            expect := "hello"
+            result := string_strip("  `n" expect)
             if (result != "hello")
-                throw Error("Expected 'hello', got '" result "'")
+                throw Error("Expected '" expect "', got '" result "'!")
         }
     }
 
@@ -218,28 +224,6 @@ class StringTests {
         plain_string_is_not() {
             if (string_is_web_address("just a string"))
                 throw Error("Plain string should not be a web address")
-        }
-    }
-
-    class IsWhitespace {
-        space() {
-            if (!string_is_whitespace(A_Space))
-                throw Error("Space should be whitespace")
-        }
-
-        tab() {
-            if (!string_is_whitespace(A_Tab))
-                throw Error("Tab should be whitespace")
-        }
-
-        newline() {
-            if (!string_is_whitespace("`n"))
-                throw Error("Newline should be whitespace")
-        }
-
-        letter_is_not() {
-            if (string_is_whitespace("a"))
-                throw Error("Letter 'a' should not be whitespace")
         }
     }
 }

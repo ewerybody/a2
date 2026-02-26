@@ -1,15 +1,16 @@
 #include %A_ScriptDir%\..\..\_a2dev_find_py.ahk
 #include %A_ScriptDir%\..\..\a2_globals.ahk
-#include %A_ScriptDir%\..\..\Autohotkey\lib\string.ahk
-#include %A_ScriptDir%\..\..\Autohotkey\lib\path.ahk
-#include %A_ScriptDir%\..\..\Autohotkey\lib\msgbox.ahk
-pydir := path_dirname(a2dev_get_py())
-if (!pydir) {
-    msgbox_error('Could not get "pydir" from "path_dirname(a2dev_get_py())"')
+#include <string>
+#include <path>
+#include <msgbox>
+
+py_dir := path_dirname(a2dev_get_py())
+if (!py_dir) {
+    msgbox_error('Could not get "py_dir" from "path_dirname(a2dev_get_py())"')
     ExitApp
 }
 
-; Lists all compatible versions, prefered verison top.
+; Lists all compatible versions, preferred version top.
 ; Lets not use `FileGetVersion` on QtCore.dll since they skip the last bits.
 ; The whole version is in the shiboken-init script:
 ; files := ["PySide6\Qt6Core.dll", "PySide2\Qt5Core.dll"]
@@ -17,7 +18,7 @@ files := ["shiboken6\__init__.py", "shiboken2\__init__.py"]
 
 for _, rel_path in files
 {
-    file_path := pydir . "\Lib\site-packages\" . rel_path
+    file_path := py_dir . "\Lib\site-packages\" . rel_path
     if (!FileExist(file_path))
         Continue
 
@@ -31,7 +32,7 @@ for _, rel_path in files
     }
 
     version := SubStr(version, StrLen(version_prefix))
-    version := string_trim(version, ' "')
+    version := string_strip(version, ' "')
 
     if version
         Break
