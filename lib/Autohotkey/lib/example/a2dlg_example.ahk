@@ -4,7 +4,7 @@
 ;   - Colors render correctly for each button variant
 ;   - Pressed state (click + hold) visibly darkens the button
 ;   - Tab key moves focus; focused button shows a dotted focus ring
-;   - Enter fires the Default button (✓ Accent); Space fires the focused button
+;   - Enter fires the Default button (✔️ Accent); Space fires the focused button
 ;   - "Toggle Dark / Light" rebuilds the dialog in the other theme
 ;   - Clicking any color button updates the status line at the bottom
 ;
@@ -32,14 +32,14 @@ a2dlg_demo(forced_dark := unset) {
     ; ---- Button grid ----
     ; Row 1 — three semantic variants
     row1 := d.btn_row([
-        {label: "✓  Accent",    bg: c.ok,     fg: c.acc_fg, opts: "Default"},
+        {label: "✔️  Accent",    bg: c.ok,     fg: c.acc_fg, opts: "Default"},
         {label: "Neutral",       bg: c.btn_bg, fg: c.text},
-        {label: "⚠  Warning",   bg: c.warn,   fg: "1A1A1A"}
+        {label: "⚠️  Warning",   bg: c.warn,   fg: "1A1A1A"}
     ], 30, 8, 136)
 
     ; Row 2 — danger + a custom color swatch
     row2 := d.btn_row([
-        {label: "✗  Danger",     bg: c.err,   fg: "F8F8F8"},
+        {label: "❌  Danger",     bg: c.err,   fg: "F8F8F8"},
         {label: "Custom (teal)", bg: "117A8B", fg: "E8F8FF"}
     ], 30, 8, 136)
     d.space(10)
@@ -62,11 +62,11 @@ a2dlg_demo(forced_dark := unset) {
     d._y += 18
 
     popup_rows := [
-        ["ℹ  Info",        "a2dlg_info",     "MsgBox (info)"],
-        ["✗  Error",      "a2dlg_error",    "MsgBox (error)"],
-        ["?  Yes / No",   "a2dlg_yes_no",   "MsgBox (yes no)"],
-        ["?  OK / Cancel","a2dlg_ok_cancel","MsgBox (ok cancel)"],
-        ["✎  Input",     "a2dlg_input",    "InputBox"],
+        ["ℹ️  Info",        "a2dlg_info",     "MsgBox (info)"],
+        ["❌  Error",      "a2dlg_error",    "MsgBox (error)"],
+        ["❓  Yes / No",   "a2dlg_yes_no",   "MsgBox (yes no)"],
+        ["❓  OK / Cancel","a2dlg_ok_cancel","MsgBox (ok cancel)"],
+        ["✏️  Input",     "a2dlg_input",    "InputBox"],
     ]
     popup_buttons_a2  := []
     popup_buttons_ahk := []

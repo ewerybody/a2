@@ -500,7 +500,7 @@ a2dlg_info(msg, title := "a2 Information", dark := unset) {
     d := A2Dialog(title, opts)
     c := d.c
     d.space(4)
-    _a2dlg_icon_msg(d, "ℹ", c.ok, msg)
+    _a2dlg_icon_msg(d, "ℹ️", c.ok, msg)
     d.space(6)
     d.sep()
     buttons := d.btn_row_right([{ label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" }])
@@ -521,7 +521,7 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := unset) {
     d := A2Dialog(title, opts)
     c := d.c
     d.space(4)
-    _a2dlg_icon_msg(d, "✗", c.err, msg)
+    _a2dlg_icon_msg(d, "❌", c.err, msg)
     if (error_detail != "") {
         d.space(4)
         detail_bg := d.dark ? "181818" : "FFFFFF"
@@ -553,7 +553,7 @@ a2dlg_yes_no(msg, title := "a2", dark := unset) {
     d := A2Dialog(title, opts)
     c := d.c
     d.space(4)
-    _a2dlg_icon_msg(d, "?", c.warn, msg)
+    _a2dlg_icon_msg(d, "❓", c.warn, msg)
     d.space(6)
     d.sep()
     buttons := d.btn_row_right([{ label: "Yes", bg: c.ok, fg: c.acc_fg, opts: "Default" }, { label: "No", bg: c.btn_bg,
@@ -578,7 +578,7 @@ a2dlg_ok_cancel(msg, title := "a2", dark := unset) {
     d := A2Dialog(title, opts)
     c := d.c
     d.space(4)
-    _a2dlg_icon_msg(d, "?", c.warn, msg)
+    _a2dlg_icon_msg(d, "❓", c.warn, msg)
     d.space(6)
     d.sep()
     buttons := d.btn_row_right([{ label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" }, { label: "Cancel", bg: c.btn_bg,
@@ -603,7 +603,7 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := unset) {
     d := A2Dialog(title, opts)
     c := d.c
     d.space(4)
-    _a2dlg_icon_msg(d, "✎", c.ok, msg)
+    _a2dlg_icon_msg(d, "✏️", c.ok, msg)
     d.space(4)
     inner_w := d._w - d._pad * 2
     edit_bg := d.dark ? "2A2A2A" : "FFFFFF"
