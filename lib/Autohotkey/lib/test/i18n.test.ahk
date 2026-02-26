@@ -45,7 +45,7 @@ class I18nTests {
     class Domain {
         load_correct_string() {
             t := i18n_domain("i18n",, _language := "en")
-            expect := "translatiaon"
+            expect := "translation"
             if (t["translation"] != expect)
                 throw Error('Expected "' expect '", got: "' t["translation"] '"')
         }
