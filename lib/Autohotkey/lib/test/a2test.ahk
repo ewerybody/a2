@@ -29,3 +29,10 @@ A2Test(name, fn, indentation) {
 A2TestClass(name, indentation) {
     FileAppend(indentation "• " name "`n", "*", "UTF-8")
 }
+
+
+assertmsg(result) {
+    if result
+        return "✔️"
+    return "❌"
+}
