@@ -1,5 +1,15 @@
-﻿
-; Assemble a single string from a given array of strings.
+
+/**
+ * Assemble a single string from an array of strings.
+ * @param {(Array)} array_of_strings
+ * Array of strings to join.
+ * @param {(String)} [separator]
+ * String to place between items. Defaults to ", ".
+ * @param {(String)} [default]
+ * Value to use for missing array items. Defaults to "".
+ * @returns {(String)}
+ * Joined string.
+ */
 string_join(array_of_strings, separator:=", ", default:="") {
     result := ""
     if not array_of_strings.Length
@@ -12,10 +22,18 @@ string_join(array_of_strings, separator:=", ", default:="") {
     Return result
 }
 
-; Tell if a search string is in an array object of strings.
+/**
+ * Search for a string in an array, returning its index.
+ * @param {(String)} search
+ * String to search for.
+ * @param {(Array)} string_list
+ * Array of strings to search in.
+ * @param {(Integer)} [start]
+ * Index to start searching from. Defaults to 1.
+ * @returns {(Integer)}
+ * Index of the match, or 0 if not found.
+ */
 string_is_in_array(search, string_list, start := 1) {
-    ; returns index of search string if found
-    ; returns 0 otherwise
     Loop(string_list.Length) {
         idx := A_Index + start - 1
         if idx > string_list.Length
@@ -26,7 +44,13 @@ string_is_in_array(search, string_list, start := 1) {
     Return 0
 }
 
-; Return true if given string looks like an URL.
+/**
+ * Check if a string looks like a web address.
+ * @param {(String)} string
+ * String to check.
+ * @returns {(Boolean)}
+ * True if the string looks like a URL or web domain.
+ */
 string_is_web_address(string) {
     if ( RegExMatch(string, "i)^http://") OR RegExMatch(string, "i)^https://") )
         return true
@@ -41,44 +65,103 @@ string_is_web_address(string) {
     return false
 }
 
-; Determine if a string starts with another string.
+/**
+ * Check if a string starts with another string.
+ * @param {(String)} string
+ * String to check.
+ * @param {(String)} start_str
+ * Prefix to look for.
+ * @returns {(Boolean)}
+ * True if string starts with start_str.
+ */
 string_startswith(string, start_str) {
-    ; NOTE: It's a bit faster to simply use InStr(string, start_str) = 1
     return InStr(string, start_str) = 1
 }
 
-; Determine if a string ends with another string
+/**
+ * Check if a string ends with another string.
+ * @param {(String)} string
+ * String to check.
+ * @param {(String)} end
+ * Suffix to look for.
+ * @returns {(Boolean)}
+ * True if string ends with end.
+ */
 string_endswith(string, end) {
     return StrLen(end) <= StrLen(string) && Substr(string, -StrLen(end)) = end
 }
 
-; Strip or trim whitespace from start and end of a string.
+/**
+ * Strip characters from both ends of a string.
+ * @param {(String)} string
+ * String to strip.
+ * @param {(String)} [omit_chars]
+ * Characters to remove. Defaults to whitespace.
+ * @returns {(String)}
+ * Stripped string.
+ */
 string_strip(string, omit_chars := "") {
     if omit_chars == ""
         omit_chars := " `t`n`r"
     return Trim(string, omit_chars)
 }
 
+/**
+ * Strip characters from the right end of a string.
+ * @param {(String)} string
+ * String to strip.
+ * @param {(String)} [omit_chars]
+ * Characters to remove. Defaults to whitespace.
+ * @returns {(String)}
+ * Stripped string.
+ */
 string_strip_right(string, omit_chars := "") {
     if omit_chars == ""
         omit_chars := " `t`n`r"
     return RTrim(string, omit_chars)
 }
 
+/**
+ * Strip characters from the left end of a string.
+ * @param {(String)} string
+ * String to strip.
+ * @param {(String)} [omit_chars]
+ * Characters to remove. Defaults to whitespace.
+ * @returns {(String)}
+ * Stripped string.
+ */
 string_strip_left(string, omit_chars := "") {
     if omit_chars == ""
         omit_chars := " `t`n`r"
     return LTrim(string, omit_chars)
 }
 
-; Remove quotes from a string if necessary.
+/**
+ * Remove surrounding quotes from a string if present.
+ * @param {(String)} string
+ * String to unquote.
+ * @param {(String)} [quote]
+ * Quote character to remove. Defaults to double-quote.
+ * @returns {(String)}
+ * Unquoted string, or the original if not quoted.
+ */
 string_unquote(string, quote := '"') {
     if (InStr(string, quote) = 1 && string_endsWith(string, quote))
         string := string_strip(string, quote)
     return string
 }
 
-; Add quotes to a string only if necessary.
+/**
+ * Surround a string with quotes, optionally only where missing.
+ * @param {(String)} string
+ * String to quote.
+ * @param {(Integer)} [once]
+ * If true, only add quotes where missing. Defaults to true.
+ * @param {(String)} [quote]
+ * Quote character to use. Defaults to double-quote.
+ * @returns {(String)}
+ * Quoted string.
+ */
 string_quote(string, once := 1, quote := '"') {
     if (once) {
         if (InStr(string, quote) != 1)
@@ -90,21 +173,43 @@ string_quote(string, once := 1, quote := '"') {
     return quote string quote
 }
 
-; Ensure a string to end with a suffix string.
+/**
+ * Ensure a string ends with the given suffix, adding it if missing.
+ * @param {(String)} string
+ * String to check.
+ * @param {(String)} suffix
+ * Suffix to ensure.
+ * @returns {(String)}
+ * String guaranteed to end with suffix.
+ */
 string_suffix(string, suffix) {
     if !string_endswith(string, suffix)
         return string suffix
     return string
 }
 
-; Ensure a string to start with a suffix string.
+/**
+ * Ensure a string starts with the given prefix, adding it if missing.
+ * @param {(String)} string
+ * String to check.
+ * @param {(String)} prefix
+ * Prefix to ensure.
+ * @returns {(String)}
+ * String guaranteed to start with prefix.
+ */
 string_prefix(string, prefix) {
     if !string_startswith(string, prefix)
         return prefix string
     return string
 }
 
-; Make back for front flipped version of given string
+/**
+ * Return a reversed copy of the given string.
+ * @param {(String)} string
+ * String to reverse.
+ * @returns {(String)}
+ * Reversed string.
+ */
 string_reverse(string) {
     new_string := ""
     Loop(StrLen(string))
@@ -112,7 +217,13 @@ string_reverse(string) {
     Return new_string
 }
 
-; Make string of random UPPER case letters with given length.
+/**
+ * Generate a random string of uppercase ASCII letters.
+ * @param {(Integer)} length
+ * Number of characters to generate.
+ * @returns {(String)}
+ * Random uppercase string of the given length.
+ */
 string_random(length) {
     txt := ""
     offset := 64
