@@ -1,128 +1,218 @@
-﻿;a2 Autohotkey path library.
+;a2 Autohotkey path library.
 #include <string>
 
+/**
+ * Check if a path is absolute or relative.
+ * @param {(String)} path
+ * Path to check.
+ * @returns {(Boolean)}
+ * True if absolute, false if relative.
+ */
 path_is_absolute(path) {
-    ; Return true/false according to if given path is absolute or relative.
     SplitPath path ,,,,, &OutDrive
-    if (OutDrive == "")
-        return false
-    else
-        return true
+    return OutDrive != ""
 }
 
+/**
+ * Return the parent directory of a path.
+ * @param {(String)} path
+ * Path to get the parent of.
+ * @returns {(String)}
+ * Parent directory path.
+ */
 path_dirname(path) {
-    ; Return the parent directory to the path.
     SplitPath path,, &OutDir
-    Return OutDir
+    return OutDir
 }
 
+/**
+ * Return the filename portion of a path, without its directory.
+ * @param {(String)} path
+ * Path to get the filename from.
+ * @returns {(String)}
+ * Filename with extension.
+ */
 path_basename(path) {
-    ; Return the short-name of a given path without its path.
     SplitPath path, &OutFileName
-    Return OutFileName
+    return OutFileName
 }
 
+/**
+ * Split a path into its base name and extension.
+ * @param {(String)} path
+ * Path to split.
+ * @returns {(Array)}
+ * Two-element array: [name_without_extension, extension].
+ */
 path_split_ext(path) {
-    ; Return No-extension file name and extension in a list.
     SplitPath path,,, &OutExtension, &OutNameNoExt
-    Return [OutNameNoExt, OutExtension]
+    return [OutNameNoExt, OutExtension]
 }
 
+/**
+ * Check if a path exists and is a directory.
+ * @param {(String)} path
+ * Path to check.
+ * @returns {(Boolean)}
+ * True if path is an existing directory.
+ */
 path_is_dir(path) {
-    ; Return true/false according to if the given path exists and is a directory.
-    if (InStr(FileExist(path), "D"))
-        return true
-    else
-        return false
+    return InStr(FileExist(path), "D") > 0
 }
 
+/**
+ * Check if a path exists and is a file.
+ * @param {(String)} path
+ * Path to check.
+ * @returns {(Boolean)}
+ * True if path is an existing file.
+ */
 path_is_file(path) {
-    ; Return true/false according to if the given path exists and is a file.
     attrs := FileExist(path)
-    if (attrs != "" && !InStr(attrs, "D"))
-        return true
-    else
-        return false
+    return attrs != "" && !InStr(attrs, "D")
 }
 
+/**
+ * Join path parts, handling extra or missing backslashes.
+ * @param {(String)} base_path
+ * Base path to join onto.
+ * @param {(String)} items*
+ * One or more path parts to append.
+ * @returns {(String)}
+ * Joined path string.
+ */
 path_join(base_path, items*) {
-    ; Append two paths together and treat possibly double or missing backslashes
-    ; Now Variadic! https://www.autohotkey.com/docs/Functions.htm#Variadic
     path := RTrim(base_path, "\")
     Loop(items.Length)
         path .= "\" Trim(items[A_Index], "\")
     return path
 }
 
+/**
+ * Resolve a path, expanding `.` and `..` components.
+ * @param {(String)} path
+ * Path to normalize.
+ * @returns {(String)}
+ * Absolute normalized path.
+ */
 path_normalize(path) {
     ; From the documentation - https://www.autohotkey.com/docs/misc/LongPaths.htm
     cc := DllCall("GetFullPathName", "str", path, "uint", 0, "ptr", 0, "ptr", 0, "uint")
-    ; buf := Buffer(cc*2)
     VarSetStrCapacity(&buf, cc*2)
-    ; buf := ""
     DllCall("GetFullPathName", "str", path, "uint", cc, "str", buf, "ptr", 0)
     return buf
 }
 
+/**
+ * Check if a directory contains no files or subdirectories.
+ * @param {(String)} path
+ * Directory path to check.
+ * @returns {(Boolean)}
+ * True if the directory is empty.
+ */
 path_is_empty(path) {
-    ; tell if the given path contains anything
-    Loop Files, path "\*.*", "FD"
+    Loop Files, path "\*", "FD"
         return false
     return true
 }
 
+/**
+ * Check if a path is writable (not read-only).
+ * @param {(String)} path
+ * Path to check.
+ * @returns {(Boolean)}
+ * True if the path is writable.
+ */
 path_is_writeable(path) {
     if InStr(FileGetAttrib(path), "R")
         return false
     return true
 }
 
+/**
+ * Remove the read-only attribute from a path.
+ * @param {(String)} path
+ * Path to make writable.
+ */
 path_set_writable(path) {
     FileSetAttrib("-R", path)
 }
 
+/**
+ * Set the read-only attribute on a path.
+ * @param {(String)} path
+ * Path to make read-only.
+ */
 path_set_readonly(path) {
     FileSetAttrib("+R", path)
 }
 
+/**
+ * Expand %environment_variable% references in a path.
+ * Handles multiple variables in a single path string.
+ * @param {(String)} path
+ * Path string potentially containing %VAR% references.
+ * @returns {(String)}
+ * Path with all known environment variables expanded.
+ */
 path_expand_env(path) {
-    ; Find environment %variables% in a path,
-    ; Return expanded path string.
-    if !InStr(path, "%")
-        Return path
-
-    pos1 := InStr(path, "%")
-    pos2 := InStr(path, "%",, pos1 + 1)
-    if !pos2
-        Return path
-    subs := SubStr(path, pos1 + 1, pos2 - pos1 - 1)
-    env_path := EnvGet(subs)
-    new_path := StrReplace(path, "%" subs "%", env_path)
-    ; MsgBox pos1: %pos1%`npos2: %pos2%`nsubs: %subs%`nenv_path: %env_path%`nnew_path: %new_path%
-    return new_path
+    while InStr(path, "%") {
+        pos1 := InStr(path, "%")
+        pos2 := InStr(path, "%",, pos1 + 1)
+        if !pos2
+            break
+        subs := SubStr(path, pos1 + 1, pos2 - pos1 - 1)
+        env_val := EnvGet(subs)
+        if (env_val == "")
+            break
+        path := StrReplace(path, "%" subs "%", env_val)
+    }
+    return path
 }
 
+/**
+ * Return the path to a file neighboring another file in the same directory.
+ * Handy with the builtin var `A_LineFile`.
+ * @param {(String)} file_path
+ * Reference file path.
+ * @param {(String)} neighbor_name
+ * Name of the neighboring file.
+ * @returns {(String)}
+ * Full path to the neighbor.
+ */
 path_neighbor(file_path, neighbor_name) {
-    ; Shorthand to do `path_join(path_dirname(file_path), "somename.txt")`.
-    ; Also handy with builtin var `A_LineFile`!
     return path_join(path_dirname(file_path), neighbor_name)
 }
 
-; If already existing add numbers to file name until a free one is found.
+/**
+ * Get next free file name. If already existing add numbers to
+ * file name until a free one is found.
+ * @param {(String)} dir_path
+ * Directory to look for names.
+ * @param {(String)} file_name
+ * Initial file name to iterate on.
+ * @param {(String)} ext
+ * File extension.
+ * @param {(String)} [separator]
+ * Separator to put between file name and numbers.
+ * @returns {(String)}
+ * A file name (without directory or extension) that does not exist in dir_path.
+ */
 path_get_free_name(dir_path, file_name, ext, separator := "") {
     if !file_name AND !ext
-        Return file_name
+        return file_name
 
     ext := string_prefix(Trim(ext), ".")
     file_path := path_join(dir_path, file_name . ext)
     if !FileExist(file_path)
-        Return file_name
+        return file_name
 
     index := 1
-    While FileExist(file_path) {
-        index++
+    Loop {
         base := file_name . separator . index
         file_path := path_join(dir_path, base . ext)
+        if !FileExist(file_path)
+            return base
+        index++
     }
-    return base
 }
