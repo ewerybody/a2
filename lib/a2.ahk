@@ -1,5 +1,5 @@
-; a2 - modular Autohotkey script envirionment
-; main file! This gathers all the runtime resources
+; a2 - Modular Autohotkey script environment.
+; Main file! This gathers all the runtime resources.
 #SingleInstance force
 Persistent
 
@@ -48,8 +48,8 @@ OnExit(a2ui_exit)
 
 ; Finally the user data includes. Happening in the end
 ; so the top of this main script is executed before first Return.
-#include "..\_ user_data_include"
-Return ; -----------------------------------------------------------------------
+; #include "..\_ user_data_include"
+; Return ; -----------------------------------------------------------------------
 
 a2ui(*) {
     a2tip("Calling a2 ui ...")
