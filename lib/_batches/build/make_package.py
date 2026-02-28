@@ -19,7 +19,7 @@ import _build_common
 import a2ahk  # ty:ignore[unresolved-import]
 
 from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
-from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME, make_ahk_exe
+from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME
 
 Paths = _build_common.Paths
 
@@ -63,21 +63,11 @@ PY_PACK_URL = 'https://www.python.org/ftp/python/{}/{}'
 
 def main():
     package_cfg = _build_common.get_package_cfg()
-    package_name = f'{A2} {package_cfg["project"]["version"]} {PACKAGE_SUB_NAME}'
+    version = package_cfg["project"]["version"]
+    package_name = f'{A2} {version} {PACKAGE_SUB_NAME}'
     print('\n{0} Making package: {1} ... {0}'.format(8 * '#', package_name))
 
     prepare_package()
-
-    for name, source_name, icon in (
-        (A2, 'a2_starter', None),
-        (f'{A2}ui', 'a2ui_release', None),
-        (f'Uninstall {A2}', 'a2_uninstaller', 'a2x'),
-    ):
-        make_ahk_exe(
-            os.path.join(Paths.source, f'{source_name}.ahk'),
-            os.path.join(Paths.dist, f'{name}.exe'),
-            icon=icon,
-        )
 
     get_py_package()
     patch_sqlite()
@@ -90,6 +80,8 @@ def main():
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
     make_desktop_ini()
+
+    make_executables(version)
 
     print('{0} {1} finished! {0}\n'.format(8 * '#', package_name))
 
@@ -108,6 +100,7 @@ def prepare_package():
 
 
 def update_readme():
+    print('Checking Package versions ...')
     # get versions in readme:
     readme_path = os.path.join(Paths.a2, 'README.md')
     lines = []
@@ -126,10 +119,8 @@ def update_readme():
         raise RuntimeError('Linebreak could not be determined from readme file!!!')
 
     versions = _build_common.VERSIONS
-    print('Versions:\n')
     for name, version_str in versions.items():
         print('* %s: %s' % (name, version_str))
-    print('')
 
     changed = False
     for i, line in enumerate(lines):
@@ -141,11 +132,11 @@ def update_readme():
                     changed = True
 
     if changed:
-        print('Updating %s' % readme_path)
-        with open(readme_path, 'wb') as fileobj:
-            fileobj.write(''.join(lines).encode('utf8'))
+        print(f'  Updating {readme_path}\n')
+        with open(readme_path, 'w') as file_obj:
+            file_obj.write(''.join(lines))
     else:
-        print('Versions unchanged!')
+        print('  Versions unchanged!\n')
 
 
 def copy_files():
@@ -185,10 +176,13 @@ def _lib_ignore(path, items):
 
     for item in [i for i in items if i not in result]:
         item_path = os.path.join(path, item)
-        if os.path.isdir(item_path):
-            for base, name in LIB_IGNORES:
-                if this_base == base and item == name:
-                    result.append(item)
+        if not os.path.isdir(item_path):
+            continue
+        if item == 'test' and this_base == 'lib':
+            result.append(item)
+        for base, name in LIB_IGNORES:
+            if this_base == base and item == name:
+                result.append(item)
     # if result:
     #     print('IGNORING lib items: %s' % result)
     return result
@@ -465,6 +459,30 @@ def make_desktop_ini():
         with open(folder_icon_ini, 'w') as file_obj:
             file_obj.write(DESKTOP_INI_CODE)
         ctypes.windll.kernel32.SetFileAttributesW(folder_icon_ini, FILE_ATTR_HIDDEN)
+
+
+def make_executables(version):
+    for name, source_name, description in (
+        (A2, 'a2_starter', 'a2 Runtime Starter'),
+        (f'{A2}ui', 'a2_ui_starter', 'a2 UI Starter'),
+    ):
+        nfo = _build_common.EXE_NFO.copy()
+        nfo['FileVersion'] = version
+        nfo['ProductVersion'] = version
+        nfo['FileDescription'] = description
+        _build_common.make_py_exe(
+            os.path.join(Paths.source, f'{source_name}.py'),
+            os.path.join(Paths.dist, f'{name}.exe'),
+            nfo=nfo,
+            console=False,
+        )
+
+    for name, source_name, icon in ((f'Uninstall {A2}', 'a2_uninstaller', 'a2x'),):
+        _build_common.make_ahk_exe(
+            os.path.join(Paths.source, f'{source_name}.ahk'),
+            os.path.join(Paths.dist, f'{name}.exe'),
+            icon=icon,
+        )
 
 
 if __name__ == '__main__':
