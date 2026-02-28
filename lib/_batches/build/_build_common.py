@@ -90,7 +90,6 @@ class Paths:
     sfx_source_silent = join(source, SEVEN_ZIP_DIR, '7zS2con.sfx')
     seven_zip_exe = join(source, SEVEN_ZIP_DIR, SEVEN_ZIP_EXE)
     rcedit = join(source, RCEDIT_EXE)
-    manifest = join(source, MANIFEST_NAME)
     manifest_tmp = join(source, 'manifest.xml.template')
     installer_script = join(source, NAME + '.ahk')
     installer_script_silent = join(source, NAME + '_silent.ahk')

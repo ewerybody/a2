@@ -163,7 +163,6 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         self.tmpl8 = '%s <b>%s</b>'
         self.nothing = 'NOTHING FOUND!'
         self.ahk_setver = ';@Ahk2Exe-SetVersion'
-        self.mini_ns_tag = '{urn:schemas-microsoft-com:asm.v1}assemblyIdentity'
         self.error = 'ERROR'
 
         self._file_package = a2.paths.package_cfg
@@ -177,7 +176,6 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
             os.path.join(source_dir, 'a2_installer_silent.ahk'),
             os.path.join(source_dir, 'a2_uninstaller.ahk'),
         )
-        self._file_manifest = os.path.join(source_dir, 'a2_installer_manifest.xml')
 
         self._all_set = False
         try:
@@ -208,16 +206,6 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
 
         for pth in self._files_source:
             msgs.append(self._text_file_get(pth, self.ahk_setver))
-
-        from xml.etree import ElementTree
-
-        xml = ElementTree.parse(self._file_manifest)
-        id_node = xml.find(self.mini_ns_tag)
-        mani_ver = self.nothing if id_node is None else id_node.get('version', self.nothing)
-        if not mani_ver.startswith(self._orig_ver):
-            self._all_set = False
-        msgs.append(self.tmpl8 % (os.path.basename(self._file_manifest), mani_ver))
-
         return '<br>'.join(msgs)
 
     def set_versions(self, *arg):
@@ -234,31 +222,6 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
 
         for pth in self._files_source:
             self._text_file_set(pth, self.ahk_setver)
-
-        # WHAT the XML namespace crap!? I'm out of ideas here.
-        # Lets just parse and set text like in the olden days ... m(
-        # from xml.etree import ElementTree
-        # xml = ElementTree.parse(self._file_manifest)
-        # id_node = xml.find(self.mini_ns_tag)
-        # id_node.set('version', self.output + '.0')
-        # xml.write(self._file_manifest)
-        lines = a2util.load_utf8(self._file_manifest).split('\n')
-        for i, line in enumerate(lines):
-            if '<assemblyIdentity' not in line:
-                continue
-            nextline = lines[i + 1]
-            marker = 'version="'
-            if marker not in nextline:
-                break
-            pre, ver = nextline.split(marker, 1)
-            parts = ver.split('.', 3)
-            current = '.'.join(parts[:3])
-            if current == self.output:
-                break
-            lines[i + 1] = f'{pre}{marker}{self.output}.{parts[-1]}'
-            log.info(f'Setting manifest version from:{current} to:{self.output}')
-            a2util.write_utf8(self._file_manifest, '\n'.join(lines))
-            break
 
     def _text_file_get(self, file_path, startswith):
         base = os.path.basename(file_path)
@@ -299,7 +262,7 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
             return 'Enter something'
         if text == self._orig_ver and self._all_set:
             return 'No change'
-        if not '.' in text:
+        if '.' not in text:
             return 'No x.y.z semver style!'
         nrs = text.split('.')
         if not len(nrs) == 3 or not all(p.isnumeric() for p in nrs):
