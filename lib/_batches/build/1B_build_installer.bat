@@ -1,22 +1,10 @@
 rem Kick off calling the installer builder (Python).
 @echo off
 set here=%~dp0
-set a2path=%here%..\..\..
-set dist_root=%a2path%\_ package
-
-rem getting latest python path
-set ahk_exe=%here%..\..\Autohotkey\Autohotkey.exe
-set tmp_txt=_ sfdgsdfgsdfgsdfg.txt
-
-"%ahk_exe%" %here%..\versions\get_Python_path.ahk > "%tmp_txt%"
-set /p pypath= < "%tmp_txt%"
-del "%tmp_txt%"
-echo pypath: %pypath%
-
-echo ### building a2 installer packed executable ###
-echo dist_root: %dist_root%
+set py_path=%here%..\..\..\.venv\Scripts
+echo py_path: %py_path%
 
 echo running build assistant script ...
-%pypath%\python.exe %here%build_installer.py
+%py_path%\python.exe %here%build_installer.py
 
 echo ########### Build Installer Done! ###########

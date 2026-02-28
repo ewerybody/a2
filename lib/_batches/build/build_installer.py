@@ -13,7 +13,7 @@ import _build_common
 import a2core  # ty:ignore[unresolved-import]
 import a2util  # ty:ignore[unresolved-import]
 from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHK_MK, EX_MRK
-from _build_common import Paths, make_ahk_exe, EXE_NFO
+from _build_common import Paths, make_ahk_exe, EXE_NFO, make_4_numbers_version
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
@@ -31,11 +31,11 @@ def main():
         raise FileNotFoundError(ERROR_NO_PACKAGE)
 
     package_cfg = _build_common.get_package_cfg()
-    version = package_cfg['project']["version"]
+    version = package_cfg['project']['version']
     package_name = f'{a2core.NAME} {PACKAGE_SUB_NAME} {version}'
     print('\n{0} building installer: {1} ... {0}'.format(15 * '#', package_name))
 
-    version_string = _check_version(version)
+    version_string = make_4_numbers_version(version)
     # version_label = version_string if not PACKAGE_SUB_NAME else version_string + ' ' + PACKAGE_SUB_NAME
     t_main_checks = time.time() - t00
 
@@ -69,41 +69,18 @@ def main():
     print('  all_in_all: %.3fs' % (time.time() - t00))
 
 
-def _check_version(version):
-    """Have a look at our version string if it works like semver style."""
-    version_list = []
-    for i, number in enumerate(version.split('.')):
-        if not number.isdigit():
-            print('ERROR:\n  Bad Nr in version string %i: %s' % (i, number))
-            continue
-        version_list.append(number)
-    version_list.extend((4 - len(version_list)) * '0')
-    version_string = '.'.join(version_list)
-    return version_string
-
-
 def _update_manifest(version_string):
     """
     Read template manifest, insert the updated version, compact and
     write new file to target location.
     """
     content = ''
-    with open(Paths.manifest, encoding='utf8') as file_obj:
-        for line in file_obj:
-            line = line.strip()
-            if not line:
-                continue
-            if line.startswith('<?xml version="'):
-                continue
-            if line.startswith('<!--'):
-                continue
-
-            if line.startswith('version="'):
-                line = f'version="{version_string}"'
-
-            if not line.endswith('>'):
-                line += ' '
-            content += line
+    with open(os.path.join(Paths.manifest_tmp), encoding='utf8') as file_obj:
+        content = file_obj.read().format(
+            version=version_string,
+            name=_build_common.NAME,
+            description=_build_common.NAME,
+        )
 
     with open(Paths.manifest_target, 'w', encoding='utf8') as file_obj:
         file_obj.write(content)
@@ -111,7 +88,9 @@ def _update_manifest(version_string):
 
 
 def _apply_manifest(sfx_target):
-    subprocess.call([Paths.rcedit, sfx_target, '--application-manifest', Paths.manifest_target])
+    subprocess.call(
+        [Paths.rcedit, sfx_target, '--application-manifest', Paths.manifest_target]
+    )
 
 
 def _pack_installer_archive():
@@ -127,7 +106,9 @@ def _pack_installer_archive():
     else:
         shutil.copytree(Paths.qt_temp, Paths.dist_ui, dirs_exist_ok=True)
 
-    subprocess.call([Paths.seven_zip_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS)
+    subprocess.call(
+        [Paths.seven_zip_exe, 'a', Paths.archive_target, Paths.dist] + SEVEN_FLAGS
+    )
     print(f'packing archive took: {time.time() - t0:.2f}sec')
 
 
@@ -235,8 +216,12 @@ def _copy_together_installer_binaries(version_label):
         shutil.copyfile(Paths.archive_target, this_archive)
 
         # add setup executable to archive
-        exe_path = make_ahk_exe(script_path, os.path.join(Paths.dist_root, SETUP_EXE), nfo)
-        subprocess.call([Paths.seven_zip_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
+        exe_path = make_ahk_exe(
+            script_path, os.path.join(Paths.dist_root, SETUP_EXE), nfo
+        )
+        subprocess.call(
+            [Paths.seven_zip_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS
+        )
         os.unlink(exe_path)
 
         # copy together
@@ -248,7 +233,9 @@ def _copy_together_installer_binaries(version_label):
         if os.path.isfile(target_path):
             print('\n%s Success!: "%s" written!\n' % (CHK_MK, target_name))
         else:
-            raise FileNotFoundError('%s Installer "%s" was not written!' % (EX_MRK, target_name))
+            raise FileNotFoundError(
+                '%s Installer "%s" was not written!' % (EX_MRK, target_name)
+            )
 
 
 def _create_fresh_sfx_files():

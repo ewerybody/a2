@@ -91,6 +91,7 @@ class Paths:
     seven_zip_exe = join(source, SEVEN_ZIP_DIR, SEVEN_ZIP_EXE)
     rcedit = join(source, RCEDIT_EXE)
     manifest = join(source, MANIFEST_NAME)
+    manifest_tmp = join(source, 'manifest.xml.template')
     installer_script = join(source, NAME + '.ahk')
     installer_script_silent = join(source, NAME + '_silent.ahk')
 
@@ -203,7 +204,9 @@ def make_ahk_exe(script_path, out_path, nfo=None, icon=None):
     return out_path
 
 
-def make_py_exe(script_path, out_path, nfo=None, icon_path=None, console=False):
+def make_py_exe(
+    script_path, out_path, nfo: dict[str, str], icon_path=None, console=False
+):
     if not os.path.isfile(script_path):
         raise RuntimeError('No such Script File!! (%s)' % script_path)
     if os.path.isfile(out_path):
@@ -216,12 +219,8 @@ def make_py_exe(script_path, out_path, nfo=None, icon_path=None, console=False):
     stub_version = ('w64.exe', 't64.exe')[console]
     py_exe_version = ('pythonw.exe', 'python.exe')[console]
     distlib_dir = os.path.dirname(distlib.__file__)
-    stub_path = os.path.join(distlib_dir, stub_version)
-    with open(stub_path, 'rb') as file_obj:
-        stub_bytes = file_obj.read()
-
-    with open(script_path) as file_obj:
-        script_contents = file_obj.read()
+    stub_bytes = read_bytes(os.path.join(distlib_dir, stub_version))
+    script_contents = read_text(script_path)
 
     archive_buffer = io.BytesIO()
     with zipfile.ZipFile(archive_buffer, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
@@ -235,14 +234,11 @@ def make_py_exe(script_path, out_path, nfo=None, icon_path=None, console=False):
 
     with open(out_path, 'wb') as file_obj:
         file_obj.write(stub_bytes)
-        # file_obj.write(f'#!{py_path}\r\n'.encode())
-        # file_obj.write(archive_buffer.getvalue())
     print(f'\b\b\b{CHK_MK}  ')
 
-    if nfo is not None:
-        if not nfo.get('OriginalFilename'):
-            nfo['OriginalFilename'] = os.path.basename(out_path)
-        set_rc_nfo(out_path, nfo)
+    if not nfo.get('OriginalFilename'):
+        nfo['OriginalFilename'] = os.path.basename(out_path)
+    set_rc_nfo(out_path, nfo)
 
     print('  Setting icon ...', end='')
     if icon_path is None or not os.path.isfile(icon_path):
@@ -250,9 +246,23 @@ def make_py_exe(script_path, out_path, nfo=None, icon_path=None, console=False):
     subprocess.call([Paths.rcedit, out_path, '--set-icon', icon_path])
     print(f'\b\b\b{CHK_MK}  ')
 
+    print('  Applying manifest ...', end='')
+    base, ext = os.path.splitext(os.path.basename(script_path))
+    manifest_tmp = read_text(Paths.manifest_tmp).format(
+        name=base,
+        version=make_4_numbers_version(nfo['FileVersion']),
+        description=nfo['FileDescription'],
+    )
+    manifest_target = os.path.join(Paths.dist_root, f'_ {base}_manifest.xml')
+    with open(manifest_target, 'w', encoding='utf8') as file_obj:
+        file_obj.write(manifest_tmp)
+    subprocess.call(
+        [Paths.rcedit, out_path, '--application-manifest', Paths.manifest_target]
+    )
+    print(f'\b\b\b{CHK_MK}  ')
+
     # These always need to go last!!
     with open(out_path, 'ab') as file_obj:
-        # file_obj.write(stub_bytes)
         file_obj.write(f'#!{py_path}\r\n'.encode())
         file_obj.write(archive_buffer.getvalue())
 
@@ -315,3 +325,26 @@ def get_package_cfg() -> dict[str, typing.Any]:
 
     with open(Paths.package_config, 'rb') as file_obj:
         return tomllib.load(file_obj)
+
+
+def read_bytes(file_path):
+    with open(file_path, 'rb') as file_obj:
+        return file_obj.read()
+
+
+def read_text(file_path):
+    with open(file_path, encoding='utf8') as file_obj:
+        return file_obj.read()
+
+
+def make_4_numbers_version(version):
+    """Take a version string and make sure it's 3 dots between 4 numbers."""
+    version_list = []
+    for i, number in enumerate(version.split('.')):
+        if not number.isdigit():
+            print('ERROR:\n  Bad Nr in version string %i: %s' % (i, number))
+            continue
+        version_list.append(number)
+    version_list.extend((4 - len(version_list)) * '0')
+    version_string = '.'.join(version_list)
+    return version_string
