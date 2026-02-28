@@ -66,9 +66,10 @@ def parse_test_structure(source: str) -> TestNode:
     return root
 
 
-def _generate_calls(tree: TestNode, ahk_prefix: str, level: int) -> list[str]:
+def _generate_calls(tree: TestNode, ahk_prefix: str, level: int) -> tuple[list[str], int]:
     """Recursively generate A2TestClass + A2Test AHK call lines."""
     lines = []
+    tests = 0
     indent = INDENTATION * level
     method_indent = INDENTATION * (level + 1)
     for cls_name, node in tree.items():
@@ -78,8 +79,11 @@ def _generate_calls(tree: TestNode, ahk_prefix: str, level: int) -> list[str]:
             lines.append(
                 f'_failures += A2Test("{method}", () => {ahk_path}().{method}(), "{method_indent}")'
             )
-        lines.extend(_generate_calls(node['children'], ahk_path, level + 1))
-    return lines
+            tests += 1
+        sub_lines, sub_tests = _generate_calls(node['children'], ahk_path, level + 1)
+        lines.extend(sub_lines)
+        tests += sub_tests
+    return lines, tests
 
 
 def run_test_file(test_file: Path) -> int:
@@ -91,7 +95,7 @@ def run_test_file(test_file: Path) -> int:
         print('  (no test classes found, skipping)')
         return 0
 
-    calls = _generate_calls(tree, '', 0)
+    calls, num_tests = _generate_calls(tree, '', 0)
     script = (
         '#Requires AutoHotkey v2.0\n'
         '#NoTrayIcon\n'
@@ -100,6 +104,7 @@ def run_test_file(test_file: Path) -> int:
         f'#Include "{test_file}"\n'
         '_failures := 0\n'
         + '\n'.join(calls) + '\n'
+        f'A2Results(_failures, {num_tests})\n'
         'ExitApp(_failures > 0 ? 1 : 0)\n'
     )
 

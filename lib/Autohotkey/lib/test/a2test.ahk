@@ -15,10 +15,10 @@
 A2Test(name, fn, indentation) {
     try {
         fn.Call()
-        FileAppend(indentation "✔️  " name "`n", "*", "UTF-8")
+        FileAppend(indentation "✅ PASS: " name "`n", "*", "UTF-8")
         return 0
     } catch Error as e {
-        msg := indentation "❌ " name " FAILED!`n"
+        msg := indentation "❌ FAIL: " name "`n"
         msg .= indentation "   " e.Message "`n"
         msg .= indentation "   " e.File " (" e.Line ")`n"
         FileAppend(msg, "*", "UTF-8")
@@ -30,6 +30,9 @@ A2TestClass(name, indentation) {
     FileAppend(indentation "• " name "`n", "*", "UTF-8")
 }
 
+A2Results(fails, total) {
+    FileAppend(" > Passed/Failed: " total - fails "/" fails " out of: " total "`n", "*", "UTF-8")
+}
 
 assertmsg(result) {
     if result
