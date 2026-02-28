@@ -1,6 +1,6 @@
 ; This is the script that becomes the a2.exe in root!
 ; Overhauled for ahk2 there were some things removed.
-; TBD: Look into reimplementation
+; TBD: Look into re-implementation
 ; * cursor reset?
 ; * check_load_time_errors - there are fare better error dialogs in ahk2,
 ;   we might not need anything better?
