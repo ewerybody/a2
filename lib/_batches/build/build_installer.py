@@ -12,22 +12,13 @@ import subprocess
 import _build_common
 import a2core  # ty:ignore[unresolved-import]
 import a2util  # ty:ignore[unresolved-import]
-from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHK_MK, EX_MRK, Paths, make_ahk_exe
+from _build_common import SEVEN_FLAGS, PACKAGE_SUB_NAME, CHK_MK, EX_MRK
+from _build_common import Paths, make_ahk_exe, EXE_NFO
 
 NFO_DESCRIPTION = a2core.NAME + ' self-extracting installation package.'
 SETUP_EXE = 'setup.exe'
 INSTALLER_CFG = f';!@Install@!UTF-8!\nRunProgram="{SETUP_EXE}"\n;!@InstallEnd@!'
 ERROR_NO_PACKAGE = 'No package? No need to build an installer :/ build a package first!'
-COMPANY = 'github.com/ewerybody/a2'
-COPYRIGHT = f'GPLv3 ({COMPANY})'
-EXE_NFO = {
-    'FileVersion': '',
-    'ProductVersion': '',
-    'FileDescription': '',
-    'ProductName': a2core.NAME,
-    'CompanyName': COMPANY,
-    'LegalCopyright': COPYRIGHT,
-}
 USE_PRE_ZIPPED_QT = True
 _TIMINGS = {}
 
@@ -225,7 +216,7 @@ def _copy_together_installer_binaries(version_label):
     version_nfo['FileVersion'] = version_label
     version_nfo['ProductVersion'] = version_label
 
-    for target_name, target_sfx, script in (
+    for target_name, target_sfx, script_path in (
         (name_ui, Paths.sfx_target_ui, Paths.installer_script),
         (name_silent, Paths.sfx_target_silent, Paths.installer_script_silent),
     ):
@@ -244,7 +235,7 @@ def _copy_together_installer_binaries(version_label):
         shutil.copyfile(Paths.archive_target, this_archive)
 
         # add setup executable to archive
-        exe_path = make_ahk_exe(script, os.path.join(Paths.dist_root, SETUP_EXE), nfo)
+        exe_path = make_ahk_exe(script_path, os.path.join(Paths.dist_root, SETUP_EXE), nfo)
         subprocess.call([Paths.seven_zip_exe, 'a', this_archive, exe_path] + SEVEN_FLAGS)
         os.unlink(exe_path)
 

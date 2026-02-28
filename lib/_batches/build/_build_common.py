@@ -1,7 +1,11 @@
 # adding a2 paths for imports
+import time
 import os
+import io
 import sys
 import typing
+import distlib
+import zipfile
 import subprocess
 from os.path import join
 
@@ -35,6 +39,18 @@ VERSIONS = {PYSIDE: '', AUTOHOTKEY: '', PYTHON: ''}
 CHK_MK = b'\xe2\x9c\x94'.decode()
 EX_MRK = b'\xe2\x9c\x96'.decode()
 I18N = 'i18n'
+
+COMPANY = f'github.com/ewerybody/{A2}'
+COPYRIGHT = f'GPLv3 ({COMPANY})'
+EXE_NFO = {
+    'FileVersion': '',
+    'ProductVersion': '',
+    'FileDescription': '',
+    'ProductName': A2,
+    'CompanyName': COMPANY,
+    'LegalCopyright': COPYRIGHT,
+}
+
 
 def _get_versions(lib_dir, batches_path, ahk_path):
     """Get currently used versions."""
@@ -145,21 +161,28 @@ class Paths:
             yield name, cls.__dict__[name]
 
 
-def make_ahk_exe(script, out_path, nfo=None, icon=None):
-    if not os.path.isfile(script):
-        raise RuntimeError('No such Script File!! (%s)' % script)
+def make_ahk_exe(script_path, out_path, nfo=None, icon=None):
+    if not os.path.isfile(script_path):
+        raise RuntimeError('No such Script File!! (%s)' % script_path)
 
     print(f'Generating AHK executable "{os.path.basename(out_path)}" ...', end='')
 
     if os.path.isfile(out_path):
+        print(
+            f'There is already "{out_path}" ({time.time() - os.path.getctime(out_path)}s old)'
+        )
         os.unlink(out_path)
 
     cmd = [
         Paths.ahk2exe,
-        '/in', script,
-        '/out', out_path,
-        '/compress', '0',
-        '/ahk', Paths.ahk_exe,
+        '/in',
+        script_path,
+        '/out',
+        out_path,
+        '/compress',
+        '0',
+        '/ahk',
+        Paths.ahk_exe,
     ]
     if isinstance(icon, str) and os.path.isfile(icon):
         cmd.extend(['/icon', icon])
@@ -178,6 +201,60 @@ def make_ahk_exe(script, out_path, nfo=None, icon=None):
         set_rc_nfo(out_path, nfo)
 
     return out_path
+
+
+def make_py_exe(script_path, out_path, nfo=None, icon_path=None, console=False):
+    if not os.path.isfile(script_path):
+        raise RuntimeError('No such Script File!! (%s)' % script_path)
+    if os.path.isfile(out_path):
+        file_age = time.time() - os.path.getctime(out_path)
+        print(f'There is already "{out_path}" ({file_age:.1f}s old)')
+        os.unlink(out_path)
+
+    print(f'Generating Python executable "{os.path.basename(out_path)}" ...', end='')
+
+    stub_version = ('w64.exe', 't64.exe')[console]
+    py_exe_version = ('pythonw.exe', 'python.exe')[console]
+    distlib_dir = os.path.dirname(distlib.__file__)
+    stub_path = os.path.join(distlib_dir, stub_version)
+    with open(stub_path, 'rb') as file_obj:
+        stub_bytes = file_obj.read()
+
+    with open(script_path) as file_obj:
+        script_contents = file_obj.read()
+
+    archive_buffer = io.BytesIO()
+    with zipfile.ZipFile(archive_buffer, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.writestr('__main__.py', script_contents)
+
+    out_dir = os.path.dirname(out_path)
+    if os.path.isfile(os.path.join(out_dir, 'ui', py_exe_version)):
+        py_path = os.path.join('ui', py_exe_version)
+    else:
+        py_path = sys.executable
+
+    with open(out_path, 'wb') as file_obj:
+        file_obj.write(stub_bytes)
+        # file_obj.write(f'#!{py_path}\r\n'.encode())
+        # file_obj.write(archive_buffer.getvalue())
+    print(f'\b\b\b{CHK_MK}  ')
+
+    if nfo is not None:
+        if not nfo.get('OriginalFilename'):
+            nfo['OriginalFilename'] = os.path.basename(out_path)
+        set_rc_nfo(out_path, nfo)
+
+    print('  Setting icon ...', end='')
+    if icon_path is None or not os.path.isfile(icon_path):
+        icon_path = Paths.a2icon
+    subprocess.call([Paths.rcedit, out_path, '--set-icon', icon_path])
+    print(f'\b\b\b{CHK_MK}  ')
+
+    # These always need to go last!!
+    with open(out_path, 'ab') as file_obj:
+        # file_obj.write(stub_bytes)
+        file_obj.write(f'#!{py_path}\r\n'.encode())
+        file_obj.write(archive_buffer.getvalue())
 
 
 def set_rc_nfo(target_path: str, nfo: dict[str, str]):
@@ -202,11 +279,10 @@ def _set_rc_key(target_path, key, value_string):
     https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource#parameters
     FileDescription, ProductName, LegalCopyright, OriginalFilename, CompanyName
     """
-    try:
-        current = subprocess.check_output(
-            [Paths.rcedit, target_path, '--get-version-string', key]
-        ).decode()
-    except subprocess.CalledProcessError:
+    error, current = subprocess.getstatusoutput(
+        [Paths.rcedit, target_path, '--get-version-string', key]
+    )
+    if error:
         current = ''
 
     if current == value_string:
