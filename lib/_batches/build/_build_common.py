@@ -57,9 +57,9 @@ def _get_versions(lib_dir, batches_path, ahk_path):
     pattern = 'get_%s_version.ahk'
     names = AUTOHOTKEY, PYSIDE, PYTHON
     scripts = (
-        os.path.join(lib_dir, 'cmds', pattern % names[0]),
-        os.path.join(batches_path, 'versions', pattern % names[1]),
-        os.path.join(batches_path, 'versions', pattern % names[2]),
+        join(lib_dir, 'cmds', pattern % names[0]),
+        join(batches_path, 'versions', pattern % names[1]),
+        join(batches_path, 'versions', pattern % names[2]),
     )
     for name, script in zip(names, scripts):
         if not VERSIONS[name]:
@@ -112,17 +112,19 @@ class Paths:
 
     # Note: This points to the Python packages of the RUNNING python
     # Not necessarily the one that we ship a2 with!
-    if sys.executable.endswith(os.path.join('.venv', 'Scripts', 'python.exe')):
-        py_lib = os.path.join(os.path.dirname(os.path.dirname(sys.executable)), 'Lib')
+    if sys.executable.endswith(join('.venv', 'Scripts', 'python.exe')):
+        py_lib = join(os.path.dirname(os.path.dirname(sys.executable)), 'Lib')
     else:
-        py_lib = os.path.join(os.path.dirname(sys.executable), 'Lib')
-    py_site_packs = os.path.join(py_lib, 'site-packages')
-    pyside = os.path.join(py_site_packs, PYSIDE_NAME)
-    temp_build = os.path.join(os.environ['TEMP'], TMP_NAME)
+        py_lib = join(os.path.dirname(sys.executable), 'Lib')
+    py_site_packs = join(py_lib, 'site-packages')
+    pyside = join(py_site_packs, PYSIDE_NAME)
+    temp_build = join(os.environ['TEMP'], TMP_NAME)
 
     _get_versions(lib, batches, ahk_exe)
-    qt_dir = os.path.join(temp_build, 'qt')
-    qt_temp = os.path.join(qt_dir, VERSIONS[PYSIDE])
+    qt_dir = join(temp_build, 'qt')
+    qt_temp = join(qt_dir, VERSIONS[PYSIDE])
+
+    dev_python = join(a2, '.venv', 'Scripts', 'python.exe')
 
     @classmethod
     def check(cls):
@@ -219,7 +221,7 @@ def make_py_exe(
     stub_version = ('w64.exe', 't64.exe')[console]
     py_exe_version = ('pythonw.exe', 'python.exe')[console]
     distlib_dir = os.path.dirname(distlib.__file__)
-    stub_bytes = read_bytes(os.path.join(distlib_dir, stub_version))
+    stub_bytes = read_bytes(join(distlib_dir, stub_version))
     script_contents = read_text(script_path)
 
     archive_buffer = io.BytesIO()
@@ -227,10 +229,10 @@ def make_py_exe(
         zf.writestr('__main__.py', script_contents)
 
     out_dir = os.path.dirname(out_path)
-    if os.path.isfile(os.path.join(out_dir, 'ui', py_exe_version)):
-        py_path = os.path.join('ui', py_exe_version)
+    if os.path.isfile(join(out_dir, 'ui', py_exe_version)):
+        py_path = join('ui', py_exe_version)
     else:
-        py_path = sys.executable
+        py_path = os.path.join(os.path.dirname(sys.executable), py_exe_version)
 
     with open(out_path, 'wb') as file_obj:
         file_obj.write(stub_bytes)
@@ -253,7 +255,7 @@ def make_py_exe(
         version=make_4_numbers_version(nfo['FileVersion']),
         description=nfo['FileDescription'],
     )
-    manifest_target = os.path.join(Paths.dist_root, f'_ {base}_manifest.xml')
+    manifest_target = join(Paths.dist_root, f'_ {base}_manifest.xml')
     with open(manifest_target, 'w', encoding='utf8') as file_obj:
         file_obj.write(manifest_tmp)
     subprocess.call(
