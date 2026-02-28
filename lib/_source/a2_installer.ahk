@@ -16,10 +16,9 @@
 
 #NoTrayIcon
 #Include _installib.ahk
-#Include <jxon>
+#Include <Jxon>
 #Include <move>
 #Include <msgbox>
-
 
 if complain_if_uncompiled()
     ExitApp
@@ -32,16 +31,128 @@ backup_dir_name := "_ a2 upgrade.bak"
 run_silent := check_silent()
 PACKAGE_DIR := A_ScriptDir . "\a2"
 
-intro()
-check_running()
+if (!run_silent)
+    installer_dialog()
+else {
+    intro()
+    check_running()
+}
+
 backup()
 install()
 
 Run("a2.exe", A2DIR)
 ExitApp ; --------------------------------------------------------
 
+installer_dialog() {
+    global PACKAGE_DIR, A2DIR
+    new_ver := read_version(PACKAGE_DIR)
+    icon_src := A_IsCompiled ? A_ScriptFullPath : ""
+    ; For some better UX (Should feel like it's doing something)
+    sleep_ticks := 150
 
-; Prepare the user with info about already installed versions and get OKs.
+    d := A2Dialog("a2 Installer", { w: 480, pad: 14 })
+    c := d.c
+
+    ; ---- Header: icon + title ----
+    d.header("a2 " new_ver " Installation", icon_src)
+    d.sep()
+    d.show(50)
+    if (icon_src)
+        d.set_icon(icon_src)
+    Sleep(sleep_ticks)
+
+    ; ---- Check 1: Version ----
+    inst_ver := read_version(A2DIR)
+    is_update := has_a2_stuff()
+
+    if (!is_update) {
+        ver_icon := "✔️"
+        ver_color := c.ok
+        ver_text := "Installing a2 " new_ver " for " A_UserName
+        ver_sub := ""
+    } else if (inst_ver == new_ver) {
+        ver_icon := "⚠️"
+        ver_color := c.warn
+        ver_text := "a2 " new_ver " is already installed — will reinstall"
+        ver_sub := ""
+    } else if (inst_ver) {
+        ver_icon := "✔️"
+        ver_color := c.ok
+        ver_text := "Upgrading a2 " inst_ver " → " new_ver " for " A_UserName
+        ver_sub := ""
+    } else {
+        ver_icon := "✔️"
+        ver_color := c.ok
+        ver_text := "Updating a2 → " new_ver " for " A_UserName
+        ver_sub := ""
+    }
+    d.row(ver_icon, ver_color, ver_text, ver_sub)
+    d.resize(50)
+    Sleep(sleep_ticks)
+
+    ; Check for Running processes under install path ...
+    proc_row := d.row_pending("...", "Checking for running a2 processes ...")
+    d.resize(50)
+    Sleep(sleep_ticks)
+
+    running_processes := find_processes_running_under(A2DIR)
+    if (!running_processes.Length) {
+        proc_row.icon.SetFont("c" c.ok)
+        proc_row.icon.Text := "✔️"
+        proc_row.text.SetFont("c" c.text)
+        proc_row.text.Text := "No a2 processes running"
+    } else {
+        names := []
+        for _, p in running_processes
+            names.Push(p["Name"])
+        proc_row.icon.SetFont("c" c.warn)
+        proc_row.icon.Text := "⚠️"
+        proc_row.text.SetFont("c" c.warn)
+        proc_row.text.Text := "Running: " string_join(names, ", ")
+        d.gui.SetFont("s" (d._fsz - 1) " c" c.sub, d._face)
+        d.gui.AddText("x" (d._pad + 24) " y" d._y " w" (d._w - d._pad * 2 - 24),
+        "They will be closed when you click Install.")
+        d._y += 20
+    }
+    d.resize(50)
+
+    ; Check installed AHK version when updating existing installation
+    if (is_update) {
+        existing_version := check_existing_version()
+        if existing_version AND (VerCompare(existing_version, "2.0") < 0) {
+            d.row("⚠️", c.warn,
+                "Upgrade includes AutoHotkey v2",
+                "All extensions will be deactivated temporarily.")
+            d.resize(50)
+            Sleep(sleep_ticks)
+        }
+    }
+
+    ; ---- Buttons ----
+    d.space(10)
+    d.sep()
+    btns := d.btn_row_right([{ label: "Cancel", bg: c.btn_bg, fg: c.text }, { label: "Install →", bg: c.ok, fg: c.acc_fg,
+        opts: "Default" }])
+    d.resize()
+
+    ; ---- Wait for user ----
+    result := false
+    btns[2].OnEvent("Click", (*) => (result := true, d.destroy()))
+    btns[1].OnEvent("Click", (*) => d.destroy())
+    d.on_close((*) => d.destroy())
+    d.on_escape((*) => d.destroy())
+    WinWaitClose("ahk_id " d.hwnd)
+
+    if !result
+        ExitApp
+
+    ; Close any running a2 processes before proceeding
+    for _, p in running_processes
+        ProcessClose(p["ProcessId"])
+}
+
+; Prepare the user with info. Used in silent mode only.
 intro() {
     global install_ver, run_silent, PACKAGE_DIR
 
@@ -67,7 +178,7 @@ intro() {
         about_current .= "it would be replaced.`n"
 
         if (!run_silent) {
-            IF !msgbox_accepted(install_msg . about_current . continue_msg, title)
+            if !msgbox_accepted(install_msg . about_current . continue_msg, title)
                 ExitApp
         } else
             log_msg(install_msg . about_current)
@@ -75,21 +186,35 @@ intro() {
 }
 
 read_version(path) {
-    package_path := path . "\package.json"
-    if FileExist(package_path) {
-        data := Jxon_Read(package_path)
-        v := data["version"]
-        return v
-    }
+    _dev_suffix := "a2\lib\_source\a2"
+    if string_endswith(path, _dev_suffix)
+        package_cfg_path := SubStr(path, 1, -StrLen(_dev_suffix) + 2) "\pyproject.toml"
     else
-        return ""
+        package_cfg_path := path "\pyproject.toml"
+
+    if FileExist(package_cfg_path) {
+        version_id := 'version = "'
+        loop read package_cfg_path {
+            if !string_startswith(A_LoopReadLine, 'version = "')
+                continue
+            return Trim(SubStr(A_LoopReadLine, StrLen(version_id)), ' "')
+        }
+    }
+
+    package_cfg_path := path . "\package.json"
+    if FileExist(package_cfg_path) {
+        data := Jxon_Read(package_cfg_path)
+        return data["version"]
+    }
+
+    msgbox_error('Could not get version from path: ' path)
 }
 
 ; Tell if there are a2 files or folders existing.
 has_a2_stuff() {
     global A2STUFF, A2DIR
     for i, thing in A2STUFF {
-        If FileExist(A2DIR "\" thing)
+        if FileExist(A2DIR "\" thing)
             return 1
     }
     return 0
@@ -102,14 +227,12 @@ backup() {
         install_ver := A_Now
 
     backup_items := []
-    Loop Files, A2DIR "\*", "D"
-    {
-        If (A_LoopFileName == "data")
+    loop files, A2DIR "\*", "D" {
+        if (A_LoopFileName == "data")
             continue
         backup_items.Push(A_LoopFileName)
     }
-    Loop Files, A2DIR "\*", "F"
-    {
+    loop files, A2DIR "\*", "F" {
         if (A_LoopFileName == "_ user_data_include")
             continue
         backup_items.Push(A_LoopFileName)
@@ -117,7 +240,7 @@ backup() {
 
     if (!backup_items.Length) {
         log_msg("Nothing to backup!")
-        Return
+        return
     }
 
     delete_later := false
@@ -142,7 +265,6 @@ backup() {
     ExitApp
 }
 
-
 install() {
     global A2DIR, PACKAGE_DIR
     if (!PACKAGE_DIR)
@@ -150,9 +272,9 @@ install() {
     if (!FileExist(PACKAGE_DIR))
         log_error("Package dir missing?!", "The package dir must exist!`n'" . PACKAGE_DIR . "'!!?")
 
-    Loop Files, PACKAGE_DIR "\*", "D"
+    loop files, PACKAGE_DIR "\*", "D"
         DirMove(A_LoopFilePath, path_join(A2DIR, A_LoopFileName))
-    Loop Files, PACKAGE_DIR "\*", "F"
+    loop files, PACKAGE_DIR "\*", "F"
         FileMove(A_LoopFilePath, path_join(A2DIR, A_LoopFileName))
 
     ; make sure the SQLlite-dll can be found
@@ -187,8 +309,7 @@ remove_if_empty(path) {
 
 _remove_if_empty(path) {
     empty := true
-    Loop Files, path "\*", "FD"
-    {
+    loop files, path "\*", "FD" {
         empty := false
         return empty
     }
@@ -197,14 +318,13 @@ _remove_if_empty(path) {
     return empty
 }
 
-; Check for running processes from under the install dir.
+; Check for running processes from under the install dir. Used in silent mode only.
 check_running() {
     global A2DIR, run_silent
     processes := find_processes_running_under(A2DIR)
     runs_a2runtime := false
     names := []
-    for i, proc in processes
-    {
+    for i, proc in processes {
         names.push(proc["Name"])
         if (proc["Name"] == "Autohotkey.exe" && string_endswith(proc["CommandLine"], " lib\a2.ahk"))
             runs_a2runtime := true
@@ -231,4 +351,16 @@ check_running() {
     }
 
     return runs_a2runtime
+}
+
+check_existing_version() {
+    ahk_exe := A2DIR "\lib\AutoHotkey\AutoHotkey.exe"
+    if !FileExist(ahk_exe)
+        return ""
+
+    try {
+        ahk_ver := FileGetVersion(ahk_exe)
+        return ahk_ver
+    }
+    return ""
 }
