@@ -6,17 +6,18 @@ id key  value
 -------------
 01 this 0.5
 02 that 'lala'
-03 blib 'something'
+03 biib 'something'
 04 blob 'something'
 
 lets see how we deal with 'real' tables in the future... if we need to
 
 this enables us to do simple get/set things like
 
-incls = a2db.get('includes', 'a2')
-a2db.set('includes', 'a2', incls)
-a2db.rem('tempstuff', 'a2')
+includes = a2db.get('includes', 'a2')
+a2db.set('includes', 'a2', includes)
+a2db.pop('temp_stuff', 'a2')
 """
+
 import os
 import json
 import sqlite3
@@ -24,11 +25,12 @@ import sqlite3
 import a2core
 
 log = a2core.get_logger(__name__)
-_DEFAULTTABLE = a2core.NAME
+_DEFAULT_TABLE = a2core.NAME
 
 
 class A2db:
     """A2 Database abstraction class."""
+
     def __init__(self, db_file_path: str):
         if not db_file_path:
             raise RuntimeError('Cannot create db without file path!')
@@ -37,7 +39,7 @@ class A2db:
         self._con = None
         self._cur = None
         self._db_file_exists = False
-        log.info('initialised! (%s)', self._file)
+        log.info('initialized! (%s)', self._file)
 
     @property
     def db_file_exists(self):
@@ -53,9 +55,9 @@ class A2db:
 
         directory = os.path.dirname(self._file)
         os.makedirs(directory, exist_ok=True)
-        with open(self._file, 'wb') as fobj:
-            fobj.write(bytes())
-        print('db file created: %s' % self._file)
+        with open(self._file, 'wb') as file_obj:
+            file_obj.write(bytes())
+        log.info('db file created: %s', self._file)
 
     def connect(self):
         """Connect to the sqlite db."""
@@ -64,9 +66,12 @@ class A2db:
 
     def disconnect(self):
         """Disconnect from the sqlite db."""
-        self._con.close()
+        if self._con is not None:
+            self._con.close()
+            self._con = None
+            self._cur = None
 
-    def get(self, key, table=_DEFAULTTABLE, check=True, asjson=True):
+    def get(self, key, table=_DEFAULT_TABLE, check=True, as_json=True):
         """
         Get a value from a key (in a and table).
 
@@ -75,7 +80,7 @@ class A2db:
         :param key: keyName in the "key" column
         :param table: tableName
         :param check: will look for the key in table before even trying to fetch
-        :param asjson: Only for fixing legacy stuff with the db. Just gets the string from a field
+        :param as_json: Only for fixing legacy stuff with the db. Just gets the string from a field
         :return: string of the data or empty string
         """
         if not self.db_file_exists:
@@ -90,7 +95,7 @@ class A2db:
         try:
             statement = f'select value from "{table}" where key=?'
             data = self._fetch(statement, (key,))[0][0]
-            if asjson:
+            if as_json:
                 try:
                     result = json.loads(data)
                 except json.JSONDecodeError:
@@ -111,21 +116,21 @@ class A2db:
             log.error('Error getting data from key "%s" from table "%s"', key, table)
             raise error
 
-    def set(self, key, value, table=_DEFAULTTABLE, _table_create_flag=False):
+    def set(self, key, value, table=_DEFAULT_TABLE, _table_create_flag=False):
         """
         Set or update a key/value pair (in a table).
         """
         self._ensure_db_file_exists()
 
-        jvalue = json.dumps(value, separators=(',', ':'))
+        j_value = json.dumps(value, separators=(',', ':'))
         try:
             if key not in self.keys(table):
                 statement = f'insert into "{table}" (key, value) values (?, ?)'
-                values = (key, jvalue)
+                values = (key, j_value)
                 log.debug('adding value!\n  %s', statement)
             else:
                 statement = f'update "{table}" set value=? WHERE key=?'
-                values = (jvalue, key)
+                values = (j_value, key)
                 log.debug('updating value!\n  %s', statement)
             self._commit(statement, values)
 
@@ -133,16 +138,18 @@ class A2db:
             log.debug('setting db failed...')
             if table not in self.tables():
                 if _table_create_flag:
-                    raise RuntimeError('a2db table creation was already attempted, failed again!')
+                    raise RuntimeError(
+                        'a2db table creation was already attempted, failed again!'
+                    )
                 else:
                     log.debug('creating table and retry...')
                     self._create_table(table)
                     self.set(key, value, table, _table_create_flag=True)
             else:
-                log.error('could not set value: "%s" on key:"%s" in section:"%s"\n%s',
-                          value, key, table, error)
+                msg = 'could not set value: "%s" on key:"%s" in section:"%s"\n%s'
+                log.error(msg, value, key, table, error)
 
-    def pop(self, key, table=_DEFAULTTABLE):
+    def pop(self, key, table=_DEFAULT_TABLE):
         """
         Removes a whole entry from a table. So the whole row: index, key and value will be gone.
         """
@@ -160,10 +167,10 @@ class A2db:
 
     def tables(self):
         """Give list of tables on the db."""
-        tablelist = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
-        return [t[0] for t in tablelist]
+        table_list = self._fetch("SELECT name FROM sqlite_master WHERE type='table'")
+        return [t[0] for t in table_list]
 
-    def keys(self, table=_DEFAULTTABLE):
+    def keys(self, table=_DEFAULT_TABLE):
         """Give list of keys in a table."""
         statement = f'select key from "{table}"'
         data = self._fetch(statement)
@@ -171,6 +178,8 @@ class A2db:
 
     def drop_table(self, table):
         """Remove a table from the db."""
+        if not self.db_file_exists:
+            return
         self._ensure_db_file_exists()
         if table not in self.tables():
             return
@@ -179,19 +188,22 @@ class A2db:
     def _fetch(self, statement, values=None):
         try:
             self.connect()
+            if self._cur is None or self._con is None:
+                raise RuntimeError('Connecting to db failed!')
 
             if values is None:
                 self._cur.execute(statement)
             else:
                 self._cur.execute(statement, values)
 
-            results = self._cur.fetchall()
-            self.disconnect()
+            return self._cur.fetchall()
 
         except Exception as err:
-            raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
-
-        return results
+            raise Exception(
+                'statement execution fail: "%s\nerror: %s' % (statement, err)
+            )
+        finally:
+            self.disconnect()
 
     def create_table(self, table):
         """Make a new table if it not yet exists."""
@@ -199,35 +211,51 @@ class A2db:
         if table in self.tables():
             return
         self._create_table(table)
-        self._con.commit()
-        self.disconnect()
 
     def _create_table(self, table):
-        self.connect()
-        statement = (f'create table "{table}" '
-                     '(id integer primary key, key TEXT, value TEXT)')
-        log.debug('create_table statement:\n\t%s', statement)
-        self._cur.execute(statement)
+        try:
+            self.connect()
+            if self._cur is None:
+                return
+            statement = (
+                f'create table "{table}" (id integer primary key, key TEXT, value TEXT)'
+            )
+            log.debug('create_table statement:\n\t%s', statement)
+            self._cur.execute(statement)
+        finally:
+            self.disconnect()
 
     def _commit(self, statement, values=None):
         try:
             self.connect()
+            if self._cur is None or self._con is None:
+                raise RuntimeError('Connecting to db failed!')
+
             if values is None:
                 self._cur.execute(statement)
             else:
                 self._cur.execute(statement, values)
             self._con.commit()
-            self.disconnect()
+
         except Exception as err:
-            raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
+            raise Exception(
+                'statement execution fail: "%s\nerror: %s' % (statement, err)
+            )
+        finally:
+            self.disconnect()
 
     def _execute(self, statement):
         try:
             self.connect()
+            if self._cur is None:
+                return
             self._cur.execute(statement)
-            self.disconnect()
         except Exception as err:
-            raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
+            raise Exception(
+                'statement execution fail: "%s\nerror: %s' % (statement, err)
+            )
+        finally:
+            self.disconnect()
 
     def log_all(self):
         """Log the complete db content."""
@@ -235,9 +263,9 @@ class A2db:
 
     def _get_digest(self):
         tables = sorted(self.tables())
-        header = ('\n\n{line}table "%s"\n'
-                  '  id - key - value\n'
-                  '{line}  ').format(line='-' * 40 + '\n')
+        header = ('\n\n{line}table "%s"\n  id - key - value\n{line}  ').format(
+            line='-' * 40 + '\n'
+        )
         text = 'database dump from %s\n' % self._file
         text += '%i tables: %s' % (len(tables), ', '.join(tables))
         for t in tables:
@@ -247,7 +275,7 @@ class A2db:
             text += '\n  '.join([str(i)[1:-1] for i in data])
         return text
 
-    def set_changes(self, key, changes_dict, defaults_dict, table=_DEFAULTTABLE):
+    def set_changes(self, key, changes_dict, defaults_dict, table=_DEFAULT_TABLE):
         """
         Write differences from defaults_dict to the db.
 
@@ -258,8 +286,8 @@ class A2db:
         changed = False
         for value_name, value in changes_dict.items():
             if value_name not in defaults_dict:
-                log.info('Setting "%s:%s" to "%s|%s" Which is not in defaults_dict!',
-                         value_name, str(value), table, key)
+                msg = 'Setting "%s:%s" to "%s|%s" Which is not in defaults_dict!'
+                log.info(msg, value_name, str(value), table, key)
 
             if defaults_dict.get(value_name) != value:
                 # value is not default
@@ -280,12 +308,13 @@ class A2db:
             else:
                 self.pop(key, table)
 
-    def get_changes(self, key, default_dict, table=_DEFAULTTABLE):
+    def get_changes(self, key, default_dict, table=_DEFAULT_TABLE):
         """
         Fetch settings from the db if set in the db and different from the
         given default_dict.
         """
         from copy import deepcopy
+
         current = self.get(key, table) or {}
         result = deepcopy(default_dict)
         for value_name, value in default_dict.items():
@@ -295,7 +324,7 @@ class A2db:
                     result[value_name] = set_value
         return result
 
-    def check(self, table=_DEFAULTTABLE):
+    def check(self, table=_DEFAULT_TABLE):
         """
         Test a table for bad data. Such as double entries ...
         """
@@ -309,16 +338,17 @@ class A2db:
                 first_entry = values[0]
                 for entry in values[1:]:
                     if entry != first_entry:
-                        log.warning('Removing duplicate db entry with varying data!\n  %s', entry)
+                        log.warning(
+                            'Removing duplicate db entry with varying data!\n  %s',
+                            entry,
+                        )
                 self.pop(key, table)
                 self.set(key, first_entry, table)
             log.info('  Done.')
 
-        # eventually perform other tests ...
-
 
 if __name__ == '__main__':
-    import unittest
+    import pytest
     import test.test_a2db
-    print('test.test_a2db: %s' % test.test_a2db)
-    unittest.main(test.test_a2db, verbosity=2)
+
+    pytest.main([test.test_a2db.__file__, '-v'])
