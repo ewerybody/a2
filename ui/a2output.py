@@ -5,28 +5,28 @@ import os
 import sys
 import time
 
-_SOUT = None
-_SERR = None
+_OUTPUTS = {
+    'std_out': None,
+    'std_err': None,
+}
 LOG_STD_NAME = 'a2.log'
 SEP = ' - '
 TIMESTAMP = '@time'
 
 def connect(write_func):
     """Connect a function to standard output."""
-    global _SOUT
-    if _SOUT is None:
-        _SOUT = _OutputWrangler(sys.stdout)
-        sys.stdout = _SOUT
-    _SOUT.connect(write_func)
+    if _OUTPUTS['std_out'] is None:
+        _OUTPUTS['std_out'] = _OutputWrangler(sys.stdout)
+        sys.stdout = _OUTPUTS['std_out']
+    _OUTPUTS['std_out'].connect(write_func)
 
 
 def connect_error(write_func):
     """Connect a function to standard error."""
-    global _SERR
-    if _SERR is None:
-        _SERR = _OutputWrangler(sys.stderr)
-        sys.stderr = _SERR
-    _SERR.connect(write_func)
+    if _OUTPUTS['std_err'] is None:
+        _OUTPUTS['std_err'] = _OutputWrangler(sys.stderr)
+        sys.stderr = _OUTPUTS['std_err']
+    _OUTPUTS['std_err'].connect(write_func)
 
 
 class _OutputWrangler(object):
@@ -35,31 +35,31 @@ class _OutputWrangler(object):
     def __init__(self, root):
         self._root = root
         if self._root is None:
-            self._write_funcs = []
+            self._writers = []
         else:
-            self._write_funcs = [self._root.write]
+            self._writers = [self._root.write]
 
     def write(self, msg):
         """Write incoming message to all writer functions."""
-        for writer in self._write_funcs:
+        for writer in self._writers:
             writer(msg)
 
     def connect(self, write_func):
         """Enlist another writer function to be triggered on write."""
-        if write_func in self._write_funcs:
+        if write_func in self._writers:
             return
-        self._write_funcs.append(write_func)
+        self._writers.append(write_func)
 
     def disconnect(self, write_func):
         """Remove a writer function from our list."""
-        if write_func in self._write_funcs:
-            self._write_funcs.remove(write_func)
+        if write_func in self._writers:
+            self._writers.remove(write_func)
 
-    def __getattr__(self, attrname):
+    def __getattr__(self, attr_name):
         """Handle any calls that might be thrown against the root output."""
         if self._root is None:
             return self._pass
-        return getattr(self._root, attrname)
+        return getattr(self._root, attr_name)
 
     def _pass(self, *args):
         pass
