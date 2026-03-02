@@ -18,14 +18,19 @@ dev = ["distlib>=0.4.0", "pytest", "poethepoet"]
 [tool.uv]
 package = false
 
+[tool.setuptools.packages.find]
+where = ["ui"]
+
 [tool.poe.tasks]
 dev-exe = { cmd = "python lib/_batches/build/make_dev_root_executables.py", help = "Create fresh starter executables in the project root." }
-build-package = { cmd = "python lib/_batches/build/make_package.py", help = "Build a new package into '_ package'."}
-build-installer = { cmd = "python lib/_batches/build/build_installer.py", help= "Build the installer files."}
-build = { sequence = ["build-package", "build-installer"], help = "Build complete package for release."}
+build-package = { cmd = "python lib/_batches/build/make_package.py", help = "Build a new package into '_ package'." }
+build-installer = { cmd = "python lib/_batches/build/build_installer.py", help = "Build the installer files." }
+build = { sequence = ["build-package", "build-installer",], help = "Build complete package for release." }
 test-py = { cmd = "pytest ui/test", help = "Test python code with pytest." }
 test-ahk = { cmd = "python lib/Autohotkey/lib/test/run_ahk_tests.py", help = "Test Autohotkey code with AHKUnit." }
 test = { sequence = ["test-ahk", "test-py"], help = "Run all available tests." }
 
+[tool.ruff]
+line-length = 120
 [tool.ruff.format]
 quote-style = "single"
