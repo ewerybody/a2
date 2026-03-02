@@ -5,7 +5,7 @@
 #Include ../test/a2test.ahk
 
 dimmer_id := dimmer_create()
-m1 := assertmsg(dimmer_id)
+m1 := assert_msg(dimmer_id)
 MsgBox(m1 " Created dimmer gui hwnd: " dimmer_id)
 dimmer_off()
 
