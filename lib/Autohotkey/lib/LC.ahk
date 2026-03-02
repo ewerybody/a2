@@ -1,7 +1,16 @@
 ; LC_Version := "0.0.21.01"
 ; truncated version to what's currently fixed already for ahk2
 
-
+/**
+ * Decode a Base64-encoded string into a binary buffer.
+ * Strips data-URI prefixes (e.g. "data:image/png;base64,") and whitespace before decoding.
+ * @param {(String)} base64
+ * Base64-encoded string to decode. May include a data-URI prefix.
+ * @param {(Buffer)} &outBuf
+ * Output buffer that will receive the decoded bytes.
+ * @returns {(Integer)}
+ * Number of bytes written to outBuf.
+ */
 LC_Base64ToBuf(base64, &outBuf) {
     ; remove optional data-uri prefix + whitespace/newlines
     base64 := RegExReplace(base64, "i)^data:[^;]+;base64,")
