@@ -9,15 +9,16 @@
 ;   - Clicking any color button updates the status line at the bottom
 ;
 #Requires AutoHotkey v2.0
+#SingleInstance Force
 #NoTrayIcon
-#Include ..\a2dlg.ahk
+
+#Include <a2dlg>
+#Include <i18n>
 
 a2dlg_demo()
 
-; ================================================================
-;  Demo window
-; ================================================================
 a2dlg_demo(forced_dark := unset) {
+    global _ := i18n_locale(A_LineFile)
     icon_path := A_ScriptDir "\..\..\..\..\ui\res\a2.ico"
 
     opts := {w: 468, pad: 16}
@@ -26,7 +27,7 @@ a2dlg_demo(forced_dark := unset) {
     d := A2Dialog("A2 Dialog Demo", opts)
     c := d.c
 
-    d.header("Welcome to the A2 Dialog Demo", icon_path)
+    d.header(_["welcome"], icon_path)
     d.sep()
 
     ; ---- Button grid ----
@@ -45,17 +46,17 @@ a2dlg_demo(forced_dark := unset) {
     d.space(10)
 
     ; ---- Status line ----
-    status := d.text("Click any button above…")
+    status := d.text(_["click"])
     theme_str := "Theme: " (IsSet(forced_dark) ? "Set to" : "System default") ": " (d.dark ? "Dark" : "Light")
     theme := d.text(theme_str)
     d.sep()
 
     ; ---- Popup dialog comparison (2-column) ----
     d.sep()
-    d.gui.SetFont("s" (d._fsz + 1) " w700 c" c.text, d._face)
+    d.gui.SetFont("s" (d.font_size + 1) " w700 c" c.text, d.font_face)
     d.gui.AddText("x" d._pad " y" d._y " w" (d._w - d._pad * 2), "Popup dialogs")
     d._y += 26
-    d.gui.SetFont("s" (d._fsz - 1) " w400 c" c.sub, d._face)
+    d.gui.SetFont("s" (d.font_size - 1) " w400 c" c.sub, d.font_face)
     col_w := (d._w - d._pad * 2 - 8) // 2
     d.gui.AddText("x" d._pad " y" d._y " w" col_w, "a2dlg version")
     d.gui.AddText("x" (d._pad + col_w + 8) " y" d._y " w" col_w, "AHK built-in")
@@ -73,7 +74,7 @@ a2dlg_demo(forced_dark := unset) {
     for row in popup_rows {
         bh := 26
         ; a2dlg column
-        b1 := d.gui.AddButton("x" d._pad " y" d._y " w" col_w " h" bh, row[1] "  →  " row[2])
+        b1 := d.gui.AddButton("x" d._pad " y" d._y " w" col_w " h" bh, row[1] "  =>  " row[2])
         a2dlg_make_button(b1, c.btn_bg, c.text)
         d._btn_hwnds.Push(b1.Hwnd)
         popup_buttons_a2.Push({btn: b1, kind: row[2]})
@@ -89,7 +90,7 @@ a2dlg_demo(forced_dark := unset) {
     ; ---- Footer: toggle + close ----
     d.sep()
     footer := d.btn_row_right([
-        {label: d.dark ? "Switch to Light Mode" : "Switch to Dark Mode", bg: c.btn_bg, fg: c.text},
+        {label: d.dark ? _["light_mode"] : _["dark_mode"], bg: c.btn_bg, fg: c.text},
         {label: "Close", bg: c.btn_bg, fg: c.text}
     ], 160)
 
@@ -125,38 +126,42 @@ a2dlg_demo(forced_dark := unset) {
 ; ---- Popup demo handlers ----
 _demo_popup_a2(kind, status, dark) {
     if (kind = "a2dlg_info") {
-        a2dlg_info("This is an informational message.", "a2 Info", dark)
+        a2dlg_info(_["info"], "a2 Info", dark)
         status.Text := "a2dlg_info — dismissed"
     } else if (kind = "a2dlg_error") {
-        a2dlg_error("Something went wrong.", "a2 Error", "Error detail line 1`nError detail line 2`nLine 3", dark)
+        a2dlg_error(_["error"], "a2 Error", "Error detail line 1`nError detail line 2`nLine 3", dark)
         status.Text := "a2dlg_error — dismissed"
     } else if (kind = "a2dlg_yes_no") {
-        result := a2dlg_yes_no("Do you want to continue?", "a2 Yes/No", dark)
-        status.Text := "a2dlg_yes_no → " (result ? "Yes" : "No")
+        result := a2dlg_yes_no(_["continue"], "a2 Yes/No", dark)
+        status.Text := "a2dlg_yes_no => " (result ? "Yes" : "No")
     } else if (kind = "a2dlg_ok_cancel") {
-        result := a2dlg_ok_cancel("Proceed with the operation?", "a2 OK/Cancel", dark)
-        status.Text := "a2dlg_ok_cancel → " (result ? "OK" : "Cancel")
+        result := a2dlg_ok_cancel(_["proceed"], "a2 OK/Cancel", dark)
+        status.Text := "a2dlg_ok_cancel => " (result ? "OK" : "Cancel")
     } else if (kind = "a2dlg_input") {
-        result := a2dlg_input("Enter your name:", "a2 Input", "World", dark)
-        status.Text := (result = "") ? "a2dlg_input → (cancelled)" : "a2dlg_input → `"" result "`""
+        result := a2dlg_input(Format(_["name_please"], _["your_name"]), "a2 Input", "Hello, World!", dark)
+        if result = _["your_name"]
+            a2dlg_info(_["very_funny"])
+        status.Text := (result = "") ? "a2dlg_input => (cancelled)" : "a2dlg_input => `"" result "`""
     }
 }
 
 _demo_popup_ahk(kind, status) {
     if (kind = "MsgBox (info)") {
-        MsgBox("This is an informational message.", "AHK Info", "OK Iconi")
+        MsgBox(_["info"], "AHK Info", "OK Iconi")
         status.Text := "MsgBox info — dismissed"
     } else if (kind = "MsgBox (error)") {
-        MsgBox("Something went wrong.", "AHK Error", "OK Iconx")
+        MsgBox(_["error"], "AHK Error", "OK Iconx")
         status.Text := "MsgBox error — dismissed"
     } else if (kind = "MsgBox (yes no)") {
-        result := MsgBox("Do you want to continue?", "AHK Yes/No", "YesNo Icon?")
-        status.Text := "MsgBox YesNo → " result
+        result := MsgBox(_["continue"], "AHK Yes/No", "YesNo Icon?")
+        status.Text := "MsgBox YesNo => " result
     } else if (kind = "MsgBox (ok cancel)") {
-        result := MsgBox("Proceed with the operation?", "AHK OK/Cancel", "OKCancel Icon?")
-        status.Text := "MsgBox OKCancel → " result
+        result := MsgBox(_["proceed"], "AHK OK/Cancel", "OKCancel Icon?")
+        status.Text := "MsgBox OKCancel => " result
     } else if (kind = "InputBox") {
-        result := InputBox("Enter your name:", "AHK InputBox", , "World")
-        status.Text := (result.Result = "Cancel") ? "InputBox → (cancelled)" : "InputBox → `"" result.Value "`""
+        result := InputBox(Format(_["name_please"], _["your_name"]), "AHK InputBox", , "World")
+        if result.Value = _["your_name"]
+            a2dlg_info(_["very_funny"])
+        status.Text := (result.Result = "Cancel") ? "InputBox => (cancelled)" : "InputBox => `"" result.Value "`""
     }
 }
