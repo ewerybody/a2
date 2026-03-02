@@ -151,7 +151,7 @@ def _check_app():
 
 
 if __name__ == '__main__':
-    import unittest
+    import pytest
     import test.test_qdl
 
-    unittest.main(test.test_qdl, verbosity=2)
+    pytest.main([test.test_qdl.__file__, '-v'])
