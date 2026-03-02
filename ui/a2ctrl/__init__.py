@@ -183,9 +183,10 @@ def assemble_settings(module_key, cfg_list, db_dict, module_path=None):
     """
     Get user settings from a modules elements.
     """
-    import a2util, a2mod
+    import a2util
+    import a2mod
 
-    a2obj = a2core.A2Obj.inst()
+    a2obj = a2core.get()
     module_user_cfg = a2obj.db.get(a2mod.USER_CFG_KEY, module_key) or {}
     for element_cfg in cfg_list:
         # get configs named db entry of module or None

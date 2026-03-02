@@ -1,5 +1,5 @@
 import a2ctrl
-from a2qt import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 
 

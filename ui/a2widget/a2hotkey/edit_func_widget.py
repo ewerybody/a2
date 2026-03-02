@@ -1,7 +1,7 @@
 import os
 import a2core
 import a2util
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 from a2widget.a2hotkey import edit_func_widget_ui
 from a2widget.a2hotkey.hotkey_common import Vars, MOD_KEYS, SEND_MODES, strip_mode
 
@@ -91,7 +91,7 @@ class FuncWidget(QtWidgets.QWidget):
 
     def _build_help_map(self):
         if self.help_map is None:
-            self.a2 = a2core.A2Obj.inst()
+            self.a2 = a2core.get()
             urls = self.a2.urls
             self.help_map = {
                 HelpLabels.cmds: urls.ahk_commands,

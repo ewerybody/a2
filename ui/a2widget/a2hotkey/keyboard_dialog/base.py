@@ -9,7 +9,7 @@ import a2util
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
 
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 
 log = a2core.get_logger('keyboard_base')

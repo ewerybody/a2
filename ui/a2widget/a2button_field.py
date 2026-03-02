@@ -1,4 +1,4 @@
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from a2widget.a2more_button import A2MoreButton
 
 

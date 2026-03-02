@@ -10,7 +10,7 @@ https://doc.qt.io/qtforpython/PySide6/QtWidgets/QFileDialog.html?highlight=qfile
 TODO: add recent paths?
 """
 import os
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 from a2ctrl import Icons
 import a2util

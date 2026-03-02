@@ -5,7 +5,7 @@
 import os
 import json
 import importlib
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2core
 import a2util
@@ -25,7 +25,7 @@ class NewElementDialog(A2InputDialog):
 
     def __init__(self, main):
         self.main = main
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self._current_elements = [
             os.path.splitext(f)[0] for f in os.listdir(self.main.a2.paths.elements)
         ]

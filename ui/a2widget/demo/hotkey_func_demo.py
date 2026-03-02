@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 
 import a2uic
 import a2ctrl

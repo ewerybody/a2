@@ -1,5 +1,5 @@
 import a2ahk
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 from .dialogs import _HotkeyDialogBase
 import a2core
 

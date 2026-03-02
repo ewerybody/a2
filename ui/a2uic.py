@@ -6,7 +6,7 @@ import sys
 from importlib import reload
 
 import a2core
-from a2qt import QtCore, QtGui, QtWidgets, QtSvg
+from PySide6 import QtCore, QtGui, QtWidgets, QtSvg
 
 log = a2core.get_logger(__name__)
 

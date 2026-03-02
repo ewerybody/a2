@@ -17,7 +17,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 """
 
-from a2qt import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 import a2uic
 import a2core
@@ -208,7 +208,7 @@ class Edit(EditCtrl):
 
 
 def hotkey_help():
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     a2util.surf_to(a2.urls.helpHotkey)
 
 

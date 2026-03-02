@@ -37,7 +37,7 @@ class IncludeType(enum.Enum):
 
 class IncludeDataCollector(object):
     def __init__(self):
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.a2.fetch_modules()
 
         self.variables = None
@@ -62,8 +62,8 @@ class IncludeDataCollector(object):
             if self.source_libs:
                 self.source_libs.gather(source)
 
-            for modname in enabled_modules:
-                mod = source.mods.get(modname)
+            for mod_name in enabled_modules:
+                mod = source.mods.get(mod_name)
                 if mod is None:
                     continue
 
@@ -123,7 +123,7 @@ class IncludeDataCollector(object):
 class _Collection(object):
     def __init__(self, a2_instance=None):
         if a2_instance is None:
-            self.a2 = a2core.A2Obj.inst()
+            self.a2 = a2core.get()
         else:
             self.a2 = a2_instance
         self.name = ''
@@ -476,7 +476,7 @@ def _get_hidden_process_startup_nfo():
 
 def kill_a2_process():
     """
-    Deprecated. Keping for emergency reasons.
+    Deprecated. Keeping for emergency reasons.
     a2 runtime can now deal with a "--shutdown" argument!
 
     Find and kill Autohotkey processes that run a2.ahk.
@@ -504,14 +504,14 @@ def get_a2_runtime_pid():
     :return: PID string of an Autohotkey process running a2.
     :rtype: str
     """
-    wmicout = subprocess.check_output(
+    wmic_out = subprocess.check_output(
         f'wmic process where name="{a2ahk.EXECUTABLE_NAME}" ' 'get ProcessID,CommandLine',
         startupinfo=_get_hidden_process_startup_nfo(),
         stderr=subprocess.STDOUT,
     )
-    wmicout = str(wmicout).split('\\r\\r\\n')
+    wmic_out = str(wmic_out).split('\\r\\r\\n')
 
-    for line in wmicout[1:-1]:
+    for line in wmic_out[1:-1]:
         if a2ahk.EXECUTABLE_NAME in line.lower():
             cmd, pid = line.rsplit(maxsplit=1)
             if cmd.endswith('a2.ahk') or cmd.endswith('a2.ahk"'):

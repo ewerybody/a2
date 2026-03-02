@@ -139,7 +139,7 @@ def get_date():
     return '%i %i %i' % (now.tm_year, now.tm_mon, now.tm_mday)
 
 
-def surf_to(url):
+def surf_to(url: str):
     import webbrowser
 
     if url:
@@ -236,7 +236,7 @@ def start_process_detached(path, args=None, working_dir=None) -> tuple[bool, int
     if not isinstance(args, list):
         args = [args]
     if working_dir is None:
-        a2 = a2core.A2Obj.inst()
+        a2 = a2core.get()
         working_dir = a2.paths.a2
 
     process = QtCore.QProcess()

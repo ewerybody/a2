@@ -2,7 +2,7 @@
 Ui for various module-local scripts.
 """
 import os
-from a2qt import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore, QtGui
 
 import a2ctrl
 import a2util

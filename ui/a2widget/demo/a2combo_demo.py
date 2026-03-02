@@ -1,6 +1,6 @@
 import a2ctrl.connect
 from a2widget.a2combo import A2Combo
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 LIST_ITEMS = 'mango banana apple kiwi apple strawberry'.split()
 

@@ -2,7 +2,7 @@ import os
 import json
 import time
 import logging
-from a2qt import QtCore, QtWidgets, QtNetwork
+from PySide6 import QtCore, QtWidgets, QtNetwork
 
 if __name__ == '__main__':
     NAME = os.path.splitext(os.path.basename(__file__))[0]

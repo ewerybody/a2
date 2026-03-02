@@ -2,7 +2,7 @@
 Finally an own little module all things icons.
 """
 import os
-from a2qt import QtGui, QtCore, QtSvg
+from PySide6 import QtGui, QtCore, QtSvg
 import a2core
 import a2path
 

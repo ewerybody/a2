@@ -3,7 +3,7 @@ The a2 element foundations.
 """
 from functools import partial
 
-from a2qt import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 import a2core
 import a2ctrl
@@ -20,7 +20,7 @@ class DrawCtrlMixin:
     """
 
     def __init__(self, main, cfg, mod=None, user_cfg=None):
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.main = main
         self.cfg = cfg
         self.mod = mod
@@ -170,7 +170,7 @@ class EditCtrl(QtWidgets.QGroupBox):
 
     def __init__(self, cfg, main, parent_cfg, add_layout=True):
         super(EditCtrl, self).__init__()
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.cfg = cfg # type: dict[str, bool | int | float | str | list[str]]
         self.main = main
         self.parent_cfg = parent_cfg

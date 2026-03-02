@@ -9,7 +9,7 @@ import a2element._edit
 import a2element.group
 from a2ctrl import Icons
 
-from a2qt import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui
 
 ISSUE_DOUBLE = (
     'Double name! Variable "<b>%s</b>" already defined<br>'
@@ -212,7 +212,7 @@ class EditView(QtWidgets.QWidget):
         if element.help_url:
             url = element.help_url
         else:
-            a2 = a2core.A2Obj.inst()
+            a2 = a2core.get()
             url = a2.urls.wiki + element.element_name() + '-element'
         a2util.surf_to(url)
 

@@ -21,7 +21,7 @@ for display and modification.
 from copy import deepcopy
 from collections import OrderedDict
 
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2uic
 import a2core

@@ -3,7 +3,7 @@ import a2ctrl
 import a2ctrl.connect
 import a2util
 
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 from a2element import group_edit_ui, DrawCtrlMixin, EditCtrl
 
 

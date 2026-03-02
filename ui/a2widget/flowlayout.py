@@ -2,7 +2,7 @@
 So far just the bugged flow layout example from the PySide demos.
 """
 
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 
 class FlowLayout(QtWidgets.QLayout):

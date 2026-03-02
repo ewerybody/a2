@@ -4,7 +4,7 @@ Editor stuff for module source package meta data.
 import os
 from copy import deepcopy
 
-from a2qt import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 
 import a2uic
 import a2core
@@ -25,7 +25,7 @@ class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):
         """
         super(ModuleSourceEditor, self).__init__(main, f'Make a "{mod_source.name}" Release')
         self.ui.label.hide()
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.main = main
         self.mod_source = mod_source
         self.source_cfg = deepcopy(mod_source.config)

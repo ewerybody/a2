@@ -25,7 +25,7 @@ class A2Settings(QtWidgets.QWidget):
 
     def __init__(self, main, show_tab=None):
         super(A2Settings, self).__init__(parent=main)
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.main = main
         self._setup_ui(show_tab)
         self._source_widgets = {}

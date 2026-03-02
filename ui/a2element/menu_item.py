@@ -3,7 +3,7 @@ a2element.menu_item - To create module-custom menu entries
 in the main menu bar under module.
 """
 import traceback
-from a2qt import QtGui
+from PySide6 import QtGui
 
 import a2uic
 import a2ctrl

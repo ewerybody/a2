@@ -6,7 +6,7 @@ A Qt/PySide slider widget that:
 * slider can act logarithmic having more density at the start
 """
 import math
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 
 class A2Slider(QtWidgets.QWidget):

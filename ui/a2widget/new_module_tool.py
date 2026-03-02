@@ -1,6 +1,6 @@
 import os
 
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 
 import a2path
 import a2core
@@ -11,7 +11,7 @@ from a2widget.a2input_dialog import A2InputDialog
 
 class NewModulueTool(A2InputDialog):
     def __init__(self, main, source_dict, module_source=None):
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.main = main
         self._module_list = []
         self.source_dict = source_dict

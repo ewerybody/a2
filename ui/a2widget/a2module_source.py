@@ -1,7 +1,7 @@
 """
 Stuff for the module source widget in main settings.
 """
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2uic
 import a2core
@@ -292,7 +292,7 @@ class AddSourceDialog(a2input_dialog.A2InputDialog):
         )
         self.setWindowFlags(a2input_dialog.SIZABLE_FLAGS)
 
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.main = main
 
         self.ui.a2ok_button.setEnabled(False)

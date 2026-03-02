@@ -43,7 +43,7 @@ class Mod:
         self.source = source
         self.name = mod_name
         self._display_name = None
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.path = os.path.join(self.source.path, mod_name)
         self._data_path = None
         self._backup_path = None

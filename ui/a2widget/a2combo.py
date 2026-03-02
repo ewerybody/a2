@@ -8,7 +8,7 @@ So hovering and changing the value via wheel still works while
 scrolling over is properly ignored.
 """
 import time
-from a2qt import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore, QtGui
 
 # : Seconds to wait for the combo box to accept wheel events
 HOVER_TIMEOUT = 0.4

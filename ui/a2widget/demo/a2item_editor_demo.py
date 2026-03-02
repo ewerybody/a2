@@ -1,7 +1,7 @@
 import uuid
 
 import a2element.hotkey
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 from a2widget.a2item_editor import A2ItemEditor
 
 ITEMS = {

@@ -1,5 +1,5 @@
 from functools import partial
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from a2widget import a2input_dialog
 from a2widget.a2input_dialog import A2InputDialog, A2ConfirmDialog
 from a2widget.a2error_dialog import A2ErrorDialog

@@ -1,7 +1,7 @@
 from functools import partial
 from collections import OrderedDict
 
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2util
@@ -235,7 +235,7 @@ class ScopeWidget(QtWidgets.QWidget):
     def build_help_menu(self):
         if not self.help_map:
             self.help_menu = QtWidgets.QMenu(self)
-            a2 = a2core.A2Obj.inst()
+            a2 = a2core.get()
             icons = a2ctrl.Icons.inst()
             self.help_map = {
                 'Help on Scope Setup': a2.urls.help_scopes,

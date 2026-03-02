@@ -1,5 +1,5 @@
 from functools import partial
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2mod
 import a2uic
@@ -23,7 +23,7 @@ class A2ModuleList(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self._setup_ui()
         self.selection = None
 

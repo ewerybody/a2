@@ -1,5 +1,5 @@
 import a2core
-from a2qt import QtCore
+from PySide6 import QtCore
 from .keyboard_dialog.base import KeyboardDialogBase
 
 
@@ -14,7 +14,7 @@ class _HotkeyDialogBase(QtCore.QObject):
         self.parent = parent
         self.key = key
         self.scope_data = scope_data
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
 
 
 class HotKeyBoard(KeyboardDialogBase, _HotkeyDialogBase):

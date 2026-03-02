@@ -1,7 +1,7 @@
 import inspect
 from functools import partial
 
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 
 import a2core
 import a2element.hotkey

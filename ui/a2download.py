@@ -1,5 +1,5 @@
 """Stuff for downloads from the internets."""
-from a2qt import QtCore, QtNetwork
+from PySide6 import QtCore, QtNetwork
 
 import a2core
 import qdl

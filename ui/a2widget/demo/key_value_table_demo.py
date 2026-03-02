@@ -1,7 +1,7 @@
 import json
 import pprint
 
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 
 from a2widget.key_value_table import KeyValueTable
 from a2widget.a2text_field import A2CodeField

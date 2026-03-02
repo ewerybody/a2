@@ -13,7 +13,7 @@ import PySide6 as pyside_package
 OLD_PACK = 'PySide6'
 NEW_PACK = 'a2qt'
 IMPORT_STR = ' import '
-FROM_IMPORT = 'from a2qt import '
+FROM_IMPORT = 'from PySide6 import '
 IGNORE_MEMBERS = ('qApp', '__package__', '__path__')
 IGNORE_DIRS = (NEW_PACK, 'singlesiding')
 PY_PACKS = pyside_package.__all__

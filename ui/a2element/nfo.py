@@ -1,4 +1,4 @@
-from a2qt import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 
 import a2uic
 import a2core

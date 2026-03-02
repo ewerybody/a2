@@ -1,4 +1,4 @@
-from .hotkey_widget import A2Hotkey, DIALOG_CLASSES, DIALOG_DEFAULT
+from .hotkey_widget import DIALOG_CLASSES, DIALOG_DEFAULT
 from .hotkey_common import Vars
 NAME = 'hotkey'
 
@@ -15,7 +15,7 @@ def set_dialog_style(label_text):
     Sets the Hotkey Dialog class name from a given label name.
     """
     import a2core
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
 
     for class_name, class_label in iter_dialog_styles():
         if class_label == label_text:
@@ -30,7 +30,7 @@ def get_current_style():
     :rtype: str
     """
     import a2core
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     return a2.db.get(Vars.dialog_style_setting) or DIALOG_DEFAULT.__name__
 
 

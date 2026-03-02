@@ -2,7 +2,7 @@ import a2uic
 import a2ctrl
 import a2ctrl.connect
 
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 from a2element import check_edit_ui, DrawCtrl, EditCtrl
 
 

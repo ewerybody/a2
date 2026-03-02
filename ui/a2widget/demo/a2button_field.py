@@ -1,5 +1,5 @@
 import uuid
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 from a2widget.a2button_field import A2ButtonField
 
 

@@ -4,7 +4,7 @@ import a2util
 import a2core
 from a2widget import a2input_dialog
 from a2widget import busy_icon
-from a2qt import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 
 _DOWNLOAD_LINK = f'<center><a href=%s>Download {a2core.NAME} %s from github.com ...</a></center>'
 _BOLD = ' - <b>%s</b>'

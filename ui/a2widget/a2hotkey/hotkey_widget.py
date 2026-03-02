@@ -1,6 +1,6 @@
 """Home of the mighty a2Hotkey widget."""
 
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2core
 import a2ctrl
@@ -36,7 +36,7 @@ class A2Hotkey(QtWidgets.QWidget):
             up scope information.
         """
         super(A2Hotkey, self).__init__(parent)
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.key = None
         self._cfg = {}
         self._edit_mode = False

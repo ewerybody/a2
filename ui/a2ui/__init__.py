@@ -422,7 +422,7 @@ class A2Window(QtWidgets.QMainWindow):
         )
         self.a2.db.set('last_selected', [m.key for m in self.selected])
 
-        from a2qt import shiboken
+        from PySide6 import shiboken
 
         for thread in self._threads.values():
             if thread is None:
@@ -634,7 +634,7 @@ class RuntimeCallThread(QtCore.QThread):
     def run(self):
         self.msleep(RESTART_DELAY)
 
-        a2 = a2core.A2Obj.inst()
+        a2 = a2core.get()
         args = [a2.paths.a2_script]
         if self._args is None:
             pass
@@ -677,7 +677,7 @@ class WinTitleUpdater(QtCore.QThread):
             self.change.emit(f'{self._win_title} - {TITLE_OFFLINE}')
 
     def _build_title_base(self):
-        a2 = a2core.A2Obj.inst()
+        a2 = a2core.get()
         if os.path.isdir(a2.paths.git):
             import a2ahk
 

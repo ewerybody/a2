@@ -3,7 +3,7 @@ WIP: I was looking for clues for the error messaging about the dialog could
 not be resized. Turns out if `wordWrap` is turned `True` this will arise!
 So long, let's try to avoid wordWrap in these dialogs.
 """
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import a2uic
 import a2widget.tools

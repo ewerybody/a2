@@ -1,6 +1,6 @@
 import traceback
 
-from a2qt import QtCore, QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui
 
 import a2mod
 import a2uic
@@ -27,7 +27,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.editing = False
         self.controls = []
         self.menu_items = []
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self._editor = None
         self._scroll_anim = None
 

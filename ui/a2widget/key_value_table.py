@@ -1,4 +1,4 @@
-from a2qt import QtWidgets, QtCore
+from PySide6 import QtWidgets, QtCore
 from a2widget.tools import BlockSignalContext
 
 

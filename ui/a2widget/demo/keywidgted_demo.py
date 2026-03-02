@@ -1,4 +1,4 @@
-from a2qt import QtCore, QtWidgets
+from PySide6 import QtCore, QtWidgets
 import a2ctrl
 
 class TestWindow(QtWidgets.QMainWindow):

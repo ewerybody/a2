@@ -23,12 +23,12 @@ def iterate():
 
 
 def get_current():
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     return a2.db.get(DB_ATTR) or DEFAULT
 
 
 def set_layout(keyboard_label):
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     for keyboard_id, label in iterate():
         if label == keyboard_label:
             a2.db.set(DB_ATTR, keyboard_id)
@@ -37,6 +37,6 @@ def set_layout(keyboard_label):
 
 
 if __name__ == '__main__':
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     keyboard_id = a2.db.get(DB_ATTR)
     print('keyboard_id: %s' % keyboard_id)

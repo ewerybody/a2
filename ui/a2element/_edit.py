@@ -3,7 +3,7 @@ import os
 import a2ctrl
 from a2widget import local_script
 from a2ctrl.icons import Icons
-from a2qt import QtWidgets, QtCore, QtGui
+from PySide6 import QtWidgets, QtCore, QtGui
 
 
 LOCAL_MENU_PREFIX = 'local: '

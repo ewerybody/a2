@@ -12,7 +12,7 @@ log = a2core.get_logger(__name__)
 
 class NewModuleSourceTool(A2InputDialog):
     def __init__(self, main):
-        self.a2 = a2core.A2Obj.inst()
+        self.a2 = a2core.get()
         self.main = main
         self.source_names = [m.lower() for m in self.a2.module_sources]
         super(NewModuleSourceTool, self).__init__(

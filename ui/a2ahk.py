@@ -58,7 +58,7 @@ def call_lib_cmd(cmd_name, *args, **kwargs):
     """
     import a2core
 
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     cmd_name = ensure_ahk_ext(cmd_name)
     cmd_path = os.path.join(a2.paths.lib, 'cmds', cmd_name)
     if not os.path.isfile(cmd_path):
@@ -79,7 +79,7 @@ def call_cmd(cmd_path, *args, **kwargs):
     import a2core
     import subprocess
 
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
     proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs.get('cwd'))

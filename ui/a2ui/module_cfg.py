@@ -5,7 +5,7 @@ from functools import partial
 import a2mod
 import a2util
 from a2ctrl import Icons
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 
 MSG_DEFAULT = 'Appears everything is on "factory settings"!'
