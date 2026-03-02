@@ -34,7 +34,7 @@ A2Results(fails, total) {
     FileAppend(" > Passed/Failed: " total - fails "/" fails " out of: " total "`n", "*", "UTF-8")
 }
 
-assertmsg(result) {
+assert_msg(result) {
     if result
         return "✔️"
     return "❌"
