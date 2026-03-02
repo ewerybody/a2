@@ -29,12 +29,6 @@ SQL_INI = 'SQLiteDB.ini'
 PACKAGE_CFG = 'pyproject.toml'
 
 
-def get():
-    """Pass the core A2Obj instance."""
-    return A2Obj.inst()
-
-
-# pylint: disable=too-many-instance-attributes
 class A2Obj:
     """Non-Ui a2 backend object."""
 
@@ -54,8 +48,8 @@ class A2Obj:
     def __init__(self):
         if A2Obj._instance is not None:
             raise RuntimeError(
-                'Singleton A2Obj has already been initialized!\n'
-                '  Use A2Obj.inst() to get the instance!'
+                'A2Obj has already been initialized!\n'
+                '  Use a2core.get() to get it!'
             )
 
         import a2output
@@ -72,7 +66,7 @@ class A2Obj:
         self._db = None
         self._version = None
         self._updates = {}
-        log.info('A2Obj initialised!')
+        log.info('A2Obj initialized!')
 
     def start_up(self):
         import a2db
@@ -295,9 +289,13 @@ class A2Obj:
         for table in self.db.tables():
             self.db.check(table)
 
+def get() -> A2Obj:
+    """Pass the core A2Obj instance."""
+    return A2Obj.inst()
+
 
 class URLs:
-    """Internet adresses for various things."""
+    """Internet addresses for various things."""
 
     def __init__(self, a2_urls_ahk):
         """
@@ -333,7 +331,7 @@ class URLs:
 
 
 class Paths:
-    """Aquires and hosts common paths around a2."""
+    """Acquires and hosts common paths around a2."""
 
     def __init__(self):
         join = os.path.join
@@ -387,7 +385,7 @@ class Paths:
                 'a2ui start interrupted! %s Not found in main dir!' % missing
             )
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
-            raise RuntimeError('a2ui start interrupted! %s inaccessable!' % self.data)
+            raise RuntimeError('a2ui start interrupted! %s inaccessible!' % self.data)
 
     def set_data_path(self, path: str = ''):
         """
