@@ -56,8 +56,8 @@ window_toggle_maximize_width(win_id:="") {
     window_set_rect(workarea.left, wc_Y, workarea.width, wc_Height, win_id)
     _window_toggle_maximize_set_mem(&memory, win_id, wc_Width, wc_Height, wc_X, wc_Y, wc_Max)
 
-    memory[win_id]["lastw"] := workarea.width
-    memory[win_id]["lasth"] := wc_Height
+    memory[win_id]["last_w"] := workarea.width
+    memory[win_id]["last_h"] := wc_Height
 }
 
 ; Maximize a window vertically or restore its previous height.
@@ -78,8 +78,8 @@ window_toggle_maximize_height(win_id:="") {
     window_set_rect(wc_X, workarea.top, wc_Width, workarea.height, win_id)
     _window_toggle_maximize_set_mem(&memory, win_id, wc_Width, wc_Height, wc_X, wc_Y, wc_Max)
 
-    memory[win_id]["lastw"] := wc_Width
-    memory[win_id]["lasth"] := workarea.height
+    memory[win_id]["last_w"] := wc_Width
+    memory[win_id]["last_h"] := workarea.height
 }
 
 _window_toggle_maximize_reset(win_id, &memory) {
@@ -97,7 +97,7 @@ _window_toggle_maximize_reset(win_id, &memory) {
 
 ; remember values for back toggling
 _window_toggle_maximize_set_mem(&memory, win_id, wc_Width, wc_Height, wc_X, wc_Y, wc_Max) {
-    If (!memory.has(win_id) OR (memory[win_id]["lastw"] !== wc_Width OR memory[win_id]["lasth"] !== wc_Height)) {
+    If (!memory.has(win_id) OR (memory[win_id]["last_w"] !== wc_Width OR memory[win_id]["last_h"] !== wc_Height)) {
         memory[win_id] := Map("x", wc_X, "y", wc_Y, "w", wc_Width, "h", wc_Height, "minmax", wc_Max)
     }
 }
@@ -230,21 +230,25 @@ window_list(hidden:=0, process_name:="", class_name:="") {
     }
 
     windows := []
-    for win_id in WinGetlist() {
-        ahkid := "ahk_id " . win_id
-        clss := WinGetClass(ahkid)
-        if (class_name && clss != class_name)
+    n_windows := 0
+    for win_id in WinGetList() {
+        n_windows++
+        ahk_id := "ahk_id " . win_id
+        this_class := WinGetClass(ahk_id)
+        if (class_name && this_class != class_name)
             continue
 
-        proc := WinGetProcessName(ahkid)
-        if (process_name && proc != process_name)
+        try this_proc_name := WinGetProcessName(ahk_id)
+        if !IsSet(this_proc_name)
+            continue
+        if (process_name && this_proc_name != process_name)
             continue
 
-        title := WinGetTitle(ahkid)
-        min_max := WinGetMinMax(ahkid)
-        pid := WinGetPID(ahkid)
+        title := WinGetTitle(ahk_id)
+        min_max := WinGetMinMax(ahk_id)
+        pid := WinGetPID(ahk_id)
 
-        windows.push(_Window(proc, title, clss, win_id, min_max, pid))
+        windows.push(_Window(this_proc_name, title, this_class, win_id, min_max, pid))
     }
 
     if (current_detect_state != hidden)
@@ -299,7 +303,7 @@ window_is_fullscreen(win_id := "", screen_area := "") {
         screen_area := screen_get_work_area(screen_get_index(win_id))
 
     win_area := window_get_geometry(win_id)
-    ; msgbox_info("screen:  " screen_area.x "|" screen_area.y "|" screen_area.x2 "|" screen_area.y2 "`nwindow:" win_area.x "|" win_area.y "|" win_area.x2 "|" win_area.y2)
+    ; msgbox_info("screen:  " screen_area.x "|" screen_area.y "|" screen_area.x2 "|" screen_area.y2 "`n" "window:" win_area.x "|" win_area.y "|" win_area.x2 "|" win_area.y2)
     if win_area.x > screen_area.x
         return false
     if win_area.y > screen_area.y
