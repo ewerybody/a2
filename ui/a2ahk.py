@@ -2,7 +2,6 @@
 Autohotkey stuff to be used across the modules.
 """
 import os
-import codecs
 import string
 
 NAME = 'autohotkey'
@@ -82,15 +81,7 @@ def call_cmd(cmd_path, *args, **kwargs):
     a2 = a2core.get()
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
-    proc = subprocess.Popen(args, stdout=subprocess.PIPE, cwd=kwargs.get('cwd'))
-
-    cmd_result = proc.communicate()[0]
-    try:
-        cmd_result = cmd_result.decode()
-    except UnicodeDecodeError:
-        cmd_result = cmd_result.decode('latin1')
-    proc.kill()
-
+    cmd_result = subprocess.check_output(args, shell=True, text=True, encoding='utf8')
     # cut away quote characters if any
     cmd_result = cmd_result.strip(' \'"')
     return cmd_result
@@ -102,7 +93,7 @@ def get_variables(ahk_file):
     Ignores any indented ones.
     Returns a dict with the variables.
     """
-    with codecs.open(ahk_file, encoding='utf-8-sig') as file_obj:
+    with open(ahk_file, encoding='utf-8-sig') as file_obj:
         lines = [i.split('=', 1) for i in file_obj.read().split('\n') if i]
     lines = [(i[0], i[1].strip('" \r')) for i in lines if len(i) == 2]
     result = {}
@@ -290,7 +281,7 @@ MOUSE_KEYS = [
     'lbutton', 'rbutton', 'mbutton', 'xbutton1', 'xbutton2', 'wheeldown', 'wheelup',
     'wheelleft', 'wheelright'
 ]
-NUMPAD_KEYS = [
+NUM_PAD_KEYS = [
     'numlock', 'numpadins', 'numpadend', 'numpadpgup', 'numpadpgdn', 'numpaddown', 'numpadleft',
     'numpadright', 'numpadclear', 'numpadhome', 'numpadup', 'numpaddot', 'numpaddel', 'numpad0',
     'numpad1', 'numpad2', 'numpad3', 'numpad4', 'numpad5', 'numpad6', 'numpad7', 'numpad8',
@@ -304,7 +295,7 @@ KEYS = ([
     'volume_up', 'media_next', 'media_prev', 'media_stop', 'media_play_pause', 'launch_mail',
     'launch_media', 'launch_app1', 'launch_app2', 'special', 'appskey', 'printscreen', 'ctrlbreak',
     'pause', 'break', 'help', 'sleep']
-    + MOUSE_KEYS + NUMPAD_KEYS + ['f%i' % _i for _i in range(1, 25)
+    + MOUSE_KEYS + NUM_PAD_KEYS + ['f%i' % _i for _i in range(1, 25)
 ])
 # fmt: on
 
@@ -318,7 +309,7 @@ def get_latest_version():
         return version
 
     if version.startswith('<'):
-        # cloudflare puts sume 'aRe YOu huMaN?' test page in front of this m(
+        # cloudflare puts some 'aRe YOu huMaN?' test page in front of this m(
         # let's back up with github:
         info = qdl.read_json(LATEST_VERSION_GITHUB)
         if 'tag_name' in info:
@@ -340,7 +331,7 @@ def get_current_version():
 
 
 if __name__ == '__main__':
-    import unittest
+    import pytest
     import test.test_ahk
 
-    unittest.main(test.test_ahk, verbosity=2)
+    pytest.main([test.test_ahk.__file__, '-v'])
