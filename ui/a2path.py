@@ -13,9 +13,10 @@ def iter_dirs(path):
         return
 
     for this in os.scandir(path):
-        if this.is_dir():
-            item._set_path(this.path)
-            yield item
+        if not this.is_dir():
+            continue
+        item._set_path(this.path)
+        yield item
 
 
 def get_dir_names(path):
@@ -73,9 +74,10 @@ def iter_files(path):
         return
     item = FileObj()
     for this in os.scandir(path):
-        if this.is_file():
-            item._set_path(this.path)
-            yield item
+        if not this.is_file():
+            continue
+        item._set_path(this.path)
+        yield item
 
 
 def get_file_names(path):
@@ -85,10 +87,11 @@ def get_file_names(path):
 def iter_types(path, types):
     item = FileObj()
     for this in os.scandir(path):
-        if this.is_file():
-            item._set_path(this.path)
-            if item.is_type(types):
-                yield item
+        if not this.is_file():
+            continue
+        item._set_path(this.path)
+        if item.is_type(types):
+            yield item
 
 
 def add_slash(url):
@@ -197,7 +200,7 @@ class FileObj(_PathObj):
 
 
 if __name__ == '__main__':
-    import unittest
+    import pytest
     from test import test_a2path
 
-    unittest.main(test_a2path, verbosity=2)
+    pytest.main([test_a2path.__file__, '-v'])
