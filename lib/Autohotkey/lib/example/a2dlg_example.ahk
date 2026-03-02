@@ -91,8 +91,8 @@ a2dlg_demo(forced_dark := unset) {
     d.sep()
     footer := d.btn_row_right([
         {label: d.dark ? _["light_mode"] : _["dark_mode"], bg: c.btn_bg, fg: c.text},
-        {label: "Close", bg: c.btn_bg, fg: c.text}
-    ], 160)
+        {label: "Close", bg: c.btn_bg, fg: c.text, w: 100}
+    ])
 
     d.show()
     d.set_icon(icon_path)

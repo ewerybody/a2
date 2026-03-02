@@ -17,6 +17,7 @@
  *   d.btn(label, bg, fg [, ahk_opts])        — single flat button => ctrl
  *   d.btn_row(specs [, h, gap, bw])          — left-aligned button row => [controls]
  *   d.btn_row_right(specs [, bw, h, gap])    — right-aligned footer row => [controls]
+ *  Per-button width override: add w to a spec, e.g. {label: "X", bg:…, fg:…, w: 120}
  *   d.show([extra_h])                        — first show, centered on screen
  *   d.resize([extra_h])                      — resize in-place (progressive reveal)
  *   d.set_icon(path)                         — set window title-bar / taskbar icon
@@ -334,30 +335,54 @@ class A2Dialog {
     /**
      * Horizontal row of flat buttons, right-aligned — typical footer layout.
      *
+     * Button width priority (highest → lowest):
+     *   1. Per-spec w property  — {label: "X", bg:…, fg:…, w: 120}
+     *   2. bw parameter         — uniform width for every button without a spec.w
+     *   3. Auto (bw = 0)        — each button sizes to its label text
+     *
      * @param {(Array)} specs
-     * Array of {label, bg, fg [, opts]} — opts is an extra AHK button option string
+     * Array of {label, bg, fg [, opts, w]} — opts: extra AHK option string; w: per-button width
      * @param {(Integer)} bw
-     * Uniform button width in pixels (default 100)
+     * Uniform button width in pixels; 0 = auto-size each to its label (default 0)
      * @param {(Integer)} h
      * Button height in pixels (default 28)
      * @param {(Integer)} gap
      * Spacing between buttons in pixels (default 8)
      * @returns  Array of button controls in left => right order
     */
-    btn_row_right(specs, bw := 100, h := 28, gap := 8) {
+    btn_row_right(specs, bw := 0, h := 28, gap := 8) {
         this.gui.SetFont("s" this.font_size " w600", this.font_face)
         pad := this._pad
-        n := specs.Length
-        x0 := this._w - pad - bw * n - gap * (n - 1)
         controls := []
-        for i, s in specs {
-            x := x0 + (i - 1) * (bw + gap)
-            extra := s.HasProp("opts") ? " " s.opts : ""
-            ctrl := this.gui.AddButton("x" x " y" this._y " w" bw " h" h extra, s.label)
-            a2dlg_make_button(ctrl, s.bg, s.fg)
+        widths := []
+
+        ; Pass 1 — add every button at a throwaway position to resolve its final width.
+        ; spec.w beats bw; bw=0 means auto-detect from the rendered control size.
+        for spec in specs {
+            extra := spec.HasProp("opts") ? " " spec.opts : ""
+            w := spec.HasProp("w") ? spec.w : bw
+            if w {
+                ctrl := this.gui.AddButton("x0 y0 w" w " h" h extra, spec.label)
+            } else {
+                ctrl := this.gui.AddButton("x0 y0 h" h extra, spec.label)
+                ctrl.GetPos(,, &w,)
+            }
+            a2dlg_make_button(ctrl, spec.bg, spec.fg)
             this._btn_hwnds.Push(ctrl.Hwnd)
             controls.Push(ctrl)
+            widths.Push(w)
         }
+
+        ; Pass 2 — right-align: compute start x from total width, then move each button.
+        total_w := gap * (controls.Length - 1)
+        for w in widths
+            total_w += w
+        x := this._w - pad - total_w
+        for i, ctrl in controls {
+            ctrl.Move(x, this._y, widths[i], h)
+            x += widths[i] + gap
+        }
+
         this._y += h + pad
         return controls
     }
@@ -587,7 +612,7 @@ _flat_btn_on_draw(wParam, lParam, *) {
     if !_flat_buttons.Has(hwnd)
         return
 
-    s := _flat_buttons[hwnd]
+    spec := _flat_buttons[hwnd]
     state := NumGet(lParam, 16, "UInt")
     hDC := NumGet(lParam, 32, "Ptr")
 
@@ -599,9 +624,9 @@ _flat_btn_on_draw(wParam, lParam, *) {
     NumPut("Int", NumGet(lParam, 52, "Int"), rc, 12)    ; bottom
 
     ; Fill background: darken when pressed, lighten when hovered, plain otherwise
-    bg := (state & 0x1) ? _flat_btn_dim(s.bg)
-        : (_flat_btn_hover = hwnd) ? _flat_btn_lit(s.bg)
-            : s.bg
+    bg := (state & 0x1) ? _flat_btn_dim(spec.bg)
+        : (_flat_btn_hover = hwnd) ? _flat_btn_lit(spec.bg)
+            : spec.bg
     hBrush := DllCall("CreateSolidBrush", "UInt", _flat_btn_gdi(bg), "Ptr")
     DllCall("FillRect", "Ptr", hDC, "Ptr", rc, "Ptr", hBrush)
     DllCall("DeleteObject", "Ptr", hBrush)
@@ -610,8 +635,8 @@ _flat_btn_on_draw(wParam, lParam, *) {
     hFont := SendMessage(0x31, 0, 0, hwnd)   ; WM_GETFONT
     old_font := DllCall("SelectObject", "Ptr", hDC, "Ptr", hFont, "Ptr")
     DllCall("SetBkMode", "Ptr", hDC, "Int", 1)                  ; TRANSPARENT
-    DllCall("SetTextColor", "Ptr", hDC, "UInt", _flat_btn_gdi(s.fg))
-    DllCall("DrawTextW", "Ptr", hDC, "WStr", s.text, "Int", -1,
+    DllCall("SetTextColor", "Ptr", hDC, "UInt", _flat_btn_gdi(spec.fg))
+    DllCall("DrawTextW", "Ptr", hDC, "WStr", spec.text, "Int", -1,
         "Ptr", rc, "UInt", 0x25)                                    ; DT_CENTER|DT_VCENTER|DT_SINGLELINE
     DllCall("SelectObject", "Ptr", hDC, "Ptr", old_font)
 
