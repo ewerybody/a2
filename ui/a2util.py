@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
 """
 Misc functions - gathered from the a2core module.
 This is all too random to be core.
 """
+
 import os
 import time
 import stat
 import string
-import codecs
-
-from a2qt import QtCore
 
 import a2core
 
@@ -47,13 +44,13 @@ def standard_name_check(name, black_list=None, black_list_msg=None):
         return 'Names starting with a dot would be ignored!'
     if black_list is not None and name in black_list:
         return black_list_msg % name
-    if any((l in string.whitespace) for l in name):
-        return 'Name cannot have whitespace! Use _ or - insead!'
-    if not all((l in ALLOWED_CHARS) for l in name):
+    if any((letter in string.whitespace) for letter in name):
+        return 'Name cannot have whitespace! Use _ or - instead!'
+    if not all((letter in ALLOWED_CHARS) for letter in name):
         return 'Name can only have letters, digits and "_.-"'
     if name in ILLEGAL_NAMES:
         return 'Name cannot be reserved OS device name!'
-    if all(l.isnumeric() for l in name):
+    if all(letter.isnumeric() for letter in name):
         return 'Have at least 1 letter in the name!'
 
     return ''
@@ -108,9 +105,9 @@ def get_next_free_number(name, name_list, separator='', start_nr=2):
             break
     if nr:
         number = int(nr)
-        name = name[:-len(nr)]
+        name = name[: -len(nr)]
         if separator and name.endswith(separator):
-            name = name[:-len(separator)]
+            name = name[: -len(separator)]
     else:
         number = start_nr
 
@@ -126,15 +123,15 @@ def get_next_free_number(name, name_list, separator='', start_nr=2):
 def json_read(path):
     import json
 
-    with codecs.open(path, encoding=UTF8_CODEC) as fobj:
-        return json.load(fobj)
+    with open(path, encoding=UTF8_CODEC) as file_obj:
+        return json.load(file_obj)
 
 
 def json_write(path, data):
     import json
 
-    with codecs.open(path, 'w', encoding=UTF8_CODEC) as fobj:
-        json.dump(data, fobj, indent=JSON_INDENT, sort_keys=True)
+    with open(path, 'w', encoding=UTF8_CODEC) as file_obj:
+        json.dump(data, file_obj, indent=JSON_INDENT, sort_keys=True)
 
 
 def get_date():
@@ -151,28 +148,28 @@ def surf_to(url):
 
 def load_utf8(path):
     """
-    Opens a file with UTF8 codec to return its content in a string
+    Open file with UTF8 codec to return its content as string.
     :param str path: Path to a file to load from.
     :rtype: str
     """
-    with codecs.open(path, encoding=UTF8_CODEC) as fobj:
-        return fobj.read()
+    with open(path, encoding=UTF8_CODEC) as file_obj:
+        return file_obj.read()
 
 
 def write_utf8(path, content):
     """
-    Opens a file path with UTF8 codec to write string content into.
+    Open ile path with UTF8 codec to write string content into.
     :param str path: Path to a file to write to.
     :param str content: String content for the file.
     """
-    with codecs.open(path, 'w', encoding=UTF8_CODEC) as fobj:
-        fobj.write(content)
+    with open(path, 'w', encoding=UTF8_CODEC) as file_obj:
+        file_obj.write(content)
 
 
 def explore(path):
     """
-    Opens the Windows Explorer for the given path.
-    Selects the file if a file path was passed.
+    Open Windows Explorer for the given path.
+    Select file if a file path was passed.
 
     :param str path: Path to a folder or file.
     """
@@ -189,9 +186,9 @@ def explore(path):
     start_process_detached(EXPLORER_PATH, args)
 
 
-def unroll_seconds(value: float | int, decimals=2):
+def unroll_seconds(value: float | int, decimals=2) -> str:
     """
-    Converts a number of seconds to easily readable values like
+    Convert a number of seconds to easily readable values like
     2 minutes
     5 weeks ...
 
@@ -222,7 +219,7 @@ def unroll_seconds(value: float | int, decimals=2):
     return '%s %s' % (v, name)
 
 
-def start_process_detached(path, args=None, working_dir=None):
+def start_process_detached(path, args=None, working_dir=None) -> tuple[bool, int]:
     """
     Uses QtCore.QProcess to start off detached processes
 
@@ -232,6 +229,8 @@ def start_process_detached(path, args=None, working_dir=None):
     :return: Tuple of process result value and process ID.
     :rtype: tuple
     """
+    from PySide6 import QtCore
+
     if args is None:
         args = []
     if not isinstance(args, list):
