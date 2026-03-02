@@ -10,8 +10,6 @@ import shutil
 import a2ahk
 import a2path
 import a2core
-import a2ctrl
-import a2ctrl.icons
 import a2util
 
 
@@ -40,13 +38,13 @@ class Mod:
     config is None at first and filled as soon as the mod is selected in the UI.
     If there is no config_file yet it will be emptied instead of None.
     """
-    def __init__(self, source, modname):
+    def __init__(self, source, mod_name):
         # gather files from module path in local list
         self.source = source
-        self.name = modname
+        self.name = mod_name
         self._display_name = None
         self.a2 = a2core.A2Obj.inst()
-        self.path = os.path.join(self.source.path, modname)
+        self.path = os.path.join(self.source.path, mod_name)
         self._data_path = None
         self._backup_path = None
         self._config = None
@@ -54,7 +52,7 @@ class Mod:
         self.ui = None
         self._icon = None
 
-        # the compound modulesource|modulename identifier
+        # the compound modsource|modulename identifier
         self.key = self.source.name + '|' + self.name
 
     @property
@@ -115,6 +113,7 @@ class Mod:
         Sets the mods own db entries.
         TODO: remove empty entries!
         """
+        import a2ctrl
         db_dict = {'variables': {}, 'hotkeys': {}, 'includes': [], 'init_calls': []}
         a2ctrl.assemble_settings(self.key, self.config[1:], db_dict, self.path)
         for typ, data in db_dict.items():
@@ -228,7 +227,7 @@ class Mod:
         else:
             module_user_cfg[cfg_name] = current_cfg
 
-        # delete module_user_cfg alltogether if needed
+        # delete module_user_cfg all together if needed
         if module_user_cfg:
             self.set_user_cfg(module_user_cfg)
         else:
@@ -251,7 +250,7 @@ class Mod:
         except KeyError:
             pass
 
-        # delete module_user_cfg alltogether if needed
+        # delete module_user_cfg all together if needed
         if module_user_cfg:
             self.a2.db.set(USER_CFG_KEY, module_user_cfg, self.key)
         else:
@@ -277,6 +276,7 @@ class Mod:
 
     @property
     def icon(self):
+        import a2ctrl.icons
         self._icon = a2ctrl.icons.get(self._icon, self.path, self.source.icon)
         return self._icon
 
