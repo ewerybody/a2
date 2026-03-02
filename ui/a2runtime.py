@@ -17,7 +17,7 @@ A2_DATA = '%a2data%'
 PACKAGE_LIB = '.lib'
 EDIT_DISCLAIMER = a2core.EDIT_DISCLAIMER
 ERROR_DUP_VALUE = 'Value name already collected!!\n  module: %s\n  value name: %s'
-ERROR_EMPTYNAME = 'Empty variable name!!\n  module: %s\n  value name: %s'
+ERROR_EMPTY_NAME = 'Empty variable name!!\n  module: %s\n  value name: %s'
 SCOPE_PREFIX = '\n#HotIf'
 
 class Scope:
@@ -161,7 +161,7 @@ class VariablesCollection(_Collection):
                 log.error(ERROR_DUP_VALUE, mod.name, var_name)
                 continue
             if not var_name:
-                log.error(ERROR_EMPTYNAME, mod.name, var_name)
+                log.error(ERROR_EMPTY_NAME, mod.name, var_name)
                 continue
             self._data[var_name] = (value, mod.key)
 
@@ -386,8 +386,9 @@ class SourceLibsCollection(_Collection):
         self.name = 'source_libs'
         self.includes = []
 
-    def gather(self, source):
-        lib_path = os.path.join(source.path, PACKAGE_LIB)
+    def gather(self, mod):
+        """Gather modsource libraries. `mod` is a module source package here!"""
+        lib_path = os.path.join(mod.path, PACKAGE_LIB)
         if not os.path.isdir(lib_path):
             return
         names = [i.name for i in a2path.iter_types(lib_path, a2ahk.EXTENSION)]
