@@ -1,6 +1,7 @@
 """
 Finally an own little module all things icons.
 """
+
 import os
 from PySide6 import QtGui, QtCore, QtSvg
 import a2core
@@ -14,10 +15,11 @@ LOW_ALPHA = 0.25
 DEFAULT_NAME = f'{a2core.NAME}icon'
 ICON_FORMATS = ['.svg', '.png', '.ico']
 ICON_TYPES = [DEFAULT_NAME + ext for ext in ICON_FORMATS]
-ICON_OBJ_INST_ERROR = 'Icons() has already been instanciated!\nGet it with .inst()'
+ICON_OBJ_INST_ERROR = 'Icons() has already been instantiated!\nGet it with .inst()'
 _FULL_COLOR_ICONS = ('a2*', 'autohotkey', 'github')
 _PLACEHOLDER_ICON = 'placeholder'
 _IGNORE_ICONS = ('_ *', 'telegram_join', 'css_*', 'logo_*', _PLACEHOLDER_ICON)
+Q_ICON_FORMAT = QtGui.QImage.Format.Format_ARGB32
 
 
 class Ico(QtGui.QIcon):
@@ -52,7 +54,7 @@ class Ico(QtGui.QIcon):
             self.path = ico_name
         else:
             if Ico.ico_path is None:
-                Ico.ico_path = os.path.join(a2core.A2Obj.inst().paths.a2, 'ui', 'res', '%s.svg')
+                Ico.ico_path = os.path.join(a2core.get().paths.a2, 'ui', 'res', '%s.svg')
                 # log.info('getting Ico.ico_path: %s', Ico.ico_path)
 
             self.path = Ico.ico_path % ico_name
@@ -70,7 +72,7 @@ class Ico(QtGui.QIcon):
 
     def _render_svg(self):
         renderer = QtSvg.QSvgRenderer(self.path)
-        self._image = QtGui.QImage(QtCore.QSize(self.size, self.size), QtGui.QImage.Format_ARGB32)
+        self._image = QtGui.QImage(QtCore.QSize(self.size, self.size), Q_ICON_FORMAT)
         self._painter = QtGui.QPainter(self._image)
 
         if self._alpha is not None:
@@ -79,11 +81,11 @@ class Ico(QtGui.QIcon):
         renderer.render(self._painter)
 
     def _render(self):
-        self._image = QtGui.QImage(QtCore.QSize(self.size, self.size), QtGui.QImage.Format_ARGB32)
+        self._image = QtGui.QImage(QtCore.QSize(self.size, self.size), Q_ICON_FORMAT)
 
         if self._alpha is not None:
             self._painter = QtGui.QPainter(self._image)
-            image = QtGui.QImage(QtCore.QSize(self.size, self.size), QtGui.QImage.Format_ARGB32)
+            image = QtGui.QImage(QtCore.QSize(self.size, self.size), Q_ICON_FORMAT)
             image = self._load_path_to_image(image)
             self._painter.setOpacity(self._alpha)
             self._painter.drawImage(self._image.rect(), image)
@@ -94,7 +96,7 @@ class Ico(QtGui.QIcon):
     def _load_path_to_image(self, image):
         image.load(self.path)
         if image.format() == QtGui.QImage.Format.Format_Indexed8:
-            image = image.convertToFormat(QtGui.QImage.Format_ARGB32)
+            image = image.convertToFormat(Q_ICON_FORMAT)
         return image
 
     def _paint(self):
@@ -292,10 +294,7 @@ def _update_icon_stub():
         new_name = __file__ + ' _ changed'
         with open(new_name, 'w') as file_obj:
             file_obj.write(new_content)
-        print(
-            f'Total of {num_icons} icons written into the code.'
-            f'look into {new_name} to see the changes!'
-        )
+        print(f'Total of {num_icons} icons written into the code.look into {new_name} to see the changes!')
     else:
         print(f'Nothing changed! All {num_icons} icons already listed!')
 
