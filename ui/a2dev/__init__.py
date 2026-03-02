@@ -1,4 +1,5 @@
 """a2 Developer stuff."""
+
 import os
 import sys
 import traceback
@@ -19,10 +20,8 @@ MSG_CFG_DIFF = (
     'Do you really want to exit and discard the changes?\n\n'
     'You can also have a look at the differences...'
 )
-MSG_CFG_NEW = (
-    'The module configuration appears to be new!\n'
-    'Do you really want to exit and discard the changes?'
-)
+MSG_CFG_NEW = 'The module configuration appears to be new!\nDo you really want to exit and discard the changes?'
+SEMVER_URL = 'https://semver.org'
 
 
 class OkDiffDialog(a2input_dialog.A2ConfirmDialog):
@@ -137,16 +136,16 @@ class DevSettings:
             parent,
             'No Valid %s Set!' % display_name,
             question,
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel,
+            QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.Cancel,
         )
 
-        if reply == QtWidgets.QMessageBox.Yes:
-            exepath, _ = QtWidgets.QFileDialog.getOpenFileName(
+        if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+            exe_path, _ = QtWidgets.QFileDialog.getOpenFileName(
                 parent, task_msg.title(), variable, 'Executable (*.exe)'
             )
-            if exepath:
-                self.set_var(var_name, exepath)
-                return exepath
+            if exe_path:
+                self.set_var(var_name, exe_path)
+                return exe_path
 
         return ''
 
@@ -181,16 +180,14 @@ class VersionBumpDialog(a2input_dialog.A2InputDialog):
         try:
             msg = self.get_versions()
 
-            semver = '<a href="https://semver.org">semver.org-style</a>'
+            semver = f'<a href="{SEMVER_URL}">semver.org-style</a>'
             msg = f'<div style="margin: 20px">{msg}</div>'
             msg = f'Currently set versions:{msg}Set another {semver} version:'
         except Exception:
             msg = traceback.format_exc().strip()
             self._orig_ver = self.error
 
-        super().__init__(
-            parent, self.__class__.__name__, self._check, self._orig_ver, msg, self.set_versions
-        )
+        super().__init__(parent, self.__class__.__name__, self._check, self._orig_ver, msg, self.set_versions)
 
     def get_versions(self):
         self._all_set = True
@@ -338,9 +335,7 @@ def check_dev_updates():
         latest = a2ahk.get_latest_version()
 
         if current != latest:
-            log.info(
-                f'New {a2ahk.NAME.title()} version online!\n' f' Current: {current}\n Latest: {latest}'
-            )
+            log.info(f'New {a2ahk.NAME.title()} version online!\n Current: {current}\n Latest: {latest}')
             yield a2ahk.NAME, current, latest
         else:
             log.info('%s is up-to-date at %s', a2ahk.NAME.title(), current)
@@ -383,5 +378,7 @@ def build_package():
     batch_path = os.path.join(a2.paths.lib, '_batches')
     batch_name = '1_build_all.bat'
     _result, _pid = a2util.start_process_detached(
-        os.getenv('COMSPEC'), ['/c', 'start %s' % batch_name], batch_path
+        os.getenv('COMSPEC'),
+        ['/c', 'start %s' % batch_name],
+        batch_path,
     )
