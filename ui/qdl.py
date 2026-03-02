@@ -35,11 +35,11 @@ class QDownload(QtCore.QObject):
 
     def __init__(self):
         super().__init__()
-        self.manager = QtNetwork.QNetworkAccessManager(self)
+        self.manager: QtNetwork.QNetworkAccessManager = QtNetwork.QNetworkAccessManager(self)
         self._progress_callback = None
         self._finished = False
         self._data = b''
-        self._file = None
+        self._file: None | QtCore.QSaveFile = None
         self._progress = None
         self._user_agent = None
 
@@ -66,7 +66,7 @@ class QDownload(QtCore.QObject):
             target_path = os.path.join(target_path, base_name)
 
         if os.path.isfile(target_path) and not overwrite:
-            raise FileExistsError('The target file path alredy exists!')
+            raise FileExistsError('The target file path already exists!')
 
         tmp_file = os.path.join(os.getenv('TEMP', ''), f'__tmp_dl_{base_name}.zip')
         if not os.path.isfile(tmp_file):
@@ -88,19 +88,23 @@ class QDownload(QtCore.QObject):
 
     def _on_download_ready(self):
         reply = self.sender()
-        if reply.error() == QtNetwork.QNetworkReply.NoError:
+        if (
+            isinstance(reply, QtNetwork.QNetworkReply)
+            and reply.error() == QtNetwork.QNetworkReply.NetworkError.NoError
+            and self._file is not None
+        ):
             self._file.write(reply.readAll())
 
     def _on_download_finished(self):
-        self._file.commit()
+        if self._file is not None:
+            self._file.commit()
 
-    def _prepare_request(self, url, progress_callback=None):
+    def _prepare_request(self, url, progress_callback=None) -> QtNetwork.QNetworkReply:
         self._progress_callback = progress_callback
 
         request = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
         request.setRawHeader(
-            b'User-Agent',
-            b'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0'
+            b'User-Agent', b'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0'
         )
 
         reply = self.manager.get(request)
@@ -125,8 +129,11 @@ class QDownload(QtCore.QObject):
             self._progress.update(current)
 
     def wait(self):
+        app = QtWidgets.QApplication.instance()
+        if app is None:
+            return
         while not self._finished:
-            QtWidgets.QApplication.instance().processEvents()
+            app.processEvents()
             time.sleep(0.01)
         self._finished = False
         self._progress = None
