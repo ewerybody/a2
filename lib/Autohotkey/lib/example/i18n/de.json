@@ -1,0 +1,10 @@
+﻿{
+    "info": "Dies ist eine Informationsnachricht.\nSie enthält einige zusätzliche Zeilen\nnm die mehrzeiligen Möglichkeiten dieses ...\neh Dialogs zu zeigen!",
+    "welcome": "Willkommen zur A2 Dialog-Demo",
+    "light_mode": "🌞 In Hellen Modus wechseln",
+    "dark_mode": "🌛 In Dunklen Modus wechseln",
+    "name_please": "Geben sie {} ein:",
+    "your_name": "Ihren Namen",
+    "very_funny": "Sehr lustig! 😃"
+
+}
