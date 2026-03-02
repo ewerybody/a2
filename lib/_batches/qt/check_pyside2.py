@@ -4,7 +4,6 @@ to prepare for porting to a new PySide package ...
 """
 
 import os
-import codecs
 import importlib
 from pprint import pprint
 
@@ -17,20 +16,20 @@ IMPORT_STR = ' import '
 FROM_IMPORT = 'from a2qt import '
 IGNORE_MEMBERS = ('qApp', '__package__', '__path__')
 IGNORE_DIRS = (NEW_PACK, 'singlesiding')
-PYPAKS = pyside_package.__all__
+PY_PACKS = pyside_package.__all__
 PAK_MEMBERS = {}
-MEMBER_PAKS = {}
+MEMBER_PACKS = {}
 
 
 def main():
-    print('pypaks:', PYPAKS)
-    global PAK_MEMBERS, MEMBER_PAKS
-    for pakname in PYPAKS:
-        qmod = importlib.import_module(f'{pyside_package.__name__}.{pakname}')
-        members = [m for m in dir(qmod) if not m.startswith('_')]
-        PAK_MEMBERS[pakname] = members
+    print('py_packs:', PY_PACKS)
+    global PAK_MEMBERS, MEMBER_PACKS
+    for pack_name in PY_PACKS:
+        q_mod = importlib.import_module(f'{pyside_package.__name__}.{pack_name}')
+        members = [m for m in dir(q_mod) if not m.startswith('_')]
+        PAK_MEMBERS[pack_name] = members
         for m in members:
-            MEMBER_PAKS[m] = pakname
+            MEMBER_PACKS[m] = pack_name
 
     stats = {
         'py_dirs': 0,
@@ -50,30 +49,30 @@ def main():
 
 
 def check_files(path, stats):
-    pyfiles = []
+    py_files = []
     for item in os.listdir(path):
         item_path = os.path.join(path, item)
         if os.path.isdir(item_path) and not item.startswith('_') and item not in IGNORE_DIRS:
             check_files(item_path, stats)
         elif os.path.isfile(item_path) and os.path.splitext(item)[1] == '.py':
-            pyfiles.append(item_path)
+            py_files.append(item_path)
 
-    if not pyfiles:
+    if not py_files:
         return
 
     stats['py_dirs'] += 1
-    stats['num_py_files'] += len(pyfiles)
+    stats['num_py_files'] += len(py_files)
 
-    for this_path in pyfiles:
+    for this_path in py_files:
         import_lines = []
-        qpacks = set()
+        q_packs = set()
         try:
             lines, needs_unicode = get_lines(this_path)
             # print(f'checking {len(lines)} lines in file {this_path} ...')
             change_file = False
             for i, line in iter_lines(lines):
                 try:
-                    changes, new_line, this_qpacks = check_line(line)
+                    changes, new_line, this_q_packs = check_line(line)
                     if changes:
                         change_file = True
                         lines[i] = new_line
@@ -83,8 +82,8 @@ def check_files(path, stats):
                         if not line.startswith('from'):
                             print('line changed:\n  %s\n  %s' % (line, new_line))
 
-                    if this_qpacks:
-                        qpacks.update(this_qpacks)
+                    if this_q_packs:
+                        q_packs.update(this_q_packs)
 
                 except Exception as error:
                     print(f'problems with File: "{this_path}", line {i}')
@@ -97,12 +96,12 @@ def check_files(path, stats):
                 if len(import_lines) > 1:
                     raise RuntimeError('Multiple import lines?!?!', import_lines, this_path)
 
-                current_paks = [
+                current_packs = [
                     p.strip() for p in lines[import_lines[0]][len(FROM_IMPORT) :].split(',')
                 ]
 
-                if qpacks != set(current_paks):
-                    new_line  = FROM_IMPORT + ', '.join(qpacks)
+                if q_packs != set(current_packs):
+                    new_line  = FROM_IMPORT + ', '.join(q_packs)
                     print('imports line changed:\n  %s\n  %s' % (lines[import_lines[0]], new_line))
                     lines[import_lines[0]] = new_line
                     change_file = True
@@ -111,11 +110,11 @@ def check_files(path, stats):
 
             if change_file:
                 if needs_unicode:
-                    with codecs.open(this_path, 'w', encoding='utf-8-sig') as fob:
-                        fob.write('\n'.join(lines))
+                    with open(this_path, 'w', encoding='utf-8-sig') as file_ob:
+                        file_ob.write('\n'.join(lines))
                 else:
-                    with open(this_path, 'w') as fob:
-                        fob.write('\n'.join(lines))
+                    with open(this_path, 'w') as file_ob:
+                        file_ob.write('\n'.join(lines))
 
                 print(f'changed file: {this_path}')
                 stats['changed_files'] += 1
@@ -124,12 +123,12 @@ def check_files(path, stats):
             print(f'problems with File: {this_path}')
             raise error
 
-        stats['packs_used'].update(qpacks)
+        stats['packs_used'].update(q_packs)
 
 
 def check_line(line):
     """
-    * Find occurences of old-package in imports or anywhere else.
+    * Find occurrences of old-package in imports or anywhere else.
         * change to new
     * lookup used packs
         * check their members
@@ -145,14 +144,14 @@ def check_line(line):
                 changes.setdefault('pack', 0)
                 changes['pack'] += 1
 
-    qpacks = set()
-    for pak in PYPAKS:
+    q_packs = set()
+    for pak in PY_PACKS:
         if pak not in line:
             continue
         if '\n' in line:
             break
 
-        qpacks.add(pak)
+        q_packs.add(pak)
 
         num_tries = 0
         pos0 = 0
@@ -163,14 +162,14 @@ def check_line(line):
 
             changed, line, pos0, changed_packs = fix_moved_members(pak, line, pos0)
             if changed:
-                qpacks.update(changed_packs)
+                q_packs.update(changed_packs)
                 num_tries += 1
                 changes.setdefault('member', 0)
                 changes['member'] += 1
                 if '\n' in line:
                     break
 
-    return changes, line, qpacks
+    return changes, line, q_packs
 
 
 def fix_pack(line, pos0):
@@ -202,7 +201,7 @@ def fix_moved_members(pak, line, pos0):
         # end of line, no members accessed
         return changed, line, pos0, []
 
-    qpacks = set()
+    q_packs = set()
 
     if line[pos2] == '.':
         rest_of_line = line[pos2 + 1 :]
@@ -212,16 +211,16 @@ def fix_moved_members(pak, line, pos0):
 
         if member_name not in PAK_MEMBERS[pak] and member_name not in IGNORE_MEMBERS:
             try:
-                new_pak = MEMBER_PAKS[member_name]
+                new_pak = MEMBER_PACKS[member_name]
             except KeyError:
-                # raise RuntimeError(f'Name "{member_name}" not under any of the paks!')
-                print(f'\nWARNING!: Name "{member_name}" not under any of the paks!\n')
+                # raise RuntimeError(f'Name "{member_name}" not under any of the packs!')
+                print(f'\nWARNING!: Name "{member_name}" not under any of the packs!\n')
                 return changed, line, pos0, []
 
             line = line[:pos1] + new_pak + line[pos2:]
             changed = True
             pos0 = pos1 + len(new_pak)
-            qpacks.add(new_pak)
+            q_packs.add(new_pak)
         else:
             pos0 = pos2
 
@@ -233,24 +232,24 @@ def fix_moved_members(pak, line, pos0):
             if any(not_in_pak):
                 lines = {}
                 for m in import_members:
-                    lines.setdefault(MEMBER_PAKS[m], []).append(m)
+                    lines.setdefault(MEMBER_PACKS[m], []).append(m)
                 new_lines = []
                 for new_pak, members in lines.items():
                     new_lines.append(line[:pos1] + new_pak + IMPORT_STR + ', '.join(members))
-                    qpacks.add(new_pak)
+                    q_packs.add(new_pak)
                 line = '\n'.join(new_lines)
                 changed = True
                 # to avoid seeking through the line again
                 pos0 = len(line)
 
-    return changed, line, pos0, qpacks
+    return changed, line, pos0, q_packs
 
 
 def get_member(string):
     member = ''
-    for l in string:
-        if l.isalpha() or l == '_':
-            member += l
+    for letter in string:
+        if letter.isalpha() or letter == '_':
+            member += letter
         else:
             break
     return member
@@ -262,12 +261,12 @@ def get_lines(path):
     (lines of the file, needs_unicode)
     """
     try:
-        with open(path) as fob:
-            return fob.read().split('\n'), False
+        with open(path) as file_obj:
+            return file_obj.read().split('\n'), False
     except UnicodeDecodeError:
-        needs_unicode = True
-        with codecs.open(path, encoding='utf-8-sig') as fob:
-            return fob.read().split('\n'), True
+        # needs_unicode = True
+        with open(path, encoding='utf-8-sig') as file_obj:
+            return file_obj.read().split('\n'), True
 
 
 def iter_lines(lines):
