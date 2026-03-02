@@ -76,7 +76,7 @@ class KeyboardDialogBase(QtWidgets.QDialog):
 
             if key in a2ahk.MOUSE_KEYS:
                 self.mouse_block_widget.setVisible(True)
-            elif key in a2ahk.NUMPAD_KEYS:
+            elif key in a2ahk.NUM_PAD_KEYS:
                 self.numpad_block_widget.setVisible(True)
 
         for button in buttons:

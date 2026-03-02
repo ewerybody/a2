@@ -4,7 +4,7 @@ from a2widget.a2hotkey import hotkey_common
 
 
 class Test(unittest.TestCase):
-    def test_sortmods(self):
+    def test_sort_mods(self):
         # testing these things ...
         for k in [
             'f',
@@ -19,7 +19,9 @@ class Test(unittest.TestCase):
             except ValueError as error:
                 print(error, '\n')
 
-        self.assertRaises(ValueError, partial(hotkey_common.sort_modifiers, 'ctrl+VSJKDBk+4'))
+        self.assertRaises(
+            ValueError, partial(hotkey_common.sort_modifiers, 'ctrl+V2sj4kdBk+4')
+        )
 
     def test_key_list(self):
         _key_list = 'shift+Alt+d'
