@@ -84,6 +84,8 @@ class ScopeWidget(QtWidgets.QWidget):
         self.blockSignals(False)
 
     def on_scope_mode_change(self):
+        if self._cfg is None:
+            return
         scope_mode = self._cfg.get(Vars.scope_mode) != 0
         for wgt in [self.ui.fields_widget, self.ui.tool_buttons_widget, self.ui.cfg_scope]:
             wgt.setEnabled(scope_mode)
@@ -100,15 +102,17 @@ class ScopeWidget(QtWidgets.QWidget):
 
     def build_button_field_menu(self, index, menu):
         name = SCOPE_ITEMS[index]
-        # usedmenu = menu.addMenu('%s in use' % name.title())
+        # used_menu = menu.addMenu('%s in use' % name.title())
         submenu = menu.addMenu('Available %s' % name.title())
         for item in sorted(self.system_scope_data[name], key=lambda s: s.lower()):
             action = submenu.addAction(item, self._set_button_field)
             action.setData(name)
 
     def _set_button_field(self):
-        sender = self.sender()
-        self.input_fields[sender.data()].setText(sender.text())
+        action = self.sender()
+        if not isinstance(action, QtGui.QAction):
+            return
+        self.input_fields[action.data()].setText(action.text())
 
     def build_add_scope_menu(self):
         if self._add_menu is None:
@@ -139,6 +143,8 @@ class ScopeWidget(QtWidgets.QWidget):
 
     def _build_available_menu(self):
         menu = self.sender()
+        if not isinstance(menu, QtWidgets.QMenu):
+            return
         menu.clear()
         for title, class_name, process in self.system_scope_data['__all']:
             scope_string = get_scope_string(title, class_name, process)
@@ -147,6 +153,8 @@ class ScopeWidget(QtWidgets.QWidget):
 
     def _build_in_use_menu(self):
         menu = self.sender()
+        if not isinstance(menu, QtWidgets.QMenu):
+            return
         menu.clear()
         import a2runtime
 
@@ -159,7 +167,10 @@ class ScopeWidget(QtWidgets.QWidget):
             action.setData(scope)
 
     def _add_scope_from_action(self):
-        scope_string = self.sender().data()
+        action = self.sender()
+        if not isinstance(action, QtGui.QAction):
+            return
+        scope_string = action.data()
         self.add_scope(scope_string)
 
     def pick_scope_info(self):
@@ -198,9 +209,7 @@ class ScopeWidget(QtWidgets.QWidget):
 
         self.input_fields = OrderedDict()
         i = 0
-        for name, ctrl in zip(
-            SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]
-        ):
+        for name, ctrl in zip(SCOPE_ITEMS, [self.ui.scope_title, self.ui.scope_class, self.ui.scope_exe]):
             self.input_fields[name] = ctrl
             ctrl.textChanged.connect(self._scope_text_changed.emit)
             ctrl.menu_called.connect(partial(self.build_button_field_menu, i))
@@ -219,9 +228,7 @@ class ScopeWidget(QtWidgets.QWidget):
         self.ui.cfg_scope.changed.connect(self.scope_update)
 
         self.context_menu = QtWidgets.QMenu(self)
-        self.context_menu.addAction(
-            icons.delete, 'Delete scope item', self.ui.cfg_scope.remove_selected
-        )
+        self.context_menu.addAction(icons.delete, 'Delete scope item', self.ui.cfg_scope.remove_selected)
         self.ui.cfg_scope.set_context_menu(self.context_menu)
 
         self._scope_mode_changed.connect(self.on_scope_mode_change)
@@ -252,7 +259,10 @@ class ScopeWidget(QtWidgets.QWidget):
         menu.popup(QtGui.QCursor.pos())
 
     def _goto_help(self):
-        a2util.surf_to(self.help_map[self.sender().text()])
+        action = self.sender()
+        if self.help_map is None or not isinstance(action, QtGui.QAction):
+            return
+        a2util.surf_to(self.help_map[action.text()])
 
     def _on_selection_clear(self):
         self.blockSignals(True)
