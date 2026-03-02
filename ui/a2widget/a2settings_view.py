@@ -6,7 +6,7 @@ import sys
 import time
 import datetime
 
-from a2qt import QtGui, QtCore, QtWidgets
+from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2ahk
 import a2uic
@@ -56,7 +56,7 @@ class A2Settings(QtWidgets.QWidget):
         self.ui.a2hotkey.hotkey_changed.connect(self.set_a2_hotkey)
 
         self.ui.remember_selection.setChecked(self.a2.db.get('remember_last') or False)
-        self.ui.remember_selection.clicked[bool].connect(self.remember_last_toggle)
+        self.ui.remember_selection.clicked.connect(self.remember_last_toggle)
 
         self.add_source_menu = QtWidgets.QMenu(self)
         self.ui.a2add_button.clicked.connect(self.build_add_source_menu)
@@ -112,9 +112,9 @@ class A2Settings(QtWidgets.QWidget):
         dialog.accepted.connect(self.reload_requested.emit)
         dialog.show()
 
-    def on_tab_changed(self, tab_index):
+    def on_tab_changed(self, tab_index: int):
         widget = self.ui.a2settings_tab.widget(tab_index)
-        if widget.children():
+        if widget is None or widget.children():
             return
 
         build_func_name = f'_build_{widget.objectName()}'
@@ -314,7 +314,8 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
         layout.addWidget(self.check)
 
         self.alert_label = QtWidgets.QLabel('')
-        icon_size = self.a2.win.style.get('icon_size_small')
+        if self.a2.win is not None:
+            icon_size = self.a2.win.style.get('icon_size_small')
         self.alert_label.setPixmap(Icons.help.pixmap(icon_size))
         self.alert_label.hide()
         layout.addWidget(self.alert_label)
@@ -355,7 +356,7 @@ class _IntegrationCheckBox(QtWidgets.QWidget):
 
     def _set_path(self, path, tooltip):
         checked = False
-        if path:
+        if path and self.path_name is not None:
             import a2path
 
             target_path = getattr(self.a2.paths, self.path_name)
@@ -391,7 +392,7 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
         self.ui.setupUi(self.tab_widget)
 
         self.ui.dev_box.setChecked(self.a2.dev_mode)
-        self.ui.dev_box.clicked[bool].connect(self.dev_mode_toggle)
+        self.ui.dev_box.clicked.connect(self.dev_mode_toggle)
         self.ui.dev_widget.setVisible(self.a2.dev_mode)
         self.ui.code_editor.file_types = 'Executables (*.exe)'
         self.ui.code_editor.writable = False
@@ -416,15 +417,17 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
 
         ahk_vars = a2ahk.get_variables(self.a2.paths.user_cfg)
         self.ui.startup_tooltips.setChecked(not ahk_vars['no_startup_tooltip'])
-        self.ui.startup_tooltips.clicked[bool].connect(self.set_startup_tooltips)
+        self.ui.startup_tooltips.clicked.connect(self.set_startup_tooltips)
         self.ui.auto_reload.setChecked(ahk_vars['auto_reload'])
-        self.ui.auto_reload.clicked[bool].connect(self.set_auto_reload)
+        self.ui.auto_reload.clicked.connect(self.set_auto_reload)
 
         ProxyUiHandler(self.ui, self.a2)
 
         self._setup_hotkey_dialog()
 
     def _setup_hotkey_dialog(self):
+        if self.ui is None:
+            return
         current_style = a2hotkey.get_current_style()
         index = 0
         for i, (style, label) in enumerate(a2hotkey.iter_dialog_styles()):
@@ -463,7 +466,8 @@ class AdvancedSettingsUiHandler(QtCore.QObject):
     def dev_mode_toggle(self, state):
         self.a2.set_dev_mode(state)
         self._set_cfg_variable('dev_mode', state)
-        self.ui.dev_widget.setVisible(state)
+        if self.ui is not None:
+            self.ui.dev_widget.setVisible(state)
         self.main.check_main_menu_bar()
 
 
@@ -485,7 +489,7 @@ class ConsoleUiHandler(QtWidgets.QListWidget):
         layout = QtWidgets.QVBoxLayout(self.tab_widget)
         self.setObjectName('a2console')
         layout.addWidget(self)
-        self.setVerticalScrollMode(QtWidgets.QListWidget.ScrollPerPixel)
+        self.setVerticalScrollMode(QtWidgets.QListWidget.ScrollMode.ScrollPerPixel)
         self.setMouseTracking(True)
         self.itemEntered.connect(self._on_item_entered)
 
@@ -536,14 +540,14 @@ class ConsoleUiHandler(QtWidgets.QListWidget):
                 line_end = block.find('\n')
                 try:
                     data = {'t': int(float(block[5:line_end].split(maxsplit=1)[0]))}
-                    item.setData(QtCore.Qt.UserRole, data)
+                    item.setData(QtCore.Qt.ItemDataRole.UserRole, data)
                     self._show_time_abs(item)
                 except ValueError:
                     continue
             self.addItem(item)
 
     def _show_time_abs(self, item: QtWidgets.QListWidgetItem):
-        data = item.data(QtCore.Qt.UserRole)
+        data = item.data(QtCore.Qt.ItemDataRole.UserRole)
         if data is None:
             return
 
@@ -553,7 +557,7 @@ class ConsoleUiHandler(QtWidgets.QListWidget):
         item.setText(f'@{date}:{text[line_end:]}')
 
     def _show_time_rel(self, item: QtWidgets.QListWidgetItem):
-        data = item.data(QtCore.Qt.UserRole)
+        data = item.data(QtCore.Qt.ItemDataRole.UserRole)
         if data is None:
             return
         text = item.text()

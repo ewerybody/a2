@@ -1,4 +1,4 @@
-from a2qt import QtWidgets
+from PySide6 import QtWidgets
 from a2widget import a2text_field
 
 
