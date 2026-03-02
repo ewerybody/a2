@@ -56,7 +56,7 @@ class A2Dialog {
      * Window title
      * @param {(Object)} opts
      * Options: {w, pad, flags, dark, font: {face, size}}
-    */
+     */
     __New(title, opts := {}) {
         _a2dlg_init()
         this._w := opts.HasProp("w") ? opts.w : 480
@@ -91,7 +91,7 @@ class A2Dialog {
      * @param {(String)} icon_path
      * Optional icon file path; supports "file,N" registry format
      * @returns  this (chainable)
-    */
+     */
     header(text, icon_path := "") {
         pad := this._pad
         y := this._y
@@ -119,7 +119,7 @@ class A2Dialog {
     /**
      * Add a thin 2px horizontal separator line followed by a small gap.
      * @returns  this (chainable)
-    */
+     */
     sep() {
         this.gui.SetFont("s1")
         this.gui.AddText("x0 y" this._y " w" this._w " h2 Background" this.c.sep)
@@ -139,7 +139,7 @@ class A2Dialog {
      * @param {(String)} subtext
      * Optional muted line below the label
      * @returns  {icon: ctrl, text: ctrl} — either can be updated later
-    */
+     */
     row(icon, color, text, subtext := "") {
         pad := this._pad
         y := this._y
@@ -165,7 +165,7 @@ class A2Dialog {
      * @param {(String)} text
      * Initial label text
      * @returns  {icon: ctrl, text: ctrl}
-    */
+     */
     row_pending(icon := "…", text := "") {
         pad := this._pad
         y := this._y
@@ -183,7 +183,7 @@ class A2Dialog {
      * @param {(String)} text
      * Heading text
      * @returns  Text ctrl
-    */
+     */
     heading(text) {
         pad := this._pad
         this.gui.SetFont("s" (this.font_size + 1) " w700 c" this.c.text, this.font_face)
@@ -200,7 +200,7 @@ class A2Dialog {
      * @param {(String)} ahk_opts
      * Extra AHK control option string appended to the AddText call
      * @returns  Text ctrl
-    */
+     */
     text(content, ahk_opts := "") {
         pad := this._pad
         opts := ahk_opts ? " " ahk_opts : ""
@@ -221,7 +221,7 @@ class A2Dialog {
      * @param {(String)} text
      * Caption text displayed to the right of the picture
      * @returns  {pic: ctrl, text: ctrl} — pic is "" if the file is missing
-    */
+     */
     pic_row(file, opt, text) {
         pad := this._pad
         y := this._y
@@ -230,10 +230,10 @@ class A2Dialog {
             try pic_ctrl := this.gui.AddPicture("x" pad " y" y " w22 h22 " opt, file)
         this.gui.SetFont("s" (this.font_size - 1) " c" this.c.sub, this.font_face)
         txt_ctrl := this.gui.AddText("x" (pad + 28) " y" (y + 4)
-            " w" (this._w - pad * 2 - 28) " Wrap", text)
+        " w" (this._w - pad * 2 - 28) " Wrap", text)
         txt_ctrl.GetPos(, , , &h)
         this._y += Max(28, h + 8)
-        return {pic: pic_ctrl, text: txt_ctrl}
+        return { pic: pic_ctrl, text: txt_ctrl }
     }
 
     /**
@@ -246,7 +246,7 @@ class A2Dialog {
      * @param {(Integer)} gap
      * Spacing between pictures in pixels (default 8)
      * @returns  Count of pictures actually shown
-    */
+     */
     pic_strip(items, size := 32, gap := 8) {
         pad := this._pad
         slot := size + gap
@@ -254,9 +254,9 @@ class A2Dialog {
         loop n {
             item := items[A_Index]
             file_path := (item is String) ? item : item.file
-            opt  := (item is String || !item.HasProp("opt")) ? "" : item.opt
+            opt := (item is String || !item.HasProp("opt")) ? "" : item.opt
             try this.gui.AddPicture("x" (pad + (A_Index - 1) * slot) " y" this._y
-                " w" size " h" size " " opt, file_path)
+            " w" size " h" size " " opt, file_path)
         }
         this._y += size + 4
         return n
@@ -268,7 +268,7 @@ class A2Dialog {
      * @param {(Integer)} px
      * Pixels to advance (default 8)
      * @returns  this (chainable)
-    */
+     */
     space(px := 8) {
         this._y += px
         return this
@@ -291,7 +291,7 @@ class A2Dialog {
      * @param {(String)} ahk_opts
      * Extra AHK button option string (e.g. "x10 y20 w80 h28")
      * @returns  Button ctrl
-    */
+     */
     btn(label, bg, fg, ahk_opts := "") {
         this.gui.SetFont("s" this.font_size " w600", this.font_face)
         ctrl := this.gui.AddButton(ahk_opts, label)
@@ -312,7 +312,7 @@ class A2Dialog {
      * @param {(Integer)} bw
      * Per-button width; 0 = auto-distribute across full content width
      * @returns  Array of button controls in spec order
-    */
+     */
     btn_row(specs, h := 30, gap := 8, bw := 0) {
         this.gui.SetFont("s" this.font_size " w600", this.font_face)
         pad := this._pad
@@ -349,7 +349,7 @@ class A2Dialog {
      * @param {(Integer)} gap
      * Spacing between buttons in pixels (default 8)
      * @returns  Array of button controls in left => right order
-    */
+     */
     btn_row_right(specs, bw := 0, h := 28, gap := 8) {
         this.gui.SetFont("s" this.font_size " w600", this.font_face)
         pad := this._pad
@@ -365,7 +365,7 @@ class A2Dialog {
                 ctrl := this.gui.AddButton("x0 y0 w" w " h" h extra, spec.label)
             } else {
                 ctrl := this.gui.AddButton("x0 y0 h" h extra, spec.label)
-                ctrl.GetPos(,, &w,)
+                ctrl.GetPos(, , &w,)
             }
             a2dlg_make_button(ctrl, spec.bg, spec.fg)
             this._btn_hwnds.Push(ctrl.Hwnd)
@@ -399,7 +399,7 @@ class A2Dialog {
      * @param {(Integer)} extra_h
      * Extra pixels of height to reserve below current content (default 0)
      * @returns  this (chainable)
-    */
+     */
     show(extra_h := 0) {
         this.gui.Show("w" this._w " h" (this._y + extra_h) " Center")
         a2dlg_apply_dark_title_bar(this.hwnd, this.dark)
@@ -412,7 +412,7 @@ class A2Dialog {
      * @param {(Integer)} extra_h
      * Extra pixels of height to reserve (default 0)
      * @returns  this (chainable)
-    */
+     */
     resize(extra_h := 0) {
         this.gui.Show("w" this._w " h" (this._y + extra_h) " NA")
         return this
@@ -424,7 +424,7 @@ class A2Dialog {
      * @param {(String|Integer)} path
      * File path to an ICO/EXE/DLL, or an HICON handle returned by icon_extract()
      * @returns  this (chainable)
-    */
+     */
     set_icon(path) {
         if FileExist(path)
             hIcon := DllCall("LoadImage", "Ptr", 0, "Str", path, "UInt", 1, "Int", 0, "Int", 0, "UInt", 0x10, "Ptr")
@@ -441,7 +441,7 @@ class A2Dialog {
      * @param {(Func)} fn
      * Callback to invoke on Escape; defaults to ExitApp()
      * @returns  this (chainable)
-    */
+     */
     esc_to_close(fn := "") {
         if !fn
             fn := (*) => ExitApp()
@@ -457,7 +457,7 @@ class A2Dialog {
      * @param {(Func)} fn
      * Callback receiving the Gui object
      * @returns  this (chainable)
-    */
+     */
     on_close(fn) {
         this.gui.OnEvent("Close", fn)
         return this
@@ -469,7 +469,7 @@ class A2Dialog {
      * @param {(Func)} fn
      * Callback receiving the Gui object
      * @returns  this (chainable)
-    */
+     */
     on_escape(fn) {
         this.gui.OnEvent("Escape", fn)
         return this
@@ -478,7 +478,7 @@ class A2Dialog {
     /**
      * Destroy the window and clean up all registered button HWNDs.
      * Safe to call more than once.
-    */
+     */
     destroy() {
         if this._destroyed
             return
@@ -504,7 +504,7 @@ class A2Dialog {
  * Background color, 6-digit RRGGBB hex
  * @param {(String)} fg
  * Foreground (text) color, 6-digit RRGGBB hex
-*/
+ */
 a2dlg_make_button(ctrl, bg, fg) {
     _a2dlg_init()
     global _flat_buttons
@@ -522,7 +522,7 @@ a2dlg_make_button(ctrl, bg, fg) {
 /**
  * True when Windows "Apps use dark mode" is on.
  * @returns  true / false
-*/
+ */
 a2dlg_is_dark() {
     try return !RegRead("HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
         "AppsUseLightTheme")
@@ -535,7 +535,7 @@ a2dlg_is_dark() {
  * @param {(Boolean)} dark
  * True for the dark palette, false for light
  * @returns  Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
-*/
+ */
 a2dlg_colors(dark) {
     if (dark)
         return {
@@ -569,7 +569,7 @@ a2dlg_colors(dark) {
  * Window handle
  * @param {(Boolean)} dark
  * True for dark title bar, false for light
-*/
+ */
 a2dlg_apply_dark_title_bar(hwnd, dark) {
     val := dark ? 1 : 0
     try DllCall("dwmapi\DwmSetWindowAttribute",
@@ -603,7 +603,7 @@ _a2dlg_init() {
  *   0  CtlType (UInt)   4  CtlID   8  itemID   12 itemAction
  *  16  itemState (UInt) 20 (pad)  24  hwndItem (Ptr)   32  hDC (Ptr)
  *  40  rcItem.left  44  .top  48  .right  52  .bottom  (all Int)
-*/
+ */
 _flat_btn_on_draw(wParam, lParam, *) {
     global _flat_buttons
     if (NumGet(lParam, 0, "UInt") != 4)     ; CtlType must be ODT_BUTTON = 4
@@ -657,7 +657,7 @@ _flat_btn_on_draw(wParam, lParam, *) {
  *
  * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Integer COLORREF value
-*/
+ */
 _flat_btn_gdi(hex) {
     r := Integer("0x" SubStr(hex, 1, 2))
     g := Integer("0x" SubStr(hex, 3, 2))
@@ -670,7 +670,7 @@ _flat_btn_gdi(hex) {
  *
  * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Darkened 6-digit RRGGBB hex string
-*/
+ */
 _flat_btn_dim(hex) {
     r := Max(0, Integer("0x" SubStr(hex, 1, 2)) - 30)
     g := Max(0, Integer("0x" SubStr(hex, 3, 2)) - 30)
@@ -683,7 +683,7 @@ _flat_btn_dim(hex) {
  *
  * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Lightened 6-digit RRGGBB hex string
-*/
+ */
 _flat_btn_lit(hex) {
     r := Min(255, Integer("0x" SubStr(hex, 1, 2)) + 15)
     g := Min(255, Integer("0x" SubStr(hex, 3, 2)) + 15)
@@ -694,7 +694,7 @@ _flat_btn_lit(hex) {
 /**
  * WM_MOUSEMOVE — fires on the button control; starts leave-tracking if not already active.
  * TRACKMOUSEEVENT layout (x64): cbSize DWORD@0, dwFlags DWORD@4, hwndTrack Ptr@8, dwHoverTime DWORD@16
-*/
+ */
 _flat_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
     global _flat_buttons, _flat_btn_hover
     if !_flat_buttons.Has(hwnd) || (_flat_btn_hover = hwnd)
@@ -711,7 +711,7 @@ _flat_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
 
 /**
  * WM_MOUSELEAVE — fires on the button that called TrackMouseEvent when the cursor leaves.
-*/
+ */
 _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
     global _flat_buttons, _flat_btn_hover
     if (_flat_btn_hover != hwnd)
@@ -747,7 +747,7 @@ _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
  * @param {(String)} msg
  * Message text (wraps automatically)
  * @returns  Text ctrl for the message body
-*/
+ */
 _a2dlg_icon_msg(d, icon_glyph, icon_color, msg) {
     c := d.c
     inner_w := d._w - d._pad * 2
@@ -775,7 +775,7 @@ _a2dlg_icon_msg(d, icon_glyph, icon_color, msg) {
  * Window title (default "a2 Information")
  * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
-*/
+ */
 a2dlg_info(msg, title := "a2 Information", dark := unset) {
     opts := { w: 380, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     if IsSet(dark)
@@ -786,7 +786,7 @@ a2dlg_info(msg, title := "a2 Information", dark := unset) {
     _a2dlg_icon_msg(d, "ℹ️", c.ok, msg)
     d.space(6)
     d.sep()
-    buttons := d.btn_row_right([{ label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" }])
+    buttons := d.btn_row_right([{ label: "OK", bg: c.ok, fg: c.acc_fg, w: 100, opts: "Default" }])
     buttons[1].OnEvent("Click", (*) => d.destroy())
     d.on_close((*) => d.destroy())
     d.on_escape((*) => d.destroy())
@@ -807,7 +807,7 @@ a2dlg_info(msg, title := "a2 Information", dark := unset) {
  * Optional selectable detail text shown in a read-only code box
  * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
-*/
+ */
 a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := unset) {
     opts := { w: 420, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     if IsSet(dark)
@@ -829,7 +829,7 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := unset) {
     }
     d.space(6)
     d.sep()
-    buttons := d.btn_row_right([{ label: "OK", bg: c.err, fg: "F8F8F8", opts: "Default" }])
+    buttons := d.btn_row_right([{ label: "OK", bg: c.err, fg: "F8F8F8", w: 100, opts: "Default" }])
     buttons[1].OnEvent("Click", (*) => d.destroy())
     d.on_close((*) => d.destroy())
     d.on_escape((*) => d.destroy())
@@ -850,7 +850,7 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := unset) {
  * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
  * @returns  true (Yes) / false (No or closed)
-*/
+ */
 a2dlg_yes_no(msg, title := "a2", dark := unset) {
     opts := { w: 360, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     if IsSet(dark)
@@ -861,8 +861,10 @@ a2dlg_yes_no(msg, title := "a2", dark := unset) {
     _a2dlg_icon_msg(d, "❓", c.warn, msg)
     d.space(6)
     d.sep()
-    buttons := d.btn_row_right([{ label: "Yes", bg: c.ok, fg: c.acc_fg, opts: "Default" }, { label: "No", bg: c.btn_bg,
-        fg: c.text }])
+    buttons := d.btn_row_right([
+        { label: "Yes", bg: c.ok, fg: c.acc_fg, opts: "Default" },
+        { label: "No", bg: c.btn_bg, fg: c.text }
+    ], bw := 80 )
     result := false
     buttons[1].OnEvent("Click", (*) => (result := true, d.destroy()))
     buttons[2].OnEvent("Click", (*) => d.destroy())
@@ -886,7 +888,7 @@ a2dlg_yes_no(msg, title := "a2", dark := unset) {
  * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
  * @returns  true (OK) / false (Cancel or closed)
-*/
+ */
 a2dlg_ok_cancel(msg, title := "a2", dark := unset) {
     opts := { w: 360, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     if IsSet(dark)
@@ -897,8 +899,10 @@ a2dlg_ok_cancel(msg, title := "a2", dark := unset) {
     _a2dlg_icon_msg(d, "❓", c.warn, msg)
     d.space(6)
     d.sep()
-    buttons := d.btn_row_right([{ label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" }, { label: "Cancel", bg: c.btn_bg,
-        fg: c.text }])
+    buttons := d.btn_row_right([
+        { label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" },
+        { label: "Cancel", bg: c.btn_bg, fg: c.text }
+    ], bw := 80)
     result := false
     buttons[1].OnEvent("Click", (*) => (result := true, d.destroy()))
     buttons[2].OnEvent("Click", (*) => d.destroy())
@@ -923,7 +927,7 @@ a2dlg_ok_cancel(msg, title := "a2", dark := unset) {
  * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
  * @returns  Entered string, or "" if cancelled
-*/
+ */
 a2dlg_input(msg, title := "a2 Input", default_text := "", dark := unset) {
     opts := { w: 380, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     if IsSet(dark)
@@ -943,8 +947,10 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := unset) {
     d._y += 32
     d.space(6)
     d.sep()
-    buttons := d.btn_row_right([{ label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" }, { label: "Cancel", bg: c.btn_bg,
-        fg: c.text }])
+    buttons := d.btn_row_right([
+        { label: "OK", bg: c.ok, fg: c.acc_fg, opts: "Default" },
+        { label: "Cancel", bg: c.btn_bg, fg: c.text }
+    ], bw := 80)
     value := default_text       ; preset; updated on OK, stays default_text on Cancel/close
     cancelled := false
     buttons[1].OnEvent("Click", (*) => (value := edit.Value, d.destroy()))
