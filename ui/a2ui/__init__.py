@@ -93,8 +93,6 @@ class A2Window(QtWidgets.QMainWindow):
 
         log.info('A2Window initialized! (%.3fs)', time.process_time())
 
-        QtCore.QTimer(self).singleShot(5000, self.a2.db_check)
-
     def _setup_ui(self):
         from a2ui import a2design_ui
 

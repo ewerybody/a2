@@ -284,10 +284,6 @@ class A2Obj:
     def is_git(self):
         return os.path.isdir(self.paths.git)
 
-    def db_check(self):
-        """Check every db table for bad data."""
-        for table in self.db.tables():
-            self.db.check(table)
 
 def get() -> A2Obj:
     """Pass the core A2Obj instance."""
