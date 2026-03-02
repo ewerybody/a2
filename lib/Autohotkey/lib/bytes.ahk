@@ -1,35 +1,48 @@
-bytes_get_integer(ByRef pSource, pOffset=0, pIsSigned=false, pSize=4)
-{
-    ; pSource is a string (buffer) whose memory area contains a raw/binary integer at pOffset.
-    ; The caller should pass true for pSigned to interpret the result as signed vs. unsigned.
-    ; pSize is the size of PSource's integer in bytes (e.g. 4 bytes for a DWORD or Int).
-    ; pSource must be ByRef to avoid corruption during the formal-to-actual copying process
-    ; (since pSource might contain valid data beyond its first binary zero).
-
-    Loop %pSize% ; Build the integer by adding up its bytes.
-        result += *(&pSource + pOffset + A_Index-1) << 8*(A_Index-1)
+/**
+ * Read a little-endian integer from a Buffer at a given byte offset.
+ *
+ * @sample
+ *     buf := Buffer(4, 0)
+ *     NumPut("UInt", 0x12345678, buf, 0)
+ *     val := bytes_get_integer(buf, 0, false, 4)  ; val == 0x12345678
+ *
+ * @param {(Buffer)} pSource
+ * Buffer object containing the raw binary data.
+ * @param {(Integer)} pOffset
+ * Byte offset within pSource where the integer starts. Defaults to 0.
+ * @param {(Integer)} pIsSigned
+ * Pass true to interpret the result as a signed integer. Defaults to false.
+ * @param {(Integer)} pSize
+ * Number of bytes to read (e.g. 2 for a Word/Short, 4 for a DWord/Int). Defaults to 4.
+ * @returns {(Integer)}
+ */
+bytes_get_integer(pSource, pOffset := 0, pIsSigned := false, pSize := 4) {
+    result := 0
+    loop pSize ; Accumulate bytes, little-endian.
+        result += NumGet(pSource, pOffset + A_Index - 1, "UChar") << 8 * (A_Index - 1)
+    ; Return as-is if unsigned, larger than 32-bit, or high bit is clear (positive either way).
     if (!pIsSigned OR pSize > 4 OR result < 0x80000000)
-        return result ; Signed vs. unsigned doesn't matter in these cases.
-    ; Otherwise, convert the value (now known to be 32-bit) to its signed counterpart:
+        return result
+    ; High bit is set on a 32-bit signed value — convert to its negative counterpart.
     return -(0xFFFFFFFF - result + 1)
 }
 
 /**
- * Helper Function
- *     Formats a file size in bytes to a human-readable size string
+ * Format a file size in bytes to human-readable size string.
  *
  * @sample
- *     x := bytest_format(31236)
+ *     x := bytes_format(31236)
  *
- * @param   int     Bytes      Number of bytes to be formated
- * @param   int     Decimals   Number of decimals to be shown
- * @param   int     Prefixes   List of which the best matching prefix will be used
- * @return  string
-*/
-bytes_format(Bytes, Decimals = 1, Prefixes = "B,KB,MB,GB,TB,PB,EB,ZB,YB")
-{
-    StringSplit, Prefix, Prefixes, `,
-    Loop, Parse, Prefixes, `,
-        if (Bytes < e := 1024 ** A_Index)
-        return % Round(Bytes / (e / 1024), decimals) Prefix%A_Index%
+ * @param {(Integer)} bytes
+ * Number of bytes to be formatted.
+ * @param {(Integer)} decimals
+ * Number of decimals to be shown.
+ * @returns {(String)}
+ */
+bytes_format(bytes, decimals := 1) {
+    suffixes := "B,KB,MB,GB,TB,PB,EB,ZB,YB"
+    loop Parse, suffixes, "," {
+        if (bytes < e := 1024 ** A_Index)
+            return Round(bytes / (e / 1024), decimals) . A_LoopField
+    }
 }
