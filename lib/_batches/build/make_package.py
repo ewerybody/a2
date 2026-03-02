@@ -103,6 +103,11 @@ def update_readme():
     print('Checking Package versions ...')
     # get versions in readme:
     readme_path = os.path.join(Paths.a2, 'README.md')
+    if not os.path.isfile(readme_path):
+        raise RuntimeError('No "README.md" file!?!?!')
+    if not os.path.getsize(readme_path):
+        raise RuntimeError('"README.md" is empty?!!?!')
+
     lines = []
     linebreak = ''
     with open(readme_path, encoding='utf8') as fileobj:
@@ -125,15 +130,17 @@ def update_readme():
     changed = False
     for i, line in enumerate(lines):
         for name in versions:
-            if line.startswith(f'* {name}: '):
-                set_version = line.split(':')[1].strip()
-                if set_version != versions[name]:
-                    lines[i] = f'* {name}: {versions[name]}{linebreak}'
-                    changed = True
+            if not line.startswith(f'* {name}: '):
+                continue
+            set_version = line.split(':')[1].strip()
+            if set_version == versions[name]:
+                continue
+            lines[i] = f'* {name}: {versions[name]}{linebreak}'
+            changed = True
 
     if changed:
         print(f'  Updating {readme_path}\n')
-        with open(readme_path, 'w') as file_obj:
+        with open(readme_path, 'w', encoding='utf8') as file_obj:
             file_obj.write(''.join(lines))
     else:
         print('  Versions unchanged!\n')
