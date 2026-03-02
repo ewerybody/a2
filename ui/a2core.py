@@ -182,7 +182,7 @@ class A2Obj:
             from urllib import request
 
             log.info('disabling proxy ...')
-            request.install_opener(None)
+            request.install_opener(None)  # ty:ignore[invalid-argument-type]
 
     @property
     def db(self):
