@@ -1,4 +1,7 @@
 #include <Class_SQliteDB>
+#include <a2dlg>
+#include <path>
+
 /**
  * a2 global object definition
  */
@@ -53,7 +56,7 @@ Class A2Core_Class {
 
         if (!FileExist(dll_path)) {
             msg := 'The "' sql_dll '" must exist here:`n' dll_path '!`n`nWhere is it?'
-            msgbox_error(msg, sql_dll ' missing?!')
+            a2dlg_error(msg, sql_dll ' missing?!')
             Return
         }
 
