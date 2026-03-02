@@ -225,3 +225,33 @@ class IsWebAddress {
             throw Error("Plain string should not be a web address")
     }
 }
+
+class StringCount {
+    count_occurrences() {
+        string := "Plain string should not be a web address"
+        result := string_count(string, " ")
+        expect := 7
+        if (result != expect)
+            throw Error('Expected: "' expect '" got: "' result '"')
+    }
+    count_no_occurrences() {
+        string := "Plain string should not be a web address"
+        result := string_count(string, "p", 1)
+        expect := 0
+        if (result != expect)
+            throw Error('Expected: "' expect '" got: "' result '"')
+    }
+    count_lines() {
+        string := "There once was a man from Peru`nWho dreamt he was eating his shoe`nHe woke with a fright`nIn the middle of the night`nTo find that his dream had come true."
+        result := string_count_lines(string)
+        expect := 5
+        if (result != expect)
+            throw Error('Expected: "' expect '" got: "' result '"')
+    }
+    count_lines_empty() {
+        result := string_count_lines("")
+        expect := 1
+        if (result != expect)
+            throw Error('Expected: "' expect '" got: "' result '"')
+    }
+}

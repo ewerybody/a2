@@ -234,3 +234,28 @@ string_random(length) {
     }
     return txt
 }
+
+/**
+ * Get number of occurrences in given string.
+ * @param {(String)} string
+ * Input string. "Haystack" so to say.
+ * @param {(String)} what_to_count
+ * String to count. "Needle" so to say.
+ * @returns {(Integer)}
+ * Number of found occurrences.
+ */
+string_count(string, what_to_count, case_sense := 0) {
+    StrReplace(string, what_to_count, what_to_count, case_sense, &count)
+    return count
+}
+
+/**
+ * Get number of lines in given string.
+ * @param {(String)} string
+ * Input string. "Haystack" so to say.
+  * @returns {(Integer)}
+ * Number of found lines. Will at least be 1 line.
+ */
+string_count_lines(string) {
+    return string_count(string, "`n") + 1
+}
