@@ -79,12 +79,12 @@ installer_dialog() {
     } else if (inst_ver) {
         ver_icon := "✔️"
         ver_color := c.ok
-        ver_text := "Upgrading a2 " inst_ver " → " new_ver " for " A_UserName
+        ver_text := "Upgrading a2 " inst_ver " => " new_ver " for " A_UserName
         ver_sub := ""
     } else {
         ver_icon := "✔️"
         ver_color := c.ok
-        ver_text := "Updating a2 → " new_ver " for " A_UserName
+        ver_text := "Updating a2 => " new_ver " for " A_UserName
         ver_sub := ""
     }
     d.row(ver_icon, ver_color, ver_text, ver_sub)
@@ -132,7 +132,7 @@ installer_dialog() {
     ; ---- Buttons ----
     d.space(10)
     d.sep()
-    btns := d.btn_row_right([{ label: "Cancel", bg: c.btn_bg, fg: c.text }, { label: "Install →", bg: c.ok, fg: c.acc_fg,
+    btns := d.btn_row_right([{ label: "Cancel", bg: c.btn_bg, fg: c.text }, { label: "Install =>", bg: c.ok, fg: c.acc_fg,
         opts: "Default" }])
     d.resize()
 
@@ -253,7 +253,7 @@ backup() {
     }
 
     DirCreate(backup_dir)
-    result := move_catched(A2DIR, backup_dir, backup_items)
+    result := move_atomic(A2DIR, backup_dir, backup_items)
     if result == ""
         return
 

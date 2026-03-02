@@ -1,4 +1,12 @@
-; Move a file or directory, tell true/false 1/0 if it worked.
+/**
+ * Move a file or directory safely.
+ * @param {(String)} from_path
+ * Source path to move from.
+ * @param {(String)} to_path
+ * Destination path to move to.
+ * @returns {(Boolean)}
+ * True if the move succeeded, false otherwise.
+ */
 move_secure(from_path, to_path) {
     attrs := FileExist(from_path)
     if (attrs == "")
@@ -23,8 +31,20 @@ move_secure(from_path, to_path) {
         return false
 }
 
-; Try moving a list of items. Rollback everything if it breaks. ; Return "" on success. Otherwise breaking source and target paths separated by linebreak
-move_catched(source_dir, target_dir, relative_paths) {
+/**
+ * Atomically move a list of relative paths from source to target directory.
+ * If any move fails, all previously completed moves are rolled back.
+ * @param {(String)} source_dir
+ * Source directory containing the items to move.
+ * @param {(String)} target_dir
+ * Target directory to move items into.
+ * @param {(Array)} relative_paths
+ * List of relative file/directory names to move.
+ * @returns {(String)}
+ * Empty string on full success. On failure, the blocking source and target
+ * paths separated by a newline.
+ */
+move_atomic(source_dir, target_dir, relative_paths) {
     done_items := []
     for i, rel_path in relative_paths
     {
@@ -35,7 +55,7 @@ move_catched(source_dir, target_dir, relative_paths) {
         else
         {
             ; msgbox_error("Could not move " rel_path " from/to:`n" source_dir "`n" target_dir)
-            rollback_result := move_catched(target_dir, source_dir, done_items)
+            rollback_result := move_atomic(target_dir, source_dir, done_items)
             return source "`n" target
         }
     }
