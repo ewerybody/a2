@@ -60,7 +60,7 @@ class A2Obj:
         self._modules_fetched = 0.0
         self._enabled = None
 
-        self.paths = Paths()
+        self.paths: Paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
         self.log = a2output.get_logwriter()
         self._db = None
@@ -338,16 +338,16 @@ class Paths:
         self.widgets = join(self.ui, 'a2widget')
         self.elements = join(self.ui, 'a2element')
 
-        self.lib = join(self.a2, 'lib')
-        self.defaults = join(self.lib, 'defaults')
-        self.a2_script = join(self.lib, 'a2.ahk')
-        self.a2_urls = join(self.lib, 'a2_urls.ahk')
-        self.a2_config = join(self.lib, 'a2_config.ahk')
-        self.autohotkey = join(self.lib, 'Autohotkey', 'Autohotkey.exe')
-        self.python = sys.executable
-        self.git = join(self.a2, '.git')
-        self.uninstaller = join(self.a2, 'Uninstall a2.exe')
-        self.package_cfg = join(self.a2, PACKAGE_CFG)
+        self.lib: str = join(self.a2, 'lib')
+        self.defaults: str = join(self.lib, 'defaults')
+        self.a2_script: str = join(self.lib, 'a2.ahk')
+        self.a2_urls: str = join(self.lib, 'a2_urls.ahk')
+        self.a2_config: str = join(self.lib, 'a2_config.ahk')
+        self.autohotkey: str = join(self.lib, 'Autohotkey', 'Autohotkey.exe')
+        self.python: str = sys.executable
+        self.git: str = join(self.a2, '.git')
+        self.uninstaller: str = join(self.a2, 'Uninstall a2.exe')
+        self.package_cfg: str = join(self.a2, PACKAGE_CFG)
 
         # get data dir from user include file in a2 root
         self.default_data = join(self.a2, 'data')
