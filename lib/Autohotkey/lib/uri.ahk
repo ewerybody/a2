@@ -17,29 +17,11 @@ uri_decode(uri) {
         uri := StrReplace(uri, "%" . match[0], Chr("0x" . match[0]))
     }
     Return uri
-
-    ; Pos := 1
-    ; While Pos := RegExMatch(uri, "i)(%[\da-f]{2})+", &Code, Pos)
-    ; {
-    ;     ; VarSetCapacity(Var, StrLen(Code) // 3, 0), Code := SubStr(Code,2)
-    ;     VarSetStrCapacity(&Var, StrLen(Code[1]) // 3)
-    ;     Loop Parse Code, "%"
-    ;         NumPut("0x" A_LoopField, Var, A_Index-1, "UChar")
-    ;     msgbox(Var)
-    ;     Decoded := StrGet(&Var, "UTF-8")
-    ;     uri := SubStr(uri, 1, Pos-1) . Decoded . SubStr(uri, Pos+StrLen(Code)+1)
-    ;     Pos += StrLen(Decoded)+1
-    ; }
-    ; Return uri
 }
 
 
 ; Turn special characters to percentage encoding.
 uri_encode(uri, RE:="[0-9A-Za-z]") {
-    ; VarSetCapacity(Var, StrPut(uri, "UTF-8"), 0)
-    ; VarSetStrCapacity(&Var, StrPut(uri, "UTF-8"))
-    ; StrPut(uri, Var, "UTF-8")
-
     var := Buffer(StrPut(uri, "UTF-8"))
     StrPut(uri, var, "UTF-8")
 
