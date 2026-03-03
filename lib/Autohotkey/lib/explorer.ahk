@@ -13,6 +13,8 @@ examples:
 Joshua A. Kinnison
 2011-04-27, 16:12
 */
+#Include <a2dlg>
+
 
 ; Get array of paths of selected items via Explorer window handle.
 explorer_get_selected(hwnd:="") {
@@ -28,7 +30,7 @@ explorer_get_path(hwnd:="") {
     pth := RegExReplace(window.LocationURL, "ftp://.*@", "ftp://")
     pth := StrReplace(pth, "file:///", "")
     pth := StrReplace(pth, "/", "\")
-    ; thanks to polyethene
+    ; thanks to PolyEthene
     Loop
     {
         ; find "%20" patterns. That's 2 hex digits after a %
@@ -58,7 +60,7 @@ explorer_get_all(hwnd:="") {
 
 ; Get Explorer window COM object from handle.
 explorer_get_window(hwnd:="") {
-    ; Thanks to jethrow for some pointers here!
+    ; Thanks to JeThrow for some pointers here!
     ; WinGet proc, processName, "ahk_id " hwnd := hwnd? hwnd:
     if not hwnd
         hwnd := WinExist("A")
@@ -84,8 +86,7 @@ explorer_get(hwnd:="",selection:=false) {
         return ErrorLevel := "ERROR"
 
     result := []
-    if (window=="desktop")
-    {
+    if (window=="desktop") {
         hwWindow := ControlGetHwnd("SysListView321", "ahk_class Progman")
         if !hwWindow ; #D mode
             hwWindow := ControlGetHwnd("SysListView321", "A")
@@ -97,16 +98,12 @@ explorer_get(hwnd:="",selection:=false) {
         ; ControlGet files, List, ( selection ? "Selected":"") "Col1",,%
         files := ControlGetItems(ctrl, "ahk_id " . hwWindow)
         base := SubStr(A_Desktop,0,1)=="\" ? SubStr(A_Desktop,1,-1) : A_Desktop
-        for item in files
-        ; Loop Parse, files, '`n', '`r'
-        {
+        for item in files {
             path := base "\" item
             if FileExist(path) ; ignore special icons like Computer (at least for now)
                 result.Push(path)
         }
-    }
-    else
-    {
+    } else {
         if selection
             collection := window.document.SelectedItems
         else
@@ -123,22 +120,20 @@ explorer_select(basename) {
     if !(window := explorer_get_window(""))
         return ErrorLevel := "ERROR"
 
-    basenames := []
+    base_names := []
     if IsObject(basename) {
         for name in basename
-            basenames.push(path_basename(name))
+            base_names.push(path_basename(name))
     } else {
-        basenames.push(path_basename(basename))
+        base_names.push(path_basename(basename))
     }
 
     file_found := 0
-    for item in window.document.Folder.Items
-    {
+    for item in window.document.Folder.Items {
         ; Cannot use item.name because of possibly hidden extensions.
         ; Yep. There is no explicit "item.name_WITH_ext" m(
         ; https://docs.microsoft.com/en-us/windows/win32/shell/folderitem#properties
-        if (string_is_in_array(path_basename(item.path), basenames))
-        {
+        if (string_is_in_array(path_basename(item.path), base_names)) {
             window.document.SelectItem(item, 1)
             file_found := 1
         } else {
@@ -151,8 +146,7 @@ explorer_select(basename) {
 ; Try and retry selecting a file for a couple times.
 explorer_try_select(basename, retries := 10, delay := 500) {
 
-    Loop retries
-    {
+    Loop retries {
         if explorer_select(basename)
             Return 1
         Sleep delay
@@ -175,7 +169,7 @@ explorer_show(pth) {
         cmd := '"' explorer_path '"'
     }
     else
-        msgbox_error("No such path to explorer to!`n " . pth)
+        a2dlg_error("No such path to explorer to!`n " . pth)
 
     Run cmd
 }
@@ -196,7 +190,7 @@ explorer_show(pth) {
 explorer_create_file_dialog(&file_name, dir_path, extension, file_label, title, subtitle := "", w := 420, h:= 140)
 {
     if (!dir_path) {
-        msgbox_error("No dir_path given!")
+        a2dlg_error("No dir_path given!")
         Return
     }
 
@@ -204,11 +198,11 @@ explorer_create_file_dialog(&file_name, dir_path, extension, file_label, title, 
     extension := StrLower(extension)
 
     msg := "Please enter a name for the new " file_label ":`n"
-    ibx := InputBox(msg . subtitle, title, "w420 h140", file_name)
-    if ibx.Result = "Cancel"
+    result := a2dlg_input(msg . subtitle, title, file_name)
+    if !result
         Return false
 
-    file_name := ibx.value
+    file_name := result
     file_path := __create_dialog_build_path(dir_path, file_name, extension)
     while (Trim(file_name) == "" OR FileExist(file_path)) {
         if FileExist(file_path)
@@ -216,11 +210,11 @@ explorer_create_file_dialog(&file_name, dir_path, extension, file_label, title, 
         else
             msg := "Please enter NON-EMPTY name for the new " file_label ":`n"
 
-        ibx := InputBox(msg . subtitle, title, "w420 h140", file_name)
-        if ibx.Result = "Cancel"
+        result := a2dlg_input(msg . subtitle, title, file_name)
+        if !result
             Return false
 
-        file_path := __create_dialog_build_path(dir_path, ibx.value, extension)
+        file_path := __create_dialog_build_path(dir_path, result, extension)
     }
     Return true
 }
@@ -228,8 +222,7 @@ explorer_create_file_dialog(&file_name, dir_path, extension, file_label, title, 
 __create_dialog_build_path(dir_path, file_name, extension)
 {
     this_ext := path_split_ext(file_name)[2]
-    if this_ext
-    {
+    if this_ext {
         this_ext := StrLower(this_ext)
         this_ext := Trim(string_prefix(this_ext, "."))
 
