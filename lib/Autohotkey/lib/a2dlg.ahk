@@ -3,7 +3,6 @@
  *
  * Low-level (function-based):
  *  a2dlg_make_button(ctrl, bg, fg)              — owner-drawn button with custom colors
- *  a2dlg_is_dark()                       — true when Windows dark mode is active
  *  a2dlg_colors(dark)                    — standard a2 color scheme object
  *  a2dlg_apply_dark_title_bar(hwnd, dark) — DWM dark/light title bar
  * High-level (A2Dialog class):
@@ -31,6 +30,8 @@
  *  Include this file once per script — it self-registers the WM_DRAWITEM handler.
  ***********************************************************************/
 #Include <string>
+#Include <windows>
+
 /**
  * A2Dialog — composable dialog builder
  */
@@ -63,7 +64,7 @@ class A2Dialog {
         this._pad := opts.HasProp("pad") ? opts.pad : 14
         flags := opts.HasProp("flags") ? opts.flags : "-MaximizeBox -MinimizeBox"
         this._y := this._pad
-        this.dark := opts.HasProp("dark") ? opts.dark : a2dlg_is_dark()
+        this.dark := opts.HasProp("dark") ? opts.dark : windows_is_dark()
         this.c := a2dlg_colors(this.dark)
         if opts.HasProp("font") {
             if opts.font.HasProp("face")
@@ -517,16 +518,6 @@ a2dlg_make_button(ctrl, bg, fg) {
     ; Synchronous full repaint — button never flashes with the default look
     DllCall("InvalidateRect", "Ptr", hwnd, "Ptr", 0, "Int", 1)
     DllCall("UpdateWindow", "Ptr", hwnd)
-}
-
-/**
- * True when Windows "Apps use dark mode" is on.
- * @returns  true / false
- */
-a2dlg_is_dark() {
-    try return !RegRead("HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
-        "AppsUseLightTheme")
-    return false
 }
 
 /**
