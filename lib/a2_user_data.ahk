@@ -31,17 +31,17 @@ a2_get_user_config(a2data) {
     Loop Read, config_path
     {
         parts := StrSplit(A_LoopReadLine, " ",,3)
-        varname := Trim(parts[1])
+        var_name := Trim(parts[1])
         op := Trim(parts[2])
         value := Trim(parts[3])
         _value := StrLower(value)
         if (op == ":=") {
             if (_value == "true")
-                a2cfg[varname] := true
+                a2cfg[var_name] := true
             else if (_value == "false")
-                a2cfg[varname] := false
+                a2cfg[var_name] := false
             else
-                a2cfg[varname] := string_unquote(value)
+                a2cfg[var_name] := string_unquote(value)
         }
     }
     Return a2cfg
