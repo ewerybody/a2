@@ -1,4 +1,4 @@
-from .hotkey_widget import DIALOG_CLASSES, DIALOG_DEFAULT
+from .hotkey_widget import DIALOG_CLASSES, DIALOG_DEFAULT, A2Hotkey
 from .hotkey_common import Vars
 NAME = 'hotkey'
 
