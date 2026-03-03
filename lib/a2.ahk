@@ -11,6 +11,7 @@ Persistent
 #include <a2log>
 #include <python>
 #include <explorer>
+#include <windows>
 
 #include a2_core.ahk
 #include a2_config.ahk
@@ -38,18 +39,11 @@ if a2.cfg.get("auto_reload", 1)
 OnExit(a2ui_exit)
 ; OnError("a2_on_runtime_exception")
 
-; Snippet from: https://github.com/kdalanon/ChatGPT-AutoHotkey-Utility
-; Class DarkMode {
-;     Static __New(Mode := 1) => ( ; Mode: Dark = 1, Default (Light) = 0
-;         DllCall(DllCall("GetProcAddress", "ptr", DllCall("GetModuleHandle", "str", "uxtheme", "ptr"), "ptr", 135, "ptr"), "int", mode),
-;         DllCall(DllCall("GetProcAddress", "ptr", DllCall("GetModuleHandle", "str", "uxtheme", "ptr"), "ptr", 136, "ptr"))
-;     )
-; }
 
-; Finally the user data includes. Happening in the end
-; so the top of this main script is executed before first Return.
-; #include "..\_ user_data_include"
-; Return ; -----------------------------------------------------------------------
+; TODO: make this depending on user-settings!
+if windows_is_dark()
+    windows_set_theme(mode := 1)
+
 
 a2ui(*) {
     a2tip("Calling a2 ui ...")
