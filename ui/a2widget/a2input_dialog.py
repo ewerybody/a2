@@ -22,7 +22,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
     def __init__(self, parent, title, msg='', ok_func=None):
         super(A2ConfirmDialog, self).__init__(parent)
         a2uic.check_module(a2input_dialog_ui)
-        self.ui = a2input_dialog_ui.Ui_A2InputDialog()
+        self.ui: a2input_dialog_ui.Ui_A2InputDialog = a2input_dialog_ui.Ui_A2InputDialog()
         self.ui.setupUi(self)
 
         self.setModal(True)
