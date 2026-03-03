@@ -89,17 +89,18 @@ icon_from_type(extension) {
  *
  * @param {(String)} path
  * Registry icon path, e.g. "C:\Windows\System32\shell32.dll,2"
- * @returns  Object {file, opt} — opt is "" for paths without an index
+ * @returns  Object {file, opt, idx} — opt is "" for paths without an index
 */
 icon_path_split(path) {
     if !InStr(path, ",")
-        return {file: path, opt: ""}
+        return {file: path, opt: "", idx: -1}
     parts := StrSplit(path, ",", , 2)
     try n := Integer(parts[2])
     if !IsSet(n)
-        return {file: parts[1], opt: ""}
+        return {file: parts[1], opt: "", idx: -1}
     ; Registry is 0-based; AHK Icon1 = first icon. Negative resource IDs are the same.
-    return {file: parts[1], opt: "Icon" (n >= 0 ? n + 1 : n)}
+    index := n >= 0 ? n + 1 : n
+    return {file: parts[1], opt: "Icon" index, idx: index}
 }
 
 /**
