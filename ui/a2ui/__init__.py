@@ -8,6 +8,7 @@ from functools import partial
 
 import a2uic
 import a2dev
+import a2dev.ui
 import a2core
 import a2util
 import a2mod
@@ -67,7 +68,7 @@ class A2Window(QtWidgets.QMainWindow):
             widget = QtWidgets.QWidget(self)
             layout = QtWidgets.QVBoxLayout(widget)
             label = QtWidgets.QLabel()
-            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             label.setPixmap(Icons.a2tinted.pixmap(256))
             layout.addWidget(label)
             self.setCentralWidget(widget)
@@ -168,7 +169,7 @@ class A2Window(QtWidgets.QMainWindow):
         self.ui.actionCreate_New_Element.setIcon(Icons.folder_add)
         self.ui.actionBuild_A2_Package.triggered.connect(a2dev.build_package)
         self.ui.actionSet_a2_Version.triggered.connect(
-            partial(a2dev.call_version_bump_dialog, self)
+            partial(a2dev.ui.call_version_bump_dialog, self)
         )
 
         self.ui.actionUnload_a2_Runtime.triggered.connect(self.shut_down_runtime)
@@ -224,13 +225,13 @@ class A2Window(QtWidgets.QMainWindow):
         scroll_area = self.module_view.ui.a2scroll_area
 
         for keys, parent, func in (
-            (Qt.Key_Escape, self, self.escape),
+            (Qt.Key.Key_Escape, self, self.escape),
             ('Ctrl+Enter', self, self.edit_submit),
             ('Ctrl+Return', self, self.edit_submit),
             ('Ctrl+S', self, self.edit_submit),
-            (Qt.Key_Home, scroll_area, self.scroll_to_start),
-            (Qt.Key_End, scroll_area, self.scroll_to_end),
-            (Qt.Key_F1, self, self.module_view.help),
+            (Qt.Key.Key_Home, scroll_area, self.scroll_to_start),
+            (Qt.Key.Key_End, scroll_area, self.scroll_to_end),
+            (Qt.Key.Key_F1, self, self.module_view.help),
         ):
             shortcut = QtGui.QShortcut(parent)
             shortcut.setKey(QtGui.QKeySequence(keys))
@@ -365,11 +366,11 @@ class A2Window(QtWidgets.QMainWindow):
         # restore the window from minimized state
         state = self.windowState()
         try:
-            if state == QtCore.Qt.WindowMinimized:
-                self.setWindowState(QtCore.Qt.WindowActive)
+            if state == QtCore.Qt.WindowState.WindowMinimized:
+                self.setWindowState(QtCore.Qt.WindowState.WindowActive)
             elif state not in QtCore.Qt.WindowState:
-                self.setWindowState(QtCore.Qt.WindowActive)
-        except TypeError as error:
+                self.setWindowState(QtCore.Qt.WindowState.WindowActive)
+        except TypeError:
             if QtCore.__version_info__ < (6, 4):
                 raise TypeError(
                     f'Update PySide! (yours: {QtCore.__version__}, need: 6.4)'
@@ -399,7 +400,7 @@ class A2Window(QtWidgets.QMainWindow):
                 log.debug('Exiting Module edit mode!')
             self.module_view.draw_mod()
         else:
-            log.info('Exiting a2 Ui! okithxbye')
+            log.info('Exiting a2 Ui! OkiThxBye')
             self.close()
 
     def explore_mod(self):
@@ -415,25 +416,27 @@ class A2Window(QtWidgets.QMainWindow):
         a2util.explore(self.a2.paths.data)
 
     def closeEvent(self, event):
-        win_geom_str = self.saveGeometry().toBase64().data().decode()
-        self.a2.db.set(
-            'windowprefs',
-            {'splitter': self.ui.splitter.sizes(), 'geometry': win_geom_str},
-        )
+        win_geom_bytes = self.saveGeometry().toBase64().data()
+        if isinstance(win_geom_bytes, bytes):
+            win_geom_str = win_geom_bytes.decode()
+            self.a2.db.set(
+                'windowprefs',
+                {'splitter': self.ui.splitter.sizes(), 'geometry': win_geom_str},
+            )
         self.a2.db.set('last_selected', [m.key for m in self.selected])
 
-        from PySide6 import shiboken
+        from shiboken6 import Shiboken
 
         for thread in self._threads.values():
             if thread is None:
                 continue
-            if not shiboken.isValid(thread):
+            if not Shiboken.isValid(thread):
                 continue
             thread.requestInterruption()
             tries = 10
             while thread.isRunning():
                 if tries < 15:
-                    log.debug(f'Wating for thread: {thread}')
+                    log.debug(f'Waiting for thread: {thread}')
                 tries -= 1
                 if not tries:
                     log.error(f'Thread NOT stopped: {thread}')
@@ -464,7 +467,7 @@ class A2Window(QtWidgets.QMainWindow):
         self._scroll_anim.setEndValue(end)
         self._scroll_anim.setDuration(duration)
         self._scroll_anim.setLoopCount(1)
-        self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.InOutCubic)
+        self._scroll_anim.setEasingCurve(QtCore.QEasingCurve.Type.InOutCubic)
         self._scroll_anim.start()
 
     def create_new_element(self):
