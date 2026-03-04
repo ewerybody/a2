@@ -57,6 +57,7 @@ def read_raw(url: str, progress_callback: Callable | None = None, size: int | No
     if progress_callback is None:
         progress_callback = _backup_report
     request = urllib.request.Request(url, headers=_HEADERS)
+    block_nr = 0
     with urllib.request.urlopen(request) as response:
         total = int(response.headers.get('Content-Length', -1))
         if size is not None:
@@ -101,18 +102,20 @@ def download(url: str, target_path: str, overwrite: bool = False, progress_callb
     if os.path.isfile(target_path) and not overwrite:
         raise FileExistsError('The target file path already exists!')
 
-    tmp_file = os.path.join(os.getenv('TEMP', ''), f'__tmp_dl_{base_name}.zip')
-    if os.path.isfile(tmp_file):
-        return
-    log.info('Looking up "%s" ...', url)
-    data = read_raw(url, progress_callback)
-    with open(tmp_file, 'wb') as f:
-        f.write(data)
+    tmp_file = os.path.join(os.getenv('TEMP', ''), f'__tmp_dl_{base_name}')
+    if not os.path.isfile(tmp_file):
+        log.info('Looking up "%s" ...', url)
+        data = read_raw(url, progress_callback)
+        with open(tmp_file, 'wb') as f:
+            f.write(data)
 
-    if os.path.isfile(tmp_file):
-        log.info('Downloaded: %s', tmp_file)
-    else:
+    if not os.path.isfile(tmp_file):
         raise RuntimeError('Download failed!')
+
+    if os.path.isfile(target_path):
+        os.unlink(target_path)
+    os.rename(tmp_file, target_path)
+    log.info('Downloaded: %s', base_name)
 
 
 def _backup_report(current: int, total: int) -> None:
@@ -131,3 +134,5 @@ def _backup_report(current: int, total: int) -> None:
 if __name__ == '__main__':
     import pytest
 
+    from test import test_a2dl
+    pytest.main([test_a2dl.__file__, '-v'])
