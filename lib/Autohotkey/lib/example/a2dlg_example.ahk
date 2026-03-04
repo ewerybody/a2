@@ -21,87 +21,65 @@ a2dlg_demo(forced_dark := unset) {
     global _ := i18n_locale(A_LineFile)
     icon_path := A_ScriptDir "\..\..\..\..\ui\res\a2.ico"
 
-    opts := {w: 468, pad: 16}
+    opts := { w: 468, pad: 16 }
     if IsSet(forced_dark)
         opts.dark := forced_dark
-    d := A2Dialog("A2 Dialog Demo", opts)
-    c := d.c
-
-    d.header(_["welcome"], icon_path)
-    d.sep()
+    dlg := A2Dialog("A2 Dialog Demo", opts)
+    dlg.header(_["welcome"], icon_path)
+    dlg.sep()
 
     ; ---- Button grid ----
     ; Row 1 — three semantic variants
-    row1 := d.btn_row([
-        {label: "✔️  Accent",    bg: c.ok,     fg: c.acc_fg, opts: "Default"},
-        {label: "Neutral",       bg: c.btn_bg, fg: c.text},
-        {label: "⚠️  Warning",   bg: c.warn,   fg: "1A1A1A"}
-    ], 30, 8, 136)
+    row1 := dlg.btn_row([
+        { label: "✔️  Accent", bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default" },
+        { label: "Neutral" },
+        { label: "⚠️  Warning", bg: dlg.c.warn, fg: "1A1A1A" }],
+        30, 8, 136)
 
     ; Row 2 — danger + a custom color swatch
-    row2 := d.btn_row([
-        {label: "❌  Danger",     bg: c.err,   fg: "F8F8F8"},
-        {label: "Custom (teal)", bg: "117A8B", fg: "E8F8FF"}
-    ], 30, 8, 136)
-    d.space(10)
+    row2 := dlg.btn_row([
+        { label: "❌  Danger", bg: dlg.c.err, fg: "F8F8F8" },
+        { label: "Custom (teal)", bg: "117A8B", fg: "E8F8FF" }],
+        30, 8, 136)
+    dlg.space(10)
 
     ; ---- Status line ----
-    status := d.text(_["click"])
-    theme_str := "Theme: " (IsSet(forced_dark) ? "Set to" : "System default") ": " (d.dark ? "Dark" : "Light")
-    theme := d.text(theme_str)
-    d.sep()
+    status := dlg.text(_["click"])
+    theme_str := "Theme: " (IsSet(forced_dark) ? "Set to" : "System default") ": " (dlg.dark ? "Dark" : "Light")
+    theme := dlg.text(theme_str)
+    dlg.sep()
 
     ; ---- Popup dialog comparison (2-column) ----
-    d.sep()
-    d.gui.SetFont("s" (d.font_size + 1) " w700 c" c.text, d.font_face)
-    d.gui.AddText("x" d._pad " y" d._y " w" (d._w - d._pad * 2), "Popup dialogs")
-    d._y += 26
-    d.gui.SetFont("s" (d.font_size - 1) " w400 c" c.sub, d.font_face)
-    col_w := (d._w - d._pad * 2 - 8) // 2
-    d.gui.AddText("x" d._pad " y" d._y " w" col_w, "a2dlg version")
-    d.gui.AddText("x" (d._pad + col_w + 8) " y" d._y " w" col_w, "AHK built-in")
-    d._y += 18
+    dlg.heading("Popup dialogs")
+    dlg.gui.SetFont("s" (dlg.font_size - 1) " w400 c" dlg.c.sub, dlg.font_face)
+    col_w := (dlg._w - dlg._pad * 2 - 8) // 2
+    dlg.gui.AddText("x" dlg._pad " y" dlg._y " w" col_w, "a2dlg version")
+    dlg.gui.AddText("x" (dlg._pad + col_w + 8) " y" dlg._y " w" col_w, "AHK built-in")
+    dlg._y += 18
 
     popup_rows := [
-        ["ℹ️  Info",        "a2dlg_info",     "MsgBox (info)"],
-        ["❌  Error",      "a2dlg_error",    "MsgBox (error)"],
-        ["❓  Yes / No",   "a2dlg_yes_no",   "MsgBox (yes no)"],
-        ["❓  OK / Cancel","a2dlg_ok_cancel","MsgBox (ok cancel)"],
-        ["✏️  Input",     "a2dlg_input",    "InputBox"],
+        ["a2dlg_info", "MsgBox (info)"],
+        ["a2dlg_error", "MsgBox (error)"],
+        ["a2dlg_yes_no", "MsgBox (yes no)"],
+        ["a2dlg_ok_cancel", "MsgBox (ok cancel)"],
+        ["a2dlg_input", "InputBox"],
     ]
-    popup_buttons_a2  := []
+    popup_buttons_a2 := []
     popup_buttons_ahk := []
     for row in popup_rows {
-        bh := 26
-        ; a2dlg column
-        b1 := d.gui.AddButton("x" d._pad " y" d._y " w" col_w " h" bh, row[1] "  =>  " row[2])
-        a2dlg_make_button(b1, c.btn_bg, c.text)
-        d._btn_hwnds.Push(b1.Hwnd)
-        popup_buttons_a2.Push({btn: b1, kind: row[2]})
-        ; AHK column
-        b2 := d.gui.AddButton("x" (d._pad + col_w + 8) " y" d._y " w" col_w " h" bh, row[3])
-        a2dlg_make_button(b2, c.btn_bg, c.text)
-        d._btn_hwnds.Push(b2.Hwnd)
-        popup_buttons_ahk.Push({btn: b2, kind: row[3]})
-        d._y += bh + 6
+        btns := dlg.btn_row([{ label: row[1]}, { label: row[2] }], 26, 8)
+        popup_buttons_a2.Push({ btn: btns[1], kind: row[1] })
+        popup_buttons_ahk.Push({ btn: btns[2], kind: row[2] })
     }
-    d._y += 2
 
-    ; ---- Footer: toggle + close ----
-    d.sep()
-    footer := d.btn_row_right([
-        {label: d.dark ? _["light_mode"] : _["dark_mode"], bg: c.btn_bg, fg: c.text},
-        {label: "Close", bg: c.btn_bg, fg: c.text, w: 100}
-    ])
-
-    d.show()
-    d.set_icon(icon_path)
-    d.esc_to_close()
+    dlg.sep()
+    footer := dlg.btn_row_right([{ label: dlg.dark ? _["light_mode"] : _["dark_mode"] }, { label: "Close", w: 100 }])
 
     ; ---- Click events — button grid ----
     row1[1].OnEvent("Click", (*) => (status.Text := "Clicked: Accent (Default button / Enter key)"))
     row1[2].OnEvent("Click", (*) => (status.Text := "Clicked: Neutral"))
     row1[3].OnEvent("Click", (*) => (status.Text := "Clicked: Warning"))
+
     row2[1].OnEvent("Click", (*) => (status.Text := "Clicked: Danger"))
     row2[2].OnEvent("Click", (*) => (status.Text := "Clicked: Custom teal"))
 
@@ -110,7 +88,7 @@ a2dlg_demo(forced_dark := unset) {
     ; not the shared loop variable (which would always be the last value).
     for item in popup_buttons_a2 {
         item.btn.kind := item.kind
-        item.btn.OnEvent("Click", (ctrl, *) => _demo_popup_a2(ctrl.kind, status, d.dark))
+        item.btn.OnEvent("Click", (ctrl, *) => _demo_popup_a2(ctrl.kind, status, dlg.dark))
     }
     for item in popup_buttons_ahk {
         item.btn.kind := item.kind
@@ -118,29 +96,33 @@ a2dlg_demo(forced_dark := unset) {
     }
 
     ; Defer destroy+recreate so AHK fully exits the current event handler first
-    footer[1].OnEvent("Click", (*) => SetTimer(() => (d.destroy(), a2dlg_demo(!d.dark)), -1))
+    footer[1].OnEvent("Click", (*) => SetTimer(() => (dlg.destroy(), a2dlg_demo(!dlg.dark)), -1))
     footer[2].OnEvent("Click", (*) => ExitApp())
-    d.on_close((*) => ExitApp())
+    dlg.on_close((*) => ExitApp())
+
+    dlg.show()
+    dlg.set_icon(icon_path)
+    dlg.esc_to_close()
 }
 
 ; ---- Popup demo handlers ----
 _demo_popup_a2(kind, status, dark) {
     if (kind = "a2dlg_info") {
-        a2dlg_info(_["info"], "a2 Info", dark)
+        a2dlg_info(_["info"], , dark)
         status.Text := "a2dlg_info — dismissed"
     } else if (kind = "a2dlg_error") {
-        a2dlg_error(_["error"], "a2 Error", "Error detail line 1`nError detail line 2`nLine 3", dark)
+        a2dlg_error(_["error"], , "Error detail line 1`nError detail line 2`nLine 3", dark)
         status.Text := "a2dlg_error — dismissed"
     } else if (kind = "a2dlg_yes_no") {
-        result := a2dlg_yes_no(_["continue"], "a2 Yes/No", dark)
+        result := a2dlg_yes_no(_["continue"], , dark)
         status.Text := "a2dlg_yes_no => " (result ? "Yes" : "No")
     } else if (kind = "a2dlg_ok_cancel") {
-        result := a2dlg_ok_cancel(_["proceed"], "a2 OK/Cancel", dark)
+        result := a2dlg_ok_cancel(_["proceed"], , dark)
         status.Text := "a2dlg_ok_cancel => " (result ? "OK" : "Cancel")
     } else if (kind = "a2dlg_input") {
         result := a2dlg_input(Format(_["name_please"], _["your_name"]), "a2 Input", "Hello, World!", dark)
         if result = _["your_name"]
-            a2dlg_info(_["very_funny"])
+            a2dlg_info(_["very_funny"], , dark)
         status.Text := (result = "") ? "a2dlg_input => (cancelled)" : "a2dlg_input => `"" result "`""
     }
 }
@@ -161,7 +143,7 @@ _demo_popup_ahk(kind, status) {
     } else if (kind = "InputBox") {
         result := InputBox(Format(_["name_please"], _["your_name"]), "AHK InputBox", , "World")
         if result.Value = _["your_name"]
-            a2dlg_info(_["very_funny"])
+            MsgBox(_["very_funny"])
         status.Text := (result.Result = "Cancel") ? "InputBox => (cancelled)" : "InputBox => `"" result.Value "`""
     }
 }
