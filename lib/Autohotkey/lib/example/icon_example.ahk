@@ -48,9 +48,7 @@ dlg.text("icon_extract(dll, 4) => hIcon: " win_ico "  (set as window icon below)
 dlg.space(8)
 dlg.sep()
 
-dlg.btn_row_right([{label: "Close", bg: c.btn_bg, fg: c.text, opts: "Default"}])[1]
-    .OnEvent("Click", (*) => ExitApp())
-dlg.on_close((*) => ExitApp())
+dlg.btn_close()
 dlg.show()
 
 if win_ico
