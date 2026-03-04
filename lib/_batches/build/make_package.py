@@ -8,15 +8,17 @@ create the portable zip package.
 
 import os
 import sys
-import time
 import shutil
 import ctypes
 import zipfile
 import subprocess
 from urllib import request
 
+import rich.progress
+
 import _build_common
 import a2ahk  # ty:ignore[unresolved-import]
+import a2dl  # ty:ignore[unresolved-import]
 
 from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
 from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME
@@ -25,7 +27,9 @@ Paths = _build_common.Paths
 
 PACKAGE_SUB_NAME = 'alpha'
 DESKTOP_ICO_FILE = 'ui/res/a2.ico'
-DESKTOP_INI_CODE = f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
+DESKTOP_INI_CODE = (
+    f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
+)
 FILE_ATTR_HIDDEN = 0x02
 ROOT_FILES = (
     _build_common.PACKAGE_CFG_NAME,
@@ -63,7 +67,7 @@ PY_PACK_URL = 'https://www.python.org/ftp/python/{}/{}'
 
 def main():
     package_cfg = _build_common.get_package_cfg()
-    version = package_cfg["project"]["version"]
+    version = package_cfg['project']['version']
     package_name = f'{A2} {version} {PACKAGE_SUB_NAME}'
     print('\n{0} Making package: {1} ... {0}'.format(8 * '#', package_name))
 
@@ -292,9 +296,7 @@ def _zip_qt():
     tmp_ui = os.path.join(tmp_dirname, 'ui')
     os.rename(Paths.qt_temp, tmp_ui)
 
-    subprocess.call(
-        [Paths.seven_zip_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS
-    )
+    subprocess.call([Paths.seven_zip_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS)
 
     os.rename(tmp_ui, Paths.qt_temp)
     os.rmdir(tmp_dirname)
@@ -324,10 +326,7 @@ def get_py_package():
         pack_zip_path = os.path.join(Paths.py_packs, pack_zip)
 
         if not os.path.isfile(pack_zip_path):
-            df = _DownloadFeedback(pack_name)
-            request.urlretrieve(
-                PY_PACK_URL.format(py_ver, pack_zip), pack_zip_path, df.callback
-            )
+            request.urlretrieve(PY_PACK_URL.format(py_ver, pack_zip), pack_zip_path, _DownloadCB(pack_name).callback)
             print('done!')
 
         print(f'  Unzipping "{pack_name}" ...')
@@ -342,45 +341,30 @@ def get_py_package():
 
 def patch_sqlite():
     print('Checking for sqlite to be up-to-date in dist ui ...')
-    download_page = request.urlopen(SQLITE_URL + 'download.html').read().decode()
-    pos = download_page.find('/sqlite-dll-win-x64-')
-    if pos == -1:
+    import a2dev.dependency.sqlite
+
+    latest_version, latest_url, download_size = a2dev.dependency.sqlite.get_latest_version()
+    # download_page = request.urlopen(SQLITE_URL + 'download.html').read().decode()
+    # pos = download_page.find('/sqlite-dll-win-x64-')
+    if not latest_version:
         print(f'  {EX_MRK} Error! Could not find version on sqlite website!')
         return
 
-    line_start = download_page.rfind('PRODUCT,', pos - 100, pos)
-    line_end = download_page.find('\n', pos)
-    line = download_page[line_start:line_end]
-    try:
-        latest_version, path, size, checksum = line.split(',')[1:]
-    except ValueError:
-        print(f'  {EX_MRK} Error! Could not read line from sqlite website:\n"{line}"')
-        return
-
-    latest = tuple(int(v) for v in latest_version.split('.'))
     sql_path = os.path.join(Paths.dist_ui, 'sqlite3.dll')
-
-    script = os.path.join(Paths.batches, 'versions', 'get_version.ahk')
-    script_wd = os.path.dirname(os.path.dirname(script))
     if os.path.isfile(sql_path):
-        current_version = subprocess.check_output(
-            [Paths.ahk_exe, script, sql_path], cwd=script_wd
-        ).decode()
-        current = tuple(int(v) for v in current_version.split('.'))
-        if current >= latest:
+        current_str = a2ahk.call_lib_cmd('get_version', sql_path)
+        current_version = tuple(int(v) for v in current_str.split('.'))
+        if current_version >= latest_version:
             print(f'  {CHK_MK} SQLite3 already up-to-date! ({current_version})')
             return
     else:
         current_version = '?'
 
-    print(f'  Updating SQLite3 from {current} to latest: {latest} ...')
-    zip_path = os.path.join(Paths.py_packs, os.path.basename(path))
+    print(f'  Updating SQLite3 from {current_version} to latest: {latest_version} ...')
+    zip_path = os.path.join(Paths.py_packs, os.path.basename(latest_url))
     if not os.path.isfile(zip_path):
         print('  Downloading ...')
-        new_sqlite_data = request.urlopen(SQLITE_URL + path).read()
-        # new_sqlite_data = qdl.read_raw(SQLITE_URL + path)
-        with open(zip_path, 'wb') as file_obj:
-            file_obj.write(new_sqlite_data)
+        a2dl.download(latest_url, zip_path, progress_callback=_DownloadCB('sqlite').callback)
 
     with zipfile.ZipFile(zip_path) as tmp_zip:
         for filename in tmp_zip.namelist():
@@ -388,45 +372,33 @@ def patch_sqlite():
                 tmp_zip.extract(filename, Paths.dist_ui)
                 break
 
-    current_version = subprocess.check_output(
-        [Paths.ahk_exe, script, sql_path], cwd=script_wd
-    ).decode()
-    current = tuple(int(v) for v in current_version.split('.'))
-    if current >= latest:
+    current_str = a2ahk.call_lib_cmd('get_version', sql_path)
+    current_version = current_version = tuple(int(v) for v in current_str.split('.'))
+    if current_version >= latest_version:
         print(f'  {CHK_MK} SQLite3 Updated!')
         return
-    print(
-        f'  {EX_MRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}'
-    )
+    print(f'  {EX_MRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}')
 
 
-class _DownloadFeedback:
-    def __init__(self, name):
-        self._bytes_received = 0
-        self._last_posted = 0
+class _DownloadCB:
+    def __init__(self, name: str):
         self._name = name
-        self._size = None
-        self._width = 0
-        self.channel = sys.stdout
+        self._progress = rich.progress.Progress(
+            '[progress.description]{task.description}',
+            rich.progress.BarColumn(),
+            rich.progress.DownloadColumn(),
+            rich.progress.TransferSpeedColumn(),
+            rich.progress.TimeRemainingColumn(),
+        )
+        self._task = None
+        self._progress.start()
 
-    def callback(self, block_num, block_size, full_size):
-        self._bytes_received += block_size
-        if self._size is None:
-            self._size = f'{round(full_size / (1024 * 1024), 2)}MB'
-
-        now = time.time()
-        if now - self._last_posted > 0.1:
-            pct = round(100 * self._bytes_received / full_size, 2)
-            msg = f'downloading "{self._name}" {pct}% of {self._size} ...'
-
-            if self._width:
-                backup = '\b' * self._width
-                self.channel.write(backup + ' ' * self._width + backup)
-
-            self.channel.write(msg)
-            self.channel.flush()
-            self._width = len(msg)
-            self._last_posted = now
+    def callback(self, current: int, total: int):
+        if self._task is None:
+            self._task = self._progress.add_task(f'Downloading {self._name}...', total=total if total != -1 else None)
+        self._progress.update(self._task, completed=current)
+        if total != -1 and current >= total:
+            self._progress.stop()
 
 
 def _copy(src, dst):
