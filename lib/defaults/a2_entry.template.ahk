@@ -1,4 +1,4 @@
-﻿#include {lib_path}a2.ahk
+#include {lib_path}\a2.ahk
 #include {data_path}
 #include includes\variables.ahk
 #include includes\source_libs.ahk

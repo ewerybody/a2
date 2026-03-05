@@ -452,7 +452,7 @@ class Paths:
         with open(template_path) as file_obj:
             template = EDIT_DISCLAIMER.format(ENTRYPOINT_FILENAME, file_obj.read())
 
-        write_if_changed(target, template.format(data_path=data_path, lib_path=self.lib))
+        write_if_changed(target, template.format(data_path=self.data, lib_path=self.lib))
 
         for cleanup_path in cleanup:
             if not os.path.isfile(cleanup_path):

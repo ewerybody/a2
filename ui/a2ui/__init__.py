@@ -638,7 +638,7 @@ class RuntimeCallThread(QtCore.QThread):
         self.msleep(RESTART_DELAY)
 
         a2 = a2core.get()
-        args = [a2.paths.a2_script]
+        args = [os.path.join(a2.paths.data, a2core.ENTRYPOINT_FILENAME)]
         if self._args is None:
             pass
         elif isinstance(self._args, str):

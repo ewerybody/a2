@@ -61,7 +61,7 @@ class _Collection(object):
         raise NotImplementedError
 
     def _get_final_content(self):
-        return EDIT_DISCLAIMER % self.name + self.get_content()
+        return EDIT_DISCLAIMER.format(self.name, self.get_content())
 
 
 class IncludeDataCollector(object):
