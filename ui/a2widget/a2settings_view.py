@@ -124,7 +124,15 @@ class A2Settings(QtWidgets.QWidget):
             return
 
         build_func(widget)
-        widget.sizeHint = self._size_hint
+        # if isinstance(widget, QtWidgets.QWidget):
+            # widget.sizeHint = self._size_hint
+            # widget.setSizeHint(self._size_hint())
+
+    def _size_hint(self):
+        """For building the tab widgets dynamically. Default sizeHint is WAY too big!
+        TODO: this seems like a hack and works without?
+        """
+        return QtCore.QSize(0, 0)
 
     def _build_licenses_tab(self, widget):
         """Build the licenses tab on demand."""
@@ -150,10 +158,6 @@ class A2Settings(QtWidgets.QWidget):
     def _build_advanced_tab(self, widget):
         advanced_obj = AdvancedSettingsUiHandler(self, widget, self.ui, self.a2)
         advanced_obj.reload_requested.connect(self.reload_requested.emit)
-
-    def _size_hint(self):
-        """For building the tab widgets dynamically. Default sizeHint is WAY too big!"""
-        return QtCore.QSize(0, 0)
 
     @property
     def tab_index(self):
