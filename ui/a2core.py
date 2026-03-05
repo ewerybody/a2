@@ -5,11 +5,12 @@ Everything thats needed by but itself has no constrains to the user interface.
 Such as paths and os tweaks. Mainly this is to thin out the ui module but also
 to make functionality available without passing the main ui object.
 """
-
 import os
 import sys
 import time
 import logging
+
+import a2path
 
 # Only spot where this is set! Use a2core.get_logger() anywhere else!
 LOG_LEVEL = logging.INFO
@@ -20,10 +21,10 @@ A2DEFAULT_HOTKEY = 'Win+Shift+A'
 _A2TAGS = {}
 _IS_DEV = None
 NAME = 'a2'
-ENTRYPOINT_FILENAME = 'user_data_include'
-USER_INCLUDES_NAME = 'a2_user_includes.ahk'
-EDIT_DISCLAIMER = "; a2 %s - Don't bother editing! - File is generated automatically!\n"
-DATA_PATTERN = '{a2data}'
+ENTRYPOINT_FILENAME = 'a2_entry.ahk'
+ENTRYPOINT_TEMPLATE_NAME = 'a2_entry.template.ahk'
+CUSTOM_DATA_FILENAME = 'a2_user_data.pth'
+EDIT_DISCLAIMER = "; a2 {} - Don't bother editing! - File is generated automatically!\n{}"
 SQL_DLL = 'sqlite3.dll'
 SQL_INI = 'SQLiteDB.ini'
 PACKAGE_CFG = 'pyproject.toml'
@@ -47,10 +48,7 @@ class A2Obj:
 
     def __init__(self):
         if A2Obj._instance is not None:
-            raise RuntimeError(
-                'A2Obj has already been initialized!\n'
-                '  Use a2core.get() to get it!'
-            )
+            raise RuntimeError('A2Obj has already been initialized!\n  Use a2core.get() to get it!')
 
         import a2output
 
@@ -108,9 +106,7 @@ class A2Obj:
             raise RuntimeError(f'No module source named "{source_name}"!')
         module = source.mods.get(module_name)
         if module is None:
-            raise RuntimeError(
-                f'Module source "{source_name}" has no module "{module_name}"!'
-            )
+            raise RuntimeError(f'Module source "{source_name}" has no module "{module_name}"!')
         return module
 
     @property
@@ -153,36 +149,37 @@ class A2Obj:
 
         Where 'user', 'pass' and 'port' might be optional!
         """
-        if self.db.get('proxy_enabled') or False:
-            settings = self.db.get('proxy_settings') or {}
-            server = settings.get('server')
-            if server:
-                from urllib import request
-
-                http_mode = settings.get('http', '')
-                proxy_str = http_mode + '://'
-
-                usr, pwd = settings.get('user'), settings.get('pass')
-                if usr and pwd:
-                    proxy_str += usr + ':' + pwd + '@'
-
-                proxy_str += server
-
-                port = settings.get('port')
-                if port is not None:
-                    proxy_str += ':' + port
-
-                log.info('setting up proxy: %s', proxy_str)
-                proxy_handler = request.ProxyHandler({http_mode: proxy_str})
-                opener = request.build_opener(proxy_handler)
-                request.install_opener(opener)
-                return
-
-        if 'urllib.request' in sys.modules:
+        if not (self.db.get('proxy_enabled') or False) and 'urllib.request' in sys.modules:
             from urllib import request
 
             log.info('disabling proxy ...')
             request.install_opener(None)  # ty:ignore[invalid-argument-type]
+            return
+
+        settings = self.db.get('proxy_settings') or {}
+        server = settings.get('server')
+        if not server:
+            return
+
+        from urllib import request
+
+        http_mode = settings.get('http', '')
+        proxy_str = http_mode + '://'
+
+        usr, pwd = settings.get('user'), settings.get('pass')
+        if usr and pwd:
+            proxy_str += usr + ':' + pwd + '@'
+
+        proxy_str += server
+
+        port = settings.get('port')
+        if port is not None:
+            proxy_str += ':' + port
+
+        log.info('setting up proxy: %s', proxy_str)
+        proxy_handler = request.ProxyHandler({http_mode: proxy_str})
+        opener = request.build_opener(proxy_handler)
+        request.install_opener(opener)
 
     @property
     def db(self):
@@ -251,9 +248,7 @@ class A2Obj:
                     data = source.check_update()
                     if source.has_update:
                         version = data.get('version', '')
-                        log.info(
-                            'New "%s" %s module source package!', source_name, version
-                        )
+                        log.info('New "%s" %s module source package!', source_name, version)
                         self._updates['sources'][source_name].append(version)
 
                 except FileNotFoundError:
@@ -350,9 +345,9 @@ class Paths:
         self.package_cfg: str = join(self.a2, PACKAGE_CFG)
 
         # get data dir from user include file in a2 root
-        self.default_data = join(self.a2, 'data')
-        self.local_user_data = join(os.getenv('LOCALAPPDATA', ''), NAME, 'data')
-        self.user_includes = join(self.a2, '_ user_data_include')
+        self.portable_data: str = join(self.a2, 'data')
+        self.local_user_data: str = join(os.getenv('LOCALAPPDATA', ''), NAME, 'data')
+        self.custom_path_cfg: str = join(self.local_user_data, CUSTOM_DATA_FILENAME)
         self.data = ''
         self._build_data_paths()
         self._test_dirs()
@@ -361,7 +356,7 @@ class Paths:
         try:
             self.data = self.get_data_path()
         except FileNotFoundError:
-            self.data = self.default_data
+            self.data = self.portable_data
         os.makedirs(self.data, exist_ok=True)
 
         join = os.path.join
@@ -377,60 +372,61 @@ class Paths:
         main_items = [self.a2_script, self.lib, self.ui]
         missing = [p for p in main_items if not os.path.exists(p)]
         if missing:
-            raise RuntimeError(
-                'a2ui start interrupted! %s Not found in main dir!' % missing
-            )
+            raise RuntimeError('a2ui start interrupted! %s Not found in main dir!' % missing)
         if os.path.isdir(self.data) and not os.access(self.data, os.W_OK):
             raise RuntimeError('a2ui start interrupted! %s inaccessible!' % self.data)
 
-    def set_data_path(self, path: str = ''):
+    def set_data_path(self, path: str = '') -> None:
         """
         Make sure currently set user data path can be included by runtime and
         some standard files are available.
         """
-        self.data = self.default_data if not path else path
+        self.data = self.local_user_data if not path else path
         self._write_entrypoint()
         self._build_data_paths()
 
-        if not os.path.isfile(self.user_cfg):
-            with open(os.path.join(self.defaults, NAME + '.cfg')) as src_file_obj:
-                with open(self.user_cfg, 'w') as dst_file_obj:
-                    dst_file_obj.write(src_file_obj.read())
-        self.write_user_include()
+        if os.path.isfile(self.user_cfg):
+            return
+        with open(os.path.join(self.defaults, NAME + '.cfg')) as src_file_obj:
+            with open(self.user_cfg, 'w') as dst_file_obj:
+                dst_file_obj.write(src_file_obj.read())
 
-    def write_user_include(self):
-        with open(os.path.join(self.defaults, USER_INCLUDES_NAME)) as src_file_obj:
-            write_if_changed(
-                os.path.join(self.data, USER_INCLUDES_NAME),
-                src_file_obj.read().format(
-                    a2data_includes=os.path.join(self.data, 'includes')
-                ),
-            )
+    def get_data_path(self) -> str:
+        """
+        Establish user data path.
+        * If there is a portable entry point file: We're portable!
+        * If there is a custom path file in {LOCALAPPDATA}\\a2\\data
+            * read the file, return path
+        * Otherwise its {LOCALAPPDATA}\\a2\\data
+        """
+        portable_entry = os.path.join(self.portable_data, ENTRYPOINT_FILENAME)
+        if os.path.isfile(portable_entry):
+            return self.portable_data
 
-    def get_data_path(self):
-        if os.path.isfile(self.user_includes):
-            include_key = '#include '
-            with open(self.user_includes) as file_obj:
-                line = file_obj.readline().strip()
-                while line and not line.startswith(include_key):
-                    line = file_obj.readline().strip()
-            if not line.startswith(include_key):
-                return self.default_data
+        if not self.has_data_override():
+            return self.local_user_data
 
-            path = line[len(include_key) :]
-            if os.path.isabs(path):
-                return path
-
-            return os.path.abspath(os.path.join(self.a2, path))
-
-        return self.default_data
+        with open(self.custom_path_cfg) as file_obj:
+            custom_path = file_obj.read()
+            if os.path.isdir(custom_path):
+                return custom_path
+        return self.local_user_data
 
     def has_data_override(self):
-        return self.data != self.default_data
+        return os.path.isfile(self.custom_path_cfg)
 
     def _write_entrypoint(self):
-        """Write `_ user_data_include` file to point to the right data path.
-        Write SQLiteDB.ini with path to its needed .dll file."""
+        """Write Autohotkey entry file to point to the right data path.
+
+        * `self.data` was just set
+        * if its outside of app_dir
+            * remove entry file from {app_dir}\\data
+            * write entry file to {LOCALAPPDATA}\\a2\\data
+              No matter where it data should point!
+        * else if in app_dir (portable mode)
+            * remove entry file from {LOCALAPPDATA}\\a2\\data
+            * write entry file to {app_dir}\\data
+        """
         try:
             data_path = os.path.relpath(self.data, self.a2)
             if data_path.startswith('.'):
@@ -438,19 +434,30 @@ class Paths:
         except ValueError:
             data_path = self.data
 
-        template_path = os.path.join(self.defaults, ENTRYPOINT_FILENAME + '.template')
-        with open(template_path) as file_obj:
-            template = EDIT_DISCLAIMER % ENTRYPOINT_FILENAME + file_obj.read()
-        write_if_changed(
-            os.path.join(self.a2, '_ ' + ENTRYPOINT_FILENAME),
-            template.format(data_path=data_path),
-        )
+        portable_entry = os.path.join(self.portable_data, ENTRYPOINT_FILENAME)
+        installed_entry = os.path.join(self.local_user_data, ENTRYPOINT_FILENAME)
 
-        dll_path = os.path.join(self.ui, SQL_DLL)
-        if not os.path.isfile(dll_path):
-            dll_path = os.path.join(os.path.dirname(self.python), 'DLLs', SQL_DLL)
-        assert os.path.isfile(dll_path)
-        write_if_changed(os.path.join(self.lib, SQL_INI), f'[Main]\nDllPath={dll_path}')
+        is_portable = a2path.is_same(self.data, self.portable_data)
+        if is_portable:
+            target, cleanup = portable_entry, [installed_entry, self.custom_path_cfg]
+        else:
+            target, cleanup = installed_entry, [portable_entry]
+            if a2path.is_same(data_path, self.local_user_data):
+                cleanup.append(self.custom_path_cfg)
+            else:
+                with open(self.custom_path_cfg, 'w', encoding='utf8') as file_obj:
+                    file_obj.write(self.data)
+
+        template_path = os.path.join(self.defaults, ENTRYPOINT_TEMPLATE_NAME)
+        with open(template_path) as file_obj:
+            template = EDIT_DISCLAIMER.format(ENTRYPOINT_FILENAME, file_obj.read())
+
+        write_if_changed(target, template.format(data_path=data_path, lib_path=self.lib))
+
+        for cleanup_path in cleanup:
+            if not os.path.isfile(cleanup_path):
+                continue
+            os.unlink(cleanup_path)
 
 
 def get_logger(name: str):

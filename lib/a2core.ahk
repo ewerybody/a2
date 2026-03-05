@@ -25,6 +25,8 @@ Class A2Core_Class {
         else
             root_dir := path_dirname(A_ScriptDir) "\"
 
+        data_path := string_suffix(data_path, "\")
+
         this.paths := {a2: root_dir
             ,lib: root_dir "lib\"
             ,ahklib: root_dir "lib\Autohotkey\lib\"
@@ -34,7 +36,8 @@ Class A2Core_Class {
             ,modules: data_path "modules\"
             ,module_data: data_path "module_data\"
             ,temp: data_path "temp\"
-            ,includes: data_path "includes\includes.ahk"}
+            ,includes: data_path "includes\includes.ahk"
+        }
 
         this.cfg := {}
 

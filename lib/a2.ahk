@@ -13,7 +13,7 @@ Persistent
 #include <explorer>
 #include <windows>
 
-#include a2_core.ahk
+#include a2core.ahk
 #include a2_config.ahk
 #include a2_globals.ahk
 #include a2_urls.ahk
@@ -109,18 +109,19 @@ _a2_check_changes() {
         }
     }
 
-    Loop read a2.paths.includes
-    {
-        if !string_startswith(A_LoopReadLine, "#include ")
-            Continue
+    if FileExist(a2.paths.includes) {
+        Loop read a2.paths.includes {
+            if !string_startswith(A_LoopReadLine, "#include ")
+                Continue
 
-        path := path_join(a2.paths.data, SubStr(A_LoopReadLine, 10))
-        if !FileExist(path)
-            Continue
-        if InStr(FileGetAttrib(path), "A") {
-            do_reload := true
-            a2log_debug("Changed include file: " path)
-            FileSetAttrib "-A", path
+            path := path_join(a2.paths.data, SubStr(A_LoopReadLine, 10))
+            if !FileExist(path)
+                Continue
+            if InStr(FileGetAttrib(path), "A") {
+                do_reload := true
+                a2log_debug("Changed include file: " path)
+                FileSetAttrib "-A", path
+            }
         }
     }
 

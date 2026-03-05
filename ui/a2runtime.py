@@ -35,6 +35,35 @@ class IncludeType(enum.Enum):
     exit = 6
 
 
+class _Collection(object):
+    def __init__(self, a2_instance=None):
+        if a2_instance is None:
+            self.a2 = a2core.get()
+        else:
+            self.a2 = a2_instance
+        self.name = ''
+
+    def write(self):
+        path = os.path.join(self.a2.paths.includes, self.name + a2ahk.EXTENSION)
+        a2util.write_utf8(path, self._get_final_content())
+
+    def gather(self, mod):
+        """To collect the needed data from a module."""
+        raise NotImplementedError
+
+    def get_content(self):
+        """Creates the AHK code out of the collected data."""
+        raise NotImplementedError
+
+    @property
+    def has_content(self):
+        """To return if there is anything to write before assembling at all"""
+        raise NotImplementedError
+
+    def _get_final_content(self):
+        return EDIT_DISCLAIMER % self.name + self.get_content()
+
+
 class IncludeDataCollector(object):
     def __init__(self):
         self.a2 = a2core.get()
@@ -85,8 +114,7 @@ class IncludeDataCollector(object):
         self.a2.paths.set_data_path(self.a2.paths.data)
 
     @property
-    def collections(self):
-        # type: () -> list[None | _Collection]
+    def collections(self) -> list[None | _Collection]:
         """
         Collections per module.
         A property to be dynamically fillable.
@@ -118,35 +146,6 @@ class IncludeDataCollector(object):
         self.get_init()
         self.get_source_libs()
         self.get_exit()
-
-
-class _Collection(object):
-    def __init__(self, a2_instance=None):
-        if a2_instance is None:
-            self.a2 = a2core.get()
-        else:
-            self.a2 = a2_instance
-        self.name = ''
-
-    def write(self):
-        path = os.path.join(self.a2.paths.includes, self.name + a2ahk.EXTENSION)
-        a2util.write_utf8(path, self._get_final_content())
-
-    def gather(self, mod):
-        """To collect the needed data from a module."""
-        raise NotImplementedError
-
-    def get_content(self):
-        """Creates the AHK code out of the collected data."""
-        raise NotImplementedError
-
-    @property
-    def has_content(self):
-        """To return if there is anything to write before assembling at all"""
-        raise NotImplementedError
-
-    def _get_final_content(self):
-        return EDIT_DISCLAIMER % self.name + self.get_content()
 
 
 class VariablesCollection(_Collection):
@@ -407,7 +406,7 @@ class SourceLibsCollection(_Collection):
         return self.includes != []
 
 
-def collect_includes(specific=None):
+def collect_includes(specific=None) -> IncludeDataCollector:
     """
     :rtype: IncludeDataCollector
     """

@@ -239,7 +239,7 @@ class DataPathUiHandler(QtCore.QObject):
         self.a2.paths.set_data_path(path)
 
         # enlist to recent paths list
-        if path and path not in (self.a2.paths.default_data, self.dev_data_path):
+        if path and path not in (self.a2.paths.local_user_data, self.dev_data_path):
             recent_override_paths = self.a2.db.get('recent_override_paths') or []
             if a2util.rolling_list_add(path, recent_override_paths):
                 self.a2.db.set('recent_override_paths', recent_override_paths)

@@ -107,9 +107,7 @@ def ensure_ending(path, ending):
 
 
 def is_same(path1, path2):
-    """
-    Return True if two normalised paths are identical.
-    """
+    """Return True if two normalised paths are identical."""
     return os.path.normcase(path1) == os.path.normcase(path2)
 
 

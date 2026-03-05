@@ -141,7 +141,7 @@ class A2Logger:
         return self._path
 
 
-def get_logwriter():
+def get_logwriter() -> A2Logger:
     """
     Return the singleton logger object.
     :rtype: A2Logger

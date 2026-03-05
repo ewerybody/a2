@@ -1,31 +1,38 @@
+/************************************************************************
+ * Establish user data path.
+ * * If there is a portable entry point file: We're portable!
+ * * If there is a custom path file in {LOCALAPPDATA}\\a2\\data
+ *   * read the file, return path
+ * * Otherwise its {LOCALAPPDATA}\\a2\\data
+ * @param {String} a2dir - a2 root app directory string path.
+ * @returns {String} Path to the user data.
+ ***********************************************************************/
 a2_get_user_data_path(a2dir) {
-    ; Get the user data directory from cfg file or:
-    ; Set it as "data", right in the the a2 root.
-    user_include := "_ user_data_include"
-    if !FileExist(user_include) {
-        ; Make sure there is a slash at the end:
-        return path_join(a2dir, "data", "")
-    }
+    ENTRYPOINT_FILENAME := 'a2_entry.ahk'
+    portable_data := path_join(a2dir, "data")
+    portable_entry := path_join(portable_data, ENTRYPOINT_FILENAME)
+    if FileExist(portable_entry)
+        return portable_data
 
-    file_obj := FileOpen(user_include, "r")
-    line := file_obj.ReadLine() ;1st
-    line := file_obj.ReadLine() ;2nd!
-    include_key := "#include "
-    key_len := StrLen(include_key)
-    if SubStr(line, 1, key_len) == include_key {
-        path := string_suffix(SubStr(line, key_len + 1), "\")
-        SplitPath path,,,,, &drive_str
-        if (!drive_str)
-            path := string_suffix(path_join(a2dir, path), "\")
+    CUSTOM_DATA_FILENAME := 'a2_user_data.pth'
+    local_data := path_join(EnvGet('LocalAppData'), "a2", "data")
+    custom_path_cfg := path_join(local_data, CUSTOM_DATA_FILENAME)
+    if !FileExist(custom_path_cfg)
+        return local_data
 
-        Return path
-    }
-
-    return path_join(a2dir, "data\")
+    custom_path := FileRead(custom_path_cfg)
+    if DirExist(custom_path)
+        return custom_path
+    return local_data
 }
 
+
+/**
+ * Parse the a2.cfg in the user data dir and equip global a2cfg with values.
+ * @param {String} a2data
+ * @returns {Map}
+ */
 a2_get_user_config(a2data) {
-    ; Parse the a2.cfg in the user data dir and equip global a2cfg with values
     a2cfg := Map()
     config_path := path_join(a2data, "a2.cfg")
     Loop Read, config_path
