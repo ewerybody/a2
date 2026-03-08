@@ -1,39 +1,40 @@
 /************************************************************************
- * a2dlg.ahk — reusable dialog helpers for a2
+ * a2dlg.ahk - reusable dialog helpers for a2
  *
  * Low-level (function-based):
- *  a2dlg_make_button(ctrl, bg, fg)              — owner-drawn button with custom colors
- *  a2dlg_colors(dark)                    — standard a2 color scheme object
- *  a2dlg_apply_dark_title_bar(hwnd, dark) — DWM dark/light title bar
+ *  a2dlg_make_button(ctrl, bg, fg)              - owner-drawn button with custom colors
+ *  a2dlg_colors(dark)                    - standard a2 color scheme object
+ *  a2dlg_apply_dark_title_bar(hwnd, dark) - DWM dark/light title bar
  * High-level (A2Dialog class):
- *   d := A2Dialog(title [, opts])            — opts: w, pad, flags, dark, font: {face, size}
- *   d.header(text [, icon_path])             — large title with optional 32px icon
- *   d.sep()                                  — thin horizontal separator line
- *   d.row(icon, color, text [, subtext])     — colored icon + label row => {icon, text}
- *   d.row_pending([icon, text])              — muted row for live update => {icon, text}
- *   d.text(content [, ahk_opts])             — small caption / status line => ctrl
- *   d.space(px)                              — extra vertical gap
- *   d.btn(label, [bg, fg , ahk_opts])        — single flat button => ctrl
- *   d.btn_row(specs [, h, gap, bw])          — left-aligned button row => [controls]
- *   d.btn_row_right(specs [, bw, h, gap])    — right-aligned footer row => [controls]
+ *   d := A2Dialog(title [, opts])            - opts: w, pad, flags, dark, font: {face, size}
+ *   d.header(text [, icon_path])             - large title with optional 32px icon
+ *   d.sep()                                  - thin horizontal separator line
+ *   d.row(icon, color, text [, subtext])     - colored icon + label row => {icon, text}
+ *   d.row_pending([icon, text])              - muted row for live update => {icon, text}
+ *   d.text(content [, ahk_opts])             - small caption / status line => ctrl
+ *   d.space(px)                              - extra vertical gap
+ *   d.btn(label, [bg, fg , ahk_opts])        - single flat button => ctrl
+ *   d.btn_row(specs [, h, gap, bw])          - left-aligned button row => [controls]
+ *   d.btn_row_right(specs [, bw, h, gap])    - right-aligned footer row => [controls]
  *  Per-button width override: add w to a spec, e.g. {label: "X", bg:…, fg:…, w: 120}
- *   d.show([extra_h])                        — first show, centered on screen
- *   d.resize([extra_h])                      — resize in-place (progressive reveal)
- *   d.set_icon(path)                         — set window title-bar / taskbar icon
- *   d.esc_to_close([fn])                     — Esc closes or calls fn
- *   d.on_close(fn)                           — register Gui Close handler
- *   d.destroy()                              — destroy window and clean up btn registry
- *   d.gui  d.hwnd  d.c  d.dark              — direct access to underlying objects
+ *   d.show([extra_h], [center_on_window])    - first show, centered on screen or on
+ *                                              window of given handle.
+ *   d.resize([extra_h])                      - resize in-place (progressive reveal)
+ *   d.set_icon(path)                         - set window title-bar / taskbar icon
+ *   d.esc_to_close([fn])                     - Esc closes or calls fn
+ *   d.on_close(fn)                           - register Gui Close handler
+ *   d.destroy()                              - destroy window and clean up btn registry
+ *   d.gui  d.hwnd  d.c  d.dark              - direct access to underlying objects
  *  Button specs (for btn_row / btn_row_right): array of {label, bg, fg [, opts]}
  *    opts: extra AHK button option string, e.g. "Default"
  *  Color strings are always 6-digit "RRGGBB" hex (no #).
- *  Include this file once per script — it self-registers the WM_DRAWITEM handler.
+ *  Include this file once per script - it self-registers the WM_DRAWITEM handler.
  ***********************************************************************/
 #Include <string>
 #Include <windows>
 
 /**
- * A2Dialog — composable dialog builder
+ * A2Dialog - composable dialog builder
  */
 class A2Dialog {
     ; Layout state
@@ -45,7 +46,7 @@ class A2Dialog {
     _y := 0
     _pos := ""
     font_face := "Segoe UI"
-    font_size := 10            ; base font size — all other sizes derived from this
+    font_size := 10            ; base font size - all other sizes derived from this
     _btn_hwnds := []            ; tracked for cleanup in destroy()
     _destroyed := false         ; guard against double-destroy
     _exit_on_close := false
@@ -139,7 +140,7 @@ class A2Dialog {
      * @param {String} [color] - Optional 6-digit RRGGBB hex color for the icon
      * @param {String} [subtext] - Optional muted line below the label
      * @param {Boolean} [active] - Optional muted line below the label
-     * @returns  {icon: ctrl, text: ctrl} — either can be updated later
+     * @returns  {icon: ctrl, text: ctrl} - either can be updated later
      */
     glyph_row(glyph, text, color := "", subtext := "", active := true) {
         if !color
@@ -216,7 +217,7 @@ class A2Dialog {
     }
 
     /**
-     * Like row() but starts muted — intended for async status rows.
+     * Like row() but starts muted - intended for async status rows.
      * Update .icon and .text controls once the result is known.
      *
      * @param {String} icon
@@ -281,7 +282,7 @@ class A2Dialog {
      * Extra AHK picture option string (e.g. "Icon3"), or ""
      * @param {String} text
      * Caption text displayed to the right of the picture
-     * @returns  {pic: ctrl, text: ctrl} — pic is "" if the file is missing
+     * @returns  {pic: ctrl, text: ctrl} - pic is "" if the file is missing
      */
     pic_row(file, opt, text) {
         pad := this._pad
@@ -367,7 +368,7 @@ class A2Dialog {
      * Horizontal row of flat buttons, left-aligned from the left margin.
      *
      * @param {Array} specs
-     * Array of {label, bg, fg [, opts]} — opts is an extra AHK button option string
+     * Array of {label, bg, fg [, opts]} - opts is an extra AHK button option string
      * @param {Integer} h
      * Button height in pixels (default 30)
      * @param {Integer} gap
@@ -398,15 +399,15 @@ class A2Dialog {
     }
 
     /**
-     * Horizontal row of flat buttons, right-aligned — typical footer layout.
+     * Horizontal row of flat buttons, right-aligned - typical footer layout.
      *
      * Button width priority (highest → lowest):
-     *   1. Per-spec w property  — {label: "X", bg:…, fg:…, w: 120}
-     *   2. bw parameter         — uniform width for every button without a spec.w
-     *   3. Auto (bw = 0)        — each button sizes to its label text
+     *   1. Per-spec w property  - {label: "X", bg:…, fg:…, w: 120}
+     *   2. bw parameter         - uniform width for every button without a spec.w
+     *   3. Auto (bw = 0)        - each button sizes to its label text
      *
      * @param {Array} specs
-     * Array of {label, bg, fg [, opts, w]} — opts: extra AHK option string; w: per-button width
+     * Array of {label, bg, fg [, opts, w]} - opts: extra AHK option string; w: per-button width
      * @param {Integer} bw
      * Uniform button width in pixels; 0 = auto-size each to its label (default 0)
      * @param {Integer} h
@@ -421,7 +422,7 @@ class A2Dialog {
         controls := []
         widths := []
 
-        ; Pass 1 — add every button at a throwaway position to resolve its final width.
+        ; Pass 1 - add every button at a throwaway position to resolve its final width.
         ; spec.w beats bw; bw=0 means auto-detect from the rendered control size.
         for spec in specs {
             extra := spec.HasProp("opts") ? " " spec.opts : ""
@@ -440,7 +441,7 @@ class A2Dialog {
             widths.Push(w)
         }
 
-        ; Pass 2 — right-align: compute start x from total width, then move each button.
+        ; Pass 2 - right-align: compute start x from total width, then move each button.
         total_w := gap * (controls.Length - 1)
         for w in widths
             total_w += w
@@ -456,7 +457,7 @@ class A2Dialog {
 
     /**
      * Add a right-aligned "Close" button that calls destroy().
-     * Sets cancelled := false — closing is not cancelling.
+     * Sets cancelled := false - closing is not cancelling.
      * @returns  this (chainable)
      */
     btn_close() {
@@ -518,7 +519,7 @@ class A2Dialog {
     }
 
     /**
-     * Read-only monospaced text box — for error details, stack traces, generated code etc.
+     * Read-only monospaced text box - for error details, stack traces, generated code etc.
      *
      * @param {String}  text      Initial content
      * @param {Integer} [h=64]    Box height in pixels
@@ -560,18 +561,31 @@ class A2Dialog {
      * Pass extra_h to reserve blank space for a progressive reveal workflow:
      * call show() early with headroom, add rows, call resize() each time.
      *
-     * @param {Integer} extra_h
+     * @param {Integer} [extra_h]
      * Extra pixels of height to reserve below current content (default 0)
+     * @param {Integer} [center_on_window]
+     * Optional window handle to center the dialog on. (Default 0 > centers on screen)
      * @returns  this (chainable)
      */
-    show(extra_h := 0) {
-        this.gui.Show("w" this._w " h" (this._y + extra_h) " " (this._pos ? this._pos : "Center"))
+    show(extra_h := 0, center_on_window := 0) {
+        w := this._w, h := this._y + extra_h
+        options := "w" w " h" h " "
+        if center_on_window {
+            other_geo := window_get_geometry(center_on_window)
+            this_geo := window_get_empty_geo()
+            this_geo.w := w, this_geo.h := h
+            window_center_geo(&this_geo, other_geo)
+            options .= "x" this_geo.x " y" this_geo.y
+        }
+        else
+            options .= this._pos ? this._pos : "Center"
+        this.gui.Show(options)
         a2dlg_apply_dark_title_bar(this.hwnd, this.dark)
         return this
     }
 
     /**
-     * Resize without moving or activating — use after adding content progressively.
+     * Resize without moving or activating - use after adding content progressively.
      *
      * @param {Integer} extra_h
      * Extra pixels of height to reserve (default 0)
@@ -682,12 +696,12 @@ a2dlg_make_button(ctrl, bg := "", fg := "") {
     _a2dlg_init()
     global _flat_buttons
     hwnd := ctrl.Hwnd
-    ; Register FIRST — WM_DRAWITEM can fire synchronously during the style change below
+    ; Register FIRST - WM_DRAWITEM can fire synchronously during the style change below
     _flat_buttons[hwnd] := { bg: bg, fg: fg, text: ctrl.Text }
     ; Switch style bits to BS_OWNERDRAW (0xB), keeping all other flags
     style := DllCall("GetWindowLongPtr", "Ptr", hwnd, "Int", -16, "Ptr")
     DllCall("SetWindowLongPtr", "Ptr", hwnd, "Int", -16, "Ptr", (style & ~0xF) | 0xB)
-    ; Synchronous full repaint — button never flashes with the default look
+    ; Synchronous full repaint - button never flashes with the default look
     DllCall("InvalidateRect", "Ptr", hwnd, "Ptr", 0, "Int", 1)
     DllCall("UpdateWindow", "Ptr", hwnd)
 }
@@ -740,7 +754,7 @@ a2dlg_apply_dark_title_bar(hwnd, dark) {
 }
 
 /**
- * one-time library initializer — called lazily from a2dlg_make_button / A2Dialog.__New
+ * one-time library initializer - called lazily from a2dlg_make_button / A2Dialog.__New
  * No top-level executable code: the library is safe to #Include <a2dlg> without warnings.
  */
 _a2dlg_init() {
@@ -757,11 +771,11 @@ _a2dlg_init() {
 }
 
 ; ================================================================
-;  Internal — WM_DRAWITEM handler and GDI helpers
+;  Internal - WM_DRAWITEM handler and GDI helpers
 ; ================================================================
 
 /**
- * WM_DRAWITEM handler — called by Windows whenever a registered button needs painting.
+ * WM_DRAWITEM handler - called by Windows whenever a registered button needs painting.
  * DRAWITEMSTRUCT offsets (x64):
  *   0  CtlType (UInt)   4  CtlID   8  itemID   12 itemAction
  *  16  itemState (UInt) 20 (pad)  24  hwndItem (Ptr)   32  hDC (Ptr)
@@ -797,7 +811,7 @@ _flat_btn_on_draw(wParam, lParam, *) {
     DllCall("FillRect", "Ptr", hDC, "Ptr", rc, "Ptr", hBrush)
     DllCall("DeleteObject", "Ptr", hBrush)
 
-    ; Draw label — dim fg when disabled
+    ; Draw label - dim fg when disabled
     hFont := SendMessage(0x31, 0, 0, hwnd)
     old_font := DllCall("SelectObject", "Ptr", hDC, "Ptr", hFont, "Ptr")
     DllCall("SetBkMode", "Ptr", hDC, "Int", 1)
@@ -833,7 +847,7 @@ _flat_btn_gdi(hex) {
 }
 
 /**
- * Darken each RGB channel by 30 (clamped to 0) — pressed-state visual feedback.
+ * Darken each RGB channel by 30 (clamped to 0) - pressed-state visual feedback.
  *
  * @param {String} hex  6-digit RRGGBB hex string
  * @returns  Darkened 6-digit RRGGBB hex string
@@ -846,7 +860,7 @@ _flat_btn_dim(hex) {
 }
 
 /**
- * Lighten each RGB channel by 15 (clamped to 255) — hover-state visual feedback.
+ * Lighten each RGB channel by 15 (clamped to 255) - hover-state visual feedback.
  *
  * @param {String} hex  6-digit RRGGBB hex string
  * @returns  Lightened 6-digit RRGGBB hex string
@@ -859,7 +873,7 @@ _flat_btn_lit(hex) {
 }
 
 /**
- * Blend each RGB channel 50% toward mid-grey — disabled-state visual feedback.
+ * Blend each RGB channel 50% toward mid-grey - disabled-state visual feedback.
  *
  * @param {String} hex  6-digit RRGGBB hex string
  * @returns  Muted 6-digit RRGGBB hex string
@@ -876,7 +890,7 @@ _flat_btn_disabled(hex) {
 }
 
 /**
- * WM_MOUSEMOVE — fires on the button control; starts leave-tracking if not already active.
+ * WM_MOUSEMOVE - fires on the button control; starts leave-tracking if not already active.
  * TRACKMOUSEEVENT layout (x64): cbSize DWORD@0, dwFlags DWORD@4, hwndTrack Ptr@8, dwHoverTime DWORD@16
  */
 _flat_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
@@ -894,7 +908,7 @@ _flat_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
 }
 
 /**
- * WM_MOUSELEAVE — fires on the button that called TrackMouseEvent when the cursor leaves.
+ * WM_MOUSELEAVE - fires on the button that called TrackMouseEvent when the cursor leaves.
  */
 _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
     global _flat_buttons, _flat_btn_hover
@@ -909,8 +923,8 @@ _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
 ; ================================================================
 ;  Popup dialog functions
 ;
-;   a2dlg_info(msg [, title])                    — info message + OK
-;   a2dlg_error(msg [, title, error_detail])     — error + selectable detail + OK
+;   a2dlg_info(msg [, title])                    - info message + OK
+;   a2dlg_error(msg [, title, error_detail])     - error + selectable detail + OK
 ;   a2dlg_yes_no(msg [, title])                  => true / false
 ;   a2dlg_ok_cancel(msg [, title])               => true / false
 ;   a2dlg_input(msg [, title, default_text])     => "" (cancelled) or user string
@@ -930,10 +944,10 @@ _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
  * @param {Boolean} dark
  * Force dark/light theme; omit to follow the system setting
  */
-a2dlg_info(msg, title := "a2 Information", dark := -1) {
-    dlg := _a2dlg_make(title, msg, "ℹ️", "ok", 380, dark)
+a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
+    dlg := _a2dlg_make(title, msg, "ℹ️", "ok", 380, dark, &center_on_window)
     dlg.btn_ok()
-    _a2dlg_resolve(dlg)
+    _a2dlg_resolve(dlg, center_on_window)
 }
 
 /**
@@ -950,8 +964,8 @@ a2dlg_info(msg, title := "a2 Information", dark := -1) {
  * @param {Boolean} dark
  * Force dark/light theme; omit to follow the system setting
  */
-a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1) {
-    dlg := _a2dlg_make(title, msg, "❌", "warn", 420, dark)
+a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_window := 0) {
+    dlg := _a2dlg_make(title, msg, "❌", "warn", 420, dark, &center_on_window)
 
     if (error_detail != "")
         dlg.code_box(error_detail)
@@ -959,7 +973,7 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1) {
     dlg.space(6)
     dlg.sep()
     dlg.btn_ok(, , , bg := dlg.c.err, fg := "F8F8F8")
-    _a2dlg_resolve(dlg)
+    _a2dlg_resolve(dlg, center_on_window)
 }
 
 /**
@@ -976,8 +990,8 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1) {
  * Optional Force dark/light theme; omit to follow the system setting.
  * @returns  true (Yes) / false (No or closed)
  */
-a2dlg_yes_no(msg, title := "a2 Yes/No", dark := -1) {
-    return _a2dlg_confirm(msg, title, "Yes", "No", dark)
+a2dlg_yes_no(msg, title := "a2 Yes/No", dark := -1, center_on_window := 0) {
+    return _a2dlg_confirm(msg, title, "Yes", "No", dark, center_on_window)
 }
 
 /**
@@ -994,8 +1008,8 @@ a2dlg_yes_no(msg, title := "a2 Yes/No", dark := -1) {
  * Optional Force dark/light theme; omit to follow the system setting.
  * @returns {Boolean} true (OK) / false (Cancel or closed)
  */
-a2dlg_ok_cancel(msg, title := "a2 OK/Cancel", dark := -1) {
-    return _a2dlg_confirm(msg, title, "OK", "Cancel", dark)
+a2dlg_ok_cancel(msg, title := "a2 OK/Cancel", dark := -1, center_on_window := 0) {
+    return _a2dlg_confirm(msg, title, "OK", "Cancel", dark, center_on_window)
 }
 
 /**
@@ -1013,15 +1027,15 @@ a2dlg_ok_cancel(msg, title := "a2 OK/Cancel", dark := -1) {
  * Force dark/light theme; omit to follow the system setting
  * @returns {String} Entered string, or "" if cancelled
  */
-a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1) {
-    dlg := _a2dlg_make(title, msg, "✏️", "ok", 380, dark)
+a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_window := 0) {
+    dlg := _a2dlg_make(title, msg, "✏️", "ok", 380, dark, &center_on_window)
     edit := dlg.edit_field(default_text)
     dlg.space(6)
     dlg.sep()
     dlg.result := default_text
     dlg.btn_ok_cancel(, () => dlg.result := edit.Value)
     edit.Focus()
-    _a2dlg_resolve(dlg)
+    _a2dlg_resolve(dlg, center_on_window)
     return dlg.cancelled ? "" : dlg.result
 }
 
@@ -1040,10 +1054,10 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1) {
  */
 _a2dlg_icon_msg(dlg, icon_glyph, icon_color, msg) {
     inner_w := dlg._w - dlg._pad * 2
-    ; Icon — large, colored
+    ; Icon - large, colored
     dlg.gui.SetFont("s18 w700 c" icon_color, dlg.font_face)
     dlg.gui.AddText("x" dlg._pad " y" dlg._y " w30 h30 Center", icon_glyph)
-    ; Message — wrap within remaining width
+    ; Message - wrap within remaining width
     dlg.gui.SetFont("s" dlg.font_size " w400 c" dlg.c.text, dlg.font_face)
     msg_x := dlg._pad + 36
     msg_w := inner_w - 36
@@ -1053,7 +1067,9 @@ _a2dlg_icon_msg(dlg, icon_glyph, icon_color, msg) {
     return msg_ctrl
 }
 
-_a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1) {
+_a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1, &center_on_window := 0) {
+    if (center_on_window == 1)
+        center_on_window := WinExist('A')
     opts := { w: w, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     if dark != -1
         opts.dark := dark
@@ -1065,15 +1081,18 @@ _a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1) {
     return dlg
 }
 
-_a2dlg_resolve(dlg) {
+_a2dlg_resolve(dlg, center_on_window) {
     dlg.esc_to_close()
-    dlg.show()
+    if center_on_window != 0
+        dlg.show(,center_on_window)
+    else
+        dlg.show()
     WinWaitClose("ahk_id " dlg.hwnd)
 }
 
-_a2dlg_confirm(msg, title, ok_label, cancel_label, dark := -1) {
-    dlg := _a2dlg_make(title, msg, "❓", "warn", 380, dark)
+_a2dlg_confirm(msg, title, ok_label, cancel_label, dark := -1, center_on_window := 0) {
+    dlg := _a2dlg_make(title, msg, "❓", "warn", 380, dark, &center_on_window)
     dlg.btn_ok_cancel(, , ok_label, cancel_label)
-    _a2dlg_resolve(dlg)
+    _a2dlg_resolve(dlg, center_on_window)
     return !dlg.cancelled
 }
