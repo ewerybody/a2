@@ -1,12 +1,12 @@
 #Include ..\windows.ahk
 #Include ..\..\..\a2_globals.ahk
 #Include %A_ScriptDir%\..\
-#Include msgbox.ahk
-#Include explorer.ahk
-#Include window.ahk
-#Include screen.ahk
-#Include path.ahk
-#Include string.ahk
+#Include <msgbox>
+#Include <explorer>
+#Include <window>
+#Include <screen>
+#Include <path>
+#Include <string>
 
 explorers := window_list(,,"CabinetWClass")
 if !(explorers.Length) {
