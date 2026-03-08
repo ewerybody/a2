@@ -15,26 +15,14 @@ window_is_resizable(win_id:="") {
 ; Maximize a floating window or restore a maximized one.
 window_toggle_maximize(win_id:="") {
     win_id := _ensure_win_active(win_id)
-
     If !window_is_resizable(win_id)
         Return
 
     ahk_id := "ahk_id " win_id
-
-    If (WinGetMinMax(ahk_id) == 1) {
+    If (WinGetMinMax(ahk_id) == 1)
         WinRestore(ahk_id)
-    }
     Else
-    {
         WinMaximize(ahk_id)
-        ; I don't know why that was implemented. seems unnecessary.
-        ; workarea := new Screen_WorkArea(screen_get_index(win_id))
-        ; x := workarea.left
-        ; y := workarea.top
-        ; w := workarea.width
-        ; h := workarea.height
-        ; WinMove, ahk_id %win_id%, , %x%, %y%, %w%, %h%
-    }
 }
 
 ; Maximize a window horizontally or restore its previous width.
@@ -143,8 +131,15 @@ _ensure_win_active(win_id) {
     return win_id
 }
 
-; Get a windows top-left position and dimensions into passed in arguments x, y, width, height.
-window_get_rect(&x, &y, &width, &height, win_id:="") {
+/**
+ * Get a windows top-left position and dimensions into passed in arguments x, y, width, height.
+ * @param {Integer} x
+ * @param {Integer} y
+ * @param {Integer} width
+ * @param {Integer} height
+ * @param {Integer} win_id
+ */
+window_get_rect(&x, &y, &width, &height, win_id := 0) {
     if (!win_id)
         win_id := WinExist("A")
     WinGetPos &_x, &_y, &_w, &_h, "ahk_id " . win_id
@@ -152,26 +147,47 @@ window_get_rect(&x, &y, &width, &height, win_id:="") {
     y := _y
     width := _w - (WIN_FRAME_WIDTH - 1) * 2
     height := _h - (WIN_FRAME_HEIGHT - 1)
-
-    ; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%, WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
 }
 
-; Set a windows top-left position and dimensions from passed in arguments x, y, width, height.
-window_set_rect(x, y, width, height, win_id:="") {
+/**
+ * Set a windows top-left position and dimensions from passed in arguments x, y, width, height.
+ * @param {Integer} x
+ * @param {Integer} y
+ * @param {Integer} width
+ * @param {Integer} height
+ * @param {Integer} win_id
+ */
+window_set_rect(x, y, width, height, win_id := 0) {
     if (!win_id)
         win_id := WinExist("A")
     _x := x - WIN_FRAME_WIDTH + 1
     _w := width + (WIN_FRAME_WIDTH - 1) * 2
     _h := height + (WIN_FRAME_HEIGHT - 1)
-
-    ; txt = _x:%_x%, x: %x%, WIN_FRAME_WIDTH: %WIN_FRAME_WIDTH%`n_y:%_y%,y: %y%,
-    ; txt = %txt% WIN_FRAME_HEIGHT: %WIN_FRAME_HEIGHT%,`n_w:%_w%, width: %width%, _h:%_h%, height: %height%
     WinMove(_x, y, _w, _h, "ahk_id " . win_id)
+}
+
+/**
+ * Set geo objects x,y,w,h,right,bottom values to the ones of given windows handle.
+ * @param {Object} geo Geo object to be modified.
+ * @param {Integer} hwnd Handle of window to get geometry data from.
+ */
+window_set_geo(&geo, hwnd) {
+    window_get_rect(&x, &y, &w, &h, hwnd)
+    geo.x := x, geo.y := y,
+    geo.w := w, geo.h := h,
+    geo.x2 := geo.x + geo.w
+    geo.y2 := geo.y + geo.h
+    geo.right := geo.x2
+    geo.bottom := geo.y2
+}
+
+window_get_empty_geo() {
+    return {x: 0, y: 0, x2: 0, y2: 0, right: 0, bottom: 0, w: 0, h: 0}
 }
 
 
 ; Find a window's visible boundaries W10 compatible.
-window_get_geometry(hwnd) {
+window_get_geometry(hwnd := 0) {
     ; From GeekDude:
     ; https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
     ; Modified by Marius Șucan to return an array where:
@@ -194,9 +210,10 @@ window_get_geometry(hwnd) {
         DllCall("GetWindowRect", "UPtr", hwnd, "UPtr", &rect, "UInt")
     }
 
-    r := []
+    r := {}
     r.x := NumGet(rect, 0, "Int"), r.y := NumGet(rect, 4, "Int")
     r.x2 := NumGet(rect, 8, "Int"), r.y2 := NumGet(rect, 12, "Int")
+    r.right := r.x2, r.bottom := r.y2
     r.w := Abs(max(r.x, r.x2) - min(r.x, r.x2))
     r.h := Abs(max(r.y, r.y2) - min(r.y, r.y2))
     Return r
@@ -218,7 +235,6 @@ window_cut_hole(hwnd, inner, outer := "") {
     top_left2 := inner.x "-" inner.y
     inner_str := top_left2 " " inner.x2 "-" inner.y " "
     inner_str .= inner.x2 "-" inner.y2 " " inner.x "-" inner.y2 " " top_left2
-    ; a2tip(hwnd "`n" outer_str "`n" inner_str "`nx:" inner.x "`ny:" inner.y "`nx2:" inner.x2 "`ny2:" inner.y2)
     WinSetRegion(outer_str . inner_str, "ahk_id " . hwnd)
 }
 
@@ -293,9 +309,14 @@ window_set_aot(state, win_id := "") {
     WinSetAlwaysOnTop(state, "ahk_id " . win_id)
 }
 
-; Tell if a window extends to the borders of it's screen.
-; Works for maximized, F11 full-screen mode or just dragging the window big.
-window_is_fullscreen(win_id := "", screen_area := "") {
+/**
+ * Tell if a window extends to the borders of it's screen.
+ * Works for maximized, F11 full-screen mode or just dragging the window big.
+ * @param {Integer} [win_id] Optional. Handle of window to check. Default: Active Window.
+ * @param {Screen_WorkArea} [screen_area] Optional. if already established: pass Screen_WorkArea
+ * along to avoid recreating it over again.
+ */
+window_is_fullscreen(win_id := 0, screen_area := "") {
     if !win_id
         win_id := WinExist("A")
 
@@ -303,7 +324,6 @@ window_is_fullscreen(win_id := "", screen_area := "") {
         screen_area := screen_get_work_area(screen_get_index(win_id))
 
     win_area := window_get_geometry(win_id)
-    ; msgbox_info("screen:  " screen_area.x "|" screen_area.y "|" screen_area.x2 "|" screen_area.y2 "`n" "window:" win_area.x "|" win_area.y "|" win_area.x2 "|" win_area.y2)
     if win_area.x > screen_area.x
         return false
     if win_area.y > screen_area.y
@@ -313,4 +333,36 @@ window_is_fullscreen(win_id := "", screen_area := "") {
     if win_area.y2 < screen_area.y2
         return false
     return true
+}
+
+/**
+ * Move a window to the center of another window.
+ * @param {Integer} this_hwnd Handle of a window to be centered.
+ * @param {Integer} other_hwnd Handle of window to center the window on.
+ */
+window_set_center(this_hwnd, other_hwnd) {
+    this_geo := window_get_geometry(this_hwnd)
+    other_geo := window_get_geometry(other_hwnd)
+    window_center_geo(&this_geo, &other_geo)
+    WinMove(this_geo.x, this_geo.y,,, this_hwnd)
+}
+
+/**
+ * Set a geo/rect object to be centered to another one.
+ * @param this_geo
+ * @param on_that_geo
+ */
+window_center_geo(&this_geo, on_that_geo) {
+    center_x := on_that_geo.x + (on_that_geo.w / 2)
+    center_y := on_that_geo.y + (on_that_geo.h / 2)
+    this_geo.x := center_x - (this_geo.w / 2)
+    this_geo.y := center_y - (this_geo.h / 2)
+}
+
+/**
+ * Build string from rect object like window geo or ScreenWorkArea
+ * @param rect
+ */
+window_format_geo(rect) {
+    return "x: " rect.x " y: " rect.y " right: " rect.right " bottom: " rect.bottom " w: " rect.w " h: " rect.h
 }
