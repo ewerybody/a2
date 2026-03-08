@@ -5,12 +5,7 @@ clipboard_get(clipWaitTime:=0.5) {
         backup := ClipboardAll()
         A_Clipboard := ''
         Send('^c')
-
-        ClipWait(clipWaitTime, clipWaitTime)
-        ; if !ClipWait(clipWaitTime, clipWaitTime) {
-        ;     return (A_Clipboard := backup)
-        ; }
-
+        ClipWait(clipWaitTime)
         txt := A_Clipboard
         A_Clipboard := backup
         return txt
