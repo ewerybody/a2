@@ -2,7 +2,7 @@
 Misc functions - gathered from the a2core module.
 This is all too random to be core.
 """
-
+import re
 import os
 import time
 import stat
@@ -287,6 +287,27 @@ def set_archive(file_path: str, state: bool):
         # print(f'Bits before:\n{attrs:016b}')
         ctypes.windll.kernel32.SetFileAttributesW(file_path, changed)
         # print(f'{changed:016b}\nBits now^')
+
+
+def version_tuplify(version_string: str) -> tuple[int, ...]:
+    if not isinstance(version_string, str):
+        raise ValueError(f'Could only get version tuple from str! Given: "{version_string}"')
+    version_string = version_string.strip()
+    if not version_string:
+        raise ValueError(f'Could not get version tuple from given "{version_string}"!')
+
+    if version_string.startswith('v'):
+        version_string = version_string[1:]
+    parts = []
+    for part in version_string.split('.'):
+        match = re.match(r'^\d+', part)
+        if match is None:
+            raise ValueError(f'Could not get version tuple from given "{version_string}"!')
+        if all(c == '0' for c in match[0]):
+            parts.append(0)
+            continue
+        parts.append(int(match[0].lstrip('0')))
+    return tuple(parts)
 
 
 if __name__ == '__main__':
