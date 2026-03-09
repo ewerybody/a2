@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 import a2core
 
-log = a2core.get_logger(__file__)
+log = a2core.get_logger(__name__)
 __version__ = (0, 1, 0)
 __version_info__ = '0.1.0'
 
@@ -104,7 +104,6 @@ def download(url: str, target_path: str, overwrite: bool = False, progress_callb
 
     tmp_file = os.path.join(os.getenv('TEMP', ''), f'__tmp_dl_{base_name}')
     if not os.path.isfile(tmp_file):
-        log.info('Looking up "%s" ...', url)
         data = read_raw(url, progress_callback)
         with open(tmp_file, 'wb') as f:
             f.write(data)
@@ -115,7 +114,6 @@ def download(url: str, target_path: str, overwrite: bool = False, progress_callb
     if os.path.isfile(target_path):
         os.unlink(target_path)
     os.rename(tmp_file, target_path)
-    log.info('Downloaded: %s', base_name)
 
 
 def _backup_report(current: int, total: int) -> None:
