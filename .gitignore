@@ -30,3 +30,19 @@ pyside2uic/
 lib/a2_portable.ahk
 lib/SQLiteDB.ini
 lib/Autohotkey/lib/SQLiteDB.ini
+
+# dev-bin-deps: binary dependencies (run `uv run poe dev-bin-deps` (or `dev-init`) to check)
+lib/Autohotkey/AutoHotkey.exe
+lib/Autohotkey/AutoHotkey32.exe
+lib/Autohotkey/AutoHotkey64.exe
+lib/Autohotkey/Compiler/
+lib/Autohotkey/UX/
+lib/Autohotkey/AutoHotkey.chm
+lib/Autohotkey/WindowSpy.ahk
+lib/Autohotkey/license.txt
+lib/_source/rcedit-x64*.exe
+lib/_source/7zr/*.exe
+lib/_source/7zr/*.dll
+lib/_source/7zr/*.sfx
+lib/_source/7zr/*.txt
+lib/sqlite3.dll
