@@ -13,7 +13,6 @@ dependencies = [
     "poethepoet",
     "rich>=14.3.3",
 ]
-
 [project.urls]
 Homepage = "https://github.com/ewerybody/a2#readme"
 Issues = "https://github.com/ewerybody/a2/issues"
@@ -25,14 +24,17 @@ package = false
 where = ["ui"]
 
 [tool.poe.tasks]
-dev-init = { cmd = "python lib/_batches/build/dev_init.py", help = "Download binary dependencies (AHK, rcedit, sqlite3, 7-Zip) after cloning." }
-dev-exe = { cmd = "python lib/_batches/build/make_dev_root_executables.py", help = "Create fresh starter executables in the project root." }
+dev-bin-deps = { cmd = "python ui/a2dev/dependency/check.py", help = "Make sure binary dependencies are present and up-to-date." }
+dev-exe = { cmd = "python ui/a2dev/build/root_executables.py", help = "Create fresh starter executables in the project root." }
+dev-init = { sequence = [ "dev-bin-deps", "dev-exe" ], help = "Perform all dev init repo initialization steps." }
 build-package = { cmd = "python lib/_batches/build/make_package.py", help = "Build a new package into '_ package'." }
 build-installer = { cmd = "python lib/_batches/build/build_installer.py", help = "Build the installer files." }
 build = { sequence = [ "build-package", "build-installer" ], help = "Build complete package for release." }
 test-py = { cmd = "pytest ui/test", help = "Test python code with pytest." }
 test-ahk = { cmd = "python lib/Autohotkey/lib/test/run_ahk_tests.py", help = "Test Autohotkey code with AHKUnit." }
 test = { sequence = ["test-ahk", "test-py"], help = "Run all available tests." }
+[tool.poe]
+envfile = [".vscode/.env"]
 
 [tool.ruff]
 line-length = 120
