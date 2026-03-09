@@ -4,17 +4,11 @@ Autohotkey stuff to be used across the modules.
 import os
 import string
 
-NAME = 'autohotkey'
+NAME = 'Autohotkey'
 EXECUTABLE_NAME = NAME + '.exe'
 EXTENSION = '.ahk'
 _LOW_BOOLS = {'true': True, 'false': False}
 ALLOWED_VAR_NAME_CHARS = string.ascii_letters + string.digits + '_'
-BASE_VERSION = '2.0'
-HOMEPAGE = f'https://www.{NAME}.com'
-DOWNLOADS_URL = f'{HOMEPAGE}/download/{BASE_VERSION}'
-LATEST_VERSION_URL = f'{DOWNLOADS_URL}/version.txt'
-LATEST_VERSION_ERROR = f'Error checking latest Autohotkey {BASE_VERSION} version online! '
-LATEST_VERSION_GITHUB = f'https://api.github.com/repos/{NAME}/{NAME}/releases/latest'
 
 
 def translate_hotkey(display_string):
@@ -298,36 +292,6 @@ KEYS = ([
     + MOUSE_KEYS + NUM_PAD_KEYS + ['f%i' % _i for _i in range(1, 25)
 ])
 # fmt: on
-
-
-def get_latest_version():
-    import qdl
-    version = qdl.read(LATEST_VERSION_URL, size=32).strip()
-    # Validate if there are dots and some numbers.
-    # (there could also be letters (v for version, b for beta))
-    if '.' in version and sum(c.isdecimal() for c in version) > 3:
-        return version
-
-    if version.startswith('<'):
-        # cloudflare puts some 'aRe YOu huMaN?' test page in front of this m(
-        # let's back up with github:
-        info = qdl.read_json(LATEST_VERSION_GITHUB)
-        if 'tag_name' in info:
-            return info.get('tag_name', '').lstrip('v')
-
-        version = version.replace('\n', ' ')
-        raise RuntimeError(
-            f'{LATEST_VERSION_ERROR}\n'
-            f'There is some HTML code inside? "{version} ..."\n'
-            f'Please check in browser:\n  {LATEST_VERSION_URL}'
-        )
-
-
-    raise RuntimeError(f'{LATEST_VERSION_ERROR}\n  {LATEST_VERSION_URL}')
-
-
-def get_current_version():
-    return call_lib_cmd('get_AutoHotkey_version')
 
 
 if __name__ == '__main__':

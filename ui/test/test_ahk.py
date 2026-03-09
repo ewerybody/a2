@@ -112,15 +112,6 @@ def test_var_names():
     for name in illegal_nms:
         assert a2ahk.check_variable_name(name)
 
-def test_get_version():
-    try:
-        version = a2ahk.get_latest_version()
-    except RuntimeError as error:
-        pytest.skip(f'Problem getting version from homepage:\n{error}')
-
-    assert isinstance(version, str)
-    assert version.startswith(a2ahk.BASE_VERSION)
-
 
 def _get_test_ahk_path():
     return os.path.join(os.getenv('temp', ''), str(uuid.uuid4()) + a2ahk.EXTENSION)
