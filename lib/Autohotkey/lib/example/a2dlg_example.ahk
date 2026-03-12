@@ -12,8 +12,12 @@
 #SingleInstance Force
 #NoTrayIcon
 
+#Include <path>
+#Include ../../../a2_globals.ahk
+#Include <a2tip>
 #Include <a2dlg>
 #Include <i18n>
+#Include <window>
 
 a2dlg_demo()
 
