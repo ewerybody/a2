@@ -52,11 +52,12 @@ class A2Dialog {
     _exit_on_close := false
     cancelled := true
     result := ""
+    msg := ""
 
     /**
      * Create a new A2Dialog.
      * @example
-     *      d := A2Dialog("My Dialog", {w: 400, dark: true})
+     *      dlg := A2Dialog("My Dialog", {w: 400, dark: true})
      *
      * @param {String} title
      * Window title
@@ -624,6 +625,18 @@ class A2Dialog {
         return this
     }
 
+    ctrl_c_to_copy_msg() {
+        HotIfWinActive("ahk_id " this.hwnd)
+        Hotkey("^c", (*) => this._copy_msg())
+        HotIfWinActive()
+        return this
+    }
+
+    _copy_msg() {
+        A_Clipboard := this.msg
+        a2tip('Message copied to clipboard!')
+    }
+
     /**
      * Register a handler for the Gui Close event (X button / Alt-F4).
      *
@@ -946,6 +959,8 @@ _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
  */
 a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
     dlg := _a2dlg_make(title, msg, "ℹ️", "ok", 380, dark, &center_on_window)
+    dlg.msg := msg
+    dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok()
     _a2dlg_resolve(dlg, center_on_window)
 }
@@ -966,10 +981,13 @@ a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
  */
 a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_window := 0) {
     dlg := _a2dlg_make(title, msg, "❌", "warn", 420, dark, &center_on_window)
+    dlg.msg := msg
 
-    if (error_detail != "")
+    if (error_detail != "") {
         dlg.code_box(error_detail)
-
+        dlg.msg .= "`n" error_detail
+    }
+    dlg.ctrl_c_to_copy_msg()
     dlg.space(6)
     dlg.sep()
     dlg.btn_ok(, , , bg := dlg.c.err, fg := "F8F8F8")
@@ -1075,6 +1093,9 @@ _a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1, &center_on_window := 
         opts.dark := dark
     dlg := A2Dialog(title, opts)
     dlg.space(4)
+    ; TODO: this should work with glyph_row right away!
+    ; row := dlg.glyph_row(glyph, msg, dlg.c.%glyph_color%)
+    ; dlg.set_color(dlg.c.text, row.text)
     _a2dlg_icon_msg(dlg, glyph, dlg.c.%glyph_color%, msg)
     dlg.space(4)
     dlg.sep()
@@ -1092,6 +1113,8 @@ _a2dlg_resolve(dlg, center_on_window) {
 
 _a2dlg_confirm(msg, title, ok_label, cancel_label, dark := -1, center_on_window := 0) {
     dlg := _a2dlg_make(title, msg, "❓", "warn", 380, dark, &center_on_window)
+    dlg.msg := msg
+    dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok_cancel(, , ok_label, cancel_label)
     _a2dlg_resolve(dlg, center_on_window)
     return !dlg.cancelled
