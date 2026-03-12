@@ -57,9 +57,15 @@ _a2tip_draw() {
     ; Since AHK2.0 we now have the direct tooltip handle and could use `WinMove`
     ; to not redraw the tooltip and "just" move it! But there are multiple
     ; drawbacks: 1st: It actually seems to be slower!, 2nd: WinMove makes the
-    ; tooltip intransparent to clicks and thus prevents clickthrough.
+    ; tooltip in-transparent to clicks and thus prevents click-through.
     CoordMode "ToolTip", "Screen"
-    _a2tip_id := Tooltip(_a2tip_message, mx_new + a2tip_offset_x, my_new + a2tip_offset_y)
+    _a2tip_id := ToolTip(_a2tip_message, mx_new + a2tip_offset_x, my_new + a2tip_offset_y)
+
+    ; coloring the tooltip is a loosing battle .. we probably need a custom tooltip then :)
+    ; DllCall("uxtheme\SetWindowTheme", "Ptr", _a2tip_id, "Str", "", "Str", "")
+    ; SendMessage(0x1013, 0xFFFF00, 0, , "ahk_id " _a2tip_id)  ; TTM_SETTIPBKCOLOR
+    ; SendMessage(0x1014, 0x00FFFF, 0, , "ahk_id " _a2tip_id)  ; TTM_SETTIPTEXTCOLOR
+
     mx := mx_new
     my := my_new
     msg_old := _a2tip_message
