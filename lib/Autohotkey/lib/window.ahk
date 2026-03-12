@@ -1,7 +1,10 @@
 #include <screen>
 
-; Tell true/false 1/0 if the active or given window can be resized.
-window_is_resizable(win_id:="") {
+/**
+ * Tell true/false 1/0 if the active or given window can be resized.
+ * @param {Integer} [win_id]
+ */
+window_is_resizable(win_id := 0) {
     if !win_id
         win_id := WinExist("A")
 
@@ -13,7 +16,7 @@ window_is_resizable(win_id:="") {
 }
 
 ; Maximize a floating window or restore a maximized one.
-window_toggle_maximize(win_id:="") {
+window_toggle_maximize(win_id := 0) {
     win_id := _ensure_win_active(win_id)
     If !window_is_resizable(win_id)
         Return
@@ -26,7 +29,7 @@ window_toggle_maximize(win_id:="") {
 }
 
 ; Maximize a window horizontally or restore its previous width.
-window_toggle_maximize_width(win_id:="") {
+window_toggle_maximize_width(win_id := 0) {
     win_id := _ensure_win_active(win_id)
     If !window_is_resizable(win_id)
         Return
@@ -49,7 +52,7 @@ window_toggle_maximize_width(win_id:="") {
 }
 
 ; Maximize a window vertically or restore its previous height.
-window_toggle_maximize_height(win_id:="") {
+window_toggle_maximize_height(win_id := 0) {
     win_id := _ensure_win_active(win_id)
     If !window_is_resizable(win_id)
         Return
@@ -181,42 +184,80 @@ window_set_geo(&geo, hwnd) {
     geo.bottom := geo.y2
 }
 
-window_get_empty_geo() {
-    return {x: 0, y: 0, x2: 0, y2: 0, right: 0, bottom: 0, w: 0, h: 0}
+window_get_empty_geo(x := 0, y := 0, w := 0, h := 0) {
+    x2 := x + w, y2 := y + h
+    return {
+        x: x, left: x,
+        y: y, top: y,
+        x2: x2, right: x2,
+        y2: y2, bottom: y2,
+        w: w, width: w,
+        h: h, height: h,
+        center_x: x + w / 2,
+        center_y: y + h / 2,
+    }
 }
 
 
-; Find a window's visible boundaries W10 compatible.
+/**
+ * Find a window's visible boundaries W10 compatible.
+ *
+ * Originally from GeekDude:
+ *  https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
+ * Modified by Marius Șucan to return object.
+ *
+ * @param {Integer} [hwnd] Window ID/handle aka hwnd. Default 0: From active window.
+ * @returns {rect}
+ * Rect object with x, y, x2, y2, w, h, or left, top, right, bottom, width, height and center_x,  center_y
+ */
 window_get_geometry(hwnd := 0) {
-    ; From GeekDude:
-    ; https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959#file-volume-ahk-L85
-    ; Modified by Marius Șucan to return an array where:
-    ; geo := window_get_geometry(handle)
-    ; geo.x, geo.y   : Top-left corner of the window
-    ; geo.w, geo.h   : Extends of the window in width & height
-    ; geo.x2, geo.y2   : Bottom-right corner of the window
-    ; size := VarSetCapacity(&rect, 16, 0)
-    size := Buffer(16)
-    ; size := Number(16)
-    rect := Buffer(24, 0)
+    if hwnd == 0
+        hwnd := WinGetID('A')
+
+    outer_buffer := Buffer(16, 0)
+    DllCall("GetWindowRect", "UPtr", hwnd, "Ptr", outer_buffer)
+    outer_geo := window_rect_from_buffer(outer_buffer)
+
+    inner_buffer := Buffer(16, 0)
     error := DllCall("dwmapi\DwmGetWindowAttribute"
         , "UPtr", hWnd ; HWND  hwnd
         , "UInt", 9 ; DWORD dwAttribute (DWMWA_EXTENDED_FRAME_BOUNDS)
-        , "Ptr", rect ; PVOID pvAttribute
+        , "Ptr", inner_buffer ; PVOID pvAttribute
         , "UInt", 16 ; DWORD cbAttribute
         , "UInt") ; HRESULT
 
     If error {
-        DllCall("GetWindowRect", "UPtr", hwnd, "UPtr", &rect, "UInt")
+        geo := outer_geo
+        geo.frame := {left: 0, right: 0, top: 0, bottom: 0}
+        return
     }
 
-    r := {}
-    r.x := NumGet(rect, 0, "Int"), r.y := NumGet(rect, 4, "Int")
-    r.x2 := NumGet(rect, 8, "Int"), r.y2 := NumGet(rect, 12, "Int")
-    r.right := r.x2, r.bottom := r.y2
-    r.w := Abs(max(r.x, r.x2) - min(r.x, r.x2))
-    r.h := Abs(max(r.y, r.y2) - min(r.y, r.y2))
-    Return r
+    geo := window_rect_from_buffer(inner_buffer)
+    geo.frame := {
+        left: geo.x - outer_geo.x,
+        right: outer_geo.x2 - geo.x2,
+        top: geo.y - outer_geo.y,
+        bottom: outer_geo.y2 - geo.y2
+    }
+    ; a2dlg_info("WinGetPos: " window_format_geo(outer_geo) "`nDwmGetWindowAttribute: " window_format_geo(geo) "`nframe: " geo.frame.left " " geo.frame.right " " geo.frame.top " " geo.frame.bottom)
+    Return geo
+}
+
+window_rect_from_buffer(rect_buffer, &rect := unset) {
+    if !IsSet(rect)
+        rect := window_get_empty_geo()
+    rect.x := NumGet(rect_buffer, 0, "Int"), rect.y := NumGet(rect_buffer, 4, "Int")
+    rect.x2 := NumGet(rect_buffer, 8, "Int"), rect.y2 := NumGet(rect_buffer, 12, "Int")
+    rect.w := Abs(max(rect.x, rect.x2) - min(rect.x, rect.x2))
+    rect.h := Abs(max(rect.y, rect.y2) - min(rect.y, rect.y2))
+
+    rect.left := rect.x, rect.top := rect.y
+    rect.right := rect.x2, rect.bottom := rect.y2
+    rect.width := rect.w, rect.height := rect.h
+
+    rect.center_x := rect.x + (rect.w / 2)
+    rect.center_y := rect.y + (rect.h / 2)
+    return rect
 }
 
 ; Cut a rectangle into a window. But from rectangle-objects rather than this dash-galore-gobbledygook.
@@ -239,7 +280,7 @@ window_cut_hole(hwnd, inner, outer := "") {
 }
 
 ; Create list of window objects with range of information.
-window_list(hidden:=0, process_name:="", class_name:="") {
+window_list(hidden := 0, process_name := "", class_name := "") {
     current_detect_state := A_DetectHiddenWindows
     if (current_detect_state != hidden) {
         DetectHiddenWindows(hidden)
@@ -290,7 +331,7 @@ class _Window {
 }
 
 ; Get a windows Always On Top state.
-window_is_aot(win_id:="") {
+window_is_aot(win_id := 0) {
     if !win_id
         win_id := WinExist("A")
 
@@ -302,7 +343,7 @@ window_is_aot(win_id:="") {
 }
 
 ; Set a windows Always On Top state.
-window_set_aot(state, win_id := "") {
+window_set_aot(state, win_id := 0) {
     if !win_id
         win_id := WinExist("A")
 
