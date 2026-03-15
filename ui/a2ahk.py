@@ -75,7 +75,7 @@ def call_cmd(cmd_path, *args, **kwargs):
     a2 = a2core.get()
 
     args = [a2.paths.autohotkey, cmd_path] + [str(a) for a in args]
-    cmd_result = subprocess.check_output(args, shell=True, text=True, encoding='utf8')
+    cmd_result = subprocess.check_output(args, shell=True, text=True)
     # cut away quote characters if any
     cmd_result = cmd_result.strip(' \'"')
     return cmd_result
