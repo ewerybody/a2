@@ -3,12 +3,9 @@ import io
 import sys
 import time
 import typing
-import distlib
 import zipfile
 import subprocess
 from os.path import join
-
-import rich.progress
 
 from a2ahk import NAME as AUTOHOTKEY
 from a2dev.dependency.rc_edit import EXE as RCEDIT_EXE
@@ -202,6 +199,8 @@ def make_ahk_exe(script_path, out_path, nfo=None, icon=None):
 
 
 def make_py_exe(script_path, out_path, nfo: dict[str, str], icon_path=None, console=False):
+    import distlib
+
     if not os.path.isfile(script_path):
         raise RuntimeError('No such Script File!! (%s)' % script_path)
     if os.path.isfile(out_path):
@@ -337,6 +336,8 @@ def make_4_numbers_version(version):
 
 class DownloadCB:
     def __init__(self, name: str):
+        import rich.progress
+
         self._name = name
         self._progress = rich.progress.Progress(
             '[progress.description]{task.description}',
