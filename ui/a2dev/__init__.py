@@ -159,14 +159,15 @@ def check_pyside_version():
 def check_dev_updates():
     import a2ahk
     import a2qt
+    import a2dev.dependency.autohotkey
 
     def str_ver(version):
         return '.'.join(str(i) for i in version)
 
     log.info('Checking %s version ...', a2ahk.NAME.title())
-    current = a2ahk.get_current_version()
+    current = a2dev.dependency.autohotkey.get_current_version()
     try:
-        latest = a2ahk.get_latest_version()
+        latest = a2dev.dependency.autohotkey.get_latest_version()
 
         if current != latest:
             log.info(f'New {a2ahk.NAME.title()} version online!\n Current: {current}\n Latest: {latest}')
@@ -176,7 +177,7 @@ def check_dev_updates():
             yield a2ahk.NAME, current, None
 
     except RuntimeError as error:
-        if str(error).startswith(a2ahk.LATEST_VERSION_ERROR):
+        if str(error).startswith(a2dev.dependency.autohotkey.LATEST_VERSION_ERROR):
             log.error(error)
         else:
             log.info('Could NOT check %s version online!\n%s', a2ahk.NAME.title(), error)

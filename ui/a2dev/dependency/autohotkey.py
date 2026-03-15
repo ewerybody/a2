@@ -115,5 +115,9 @@ def get_latest_version():
     raise RuntimeError(f'{LATEST_VERSION_ERROR}\n  {LATEST_VERSION_URL}')
 
 
+def get_current_version():
+    return version_tuplify(a2ahk.call_lib_cmd('get_AutoHotkey_version'))
+
+
 if __name__ == '__main__':
     check()
