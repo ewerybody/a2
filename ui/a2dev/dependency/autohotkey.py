@@ -54,9 +54,9 @@ def check_autohotkey_exe():
         if src_name is None:
             os.rename(outdated, Paths.ahk_exe)
             RuntimeError(f'{EX_MRK} Could not find AutoHotkey exe in zip. Contents: {names}')
-
-        with zf.open(src_name) as src, open(Paths.ahk_exe, 'wb') as dst:
-            dst.write(src.read())
+        else:
+            with zf.open(src_name) as src, open(Paths.ahk_exe, 'wb') as dst:
+                dst.write(src.read())
 
         license = 'license.txt'
         if license in names:
