@@ -107,5 +107,13 @@ def test_remove_dir():
     assert not os.path.isdir(tmp_dir)
 
 
+def test_build_dir_map():
+    this_dir = os.path.abspath(os.path.dirname(__file__))
+    dir_map = a2path.build_dir_map(__file__)
+    assert isinstance(dir_map, dict)
+    assert this_dir in dir_map
+    assert os.path.basename(__file__) in dir_map[this_dir]
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
