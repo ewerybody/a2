@@ -14,7 +14,6 @@
 
 #Include <path>
 #Include ../../../a2_globals.ahk
-#Include <a2tip>
 #Include <a2dlg>
 #Include <i18n>
 #Include <window>
@@ -56,10 +55,10 @@ a2dlg_demo(forced_dark := unset) {
     ; ---- Popup dialog comparison (2-column) ----
     dlg.heading("Popup dialogs")
     dlg.gui.SetFont("s" (dlg.font_size - 1) " w400 c" dlg.c.sub, dlg.font_face)
-    col_w := (dlg._w - dlg._pad * 2 - 8) // 2
-    dlg.gui.AddText("x" dlg._pad " y" dlg._y " w" col_w, "a2dlg version")
-    dlg.gui.AddText("x" (dlg._pad + col_w + 8) " y" dlg._y " w" col_w, "AHK built-in")
-    dlg._y += 18
+    col_w := (dlg.width - dlg.pad * 2 - 8) // 2
+    dlg.gui.AddText("x" dlg.pad " y" dlg.height " w" col_w, "a2dlg version")
+    dlg.gui.AddText("x" (dlg.pad + col_w + 8) " y" dlg.height " w" col_w, "AHK built-in")
+    dlg.space(18)
 
     popup_rows := [
         ["a2dlg_info", "MsgBox (info)"],

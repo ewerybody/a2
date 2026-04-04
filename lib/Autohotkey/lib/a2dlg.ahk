@@ -31,6 +31,8 @@
  *  Include this file once per script - it self-registers the WM_DRAWITEM handler.
  ***********************************************************************/
 #Include <string>
+#Include <a2tip>
+#Include <window>
 #Include <windows>
 
 /**
@@ -41,15 +43,22 @@ class A2Dialog {
     gui := ""
     dark := false
     c := {}
-    _w := 480
-    _pad := 14
-    _y := 0
-    _pos := ""
+
+    ; Total height of the dialog.
+    height := 0
+    ; Total width of the dialog.
+    width := 480
+    ; Padding value.
+    pad := 14
+
     font_face := "Segoe UI"
-    font_size := 10            ; base font size - all other sizes derived from this
-    _btn_hwnds := []            ; tracked for cleanup in destroy()
-    _destroyed := false         ; guard against double-destroy
+    font_size := 10 ; base font size - all other sizes derived from this
+
+    _pos := ""
+    _btn_hwnds := [] ; tracked for cleanup in destroy()
+    _destroyed := false ; guard against double-destroy
     _exit_on_close := false
+
     cancelled := true
     result := ""
     msg := ""
@@ -66,10 +75,10 @@ class A2Dialog {
      */
     __New(title, opts := {}) {
         _a2dlg_init()
-        this._w := opts.HasProp("w") ? opts.w : 480
-        this._pad := opts.HasProp("pad") ? opts.pad : 14
+        this.width := opts.HasProp("w") ? opts.w : 480
+        this.pad := opts.HasProp("pad") ? opts.pad : 14
         flags := opts.HasProp("flags") ? opts.flags : "-MaximizeBox -MinimizeBox"
-        this._y := this._pad
+        this.height := this.pad
         this.dark := opts.HasProp("dark") ? opts.dark : windows_is_dark()
         this.c := a2dlg_colors(this.dark)
         if opts.HasProp("font") {
@@ -100,8 +109,8 @@ class A2Dialog {
      * @returns  this (chainable)
      */
     header(text, icon_path := "") {
-        pad := this._pad
-        y := this._y
+        pad := this.pad
+        y := this.height
         icon_file := icon_path
         icon_opt := ""
         if InStr(icon_path, ",") {
@@ -114,11 +123,11 @@ class A2Dialog {
         this.gui.SetFont("s" (this.font_size + 2) " w700 c" this.c.text, this.font_face)
         if (icon_file && FileExist(icon_file)) {
             try this.gui.AddPicture("x" pad " y" y " w32 h32 " icon_opt, icon_file)
-            this.gui.AddText("x" (pad + 40) " y" (y + 8) " w" (this._w - pad - 40 - pad), text)
+            this.gui.AddText("x" (pad + 40) " y" (y + 8) " w" (this.width - pad - 40 - pad), text)
         } else {
-            this.gui.AddText("x" pad " y" (y + 4) " w" (this._w - pad * 2), text)
+            this.gui.AddText("x" pad " y" (y + 4) " w" (this.width - pad * 2), text)
         }
-        this._y += 48
+        this.space(48)
         return this
     }
 
@@ -128,8 +137,8 @@ class A2Dialog {
      */
     sep() {
         this.gui.SetFont("s1")
-        this.gui.AddText("x0 y" this._y " w" this._w " h2 Background" this.c.sep)
-        this._y += 10
+        this.gui.AddText("x0 y" this.height " w" this.width " h2 Background" this.c.sep)
+        this.space(10)
         return this
     }
 
@@ -146,8 +155,8 @@ class A2Dialog {
     glyph_row(glyph, text, color := "", subtext := "", active := true) {
         if !color
             color := this.c.text
-        pad := this._pad
-        y := this._y
+        pad := this.pad
+        y := this.height
         this.gui.SetFont("s" (this.font_size + 1) " w400 c" color, this.font_face)
         glyph_ctrl := this.gui.AddText("x" pad " y" (y + 4) " w20 h18", glyph)
         ; Store color so we can toggle without needing the color scheme
@@ -155,13 +164,13 @@ class A2Dialog {
         if !active
             glyph_ctrl.SetFont("c" this.c.sub)
         this.gui.SetFont("s" this.font_size " w400 c" color, this.font_face)
-        text_ctrl := this.gui.AddText("x" (pad + 24) " yp w" (this._w - pad * 2 - 24) " h18", text)
+        text_ctrl := this.gui.AddText("x" (pad + 24) " yp w" (this.width - pad * 2 - 24) " h18", text)
         text_ctrl.color_on := color
-        this._y += 26
+        this.space(26)
         if subtext {
             this.gui.SetFont("s" (this.font_size - 1) " c" this.c.sub, this.font_face)
-            this.gui.AddText("x" (pad + 24) " y" this._y " w" (this._w - pad * 2 - 24), subtext)
-            this._y += 20
+            this.gui.AddText("x" (pad + 24) " y" this.height " w" (this.width - pad * 2 - 24), subtext)
+            this.space(20)
         }
         return { glyph: glyph_ctrl, text: text_ctrl, items: [glyph_ctrl, text_ctrl] }
     }
@@ -228,13 +237,13 @@ class A2Dialog {
      * @returns  {icon: ctrl, text: ctrl}
      */
     row_pending(icon := "…", text := "") {
-        pad := this._pad
-        y := this._y
+        pad := this.pad
+        y := this.height
         this.gui.SetFont("s" (this.font_size + 1) " c" this.c.sub, this.font_face)
         glyph_ctrl := this.gui.AddText("x" pad " y" (y + 4) " w20 h18", icon)
         this.gui.SetFont("s" this.font_size " c" this.c.sub, this.font_face)
-        text_ctrl := this.gui.AddText("x" (pad + 24) " yp w" (this._w - pad * 2 - 24) " h18", text)
-        this._y += 26
+        text_ctrl := this.gui.AddText("x" (pad + 24) " yp w" (this.width - pad * 2 - 24) " h18", text)
+        this.space(26)
         return { icon: glyph_ctrl, text: text_ctrl }
     }
 
@@ -246,10 +255,10 @@ class A2Dialog {
      * @returns  Text ctrl
      */
     heading(text) {
-        pad := this._pad
+        pad := this.pad
         this.gui.SetFont("s" (this.font_size + 1) " w700 c" this.c.text, this.font_face)
-        ctrl := this.gui.AddText("x" pad " y" this._y " w" (this._w - pad * 2), text)
-        this._y += 24
+        ctrl := this.gui.AddText("x" pad " y" this.height " w" (this.width - pad * 2), text)
+        this.space(24)
         return ctrl
     }
 
@@ -265,12 +274,12 @@ class A2Dialog {
     text(content, color := "", ahk_opts := "") {
         if !color
             color := this.c.sub
-        pad := this._pad
+        pad := this.pad
         opts := ahk_opts ? " " ahk_opts : ""
         this.gui.SetFont("s" (this.font_size - 1) " c" color, this.font_face)
-        ctrl := this.gui.AddText("x" pad " y" this._y " w" (this._w - pad * 2) " Wrap" opts, content)
+        ctrl := this.gui.AddText("x" pad " y" this.height " w" (this.width - pad * 2) " Wrap" opts, content)
         ctrl.GetPos(, , , &h)
-        this._y += (h + 6)
+        this.space(h + 6)
         return ctrl
     }
 
@@ -286,16 +295,16 @@ class A2Dialog {
      * @returns  {pic: ctrl, text: ctrl} - pic is "" if the file is missing
      */
     pic_row(file, opt, text) {
-        pad := this._pad
-        y := this._y
+        pad := this.pad
+        y := this.height
         pic_ctrl := ""
         if (file && FileExist(file))
             try pic_ctrl := this.gui.AddPicture("x" pad " y" y " w22 h22 " opt, file)
         this.gui.SetFont("s" (this.font_size - 1) " c" this.c.sub, this.font_face)
         txt_ctrl := this.gui.AddText("x" (pad + 28) " y" (y + 4)
-        " w" (this._w - pad * 2 - 28) " Wrap", text)
+        " w" (this.width - pad * 2 - 28) " Wrap", text)
         txt_ctrl.GetPos(, , , &h)
-        this._y += Max(28, h + 8)
+        this.space(Max(28, h + 8))
         return { pic: pic_ctrl, text: txt_ctrl }
     }
 
@@ -311,17 +320,17 @@ class A2Dialog {
      * @returns {Integer} Count of pictures actually shown.
      */
     pic_strip(items, size := 32, gap := 8) {
-        pad := this._pad
+        pad := this.pad
         slot := size + gap
-        n := Min(items.Length, (this._w - pad * 2 + gap) // slot)
+        n := Min(items.Length, (this.width - pad * 2 + gap) // slot)
         loop n {
             item := items[A_Index]
             file_path := (item is String) ? item : item.file
             opt := (item is String || !item.HasProp("opt")) ? "" : item.opt
-            try this.gui.AddPicture("x" (pad + (A_Index - 1) * slot) " y" this._y
+            try this.gui.AddPicture("x" (pad + (A_Index - 1) * slot) " y" this.height
             " w" size " h" size " " opt, file_path)
         }
-        this._y += size + 4
+        this.space(size + 4)
         return n
     }
 
@@ -333,13 +342,11 @@ class A2Dialog {
      * @returns  this (chainable)
      */
     space(px := 8) {
-        this._y += px
+        this.height += px
         return this
     }
 
-    ; ----------------------------------------------------------------
-    ;  Buttons
-    ; ----------------------------------------------------------------
+    ; Buttons
 
     /**
      * Single flat button placed with a raw AHK option string.
@@ -380,13 +387,13 @@ class A2Dialog {
      */
     btn_row(specs, h := 30, gap := 8, bw := 0) {
         this.gui.SetFont("s" this.font_size " w600", this.font_face)
-        pad := this._pad
+        pad := this.pad
         n := specs.Length
         if !bw
-            bw := (this._w - pad * 2 - gap * (n - 1)) // n
+            bw := (this.width - pad * 2 - gap * (n - 1)) // n
         controls := []
         for i, s in specs {
-            x_opt := (i = 1) ? "x" pad " y" this._y : "x+" gap " yp"
+            x_opt := (i = 1) ? "x" pad " y" this.height : "x+" gap " yp"
             extra := s.HasProp("opts") ? " " s.opts : ""
             ctrl := this.gui.AddButton(x_opt " w" bw " h" h extra, s.label)
             bg := s.HasProp("bg") ? s.bg : this.c.btn_bg
@@ -395,7 +402,7 @@ class A2Dialog {
             this._btn_hwnds.Push(ctrl.Hwnd)
             controls.Push(ctrl)
         }
-        this._y += h + gap
+        this.space(h + gap)
         return controls
     }
 
@@ -419,7 +426,7 @@ class A2Dialog {
      */
     btn_row_right(specs, bw := 0, h := 28, gap := 8) {
         this.gui.SetFont("s" this.font_size " w600", this.font_face)
-        pad := this._pad
+        pad := this.pad
         controls := []
         widths := []
 
@@ -446,13 +453,13 @@ class A2Dialog {
         total_w := gap * (controls.Length - 1)
         for w in widths
             total_w += w
-        x := this._w - pad - total_w
+        x := this.width - pad - total_w
         for i, ctrl in controls {
-            ctrl.Move(x, this._y, widths[i], h)
+            ctrl.Move(x, this.height, widths[i], h)
             x += widths[i] + gap
         }
 
-        this._y += h + pad
+        this.space(h + pad)
         return controls
     }
 
@@ -529,11 +536,11 @@ class A2Dialog {
     code_box(text, h := 64) {
         detail_bg := this.dark ? "181818" : "FFFFFF"
         this.gui.SetFont("s" (this.font_size - 1) " w400 c" this.c.sub, "Consolas")
-        inner_w := this._w - this._pad * 2
+        inner_w := this.width - this.pad * 2
         ctrl := this.gui.AddEdit(
-            "x" this._pad " y" this._y " w" inner_w " h" h " ReadOnly -E0x200 Background" detail_bg,
+            "x" this.pad " y" this.height " w" inner_w " h" h " ReadOnly -E0x200 Background" detail_bg,
             text)
-        this._y += h + 8
+        this.space(h + 8)
         return ctrl
     }
 
@@ -545,17 +552,17 @@ class A2Dialog {
      */
     edit_field(default_text := "") {
         edit_bg := this.dark ? "181818" : "E8E8E8"
-        inner_w := this._w - this._pad * 2
+        inner_w := this.width - this.pad * 2
         this.gui.SetFont("s" this.font_size " w400 c" this.c.text, this.font_face)
         ctrl := this.gui.AddEdit(
-            "x" this._pad " y" this._y " w" inner_w " h24 -Border -E0x200 Background" edit_bg,
+            "x" this.pad " y" this.height " w" inner_w " h24 -Border -E0x200 Background" edit_bg,
             default_text)
-        this.gui.AddText("x" this._pad " y" (this._y + 24) " w" inner_w " h1 Background" this.c.sep)
-        this._y += 32
+        this.gui.AddText("x" this.pad " y" (this.height + 24) " w" inner_w " h1 Background" this.c.sep)
+        this.space(32)
         return ctrl
     }
 
-    ;  Window management methods
+    ; Window management methods
 
     /**
      * First show, centered on screen.
@@ -569,7 +576,7 @@ class A2Dialog {
      * @returns  this (chainable)
      */
     show(extra_h := 0, center_on_window := 0) {
-        w := this._w, h := this._y + extra_h
+        w := this.width, h := this.height + extra_h
         options := "w" w " h" h " "
         if center_on_window {
             other_geo := window_get_geometry(center_on_window)
@@ -593,7 +600,7 @@ class A2Dialog {
      * @returns  this (chainable)
      */
     resize(extra_h := 0) {
-        this.gui.Show("w" this._w " h" (this._y + extra_h) " NA")
+        this.gui.Show("w" this.width " h" (this.height + extra_h) " NA")
         return this
     }
 
@@ -1071,17 +1078,17 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_
  * @returns  Text ctrl for the message body
  */
 _a2dlg_icon_msg(dlg, icon_glyph, icon_color, msg) {
-    inner_w := dlg._w - dlg._pad * 2
+    inner_w := dlg.width - dlg.pad * 2
     ; Icon - large, colored
     dlg.gui.SetFont("s18 w700 c" icon_color, dlg.font_face)
-    dlg.gui.AddText("x" dlg._pad " y" dlg._y " w30 h30 Center", icon_glyph)
+    dlg.gui.AddText("x" dlg.pad " y" dlg.height " w30 h30 Center", icon_glyph)
     ; Message - wrap within remaining width
     dlg.gui.SetFont("s" dlg.font_size " w400 c" dlg.c.text, dlg.font_face)
-    msg_x := dlg._pad + 36
+    msg_x := dlg.pad + 36
     msg_w := inner_w - 36
-    msg_ctrl := dlg.gui.AddText("x" msg_x " y" dlg._y " w" msg_w " Wrap", msg)
+    msg_ctrl := dlg.gui.AddText("x" msg_x " y" dlg.height " w" msg_w " Wrap", msg)
     msg_ctrl.GetPos(, , , &mh)
-    dlg._y += Max(34, mh + 4)
+    dlg.space(Max(34, mh + 4))
     return msg_ctrl
 }
 
