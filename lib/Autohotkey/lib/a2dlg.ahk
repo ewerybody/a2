@@ -39,28 +39,24 @@
  * A2Dialog - composable dialog builder
  */
 class A2Dialog {
-    ; Layout state
-    gui := ""
-    dark := false
-    c := {}
-
-    ; Total height of the dialog.
-    height := 0
-    ; Total width of the dialog.
-    width := 480
-    ; Padding value.
-    pad := 14
-
+    ; Font face used in the dialog.
     font_face := "Segoe UI"
-    font_size := 10 ; base font size - all other sizes derived from this
+    ; Base font size - all other sizes derived from this
+    font_size := 10
+
+    _icon := ""
+    a2_icon := A_LineFile "\..\..\..\..\ui\res\a2.ico"
 
     _pos := ""
     _btn_hwnds := [] ; tracked for cleanup in destroy()
     _destroyed := false ; guard against double-destroy
     _exit_on_close := false
 
+    ; Result variable for OK/Cancel dialog.
     cancelled := true
+    ; Result variable for arbitrary dialogs.
     result := ""
+    ; Message variable for arbitrary dialogs.
     msg := ""
 
     /**
@@ -75,23 +71,34 @@ class A2Dialog {
      */
     __New(title, opts := {}) {
         _a2dlg_init()
+        ; Total width of the dialog.
         this.width := opts.HasProp("w") ? opts.w : 480
-        this.pad := opts.HasProp("pad") ? opts.pad : 14
-        flags := opts.HasProp("flags") ? opts.flags : "-MaximizeBox -MinimizeBox"
+        ; Total height of the dialog.
         this.height := this.pad
+        ; Padding value for spacing.
+        this.pad := opts.HasProp("pad") ? opts.pad : 14
         this.dark := opts.HasProp("dark") ? opts.dark : windows_is_dark()
+        ; Color Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
         this.c := a2dlg_colors(this.dark)
         if opts.HasProp("font") {
             if opts.font.HasProp("face")
                 this.font_face := opts.font.face
-            if opts.font.HasProp("size")
-                this.font_size := opts.font.size
-        }
+        if opts.font.HasProp("size")
+            this.font_size := opts.font.size
+    }
 
         if opts.HasProp("x") && opts.HasProp("y")
             this._pos := "x" opts.x " y" opts.y
+
+        flags := opts.HasProp("flags") ? opts.flags : "-MaximizeBox -MinimizeBox"
         this.gui := Gui(flags, title)
         this.gui.BackColor := this.c.bg
+
+        if opts.HasProp("icon") && FileExist(opts.icon) {
+            this.set_icon(opts.icon)
+        } else {
+            this.set_icon(this.a2_icon)
+        }
     }
 
     /** Read-only HWND of the underlying Gui. */
@@ -376,7 +383,8 @@ class A2Dialog {
      * Horizontal row of flat buttons, left-aligned from the left margin.
      *
      * @param {Array} specs
-     * Array of {label, bg, fg [, opts]} - opts is an extra AHK button option string
+     * Array of {`label`, [`bg`, `fg` , `opts`]} - optional for colors: `bg`, `fg`.
+     * `opts` for extra AHK button option string.
      * @param {Integer} h
      * Button height in pixels (default 30)
      * @param {Integer} gap
@@ -612,6 +620,10 @@ class A2Dialog {
      * @returns  this (chainable)
      */
     set_icon(path) {
+        if (path == this._icon)
+            return
+        this._icon := path
+
         if FileExist(path)
             hIcon := DllCall("LoadImage", "Ptr", 0, "Str", path, "UInt", 1, "Int", 0, "Int", 0, "UInt", 0x10, "Ptr")
         else
@@ -697,6 +709,7 @@ class A2Dialog {
      */
     exit_on_close() {
         this._exit_on_close := true
+        ; this.gui.OnEvent("Close", (*) => ExitApp())
         return this
     }
 }

@@ -22,16 +22,15 @@ a2dlg_demo()
 
 a2dlg_demo(forced_dark := unset) {
     global _ := i18n_locale(A_LineFile)
-    icon_path := A_ScriptDir "\..\..\..\..\ui\res\a2.ico"
 
     opts := { w: 468, pad: 16 }
     if IsSet(forced_dark)
         opts.dark := forced_dark
     dlg := A2Dialog("A2 Dialog Demo", opts)
-    dlg.header(_["welcome"], icon_path)
+    dlg.header(_["welcome"], dlg.a2_icon)
     dlg.sep()
 
-    ; ---- Button grid ----
+    ; Button grid
     ; Row 1 — three semantic variants
     row1 := dlg.btn_row([
         { label: "✔️  Accent", bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default" },
@@ -46,13 +45,13 @@ a2dlg_demo(forced_dark := unset) {
         30, 8, 136)
     dlg.space(10)
 
-    ; ---- Status line ----
+    ; Status line
     status := dlg.text(_["click"])
     theme_str := "Theme: " (IsSet(forced_dark) ? "Set to" : "System default") ": " (dlg.dark ? "Dark" : "Light")
     theme := dlg.text(theme_str)
     dlg.sep()
 
-    ; ---- Popup dialog comparison (2-column) ----
+    ; Popup dialog comparison (2-column)
     dlg.heading("Popup dialogs")
     dlg.gui.SetFont("s" (dlg.font_size - 1) " w400 c" dlg.c.sub, dlg.font_face)
     col_w := (dlg.width - dlg.pad * 2 - 8) // 2
@@ -78,7 +77,7 @@ a2dlg_demo(forced_dark := unset) {
     dlg.sep()
     footer := dlg.btn_row_right([{ label: dlg.dark ? _["light_mode"] : _["dark_mode"] }, { label: "Close", w: 100 }])
 
-    ; ---- Click events — button grid ----
+    ; Click events — button grid
     row1[1].OnEvent("Click", (*) => (status.Text := "Clicked: Accent (Default button / Enter key)"))
     row1[2].OnEvent("Click", (*) => (status.Text := "Clicked: Neutral"))
     row1[3].OnEvent("Click", (*) => (status.Text := "Clicked: Warning"))
@@ -86,7 +85,6 @@ a2dlg_demo(forced_dark := unset) {
     row2[1].OnEvent("Click", (*) => (status.Text := "Clicked: Danger"))
     row2[2].OnEvent("Click", (*) => (status.Text := "Clicked: Custom teal"))
 
-    ; ---- Click events — popup comparison ----
     ; Store kind on the control itself so each handler reads its own value,
     ; not the shared loop variable (which would always be the last value).
     for item in popup_buttons_a2 {
@@ -98,17 +96,17 @@ a2dlg_demo(forced_dark := unset) {
         item.btn.OnEvent("Click", (ctrl, *) => _demo_popup_ahk(ctrl.kind, status))
     }
 
+    ; To enable light-dark-mode switching we move around our built-ins `exit_on_close` and `esc_to_close`:
     ; Defer destroy+recreate so AHK fully exits the current event handler first
     footer[1].OnEvent("Click", (*) => SetTimer(() => (dlg.destroy(), a2dlg_demo(!dlg.dark)), -1))
     footer[2].OnEvent("Click", (*) => ExitApp())
     dlg.on_close((*) => ExitApp())
+    dlg.on_escape((*) => ExitApp())
 
     dlg.show()
-    dlg.set_icon(icon_path)
-    dlg.esc_to_close()
 }
 
-; ---- Popup demo handlers ----
+; Popup a2dlg demo handlers.
 _demo_popup_a2(kind, status, dark) {
     if (kind = "a2dlg_info") {
         a2dlg_info(_["info"], , dark)
@@ -130,6 +128,7 @@ _demo_popup_a2(kind, status, dark) {
     }
 }
 
+; Popup built-in AHK demo handlers.
 _demo_popup_ahk(kind, status) {
     if (kind = "MsgBox (info)") {
         MsgBox(_["info"], "AHK Info", "OK Iconi")
