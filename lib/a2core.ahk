@@ -9,7 +9,7 @@ Class A2Core_Class {
     /**
      * Title of the a2 instance
      *
-     * @type string
+     * @type {(String)}
      */
     static title := ""
 
