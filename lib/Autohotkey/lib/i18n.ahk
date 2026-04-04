@@ -7,11 +7,11 @@
  * paths relative to the current file! A_ScriptDir points to the main
  * entry script, which may be a temp file or a different location entirely.
  * @param {(String)} caller_file
- * String script path from `A_LineFile` variable for easy finding loca files
+ * Script path from `A_LineFile` variable to find localization files.
  * that should be right next in `i18n` folder.
  * @param {(String)} [_language]
  * For **testing purposed** only! Force a language to be used.
- * @returns {(Map)}}
+ * @returns {(Map)}
  */
 i18n_locale(caller_file, _language := "") {
     SplitPath(caller_file, , &module_dir)
@@ -35,7 +35,7 @@ i18n_locale(caller_file, _language := "") {
  * Optionally pass `A_LineFile` to get translation from local "i18n\en\domain.json".
  * @param {(String)} [_language]
  * For **testing purposed** only! Force a language to be used.
- * @returns {(Map)}}
+ * @returns {(Map)}
  */
 i18n_domain(domain, caller_file := "", _language := "") {
     i18n_dir := _i18n_domain_dir(caller_file)
@@ -55,8 +55,10 @@ i18n_domain(domain, caller_file := "", _language := "") {
  * * passed right away
  * * set by the user
  * * from system settings (default fallback)
- * @param {(String)} language
- * Language id string like "en-US" to force a language to be used.
+ * @param {(String)} [language]
+ * Optional language id string like "en-US" to force a language to be used.
+ * @returns {(String)}
+ * Resulting language id string.
  */
 i18n_get_language(language := "") {
     if language != ""
@@ -70,6 +72,11 @@ i18n_get_language(language := "") {
     return language
 }
 
+/**
+ * Get the language from user settings is set.
+ * @returns {(String)}
+ * Resulting language id string.
+ */
 i18n_get_user_language() {
     if IsSet(a2) {
         language := a2.db.get("language", "a2")
@@ -79,6 +86,11 @@ i18n_get_user_language() {
     return ""
 }
 
+/**
+ * Get the language from system settings.
+ * @returns {(String)}
+ * Resulting language id string.
+ */
 i18n_get_system_language() {
     buf := Buffer(16, 0)
     DllCall("GetUserDefaultLocaleName", "Ptr", buf, "Int", 16)
