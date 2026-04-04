@@ -4,12 +4,12 @@
  *      icon_extract("C:\windows\system32\system.dll", 1)
  *
  * @param {(String)} filename
- * Name of the ico, dll or exe from which to extract the icon
+ * Name of the ico, dll or exe from which to extract the icon.
  * @param {(Integer)} icon_number
- * 1-based index of the icon in the file
+ * 1-based index of the icon in the file.
  * @param {(Integer)} icon_size
- * Resolution of the icon (e.g. 16, 32, 48, 64)
- * @returns  HICON handle, or 0 on failure
+ * Resolution of the icon (e.g. 16, 32, 48, 64).
+ * @returns {(Integer)} HICON handle, or 0 on failure.
 */
 icon_extract(filename, icon_number := 1, icon_size := 32) {
     try {
@@ -61,7 +61,7 @@ icon_get_icon_count(filename) {
  *
  * @param {(String)} extension
  * File extension with or without leading dot (e.g. "pdf" or ".pdf")
- * @returns  Registry icon path string, or "" if unregistered or no icon found
+ * @returns {(String)} Registry icon path, or "" if unregistered or no icon found.
 */
 icon_from_type(extension) {
     extension := string_prefix(extension, ".")
@@ -88,8 +88,8 @@ icon_from_type(extension) {
  *      gui.AddPicture("w32 h32 " p.opt, p.file)
  *
  * @param {(String)} path
- * Registry icon path, e.g. "C:\Windows\System32\shell32.dll,2"
- * @returns  Object {file, opt, idx} — opt is "" for paths without an index
+ * Registry icon path, e.g. "C:\Windows\System32\shell32.dll,2".
+ * @returns  Object {file, opt, idx} — opt is "" for paths without an index.
 */
 icon_path_split(path) {
     if !InStr(path, ",")
@@ -109,7 +109,7 @@ icon_path_split(path) {
  *
  * @param {(String)} prog_id
  * ProgId / type name, e.g. "FirefoxPDF-CA9422711AE1A81C"
- * @returns  Icon path string, or "" if nothing is found
+ * @returns {(String)} Icon path, or "" if nothing is found.
 */
 _icon_from_progid(prog_id) {
     try icon := RegRead(path_join("HKCR", path_join(prog_id, "DefaultIcon")))
