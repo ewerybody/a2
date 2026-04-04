@@ -72,7 +72,7 @@ outro(items) {
 gather_items() {
     items := []
     if FileExist(A2DIR) {
-        Loop Files, A2DIR . "\*.*", "FD"
+        Loop Files, A2DIR . "\*", "FD"
         {
             ; Skip Uninstaller executable for now (cannot delete itself while running)
             if (A_LoopFileName == A_ScriptName)
