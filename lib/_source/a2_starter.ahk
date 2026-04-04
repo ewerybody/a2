@@ -18,7 +18,7 @@
 #include ..\Autohotkey\lib\string.ahk
 #include ..\Autohotkey\lib\msgbox.ahk
 ; #include ..\_a2init_check.ahk
-; #include ..\a2_core.ahk
+; #include ..\a2core.ahk
 ; #include ..\a2_exceptions.ahk
 ; #include ..\a2_user_data.ahk
 
