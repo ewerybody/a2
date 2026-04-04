@@ -110,10 +110,10 @@ installer_dialog() {
         proc_row.icon.Text := "⚠️"
         proc_row.text.SetFont("c" c.warn)
         proc_row.text.Text := "Running: " string_join(names, ", ")
-        d.gui.SetFont("s" (d._fsz - 1) " c" c.sub, d._face)
-        d.gui.AddText("x" (d._pad + 24) " y" d._y " w" (d._w - d._pad * 2 - 24),
+        d.gui.SetFont("s" (d.font_size - 1) " c" c.sub, d.font_face)
+        d.gui.AddText("x" (d.pad + 24) " y" d.height " w" (d.width - d.pad * 2 - 24),
         "They will be closed when you click Install.")
-        d._y += 20
+        d.space(20)
     }
     d.resize(50)
 
