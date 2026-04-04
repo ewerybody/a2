@@ -146,10 +146,13 @@ window_get_rect(&x, &y, &width, &height, win_id := 0) {
     if (!win_id)
         win_id := WinExist("A")
     WinGetPos &_x, &_y, &_w, &_h, "ahk_id " . win_id
-    x := _x + WIN_FRAME_WIDTH - 1
+
+    frame_width := WIN_FRAME_WIDTH ? IsSet(WIN_FRAME_WIDTH) : SysGet(32)
+    frame_height := WIN_FRAME_HEIGHT ? IsSet(WIN_FRAME_HEIGHT) : SysGet(33)
+    x := _x + frame_width - 1
     y := _y
-    width := _w - (WIN_FRAME_WIDTH - 1) * 2
-    height := _h - (WIN_FRAME_HEIGHT - 1)
+    width := _w - (frame_width - 1) * 2
+    height := _h - (frame_height - 1)
 }
 
 /**
@@ -163,9 +166,11 @@ window_get_rect(&x, &y, &width, &height, win_id := 0) {
 window_set_rect(x, y, width, height, win_id := 0) {
     if (!win_id)
         win_id := WinExist("A")
-    _x := x - WIN_FRAME_WIDTH + 1
-    _w := width + (WIN_FRAME_WIDTH - 1) * 2
-    _h := height + (WIN_FRAME_HEIGHT - 1)
+    frame_width := WIN_FRAME_WIDTH ? IsSet(WIN_FRAME_WIDTH) : SysGet(32)
+    frame_height := WIN_FRAME_HEIGHT ? IsSet(WIN_FRAME_HEIGHT) : SysGet(33)
+    _x := x - frame_width + 1
+    _w := width + (frame_width - 1) * 2
+    _h := height + (frame_height - 1)
     WinMove(_x, y, _w, _h, "ahk_id " . win_id)
 }
 
