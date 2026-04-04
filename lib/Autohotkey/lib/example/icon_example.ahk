@@ -54,4 +54,5 @@ dlg.show()
 if win_ico
     dlg.set_icon(win_ico)
 
+dlg.exit_on_close()
 dlg.esc_to_close()
