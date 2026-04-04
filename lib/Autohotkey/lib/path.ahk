@@ -17,12 +17,20 @@ path_is_absolute(path) {
  * Return the parent directory of a path.
  * @param {(String)} path
  * Path to get the parent of.
+ * @param {(Integer)} [n_parent]
+ * Number of times to get parent directory name. Default: 1
  * @returns {(String)}
  * Parent directory path.
  */
-path_dirname(path) {
-    SplitPath path,, &OutDir
-    return OutDir
+path_dirname(path, n_parent := 1) {
+    if (n_parent <= 1) {
+        SplitPath path,, &out_dir
+        return out_dir
+    }
+    out_dir := path
+    Loop(n_parent)
+        SplitPath out_dir,, &out_dir
+    return out_dir
 }
 
 /**
@@ -215,4 +223,26 @@ path_get_free_name(dir_path, file_name, ext, separator := "") {
             return base
         index++
     }
+}
+
+/**
+ * Get list of files in given `dir_path` with a single call.
+ * @param {(String)} dir_path
+ * Directory to look for files.
+ * @param {(String)} [pattern]
+ * Pattern to filter for. Default: "*" for any files.
+ * @param {(String)} [full_path]
+ * Set true to get list of full paths. Default: false.
+ * @returns {(Array)}
+ * Array with string file names or paths.
+ */
+path_get_files(dir_path, pattern := "*", full_path := false) {
+    files := []
+    Loop Files dir_path "\" pattern, "F" {
+        if full_path
+            files.Push(A_LoopFileFullPath)
+        else
+            files.Push(A_LoopFileName)
+    }
+    return files
 }

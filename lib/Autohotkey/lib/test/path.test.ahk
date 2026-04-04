@@ -33,6 +33,16 @@ class PathTests {
             if result != expected
                 throw Error("Expected '" expected "', got '" result "'")
         }
+        returns_n_parent_dir() {
+            result := path_dirname(A_ScriptFullPath, 2)
+            SplitPath A_ScriptDir,, &parent_dir
+            if result != parent_dir
+                throw Error("Expected '" parent_dir "', got '" result "'")
+            result := path_dirname(A_ScriptFullPath, 3)
+            SplitPath parent_dir,, &parent_dir
+            if result != parent_dir
+                throw Error("Expected '" parent_dir "', got '" result "'")
+        }
     }
 
     class Basename {
