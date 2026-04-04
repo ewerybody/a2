@@ -64,19 +64,20 @@ class A2Dialog {
      * @example
      *      dlg := A2Dialog("My Dialog", {w: 400, dark: true})
      *
-     * @param {String} title
+     * @param {(String)} title
      * Window title
      * @param {(Object)} opts
      * Options: {w, pad, flags, dark, font: {face, size}}
      */
     __New(title, opts := {}) {
         _a2dlg_init()
-        ; Total width of the dialog.
-        this.width := opts.HasProp("w") ? opts.w : 480
-        ; Total height of the dialog.
-        this.height := this.pad
         ; Padding value for spacing.
         this.pad := opts.HasProp("pad") ? opts.pad : 14
+        ; Total height of the dialog.
+        this.height := this.pad
+        ; Total width of the dialog.
+        this.width := opts.HasProp("w") ? opts.w : 480
+        ; Theme mode. `dark` false is "light".
         this.dark := opts.HasProp("dark") ? opts.dark : windows_is_dark()
         ; Color Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
         this.c := a2dlg_colors(this.dark)
@@ -85,7 +86,7 @@ class A2Dialog {
                 this.font_face := opts.font.face
         if opts.font.HasProp("size")
             this.font_size := opts.font.size
-    }
+        }
 
         if opts.HasProp("x") && opts.HasProp("y")
             this._pos := "x" opts.x " y" opts.y
@@ -109,9 +110,9 @@ class A2Dialog {
     /**
      * Large title line with an optional 32×32 icon to the left.
      *
-     * @param {String} text
+     * @param {(String)} text
      * Title text to display
-     * @param {String} icon_path
+     * @param {(String)} icon_path
      * Optional icon file path; supports "file,N" registry format
      * @returns  this (chainable)
      */
@@ -152,11 +153,11 @@ class A2Dialog {
     /**
      * Colored icon glyph + main label + optional smaller subtext below.
      *
-     * @param {String} glyph - Glyph or emoji for the first column.
-     * @param {String} text - Main label text.
-     * @param {String} [color] - Optional 6-digit RRGGBB hex color for the icon
-     * @param {String} [subtext] - Optional muted line below the label
-     * @param {Boolean} [active] - Optional muted line below the label
+     * @param {(String)} glyph - Glyph or emoji for the first column.
+     * @param {(String)} text - Main label text.
+     * @param {(String)} [color] - Optional 6-digit RRGGBB hex color for the icon
+     * @param {(String)} [subtext] - Optional muted line below the label
+     * @param {(Boolean)} [active] - Optional muted line below the label
      * @returns  {icon: ctrl, text: ctrl} - either can be updated later
      */
     glyph_row(glyph, text, color := "", subtext := "", active := true) {
@@ -217,7 +218,7 @@ class A2Dialog {
      * Set each control to an arbitrary color.
      * Accepts individual controls or glyph_row return values (which have an .items array).
      *
-     * @param {String} color  6-digit RRGGBB hex color to apply
+     * @param {(String)} color  6-digit RRGGBB hex color to apply
      * @param {Any*} items    Controls or row refs to recolor (variadic)
      * @returns  this (chainable)
      */
@@ -237,9 +238,9 @@ class A2Dialog {
      * Like row() but starts muted - intended for async status rows.
      * Update .icon and .text controls once the result is known.
      *
-     * @param {String} icon
+     * @param {(String)} icon
      * Initial glyph, default "…"
-     * @param {String} text
+     * @param {(String)} text
      * Initial label text
      * @returns  {icon: ctrl, text: ctrl}
      */
@@ -257,7 +258,7 @@ class A2Dialog {
     /**
      * Bold sub-section heading (font_size+1, text color).
      *
-     * @param {String} text
+     * @param {(String)} text
      * Heading text
      * @returns  Text ctrl
      */
@@ -272,9 +273,9 @@ class A2Dialog {
     /**
      * Small muted caption. Wraps and auto-sizes to the rendered height.
      *
-     * @param {String} content
+     * @param {(String)} content
      * Text to display
-     * @param {String} ahk_opts
+     * @param {(String)} ahk_opts
      * Extra AHK control option string appended to the AddText call
      * @returns  Text ctrl
      */
@@ -293,11 +294,11 @@ class A2Dialog {
     /**
      * 22×22 picture on the left + wrapped sub-text on the right.
      *
-     * @param {String} file
+     * @param {(String)} file
      * Path to the image or executable file
-     * @param {String} opt
+     * @param {(String)} opt
      * Extra AHK picture option string (e.g. "Icon3"), or ""
-     * @param {String} text
+     * @param {(String)} text
      * Caption text displayed to the right of the picture
      * @returns  {pic: ctrl, text: ctrl} - pic is "" if the file is missing
      */
@@ -318,13 +319,13 @@ class A2Dialog {
     /**
      * Lay out array of pictures in a horizontal strip, auto-clipped to content width.
      *
-     * @param {Array} items
+     * @param {(Array)} items
      * Each item is a file path string, or {file [, opt]} for extra AHK picture options
-     * @param {Integer} size
+     * @param {(Integer)} size
      * Width and height of each picture in pixels (default 32)
-     * @param {Integer} gap
+     * @param {(Integer)} gap
      * Spacing between pictures in pixels (default 8)
-     * @returns {Integer} Count of pictures actually shown.
+     * @returns {(Integer)} Count of pictures actually shown.
      */
     pic_strip(items, size := 32, gap := 8) {
         pad := this.pad
@@ -344,7 +345,7 @@ class A2Dialog {
     /**
      * Add extra vertical whitespace.
      *
-     * @param {Integer} px
+     * @param {(Integer)} px
      * Pixels to advance (default 8)
      * @returns  this (chainable)
      */
@@ -359,13 +360,13 @@ class A2Dialog {
      * Single flat button placed with a raw AHK option string.
      * Use btn_row / btn_row_right for grouped layouts.
      *
-     * @param {String} label
+     * @param {(String)} label
      * Button label text.
-     * @param {String} [ahk_opts]
+     * @param {(String)} [ahk_opts]
      * Optional AHK button option string (e.g. "x10 y20 w80 h28").
-     * @param {String} [bg]
+     * @param {(String)} [bg]
      * Optional Background color, 6-digit RRGGBB hex.
-     * @param {String} [fg]
+     * @param {(String)} [fg]
      * Optional Foreground (text) color, 6-digit RRGGBB hex.
      * @returns Button ctrl
      */
@@ -385,11 +386,11 @@ class A2Dialog {
      * @param {Array} specs
      * Array of {`label`, [`bg`, `fg` , `opts`]} - optional for colors: `bg`, `fg`.
      * `opts` for extra AHK button option string.
-     * @param {Integer} h
+     * @param {(Integer)} h
      * Button height in pixels (default 30)
-     * @param {Integer} gap
+     * @param {(Integer)} gap
      * Spacing between buttons in pixels (default 8)
-     * @param {Integer} bw
+     * @param {(Integer)} bw
      * Per-button width; 0 = auto-distribute across full content width
      * @returns  Array of button controls in spec order
      */
@@ -424,11 +425,11 @@ class A2Dialog {
      *
      * @param {Array} specs
      * Array of {label, bg, fg [, opts, w]} - opts: extra AHK option string; w: per-button width
-     * @param {Integer} bw
+     * @param {(Integer)} bw
      * Uniform button width in pixels; 0 = auto-size each to its label (default 0)
-     * @param {Integer} h
+     * @param {(Integer)} h
      * Button height in pixels (default 28)
-     * @param {Integer} gap
+     * @param {(Integer)} gap
      * Spacing between buttons in pixels (default 8)
      * @returns  Array of button controls in left => right order
      */
@@ -485,11 +486,11 @@ class A2Dialog {
      * Add a right-aligned OK + Cancel button pair.
      * OK sets cancelled := false and calls destroy(); Cancel just calls destroy().
      *
-     * @param {Integer} [bw=80]           Uniform button width in pixels
-     * @param {Func}    [on_ok]           Optional callback fired before destroy on OK
-     * @param {String}  [ok_label="OK"]   Label override for the OK button
-     * @param {String}  [cancel_label="Cancel"]  Label override for the Cancel button
-     * @param {Boolean} [default_btn=true]  Whether OK gets the Default (Enter key) style
+     * @param {(Integer)} [bw=80]           Uniform button width in pixels
+     * @param {(Func)}    [on_ok]           Optional callback fired before destroy on OK
+     * @param {(String)}  [ok_label="OK"]   Label override for the OK button
+     * @param {(String)}  [cancel_label="Cancel"]  Label override for the Cancel button
+     * @param {(Boolean)} [default_btn=true]  Whether OK gets the Default (Enter key) style
      * @returns  [ok_ctrl, cancel_ctrl]
      */
     btn_ok_cancel(bw := 80, on_ok := "", ok_label := "", cancel_label := "", default_btn := true) {
@@ -513,12 +514,12 @@ class A2Dialog {
     /**
      * Add a right-aligned accent OK button that sets cancelled := false and calls destroy().
      *
-     * @param {Integer} [bw=80]             Button width in pixels
-     * @param {Func}    [on_ok]             Optional callback fired before destroy
-     * @param {String}  [ok_label="OK"]     Label override
-     * @param {String}  [bg]                Background color override (default c.ok)
-     * @param {String}  [fg]                Foreground color override (default c.acc_fg)
-     * @param {Boolean} [default_btn=true]  Whether the button gets the Default (Enter key) style
+     * @param {(Integer)} [bw=80]             Button width in pixels
+     * @param {(Func)}    [on_ok]             Optional callback fired before destroy
+     * @param {(String)}  [ok_label="OK"]     Label override
+     * @param {(String)}  [bg]                Background color override (default c.ok)
+     * @param {(String)}  [fg]                Foreground color override (default c.acc_fg)
+     * @param {(Boolean)} [default_btn=true]  Whether the button gets the Default (Enter key) style
      * @returns  this (chainable)
      */
     btn_ok(bw := 80, on_ok := "", ok_label := "", bg := "", fg := "", default_btn := true) {
@@ -537,8 +538,8 @@ class A2Dialog {
     /**
      * Read-only monospaced text box - for error details, stack traces, generated code etc.
      *
-     * @param {String}  text      Initial content
-     * @param {Integer} [h=64]    Box height in pixels
+     * @param {(String)}  text      Initial content
+     * @param {(Integer)} [h=64]    Box height in pixels
      * @returns  Edit ctrl (Value can be updated later)
      */
     code_box(text, h := 64) {
@@ -555,7 +556,7 @@ class A2Dialog {
     /**
      * Single-line text input with a subtle underline separator below.
      *
-     * @param {String} [default_text]  Pre-filled value
+     * @param {(String)} [default_text]  Pre-filled value
      * @returns  Edit ctrl
      */
     edit_field(default_text := "") {
@@ -577,9 +578,9 @@ class A2Dialog {
      * Pass extra_h to reserve blank space for a progressive reveal workflow:
      * call show() early with headroom, add rows, call resize() each time.
      *
-     * @param {Integer} [extra_h]
+     * @param {(Integer)} [extra_h]
      * Extra pixels of height to reserve below current content (default 0)
-     * @param {Integer} [center_on_window]
+     * @param {(Integer)} [center_on_window]
      * Optional window handle to center the dialog on. (Default 0 > centers on screen)
      * @returns  this (chainable)
      */
@@ -603,7 +604,7 @@ class A2Dialog {
     /**
      * Resize without moving or activating - use after adding content progressively.
      *
-     * @param {Integer} extra_h
+     * @param {(Integer)} extra_h
      * Extra pixels of height to reserve (default 0)
      * @returns  this (chainable)
      */
@@ -615,7 +616,7 @@ class A2Dialog {
     /**
      * Set the title-bar and taskbar icon.
      *
-     * @param {String|Integer} path
+     * @param {(String|Integer)} path
      * File path to an ICO/EXE/DLL, or an HICON handle returned by icon_extract()
      * @returns  this (chainable)
      */
@@ -637,14 +638,14 @@ class A2Dialog {
      * Bind Esc to destroying this dialog.
      * @returns  this (chainable)
      */
-    esc_to_close() {
+    esc_to_close(*) {
         HotIfWinActive("ahk_id " this.hwnd)
         Hotkey("Escape", (*) => this.destroy())
         HotIfWinActive()
         return this
     }
 
-    ctrl_c_to_copy_msg() {
+    ctrl_c_to_copy_msg(*) {
         HotIfWinActive("ahk_id " this.hwnd)
         Hotkey("^c", (*) => this._copy_msg())
         HotIfWinActive()
@@ -685,7 +686,7 @@ class A2Dialog {
      * Destroy the window and clean up all registered button HWNDs.
      * Safe to call more than once.
      */
-    destroy() {
+    destroy(*) {
         if this._destroyed
             return
         this._destroyed := true
@@ -707,7 +708,7 @@ class A2Dialog {
      * For embedded dialogs just call destroy() directly.
      * @returns  this (chainable)
      */
-    exit_on_close() {
+    exit_on_close(*) {
         this._exit_on_close := true
         ; this.gui.OnEvent("Close", (*) => ExitApp())
         return this
@@ -718,11 +719,11 @@ class A2Dialog {
  * Register a button control as owner-drawn with custom colors.
  * Call after AddButton. Works before or after Gui.Show().
  *
- * @param {Ctrl} ctrl
+ * @param {(Ctrl)} ctrl
  * The button control returned by Gui.AddButton()
- * @param {String} [bg]
+ * @param {(String)} [bg]
  * Background color, 6-digit RRGGBB hex
- * @param {String} [fg]
+ * @param {(String)} [fg]
  * Foreground (text) color, 6-digit RRGGBB hex
  */
 a2dlg_make_button(ctrl, bg := "", fg := "") {
@@ -742,7 +743,7 @@ a2dlg_make_button(ctrl, bg := "", fg := "") {
 /**
  * Return the standard a2 color scheme object.
  *
- * @param {Boolean} dark
+ * @param {(Boolean)} dark
  * True for the dark palette, false for light
  * @returns  Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
  */
@@ -775,9 +776,9 @@ a2dlg_colors(dark) {
 /**
  * Apply a dark or light DWM title bar (Windows 10 1809+ / Windows 11).
  *
- * @param {Integer} hwnd
+ * @param {(Integer)} hwnd
  * Window handle
- * @param {Boolean} dark
+ * @param {(Boolean)} dark
  * True for dark title bar, false for light
  */
 a2dlg_apply_dark_title_bar(hwnd, dark) {
@@ -869,7 +870,7 @@ _flat_btn_on_draw(wParam, lParam, *) {
 /**
  * Convert a 6-digit RRGGBB hex string to a Win32 COLORREF (0x00BBGGRR).
  *
- * @param {String} hex  6-digit RRGGBB hex string
+ * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Integer COLORREF value
  */
 _flat_btn_gdi(hex) {
@@ -882,7 +883,7 @@ _flat_btn_gdi(hex) {
 /**
  * Darken each RGB channel by 30 (clamped to 0) - pressed-state visual feedback.
  *
- * @param {String} hex  6-digit RRGGBB hex string
+ * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Darkened 6-digit RRGGBB hex string
  */
 _flat_btn_dim(hex) {
@@ -895,7 +896,7 @@ _flat_btn_dim(hex) {
 /**
  * Lighten each RGB channel by 15 (clamped to 255) - hover-state visual feedback.
  *
- * @param {String} hex  6-digit RRGGBB hex string
+ * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Lightened 6-digit RRGGBB hex string
  */
 _flat_btn_lit(hex) {
@@ -908,7 +909,7 @@ _flat_btn_lit(hex) {
 /**
  * Blend each RGB channel 50% toward mid-grey - disabled-state visual feedback.
  *
- * @param {String} hex  6-digit RRGGBB hex string
+ * @param {(String)} hex  6-digit RRGGBB hex string
  * @returns  Muted 6-digit RRGGBB hex string
  */
 _flat_btn_disabled(hex) {
@@ -970,11 +971,11 @@ _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
  * @example
  *      a2dlg_info("Operation complete.", "Done")
  *
- * @param {String} msg
+ * @param {(String)} msg
  * Message text
- * @param {String} title
+ * @param {(String)} title
  * Window title (default "a2 Information")
- * @param {Boolean} dark
+ * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
  */
 a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
@@ -990,13 +991,13 @@ a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
  * @example
  *      a2dlg_error("Something went wrong.", "Error", "Traceback line 1`nLine 2")
  *
- * @param {String} msg
+ * @param {(String)} msg
  * Message text
- * @param {String} title
+ * @param {(String)} title
  * Window title (default "a2 Error")
- * @param {String} error_detail
+ * @param {(String)} error_detail
  * Optional selectable detail text shown in a read-only code box
- * @param {Boolean} dark
+ * @param {(Boolean)} dark
  * Force dark/light theme; omit to follow the system setting
  */
 a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_window := 0) {
@@ -1020,11 +1021,11 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_
  *      if a2dlg_yes_no("Delete this item?")
  *          delete_item()
  *
- * @param {String} msg
+ * @param {(String)} msg
  * Question text.
- * @param {String} [title="a2"]
+ * @param {(String)} [title="a2"]
  * Optional Window title.
- * @param {Boolean} [dark]
+ * @param {(Boolean)} [dark]
  * Optional Force dark/light theme; omit to follow the system setting.
  * @returns  true (Yes) / false (No or closed)
  */
@@ -1038,13 +1039,13 @@ a2dlg_yes_no(msg, title := "a2 Yes/No", dark := -1, center_on_window := 0) {
  *      if a2dlg_ok_cancel("Proceed with installation?")
  *          install()
  *
- * @param {String} msg
+ * @param {(String)} msg
  * Confirmation text.
- * @param {String} [title="a2"]
+ * @param {(String)} [title="a2"]
  * Optional Window title.
- * @param {Boolean} [dark]
+ * @param {(Boolean)} [dark]
  * Optional Force dark/light theme; omit to follow the system setting.
- * @returns {Boolean} true (OK) / false (Cancel or closed)
+ * @returns {(Boolean)} true (OK) / false (Cancel or closed)
  */
 a2dlg_ok_cancel(msg, title := "a2 OK/Cancel", dark := -1, center_on_window := 0) {
     return _a2dlg_confirm(msg, title, "OK", "Cancel", dark, center_on_window)
@@ -1055,15 +1056,15 @@ a2dlg_ok_cancel(msg, title := "a2 OK/Cancel", dark := -1, center_on_window := 0)
  * @example
  *      name := a2dlg_input("Enter your name:", "Name", "World")
  *
- * @param {String} msg
+ * @param {(String)} msg
  * Prompt text shown above the input field
- * @param {String} [title]
+ * @param {(String)} [title]
  * Window title (default "a2 Input")
- * @param {String} [default_text]
+ * @param {(String)} [default_text]
  * Pre-filled value in the edit field
- * @param {Boolean} [dark]
+ * @param {(Boolean)} [dark]
  * Force dark/light theme; omit to follow the system setting
- * @returns {String} Entered string, or "" if cancelled
+ * @returns {(String)} Entered string, or "" if cancelled
  */
 a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_window := 0) {
     dlg := _a2dlg_make(title, msg, "✏️", "ok", 380, dark, &center_on_window)
@@ -1080,13 +1081,13 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_
 /**
  * Add a large colored icon glyph + wrapped message body to a dialog.
  *
- * @param {A2Dialog} dlg
+ * @param {(A2Dialog)} dlg
  * Target dialog
- * @param {String} icon_glyph
+ * @param {(String)} icon_glyph
  * Emoji / glyph rendered large on the left
- * @param {String} icon_color
+ * @param {(String)} icon_color
  * 6-digit RRGGBB hex color for the glyph
- * @param {String} msg
+ * @param {(String)} msg
  * Message text (wraps automatically)
  * @returns  Text ctrl for the message body
  */
