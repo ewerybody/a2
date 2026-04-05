@@ -33,15 +33,15 @@ a2dlg_demo(forced_dark := unset) {
     ; Button grid
     ; Row 1 — three semantic variants
     row1 := dlg.btn_row([
-        { label: "✔️  Accent", bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default" },
-        { label: "Neutral" },
-        { label: "⚠️  Warning", bg: dlg.c.warn, fg: "1A1A1A" }],
+        { label: "✔️  Accent", bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default"
+        , func: (*) => (status.Text := "Clicked: Accent (Default button / Enter key)") },
+        { label: "Neutral", func: (*) => (status.Text := "Clicked: Neutral") },
+        { label: "⚠️  Warning", bg: dlg.c.warn, fg: "1A1A1A", func: (*) => (status.Text := "Clicked: Warning")}],
         30, 8, 136)
-
     ; Row 2 — danger + a custom color swatch
     row2 := dlg.btn_row([
-        { label: "❌  Danger", bg: dlg.c.err, fg: "F8F8F8" },
-        { label: "Custom (teal)", bg: "117A8B", fg: "E8F8FF" }],
+        { label: "❌  Danger", bg: dlg.c.err, fg: "F8F8F8", func: (*) => (status.Text := "Clicked: Danger") },
+        { label: "Custom (teal)", bg: "117A8B", fg: "E8F8FF", func: (*) => (status.Text := "Clicked: Custom teal") }],
         30, 8, 136)
     dlg.space(10)
 
@@ -75,15 +75,11 @@ a2dlg_demo(forced_dark := unset) {
     }
 
     dlg.sep()
-    footer := dlg.btn_row_right([{ label: dlg.dark ? _["light_mode"] : _["dark_mode"] }, { label: "Close", w: 100 }])
-
-    ; Click events — button grid
-    row1[1].OnEvent("Click", (*) => (status.Text := "Clicked: Accent (Default button / Enter key)"))
-    row1[2].OnEvent("Click", (*) => (status.Text := "Clicked: Neutral"))
-    row1[3].OnEvent("Click", (*) => (status.Text := "Clicked: Warning"))
-
-    row2[1].OnEvent("Click", (*) => (status.Text := "Clicked: Danger"))
-    row2[2].OnEvent("Click", (*) => (status.Text := "Clicked: Custom teal"))
+    footer := dlg.btn_row_right([
+        { label: dlg.dark ? _["light_mode"] : _["dark_mode"]
+        , func: (*) => SetTimer(() => (dlg.destroy(), a2dlg_demo(!dlg.dark)), -1)},
+        { label: "Close", w: 100, func: (*) => ExitApp() }
+    ])
 
     ; Store kind on the control itself so each handler reads its own value,
     ; not the shared loop variable (which would always be the last value).
@@ -98,8 +94,6 @@ a2dlg_demo(forced_dark := unset) {
 
     ; To enable light-dark-mode switching we move around our built-ins `exit_on_close` and `esc_to_close`:
     ; Defer destroy+recreate so AHK fully exits the current event handler first
-    footer[1].OnEvent("Click", (*) => SetTimer(() => (dlg.destroy(), a2dlg_demo(!dlg.dark)), -1))
-    footer[2].OnEvent("Click", (*) => ExitApp())
     dlg.on_close((*) => ExitApp())
     dlg.on_escape((*) => ExitApp())
 

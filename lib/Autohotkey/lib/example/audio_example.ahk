@@ -32,7 +32,7 @@ audio_example() {
         rows := []
         for dev in devices {
             is_current := dev.id = current_id
-            row_ref := dlg.glyph_row(is_current ? "✔" : "◦", dev.name,,, is_current)
+            row_ref := dlg.glyph_row(is_current ? "✔" : "◦", dev.name,,, {active: is_current})
             btns := dlg.btn_row([{label: "Switch here", bg: dlg.c.btn_bg, fg: dlg.c.text}], 24, 0, 110)
             rows.Push({id: dev.id, name: dev.name, row: row_ref, btn: btns[1]})
             if is_current {

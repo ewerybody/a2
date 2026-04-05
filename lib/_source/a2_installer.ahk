@@ -42,7 +42,7 @@ backup()
 install()
 
 Run("a2.exe", A2DIR)
-ExitApp ; --------------------------------------------------------
+ExitApp ;----------------------------------------------------
 
 installer_dialog() {
     global PACKAGE_DIR, A2DIR
@@ -54,7 +54,7 @@ installer_dialog() {
     d := A2Dialog("a2 Installer", { w: 480, pad: 14 })
     c := d.c
 
-    ; ---- Header: icon + title ----
+    ; Header: icon + title
     d.header("a2 " new_ver " Installation", icon_src)
     d.sep()
     d.show(50)
@@ -62,7 +62,7 @@ installer_dialog() {
         d.set_icon(icon_src)
     Sleep(sleep_ticks)
 
-    ; ---- Check 1: Version ----
+    ; Check 1: Version
     inst_ver := read_version(A2DIR)
     is_update := has_a2_stuff()
 
@@ -87,27 +87,27 @@ installer_dialog() {
         ver_text := "Updating a2 => " new_ver " for " A_UserName
         ver_sub := ""
     }
-    d.row(ver_icon, ver_color, ver_text, ver_sub)
+    d.glyph_row(ver_icon, ver_text, ver_color, ver_sub)
     d.resize(50)
     Sleep(sleep_ticks)
 
     ; Check for Running processes under install path ...
-    proc_row := d.row_pending("...", "Checking for running a2 processes ...")
+    proc_row := d.glyph_row("...", "Checking for running a2 processes ...",,, {active: false})
     d.resize(50)
     Sleep(sleep_ticks)
 
     running_processes := find_processes_running_under(A2DIR)
     if (!running_processes.Length) {
-        proc_row.icon.SetFont("c" c.ok)
-        proc_row.icon.Text := "✔️"
+        proc_row.glyph.SetFont("c" c.ok)
+        proc_row.glyph.Text := "✔️"
         proc_row.text.SetFont("c" c.text)
         proc_row.text.Text := "No a2 processes running"
     } else {
         names := []
         for _, p in running_processes
             names.Push(p["Name"])
-        proc_row.icon.SetFont("c" c.warn)
-        proc_row.icon.Text := "⚠️"
+        proc_row.glyph.SetFont("c" c.warn)
+        proc_row.glyph.Text := "⚠️"
         proc_row.text.SetFont("c" c.warn)
         proc_row.text.Text := "Running: " string_join(names, ", ")
         d.gui.SetFont("s" (d.font_size - 1) " c" c.sub, d.font_face)
@@ -121,22 +121,22 @@ installer_dialog() {
     if (is_update) {
         existing_version := check_existing_version()
         if existing_version AND (VerCompare(existing_version, "2.0") < 0) {
-            d.row("⚠️", c.warn,
-                "Upgrade includes AutoHotkey v2",
+            d.glyph_row("⚠️",
+                "Upgrade includes AutoHotkey v2", c.warn,
                 "All extensions will be deactivated temporarily.")
             d.resize(50)
             Sleep(sleep_ticks)
         }
     }
 
-    ; ---- Buttons ----
+    ; Buttons
     d.space(10)
     d.sep()
     btns := d.btn_row_right([{ label: "Cancel", bg: c.btn_bg, fg: c.text }, { label: "Install =>", bg: c.ok, fg: c.acc_fg,
         opts: "Default" }])
     d.resize()
 
-    ; ---- Wait for user ----
+    ; Wait for user
     result := false
     btns[2].OnEvent("Click", (*) => (result := true, d.destroy()))
     btns[1].OnEvent("Click", (*) => d.destroy())

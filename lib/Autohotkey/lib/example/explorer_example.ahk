@@ -23,12 +23,11 @@ explorer_example() {
     dlg.sep()
 
     dlg.text("Explore to Files:")
-    ; dlg.btn_row()
     buttons := dlg.btn_row([
-        {label: "Single"}, {label: "Multiple"}, {label: "Multi Dirs"}, {label: "Dir Only"}
+        {label: "Single", func: _single},
+        {label: "Multiple", func: _multi},
+        {label: "Dir Only", func: _dirs}
     ])
-    buttons[1].OnEvent("Click", _single)
-    buttons[2].OnEvent("Click", _multi)
 
     dlg.space(4)
     dlg.sep()
@@ -62,8 +61,8 @@ _get_paths(explorers) {
 }
 
 _single(*) {
-    static a2path := path_dirname(A_ScriptDir)
-    static lib_files := path_get_files(a2path,,1)
+    static lib_path := path_dirname(A_ScriptDir)
+    static lib_files := path_get_files(lib_path,,1)
 
     select_files := []
     select_files.Push(lib_files[Random(1, lib_files.Length)])
@@ -71,8 +70,8 @@ _single(*) {
 }
 
 _multi(*) {
-    static a2path := path_dirname(A_ScriptDir)
-    static lib_files := path_get_files(a2path,,1)
+    static lib_path := path_dirname(A_ScriptDir)
+    static lib_files := path_get_files(lib_path,,1)
 
     select_files := []
     while select_files.Length != 3 {
@@ -82,4 +81,13 @@ _multi(*) {
         select_files.Push(this_file)
     }
     explorer_show(select_files*)
+}
+
+_dirs(*) {
+    static a2path := path_dirname(A_ScriptDir, 3)
+    paths := []
+    loop files a2path "\*", 'DR' {
+        paths.push(A_LoopFileDir)
+    }
+    explorer_show(paths[Random(1, paths.Length)])
 }

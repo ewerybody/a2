@@ -9,9 +9,9 @@
  *   d := A2Dialog(title [, opts])            - opts: w, pad, flags, dark, font: {face, size}
  *   d.header(text [, icon_path])             - large title with optional 32px icon
  *   d.sep()                                  - thin horizontal separator line
- *   d.row(icon, color, text [, subtext])     - colored icon + label row => {icon, text}
+ *   d.glyph_row(icon, text [,color, subtext])- colored icon + label row => {icon, text}
  *   d.row_pending([icon, text])              - muted row for live update => {icon, text}
- *   d.text(content [, ahk_opts])             - small caption / status line => ctrl
+ *   d.text(content [, color, ahk_opts])      - small caption / status line => ctrl
  *   d.space(px)                              - extra vertical gap
  *   d.btn(label, [bg, fg , ahk_opts])        - single flat button => ctrl
  *   d.btn_row(specs [, h, gap, bw])          - left-aligned button row => [controls]
@@ -21,7 +21,7 @@
  *                                              window of given handle.
  *   d.resize([extra_h])                      - resize in-place (progressive reveal)
  *   d.set_icon(path)                         - set window title-bar / taskbar icon
- *   d.esc_to_close([fn])                     - Esc closes or calls fn
+ *   d.esc_to_close()                         - Set Esc to close.
  *   d.on_close(fn)                           - register Gui Close handler
  *   d.destroy()                              - destroy window and clean up btn registry
  *   d.gui  d.hwnd  d.c  d.dark              - direct access to underlying objects
@@ -84,8 +84,8 @@ class A2Dialog {
         if opts.HasProp("font") {
             if opts.font.HasProp("face")
                 this.font_face := opts.font.face
-        if opts.font.HasProp("size")
-            this.font_size := opts.font.size
+            if opts.font.HasProp("size")
+                this.font_size := opts.font.size
         }
 
         if opts.HasProp("x") && opts.HasProp("y")
@@ -145,7 +145,7 @@ class A2Dialog {
      */
     sep() {
         this.gui.SetFont("s1")
-        this.gui.AddText("x0 y" this.height " w" this.width " h2 Background" this.c.sep)
+        this.gui.AddText("x0 y" this.height " w" this.width " h1 Background" this.c.sep)
         this.space(10)
         return this
     }
@@ -157,27 +157,42 @@ class A2Dialog {
      * @param {(String)} text - Main label text.
      * @param {(String)} [color] - Optional 6-digit RRGGBB hex color for the icon
      * @param {(String)} [subtext] - Optional muted line below the label
-     * @param {(Boolean)} [active] - Optional muted line below the label
-     * @returns  {icon: ctrl, text: ctrl} - either can be updated later
+     * @param {(Object)} [opts] - Optional options {
+     *  active: {Boolean} to dim the control on creation.,
+     *  glyph_color: {String} extra color for the glyph if it should be different.,
+     *  glyph_size: {Integer} extra size to make the glyph appear bigger or smaller
+     *  }
+     * @returns  {glyph: ctrl, text: ctrl, items: [glyph_ctrl, text_ctrl]} - either can be updated later
      */
-    glyph_row(glyph, text, color := "", subtext := "", active := true) {
+    glyph_row(glyph, text, color := "", subtext := "", opts := {}) {
         if !color
             color := this.c.text
         pad := this.pad
         y := this.height
-        this.gui.SetFont("s" (this.font_size + 1) " w400 c" color, this.font_face)
-        glyph_ctrl := this.gui.AddText("x" pad " y" (y + 4) " w20 h18", glyph)
+
+        glyph_size := opts.HasProp("glyph_size") ? opts.glyph_size : this.font_size + 1
+        em_px := Round(glyph_size * A_ScreenDPI / 72)
+        glyph_box := em_px + 2
+        glyph_color := opts.HasProp("glyph_color") ? opts.glyph_color : color
+        this.gui.SetFont("s" glyph_size " w400 c" glyph_color, this.font_face)
+        glyph_ctrl := this.gui.AddText("x" pad " y" y " w" glyph_box " h" glyph_box " Center", glyph)
         ; Store color so we can toggle without needing the color scheme
-        glyph_ctrl.color_on := color
-        if !active
+        glyph_ctrl.color_on := glyph_color
+        if opts.HasProp("active") and !opts.active
             glyph_ctrl.SetFont("c" this.c.sub)
+
         this.gui.SetFont("s" this.font_size " w400 c" color, this.font_face)
-        text_ctrl := this.gui.AddText("x" (pad + 24) " yp w" (this.width - pad * 2 - 24) " h18", text)
+        msg_x := pad * 2 + glyph_box
+        msg_w := this.width - pad - msg_x
+        text_ctrl := this.gui.AddText("x" msg_x " y" y " w" msg_w " Wrap", text)
         text_ctrl.color_on := color
-        this.space(26)
+        glyph_ctrl.GetPos(, , , &glyph_height)
+        text_ctrl.GetPos(, , , &text_height)
+        this.space(Max(glyph_height, text_height + 4))
+
         if subtext {
             this.gui.SetFont("s" (this.font_size - 1) " c" this.c.sub, this.font_face)
-            this.gui.AddText("x" (pad + 24) " y" this.height " w" (this.width - pad * 2 - 24), subtext)
+            this.gui.AddText("x" msg_x " y" this.height " w" msg_w, subtext)
             this.space(20)
         }
         return { glyph: glyph_ctrl, text: text_ctrl, items: [glyph_ctrl, text_ctrl] }
@@ -194,7 +209,8 @@ class A2Dialog {
         for item in items {
             if item.HasProp('items') {
                 for sub_item in item.items
-                    sub_item.SetFont("c" sub_item.color_on)
+                    if sub_item.HasProp("color_on")
+                        sub_item.SetFont("c" sub_item.color_on)
             } else {
                 item.SetFont("c" item.color_on)
             }
@@ -235,27 +251,6 @@ class A2Dialog {
     }
 
     /**
-     * Like row() but starts muted - intended for async status rows.
-     * Update .icon and .text controls once the result is known.
-     *
-     * @param {(String)} icon
-     * Initial glyph, default "…"
-     * @param {(String)} text
-     * Initial label text
-     * @returns  {icon: ctrl, text: ctrl}
-     */
-    row_pending(icon := "…", text := "") {
-        pad := this.pad
-        y := this.height
-        this.gui.SetFont("s" (this.font_size + 1) " c" this.c.sub, this.font_face)
-        glyph_ctrl := this.gui.AddText("x" pad " y" (y + 4) " w20 h18", icon)
-        this.gui.SetFont("s" this.font_size " c" this.c.sub, this.font_face)
-        text_ctrl := this.gui.AddText("x" (pad + 24) " yp w" (this.width - pad * 2 - 24) " h18", text)
-        this.space(26)
-        return { icon: glyph_ctrl, text: text_ctrl }
-    }
-
-    /**
      * Bold sub-section heading (font_size+1, text color).
      *
      * @param {(String)} text
@@ -283,6 +278,7 @@ class A2Dialog {
         if !color
             color := this.c.sub
         pad := this.pad
+        ; prepend options with space if any
         opts := ahk_opts ? " " ahk_opts : ""
         this.gui.SetFont("s" (this.font_size - 1) " c" color, this.font_face)
         ctrl := this.gui.AddText("x" pad " y" this.height " w" (this.width - pad * 2) " Wrap" opts, content)
@@ -401,15 +397,19 @@ class A2Dialog {
         if !bw
             bw := (this.width - pad * 2 - gap * (n - 1)) // n
         controls := []
-        for i, s in specs {
+        for i, spec in specs {
             x_opt := (i = 1) ? "x" pad " y" this.height : "x+" gap " yp"
-            extra := s.HasProp("opts") ? " " s.opts : ""
-            ctrl := this.gui.AddButton(x_opt " w" bw " h" h extra, s.label)
-            bg := s.HasProp("bg") ? s.bg : this.c.btn_bg
-            fg := s.HasProp("fg") ? s.fg : this.c.text
+            extra := spec.HasProp("opts") ? " " spec.opts : ""
+            ctrl := this.gui.AddButton(x_opt " w" bw " h" h extra, spec.label)
+            bg := spec.HasProp("bg") ? spec.bg : this.c.btn_bg
+            fg := spec.HasProp("fg") ? spec.fg : this.c.text
+
             a2dlg_make_button(ctrl, bg, fg)
             this._btn_hwnds.Push(ctrl.Hwnd)
             controls.Push(ctrl)
+
+            if spec.HasProp("func") && spec.func != ""
+                ctrl.OnEvent("Click", spec.func)
         }
         this.space(h + gap)
         return controls
@@ -452,10 +452,14 @@ class A2Dialog {
                 ctrl := this.gui.AddButton("x0 y0 h" h extra, spec.label)
                 ctrl.GetPos(, , &w,)
             }
+
             a2dlg_make_button(ctrl, bg, fg)
             this._btn_hwnds.Push(ctrl.Hwnd)
             controls.Push(ctrl)
             widths.Push(w)
+
+            if spec.HasProp("func") && spec.func != ""
+                ctrl.OnEvent("Click", spec.func)
         }
 
         ; Pass 2 - right-align: compute start x from total width, then move each button.
@@ -479,7 +483,7 @@ class A2Dialog {
      */
     btn_close() {
         this.btn_row_right([{ label: "Close", bg: this.c.btn_bg, fg: this.c.text, opts: "Default" }])[1]
-        .OnEvent("Click", (*) => this.destroy())
+        .OnEvent("Click", (*) => (this.cancelled := false, this.destroy()))
     }
 
     /**
@@ -645,6 +649,10 @@ class A2Dialog {
         return this
     }
 
+    /**
+     * Bind Ctrl+C to copy the dialogs current message.
+     * @returns  this (chainable)
+     */
     ctrl_c_to_copy_msg(*) {
         HotIfWinActive("ahk_id " this.hwnd)
         Hotkey("^c", (*) => this._copy_msg())
@@ -755,7 +763,7 @@ a2dlg_colors(dark) {
             sub: "888888",
             sep: "444444",
             ok: "36EC95",
-            warn: "FFA040",
+            warn: "fff540",
             err: "FF5050",
             btn_bg: "2D2D2D",
             acc_fg: "1A1A1A"
@@ -766,7 +774,7 @@ a2dlg_colors(dark) {
         sub: "666666",
         sep: "C8C8C8",
         ok: "1A9E60",
-        warn: "CC7000",
+        warn: "ccb100",
         err: "CC2020",
         btn_bg: "D8D8D8",
         acc_fg: "F8F8F8"
@@ -979,7 +987,7 @@ _flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
  * Force dark/light theme; omit to follow the system setting
  */
 a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
-    dlg := _a2dlg_make(title, msg, "ℹ️", "ok", 380, dark, &center_on_window)
+    dlg := _a2dlg_make(title, msg, "💡", "ok", 380, dark, &center_on_window)
     dlg.msg := msg
     dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok()
@@ -1001,7 +1009,7 @@ a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
  * Force dark/light theme; omit to follow the system setting
  */
 a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_window := 0) {
-    dlg := _a2dlg_make(title, msg, "❌", "warn", 420, dark, &center_on_window)
+    dlg := _a2dlg_make(title, msg, "❌", "err", 420, dark, &center_on_window)
     dlg.msg := msg
 
     if (error_detail != "") {
@@ -1078,34 +1086,6 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_
     return dlg.cancelled ? "" : dlg.result
 }
 
-/**
- * Add a large colored icon glyph + wrapped message body to a dialog.
- *
- * @param {(A2Dialog)} dlg
- * Target dialog
- * @param {(String)} icon_glyph
- * Emoji / glyph rendered large on the left
- * @param {(String)} icon_color
- * 6-digit RRGGBB hex color for the glyph
- * @param {(String)} msg
- * Message text (wraps automatically)
- * @returns  Text ctrl for the message body
- */
-_a2dlg_icon_msg(dlg, icon_glyph, icon_color, msg) {
-    inner_w := dlg.width - dlg.pad * 2
-    ; Icon - large, colored
-    dlg.gui.SetFont("s18 w700 c" icon_color, dlg.font_face)
-    dlg.gui.AddText("x" dlg.pad " y" dlg.height " w30 h30 Center", icon_glyph)
-    ; Message - wrap within remaining width
-    dlg.gui.SetFont("s" dlg.font_size " w400 c" dlg.c.text, dlg.font_face)
-    msg_x := dlg.pad + 36
-    msg_w := inner_w - 36
-    msg_ctrl := dlg.gui.AddText("x" msg_x " y" dlg.height " w" msg_w " Wrap", msg)
-    msg_ctrl.GetPos(, , , &mh)
-    dlg.space(Max(34, mh + 4))
-    return msg_ctrl
-}
-
 _a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1, &center_on_window := 0) {
     if (center_on_window == 1)
         center_on_window := WinExist('A')
@@ -1114,10 +1094,7 @@ _a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1, &center_on_window := 
         opts.dark := dark
     dlg := A2Dialog(title, opts)
     dlg.space(4)
-    ; TODO: this should work with glyph_row right away!
-    ; row := dlg.glyph_row(glyph, msg, dlg.c.%glyph_color%)
-    ; dlg.set_color(dlg.c.text, row.text)
-    _a2dlg_icon_msg(dlg, glyph, dlg.c.%glyph_color%, msg)
+    row := dlg.glyph_row(glyph, msg,,, {glyph_size: dlg.font_size + 8, glyph_color: dlg.c.%glyph_color%})
     dlg.space(4)
     dlg.sep()
     return dlg
