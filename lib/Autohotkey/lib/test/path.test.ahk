@@ -90,7 +90,7 @@ class PathTests {
     }
 
     class Normalize {
-        resolves_dotdot() {
+        resolves_dot_dot() {
             p := path_normalize(A_ScriptDir . "\..\..\ASD")
             if InStr(p, "..")
                 throw Error("Normalized path should not contain '..', got '" p "'")
@@ -144,7 +144,7 @@ class PathTests {
         }
 
         fresh_dir_is_empty() {
-            test_dir := A_ScriptDir . "\_ emptytest_path_8f3kq"
+            test_dir := A_ScriptDir . "\_ empty_test_path_8f3kq"
             DirCreate(test_dir)
             try {
                 if !path_is_empty(test_dir)
@@ -175,13 +175,13 @@ class PathTests {
 
     class ExpandEnv {
         expands_system_root() {
-            result := path_expand_env("%SystemRoot%\System32\imageres.dll")
+            result := path_expand_env("%SystemRoot%\System32\imageRes.dll")
             if InStr(result, "%")
                 throw Error("Expanded path should not contain '%', got '" result "'")
         }
 
         expanded_path_exists() {
-            result := path_expand_env("%SystemRoot%\System32\imageres.dll")
+            result := path_expand_env("%SystemRoot%\System32\imageRes.dll")
             if !FileExist(result)
                 throw Error("Expanded path should exist: '" result "'")
         }
@@ -213,8 +213,8 @@ class PathTests {
 
     class GetFreeName {
         no_conflict_returns_original() {
-            result := path_get_free_name(A_ScriptDir, "_pth_noexist_xyzfree_", "txt")
-            if result != "_pth_noexist_xyzfree_"
+            result := path_get_free_name(A_ScriptDir, "_pth_no_exist_xyz_free_", "txt")
+            if result != "_pth_no_exist_xyz_free_"
                 throw Error("Expected original name, got '" result "'")
         }
 
@@ -262,6 +262,42 @@ class PathTests {
             result := path_get_free_name(A_ScriptDir, "", "")
             if result
                 throw Error("Empty name/ext should return falsy, got '" result "'")
+        }
+    }
+
+    class DirMap {
+        single_file() {
+            result := Map()
+            for test in [A_ScriptFullPath, [A_ScriptFullPath], [A_ScriptFullPath, A_ScriptFullPath]] {
+                result.Clear()
+                result := path_get_dir_map(test)
+                class_name := Type(result)
+                if class_name != "Map"
+                    throw Error("Expected 'Map'! Result is: '" class_name "' !")
+                if !result.Has(A_ScriptDir)
+                    throw Error("Result should have " A_ScriptDir " as a key!")
+
+                expect := result[A_ScriptDir][1]
+                if expect != A_ScriptName
+                    throw Error("Result[A_ScriptDir] is '" expect "' should be '" A_ScriptName "' !")
+                got_len := result[A_ScriptDir].Length
+                if got_len != 1
+                    throw Error("Result[A_ScriptDir] should be 1 entry! Is  '" got_len "'!`n" string_join(result[A_ScriptDir]))
+            }
+        }
+
+        single_dir() {
+            for test in [A_ScriptDir, [A_ScriptDir], [A_ScriptDir, A_ScriptDir]] {
+                result := path_get_dir_map(test)
+                class_name := Type(result)
+                if class_name != "Map"
+                    throw Error("Expected 'Map'! Result is: '" class_name "' !")
+                if !result.Has(A_ScriptDir)
+                    throw Error("Result should have " A_ScriptDir " as a key!")
+                got_len := result[A_ScriptDir].Length
+                if got_len != 0
+                    throw Error("Result[A_ScriptDir] should be empty! Is  '" got_len "'!")
+            }
         }
     }
 }

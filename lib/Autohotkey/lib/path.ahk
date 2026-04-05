@@ -246,3 +246,45 @@ path_get_files(dir_path, pattern := "*", full_path := false) {
     }
     return files
 }
+
+/**
+ * Create flat {directory-path: [file-array]} map from single or array of full paths,
+ * ignoring in-existing paths and making empty array for directory-paths with no files listed.
+ * @param {(String|Array)} paths
+ * Array of paths or single path even.
+ * @returns {(Map)}
+ * Map with full directory path keys and Array of file names values.
+ */
+path_get_dir_map(paths*) {
+    result := []
+    for path in paths {
+        if path is Array {
+            for inner in path {
+                if string_is_in_array(inner, result)
+                    continue
+                result.Push(String(inner))
+            }
+        }
+        else {
+            if string_is_in_array(path, result)
+                continue
+            result.Push(String(path))
+        }
+    }
+
+    dir_map := Map()
+    for path in result {
+        if path_is_file(path) {
+            SplitPath(path, &file_name, &dir_path)
+            if !dir_map.Has(dir_path) {
+                dir_map[dir_path] := []
+            }
+            dir_map[dir_path].push(file_name)
+        } else if path_is_dir(path) {
+            if !dir_map.Has(path) {
+                dir_map[path] := []
+            }
+        }
+    }
+    return dir_map
+}
