@@ -10,6 +10,7 @@
 #Include <string>
 
 explorer_example()
+return
 
 explorer_example() {
     dlg := A2Dialog("Explorer lib example", { w: 440 })
@@ -38,16 +39,6 @@ explorer_example() {
 
     window_set_aot(true, dlg.hwnd)
 }
-
-; x1 := explorers[1]
-; sel_paths := explorer_get_selected(x1.id)
-; all_paths := explorer_get_all(x1.id)
-; txt .= '`n`nExplorer 1: "' x1.title '" ID:' x1.id " PID:" x1.pid "`n"
-; txt .= "Selection: " sel_paths.Length " " string_join(sel_paths) "`nTotal number of items: " all_paths.Length
-
-; msgbox_info(txt)
-
-return
 
 _get_paths(explorers) {
     paths := []

@@ -14,6 +14,7 @@ Joshua A. Kinnison
 2011-04-27, 16:12
 */
 #Include <a2dlg>
+#Include <path>
 
 
 ; Get array of paths of selected items via Explorer window handle.
@@ -157,30 +158,39 @@ explorer_try_select(basename, retries := 10, delay := 500) {
 
 ; Open Windows Explorer with the given directory or directory with file(s) selected.
 explorer_show(paths*) {
-    if !paths.Length
-        return
+    for dir_path, files in path_get_dir_map(paths)
+        explorer_show_dir_files(dir_path, files)
+}
 
-    ; Normalize to full paths
-    files := []
-    for p in paths
-        files.Push(p)
-        ; files.Push(p is String ? p : String(p))
-    SplitPath(files[1], , &folder)
+; Explicitly open Windows Explorer with a given directory path.
+explorer_show_dir(path) {
+    if !path_is_dir(path)
+        throw Error("explorer_show_dir needs an existing directory path!")
+    Run("open " path)
+}
+
+; Call SHOpenFolderAndSelectItems with given `dir_path` and selected `files` in it.
+explorer_show_dir_files(dir_path, files) {
+    if !files.Length {
+        explorer_show_dir(dir_path)
+        return
+    }
+
+    ; Folder PIDL + COM init
+    hr_init := DllCall("ole32\CoInitializeEx", "Ptr", 0, "UInt", 2, "HRESULT")  ; COINIT_APARTMENTTHREADED
+    DllCall("shell32\SHParseDisplayName",
+        "Str", dir_path, "Ptr", 0, "Ptr*", &folder_p_id_list := 0, "UInt", 0, "Ptr", 0,
+        "HRESULT")
 
     ; Build PIDL array for files
     item_list := Buffer(files.Length * A_PtrSize)
     for i, f in files {
+        f_path := dir_path "\" f
         DllCall("shell32\SHParseDisplayName",
-            "Str", f, "Ptr", 0, "Ptr*", &p_id_list := 0, "UInt", 0, "Ptr", 0,
+            "Str", f_path, "Ptr", 0, "Ptr*", &p_id_list := 0, "UInt", 0, "Ptr", 0,
             "HRESULT")
         NumPut("Ptr", p_id_list, item_list, (i - 1) * A_PtrSize)
     }
-
-    ; Folder PIDL + COM init
-    DllCall("ole32\CoInitializeEx", "Ptr", 0, "UInt", 2, "HRESULT")  ; COINIT_APARTMENTTHREADED
-    DllCall("shell32\SHParseDisplayName",
-        "Str", folder, "Ptr", 0, "Ptr*", &folder_p_id_list := 0, "UInt", 0, "Ptr", 0,
-        "HRESULT")
 
     DllCall("shell32\SHOpenFolderAndSelectItems",
         "Ptr", folder_p_id_list, "UInt", files.Length, "Ptr", item_list, "UInt", 0,
@@ -190,25 +200,9 @@ explorer_show(paths*) {
     DllCall("ole32\CoTaskMemFree", "Ptr", folder_p_id_list)
     loop files.Length
         DllCall("ole32\CoTaskMemFree", "Ptr", NumGet(item_list, (A_Index - 1) * A_PtrSize, "Ptr"))
-    DllCall("ole32\CoUninitialize")
+    if hr_init == 0
+        DllCall("ole32\CoUninitialize")
 }
-
-;     pth := StrReplace(pth, "\\", "\")
-;     pth := StrReplace(pth, "/", "\")
-
-;     explorer_path := path_join(A_WinDir, "explorer.exe")
-;     if path_is_file(pth)
-;         cmd := '"' explorer_path '" /select, "' pth '"'
-;     else if path_is_dir(pth)
-;         cmd := '"' explorer_path '" "' pth '"'
-;     else if (pth == "") {
-;         cmd := '"' explorer_path '"'
-;     }
-;     else
-;         a2dlg_error("No such path to explorer to!`n " . pth)
-
-;     Run cmd
-; }
 
 /**
  * Ask for file name as long that name exists in given directory or user cancels.
