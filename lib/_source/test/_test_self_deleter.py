@@ -32,8 +32,8 @@ AHK_EXE = 'Autohotkey.exe'
 AHK_PATH = os.path.join(AHK_DIR, AHK_EXE)
 COMPILER = join(AHK_DIR, 'Compiler', 'Ahk2Exe.exe')
 TEST_SCRIPT = join(THIS_DIR, NAME + '.ahk')
-CHKMK = b'\xe2\x9c\x94'.decode()
-EXMRK = b'\xe2\x9c\x96'.decode()
+CHK_MK = b'\xe2\x9c\x94'.decode()
+EX_MRK = b'\xe2\x9c\x96'.decode()
 MAX_WAIT = 3
 WAIT_STEP = 0.25
 
@@ -52,7 +52,7 @@ def main():
 
             if extra_file:
                 with open(EXTRA_FILE, 'w', encoding='utf8') as fileobj:
-                    fileobj.write(CHKMK * 50)
+                    fileobj.write(CHK_MK * 50)
 
             compile_args = [
                 COMPILER,
@@ -69,14 +69,14 @@ def main():
             # subprocess.call(args, cwd=batches_path)
 
             if os.path.isfile(TEST_EXE):
-                print(f'{CHKMK} done - {TEST_EXE}')
+                print(f'{CHK_MK} done - {TEST_EXE}')
             else:
-                print(f'{EXMRK} Failed! - {TEST_EXE}')
+                print(f'{EX_MRK} Failed! - {TEST_EXE}')
                 return
 
             print('Calling executable ... ', end='')
             pid = subprocess.Popen(args).pid
-            print(f'{CHKMK} done - {pid}')
+            print(f'{CHK_MK} done - {pid}')
 
             print('waiting for deletion ...\n')
             waited = 0
@@ -90,25 +90,25 @@ def main():
             time.sleep(WAIT_STEP)
 
             if os.path.isfile(TEST_EXE):
-                print(f'\n{EXMRK} Executable deletion FAILED!')
+                print(f'\n{EX_MRK} Executable deletion FAILED!')
                 return
 
             if os.path.isdir(TEST_DIR) and not extra_file:
-                print(f'\n{EXMRK} Folder deletion FAILED!')
+                print(f'\n{EX_MRK} Folder deletion FAILED!')
                 return
             if not os.path.isdir(TEST_DIR) and extra_file:
-                print(f'\n{EXMRK} Keeping Folder FAILED!')
+                print(f'\n{EX_MRK} Keeping Folder FAILED!')
                 return
             else:
-                print(f'\n{CHKMK} deletion done!')
+                print(f'\n{CHK_MK} deletion done!')
 
-            print(f'{CHKMK} run_nr: %s' % run_nr)
+            print(f'{CHK_MK} run_nr: %s' % run_nr)
             successes += 1
 
     if not successes:
-        print(f'\n{EXMRK} FAILED!')
+        print(f'\n{EX_MRK} FAILED!')
     else:
-        print(f'\n{CHKMK} Test PASSED! ({successes})')
+        print(f'\n{CHK_MK} Test PASSED! ({successes})')
 
 
 if __name__ == '__main__':
