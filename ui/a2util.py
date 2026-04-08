@@ -7,6 +7,9 @@ import os
 import time
 import stat
 import string
+from typing import Any
+
+from PIL.ImagePath import Path
 
 import a2core
 
@@ -120,14 +123,14 @@ def get_next_free_number(name, name_list, separator='', start_nr=2):
     return try_name
 
 
-def json_read(path):
+def json_read(path: str | Path) -> dict[str, Any]:
     import json
 
     with open(path, encoding=UTF8_CODEC) as file_obj:
         return json.load(file_obj)
 
 
-def json_write(path, data):
+def json_write(path: str | Path, data: dict[str, Any]) -> None:
     import json
 
     with open(path, 'w', encoding=UTF8_CODEC) as file_obj:
@@ -146,7 +149,7 @@ def surf_to(url: str):
         webbrowser.get().open(url)
 
 
-def load_utf8(path):
+def load_utf8(path: str | Path) -> str:
     """
     Open file with UTF8 codec to return its content as string.
     :param str path: Path to a file to load from.
@@ -311,7 +314,7 @@ def version_tuplify(version_string: str) -> tuple[int, ...]:
 
 
 if __name__ == '__main__':
-    import unittest
+    import pytest
     import test.test_util
 
-    unittest.main(test.test_util, verbosity=2)
+    pytest.main([test.test_util.__file__, '-v'])
