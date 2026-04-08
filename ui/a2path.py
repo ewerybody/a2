@@ -7,6 +7,103 @@ import os
 import typing
 
 
+class _PathObj:
+    def __init__(self, path: str = '') -> None:
+        self._path = path
+        self._name = ''
+        self._dir = ''
+
+    def _set_path(self, path: str) -> None:
+        self._path = path
+        self._name = ''
+        self._dir = ''
+
+    @property
+    def path(self) -> str:
+        if not self._path:
+            if not self._name or not self._dir:
+                raise RuntimeError('Cannot build path without both dir and name!')
+            self._path = os.path.join(self._dir, self._name)
+        return self._path
+
+    def _set_name(self, name: str) -> None:
+        self._name = name
+        if not self._dir:
+            self._dir, _ = os.path.split(self._path)
+        self._path = ''
+
+    @property
+    def name(self) -> str:
+        """Give the name aka tail part of the directories path."""
+        if not self._name:
+            self._set_dir_name()
+        return self._name
+
+    def _set_dir_name(self) -> None:
+        self._dir, self._name = os.path.split(self._path)
+
+    @property
+    def dir(self) -> str:
+        """Give the parent path above the current directory."""
+        if not self._dir:
+            self._set_dir_name()
+        return self._dir
+
+
+class DirObj(_PathObj):
+    """A basic path primitive object."""
+
+    def join(self, *sub_path):
+        """Join the directories path with another given `sub_path` or paths."""
+        return os.path.join(self._path, *sub_path)
+
+
+class FileObj(_PathObj):
+    """A file specific path primitive object.
+    Featuring `ext` to identify file types, alongside `is_type`, and `base` to
+    get a files name without path and extension.
+    """
+
+    def __init__(self) -> None:
+        super(FileObj, self).__init__()
+        self._ext = None  # type str | None
+        self._base = ''
+
+    @property
+    def ext(self) -> str:
+        """Get the files extension. Such as '.jpg'."""
+        if self._ext is None:
+            _, ext = self._set_base_ext()
+            return ext
+        return self._ext
+
+    def _set_base_ext(self):
+        self._base, self._ext = os.path.splitext(self.name)
+        self._ext = self._ext.lower()
+        return self._base, self._ext
+
+    def is_type(self, type_list: list[str] | tuple[str, ...]) -> bool:
+        """Tell if the file is of the given `type_list`."""
+        return self.ext in type_list
+
+    @property
+    def base(self) -> str:
+        """Get the files base name without path and extension."""
+        if not self._base:
+            self._set_base_ext()
+        return self._base
+
+    def _set_name(self, name: str) -> None:
+        super(FileObj, self)._set_name(name)
+        self._ext = None
+        self._base = ''
+
+    def _set_path(self, path: str) -> None:
+        super(FileObj, self)._set_path(path)
+        self._ext = None
+        self._base = ''
+
+
 def iter_dirs(path: str) -> typing.Iterator[DirObj]:
     """Iterate over directory items in a path. Yield DirObj."""
     item = DirObj()
@@ -109,103 +206,6 @@ def ensure_ending(path, ending):
 def is_same(path1, path2):
     """Return True if two normalized paths are identical."""
     return os.path.normcase(path1) == os.path.normcase(path2)
-
-
-class _PathObj:
-    def __init__(self, path: str = ''):
-        self._path = path
-        self._name = ''
-        self._dir = ''
-
-    def _set_path(self, path: str):
-        self._path = path
-        self._name = ''
-        self._dir = ''
-
-    @property
-    def path(self):
-        if not self._path:
-            if not self._name or not self._dir:
-                raise RuntimeError('Cannot build path without both dir and name!')
-            self._path = os.path.join(self._dir, self._name)
-        return self._path
-
-    def _set_name(self, name: str):
-        self._name = name
-        if not self._dir:
-            self._dir, _ = os.path.split(self._path)
-        self._path = ''
-
-    @property
-    def name(self):
-        """Give the name aka tail part of the directories path."""
-        if not self._name:
-            self._set_dir_name()
-        return self._name
-
-    def _set_dir_name(self):
-        self._dir, self._name = os.path.split(self._path)
-
-    @property
-    def dir(self) -> str:
-        """Give the parent path above the current directory."""
-        if not self._dir:
-            self._set_dir_name()
-        return self._dir
-
-
-class DirObj(_PathObj):
-    """A basic path primitive object."""
-
-    def join(self, *sub_path):
-        """Join the directories path with another given `sub_path` or paths."""
-        return os.path.join(self._path, *sub_path)
-
-
-class FileObj(_PathObj):
-    """A file specific path primitive object.
-    Featuring `ext` to identify file types, alongside `is_type`, and `base` to
-    get a files name without path and extension.
-    """
-
-    def __init__(self) -> None:
-        super(FileObj, self).__init__()
-        self._ext = None  # type str | None
-        self._base = ''
-
-    @property
-    def ext(self) -> str:
-        """Get the files extension. Such as '.jpg'."""
-        if self._ext is None:
-            _, ext = self._set_base_ext()
-            return ext
-        return self._ext
-
-    def _set_base_ext(self):
-        self._base, self._ext = os.path.splitext(self.name)
-        self._ext = self._ext.lower()
-        return self._base, self._ext
-
-    def is_type(self, type_list: list[str] | tuple[str, ...]) -> bool:
-        """Tell if the file is of the given `type_list`."""
-        return self.ext in type_list
-
-    @property
-    def base(self) -> str:
-        """Get the files base name without path and extension."""
-        if not self._base:
-            self._set_base_ext()
-        return self._base
-
-    def _set_name(self, name: str) -> None:
-        super(FileObj, self)._set_name(name)
-        self._ext = None
-        self._base = ''
-
-    def _set_path(self, path: str) -> None:
-        super(FileObj, self)._set_path(path)
-        self._ext = None
-        self._base = ''
 
 
 def build_dir_map(path: str | Path | list[str | Path] | tuple[str | Path, ...]) -> dict[str, list[str]]:
