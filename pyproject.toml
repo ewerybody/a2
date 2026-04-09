@@ -17,6 +17,9 @@ dependencies = [
 Homepage = "https://github.com/ewerybody/a2#readme"
 Issues = "https://github.com/ewerybody/a2/issues"
 
+[dependency-groups]
+gfx = ["pillow"]
+
 [tool.uv]
 package = false
 
