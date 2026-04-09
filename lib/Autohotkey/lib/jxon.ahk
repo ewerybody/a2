@@ -212,7 +212,7 @@ Jxon_Dump(obj, indent := "", lvl := 1) {
  * @returns {(String)}
  */
 Jxon_Read(file_name, args*) {
-    json_str := FileRead(file_name)
+    json_str := FileRead(file_name, "UTF-8")
     return Jxon_Load(&json_str)
 }
 

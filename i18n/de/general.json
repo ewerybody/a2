@@ -1,4 +1,4 @@
-﻿{
+{
     "cancel": "Abbrechen",
     "current": "aktuell",
     "copy": "Kopieren",
@@ -6,5 +6,5 @@
     "show_in_web": "Im Web-Browser Anzeigen",
     "explore": "Im Explorer Anzeigen",
     "to_clipboard": "In Clipboard Kopieren",
-    "have_net_connection": "Sind Sie mit dem Internet verbunden?"
+    "ask_net_connection": "Sind Sie mit dem Internet verbunden?"
 }
