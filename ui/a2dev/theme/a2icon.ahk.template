@@ -1,0 +1,27 @@
+﻿; AUTO-GENERATED! Do not edit! Run: poe build-theme
+#Include <windows>
+#Include <path>
+
+class {class_name} {{
+    static _cache := Map()
+    static mode := windows_is_dark() ? "dark" : "light"
+
+    static _base := path_dirname(A_LineFile, 2) "\theme\"
+
+    static __Get(name, params) {{
+        if {class_name}._cache.Has(name)
+            return {class_name}._cache[name]
+        path := {class_name}._base name ".ico"
+        if !FileExist(path) {{
+            path := {class_name}._base {class_name}.mode "\" name ".ico"
+            if !FileExist(path)
+                path := {class_name}._base "a2.ico"
+        }}
+        {class_name}._cache[name] := path
+        return path
+    }}
+
+{logo_icons}
+
+{icons}
+}}
