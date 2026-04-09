@@ -131,7 +131,7 @@ _i18n_domain_dir(caller_file) {
         return module_dir "\i18n"
     }
     if IsSet(a2)
-        return a2.path.a2 "\i18n"
+        return a2.paths.a2 "\i18n"
     SplitPath(A_LineFile, , &dir_path)
     SplitPath(dir_path, , &dir_path)
     SplitPath(dir_path, , &dir_path)
