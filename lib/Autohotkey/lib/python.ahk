@@ -29,6 +29,11 @@ python_get_path() {
 }
 
 _py_get_path(exe_type) {
+    out_dir := path_dirname(A_LineFile, 4)
+    venv_path := path_join(out_dir, '.venv', 'Scripts', exe_type.filename)
+    if FileExist(venv_path)
+        return venv_path
+
     py_path := python_check_registry(exe_type)
     if (py_path != "")
         Return py_path
@@ -45,14 +50,12 @@ python_check_registry(exe_type) {
         py_key := "HKEY_CURRENT_USER\Software\Python\PythonCore\" version "\InstallPath"
         py_path := RegRead(py_key, exe_type.reg_name)
 
-        if !string_endswith(py_path, exe_type.filename)
-        {
+        if !string_endswith(py_path, exe_type.filename) {
             py_key := "HKEY_LOCAL_MACHINE\Software\Python\PythonCore\" version "\InstallPath"
             py_path := RegRead(py_key, exe_type.reg_name)
         }
 
-        If FileExist(py_path)
-        {
+        If FileExist(py_path) {
             global a2_PY_VERSION_SHORT := version
             Return py_path
         }
