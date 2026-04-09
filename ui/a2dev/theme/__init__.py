@@ -11,13 +11,17 @@ import a2dev.dependency.inkscape
 
 import PIL.Image
 
-THEME_DIR = Path(__file__).parent.parent.parent.parent / 'theme'
+THIS_DIR = Path(__file__).parent
+A2_ROOT = THIS_DIR.parent.parent.parent
+THEME_DIR = A2_ROOT / 'theme'
 SOURCE_DIR = THEME_DIR / '_source'
 SOURCE_ICONS = SOURCE_DIR / 'icons'
 TMP_DIR = Path(os.getenv('TEMP', '')) / '.a2_tmp_icons'
 CHK_MARK = '\u2714'
 EX_MARK = '\u2716'
 TEXT_COLOR_REPLACE = '#f111f1'
+LOGO_SIZES = (24, 32, 48, 64, 128)
+ICON_SIZES = (24, 32, 48)
 
 
 def main(force=False):
@@ -30,16 +34,40 @@ def main(force=False):
     """
     t0 = time.perf_counter()
 
-    inkscape_exe = a2dev.dependency.inkscape.get_path()
-    if not inkscape_exe.is_file():
-        raise RuntimeError('We need Inkscape for this!!')
-
     logos_todo = _assemble_logos(force)
     icons_todo = _assemble_icons(force)
     if not logos_todo and not icons_todo:
         print(f'{CHK_MARK} nothing to do!')
         return
 
+    ink_proc = _spawn_inkscape()
+    assert ink_proc.stdin is not None and ink_proc.stdout is not None
+
+    progress = rich.progress.Progress(
+        '[progress.description]{task.description}',
+        rich.progress.BarColumn(),
+        rich.progress.TimeRemainingColumn(),
+    )
+    progress.start()
+    _process_todos(logos_todo, ink_proc, progress, 'logo', LOGO_SIZES)
+    for theme_name, todos in icons_todo.items():
+        _process_todos(todos, ink_proc, progress, theme_name, ICON_SIZES)
+    progress.stop()
+
+    ink_proc.stdin.write('quit\n')
+    ink_proc.stdin.flush()
+    ink_proc.wait()
+
+    _create_ahk_icon_lib()
+
+    print(f'took {time.perf_counter() - t0:.2f}s all in all.')
+
+
+def _spawn_inkscape() -> subprocess.Popen:
+    inkscape_exe = a2dev.dependency.inkscape.get_path()
+    if not inkscape_exe.is_file():
+        raise RuntimeError('We need Inkscape for this!!')
+    t1 = time.perf_counter()
     print('Starting up Inkscape shell ...', end='')
     ink_proc = subprocess.Popen(
         [inkscape_exe, '--shell'],
@@ -49,31 +77,9 @@ def main(force=False):
         text=True,
         bufsize=0,
     )
-    assert ink_proc.stdin is not None and ink_proc.stdout is not None
     _wait_for_inkscape(ink_proc)
-    print(f'\b\b\b{CHK_MARK} {time.perf_counter() - t0:.2f}s')
-
-    progress = rich.progress.Progress(
-        '[progress.description]{task.description}',
-        rich.progress.BarColumn(),
-        rich.progress.TimeRemainingColumn(),
-    )
-    progress.start()
-
-    task_id = progress.add_task('Generating logo icons', total=len(logos_todo))
-    TMP_DIR.mkdir(exist_ok=True)
-    _process_todos(logos_todo, ink_proc, progress, task_id)
-
-    for theme_name, todos in icons_todo.items():
-        task_id = progress.add_task(f'Generating {theme_name} icons', total=len(todos))
-        _process_todos(todos, ink_proc, progress, task_id)
-
-    progress.stop()
-    ink_proc.stdin.write('quit\n')
-    ink_proc.stdin.flush()
-    ink_proc.wait()
-
-    print(f'took {time.perf_counter() - t0:.2f}s all in all.')
+    print(f'\b\b\b{CHK_MARK} {time.perf_counter() - t1:.2f}s')
+    return ink_proc
 
 
 def _wait_for_inkscape(ink_proc):
@@ -85,7 +91,7 @@ def _wait_for_inkscape(ink_proc):
             return
 
 
-def make_ico(png_path, ico_path, sizes=(16, 24, 32, 48, 128)):
+def make_ico(png_path, ico_path, sizes):
     sort_size = sorted(sizes, reverse=True)
     img = PIL.Image.open(png_path).convert('RGBA')
     img.save(ico_path, format='ICO', sizes=[(s, s) for s in sort_size])
@@ -148,11 +154,15 @@ def _process_todos(
     todos: list[tuple[Path, Path]],
     ink_proc: subprocess.Popen,
     progress: rich.progress.Progress,
-    task_id: rich.progress.TaskID,
+    task_name: str,
+    sizes: tuple[int, ...]
 ) -> None:
-    assert ink_proc.stdin is not None and ink_proc.stdout is not None
     if not todos:
         return
+
+    assert ink_proc.stdin is not None and ink_proc.stdout is not None
+
+    task_id = progress.add_task(f'Generating {task_name} icons', total=len(todos))
     todos[0][1].parent.mkdir(exist_ok=True)
     for source, target in todos:
         tmp_png = TMP_DIR / f'{source.stem}.png'
@@ -163,8 +173,33 @@ def _process_todos(
         ink_proc.stdin.write(cmd)
         ink_proc.stdin.flush()
         _wait_for_inkscape(ink_proc)
-        make_ico(tmp_png, target)
+        make_ico(tmp_png, target, sizes)
         progress.update(task_id, advance=1)
+
+
+def _create_ahk_icon_lib():
+    root_icons = [i.stem for i in THEME_DIR.glob('*.ico')]
+    themes = []
+    for theme_item in THEME_DIR.glob('*'):
+        if not theme_item.is_dir() or theme_item.name.startswith('_'):
+            continue
+        themes.append([i.stem for i in theme_item.glob('*.ico')])
+
+    present_in_all = set(themes[0])
+    for others in themes[1:]:
+        present_in_all = present_in_all.intersection(others)
+
+    code_line = '    static {0} => A2Icons.__Get("{0}", 0)'
+    logos_code = [code_line.format(name) for name in root_icons]
+    icons_code = [code_line.format(name) for name in sorted(present_in_all)]
+    template = a2util.load_utf8(THIS_DIR / 'a2icon.ahk.template')
+    (A2_ROOT / 'lib' / 'a2icon.ahk').write_text(
+        template.format(
+            class_name='A2Icons',
+            logo_icons='\n'.join(logos_code),
+            icons='\n'.join(icons_code),
+        )
+    )
 
 
 # def make_tmp_png(inkscape_exe, tmp_dir, source):
