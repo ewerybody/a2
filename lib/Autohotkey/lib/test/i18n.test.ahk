@@ -24,6 +24,9 @@ class I18nTests {
             t_en := i18n_locale(A_LineFile, "en")
             if (t["only_english"] != t_en["only_english"])
                 throw Error('German dictionary should have same replaced missing keys!!')
+
+            if t['umlauts'] != "Ümläüts Ök?"
+                throw Error('Error reading umlauts!!')
         }
 
         no_english_file_throws() {

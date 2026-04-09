@@ -1,8 +1,9 @@
-{
+﻿{
     "welcome": "Willkommen beim {}!",
     "test": "Probe",
     "greeting": "Hallo",
     "okay": "In Ordnung",
     "cancel": "Abbrechen",
+    "umlauts": "Ümläüts Ök?",
     "empty_in_german": ""
 }
