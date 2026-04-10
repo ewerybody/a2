@@ -32,11 +32,11 @@ dev-exe = { cmd = "python ui/a2dev/build/root_executables.py", help = "Create fr
 dev-init = { sequence = [ "dev-bin-deps", "dev-exe" ], help = "Perform all dev init repo initialization steps." }
 build-package = { cmd = "python lib/_batches/build/make_package.py", help = "Build a new package into '_ package'." }
 build-installer = { cmd = "python lib/_batches/build/build_installer.py", help = "Build the installer files." }
+build-theme = { cmd = "python ui/a2dev/build/theme.py", help = "Build theme files and colored icons from SVG sources. Needs Inkscape and gfx group!" }
 build = { sequence = [ "build-package", "build-installer" ], help = "Build complete package for release." }
 test-py = { cmd = "pytest ui/test", help = "Test python code with pytest." }
 test-ahk = { cmd = "python lib/Autohotkey/lib/test/run_ahk_tests.py", help = "Test Autohotkey code with AHKUnit." }
 test = { sequence = ["test-ahk", "test-py"], help = "Run all available tests." }
-theme-build = { cmd = "python ui/a2dev/theme/__init__.py", help = "Build theme files and colored icons from SVG sources." }
 check-i18n = { help = "Validate i18n JSON files for encoding issues", cmd = "python ui/a2dev/check_i18n.py" }
 
 [tool.poe]
