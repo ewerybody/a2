@@ -1,6 +1,8 @@
 ﻿; Example Tool to test and showcase the `a2tip` capabilities.
 #SingleInstance Force
 #NoTrayIcon
+
+#Include ../../../a2icon.ahk
 #Include <a2tip>
 
 a2tip("hallo")

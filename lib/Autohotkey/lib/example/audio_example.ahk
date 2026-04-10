@@ -10,6 +10,7 @@
 #SingleInstance Force
 #NoTrayIcon
 
+#Include ../../../a2icon.ahk
 #Include <audio>
 #Include <a2dlg>
 

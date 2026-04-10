@@ -1,5 +1,5 @@
 #Include ..\windows.ahk
-#Include ..\..\..\a2_globals.ahk
+#Include ..\..\..\a2icon.ahk
 #Include %A_ScriptDir%\..\
 #Include <a2dlg>
 #Include <msgbox>

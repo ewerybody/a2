@@ -14,6 +14,7 @@ Persistent
 #include <windows>
 
 #include a2core.ahk
+#include a2icon.ahk
 #include a2_config.ahk
 #include a2_globals.ahk
 #include a2_urls.ahk
@@ -25,6 +26,7 @@ root_dir := path_dirname(A_ScriptDir) "\"
 data_dir := a2_get_user_data_path(root_dir)
 global a2 := A2Core_Class(data_dir)
 a2.cfg := a2_get_user_config(data_dir)
+global A2Icons
 SetWorkingDir a2.paths.a2
 
 _a2_check_arguments()
@@ -55,7 +57,7 @@ a2ui(*) {
 
     show_console := false
     if show_console
-        py_exe := path_join(a2.paths.a2, "python.exe")
+        py_exe := path_join(a2.paths.ui, "python.exe")
     else
         py_exe := path_join(a2.paths.ui, "pythonw.exe")
 
@@ -98,8 +100,8 @@ _a2_check_changes() {
     ; Check library & module scripts for changes via archive file attribute.
     ; Removes the attribute from ALL files and reloads if any was found.
     do_reload := false
-    for _, libdir in [a2.paths.lib, a2.paths.ahklib] {
-        Loop Files, string_suffix(libdir, "\") "*.ahk"
+    for lib_dir in [a2.paths.lib, a2.paths.ahklib] {
+        Loop Files, string_suffix(lib_dir, "\") "*.ahk"
         {
             If InStr(A_LoopFileAttrib, "A") {
                 do_reload := true

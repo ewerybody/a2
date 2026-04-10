@@ -31,7 +31,7 @@ Class A2Core_Class {
             ,lib: root_dir "lib\"
             ,ahklib: root_dir "lib\Autohotkey\lib\"
             ,ui: root_dir "ui\"
-            ,resources: root_dir "ui\res\"
+            ,resources: root_dir "theme\"
             ,data: data_path
             ,modules: data_path "modules\"
             ,module_data: data_path "module_data\"
