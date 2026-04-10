@@ -9,23 +9,26 @@
 #SingleInstance Force
 #NoTrayIcon
 
+#Include ../../../a2icon.ahk
 #Include <a2dlg>
+#Include <path>
 
 A2dlgBuilder()
 
 class A2dlgBuilder {
     static FEATURES := [
-        {label: "header",        code: 'd.header("My Dialog")'},
-        {label: "sep",           code: "d.sep()"},
-        {label: "glyph_row",     code: 'd.glyph_row("✔", "Everything is fine", d.c.ok)'},
-        {label: "text",          code: 'd.text("Some caption or status line.")'},
-        {label: "space",         code: "d.space(12)"},
-        {label: "heading",       code: 'd.heading("Section")'},
-        {label: "edit_field",    code: "d.edit_field()"},
-        {label: "code_box",      code: 'd.code_box("error detail here")'},
-        {label: "btn_ok",        code: "d.btn_ok()"},
-        {label: "btn_close",     code: "d.btn_close()"},
-        {label: "btn_ok_cancel", code: "d.btn_ok_cancel()"},
+        {label: "header",        code: 'dlg.header("My Dialog")'},
+        {label: "sep",           code: "dlg.sep()"},
+        {label: "glyph_row",     code: 'dlg.glyph_row("✔", "Everything is fine", dlg.c.ok)'},
+        {label: "text",          code: 'dlg.text("Some caption or status line.")'},
+        {label: "space",         code: "dlg.space(12)"},
+        {label: "heading",       code: 'dlg.heading("Section")'},
+        {label: "edit_field",    code: "dlg.edit_field()"},
+        {label: "code_box",      code: 'dlg.code_box("error detail here")'},
+        {label: "btn",           code: "dlg.btn('Hello')"},
+        {label: "btn_ok",        code: "dlg.btn_ok()"},
+        {label: "btn_close",     code: "dlg.btn_close()"},
+        {label: "btn_ok_cancel", code: "dlg.btn_ok_cancel()"},
     ]
 
     stack        := []
@@ -34,51 +37,52 @@ class A2dlgBuilder {
     dlg          := ""
     stack_ctrl   := ""
     code_ctrl    := ""
+    lib_path     := path_dirname(A_ScriptDir, 3)
 
     __New() {
-        d := A2Dialog("a2dlg Builder", {w: 520})
-        this.dlg := d
-        c := d.c
+        dlg := A2Dialog("a2dlg Builder", {w: 520})
+        this.dlg := dlg
+        c := dlg.c
 
-        d.header("🧱 a2dlg Builder")
-        d.text("Click features to add them to your dialog.")
-        d.sep()
+        dlg.header("🧱 a2dlg Builder")
+        dlg.text("Click features to add them to your dialog.")
+        dlg.sep()
 
-        d.heading("Add feature")
-        d.space(4)
+        dlg.heading("Add feature")
+        dlg.space(4)
             for i, feat in A2dlgBuilder.FEATURES {
-            btns := d.btn_row([{label: "+ " feat.label}], 26, 0, 160)
-                btns[1].OnEvent("Click", this._on_add.Bind(this, i))
-            d.space(2)
+            buttons := dlg.btn_row([{label: "+ " feat.label}], 160, 26, 0)
+            buttons[1].OnEvent("Click", this._on_add.Bind(this, i))
+            dlg.space(2)
         }
 
-        d.space(6)
-        d.sep()
+        dlg.space(6)
+        dlg.sep()
 
-        d.heading("Current stack")
-        d.space(4)
-            this.stack_ctrl := d.text("(empty)", c.sub)
+        dlg.heading("Current stack")
+        dlg.space(4)
+            this.stack_ctrl := dlg.text("(empty)", c.sub)
 
-        d.space(6)
-        d.sep()
+        dlg.space(6)
+        dlg.sep()
 
-        d.heading("Generated code")
-        d.space(4)
-        this.code_ctrl := d.code_box("", 120)
-        d.space(6)
-        d.sep()
+        dlg.heading("Generated code")
+        dlg.space(4)
+        this.code_ctrl := dlg.code_box("", 120)
+        dlg.space(6)
+        dlg.sep()
 
-        footer := d.btn_row_right([
-            {label: "↩ Undo",   w: 80},
-            {label: "🗑 Clear",  w: 80},
-            {label: "Close",     w: 80}
+        footer := dlg.btn_row_right([
+            {label: "↩ Undo", w: 80},
+            {label: "🗑 Clear", w: 80},
+            {label: "Close", w: 80}
         ])
             footer[1].OnEvent("Click", (*) => this._undo())
             footer[2].OnEvent("Click", (*) => this._clear())
         footer[3].OnEvent("Click", (*) => ExitApp())
-        d.on_close((*) => ExitApp())
-        d.esc_to_close()
-        d.show()
+        dlg.on_close((*) => ExitApp())
+        dlg.esc_to_close()
+        dlg.show()
     }
 
     _on_add(feat_idx, ctrl, *) {
@@ -147,13 +151,14 @@ class A2dlgBuilder {
             "#SingleInstance Force`n"
             "#NoTrayIcon`n"
             "`n"
+            "#Include " this.lib_path "\a2icon.ahk`n"
             "#Include <a2dlg>`n"
             "`n"
-                "d := A2Dialog(`"Preview`", {w: 380, x: " x ", y: " y "})`n"
+                "dlg := A2Dialog(`"Preview`", {w: 380, x: " x ", y: " y "})`n"
             code_lines "`n"
-            "d.esc_to_close()`n"
-            "d.show()`n"
-            "WinWaitClose(`"ahk_id `" d.hwnd)`n"
+            "dlg.esc_to_close()`n"
+            "dlg.show()`n"
+            "WinWaitClose(`"ahk_id `" dlg.hwnd)`n"
         )
     }
 }

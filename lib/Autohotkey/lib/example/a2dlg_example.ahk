@@ -12,8 +12,8 @@
 #SingleInstance Force
 #NoTrayIcon
 
+#Include ../../../a2icon.ahk
 #Include <path>
-#Include ../../../a2_globals.ahk
 #Include <a2dlg>
 #Include <i18n>
 #Include <window>
@@ -33,16 +33,17 @@ a2dlg_demo(forced_dark := unset) {
     ; Button grid
     ; Row 1 — three semantic variants
     row1 := dlg.btn_row([
-        { label: "✔️  Accent", bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default"
+        { label: "✔️  Accent", w: 230, bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default"
         , func: (*) => (status.Text := "Clicked: Accent (Default button / Enter key)") },
         { label: "Neutral", func: (*) => (status.Text := "Clicked: Neutral") },
         { label: "⚠️  Warning", bg: dlg.c.warn, fg: "1A1A1A", func: (*) => (status.Text := "Clicked: Warning")}],
-        30, 8, 136)
+    )
     ; Row 2 — danger + a custom color swatch
     row2 := dlg.btn_row([
         { label: "❌  Danger", bg: dlg.c.err, fg: "F8F8F8", func: (*) => (status.Text := "Clicked: Danger") },
         { label: "Custom (teal)", bg: "117A8B", fg: "E8F8FF", func: (*) => (status.Text := "Clicked: Custom teal") }],
-        30, 8, 136)
+        150,
+    )
     dlg.space(10)
 
     ; Status line
@@ -69,9 +70,9 @@ a2dlg_demo(forced_dark := unset) {
     popup_buttons_a2 := []
     popup_buttons_ahk := []
     for row in popup_rows {
-        btns := dlg.btn_row([{ label: row[1]}, { label: row[2] }], 26, 8)
-        popup_buttons_a2.Push({ btn: btns[1], kind: row[1] })
-        popup_buttons_ahk.Push({ btn: btns[2], kind: row[2] })
+        buttons := dlg.btn_row([{ label: row[1]}, { label: row[2] }],, 26)
+        popup_buttons_a2.Push({ btn: buttons[1], kind: row[1] })
+        popup_buttons_ahk.Push({ btn: buttons[2], kind: row[2] })
     }
 
     dlg.sep()

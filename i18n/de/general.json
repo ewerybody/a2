@@ -1,5 +1,8 @@
 {
     "cancel": "Abbrechen",
+    "yes": "Ja",
+    "no": "Nein",
+    "close": "Schließen",
     "current": "aktuell",
     "copy": "Kopieren",
     "paste": "Einfügen",
