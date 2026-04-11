@@ -3,22 +3,19 @@
 /**
  * Get locale dictionary for the calling module.
  *
- * ⚠️ Always use A_LineFile (not A_ScriptDir or A_WorkingDir) to reference
- * paths relative to the current file! A_ScriptDir points to the main
- * entry script, which may be a temp file or a different location entirely.
- * @param {(String)} caller_file
- * Script path from `A_LineFile` variable to find localization files.
+ * Always use `A_LineFile` (not `A_ScriptDir` or `A_WorkingDir`) to reference paths relative to the
+ * current file! A_ScriptDir points to main entry script! which may be temp file or a different location entirely.
+ * @param {(String)} caller_file - Script path from `A_LineFile` variable to find localization files.
  * that should be right next in `i18n` folder.
- * @param {(String)} [_language]
- * For **testing purposed** only! Force a language to be used.
  * @returns {(Map)}
- */
+*/
 i18n_locale(caller_file, _language := "") {
     SplitPath(caller_file, , &module_dir)
     i18n_dir := module_dir "\i18n"
     if !DirExist(i18n_dir)
         throw Error('No "i18n" directory at "' i18n_dir '"!')
 
+    ; For **testing purposed** this can be forced to use a dedicated language.
     _language := i18n_get_language(_language)
     return _i18n_load(
         i18n_dir "\en.json",
@@ -29,12 +26,8 @@ i18n_locale(caller_file, _language := "") {
 
 /**
  * Get locale dictionary for given domain of calling module.
- * @param {(String)} domain
- * Topic of the translations to get.
- * @param {(String)} [caller_file]
- * Optionally pass `A_LineFile` to get translation from local "i18n\en\domain.json".
- * @param {(String)} [_language]
- * For **testing purposed** only! Force a language to be used.
+ * @param {(String)} domain - Topic of the translations to get.
+ * @param {(String)} [caller_file] - Optionally pass `A_LineFile` to get translation from local "i18n\en\domain.json".
  * @returns {(Map)}
  */
 i18n_domain(domain, caller_file := "", _language := "") {
@@ -42,6 +35,7 @@ i18n_domain(domain, caller_file := "", _language := "") {
     if !DirExist(i18n_dir)
         throw Error('No "i18n" directory at "' i18n_dir '"!')
 
+    ; For **testing purposed** this can be forced to use a dedicated language.
     _language := i18n_get_language(_language)
     return _i18n_load(
         i18n_dir "\en\" domain ".json",
@@ -52,13 +46,11 @@ i18n_domain(domain, caller_file := "", _language := "") {
 
 /**
  * Get the language to use.
- * * passed right away
- * * set by the user
- * * from system settings (default fallback)
- * @param {(String)} [language]
- * Optional language id string like "en-US" to force a language to be used.
- * @returns {(String)}
- * Resulting language id string.
+ * - passed right away
+ * - set by the user
+ * - from system settings (default fallback)
+ * @param {(String)} [language] - Optional language id string like "en-US" to force a language to be used.
+ * @returns {(String)} - Resulting language id string.
  */
 i18n_get_language(language := "") {
     if language != ""
@@ -74,8 +66,7 @@ i18n_get_language(language := "") {
 
 /**
  * Get the language from user settings is set.
- * @returns {(String)}
- * Resulting language id string.
+ * @returns {(String)} - Resulting language id string.
  */
 i18n_get_user_language() {
     if IsSet(a2) {
@@ -88,8 +79,7 @@ i18n_get_user_language() {
 
 /**
  * Get the language from system settings.
- * @returns {(String)}
- * Resulting language id string.
+ * @returns {(String)} - Resulting language id string.
  */
 i18n_get_system_language() {
     buf := Buffer(16, 0)
