@@ -121,8 +121,8 @@ def _assemble_icons(force: bool) -> dict[str, list[tuple[Path, Path]]]:
         text_color = ''
         if theme_colors.is_file():
             this_color = a2util.json_read(theme_colors).get('text', '')
-            if re.match('[0-9A-F]{6}', this_color):
-                text_color = f'#{this_color}'
+            if re.match('#[0-9A-F]{6}', this_color):
+                text_color = this_color
 
         for item in SOURCE_ICONS.glob('*.svg'):
             target = THEME_DIR / theme_item.name / f'{item.stem}.ico'
