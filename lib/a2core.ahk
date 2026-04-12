@@ -8,7 +8,6 @@
 Class A2Core_Class {
     /**
      * Title of the a2 instance
-     *
      * @type {(String)}
      */
     static title := ""
@@ -27,16 +26,16 @@ Class A2Core_Class {
 
         data_path := string_suffix(data_path, "\")
 
-        this.paths := {a2: root_dir
-            ,lib: root_dir "lib\"
-            ,ahklib: root_dir "lib\Autohotkey\lib\"
-            ,ui: root_dir "ui\"
-            ,resources: root_dir "theme\"
-            ,data: data_path
-            ,modules: data_path "modules\"
-            ,module_data: data_path "module_data\"
-            ,temp: data_path "temp\"
-            ,includes: data_path "includes\includes.ahk"
+        this.paths := {a2: root_dir,
+            lib: root_dir "lib\",
+            ahklib: root_dir "lib\Autohotkey\lib\",
+            ui: root_dir "ui\",
+            resources: root_dir "theme\",
+            data: data_path,
+            modules: data_path "modules\",
+            module_data: data_path "module_data\",
+            temp: data_path "temp\",
+            includes: data_path "includes\includes.ahk"
         }
 
         this.cfg := {}
@@ -109,11 +108,8 @@ Class _Ca2DB {
     /**
      * From a A_LineFile path build the module key and fetch the wanted value.
      * Entry in DB is a key/value pair.
-     *
-     * @param {(String)} line_file
-     * Path to a file in a module directory.
-     * @param {(String)} key
-     * Name of the key in the table.
+     * @param {(String)} line_file - Path to a file in a module directory.
+     * @param {(String)} key - Name of the key in the table.
      * @returns {(String)}
      */
     find(line_file, key) {
@@ -125,13 +121,9 @@ Class _Ca2DB {
     /**
      * From a A_LineFile path build the module key and set the according value.
      * Entry in DB is a key/value pair.
-     *
-     * @param {(String)} line_file
-     * Path to a file in a module directory.
-     * @param {(String)} key
-     * Name of the key in table.
-     * @param {(String)} value
-     * Value to be set in table.
+     * @param {(String)} line_file - Path to a file in a module directory.
+     * @param {(String)} key - Name of the key in table.
+     * @param {(String)} value - Value to be set in table.
      * @return {(String)}
      */
     find_set(line_file, key, value) {
@@ -146,13 +138,9 @@ Class _Ca2DB {
     /**
      * Get single value of key from the DB.
      * Entry in DB is a key/value pair.
-     *
-     * @param {(String)} key
-     * Name of the key in the table.
-     * @param {(String)} module_pack
-     * Name of the Module Pack that called the method.
-     * @param {(String)} module_name
-     * Name of the Module that called the method.
+     * @param {(String)} key - Name of the key in the table.
+     * @param {(String)} module_pack - Name of the Module Pack that called the method.
+     * @param {(String)} module_name - Name of the Module that called the method.
      * @return {(String)}
      */
     get(key, module_pack, module_name := "") {
@@ -162,17 +150,11 @@ Class _Ca2DB {
     }
 
     /**
-     * Set a single value to a key from the DB.
-     * Entry in DB is a key/value pair.
-     *
-     * @param {(String)} key
-     * Name of the key in the table.
-     * @param {(String)} value
-     * Value to be set in the table.
-     * @param {(String)} module_pack
-     * Name of the Module Pack that called the method.
-     * @param {(String)} [module_name]
-     * Name of the Module that called the method.
+     * Set a single value to a key from the DB. Entry in DB is a key/value pair.
+     * @param {(String)} key - Name of the key in the table.
+     * @param {(String)} value - Value to be set in the table.
+     * @param {(String)} module_pack - Name of the Module Pack that called the method.
+     * @param {(String)} [module_name] - Name of the Module that called the method.
      */
     set(key, value, module_pack, module_name := "") {
         table_name := this.__module_table(module_pack, module_name)
@@ -184,15 +166,10 @@ Class _Ca2DB {
     }
 
     /**
-     * Delete a row from the table in the DB
-     * based on the key name
-     *
-     * @param {(String)} key
-     * Name of the key in the table.
-     * @param {(String)} module_pack
-     * Name of the Module Pack that called the method.
-     * @param {(String)} [module_name]
-     * Name of the Module that called the method.
+     * Delete a row from the table in the DB. Based on the key name.
+     * @param {(String)} key - Name of the key in the table.
+     * @param {(String)} module_pack - Name of the Module Pack that called the method.
+     * @param {(String)} [module_name] - Name of the Module that called the method.
      */
     delete(key, module_pack, module_name := "") {
         table_name := this.__module_table(module_pack, module_name)
@@ -205,16 +182,11 @@ Class _Ca2DB {
      * - Value MUST be numeric/integer
      * - Amount can be negative
      * - If the key was non-existing, it will be created with value = amount
-     *
-     * @param {(String)} module_pack
-     * Name of the Module Pack that called the method.
-     * @param {(String)} [module_name]
-     * Name of the Module that called the method.
-     * @param {(String)} key
-     * Name of the key in the table.
-     * @param {(Integer)} step
-     * Amount to increase the value by.
-     * @return {(Integer)}              Value after adding the amount
+     * @param {(String)} module_pack - Name of the Module Pack that called the method.
+     * @param {(String)} [module_name] - Name of the Module that called the method.
+     * @param {(String)} key - Name of the key in the table.
+     * @param {(Integer)} [step] - Amount to increase the value by (Default: 1).
+     * @return {(Integer)} - Value after adding the amount
      */
     increment(key, module_pack, module_name := "", step := 1) {
         ; if step is not number
@@ -234,8 +206,7 @@ Class _Ca2DB {
 
     /**
      * Get the list of tables available in the database.
-     * @return {(Array)}
-     * List of string table names.
+     * @return {(Array)} - List of string table names.
      */
     tables() {
         this.__open_connection()
@@ -257,11 +228,8 @@ Class _Ca2DB {
 
     /**
      * Get single value from table row.
-     *
-     * @param {(String)} table_name
-     * Name of the table.
-     * @param {(String)} key
-     * Value in column "key".
+     * @param {(String)} table_name - Name of the table.
+     * @param {(String)} key - Value in column "key".
      * @return {(String)}
      */
     __get(table_name, key) {
@@ -281,70 +249,49 @@ Class _Ca2DB {
 
     /**
      * Set single value to table row.
-     *
-     * @param {(String)} table_name
-     * Name of the table.
-     * @param {(String)} key
-     * Value for column "key".
-     * @param {(String)} value
-     * Value for column "value".
+     * @param {(String)} table_name - Name of the table.
+     * @param {(String)} key - Value for column "key".
+     * @param {(String)} value - Value for column "value".
      */
     __insert(table_name, key, value) {
         this.__open_connection()
-
         sql := "INSERT INTO '" table_name "' ('key', 'value') VALUES ('" key "', '" value "')"
         if (!this.db_object.Exec(sql))
             throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
-
         this.__close_connection()
     }
 
     /**
      * Update single value in table row.
-     *
-     * @param {(String)} table_name
-     * Name of the table.
-     * @param {(String)} key
-     * Value in column "key".
-     * @param {(String)} value
-     * Value for column "value".
+     * @param {(String)} table_name - Name of the table.
+     * @param {(String)} key - Value in column "key".
+     * @param {(String)} value - Value for column "value".
      */
     __update(table_name, key, value) {
         this.__open_connection()
-
         sql := "UPDATE '" table_name "' set value = '" value "' WHERE key = '" key "'"
         if (!this.db_object.Exec(sql))
             throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
-
         this.__close_connection()
     }
 
     /**
-     * Delete single row from table.
-     * Renamed, as __delete() is the destructor.
-     *
-     * @param {(String)} table_name
-     * Name of the table.
-     * @param {(String)} key
-     * Value in column "key".
+     * Delete single row from table. Renamed, as __delete() is the destructor.
+     * @param {(String)} table_name - Name of the table.
+     * @param {(String)} key - Value in column "key".
      */
     __remove(table_name, key) {
         this.__open_connection()
-
         sql := "DELETE FROM '" table_name "' WHERE key = '" key "'"
         if (!this.db_object.Exec(sql))
             throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
-
         this.__close_connection()
     }
 
     /**
      * Generate the table name based on the module package and module name.
-     *
-     * @param {(String)} module_pack
-     * Name of the Module Package.
-     * @param {(String)} module_name
-     * Name of the Module.
+     * @param {(String)} module_pack - Name of the Module Package.
+     * @param {(String)} module_name - Name of the Module.
      * @return {(String)}
      */
     __module_table(module_pack, module_name := "") {
@@ -355,8 +302,7 @@ Class _Ca2DB {
 
     /**
      * Build table-name from incoming line_file path.
-     * @param {(String)} line_file
-     * String path of calling script file.
+     * @param {(String)} line_file - String path of calling script file.
      * @returns {(String)}
      */
     __module_tableFromFile(line_file) {
@@ -368,20 +314,15 @@ Class _Ca2DB {
     }
 
     /**
-     * Ensure the table exists in the DB.
-     * Throw a terminating Exception if it doesn't.
-     *
-     * @param {(String)} table_name
-     * Name of the table.
+     * Ensure the table exists in the DB. Throw Error if it doesn't.
+     * @param {(String)} table_name - Name of the table.
      */
     __validate_table(table_name) {
         this.__open_connection()
-
         sql := "SELECT COUNT(*) FROM '" table_name "'"
         table := ""
         If (!this.db_object.getTable(sql, &table))
             Throw Error("[" this.db_object.ErrorCode "] " this.db_object.ErrorMsg, -1)
-
         this.__close_connection()
     }
 
