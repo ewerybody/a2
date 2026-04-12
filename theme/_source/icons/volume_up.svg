@@ -26,8 +26,8 @@
      showguides="true"
      showgrid="true"
      inkscape:zoom="45.17231"
-     inkscape:cx="3.8297798"
-     inkscape:cy="10.924834"
+     inkscape:cx="9.0320818"
+     inkscape:cy="13.758429"
      inkscape:window-width="3440"
      inkscape:window-height="1406"
      inkscape:window-x="-11"
@@ -58,40 +58,13 @@
        inkscape:label="middle"
        inkscape:color="rgb(248,228,92)" />
   </sodipodi:namedview>
-  <rect
-     style="fill:none;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
-     id="rect1"
-     width="7"
-     height="4"
-     x="8.5"
-     y="15"
-     transform="rotate(90)" />
   <path
      style="fill:#f111f1;fill-opacity:1;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill markers"
-     d="m 17.5,9 h 5 L 20,5.5 Z"
+     d="m 17.5,9.5 h 5 L 20,6.5 Z"
      id="path6"
      sodipodi:nodetypes="cccc" />
-  <path
-     style="fill:none;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
-     d="m -15,8.5 5,-5 v 17 l -5,-5"
-     id="path10"
-     sodipodi:nodetypes="cccc" />
-  <path
-     style="fill:#f111f1;fill-opacity:1;stroke:none;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
-     id="path11"
-     sodipodi:type="arc"
-     sodipodi:cx="-12"
-     sodipodi:cy="-9"
-     sodipodi:rx="2.5"
-     sodipodi:ry="2.5"
-     sodipodi:start="0"
-     sodipodi:end="3.1415927"
-     sodipodi:open="true"
-     sodipodi:arc-type="arc"
-     d="m -9.5,-9 a 2.5,2.5 0 0 1 -1.25,2.1650635 2.5,2.5 0 0 1 -2.5,0 A 2.5,2.5 0 0 1 -14.5,-9"
-     transform="rotate(-90)" />
   <ellipse
-     style="fill:none;fill-opacity:1;stroke:#f111f1;stroke-width:1.05409;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
+     style="fill:#f111f1;fill-opacity:0.33000001;stroke:#f111f1;stroke-width:1.05409;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
      id="path12"
      cx="12.5"
      cy="12"
@@ -108,13 +81,13 @@
      id="path14"
      sodipodi:nodetypes="cccc" />
   <path
-     style="fill:none;fill-opacity:1;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
+     style="fill:#f111f1;fill-opacity:0.33000001;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:markers fill stroke"
      d="M 5,7.5 H 3 c -0.666667,2.333333 -0.666667,6.666667 0,9 h 2"
      id="path15"
      sodipodi:nodetypes="cccc" />
   <path
      style="fill:none;fill-opacity:1;stroke:#f111f1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
-     d="m 20,8.5 v 10"
+     d="M 20,9 V 19"
      id="path16"
      sodipodi:nodetypes="cc" />
 </svg>

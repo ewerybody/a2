@@ -25,9 +25,9 @@
      inkscape:deskcolor="#d1d1d1"
      showguides="true"
      showgrid="true"
-     inkscape:zoom="31.941647"
-     inkscape:cx="-4.7273705"
-     inkscape:cy="12.10019"
+     inkscape:zoom="63.883294"
+     inkscape:cx="8.1868039"
+     inkscape:cy="15.896175"
      inkscape:window-width="3440"
      inkscape:window-height="1406"
      inkscape:window-x="-11"
@@ -68,7 +68,7 @@
      transform="rotate(90)" />
   <path
      style="fill:#f111f1;fill-opacity:1;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill markers"
-     d="m 17.5,15.500036 h 5 l -2.5,3.5 z"
+     d="m 17.5,15.500036 h 5 L 20,18.5 Z"
      id="path6"
      sodipodi:nodetypes="cccc" />
   <path

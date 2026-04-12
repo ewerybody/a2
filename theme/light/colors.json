@@ -1,11 +1,11 @@
 {
-    "bg": "F0F0F0",
-    "text": "1A1A1A",
-    "sub": "666666",
-    "sep": "C8C8C8",
-    "ok": "1A9E60",
-    "warn": "ccb100",
-    "err": "CC2020",
-    "btn_bg": "D8D8D8",
-    "acc_fg": "F8F8F8"
+    "bg": "#F0F0F0",
+    "text": "#1A1A1A",
+    "sub": "#666666",
+    "sep": "#C8C8C8",
+    "ok": "#1A9E60",
+    "warn": "#ccb100",
+    "err": "#CC2020",
+    "btn_bg": "#D8D8D8",
+    "acc_fg": "#F8F8F8"
 }

@@ -25,9 +25,9 @@
      inkscape:deskcolor="#d1d1d1"
      showguides="false"
      showgrid="false"
-     inkscape:zoom="21.715621"
-     inkscape:cx="-12.939993"
-     inkscape:cy="16.647002"
+     inkscape:zoom="30.710526"
+     inkscape:cx="-4.8843189"
+     inkscape:cy="14.376179"
      inkscape:window-width="3440"
      inkscape:window-height="1406"
      inkscape:window-x="-11"
@@ -76,7 +76,7 @@
   </sodipodi:namedview>
   <path
      id="rect1"
-     style="fill:none;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
+     style="fill:#f111f1;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke;fill-opacity:0.33000001"
      d="m 7.5,2.5 h 7 v 6 h 5 v 9 h -12 z"
      sodipodi:nodetypes="ccccccc" />
   <path

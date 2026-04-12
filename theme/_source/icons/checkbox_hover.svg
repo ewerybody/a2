@@ -6,7 +6,7 @@
    width="24"
    version="1.1"
    id="svg2"
-   sodipodi:docname="to_clipboard.svg"
+   sodipodi:docname="checkbox_hover.svg"
    inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,9 +25,9 @@
      inkscape:deskcolor="#d1d1d1"
      showguides="false"
      showgrid="true"
-     inkscape:zoom="30.710526"
-     inkscape:cx="-4.7215082"
-     inkscape:cy="13.920309"
+     inkscape:zoom="43.431243"
+     inkscape:cx="6.5620963"
+     inkscape:cy="11.270688"
      inkscape:window-width="3440"
      inkscape:window-height="1406"
      inkscape:window-x="-11"
@@ -75,30 +75,13 @@
        visible="true" />
   </sodipodi:namedview>
   <path
-     id="rect2"
-     style="opacity:0.33;fill:#f111f1;stroke-width:0.901388;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
-     d="m 5.5,2.5 h 3 v 3 h 7 v -3 h 3 v 16 h -13 z"
-     sodipodi:nodetypes="ccccccccc" />
+     style="fill:none;stroke:#f111f1;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0.33000001;paint-order:stroke fill markers"
+     d="M 5.705,11.295 10,16 22,5"
+     id="path3"
+     sodipodi:nodetypes="ccc" />
   <path
-     id="path2"
-     style="fill:none;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
-     d="m 15.5,2.5 h 3 v 16 h -4 m -5,0 h -4 v -16 h 3"
-     sodipodi:nodetypes="cccccccc" />
-  <rect
-     style="fill:none;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke;opacity:1"
      id="rect1"
-     width="7"
-     height="4"
-     x="8.5"
-     y="1.5" />
-  <path
-     style="fill:#f111f1;fill-opacity:1;stroke:#f111f1;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill markers"
-     d="m 9.5,15.5 h 5 l -2.5,-3 z"
-     id="path6-8"
-     sodipodi:nodetypes="cccc" />
-  <path
-     style="fill:none;fill-opacity:1;stroke:#f111f1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:markers fill stroke"
-     d="m 12,15 v 7"
-     id="path16"
-     sodipodi:nodetypes="cc" />
+     style="fill:none;stroke:#f111f1;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:markers fill stroke"
+     d="m 22.5,10 v 9.5 c 0,1.662 -1.338,3 -3,3 h -15 c -1.662,0 -3,-1.338 -3,-3 v -15 c 0,-1.662 1.338,-3 3,-3 h 15"
+     sodipodi:nodetypes="cssssssc" />
 </svg>

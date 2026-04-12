@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="true"
      inkscape:zoom="37.594511"
-     inkscape:cx="0.78468903"
-     inkscape:cy="11.065445"
+     inkscape:cx="11.41124"
+     inkscape:cy="11.078745"
      inkscape:window-width="3440"
      inkscape:window-height="1406"
      inkscape:window-x="-11"
@@ -48,8 +48,8 @@
        visible="true" />
   </sodipodi:namedview>
   <path
-     style="fill:none;stroke:#0cca13;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke fill markers"
-     d="M 5.705,11.295 10,16 18.295,7.29"
+     style="fill:none;stroke:#0cca13;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+     d="M 5.705,11.295 10,16 22,5"
      id="path3"
      sodipodi:nodetypes="ccc" />
 </svg>

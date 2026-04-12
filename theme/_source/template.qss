@@ -1,0 +1,294 @@
+* {
+	font-size: %(font_size)ipx;
+	color: "%(font_color)s";
+	icon-size: %(icon_size_small)ipx;
+}
+
+*:disabled {
+	color: "%(color_darkgrey)s";
+}
+
+QPushButton {
+	border-radius: %(border_radius)ipx;
+	padding: %(margin)ipx;
+	padding-left: %(margin_h)ipx;
+	padding-right: %(margin_h)ipx;
+	background-color: "%(color_button)s";
+	icon-size: %(icon_size_small)ipx;
+}
+
+QPushButton:hover,
+QGroupBox::indicator:hover,
+QCheckBox::indicator:hover {
+	background-color: "%(color_hover)s";
+}
+
+QPushButton:pressed,
+QGroupBox::indicator:pressed,
+QCheckBox::indicator:pressed {
+	background-color: "%(color_pressed)s";
+}
+
+QGroupBox::indicator {
+	margin: %(margin)ipx;
+}
+
+QGroupBox::indicator,
+QCheckBox::indicator {
+	height: %(icon_size)ipx;
+	width: %(icon_size)ipx;
+	image: url(res/css_check_off.svg);
+}
+
+QGroupBox::indicator:checked,
+QCheckBox::indicator:checked {
+	image: url(res/css_check_on.svg);
+}
+
+QCheckBox::indicator:indeterminate {
+	image: url(res/css_check_int.svg);
+}
+
+QCheckBox::indicator:indeterminate:hover {
+	background-color: "%(color_hover)s";
+	image: url(res/css_check_off.svg);
+}
+
+QCheckBox::indicator:disabled {image: url(res/css_check_off_disabled.svg);}
+QCheckBox::indicator:checked:disabled {image: url(res/css_check_on_disabled.svg);}
+QCheckBox::indicator:indeterminate:disabled {image: url(res/css_check_int_disabled.svg);}
+
+
+QLabel#a2mod_view_source_label {
+	color: "%(color_pressed)s";
+}
+
+QLabel#a2mod_view_source_label {
+	color: "%(color_pressed)s";
+}
+
+QGroupBox {
+	font-weight: bold;
+	margin: %(margin)ipx;
+	margin-top: %(group_label_space)ipx;
+	border-width: 3px;
+	border-style: solid;
+	border-radius: %(border_radius)ipx;
+	border-color: "%(color_hover)s";
+}
+QGroupBox::title {
+	font-size: %(font_size_big)ipx;
+	left: %(line)ipx;
+	top: -%(group_label_space)ipx;
+	padding-left: %(spacing)ipx;
+	padding-right: %(spacing)ipx;
+}
+
+QScrollArea,
+QListWidget#a2module_list_widget,
+QTreeWidget#a2module_list_widget {
+	border-style: none;
+}
+
+QScrollArea {
+	border-style: none;
+	background-color: "%(color_background)s";
+}
+
+QWidget#a2scroll_area_background {
+	background-color: "%(color_bright)s";
+}
+
+
+QPushButton#a2cancel_button,
+QPushButton#a2ok_button,
+QPushButton#a2add_button,
+
+QPushButton#a2cancel_button {
+	background:transparent;
+}
+
+QPushButton#a2cancel_button:hover {
+	background-color: "%(color_hover)s";
+}
+QPushButton#a2cancel_button:pressed {
+	background-color: "%(color_pressed)s";
+}
+
+QPushButton#a2ok_button {
+	background-color: "%(color_blue)s";
+}
+QPushButton#a2ok_button:hover {
+	background-color: "%(color_blue_hover)s";
+}
+QPushButton#a2ok_button:pressed {
+	background-color: "%(color_dark_pressed)s";
+}
+
+QPushButton#a2add_button {
+	background-color: "%(color_green)s";
+	icon-size: %(icon_size)ipx;
+}
+QPushButton#a2add_button:hover {
+	background-color: "%(color_green_hover)s";
+}
+QPushButton#a2add_button:pressed {
+	background-color: "%(color_green_pressed)s";
+}
+
+QPushButton[flat="true"] {
+	background-color:transparent;
+}
+QPushButton[flat="true"]:hover {
+	background-color: "%(color_hover)s";
+}
+
+QPushButton#a2help_button {
+	padding: 0px;
+	max-height: %(icon_size)ipx;
+	max-width: %(icon_size)ipx;
+	min-height: %(icon_size)ipx;
+	min-width: %(icon_size)ipx;
+	margin: %(border_radius)ipx;
+	color: "%(color_pressed)s";
+}
+
+QPushButton#a2search_x_button {
+	padding: 0px;
+	margin: 0px;
+	max-height: %(search_x_button_size)ipx;
+	max-width: %(search_x_button_size)ipx;
+	min-height: %(search_x_button_size)ipx;
+	min-width: %(search_x_button_size)ipx;
+	color: "%(color_pressed)s";
+}
+
+QWidget#A2Hotkey {
+	background-color: "%(color_yellow)s";
+	border-radius: %(border_radius)ipx;
+	margin: %(hotkey_widget_margin)ipx;
+}
+
+QPushButton#A2HotkeyButton,
+QPushButton#A2HotkeyScope {
+	border-radius: %(border_radius)ipx;
+	background: transparent;
+	font-size: %(font_size_large)ipx;
+	/* font-weight: bold; */
+	min-height: %(hotkey_button_size)ipx;
+}
+QPushButton#A2HotkeyButton:hover,
+QPushButton#A2HotkeyScope:hover {
+	background-color: "%(color_yellow_hover)s";
+}
+QPushButton#A2HotkeyButton:pressed,
+QPushButton#A2HotkeyScope:pressed {
+	background-color: "%(color_yellow_pressed)s";
+}
+QPushButton#A2HotkeyScope {
+	icon-size: %(icon_size)ipx;
+	padding-left: %(margin)ipx;
+	padding-right: %(margin)ipx;
+	max-width: %(hotkey_button_size)ipx;
+	min-width: %(hotkey_button_size)ipx;
+}
+QPushButton#a2item_editor_add_button,
+QPushButton#a2item_editor_remove_button {
+	padding: %(spacing)ipx;;
+	font-size: %(font_size_small)ipx;
+}
+
+QScrollBar:vertical,
+QScrollBar:horizontal {
+	background:transparent;
+	margin: 0px;
+}
+QScrollBar:vertical {
+	width: %(scrollbar_width)ipx;
+}
+QScrollBar:horizontal {
+	height: %(scrollbar_width)ipx;
+}
+
+QScrollBar::add-line,
+QScrollBar::sub-line{
+	background: transparent;
+	border: 0px;
+	width: 0px;
+	height: 0px;
+}
+
+QScrollBar::handle {
+	background-color: "%(color_hover)s";
+	border-radius: %(border_radius)ipx;
+}
+
+QScrollBar::handle:vertical {
+	margin-left:0px;
+	margin-right:0px;
+	min-height:%(margin_h)ipx;
+}
+
+QScrollBar::handle:horizontal {
+	margin-top:0px;
+	margin-bottom:0px;
+	min-width:%(margin_h)ipx;
+}
+
+QScrollBar::handle:hover {
+	background-color: "%(color_button)s";
+}
+
+QScrollBar::handle:pressed {
+	background-color: "%(color_pressed)s";
+}
+
+
+A2CodeField,
+A2InternalName,
+ConsoleUiHandler#a2console {
+	font-family: "Consolas";
+}
+
+QLabel#a2license_text {
+	background-color: "%(color_bright)s";
+}
+
+QToolButton#a2option_button {
+	image: url(res/more.svg);
+	color: "%(color_darkgrey)s";
+	icon-size: %(icon_size_small)ipx;
+}
+
+QLabel#a2_mod_name {
+	font-size: %(font_size_large)ipx;
+}
+
+QLineEdit {
+    border: 1px solid "%(color_button)s";
+    border-radius: %(border_radius)ipx;
+    padding: %(small_spacing)ipx;
+}
+
+QAbstractItemView {
+	icon-size: %(icon_size_small)ipx;
+}
+
+ModSourceWidget QToolButton#tool_button {
+	icon-size: %(icon_size_small)ipx;
+}
+
+QMenu::item {
+	background: "%(color_background)s";
+}
+QMenu::item:selected {
+	background: "%(color_hover)s";
+}
+
+QGroupBox#a2modlist_label_group {
+    margin: 0px;
+    margin-left: %(margin)ipx;
+}
+QGroupBox#a2modlist_label_group > QLabel {
+    font-size: %(font_size_small)ipx;
+}
