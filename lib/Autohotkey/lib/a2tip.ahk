@@ -8,6 +8,9 @@
 a2tip(msg := "", timeout := "") {
     Global _a2tip_message := ""
     Global _a2tip_id := 0, a2tip_refresh, a2tip_offset_x, a2tip_offset_y
+    estimate_s_per_char := 20
+    estimate_min := 1
+    estimate_max := 10
 
     if !msg {
         ToolTip("")
@@ -15,13 +18,13 @@ a2tip(msg := "", timeout := "") {
     }
 
     if (timeout == "") {
-        timeout := 1
+        timeout := Min(estimate_max, Max(estimate_min, StrLen(msg) / estimate_s_per_char))
     } else if timeout <= 0 {
         ToolTip("")
         Return
     }
     timeout *= 1000
-    SetTimer _a2tip_off, -timeout
+    SetTimer(_a2tip_off, -timeout)
 
     if !IsSet(a2tip_refresh)
         a2tip_refresh := 50
@@ -36,7 +39,7 @@ a2tip(msg := "", timeout := "") {
     if (!WinExist("ahk_id " _a2tip_id)) {
         _a2tip_id := _a2tip_draw()
         ; font_set(_a2tip_id, "s11, Arial")
-        SetTimer _a2tip_draw, a2tip_refresh
+        SetTimer(_a2tip_draw, a2tip_refresh)
     }
 }
 
@@ -49,8 +52,9 @@ _a2tip_draw() {
     ; if pos and text is the same, do not redraw
     if (mx_new == mx AND my_new == my AND _a2tip_message == msg_old)
         return
+
     if _a2tip_id == 0 {
-        SetTimer _a2tip_draw, 0
+        SetTimer(_a2tip_draw, 0)
         Return
     }
 
@@ -66,23 +70,22 @@ _a2tip_draw() {
     ; SendMessage(0x1013, 0xFFFF00, 0, , "ahk_id " _a2tip_id)  ; TTM_SETTIPBKCOLOR
     ; SendMessage(0x1014, 0x00FFFF, 0, , "ahk_id " _a2tip_id)  ; TTM_SETTIPTEXTCOLOR
 
-    mx := mx_new
-    my := my_new
+    mx := mx_new, my := my_new
     msg_old := _a2tip_message
     Return _a2tip_id
 }
 
 _a2tip_off() {
-    SetTimer _a2tip_draw, 0
+    SetTimer(_a2tip_draw, 0)
     if WinExist("ahk_id " . _a2tip_id)
         WinClose("ahk_id " . _a2tip_id)
 }
 
 a2tip_add(msg, timeout := "") {
-    Global _a2tip_message
     if (_a2tip_message)
         _a2tip_message .= "`n" msg
     else
         _a2tip_message := msg
+
     a2tip(_a2tip_message, timeout)
 }
