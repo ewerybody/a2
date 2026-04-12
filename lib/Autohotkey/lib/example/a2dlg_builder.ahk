@@ -9,7 +9,6 @@
 #SingleInstance Force
 #NoTrayIcon
 
-#Include ../../../a2icon.ahk
 #Include <a2dlg>
 #Include <path>
 
@@ -151,7 +150,6 @@ class A2dlgBuilder {
             "#SingleInstance Force`n"
             "#NoTrayIcon`n"
             "`n"
-            "#Include " this.lib_path "\a2icon.ahk`n"
             "#Include <a2dlg>`n"
             "`n"
                 "dlg := A2Dialog(`"Preview`", {w: 380, x: " x ", y: " y "})`n"

@@ -12,20 +12,18 @@
 #SingleInstance Force
 #NoTrayIcon
 
-#Include ../../../a2icon.ahk
 #Include <path>
 #Include <a2dlg>
 #Include <i18n>
+#Include <theme>
 #Include <window>
 
 a2dlg_demo()
 
-a2dlg_demo(forced_dark := unset) {
+a2dlg_demo() {
     global _ := i18n_locale(A_LineFile)
 
     opts := { w: 468, pad: 16 }
-    if IsSet(forced_dark)
-        opts.dark := forced_dark
     dlg := A2Dialog("A2 Dialog Demo", opts)
     dlg.header(_["welcome"], dlg.a2_icon)
     dlg.sep()
@@ -48,7 +46,9 @@ a2dlg_demo(forced_dark := unset) {
 
     ; Status line
     status := dlg.text(_["click"])
-    theme_str := "Theme: " (IsSet(forced_dark) ? "Set to" : "System default") ": " (dlg.dark ? "Dark" : "Light")
+    user_theme := theme_get_user()
+    sys_theme := theme_get_system()
+    theme_str := "Theme: " (user_theme ? "User theme: " user_theme : "System default: " sys_theme)
     theme := dlg.text(theme_str)
     dlg.sep()
 
@@ -62,10 +62,10 @@ a2dlg_demo(forced_dark := unset) {
 
     popup_rows := [
         ["a2dlg_info", "MsgBox (info)"],
-        ["a2dlg_error", "MsgBox (error)"],
         ["a2dlg_yes_no", "MsgBox (yes no)"],
         ["a2dlg_ok_cancel", "MsgBox (ok cancel)"],
         ["a2dlg_input", "InputBox"],
+        ["a2dlg_error", "MsgBox (error)"],
     ]
     popup_buttons_a2 := []
     popup_buttons_ahk := []
@@ -74,19 +74,22 @@ a2dlg_demo(forced_dark := unset) {
         popup_buttons_a2.Push({ btn: buttons[1], kind: row[1] })
         popup_buttons_ahk.Push({ btn: buttons[2], kind: row[2] })
     }
+    global error_check
+    error_check := dlg.checkbox('Show Error code')
 
     dlg.sep()
+    other_theme := dlg.dark ? 'light' : ''
     footer := dlg.btn_row_right([
-        { label: dlg.dark ? _["light_mode"] : _["dark_mode"]
-        , func: (*) => SetTimer(() => (dlg.destroy(), a2dlg_demo(!dlg.dark)), -1)},
-        { label: "Close", w: 100, func: (*) => ExitApp() }
+        { label: dlg.dark ? _["light_mode"] : _["dark_mode"],
+        func: (*) => SetTimer(() => (dlg.destroy(), theme_set(other_theme), a2dlg_demo()), -1)},
+        { label: "Close", w: 100, func: (*) => ExitApp() },
     ])
 
     ; Store kind on the control itself so each handler reads its own value,
     ; not the shared loop variable (which would always be the last value).
     for item in popup_buttons_a2 {
         item.btn.kind := item.kind
-        item.btn.OnEvent("Click", (ctrl, *) => _demo_popup_a2(ctrl.kind, status, dlg.dark))
+        item.btn.OnEvent("Click", (ctrl, *) => _demo_popup_a2(ctrl.kind, status))
     }
     for item in popup_buttons_ahk {
         item.btn.kind := item.kind
@@ -97,28 +100,28 @@ a2dlg_demo(forced_dark := unset) {
     ; Defer destroy+recreate so AHK fully exits the current event handler first
     dlg.on_close((*) => ExitApp())
     dlg.on_escape((*) => ExitApp())
-
     dlg.show()
 }
 
 ; Popup a2dlg demo handlers.
-_demo_popup_a2(kind, status, dark) {
+_demo_popup_a2(kind, status) {
     if (kind = "a2dlg_info") {
-        a2dlg_info(_["info"], , dark)
+        a2dlg_info(_["info"])
         status.Text := "a2dlg_info — dismissed"
     } else if (kind = "a2dlg_error") {
-        a2dlg_error(_["error"], , "Error detail line 1`nError detail line 2`nLine 3", dark)
+        error_detail := error_check.checked ? "Error detail line 1`nError detail line 2`nLine 3" : ""
+        a2dlg_error(_["error"], , error_detail)
         status.Text := "a2dlg_error — dismissed"
     } else if (kind = "a2dlg_yes_no") {
-        result := a2dlg_yes_no(_["continue"], , dark)
+        result := a2dlg_yes_no(_["continue"])
         status.Text := "a2dlg_yes_no => " (result ? "Yes" : "No")
     } else if (kind = "a2dlg_ok_cancel") {
-        result := a2dlg_ok_cancel(_["proceed"], , dark)
+        result := a2dlg_ok_cancel(_["proceed"])
         status.Text := "a2dlg_ok_cancel => " (result ? "OK" : "Cancel")
     } else if (kind = "a2dlg_input") {
-        result := a2dlg_input(Format(_["name_please"], _["your_name"]), "a2 Input", "Hello, World!", dark)
+        result := a2dlg_input(Format(_["name_please"], _["your_name"]), "a2 Input", "Hello, World!")
         if result = _["your_name"]
-            a2dlg_info(_["very_funny"], , dark)
+            a2dlg_info(_["very_funny"])
         status.Text := (result = "") ? "a2dlg_input => (cancelled)" : "a2dlg_input => `"" result "`""
     }
 }

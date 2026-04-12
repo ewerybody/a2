@@ -26,7 +26,9 @@
  *  Include this file once per script - it self-registers the WM_DRAWITEM handler.
  ***********************************************************************/
 #Include <a2tip>
+#Include <a2icon>
 #Include <i18n>
+#Include <theme>
 #Include <string>
 #Include <window>
 #Include <windows>
@@ -64,7 +66,7 @@ class A2Dialog {
      *      dlg := A2Dialog("My Dialog", {w: 400})
      *
      * @param {(String)} title - Dialog Window title.
-     * @param {(Object)} opts - Options: {w, pad, flags, dark, font: {face, size}}
+     * @param {(Object)} opts - Options: {w, pad, flags, theme, dark, font: {face, size}}
      */
     __New(title, opts := {}) {
         _a2dlg_init()
@@ -76,7 +78,7 @@ class A2Dialog {
         ; Total width of the dialog.
         this.width := opts.HasProp("w") ? opts.w : 480
         ; Theme mode. `dark` false is "light".
-        this.dark := opts.HasProp("dark") ? opts.dark : windows_is_dark()
+        this.dark := opts.HasProp("dark") ? opts.dark : theme_is_dark()
         ; Color Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
         this.c := a2dlg_colors(this.dark)
         if opts.HasProp("font") {
@@ -128,12 +130,17 @@ class A2Dialog {
         }
         this.gui.SetFont("s" (this.font_size + 2) " w" this.font_weight_heavy " c" this.c.text, this.font_face)
         if (icon_file && FileExist(icon_file)) {
-            try this.gui.AddPicture("x" pad " y" y " w" icon_size " h" icon_size " " icon_opt, icon_file)
-            this.gui.AddText("x" (pad + 40) " y" (y + 8) " w" (this.width - pad - 40 - pad), text)
+            try {
+                pic_ctrl := this.gui.AddPicture("x" pad " y" y " w" icon_size " h" icon_size " " icon_opt, icon_file)
+                pic_ctrl.GetPos(,, &pic_width, &pic_height)
+            } catch
+                pic_width := 0, pic_height := 0
+            txt_ctrl := this.gui.AddText("x" (pad + pic_width + this.gap) " y" (y + this.gap) " w" (this.width - pad - pic_width - pad), text)
         } else {
-            this.gui.AddText("x" pad " y" (y + 4) " w" (this.width - pad * 2), text)
+            pic_height := 0
+            txt_ctrl := this.gui.AddText("x" pad " y" (y + this.gap / 2) " w" (this.width - pad * 2), text)
         }
-        this.space(48)
+        this.space(Max(_a2dlg_get_height(txt_ctrl), pic_height) + this.pad)
         return this
     }
 
@@ -261,6 +268,36 @@ class A2Dialog {
     }
 
     /**
+     * @private Assemble positioning statement to manage x/y and width of a new control.
+     * @param {(Control)} ctrl - Gui-control object to align on. x: ctrl.x+w+gap; y: ctrl.y
+     * When empty: use default positioning x : left most after pad; y: this.height
+     * @param {(String)} [new_type] - Actually just for the error message in case.
+     * @param {(String)} [pos_opts] - Additional AHK Control options to pass along.
+     * @param {(Boolean)} max_width - Set `w` width argument to take all or rest of
+     * horizontal space available in dialog (Default: false).
+     * @returns {(Object)} {opts, x, y, w}
+     */
+    _align_next_to(ctrl, new_type := "", pos_opts := "", max_width := false) {
+        if (ctrl == "") {
+            w := max_width ? this.width - this.pad * 2 : 0
+            opts := "x" this.pad " y" this.height " " (max_width ? " w" w " " : "") pos_opts
+            return {opts: opts, x: this.pad, y: this.height, w: w}
+        }
+        ctrl.GetPos(&last_x, &last_y, &last_w)
+        last_right := last_x + last_w + this.gap
+        if last_right > this.width
+            throw Error(
+                'Placing this "' new_type '" next to given control`n'
+                '  type: ' Type(ctrl) ' x: ' last_x ' w: ' last_w '`n'
+                'will put it outside of the dialogs width (' this.width ')!'
+            )
+        w := this.width - last_x - last_w - this.pad * 2
+        x := last_x + last_w + this.gap
+        opts := "x" x " y" last_y " " (max_width ? " w" w " " : "") pos_opts
+        return {opts: opts, x: this.pad, y: this.height, w: w}
+    }
+
+    /**
      * Bold sub-section heading (font_size+1, text color).
      * @param {(String)} text - Heading text to display.
      * @returns  Text ctrl
@@ -315,12 +352,16 @@ class A2Dialog {
      * @param {(String)} text - Caption text displayed to the right of the picture.
      * @returns  {pic: ctrl, text: ctrl} - pic is "" if the file is missing
      */
-    pic_row(file, opt, text, size := 22) {
+    pic_row(pic_path, opt, text, size := 22) {
         pad := this.pad
         y := this.height
         pic_ctrl := ""
-        if (file && FileExist(file))
-            try pic_ctrl := this.gui.AddPicture("x" pad " y" y " w " size " h" size " " opt, file)
+        if (pic_path && FileExist(pic_path)) {
+            try
+                pic_ctrl := this.gui.AddPicture("x" pad " y" y " w" size " h" size " " opt, pic_path)
+            catch
+                pic_ctrl := this.gui.AddPicture("x" pad " y" y " w" size " h" size " " opt, A2Icons.a2x)
+        }
         this.gui.SetFont("s" (this.font_size - 1) " c" this.c.sub, this.font_face)
         txt_ctrl := this.gui.AddText("x" (pad + 28) " y" (y + 4)
         " w" (this.width - pad * 2 - 28) " Wrap", text)
@@ -373,11 +414,8 @@ class A2Dialog {
         bg    := spec.HasProp("bg")   && spec.bg   ? spec.bg   : this.c.btn_bg
         fg    := spec.HasProp("fg")   && spec.fg   ? spec.fg   : this.c.text
         extra := spec.HasProp("opts") && spec.opts ? " " spec.opts : ""
-        if (next_to != "") {
-            next_to.GetPos(&last_x, &last_y, &last_w, &last_h)
-            pos_opts := "x" last_x + last_w + this.gap " y" last_y " " pos_opts
-        }
-        ctrl  := this.gui.AddButton(pos_opts extra, spec.label)
+        pos := this._align_next_to(next_to, 'Button', pos_opts)
+        ctrl  := this.gui.AddButton(pos.opts extra, spec.label)
         a2dlg_make_button(ctrl, bg, fg)
         this._btn_hwnds.Push(ctrl.Hwnd)
         if spec.HasProp("func") && spec.func != ""
@@ -534,13 +572,14 @@ class A2Dialog {
      * @param {(Integer)} [h] - Box height in pixels.
      * @returns  Edit ctrl (Value can be updated later)
      */
-    code_box(text, h := 64) {
+    code_box(text, h := 64, next_to := "", bottom_line_color := "") {
         this.gui.SetFont("s" (this.font_size - 1) " w" this.font_weight_normal " c" this.c.sub, "Consolas")
-        inner_w := this.width - this.pad * 2
-        ctrl := this.gui.AddEdit(
-            "x" this.pad " y" this.height " w" inner_w " h" h " ReadOnly -E0x200 Background" this.c.sub_bg,
-            text)
-        this.space(h + 8)
+        pos := this._align_next_to(next_to, 'Edit',, max_width:=true)
+        ctrl := this.gui.AddEdit(pos.opts " h" h " ReadOnly -E0x200 Background" this.c.sub_bg, text)
+        bottom_line_color := bottom_line_color ? bottom_line_color : this.c.sep
+        this.height := _a2dlg_get_bottom(ctrl)
+        this.gui.AddText("x" pos.x " y" this.height " w" pos.w " h1 Background" bottom_line_color)
+        this.space()
         return ctrl
     }
 
@@ -551,22 +590,14 @@ class A2Dialog {
      */
     edit_field(default_text := "", rows := 1, next_to := "") {
         this.gui.SetFont("s" this.font_size " w" this.font_weight_normal " c" this.c.text, this.font_face)
-        if (next_to != "") {
-            next_to.GetPos(&last_x, &last_y, &last_w)
-            x := last_x + last_w + this.gap, y := last_y
-            inner_w := this.width - last_w - this.pad * 2
-        } else {
-            x := this.pad, y := this.height
-            inner_w := this.width - this.pad * 2
-        }
-
+        pos := this._align_next_to(next_to, 'Edit',, max_width:=true)
         ctrl := this.gui.AddEdit(
-            "x" x " y" y " w" inner_w " h24 -Border -E0x200 Background" this.c.sub_bg " r" rows,
+            pos.opts " h24 -Border -E0x200 Background" this.c.sub_bg " r" rows,
             default_text
         )
         ; Add a bottom line to the field
         this.height := _a2dlg_get_bottom(ctrl)
-        this.gui.AddText("x" x " y" this.height " w" inner_w " h1 Background" this.c.sep)
+        this.gui.AddText("x" pos.x " y" this.height " w" pos.w " h1 Background" this.c.ok)
         this.space()
         return ctrl
     }
@@ -581,24 +612,58 @@ class A2Dialog {
      * It will be placed at the same height and at the right end.
      * @param {(String)} extra - Extra options for the specific control.
      * That's the "text" for instance at a "Text" control.
+     * @param {(Boolean)} max_width - Make the control take all or rest of horizontal
+     * space available in dialog (Default: false).
      */
-    add(control_type, options := "", next_to := "", extra := "") {
-        if (next_to != "") {
-            next_to.GetPos(&last_x, &last_y, &last_w)
-            last_right := last_x + last_w + this.gap
-            if last_right > this.width
-                a2dlg_error(
-                    'Placing this "' control_type '" next to given control`n'
-                    '  type: ' Type(next_to) ' x: ' last_x ' w: ' last_w '`n'
-                    'will put it outside of the dialogs width (' this.width ')!'
-                )
-            pos_opts := "x" last_x + last_w + this.gap " y" last_y " "
-        } else {
-            pos_opts := "x" this.pad " y" this.height " "
-        }
-        ctrl := this.gui.Add(control_type, pos_opts options, extra)
-        this.height := _a2dlg_get_bottom(ctrl) + this.gap
+    add(control_type, options := "", next_to := "", extra := "", max_width := false) {
+        pos := this._align_next_to(next_to, control_type,, max_width)
+        ctrl := this.gui.Add(control_type, pos.opts options, extra)
+        this.height := Max(this.height, _a2dlg_get_bottom(ctrl) + this.gap)
         return ctrl
+    }
+
+    /**
+     * Custom checkbox with our theme icons.
+     * @param {(String)} label - Label text displayed next to the checkbox
+     * @param {(Integer)} [checked] - Initial state.
+     * @param {(String)} [options] - Options string specific to the control.
+     * Try to omit `x` and `y` in here! Rather use `next_to`.
+     * @param {(Control)} [next_to] - Optional control to align next to.
+     * @param {(Function)} [func] - Optional function to call on state change.
+     * @returns Checkbox control
+     */
+    checkbox(label, checked := 0, options := "", next_to := "", func := "") {
+        pos := this._align_next_to(next_to, "CheckBox")
+        size := this.font_size + 10  ; scale with font
+        icon_on := A2Icons.checkbox_on, icon_off := A2Icons.checkbox_off, icon_hover := A2Icons.checkbox_hover
+        check_ctrl := this.gui.AddPicture(pos.opts " w" size " h" size, checked ? icon_on : icon_off)
+        check_ctrl.checked := checked,
+        check_ctrl.icon_on := icon_on,
+        check_ctrl.icon_off := icon_off
+        check_ctrl.icon_hover := icon_hover
+        toggle := (chk, *) => (
+            chk.checked := !chk.checked,
+            chk.Value := chk.checked ? icon_on : icon_off,
+            func ? func(chk.checked) : 0
+        )
+        check_ctrl.OnEvent("Click", toggle)
+
+        ; +0x100 aka SS_NOTIFY: for better firing the click
+        pos_opts := "x" 1 + pos.x + _a2dlg_get_width(check_ctrl) " y" pos.y " +0x100"
+        label_ctrl := this.gui.AddText(pos_opts, " " label)
+
+        label_ctrl.OnEvent("Click", (*) => toggle(check_ctrl))
+        check_ctrl.label := label_ctrl
+
+        ; register for hover icon swapping
+        global _a2dlg_pic_map
+        _a2dlg_pic_map[check_ctrl.Hwnd] := check_ctrl
+        _a2dlg_pic_map[label_ctrl.Hwnd] := check_ctrl
+        this._btn_hwnds.Push(check_ctrl.Hwnd)
+        this._btn_hwnds.Push(label_ctrl.Hwnd)
+
+        this.height := Max(this.height, _a2dlg_get_bottom(check_ctrl) + this.gap)
+        return check_ctrl
     }
 
     ; Window management methods
@@ -706,11 +771,14 @@ class A2Dialog {
         if this._destroyed
             return
         this._destroyed := true
-        global _flat_buttons, _flat_btn_hover
+        global _a2dlg_buttons_map, _a2dlg_btn_hover, _a2dlg_pic_map
         for hwnd in this._btn_hwnds {
-            _flat_buttons.Delete(hwnd)
-            if (_flat_btn_hover = hwnd)
-                _flat_btn_hover := 0
+            if _a2dlg_buttons_map.Has(hwnd)
+                _a2dlg_buttons_map.Delete(hwnd)
+            if (_a2dlg_btn_hover = hwnd)
+                _a2dlg_btn_hover := 0
+            if _a2dlg_pic_map.Has(hwnd)
+                _a2dlg_pic_map.Delete(hwnd)
         }
         this._btn_hwnds := []
         this.gui.Destroy()
@@ -739,10 +807,10 @@ class A2Dialog {
  */
 a2dlg_make_button(ctrl, bg := "", fg := "") {
     _a2dlg_init()
-    global _flat_buttons
+    global _a2dlg_buttons_map
     hwnd := ctrl.Hwnd
     ; Register FIRST - WM_DRAWITEM can fire synchronously during the style change below
-    _flat_buttons[hwnd] := { bg: bg, fg: fg, text: ctrl.Text }
+    _a2dlg_buttons_map[hwnd] := { bg: bg, fg: fg, text: ctrl.Text }
     ; Switch style bits to BS_OWNERDRAW (0xB), keeping all other flags
     style := DllCall("GetWindowLongPtr", "Ptr", hwnd, "Int", -16, "Ptr")
     DllCall("SetWindowLongPtr", "Ptr", hwnd, "Int", -16, "Ptr", (style & ~0xF) | 0xB)
@@ -835,7 +903,7 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_
     dlg.msg := msg
 
     if (error_detail != "") {
-        dlg.code_box(error_detail)
+        dlg.code_box(error_detail,,, bottom_line_color:=dlg.c.err)
         dlg.msg .= "`n" error_detail
         dlg.space(6)
         dlg.sep()
@@ -960,12 +1028,13 @@ _a2dlg_init() {
     if _done
         return
     _done := true
-    global _flat_buttons, _flat_btn_hover
-    _flat_buttons := Map()
-    _flat_btn_hover := 0
-    OnMessage(0x2B, _flat_btn_on_draw)        ; WM_DRAWITEM
-    OnMessage(0x200, _flat_btn_on_mouse_move)  ; WM_MOUSEMOVE
-    OnMessage(0x2A3, _flat_btn_on_mouse_leave) ; WM_MOUSELEAVE
+    global _a2dlg_buttons_map, _a2dlg_btn_hover, _a2dlg_pic_map
+    _a2dlg_pic_map := Map()
+    _a2dlg_buttons_map := Map()
+    _a2dlg_btn_hover := 0
+    OnMessage(0x2B, _a2dlg_btn_on_draw)        ; WM_DRAWITEM
+    OnMessage(0x200, _a2dlg_btn_on_mouse_move)  ; WM_MOUSEMOVE
+    OnMessage(0x2A3, _a2dlg_btn_on_mouse_leave) ; WM_MOUSELEAVE
 }
 
 ; ================================================================
@@ -979,15 +1048,15 @@ _a2dlg_init() {
  *  16  itemState (UInt) 20 (pad)  24  hwndItem (Ptr)   32  hDC (Ptr)
  *  40  rcItem.left  44  .top  48  .right  52  .bottom  (all Int)
  */
-_flat_btn_on_draw(wParam, lParam, *) {
-    global _flat_buttons
+_a2dlg_btn_on_draw(wParam, lParam, *) {
+    global _a2dlg_buttons_map
     if (NumGet(lParam, 0, "UInt") != 4)     ; CtlType must be ODT_BUTTON = 4
         return
     hwnd := NumGet(lParam, 24, "Ptr")
-    if !_flat_buttons.Has(hwnd)
+    if !_a2dlg_buttons_map.Has(hwnd)
         return
 
-    spec := _flat_buttons[hwnd]
+    spec := _a2dlg_buttons_map[hwnd]
     state := NumGet(lParam, 16, "UInt")
     hDC := NumGet(lParam, 32, "Ptr")
 
@@ -1001,11 +1070,11 @@ _flat_btn_on_draw(wParam, lParam, *) {
     ; Fill background: darken when pressed, lighten when hovered, plain otherwise
     ; disabled := (state & 0x20)
     disabled := !DllCall("IsWindowEnabled", "Ptr", hwnd)
-    bg := disabled ? _flat_btn_disabled(spec.bg)
-        : (state & 0x1) ? _flat_btn_dim(spec.bg)
-            : (_flat_btn_hover = hwnd) ? _flat_btn_lit(spec.bg)
+    bg := disabled ? _a2dlg_btn_disabled(spec.bg)
+        : (state & 0x1) ? _a2dlg_btn_dim(spec.bg)
+            : (_a2dlg_btn_hover = hwnd) ? _a2dlg_btn_lit(spec.bg)
                 : spec.bg
-    hBrush := DllCall("CreateSolidBrush", "UInt", _flat_btn_gdi(bg), "Ptr")
+    hBrush := DllCall("CreateSolidBrush", "UInt", _a2dlg_btn_gdi(bg), "Ptr")
     DllCall("FillRect", "Ptr", hDC, "Ptr", rc, "Ptr", hBrush)
     DllCall("DeleteObject", "Ptr", hBrush)
 
@@ -1013,8 +1082,8 @@ _flat_btn_on_draw(wParam, lParam, *) {
     hFont := SendMessage(0x31, 0, 0, hwnd)
     old_font := DllCall("SelectObject", "Ptr", hDC, "Ptr", hFont, "Ptr")
     DllCall("SetBkMode", "Ptr", hDC, "Int", 1)
-    fg := disabled ? _flat_btn_disabled(spec.fg) : spec.fg
-    DllCall("SetTextColor", "Ptr", hDC, "UInt", _flat_btn_gdi(fg))
+    fg := disabled ? _a2dlg_btn_disabled(spec.fg) : spec.fg
+    DllCall("SetTextColor", "Ptr", hDC, "UInt", _a2dlg_btn_gdi(fg))
     DllCall("DrawTextW", "Ptr", hDC, "WStr", spec.text, "Int", -1,
         "Ptr", rc, "UInt", 0x25)
     DllCall("SelectObject", "Ptr", hDC, "Ptr", old_font)
@@ -1036,7 +1105,7 @@ _flat_btn_on_draw(wParam, lParam, *) {
  * @param {(String)} hex  6-digit RRGGBB hex string.
  * @returns  Integer COLORREF value
  */
-_flat_btn_gdi(hex) {
+_a2dlg_btn_gdi(hex) {
     r := Integer("0x" SubStr(hex, 1, 2))
     g := Integer("0x" SubStr(hex, 3, 2))
     b := Integer("0x" SubStr(hex, 5, 2))
@@ -1048,7 +1117,7 @@ _flat_btn_gdi(hex) {
  * @param {(String)} hex  6-digit RRGGBB hex string.
  * @returns  Darkened 6-digit RRGGBB hex string.
  */
-_flat_btn_dim(hex) {
+_a2dlg_btn_dim(hex) {
     r := Max(0, Integer("0x" SubStr(hex, 1, 2)) - 30)
     g := Max(0, Integer("0x" SubStr(hex, 3, 2)) - 30)
     b := Max(0, Integer("0x" SubStr(hex, 5, 2)) - 30)
@@ -1060,7 +1129,7 @@ _flat_btn_dim(hex) {
  * @param {(String)} hex  6-digit RRGGBB hex string.
  * @returns  Lightened 6-digit RRGGBB hex string.
  */
-_flat_btn_lit(hex) {
+_a2dlg_btn_lit(hex) {
     r := Min(255, Integer("0x" SubStr(hex, 1, 2)) + 15)
     g := Min(255, Integer("0x" SubStr(hex, 3, 2)) + 15)
     b := Min(255, Integer("0x" SubStr(hex, 5, 2)) + 15)
@@ -1068,15 +1137,15 @@ _flat_btn_lit(hex) {
 }
 
 /**
- * Blend each RGB channel 50% toward mid-grey - disabled-state visual feedback.
+ * Blend each RGB channel 50% toward mid-gray - disabled-state visual feedback.
  * @param {(String)} hex  6-digit RRGGBB hex string.
  * @returns  Muted 6-digit RRGGBB hex string.
  */
-_flat_btn_disabled(hex) {
+_a2dlg_btn_disabled(hex) {
     r := Integer("0x" SubStr(hex, 1, 2))
     g := Integer("0x" SubStr(hex, 3, 2))
     b := Integer("0x" SubStr(hex, 5, 2))
-    ; Blend 50% toward mid-grey (128, 128, 128)
+    ; Blend 50% toward mid-gray (128, 128, 128)
     r := (r + 128) // 2
     g := (g + 128) // 2
     b := (b + 128) // 2
@@ -1087,11 +1156,18 @@ _flat_btn_disabled(hex) {
  * WM_MOUSEMOVE - fires on the button control; starts leave-tracking if not already active.
  * TRACKMOUSEEVENT layout (x64): cbSize DWORD@0, dwFlags DWORD@4, hwndTrack Ptr@8, dwHoverTime DWORD@16
  */
-_flat_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
-    global _flat_buttons, _flat_btn_hover
-    if !_flat_buttons.Has(hwnd) || (_flat_btn_hover = hwnd)
+_a2dlg_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
+    global _a2dlg_buttons_map, _a2dlg_btn_hover, _a2dlg_pic_map
+    if _a2dlg_pic_map.Has(hwnd) && (_a2dlg_btn_hover != hwnd) {
+        _a2dlg_btn_hover := hwnd
+        pic := _a2dlg_pic_map[hwnd]
+        pic.Value := pic.icon_hover
+        _a2dlg_track_mouse_leave(hwnd)
         return
-    _flat_btn_hover := hwnd
+    }
+    if !_a2dlg_buttons_map.Has(hwnd) || (_a2dlg_btn_hover = hwnd)
+        return
+    _a2dlg_btn_hover := hwnd
     tme := Buffer(24, 0)
     NumPut("UInt", 24, tme, 0)   ; cbSize
     NumPut("UInt", 0x2, tme, 4)   ; dwFlags = TME_LEAVE
@@ -1104,12 +1180,25 @@ _flat_btn_on_mouse_move(wParam, lParam, msg, hwnd) {
 /**
  * WM_MOUSELEAVE - fires on the button that called TrackMouseEvent when the cursor leaves.
  */
-_flat_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
-    global _flat_buttons, _flat_btn_hover
-    if _flat_btn_hover = hwnd
-        _flat_btn_hover := 0
-    if _flat_buttons.Has(hwnd) {
+_a2dlg_btn_on_mouse_leave(wParam, lParam, msg, hwnd) {
+    global _a2dlg_buttons_map, _a2dlg_btn_hover, _a2dlg_pic_map
+    if _a2dlg_btn_hover = hwnd
+        _a2dlg_btn_hover := 0
+    if _a2dlg_pic_map.Has(hwnd) {
+        pic := _a2dlg_pic_map[hwnd]
+        pic.Value := pic.checked ? pic.icon_on : pic.icon_off
+        return
+    }
+    if _a2dlg_buttons_map.Has(hwnd) {
         DllCall("InvalidateRect", "Ptr", hwnd, "Ptr", 0, "Int", 1)
         DllCall("UpdateWindow", "Ptr", hwnd)
     }
+}
+
+_a2dlg_track_mouse_leave(hwnd) {
+    tme := Buffer(24, 0)
+    NumPut("UInt", 24,  tme, 0)
+    NumPut("UInt", 0x2, tme, 4)   ; TME_LEAVE
+    NumPut("Ptr", hwnd, tme, 8)
+    DllCall("TrackMouseEvent", "Ptr", tme)
 }

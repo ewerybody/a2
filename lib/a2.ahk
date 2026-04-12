@@ -7,6 +7,7 @@ Persistent
 #include <string>
 #include <msgbox>
 #include <cursor>
+#Include <a2icon>
 #include <a2tip>
 #include <a2log>
 #include <python>
@@ -14,7 +15,6 @@ Persistent
 #include <windows>
 
 #include a2core.ahk
-#include a2icon.ahk
 #include a2_config.ahk
 #include a2_globals.ahk
 #include a2_urls.ahk

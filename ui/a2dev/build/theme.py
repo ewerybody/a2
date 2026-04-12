@@ -22,6 +22,7 @@ EX_MARK = '\u2716'
 TEXT_COLOR_REPLACE = '#f111f1'
 LOGO_SIZES = (24, 32, 48, 64, 128)
 ICON_SIZES = (24, 32, 48)
+AHK_ICON_LIB = A2_ROOT / os.path.join('lib', 'Autohotkey', 'lib', 'a2icon.ahk')
 
 
 def main(force=False):
@@ -193,7 +194,7 @@ def _create_ahk_icon_lib():
     logos_code = [code_line.format(name) for name in root_icons]
     icons_code = [code_line.format(name) for name in sorted(present_in_all)]
     template = a2util.load_utf8(THIS_DIR / 'a2icon.ahk.template')
-    (A2_ROOT / 'lib' / 'a2icon.ahk').write_text(
+    AHK_ICON_LIB.write_text(
         template.format(
             class_name='A2Icons',
             logo_icons='\n'.join(logos_code),

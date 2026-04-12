@@ -1,13 +1,11 @@
-#Include ..\windows.ahk
-#Include ..\..\..\a2icon.ahk
-#Include %A_ScriptDir%\..\
 #Include <a2dlg>
-#Include <msgbox>
 #Include <explorer>
-#Include <window>
-#Include <screen>
+#Include <msgbox>
 #Include <path>
+#Include <screen>
 #Include <string>
+#Include <window>
+#Include <windows>
 
 explorer_example()
 return

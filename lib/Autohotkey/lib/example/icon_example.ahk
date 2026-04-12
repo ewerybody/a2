@@ -2,10 +2,10 @@
 #SingleInstance Force
 #NoTrayIcon
 
+#Include <a2dlg>
 #Include <path>
 #Include <string>
 #Include <icon>
-#Include <a2dlg>
 
 dlg := A2Dialog("A2 Icon Library", {w: 500})
 c := dlg.c
@@ -16,7 +16,6 @@ dlg.sep()
 ; ── icon_from_type ────────────────────────────────────────────────────
 ; Resolves the registered default icon path for a file extension via HKCR.
 dlg.heading("icon_from_type")
-
 for ext in ["py", "ahk", "txt", "pdf", "zip"] {
     pth := icon_from_type(ext)
     p := icon_path_split(pth)

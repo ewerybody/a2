@@ -2,31 +2,37 @@
 #SingleInstance Force
 #NoTrayIcon
 
-#Include ../../../a2icon.ahk
 #Include <a2tip>
+#Include <a2dlg>
 
 a2tip("hallo")
 
-A2TipUI := Gui("+DPIScale +Resize +MinSize500x180")
-A2TipUI.OnEvent("Escape", A2TipUI.Destroy)
-show_btn := A2TipUI.AddButton("xm Section", "Show a2tip")
-show_btn.OnEvent("Click", show_tip)
-text_field := A2TipUI.AddEdit("ys w400 Multi", "Hello,`nNew World!")
-
-A2TipUI.AddText("xm Section", "Timeout (Seconds):")
-time_field := A2TipUI.AddEdit("ys w50 Section Number")
+dlg := A2Dialog("A2 Dialog Demo")
+btn := dlg.btn("Show a2tip", show_tip,, 50)
+text_field := dlg.edit_field("Hello,`nNew World!", rows := 3, next_to := btn)
+text_field.OnEvent("Change", update_subtext)
+time_check := dlg.checkbox("Timeout (Seconds):",1,,, check_toggled)
+time_field := dlg.add("Edit", "w50 Number -E0x200 Background" dlg.c.sub_bg, next_to := time_check.label)
 time_field.OnEvent("Change", _time_field_change)
-time_updown := A2TipUI.AddUpDown("Range1-10", 2)
-time_slider := A2TipUI.AddSlider("ys w320 Range1-10 AltSubmit", 2)
+time_up_down := dlg.add("UpDown", "Range1-10", next_to := time_field, 2)
+time_slider := dlg.add("Slider", "Range1-10 AltSubmit", next_to := time_up_down, 2, max_width := true)
 time_slider.OnEvent("Change", _time_slider_change)
+using_timeout_msg := 'Using timeout ^'
+sub_text := dlg.text(using_timeout_msg)
 
-remove_btn := A2TipUI.AddButton("xm", "Remove a2tip")
-remove_btn.OnEvent("Click", remove_tip)
-A2TipUI.Show()
+dlg.btn_row_right([{label: "Remove a2tip", func: remove_tip}, {label: "Close", func: (*) => dlg.destroy()}], )
+dlg.esc_to_close()
+dlg.exit_on_close()
+dlg.show()
 
 show_tip(*){
-    a2tip(text_field.Text, time_field.Value)
+    if (time_check.checked) {
+        a2tip(text_field.Text, time_field.Value)
+        return
+    }
+    a2tip(text_field.Text)
 }
+
 remove_tip(*){
     a2tip()
 }
@@ -37,4 +43,14 @@ _time_slider_change(*) {
 
 _time_field_change(*) {
     time_slider.Value := time_field.Value
+}
+
+check_toggled(value) {
+    time_up_down.Enabled := value
+    time_slider.Enabled := value
+    update_subtext()
+}
+
+update_subtext(*) {
+    sub_text.Text := time_check.checked ? using_timeout_msg : "Using timeout estimation (" StrLen(text_field.text) / 20 * 1000 "ms)"
 }

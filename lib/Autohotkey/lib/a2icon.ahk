@@ -1,19 +1,25 @@
 ; AUTO-GENERATED! Do not edit! Run: poe build-theme
-#Include <windows>
 #Include <path>
+#Include <theme>
+#Include <windows>
 
 class A2Icons {
     static _cache := Map()
-    static mode := windows_is_dark() ? "dark" : "light"
-
-    static _base := path_dirname(A_LineFile, 2) "\theme\"
+    static _base := path_dirname(A_LineFile, 4) "\theme\"
+    static _last_theme := ""
 
     static __Get(name, params) {
+        theme_name := theme_get()
+        if A2Icons._last_theme != theme_name {
+            A2Icons._cache := Map()
+            A2Icons._last_theme := theme_name
+        }
         if A2Icons._cache.Has(name)
             return A2Icons._cache[name]
+
         path := A2Icons._base name ".ico"
         if !FileExist(path) {
-            path := A2Icons._base A2Icons.mode "\" name ".ico"
+            path := A2Icons._base theme_name "\" name ".ico"
             if !FileExist(path)
                 path := A2Icons._base "a2.ico"
         }
@@ -34,6 +40,9 @@ class A2Icons {
     static arrow_left => A2Icons.__Get("arrow_left", 0)
     static arrow_right => A2Icons.__Get("arrow_right", 0)
     static check => A2Icons.__Get("check", 0)
+    static checkbox_hover => A2Icons.__Get("checkbox_hover", 0)
+    static checkbox_off => A2Icons.__Get("checkbox_off", 0)
+    static checkbox_on => A2Icons.__Get("checkbox_on", 0)
     static clear => A2Icons.__Get("clear", 0)
     static copy => A2Icons.__Get("copy", 0)
     static folder => A2Icons.__Get("folder", 0)

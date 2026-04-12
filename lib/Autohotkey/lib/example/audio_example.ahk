@@ -10,7 +10,6 @@
 #SingleInstance Force
 #NoTrayIcon
 
-#Include ../../../a2icon.ahk
 #Include <audio>
 #Include <a2dlg>
 
@@ -34,7 +33,7 @@ audio_example() {
         for dev in devices {
             is_current := dev.id = current_id
             row_ref := dlg.glyph_row(is_current ? "✔" : "◦", dev.name,,, {active: is_current})
-            btns := dlg.btn_row([{label: "Switch here", bg: dlg.c.btn_bg, fg: dlg.c.text}], 24, 0, 110)
+            btns := dlg.btn_row([{label: "Switch here", bg: dlg.c.btn_bg, fg: dlg.c.text}], 110, 24, 0)
             rows.Push({id: dev.id, name: dev.name, row: row_ref, btn: btns[1]})
             if is_current {
                 dlg.set_color(dlg.c.ok, row_ref)
