@@ -11,11 +11,11 @@
  * Resolution of the icon (e.g. 16, 32, 48, 64).
  * @returns {(Integer)} HICON handle, or 0 on failure.
 */
-icon_extract(filename, icon_number := 1, icon_size := 32) {
+icon_extract(file_name, icon_number := 1, icon_size := 32) {
     try {
         h_icon := 0
         r := DllCall("Shell32.dll\SHExtractIconsW",
-            "str",  filename,
+            "str",  file_name,
             "int",  icon_number - 1,  ; API is 0-based
             "int",  icon_size,
             "int",  icon_size,
@@ -33,13 +33,13 @@ icon_extract(filename, icon_number := 1, icon_size := 32) {
 /**
  * Return the number of icons stored in a DLL, EXE, or ICO file.
  * @example
- *      icon_get_icon_count("C:\Windows\System32\imageres.dll")
+ *      icon_get_count("C:\Windows\System32\imageres.dll")
  *
  * @param {(String)} filename
  * Path to the DLL, EXE, or ICO file to inspect
  * @returns  Icon count, or 0 if the file has no icons or cannot be read
 */
-icon_get_icon_count(filename) {
+icon_get_count(filename) {
     try {
         return DllCall("Shell32.dll\ExtractIconExW",
             "str",  filename,
@@ -119,4 +119,17 @@ _icon_from_progid(prog_id) {
             icon := SubStr(icon, 2, InStr(icon, '"' ,, 2) - 2)
     }
     return IsSet(icon) ? icon : ""
+}
+
+
+icon_pick(owner := 0, icon_file := "") {
+    icon_buf := Buffer(520, 0)  ; MAX_PATH * 2
+    StrPut(icon_file, icon_buf, "UTF-16")
+    icon_index := Buffer(4, 0)
+
+    if !DllCall("shell32\PickIconDlg", "ptr", owner
+        , "ptr", icon_buf, "uint", 260, "ptr", icon_index)
+        return ""
+
+    return { file: StrGet(icon_buf, "UTF-16"), idx: NumGet(icon_index, "uint") }
 }

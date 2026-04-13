@@ -13,7 +13,6 @@ c := dlg.c
 dlg.header("A2 Icon Library Demo")
 dlg.sep()
 
-; ── icon_from_type ────────────────────────────────────────────────────
 ; Resolves the registered default icon path for a file extension via HKCR.
 dlg.heading("icon_from_type")
 for ext in ["py", "ahk", "txt", "pdf", "zip"] {
@@ -25,13 +24,12 @@ for ext in ["py", "ahk", "txt", "pdf", "zip"] {
 dlg.space(6)
 dlg.sep()
 
-; ── icon_extract / icon_get_icon_count ────────────────────────────────
-; icon_get_icon_count returns the total; icon_extract returns an HICON handle.
-dlg.heading("icon_extract  /  icon_get_icon_count")
+; icon_get_count returns the total; icon_extract returns an HICON handle.
+dlg.heading("icon_extract  /  icon_get_count")
 
 dll := "C:\Windows\System32\imageres.dll"
-count := icon_get_icon_count(dll)
-dlg.text(dll "  ·  icon_get_icon_count => " count)
+count := icon_get_count(dll)
+dlg.text(dll "  ·  icon_get_count => " count)
 dlg.space(6)
 icons := []
 loop count
@@ -47,7 +45,10 @@ dlg.text("icon_extract(dll, 4) => hIcon: " win_ico "  (set as window icon below)
 dlg.space(8)
 dlg.sep()
 
-dlg.btn_close()
+dlg.btn_row_right([
+    {label: "Pick Dialog Icon", func: pick_dialog_icon},
+    {label: "Close", func: (*) => dlg.destroy()}
+], )
 dlg.show()
 
 if win_ico
@@ -55,3 +56,9 @@ if win_ico
 
 dlg.exit_on_close()
 dlg.esc_to_close()
+
+
+pick_dialog_icon(*) {
+    result := icon_pick(dlg.hwnd)
+    dlg.set_icon(result.file, result.idx)
+}
