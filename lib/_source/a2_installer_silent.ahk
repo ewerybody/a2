@@ -6,7 +6,7 @@
 ;@Ahk2Exe-SetDescription a2 install script silent
 ;@Ahk2Exe-SetOrigFilename setup.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2x.ico
+;@Ahk2Exe-SetMainIcon ..\..\theme\a2.ico
 ;@Ahk2Exe-SetVersion 0.6.0
 #NoTrayIcon
 

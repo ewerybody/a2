@@ -4,7 +4,7 @@
 ; * cursor reset?
 ; * check_load_time_errors - there are fare better error dialogs in ahk2,
 ;   we might not need anything better?
-;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
+;@Ahk2Exe-SetMainIcon ..\..\ui\theme\a2.ico
 ;@Ahk2Exe-SetCompanyName a2
 ;@Ahk2Exe-SetCopyright GPLv3
 ;@Ahk2Exe-SetDescription a2 runtime starter

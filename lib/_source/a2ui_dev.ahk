@@ -1,5 +1,5 @@
 ; Becomes `a2ui.exe` in the root of our DEV environment.
-;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
+;@Ahk2Exe-SetMainIcon ..\..\ui\theme\a2.ico
 ;@Ahk2Exe-SetCompanyName a2
 ;@Ahk2Exe-SetCopyright GPLv3
 ;@Ahk2Exe-SetDescription a2 ui starter - dev

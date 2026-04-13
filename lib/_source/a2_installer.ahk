@@ -11,11 +11,12 @@
 ;@Ahk2Exe-SetDescription a2 Installer
 ;@Ahk2Exe-SetOrigFilename setup.exe
 ;@Ahk2Exe-SetProductName a2
-;@Ahk2Exe-SetMainIcon ..\..\ui\res\a2.ico
+;@Ahk2Exe-SetMainIcon ..\..\theme\a2.ico
 ;@Ahk2Exe-SetVersion 0.6.0
 
 #NoTrayIcon
 #Include _installib.ahk
+#Include <a2dlg>
 #Include <Jxon>
 #Include <move>
 #Include <msgbox>
@@ -29,7 +30,7 @@ A2STUFF := ["lib", "ui", "a2.exe", "a2ui.exe"]
 install_ver := read_version(A2DIR)
 backup_dir_name := "_ a2 upgrade.bak"
 run_silent := check_silent()
-PACKAGE_DIR := A_ScriptDir . "\a2"
+PACKAGE_DIR := A_ScriptDir "\a2"
 
 if (!run_silent)
     installer_dialog()
@@ -51,15 +52,14 @@ installer_dialog() {
     ; For some better UX (Should feel like it's doing something)
     sleep_ticks := 150
 
-    d := A2Dialog("a2 Installer", { w: 480, pad: 14 })
-    c := d.c
+    dlg := A2Dialog("a2 Installer", { w: 480, pad: 14 })
 
     ; Header: icon + title
-    d.header("a2 " new_ver " Installation", icon_src)
-    d.sep()
-    d.show(50)
-    if (icon_src)
-        d.set_icon(icon_src)
+    dlg.header("a2 " new_ver " Installation", icon_src)
+    dlg.sep()
+    dlg.show(50)
+    ; if (icon_src)
+    ;     dlg.set_icon(icon_src)
     Sleep(sleep_ticks)
 
     ; Check 1: Version
@@ -68,81 +68,83 @@ installer_dialog() {
 
     if (!is_update) {
         ver_icon := "✔️"
-        ver_color := c.ok
+        ver_color := dlg.c.ok
         ver_text := "Installing a2 " new_ver " for " A_UserName
         ver_sub := ""
     } else if (inst_ver == new_ver) {
         ver_icon := "⚠️"
-        ver_color := c.warn
+        ver_color := dlg.c.warn
         ver_text := "a2 " new_ver " is already installed — will reinstall"
         ver_sub := ""
     } else if (inst_ver) {
         ver_icon := "✔️"
-        ver_color := c.ok
+        ver_color := dlg.c.ok
         ver_text := "Upgrading a2 " inst_ver " => " new_ver " for " A_UserName
         ver_sub := ""
     } else {
         ver_icon := "✔️"
-        ver_color := c.ok
+        ver_color := dlg.c.ok
         ver_text := "Updating a2 => " new_ver " for " A_UserName
         ver_sub := ""
     }
-    d.glyph_row(ver_icon, ver_text, ver_color, ver_sub)
-    d.resize(50)
+    dlg.glyph_row(ver_icon, ver_text, ver_color, ver_sub)
+    dlg.resize(50)
     Sleep(sleep_ticks)
 
     ; Check for Running processes under install path ...
-    proc_row := d.glyph_row("...", "Checking for running a2 processes ...",,, {active: false})
-    d.resize(50)
+    proc_row := dlg.glyph_row("...", "Checking for running a2 processes ...",,, {active: false})
+    dlg.resize(50)
     Sleep(sleep_ticks)
 
     running_processes := find_processes_running_under(A2DIR)
     if (!running_processes.Length) {
-        proc_row.glyph.SetFont("c" c.ok)
+        proc_row.glyph.SetFont("c" dlg.c.ok)
         proc_row.glyph.Text := "✔️"
-        proc_row.text.SetFont("c" c.text)
+        proc_row.text.SetFont("c" dlg.c.text)
         proc_row.text.Text := "No a2 processes running"
     } else {
         names := []
         for _, p in running_processes
             names.Push(p["Name"])
-        proc_row.glyph.SetFont("c" c.warn)
+        proc_row.glyph.SetFont("c" dlg.c.warn)
         proc_row.glyph.Text := "⚠️"
-        proc_row.text.SetFont("c" c.warn)
+        proc_row.text.SetFont("c" dlg.c.warn)
         proc_row.text.Text := "Running: " string_join(names, ", ")
-        d.gui.SetFont("s" (d.font_size - 1) " c" c.sub, d.font_face)
-        d.gui.AddText("x" (d.pad + 24) " y" d.height " w" (d.width - d.pad * 2 - 24),
+        dlg.gui.SetFont("s" (dlg.font_size - 1) " c" dlg.c.sub, dlg.font_face)
+        dlg.gui.AddText("x" (dlg.pad + 24) " y" dlg.height " w" (dlg.width - dlg.pad * 2 - 24),
         "They will be closed when you click Install.")
-        d.space(20)
+        dlg.space(20)
     }
-    d.resize(50)
+    dlg.resize(50)
 
     ; Check installed AHK version when updating existing installation
     if (is_update) {
         existing_version := check_existing_version()
         if existing_version AND (VerCompare(existing_version, "2.0") < 0) {
-            d.glyph_row("⚠️",
-                "Upgrade includes AutoHotkey v2", c.warn,
+            dlg.glyph_row("⚠️",
+                "Upgrade includes AutoHotkey v2", dlg.c.warn,
                 "All extensions will be deactivated temporarily.")
-            d.resize(50)
+            dlg.resize(50)
             Sleep(sleep_ticks)
         }
     }
 
     ; Buttons
-    d.space(10)
-    d.sep()
-    btns := d.btn_row_right([{ label: "Cancel", bg: c.btn_bg, fg: c.text }, { label: "Install =>", bg: c.ok, fg: c.acc_fg,
-        opts: "Default" }])
-    d.resize()
+    dlg.space(10)
+    dlg.sep()
+    buttons := dlg.btn_row_right([
+        { label: "Cancel" },
+        { label: "Install =>", bg: dlg.c.ok, fg: dlg.c.acc_fg, opts: "Default" }
+    ])
+    dlg.resize()
 
     ; Wait for user
     result := false
-    btns[2].OnEvent("Click", (*) => (result := true, d.destroy()))
-    btns[1].OnEvent("Click", (*) => d.destroy())
-    d.on_close((*) => d.destroy())
-    d.on_escape((*) => d.destroy())
-    WinWaitClose("ahk_id " d.hwnd)
+    buttons[2].OnEvent("Click", (*) => (result := true, dlg.destroy()))
+    buttons[1].OnEvent("Click", (*) => dlg.destroy())
+    dlg.on_close((*) => dlg.destroy())
+    dlg.on_escape((*) => dlg.destroy())
+    WinWaitClose("ahk_id " dlg.hwnd)
 
     if !result
         ExitApp
@@ -157,13 +159,13 @@ intro() {
     global install_ver, run_silent, PACKAGE_DIR
 
     new_version := read_version(PACKAGE_DIR)
-    title := "a2 - " . new_version . " Installation"
-    install_msg := "This will install a2 version " . new_version . " for user " . A_UserName . ".`n"
+    title := "a2 - " new_version " Installation"
+    install_msg := "This will install a2 version " new_version " for user " A_UserName ".`n"
     continue_msg := "`nDo you want to continue? "
 
     if !has_a2_stuff() {
         if (!run_silent) {
-            if !msgbox_accepted(install_msg . continue_msg, title)
+            if !msgbox_accepted(install_msg continue_msg, title)
                 ExitApp
         } else
             log_msg(install_msg)
@@ -172,16 +174,16 @@ intro() {
             if (install_ver == new_version)
                 about_current := "Such a version is already installed!`n"
             else
-                about_current := "There is currently version " . install_ver . " installed!`n"
+                about_current := "There is currently version " install_ver " installed!`n"
         } else
             about_current := "There is currently some version installed`n"
         about_current .= "it would be replaced.`n"
 
         if (!run_silent) {
-            if !msgbox_accepted(install_msg . about_current . continue_msg, title)
+            if !msgbox_accepted(install_msg about_current continue_msg, title)
                 ExitApp
         } else
-            log_msg(install_msg . about_current)
+            log_msg(install_msg about_current)
     }
 }
 
@@ -201,7 +203,7 @@ read_version(path) {
         }
     }
 
-    package_cfg_path := path . "\package.json"
+    package_cfg_path := path "\package.json"
     if FileExist(package_cfg_path) {
         data := Jxon_Read(package_cfg_path)
         return data["version"]
@@ -245,10 +247,10 @@ backup() {
 
     delete_later := false
     backup_dir := path_join(A2DIR, "data", "temp", backup_dir_name, install_ver)
-    log_msg("backing up '" . install_ver . "': " . backup_dir)
+    log_msg("backing up '" install_ver "': " backup_dir)
     if FileExist(backup_dir) {
         backup_dir := path_join(A_Temp, backup_dir_name, A_Now)
-        log_msg(" version already backed up!: moving to temp:" . backup_dir)
+        log_msg(" version already backed up!: moving to temp:" backup_dir)
         delete_later := true
     }
 
@@ -259,7 +261,7 @@ backup() {
 
     src_trg_paths := StrSplit(result, "\n")
     msg := "The current version could not be moved away before the update!`n"
-    msg .= "Some file or folder is blocking!:`n`n" . src_trg_paths[1] . "`n`n"
+    msg .= "Some file or folder is blocking!:`n`n" src_trg_paths[1] "`n`n"
     msg .= "Please make sure nothing is blocking and retry."
     log_error("Backup failed!", msg)
     ExitApp
@@ -268,9 +270,9 @@ backup() {
 install() {
     global A2DIR, PACKAGE_DIR
     if (!PACKAGE_DIR)
-        log_error("Package dir empty?!", "The package dir should not be '" . PACKAGE_DIR . "'!")
+        log_error("Package dir empty?!", "The package dir should not be '" PACKAGE_DIR "'!")
     if (!FileExist(PACKAGE_DIR))
-        log_error("Package dir missing?!", "The package dir must exist!`n'" . PACKAGE_DIR . "'!!?")
+        log_error("Package dir missing?!", "The package dir must exist!`n'" PACKAGE_DIR "'!!?")
 
     loop files, PACKAGE_DIR "\*", "D"
         DirMove(A_LoopFilePath, path_join(A2DIR, A_LoopFileName))
@@ -333,11 +335,11 @@ check_running() {
         name_string := string_join(names)
         msg := "Some a2 applications are currently running!`n"
         msg .= "To safely continue the installation I'd suggest to shutdown these processes ("
-        msg .= name_string . ").`n`n"
+        msg .= name_string ").`n`n"
         msg .= "Or you hit Cancel, do it by yourself and start the installation again."
 
         if (run_silent) {
-            log_msg("a2 Applications running!" . msg)
+            log_msg("a2 Applications running!" msg)
             Sleep(1000)
         } else {
             if !msgbox_accepted(msg, "a2 Applications running ...")
