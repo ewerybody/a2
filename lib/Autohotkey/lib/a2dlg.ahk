@@ -294,7 +294,7 @@ class A2Dialog {
         w := this.width - last_x - last_w - this.pad * 2
         x := last_x + last_w + this.gap
         opts := "x" x " y" last_y " " (max_width ? " w" w " " : "") pos_opts
-        return {opts: opts, x: this.pad, y: this.height, w: w}
+        return {opts: opts, x: x, y: this.height, w: w}
     }
 
     /**
@@ -335,12 +335,13 @@ class A2Dialog {
      * @param {(String)} ahk_opts - Extra AHK control option string appended to the AddText call.
      * @returns  Text ctrl
      */
-    label(text, color := "", ahk_opts := "") {
+    label(text, color := "", ahk_opts := "", next_to := "") {
         if !color
             color := this.c.text
         opts := ahk_opts ? " " ahk_opts : ""
+        pos := this._align_next_to(next_to, 'Text', ahk_opts)
         this.gui.SetFont("s" this.font_size " c" color, this.font_face)
-        ctrl := this.gui.AddText("x" this.pad " y" this.height " " opts, text)
+        ctrl := this.gui.AddText(pos.opts, text)
         this.space(_a2dlg_get_height(ctrl) + 6)
         return ctrl
     }
@@ -604,7 +605,7 @@ class A2Dialog {
 
     /**
      * Add an arbitrary control to the dialog.
-     * @param {(String)} control_type - Control Type name. Such as: CheckBox, ComboBox, Slider, UpDown ..
+     * @param {(String)} control_type - Control Type name. Such as: ComboBox, Slider, UpDown ..
      * basically anything listed under: https://www.autohotkey.com/docs/v2/lib/GuiControls.htm#toc
      * @param {(String)} [options] - Options string specific to the control.
      * Try to omit `x` and `y` in here! Rather use `next_to`.
@@ -626,13 +627,11 @@ class A2Dialog {
      * Custom checkbox with our theme icons.
      * @param {(String)} label - Label text displayed next to the checkbox
      * @param {(Integer)} [checked] - Initial state.
-     * @param {(String)} [options] - Options string specific to the control.
-     * Try to omit `x` and `y` in here! Rather use `next_to`.
      * @param {(Control)} [next_to] - Optional control to align next to.
      * @param {(Function)} [func] - Optional function to call on state change.
      * @returns Checkbox control
      */
-    checkbox(label, checked := 0, options := "", next_to := "", func := "") {
+    checkbox(label, checked := 0, next_to := "", func := "") {
         pos := this._align_next_to(next_to, "CheckBox")
         size := this.font_size + 10  ; scale with font
         icon_on := A2Icons.checkbox_on, icon_off := A2Icons.checkbox_off, icon_hover := A2Icons.checkbox_hover
@@ -650,6 +649,7 @@ class A2Dialog {
 
         ; +0x100 aka SS_NOTIFY: for better firing the click
         pos_opts := "x" 1 + pos.x + _a2dlg_get_width(check_ctrl) " y" pos.y " +0x100"
+        this.gui.SetFont("s" this.font_size " c" this.c.text, this.font_face)
         label_ctrl := this.gui.AddText(pos_opts, " " label)
 
         label_ctrl.OnEvent("Click", (*) => toggle(check_ctrl))
@@ -704,19 +704,26 @@ class A2Dialog {
     /**
      * Set the title-bar and taskbar icon.
      * @param {(String|Integer)} path - File path to an ICO/EXE/DLL, or an HICON handle returned by icon_extract().
+     * @param {(Integer)} index - Icon index in case a multi icon path is passed like on .exe and .dll
      * @returns  this (chainable)
      */
-    set_icon(path) {
-        if (path == this._icon)
+    set_icon(h_icon, index := "") {
+        try_path := index ? h_icon ',' index : h_icon
+        if (try_path == this._icon)
             return
-        this._icon := path
+        this._icon := try_path
 
-        if FileExist(path)
-            hIcon := DllCall("LoadImage", "Ptr", 0, "Str", path, "UInt", 1, "Int", 0, "Int", 0, "UInt", 0x10, "Ptr")
-        else
-            hIcon := path
-        SendMessage(0x80, 0, hIcon, this.hwnd) ; WM_SETICON ICON_SMALL
-        SendMessage(0x80, 1, hIcon, this.hwnd) ; WM_SETICON ICON_BIG
+        icon_info := icon_path_split(try_path)
+        icon_info.file := path_expand_env(icon_info.file)
+        if FileExist(icon_info.file) {
+            h_icon := icon_extract(icon_info.file, icon_info.idx)
+            if h_icon == 0 {
+                ; path := path_expand_env(path)
+                h_icon := DllCall("LoadImage", "Ptr", 0, "Str", icon_info.file, "UInt", 1, "Int", 0, "Int", 0, "UInt", 0x10, "Ptr")
+            }
+        }
+        SendMessage(0x80, 0, h_icon, this.hwnd) ; WM_SETICON ICON_SMALL
+        SendMessage(0x80, 1, h_icon, this.hwnd) ; WM_SETICON ICON_BIG
         return this
     }
 
