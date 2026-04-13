@@ -47,6 +47,7 @@ class A2Icons {
     static copy => A2Icons.__Get("copy", 0)
     static folder => A2Icons.__Get("folder", 0)
     static paste => A2Icons.__Get("paste", 0)
+    static select_list => A2Icons.__Get("select_list", 0)
     static switch => A2Icons.__Get("switch", 0)
     static to_clipboard => A2Icons.__Get("to_clipboard", 0)
     static trash => A2Icons.__Get("trash", 0)
