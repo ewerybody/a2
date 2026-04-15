@@ -1,6 +1,6 @@
 [locales_dir]
-path = "i18n/{locale}/"
+path = "i18n/"
 
 [[paths]]
-    reference = "i18n/en/**"
-    l10n = "i18n/{locale}/**"
+    reference = "i18n/en/{filename}.json"
+    l10n = "i18n/{locale}/{filename}.json"
