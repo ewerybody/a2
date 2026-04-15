@@ -2,5 +2,5 @@
 path = "i18n/"
 
 [[paths]]
-    reference = "i18n/en/{filename}.json"
-    l10n = "i18n/{locale}/{filename}.json"
+    reference = "i18n/en/{basepath}.json"
+    l10n = "i18n/{locale}/{basepath}.json"
