@@ -1,0 +1,6 @@
+[locales_dir]
+path = "i18n/{locale}/"
+
+[[paths]]
+    reference = "i18n/en/**"
+    l10n = "i18n/{locale}/**"
