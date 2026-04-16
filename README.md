@@ -1,4 +1,4 @@
-# a2 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0bc56698a44144e68ff191105f97215d)](https://app.codacy.com/app/ewerybody/a2?utm_source=github.com&utm_medium=referral&utm_content=ewerybody/a2&utm_campaign=badger) [![Join the chat at https://gitter.im/ewerybody/a2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ewerybody/a2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Join the chat on Telegram](ui/res/telegram_join.svg)](https://t.me/a2script_de)
+# a2 [![Join the chat on Telegram](ui/res/telegram_join.svg)](https://t.me/a2script_de)
 
 > [!NOTE]
 > # 🚧 Missing progress here? 🚧
