@@ -25,22 +25,32 @@ and all of the main modules like a2.modules (and a2.modlab?)
 * log in with admin account
 * hit the **➕** in the top right and "**Add new translation component**"\
   (or go to: https://hosted.weblate.org/create/component/?project=8564)
-* **Component name**:\
-  please keep the existing patterns!
-  * `a2 {section_name}` for a section under `{a2_project_root}/i18n/{lang_name}/` and the filename being `{section_name}.json`
-    * for example [a2 general](https://hosted.weblate.org/settings/a2/a2-general/) for the files `/i18n/en/general.json` and `/i18n/de/general.json` ...
-  * `{package.name} - {module_name}` for a small module under `{a2-module-root}/{module_name}/i18n/` and the filenames being `en.json`, `de.json` ...
-    * for example [a2.modules - getWinfo](https://hosted.weblate.org/settings/a2/a2-modules-getwinfo/) for the files `/getWinfo/i18n/en.json` and `/getWinfo/i18n/de.json` ...
-* **URL slug** - leave it like it was generated
-* **Use as glossary** off (for now)
-* **Project** a2
-* **Source language** English
-* **Version control system** Git
-* **Source code repository**: the .git address. That's:
-  * for a2: https://github.com/ewerybody/a2.git
-  * for a2.modules https://github.com/ewerybody/a2.modules.git
-* **Repository branch** `ahk2` (for now)
-* 
+* fill in the fields:
+    * **Component name**: please keep the existing patterns!
+      * `a2 {section_name}` for a section under `{a2_project_root}/i18n/{lang_name}/` and the filename being `{section_name}.json`
+        * for example [a2 general](https://hosted.weblate.org/settings/a2/a2-general/) for the files `/i18n/en/general.json` and `/i18n/de/general.json` ...
+      * `{package.name} - {module_name}` for a small module under `{a2-module-root}/{module_name}/i18n/` and the filenames being `en.json`, `de.json` ...
+        * for example [a2.modules - getWinfo](https://hosted.weblate.org/settings/a2/a2-modules-getwinfo/) for the files `/getWinfo/i18n/en.json` and `/getWinfo/i18n/de.json` ...
+    * **URL slug**: leave it like it was generated
+    * **Use as glossary**: off (for now)
+    * **Project**: a2
+    * **Source language**: leave at **English**
+    * **Version control system**: leave at **Git**
+    * **Source code repository**: the .git address. That's:
+      * for a2: https://github.com/ewerybody/a2.git
+      * for a2.modules https://github.com/ewerybody/a2.modules.git
+    * **Repository branch** `ahk2` (for now)
+    * hit **Continue**, let it scan for files
+    * select the matching pattern
+      * `i18n/*/{section-name}.json` for section components
+      * `{module-name}/i18n/*.json` for module components
+    * set rest of file pattern stuff
+      * **Monolingual base language file**: that's the FULL relative path to the English file! For instance `i18n/en/general.json`
+      * **Template for new translations**: same as the other one ^ `i18n/en/general.json` (important!)
+      - [x] Sort JSON keys
+      - [x] Avoid spaces after separators
+
+that should be it! 😉
 
 
 
