@@ -34,7 +34,6 @@ class A2Icons {
     static a2x => A2Icons.__Get("a2x", 0)
     static autohotkey => A2Icons.__Get("autohotkey", 0)
     static github => A2Icons.__Get("github", 0)
-    static gitter => A2Icons.__Get("gitter", 0)
     static telegram => A2Icons.__Get("telegram", 0)
 
     static arrow_left => A2Icons.__Get("arrow_left", 0)
