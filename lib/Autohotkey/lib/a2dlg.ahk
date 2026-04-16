@@ -27,6 +27,7 @@
  ***********************************************************************/
 #Include <a2tip>
 #Include <a2icon>
+#Include <icon>
 #Include <i18n>
 #Include <theme>
 #Include <string>
@@ -568,37 +569,40 @@ class A2Dialog {
     }
 
     /**
-     * Read-only monospaced text box - for error details, stack traces, generated code etc.
-     * @param {(String)} text - Initial content.
-     * @param {(Integer)} [h] - Box height in pixels.
+     * Monospaced code box - for error details, stack traces, generated code etc.
+     * @param {(String)} [text] - Initial content.
+     * @param {(Integer)} [r] - Number of rows to show.
+     * @param {(Control)} [next_to] - A control to align the new one to.
+     * It will be placed at the same height and at the right end.
+     * @param {(Boolean)} [read_only] - To make it non-writable or writable.
+     * @param {(String)} [bottom_line_color] - Optional 6-digit RRGGBB hex color for the bottom line.
      * @returns  Edit ctrl (Value can be updated later)
      */
-    code_box(text, h := 64, next_to := "", bottom_line_color := "") {
-        this.gui.SetFont("s" (this.font_size - 1) " w" this.font_weight_normal " c" this.c.sub, "Consolas")
-        pos := this._align_next_to(next_to, 'Edit',, max_width:=true)
-        ctrl := this.gui.AddEdit(pos.opts " h" h " ReadOnly -E0x200 Background" this.c.sub_bg, text)
-        bottom_line_color := bottom_line_color ? bottom_line_color : this.c.sep
-        this.height := _a2dlg_get_bottom(ctrl)
-        this.gui.AddText("x" pos.x " y" this.height " w" pos.w " h1 Background" bottom_line_color)
-        this.space()
-        return ctrl
+    code_box(text := "", rows := 1, next_to := "", read_only := false, bottom_line_color := "") {
+        return this.edit_field(text, rows, next_to, read_only, bottom_line_color, font_face := "Consolas")
     }
 
     /**
-     * Single-line text input with a subtle underline separator below.
-     * @param {(String)} [default_text] - Pre-filled value.
+     * Text input field with a subtle underline separator below.
+     * @param {(String)} [text] - Pre-filled value.
+     * @param {(Integer)} [r] - Number of rows to show.
+     * @param {(Control)} [next_to] - A control to align the new one to.
+     * It will be placed at the same height and at the right end.
+     * @param {(Boolean)} [read_only] - To make it non-writable or writable.
+     * @param {(String)} [bottom_line_color] - Optional 6-digit RRGGBB hex color for the bottom line.
+     * @param {String} [font_face] - Font to use in the field.
      * @returns  Edit ctrl
      */
-    edit_field(default_text := "", rows := 1, next_to := "") {
-        this.gui.SetFont("s" this.font_size " w" this.font_weight_normal " c" this.c.text, this.font_face)
+    edit_field(text := "", rows := 1, next_to := "", read_only := false, bottom_line_color := "", font_face := "") {
+        font_face := font_face ? font_face : this.font_face
+        this.gui.SetFont("s" this.font_size " w" this.font_weight_normal " c" this.c.text, font_face)
         pos := this._align_next_to(next_to, 'Edit',, max_width:=true)
-        ctrl := this.gui.AddEdit(
-            pos.opts " h24 -Border -E0x200 Background" this.c.sub_bg " r" rows,
-            default_text
-        )
+        read_only := read_only ? " ReadOnly" : ""
+        ctrl := this.gui.AddEdit(pos.opts " -Border -E0x200 Background" this.c.sub_bg " r" rows read_only, text)
         ; Add a bottom line to the field
+        bottom_line_color := bottom_line_color ? bottom_line_color : this.c.ok
         this.height := _a2dlg_get_bottom(ctrl)
-        this.gui.AddText("x" pos.x " y" this.height " w" pos.w " h1 Background" this.c.ok)
+        this.gui.AddText("x" pos.x " y" this.height " w" pos.w " h1 Background" bottom_line_color)
         this.space()
         return ctrl
     }
@@ -632,6 +636,7 @@ class A2Dialog {
      * @returns Checkbox control
      */
     checkbox(label, checked := 0, next_to := "", func := "") {
+        this.space(this.gap / 2)
         pos := this._align_next_to(next_to, "CheckBox")
         size := this.font_size + 10  ; scale with font
         icon_on := A2Icons.checkbox_on, icon_off := A2Icons.checkbox_off, icon_hover := A2Icons.checkbox_hover
@@ -646,9 +651,10 @@ class A2Dialog {
             func ? func(chk.checked) : 0
         )
         check_ctrl.OnEvent("Click", toggle)
+        check_ctrl.GetPos(,&ctrl_y,, &ctrl_height)
 
         ; +0x100 aka SS_NOTIFY: for better firing the click
-        pos_opts := "x" 1 + pos.x + _a2dlg_get_width(check_ctrl) " y" pos.y " +0x100"
+        pos_opts := "x" 1 + pos.x + _a2dlg_get_width(check_ctrl) " y" ctrl_y " +0x100"
         this.gui.SetFont("s" this.font_size " c" this.c.text, this.font_face)
         label_ctrl := this.gui.AddText(pos_opts, " " label)
 
@@ -662,7 +668,7 @@ class A2Dialog {
         this._btn_hwnds.Push(check_ctrl.Hwnd)
         this._btn_hwnds.Push(label_ctrl.Hwnd)
 
-        this.height := Max(this.height, _a2dlg_get_bottom(check_ctrl) + this.gap)
+        this.height := Max(this.height, ctrl_y + ctrl_height)
         return check_ctrl
     }
 
@@ -910,7 +916,7 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_
     dlg.msg := msg
 
     if (error_detail != "") {
-        dlg.code_box(error_detail,,, bottom_line_color:=dlg.c.err)
+        dlg.code_box(error_detail, 3,, read_only := true, bottom_line_color:=dlg.c.err)
         dlg.msg .= "`n" error_detail
         dlg.space(6)
         dlg.sep()

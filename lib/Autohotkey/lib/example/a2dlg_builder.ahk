@@ -67,7 +67,7 @@ class A2dlgBuilder {
 
         dlg.heading("Generated code")
         dlg.space(4)
-        this.code_ctrl := dlg.code_box("", 120)
+        this.code_ctrl := dlg.code_box("", 6)
         dlg.space(6)
         dlg.sep()
 
