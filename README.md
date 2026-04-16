@@ -1,4 +1,4 @@
-# a2 ahk2 WIP!
+# a2 ahk2 WIP! ![Weblate badge](https://hosted.weblate.org/widget/a2/svg-badge.svg?native=1) [![Signal badge](theme/signal_join.svg)](https://signal.group/#CjQKIDSnyXtLOHcK9QyaSabhvmVTndc48OtnPiCRskUb1iKUEhBsykC41kH8y8uTg_5nG6Fc) [![Join the chat on Telegram](theme/telegram_join.svg)](https://t.me/a2script_de)
 ## 🚧 This branch is under heavy construction 🚧 and lots of things will break!
 See #266 ([Go Autohotkey v2](https://github.com/ewerybody/a2/issues/266))
 
