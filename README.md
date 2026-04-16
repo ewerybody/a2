@@ -1,8 +1,12 @@
 # a2 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0bc56698a44144e68ff191105f97215d)](https://app.codacy.com/app/ewerybody/a2?utm_source=github.com&utm_medium=referral&utm_content=ewerybody/a2&utm_campaign=badger) [![Join the chat at https://gitter.im/ewerybody/a2](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ewerybody/a2?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Join the chat on Telegram](ui/res/telegram_join.svg)](https://t.me/a2script_de)
 
-# WiP! 🚧 Missing progress here? True, this branch is pretty outdated! 🚧
-A lot of progress is happening in [the ahk2-branch](https://github.com/ewerybody/a2/edit/ahk2/README.md)
-Though we're not there yet. It's a lot of work. We'll update you here asap! ✌️
+> [!NOTE]
+> # 🚧 Missing progress here? 🚧
+> ## True, this branch is pretty outdated! 
+> 
+> A lot of progress is happening in [the ahk2-branch](https://github.com/ewerybody/a2/tree/ahk2?tab=readme-ov-file#a2-ahk2-wip)
+> Though we're not there yet.\
+> It's a lot of work. We'll update you here asap! ✌️
 
 ...
 
