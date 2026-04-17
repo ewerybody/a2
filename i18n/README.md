@@ -51,10 +51,3 @@ and all of the main modules like a2.modules (and a2.modlab?)
       - [x] Avoid spaces after separators
 
 that should be it! 😉
-
-
-
-
-
-
-
