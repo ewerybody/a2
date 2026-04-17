@@ -9,7 +9,7 @@ import stat
 import string
 from typing import Any
 
-from PIL.ImagePath import Path
+from pathlib import Path
 
 import a2core
 
