@@ -27,16 +27,16 @@ package = false
 where = ["ui"]
 
 [tool.poe.tasks]
-dev-bin-deps = { cmd = "python ui/a2dev/dependency/check.py", help = "Make sure binary dependencies are present and up-to-date." }
-dev-exe = { cmd = "python ui/a2dev/build/root_executables.py", help = "Create fresh starter executables in the project root." }
-dev-init = { sequence = [ "dev-bin-deps", "dev-exe" ], help = "Perform all dev init repo initialization steps." }
-build-package = { cmd = "python lib/_batches/build/make_package.py", help = "Build a new package into '_ package'." }
-build-installer = { cmd = "python lib/_batches/build/build_installer.py", help = "Build the installer files." }
-build-theme = { cmd = "python ui/a2dev/build/theme.py", help = "Build theme files and colored icons from SVG sources. Needs Inkscape and gfx group!" }
-build = { sequence = [ "build-package", "build-installer" ], help = "Build complete package for release." }
-test-py = { cmd = "pytest ui/test", help = "Test python code with pytest." }
-test-ahk = { cmd = "python lib/Autohotkey/lib/test/run_ahk_tests.py", help = "Test Autohotkey code with AHKUnit." }
-test = { sequence = ["test-ahk", "test-py"], help = "Run all available tests." }
+dev-bin-deps = { help = "Make sure binary dependencies are present and up-to-date.", cmd = "python ui/a2dev/dependency/check.py" }
+dev-exe = { help = "Create fresh starter executables in the project root.", cmd = "python ui/a2dev/build/root_executables.py" }
+dev-init = { help = "Perform all dev init repo initialization steps.", sequence = [ "dev-bin-deps", "dev-exe" ] }
+build-package = { help = "Build a new package into '_ package'.", cmd = "python ui/a2dev/build/package.py" }
+build-installer = { help = "Build the installer files.", cmd = "python ui/a2dev/build/installer.py" }
+build-theme = { help = "Build theme files and colored icons from SVG sources. Needs Inkscape and gfx group!", cmd = "python ui/a2dev/build/theme.py" }
+build = { help = "Build complete package for release.", sequence = [ "build-package", "build-installer" ] }
+test-py = { help = "Test python code with pytest.", cmd = "pytest ui/test" }
+test-ahk = { help = "Test Autohotkey code with AHKUnit.", cmd = "python lib/Autohotkey/lib/test/run_ahk_tests.py" }
+test = { help = "Run all available tests.", sequence = ["test-ahk", "test-py"] }
 check-i18n = { help = "Validate i18n JSON files for encoding issues", cmd = "python ui/a2dev/check_i18n.py" }
 
 [tool.poe]

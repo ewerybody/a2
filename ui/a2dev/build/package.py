@@ -7,36 +7,24 @@ create the portable zip package.
 """
 
 import os
-import sys
 import shutil
 import ctypes
-import zipfile
 import subprocess
-from urllib import request
 
-import rich.progress
+import a2ahk
+import a2core
 
-import _build_common
-import a2ahk  # ty:ignore[unresolved-import]
-import a2dl  # ty:ignore[unresolved-import]
-
-from _build_common import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME
-from _build_common import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME
-
-Paths = _build_common.Paths
+import a2dev.build
+from a2dev.build import A2, PYSIDE, PYSIDE_VERSION, QT_VERSION, PYSIDE_NAME, PACKAGE_CFG_NAME
+from a2dev.build import CHK_MK, EX_MRK, SHIBOKEN, SHIBOKEN_NAME, VERSIONS, Paths
 
 PACKAGE_SUB_NAME = 'alpha'
-DESKTOP_ICO_FILE = 'ui/res/a2.ico'
+DESKTOP_ICO_FILE = 'theme/a2.ico'
 DESKTOP_INI_CODE = (
     f'[.ShellClassInfo]\nIconResource={DESKTOP_ICO_FILE}\nIconIndex=0\n[ViewState]\nMode=\nVid=\nFolderType=Generic'
 )
 FILE_ATTR_HIDDEN = 0x02
-ROOT_FILES = (
-    _build_common.PACKAGE_CFG_NAME,
-    f'{A2} on github.com.URL',
-    'LICENSE',
-    'README.md',
-)
+ROOT_FILES = (PACKAGE_CFG_NAME, f'{A2} on github.com.URL', 'LICENSE', 'README.md')
 LIB_IGNORES = (('Autohotkey', 'Compiler'),)
 # Lets keep lib/test for implementation examples in release!
 LIB_INCLUDES = ('_Struct.ahk',)
@@ -48,7 +36,7 @@ UI_IGNORES = (
     ('ui', 'test'),
 )
 
-# The Qt dlls we need! For some reason Qml is indispensable :/
+# The Qt dlls we need!
 QT_LIBS = 'Core', 'Widgets', 'Gui', 'Network', 'Svg'
 QT_DLLS = QT_LIBS  # + ('Qml',)
 QT_DLL = 'Qt%i%s.dll'
@@ -61,18 +49,16 @@ QT_PLUGIN_DIRS = (
     'platforminputcontexts', 'platforms', 'styles', 'tls',
 )
 # fmt: on
-SQLITE_URL = 'https://www.sqlite.org/'
-PY_PACK_URL = 'https://www.python.org/ftp/python/{}/{}'
 
 
 def main():
-    package_cfg = _build_common.get_package_cfg()
+    package_cfg = a2dev.build.get_package_cfg()
     version = package_cfg['project']['version']
     package_name = f'{A2} {version} {PACKAGE_SUB_NAME}'
     print('\n{0} Making package: {1} ... {0}'.format(8 * '#', package_name))
+    a2 = a2core.get()
 
     prepare_package()
-
     get_py_package()
     patch_sqlite()
     copy_files()
@@ -84,23 +70,23 @@ def main():
     a2ahk.set_variable(config_file, 'a2_title', package_name)
 
     make_desktop_ini()
-
     make_executables(version)
 
-    print('{0} {1} finished! {0}\n'.format(8 * '#', package_name))
+    print('{0} package: {1} finished! {0}\n'.format(8 * '#', package_name))
 
 
 def prepare_package():
     if os.path.isdir(Paths.dist):
         print('Removing old package ...', end='')
         shutil.rmtree(Paths.dist)
-
-    if os.path.isdir(Paths.dist):
-        print(f'\b\b\b{EX_MRK}  ')
-        print('\nOld package still in place?')
+        if os.path.isdir(Paths.dist):
+            print(f'\b\b\b{EX_MRK}  ')
+            raise RuntimeError(f'Old package still in place?\n  {Paths.dist}')
     else:
-        print(f'\b\b\b{CHK_MK}  ')
-        os.makedirs(Paths.dist)
+        print('Creating fresh package dir ...', end='')
+
+    os.makedirs(Paths.dist)
+    print(f'\b\b\b{CHK_MK}  ')
 
 
 def update_readme():
@@ -127,7 +113,7 @@ def update_readme():
     if not linebreak:
         raise RuntimeError('Linebreak could not be determined from readme file!!!')
 
-    versions = _build_common.VERSIONS
+    versions = a2dev.build.VERSIONS
     for name, version_str in versions.items():
         print('* %s: %s' % (name, version_str))
 
@@ -151,13 +137,13 @@ def update_readme():
 
 
 def copy_files():
-    print('Copying root files ...', end='')
+    print('Copy root files ...', end='')
 
     for item in os.scandir(Paths.a2):
         if item.is_file() and item.name in ROOT_FILES:
             shutil.copy2(item.path, Paths.dist)
 
-    print(f'\b\b\b{CHK_MK}  \b\b\nCopying lib files ...', end='')
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopy lib files ...', end='')
     os.makedirs(Paths.distlib, exist_ok=True)
 
     for item in os.scandir(Paths.lib):
@@ -172,53 +158,15 @@ def copy_files():
             if not os.path.isdir(this_dest):
                 shutil.copytree(item.path, this_dest, ignore=_lib_ignore)
 
-    print(f'\b\b\b{CHK_MK}  \b\b\nCopying ui files ...', end='')
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopy ui files ...', end='')
     shutil.copytree(Paths.ui, Paths.dist_ui, ignore=_ui_ignore, dirs_exist_ok=True)
 
-    print(f'\b\b\b{CHK_MK}  \b\b\nCopying i18n files ...', end='')
-    shutil.copytree(Paths.i18n, Paths.dist_i18n, dirs_exist_ok=True)
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopy i18n files ...', end='')
+    shutil.copytree(Paths.i18n, Paths.dist_i18n, ignore=_i18n_ignore, dirs_exist_ok=True)
+
+    print(f'\b\b\b{CHK_MK}  \b\b\nCopy theme files ...', end='')
+    shutil.copytree(Paths.theme, Paths.dist_theme, ignore=_theme_ignore, dirs_exist_ok=True)
     print(f'\b\b\b{CHK_MK}  \b\b')
-
-
-def _lib_ignore(path, items):
-    # we ignore ANY '_' starting dirs and files in lib
-    result = [i for i in items if i.startswith('_') and i not in LIB_INCLUDES]
-    this_base = os.path.basename(path)
-
-    for item in [i for i in items if i not in result]:
-        item_path = os.path.join(path, item)
-        if not os.path.isdir(item_path):
-            continue
-        if item == 'test' and this_base == 'lib':
-            result.append(item)
-        for base, name in LIB_IGNORES:
-            if this_base == base and item == name:
-                result.append(item)
-    # if result:
-    #     print('IGNORING lib items: %s' % result)
-    return result
-
-
-def _ui_ignore(path, items):
-    # Can't ignore all '_' because Python has __stuff. Look for '_ ' instead
-    result = [i for i in items if i == '__pycache__' or i.startswith('_ ')]
-    this_base = os.path.basename(path)
-
-    for item in [i for i in items if i not in result]:
-        item_path = os.path.join(path, item)
-        if os.path.isdir(item_path):
-            for base, name in UI_IGNORES:
-                if this_base == base and item == name:
-                    result.append(item)
-
-        elif item.endswith('.ui'):
-            # TODO: handle ui files
-            result.append(item)
-
-    # if result:
-    #     print('IGNORING ui items: %s' % result)
-
-    return result
 
 
 def prepare_qt():
@@ -230,6 +178,9 @@ def prepare_qt():
     * selected Qt dlls
     * shiboken and PySide dirs
     * selected qt plugins
+    Note: We're no longer copying the Qt stuff into the package!!!
+    This makes the package unusable as is :/
+    but we're skipping the huge re-compression part for all the Qt things!
     """
     print('Checking Qt files ...')
     _assemble_qt()
@@ -239,7 +190,7 @@ def prepare_qt():
 
 def _assemble_qt():
     if os.path.isdir(Paths.qt_temp):
-        print(f'  {CHK_MK} Qt for Python already assembled!\n  {Paths.qt_temp}')
+        print(f'  {CHK_MK} Qt for Python {VERSIONS[PYSIDE]} already assembled!\n  {Paths.qt_temp}')
         return
 
     include = [QT_DLL % (QT_VERSION, base) for base in QT_DLLS]
@@ -291,12 +242,16 @@ def _zip_qt():
         print(f'  {CHK_MK} Qt for Python already zipped!\n  {zip_path}')
         return
 
-    tmp_dirname = os.path.join(Paths.qt_dir, _build_common.A2)
+    tmp_dirname = os.path.join(Paths.qt_dir, A2)
+    if os.path.isdir(tmp_dirname):
+        shutil.rmtree(tmp_dirname, ignore_errors=True)
     os.mkdir(tmp_dirname)
     tmp_ui = os.path.join(tmp_dirname, 'ui')
     os.rename(Paths.qt_temp, tmp_ui)
 
-    subprocess.call([Paths.seven_zip_exe, 'a', zip_path, tmp_dirname] + _build_common.SEVEN_FLAGS)
+    from a2dev.dependency import seven_zip
+
+    subprocess.call([Paths.seven_zip_exe, 'a', zip_path, tmp_dirname] + seven_zip.FLAGS)
 
     os.rename(tmp_ui, Paths.qt_temp)
     os.rmdir(tmp_dirname)
@@ -315,26 +270,11 @@ def get_py_package():
         print('Dist-path ui already exists! skipping `get_py_package` ...')
         return
 
-    py_ver = '.'.join(str(i) for i in sys.version_info[:3])
-    pack_name = f'python-{py_ver}-embed-amd64'
-    pack_path = os.path.join(Paths.py_packs, pack_name)
+    import a2dev.dependency.python_embed
 
-    if not os.path.isdir(pack_path):
-        print(f'Getting py package "{pack_name}" ...')
-        os.makedirs(Paths.py_packs, exist_ok=True)
-        pack_zip = pack_name + '.zip'
-        pack_zip_path = os.path.join(Paths.py_packs, pack_zip)
+    pack_path = a2dev.dependency.python_embed.check()
 
-        if not os.path.isfile(pack_zip_path):
-            request.urlretrieve(PY_PACK_URL.format(py_ver, pack_zip), pack_zip_path, _DownloadCB(pack_name).callback)
-            print('done!')
-
-        print(f'  Unzipping "{pack_name}" ...')
-        with zipfile.ZipFile(pack_zip_path) as tmp_zip:
-            for filename in tmp_zip.namelist():
-                tmp_zip.extract(filename, pack_path)
-
-    print('Copying Python package ...', end='')
+    print(f'  Copying fresh {os.path.basename(pack_path)} ...', end='')
     shutil.copytree(pack_path, Paths.dist_ui)
     print(f'\b\b\b{CHK_MK} ({Paths.dist_ui})')
 
@@ -343,62 +283,12 @@ def patch_sqlite():
     print('Checking for sqlite to be up-to-date in dist ui ...')
     import a2dev.dependency.sqlite
 
-    latest_version, latest_url, download_size = a2dev.dependency.sqlite.get_latest_version()
-    # download_page = request.urlopen(SQLITE_URL + 'download.html').read().decode()
-    # pos = download_page.find('/sqlite-dll-win-x64-')
+    latest_version, latest_url = a2dev.dependency.sqlite.get_latest_version()
+    a2dev.dependency.sqlite.check(Paths.dist_ui, latest_version, latest_url)
+
     if not latest_version:
         print(f'  {EX_MRK} Error! Could not find version on sqlite website!')
         return
-
-    sql_path = os.path.join(Paths.dist_ui, 'sqlite3.dll')
-    if os.path.isfile(sql_path):
-        current_str = a2ahk.call_lib_cmd('get_version', sql_path)
-        current_version = tuple(int(v) for v in current_str.split('.'))
-        if current_version >= latest_version:
-            print(f'  {CHK_MK} SQLite3 already up-to-date! ({current_version})')
-            return
-    else:
-        current_version = '?'
-
-    print(f'  Updating SQLite3 from {current_version} to latest: {latest_version} ...')
-    zip_path = os.path.join(Paths.py_packs, os.path.basename(latest_url))
-    if not os.path.isfile(zip_path):
-        print('  Downloading ...')
-        a2dl.download(latest_url, zip_path, progress_callback=_DownloadCB('sqlite').callback)
-
-    with zipfile.ZipFile(zip_path) as tmp_zip:
-        for filename in tmp_zip.namelist():
-            if filename == 'sqlite3.dll':
-                tmp_zip.extract(filename, Paths.dist_ui)
-                break
-
-    current_str = a2ahk.call_lib_cmd('get_version', sql_path)
-    current_version = current_version = tuple(int(v) for v in current_str.split('.'))
-    if current_version >= latest_version:
-        print(f'  {CHK_MK} SQLite3 Updated!')
-        return
-    print(f'  {EX_MRK} ERROR: SQLite3 Update failed! Current: {current_version}/Latest: {latest_version}')
-
-
-class _DownloadCB:
-    def __init__(self, name: str):
-        self._name = name
-        self._progress = rich.progress.Progress(
-            '[progress.description]{task.description}',
-            rich.progress.BarColumn(),
-            rich.progress.DownloadColumn(),
-            rich.progress.TransferSpeedColumn(),
-            rich.progress.TimeRemainingColumn(),
-        )
-        self._task = None
-        self._progress.start()
-
-    def callback(self, current: int, total: int):
-        if self._task is None:
-            self._task = self._progress.add_task(f'Downloading {self._name}...', total=total if total != -1 else None)
-        self._progress.update(self._task, completed=current)
-        if total != -1 and current >= total:
-            self._progress.stop()
 
 
 def _copy(src, dst):
@@ -415,23 +305,6 @@ def _copy(src, dst):
     print(f'  copied {os.path.basename(dst)}')
 
 
-def _get_versions():
-    """Get currently used versions."""
-    pattern = 'get_%s_version.ahk'
-    names = 'AutoHotkey', PYSIDE, 'Python'
-    scripts = (
-        os.path.join(Paths.lib, 'cmds', pattern % names[0]),
-        os.path.join(Paths.batches, 'versions', pattern % names[1]),
-        os.path.join(Paths.batches, 'versions', pattern % names[2]),
-    )
-    versions = {}
-    for name, script in zip(names, scripts):
-        cwd = os.path.dirname(os.path.dirname(script))
-        version_str = subprocess.check_output([Paths.ahk_exe, script], cwd=cwd).decode()
-        versions[name] = version_str
-    return versions
-
-
 def make_desktop_ini():
     folder_icon_ini = os.path.join(Paths.dist, 'desktop.ini')
     if not os.path.isfile(folder_icon_ini):
@@ -445,11 +318,11 @@ def make_executables(version):
         (A2, 'a2_starter', 'a2 Runtime Starter'),
         (f'{A2}ui', 'a2_ui_starter', 'a2 UI Starter'),
     ):
-        nfo = _build_common.EXE_NFO.copy()
+        nfo = a2dev.build.EXE_NFO.copy()
         nfo['FileVersion'] = version
         nfo['ProductVersion'] = version
         nfo['FileDescription'] = description
-        _build_common.make_py_exe(
+        a2dev.build.make_py_exe(
             os.path.join(Paths.source, f'{source_name}.py'),
             os.path.join(Paths.dist, f'{name}.exe'),
             nfo=nfo,
@@ -457,11 +330,63 @@ def make_executables(version):
         )
 
     for name, source_name, icon in ((f'Uninstall {A2}', 'a2_uninstaller', 'a2x'),):
-        _build_common.make_ahk_exe(
+        a2dev.build.make_ahk_exe(
             os.path.join(Paths.source, f'{source_name}.ahk'),
             os.path.join(Paths.dist, f'{name}.exe'),
             icon=icon,
         )
+
+
+def _lib_ignore(path, items):
+    # we ignore ANY '_' starting dirs and files in lib
+    result = [i for i in items if i.startswith('_') and i not in LIB_INCLUDES]
+    this_base = os.path.basename(path)
+
+    for item in [i for i in items if i not in result]:
+        item_path = os.path.join(path, item)
+        if not os.path.isdir(item_path):
+            continue
+        if item == 'test' and this_base == 'lib':
+            result.append(item)
+        for base, name in LIB_IGNORES:
+            if this_base == base and item == name:
+                result.append(item)
+    # if result:
+    #     print('IGNORING lib items: %s' % result)
+    return result
+
+
+def _ui_ignore(path, items):
+    # Can't ignore all '_' because Python has __stuff. Look for '_ ' instead
+    result = [i for i in items if i == '__pycache__' or i.startswith('_ ')]
+    this_base = os.path.basename(path)
+
+    for item in [i for i in items if i not in result]:
+        item_path = os.path.join(path, item)
+        if os.path.isdir(item_path):
+            for base, name in UI_IGNORES:
+                if this_base == base and item == name:
+                    result.append(item)
+
+        elif item.endswith('.ui'):
+            # TODO: handle ui files
+            result.append(item)
+    return result
+
+
+def _i18n_ignore(path, items):
+    result = []
+    # nah we can pass the i18n README to the package. COuld be useful to module devs.
+    # if path == Paths.i18n and 'README.md' in items:
+    #     result.append('README.md')
+    return result
+
+
+def _theme_ignore(path, items):
+    result = []
+    if path == Paths.theme and '_source' in items:
+        result.append('_source')
+    return result
 
 
 if __name__ == '__main__':

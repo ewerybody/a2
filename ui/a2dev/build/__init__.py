@@ -7,8 +7,10 @@ import zipfile
 import subprocess
 from os.path import join
 
+import a2util
 from a2ahk import NAME as AUTOHOTKEY
-from a2dev.dependency.rc_edit import EXE as RCEDIT_EXE
+from a2dev.dependency import rc_edit
+from a2dev.dependency import seven_zip
 
 _THIS_PATH = os.path.dirname(__file__)
 A2PATH = os.path.abspath(join(_THIS_PATH, '..', '..', '..'))
@@ -71,7 +73,8 @@ class Paths:
     lib = join(a2, 'lib')
     ui = UI_PATH
     i18n = join(a2, I18N)
-    a2icon = join(ui, 'res', 'a2.ico')
+    theme = join(a2, 'theme')
+    a2icon = join(theme, 'a2.ico')
     ahk_dir = join(lib, AUTOHOTKEY)
     ahk2exe = join(ahk_dir, 'Compiler', 'Ahk2Exe.exe')
     ahk_exe = join(ahk_dir, AUTOHOTKEY + '.exe')
@@ -80,20 +83,17 @@ class Paths:
 
     source = join(lib, '_source')
     batches = join(lib, '_batches')
-    # sfx_source_ui = join(source, SEVEN_ZIP_DIR, '7zS2.sfx')
-    # sfx_source_ui = join(source, SEVEN_ZIP_DIR, '7zSD.sfx')
-    # sfx_source_silent = join(source, SEVEN_ZIP_DIR, '7zS2con.sfx')
-    # seven_zip_exe = join(source, SEVEN_ZIP_DIR, SEVEN_ZIP_EXE)
-    rcedit = join(source, RCEDIT_EXE)
+    seven_zip_exe = join(source, seven_zip.NAME, seven_zip.EXE)
+    rcedit = join(source, rc_edit.EXE)
     manifest_tmp = join(source, 'manifest.xml.template')
     installer_script = join(source, NAME + '.ahk')
     installer_script_silent = join(source, NAME + '_silent.ahk')
 
     dist_root = join(a2, '_ package')
-    # sfx_target_ui = join(dist_root, '_ ' + SRC_SFX)
-    # sfx_target_silent = join(dist_root, '_ silent_' + SRC_SFX)
     manifest_target = join(dist_root, '_ ' + MANIFEST_NAME)
     archive_target = join(dist_root, '_ archive.7z')
+    sfx_target_ui = join(dist_root, '_ ' + seven_zip.SFX)
+    sfx_target_silent = join(dist_root, '_ silent_' + seven_zip.SFX)
 
     dist = join(dist_root, 'a2')
     distlib = join(dist, 'lib')
@@ -101,6 +101,7 @@ class Paths:
     distlib_test = join(distlib, AUTOHOTKEY, 'lib', 'test')
     dist_portable = join(dist_root, 'a2_portable')
     dist_i18n = join(dist, I18N)
+    dist_theme = join(dist, 'theme')
 
     py_packs = join(a2, '_ py_packs')
 
@@ -114,7 +115,7 @@ class Paths:
     pyside = join(py_site_packs, PYSIDE_NAME)
     temp_build = join(os.environ['TEMP'], TMP_NAME)
 
-    # _get_versions(lib, batches, ahk_exe)
+    _get_versions(lib, batches, ahk_exe)
     qt_dir = join(temp_build, 'qt')
     qt_temp = join(qt_dir, VERSIONS[PYSIDE])
 
@@ -126,7 +127,7 @@ class Paths:
         whats_missing = {}
         for name, path in cls.iter():
             if not os.path.exists(path):
-                print(f'Does NOT exist: {path}!!!')
+                print(f'{EX_MRK} Does NOT exist: {path}!!!')
                 whats_missing[name] = path
 
         if whats_missing:
@@ -135,7 +136,7 @@ class Paths:
                 % '\n  '.join(f'{k}: {p}' for k, p in whats_missing.items())
             )
 
-        print("All paths checked! Nice! Let's go!")
+        print(f"All paths checked! {CHK_MK} Nice! Let's go!")
 
     @staticmethod
     def _ignore_name(name):
@@ -158,29 +159,35 @@ class Paths:
             yield name, cls.__dict__[name]
 
 
-def make_ahk_exe(script_path, out_path, nfo=None, icon=None):
+def make_ahk_exe(script_path, out_path, nfo=None, icon=None, indent=''):
     if not os.path.isfile(script_path):
         raise RuntimeError('No such Script File!! (%s)' % script_path)
 
-    print(f'Generating AHK executable "{os.path.basename(out_path)}" ...', end='')
+    print(
+        f'{indent}Generating AHK executable "{os.path.basename(out_path)}" from "{os.path.basename(script_path)}" ...', end=''
+    )
 
     if os.path.isfile(out_path):
-        print(f'There is already "{out_path}" ({time.time() - os.path.getctime(out_path)}s old)')
+        file_age = time.time() - os.path.getctime(out_path)
+        print(f'\n{indent}There is already "{out_path}" ({a2util.unroll_seconds(file_age)} old)')
         os.unlink(out_path)
 
+    # fmt: off
     cmd = [
         Paths.ahk2exe,
-        '/in',
-        script_path,
-        '/out',
-        out_path,
-        '/compress',
-        '0',
-        '/ahk',
-        Paths.ahk_exe,
+        '/in', script_path,
+        '/out', out_path,
+        '/compress', '0',
+        '/ahk', Paths.ahk_exe,
     ]
-    if isinstance(icon, str) and os.path.isfile(icon):
-        cmd.extend(['/icon', icon])
+    # fmt: on
+    if isinstance(icon, str):
+        if os.path.isfile(icon):
+            cmd.extend(['/icon', icon])
+        else:
+            icon_path = os.path.join(Paths.theme, f'{icon}.ico')
+            if os.path.isfile(icon_path):
+                cmd.extend(['/icon', icon_path])
 
     subprocess.call(cmd, cwd=Paths.lib)
     if not os.path.isfile(out_path):
@@ -193,7 +200,7 @@ def make_ahk_exe(script_path, out_path, nfo=None, icon=None):
     if nfo is not None:
         if not nfo.get('OriginalFilename'):
             nfo['OriginalFilename'] = os.path.basename(out_path)
-        set_rc_nfo(out_path, nfo)
+        set_rc_nfo(out_path, nfo, indent)
 
     return out_path
 
@@ -205,13 +212,14 @@ def make_py_exe(script_path, out_path, nfo: dict[str, str], icon_path=None, cons
         raise RuntimeError('No such Script File!! (%s)' % script_path)
     if os.path.isfile(out_path):
         file_age = time.time() - os.path.getctime(out_path)
-        print(f'There is already "{out_path}" ({file_age:.1f}s old)')
+        print(f'There is already "{out_path}" ({a2util.unroll_seconds(file_age)} old)')
         os.unlink(out_path)
 
-    print(f'Generating Python executable "{os.path.basename(out_path)}" ...', end='')
+    print(f'Generating Python executable "{os.path.basename(out_path)}" ...')
 
     stub_version = ('w64.exe', 't64.exe')[console]
     py_exe_version = ('pythonw.exe', 'python.exe')[console]
+    print(f'  Creating raw executable from {stub_version} stub ({console = })...')
     distlib_dir = os.path.dirname(distlib.__file__)
     stub_bytes = read_bytes(join(distlib_dir, stub_version))
     script_contents = read_text(script_path)
@@ -232,7 +240,7 @@ def make_py_exe(script_path, out_path, nfo: dict[str, str], icon_path=None, cons
 
     if not nfo.get('OriginalFilename'):
         nfo['OriginalFilename'] = os.path.basename(out_path)
-    set_rc_nfo(out_path, nfo)
+    set_rc_nfo(out_path, nfo, '  ')
 
     print('  Setting icon ...', end='')
     if icon_path is None or not os.path.isfile(icon_path):
@@ -250,22 +258,25 @@ def make_py_exe(script_path, out_path, nfo: dict[str, str], icon_path=None, cons
     manifest_target = join(Paths.dist_root, f'_ {base}_manifest.xml')
     with open(manifest_target, 'w', encoding='utf8') as file_obj:
         file_obj.write(manifest_tmp)
-    subprocess.call([Paths.rcedit, out_path, '--application-manifest', Paths.manifest_target])
+    subprocess.call([Paths.rcedit, out_path, '--application-manifest', manifest_target])
     print(f'\b\b\b{CHK_MK}  ')
 
     # These always need to go last!!
     with open(out_path, 'ab') as file_obj:
+        print('  Adding shebang ...', end='')
         file_obj.write(f'#!{py_path}\r\n'.encode())
+        print(f'\b\b\b{CHK_MK}  \n  Adding payload ...', end='')
         file_obj.write(archive_buffer.getvalue())
+        print(f'\b\b\b{CHK_MK}  ')
 
 
-def set_rc_nfo(target_path: str, nfo: dict[str, str]):
-    print(f'Setting Details on "{os.path.basename(target_path)}" ...')
+def set_rc_nfo(target_path: str, nfo: dict[str, str], indent=''):
+    print(f'{indent}Setting Details on "{os.path.basename(target_path)}" ...')
     for key, value in nfo.items():
-        _set_rc_key(target_path, key, value)
+        _set_rc_key(target_path, key, value, indent)
 
 
-def _set_rc_key(target_path, key, value_string):
+def _set_rc_key(target_path, key, value_string, indent=''):
     """
     --set-version-string <key> <value>         Set version string
     --get-version-string <key>                 Print version string
@@ -288,7 +299,7 @@ def _set_rc_key(target_path, key, value_string):
     if current == value_string:
         return
 
-    print(f'  {key}: "{value_string}" ', end='')
+    print(f'{indent}  {key}: "{value_string}" ', end='')
     if key == 'FileVersion':
         subprocess.call([Paths.rcedit, target_path, '--set-file-version', value_string])
     elif key == 'ProductVersion':
