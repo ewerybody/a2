@@ -5,19 +5,22 @@ import a2dl
 import a2ahk
 
 from a2dev.build import CHK_MK, EX_MRK, Paths, DownloadCB
+from a2util import version_tuplify
 
 
 NAME = 'sqlite'
 DISPLAY = 'SQLite3'
 SQLITE_URL = f'https://www.{NAME}.org/'
+_MARKER = '/sqlite-dll-win-x64-'
 DLL = f'{NAME}3.dll'
 
 
-def get_latest_version() -> tuple[tuple[int, ...], str, int]:
+def get_latest_version() -> tuple[tuple[int, ...], str]:
+    print(f'  Looking up latest {DISPLAY} online ...', end='')
     download_page = a2dl.read(SQLITE_URL + 'download.html')
-    pos = download_page.find('/sqlite-dll-win-x64-')
+    pos = download_page.find(_MARKER)
     if pos == -1:
-        return ((), '', 0)
+        return ((), '')
 
     line_start = download_page.rfind('PRODUCT,', pos - 100, pos)
     line_end = download_page.find('\n', pos)
@@ -25,17 +28,16 @@ def get_latest_version() -> tuple[tuple[int, ...], str, int]:
     try:
         latest_version, path, size, _checksum = line.split(',')[1:]
     except ValueError:
-        return ((), '', 0)
+        return ((), '')
+    print(f'\b\b\b{CHK_MK} {latest_version}')
+    return tuple(int(v) for v in latest_version.split('.')), f'{SQLITE_URL}{path}'
 
-    return tuple(int(v) for v in latest_version.split('.')), f'{SQLITE_URL}{path}', int(size)
 
-
-def check(dir_path=None, latest_version=None):
-    print(f'  Looking up latest {DISPLAY} online ...')
+def check(dir_path: str | None = None, latest_version: tuple[int, ...] | None = None, latest_url: str | None = None):
     if dir_path is None:
         dir_path = Paths.lib
-    if latest_version is None:
-        latest_version, latest_url, download_size = get_latest_version()
+    if latest_version is None or latest_url is None:
+        latest_version, latest_url = get_latest_version()
 
     outdated = ''
     dll_path = os.path.join(dir_path, DLL)
