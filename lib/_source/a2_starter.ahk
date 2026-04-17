@@ -1,10 +1,11 @@
+; OUTDATED! This is done with a way smaller python executable now!
 ; This is the script that becomes the a2.exe in root!
 ; Overhauled for ahk2 there were some things removed.
 ; TBD: Look into re-implementation
 ; * cursor reset?
 ; * check_load_time_errors - there are fare better error dialogs in ahk2,
 ;   we might not need anything better?
-;@Ahk2Exe-SetMainIcon ..\..\ui\theme\a2.ico
+;@Ahk2Exe-SetMainIcon ..\..\..\theme\a2.ico
 ;@Ahk2Exe-SetCompanyName a2
 ;@Ahk2Exe-SetCopyright GPLv3
 ;@Ahk2Exe-SetDescription a2 runtime starter
