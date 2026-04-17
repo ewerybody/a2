@@ -1,6 +1,8 @@
 """
 Handle Qt Designer file updating, compilation and patching.
 """
+import subprocess
+
 import os
 import sys
 from importlib import reload
@@ -12,12 +14,12 @@ log = a2core.get_logger(__name__)
 
 ROOT_PATH = os.path.abspath(os.path.join(a2core.__file__, '..', '..'))
 UI_FILE_SUFFIX = '_ui'
-PYSIDE_REPLACE = 'a2qt'
-OLDSCHOOL_CLASS = '(object):\n'
+PYSIDE = 'PySide6'
+OLD_SCHOOL_CLASS = '(object):\n'
 TRANSLATE = '(QCoreApplication.translate('
 LINE_LEN = 95
-QMEMBERS = {}
-MEMBERSQ = {}
+Q_MEMBERS = {}
+MEMBERS_Q = {}
 
 
 def check_module(module, force=False):
@@ -51,8 +53,7 @@ def check_module(module, force=False):
 
 
 def get_ui_file_path(py_file_path):
-    """Get the `.ui` file path from an already compiled `..._ui.py` file.
-    """
+    """Get the `.ui` file path from an already compiled `..._ui.py` file."""
     dir_path, py_base = os.path.split(py_file_path)
     ui_name = os.path.splitext(py_base)[0]
 
@@ -62,10 +63,7 @@ def get_ui_file_path(py_file_path):
         ui_base = _get_ui_basename_from_header(py_file_path)
 
     if not ui_base:
-        raise RuntimeError(
-            f'Could not get source ui file from module:\n {py_file_path}\n  '
-            'Not a ui file module??!'
-        )
+        raise RuntimeError(f'Could not get source ui file from module:\n {py_file_path}\n  Not a ui file module??!')
 
     return os.path.join(dir_path, ui_base)
 
@@ -100,19 +98,20 @@ class UIPatcher:
     [x] remove # setupUi and # retranslateUi comments
     [x] remove retranslateUi and its call if empty
     [x] remove unneeded empty lines
-    [x] make it class Name: instead of oldschool class Name(object):
+    [x] make it class Name: instead of old-school class Name(object):
     [x] get rid of broad * imports
     [x] `"` and `u"` to `'` (make it black/brunette compliant)
         (I'd rather leave this to black/brunette itself, but maybe in a separate
         (process that auto-checks for updated ui-files.)
     """
-    def __init__(self, uiname, py_file_path):
-        self.uiname = uiname
-        self.py_file_path = py_file_path
-        _get_qmembers()
 
-        with open(py_file_path, encoding='utf8') as pyfobj:
-            self.lines = pyfobj.readlines()
+    def __init__(self, ui_name, py_file_path):
+        self.ui_name = ui_name
+        self.py_file_path = py_file_path
+        _get_q_members()
+
+        with open(py_file_path, encoding='utf8') as file_obj:
+            self.lines = file_obj.readlines()
 
         self.doc_block = self._fix_doc_string()
         self.imports_block = self._fix_imports_block()
@@ -122,14 +121,16 @@ class UIPatcher:
         self._id_len = len(self.translate_id)
         self.translate_fix = f"{TRANSLATE}'{self.obj_name}', "
 
-        self.submods_used: dict[str, dict | set] = {}
+        self.sub_modules_used: dict[str, set] = {}
         self.translate_lines: list[None | int] = [None, None]
         self._fix_main_block()
         self._fix_translate_block()
 
         new_lines = self._assemble_new_lines()
-        with open(py_file_path, 'w', encoding='utf8') as pyfobj:
-            pyfobj.write(''.join(new_lines))
+        with open(py_file_path, 'w', encoding='utf8') as file_obj:
+            file_obj.write(''.join(new_lines))
+
+        self._ruff_ruff()
 
     def _fix_doc_string(self):
         mod_doc_block = []
@@ -144,7 +145,7 @@ class UIPatcher:
     def _fix_imports_block(self):
         pyside_import_lines = []
         start = self.doc_block[1]
-        submod_lines = {}
+        sub_module_lines = {}
         sub_module = ''
         for i, line in enumerate(self.lines[start:], start):
             # finish when collected and next line is empty
@@ -158,18 +159,17 @@ class UIPatcher:
                     raise RuntimeError('Patching compiled ui failed on line %i:\n  %s' % (i, line))
 
                 sub_module = parts[1][dot_pos + 1 :]
-                parts[1] = PYSIDE_REPLACE + '.' + sub_module
                 self.lines[i] = ' '.join(parts) + '\n'
                 pyside_import_lines.append(i)
-                submod_lines[sub_module] = [i]
+                sub_module_lines[sub_module] = [i]
 
             elif sub_module:
-                submod_lines[sub_module].append(i)
+                sub_module_lines[sub_module].append(i)
                 pyside_import_lines.append(i)
 
         pyside_import_lines[:] = [min(pyside_import_lines), max(pyside_import_lines)]
 
-        if not all(mod in globals() for mod in submod_lines):
+        if not all(mod in globals() for mod in sub_module_lines):
             raise RuntimeError('Not all Qt Submodules loaded!')
         return pyside_import_lines
 
@@ -179,8 +179,8 @@ class UIPatcher:
         for i, line in enumerate(self.lines[start:], start):
             if class_block_start is None and line.startswith('class '):
                 class_block_start = i
-                if line.endswith(OLDSCHOOL_CLASS):
-                    self.lines[i] = line[: -len(OLDSCHOOL_CLASS)] + ':\n'
+                if line.endswith(OLD_SCHOOL_CLASS):
+                    self.lines[i] = line[: -len(OLD_SCHOOL_CLASS)] + ':\n'
                 break
 
         if class_block_start is None:
@@ -245,14 +245,15 @@ class UIPatcher:
     def _gather_sub_modules(self, line):
         if not line:
             return
-        for word, mod in MEMBERSQ.items():
+        for word, mod in MEMBERS_Q.items():
             if word in line:
                 if line[line.find(word) + len(word)] in '(.':
-                    self.submods_used.setdefault(mod, set()).add(word)
+                    self.sub_modules_used.setdefault(mod, set()).add(word)
                 else:
                     log.debug('Word "%s" found in line but not handled!\n> %s', word, line)
 
     def _fix_string_quotes(self, line, i):
+        """Remove Translate stuff and setting empty WindowTitles."""
         if not line or not self.lines[i]:
             return
         set_pos = self.lines[i].find('.set')
@@ -263,13 +264,13 @@ class UIPatcher:
         translate_pos = line.find(self.translate_id, set_pos)
         if translate_pos == -1:
             open_pos = line.find('(u"', set_pos)
-            command = line[set_pos + 4:open_pos]
+            command = line[set_pos + 4 : open_pos]
             end = '")\n'
 
         else:
             open_pos = line.find(' u"', translate_pos)
-            command = line[set_pos + 4:translate_pos]
-            line = line[:translate_pos] + self.translate_fix + line[translate_pos + self._id_len:]
+            command = line[set_pos + 4 : translate_pos]
+            line = line[:translate_pos] + self.translate_fix + line[translate_pos + self._id_len :]
             self.lines[i] = line
             end = '", None))\n'
 
@@ -278,11 +279,11 @@ class UIPatcher:
 
         linebreak = '\\n"\n'
         if line.endswith(linebreak):
-            for ni, next_line in enumerate(self.lines[i + 1:], i + 1):
+            for ni, next_line in enumerate(self.lines[i + 1 :], i + 1):
                 if not next_line.startswith('"'):
                     break
                 if self.lines[i].endswith(linebreak):
-                    line = self.lines[i][:-len(linebreak) + 2] + next_line[1:]
+                    line = self.lines[i][: -len(linebreak) + 2] + next_line[1:]
                     self.lines[i] = line
                     self.lines[ni] = ''
                 else:
@@ -291,19 +292,22 @@ class UIPatcher:
         if not line.endswith(end):
             return
 
-        content = line[open_pos + 3: -len(end)]
+        content = line[open_pos + 3 : -len(end)]
         if not content:
-            log.error('Setting %s to empty string in line %i!\n  %s', command, i, line.strip())
-        # print(f'set "{command}": "{content}"')
-        quote = "'" if "'" not in content else '"'
+            if command == 'WindowTitle':
+                self.lines[i] = ''
+                return
+            else:
+                log.error('Setting %s to empty string in line %i!\n  %s', command, i, line.strip())
 
-        self.lines[i] = f'{line[:open_pos + 1]}{quote}{content}{quote}{end[1:]}'
+        quote = "'" if "'" not in content else '"'
+        self.lines[i] = f'{line[: open_pos + 1]}{quote}{content}{quote}{end[1:]}'
 
     def _gather_new_imports(self):
         new_import_lines = []
-        for mod, member_set in self.submods_used.items():
+        for mod, member_set in self.sub_modules_used.items():
             member_names = sorted(member_set)
-            line = f'from {PYSIDE_REPLACE}.{mod} import '
+            line = f'from {PYSIDE}.{mod} import '
 
             rest = ', '.join(member_names)
             if len(line + rest) <= 95:
@@ -335,40 +339,47 @@ class UIPatcher:
         new_import_lines = self._gather_new_imports()
         new_lines.append('\n'.join(new_import_lines) + '\n')
         # these are probably all other imports
-        new_lines.extend(self.lines[self.imports_block[1] + 1: self.classes_start])
+        new_lines.extend(self.lines[self.imports_block[1] + 1 : self.classes_start])
         # this skips all empty lines
-        new_lines.extend(l for l in self.lines[self.classes_start:] if l)
+        new_lines.extend(line for line in self.lines[self.classes_start :] if line)
         return new_lines
+
+    def _ruff_ruff(self):
+        a2 = a2core.get()
+        ruff_exe = os.path.join(a2.paths.a2, '.venv', 'Scripts', 'ruff.exe')
+        if not os.path.isfile(ruff_exe) or not os.path.isfile(self.py_file_path):
+            return
+        subprocess.run([ruff_exe, 'format', self.py_file_path])
 
 
 def _get_ui_basename_from_header(py_ui_path):
     """TODO: This is kinda ugly I don't think we need it."""
-    uibase = None
-    with open(py_ui_path, encoding='utf8') as fobj:
-        line = fobj.readline()
-        while line and uibase is not None:
+    ui_base = None
+    with open(py_ui_path, encoding='utf8') as file_obj:
+        line = file_obj.readline()
+        while line and ui_base is not None:
             line = line.strip()
             if line.startswith('# Form implementation '):
-                uibase = line[line.rfind("'", 0, -1) + 1 : -1]
-                uibase = os.path.basename(uibase.strip())
-                log.error('checkUiModule from read: %s', uibase)
+                ui_base = line[line.rfind("'", 0, -1) + 1 : -1]
+                ui_base = os.path.basename(ui_base.strip())
+                log.error('checkUiModule from read: %s', ui_base)
                 break
-            line = fobj.readline()
-    return uibase
+            line = file_obj.readline()
+    return ui_base
 
 
-def _get_qmembers():
-    if QMEMBERS:
+def _get_q_members():
+    if Q_MEMBERS:
         return
 
     for mod in (QtCore, QtGui, QtWidgets, QtSvg):
         name = mod.__name__.split('.')[1]
-        QMEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != PYSIDE_REPLACE]
-        for member in QMEMBERS[name]:
-            if member in MEMBERSQ:
-                # print(f'{member} already listed in {MEMBERSQ[member]}!!')
+        Q_MEMBERS[name] = [n for n in dir(mod) if not n.startswith('_') and n != PYSIDE]
+        for member in Q_MEMBERS[name]:
+            if member in MEMBERS_Q:
+                # print(f'{member} already listed in {MEMBERS_Q[member]}!!')
                 continue
-            MEMBERSQ[member] = name
+            MEMBERS_Q[member] = name
 
 
 def _test():

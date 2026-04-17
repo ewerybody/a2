@@ -12,6 +12,7 @@ dependencies = [
     "pytest",
     "poethepoet",
     "rich>=14.3.3",
+    "ruff>=0.15.11",
 ]
 [project.urls]
 Homepage = "https://github.com/ewerybody/a2#readme"
