@@ -177,10 +177,18 @@ explorer_show_dir_files(dir_path, files) {
     }
 
     ; Folder PIDL + COM init
+    dir_path := StrReplace(RTrim(dir_path, "\"), "\\", "\")
     hr_init := DllCall("ole32\CoInitializeEx", "Ptr", 0, "UInt", 2, "HRESULT")  ; COINIT_APARTMENTTHREADED
-    DllCall("shell32\SHParseDisplayName",
-        "Str", dir_path, "Ptr", 0, "Ptr*", &folder_p_id_list := 0, "UInt", 0, "Ptr", 0,
-        "HRESULT")
+    try {
+        DllCall("shell32\SHParseDisplayName",
+            "Str", dir_path, "Ptr", 0, "Ptr*", &folder_p_id_list := 0, "UInt", 0, "Ptr", 0,
+            "HRESULT")
+    } catch Error as dll_error{
+        a2dlg_error('Error DllCalling "shell32\SHParseDisplayName"',,
+            "dir_path: '" dir_path "'`n"
+        )
+        throw dll_error
+    }
 
     ; Build PIDL array for files
     item_list := Buffer(files.Length * A_PtrSize)
