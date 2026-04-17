@@ -125,12 +125,12 @@ def set_variable(ahk_file, key, value, create_key=False):
             if not len(parts) == 2:
                 continue
             _key, _value = parts
-            curkey = _key.strip(': ')
+            cur_key = _key.strip(': ')
             # skip lines with indentation
-            if curkey[0] != _key[0]:
+            if cur_key[0] != _key[0]:
                 continue
             # skip if its not the droids we're looking for
-            if key != curkey:
+            if key != cur_key:
                 continue
 
             if convert_string_to_type(_value.strip('" ')) != value:
