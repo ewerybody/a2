@@ -8,6 +8,7 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
     def __init__(self):
         super(CoordsFieldDemo, self).__init__()
         self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, True)
+        self.setWindowIcon(a2ctrl.Icons.a2)
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
         v_layout = QtWidgets.QVBoxLayout(w)

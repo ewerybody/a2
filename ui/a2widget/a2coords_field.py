@@ -61,10 +61,7 @@ class A2CoordsField(QtWidgets.QWidget):
 
     def set_value(self, values, y=None):
         if isinstance(values, (tuple, list)) and len(values) < 2:
-            raise ValueError(
-                f'A2CoordsField.set_value needs tuple or list '
-                f'of 2 integers!\n  received: {values}'
-            )
+            raise ValueError(f'A2CoordsField.set_value needs tuple or list of 2 integers!\n  received: {values}')
 
         if isinstance(values, QtCore.QPoint):
             values = [values.x(), values.y()]
