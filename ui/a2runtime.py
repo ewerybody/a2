@@ -70,12 +70,12 @@ class IncludeDataCollector(object):
         self.a2 = a2core.get()
         self.a2.fetch_modules()
 
-        self.variables = None
-        self.includes = None
-        self.hotkeys = None
-        self.init = None
-        self.source_libs = None
-        self.exit = None
+        self.variables: None | _Collection = None
+        self.includes: None | _Collection = None
+        self.hotkeys: None | HotkeysCollection = None
+        self.init: None | _Collection = None
+        self.source_libs: None | _Collection = None
+        self.exit: None | _Collection = None
 
     def collect(self):
         mod_settings = self.a2.db.tables()
