@@ -1,21 +1,52 @@
 import os
+from pathlib import Path
 import a2util
-from PySide6 import QtWidgets, QtGui, QtCore
+from PySide6 import QtWidgets, QtCore
 
+import a2core
+import a2toolbox.reg
 
 BASE_DPI = 96.0
-DEFAULT_STYLE = 'light'
+DARK_THEME = 'dark'
+LIGHT_THEME = 'light'
 TEMPLATE_NAME = 'template.qss'
 DEFAULTS_NAME = 'qss_defaults.json'
-STYLE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'style')
+
+WIN_REG_THEME_PATH = r'Software\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+WIN_REG_THEME_ATTR = 'AppsUseLightTheme'
+
+_TEMP = {}
+
+
+def get() -> str:
+    user_theme = get_user()
+    if user_theme:
+        return user_theme
+    return get_system()
+
+
+def get_user() -> str:
+    a2 = a2core.get()
+    theme = a2.db.get('theme')
+    if theme and os.path.isdir(os.path.join(a2.paths.theme, theme)):
+        return theme
+
+    if temp_theme := _TEMP.get('temp_theme'):
+        return temp_theme
+    return ''
+
+
+def get_system() -> str:
+    if a2toolbox.reg.read_value(WIN_REG_THEME_PATH, WIN_REG_THEME_ATTR):
+        return LIGHT_THEME
+    return DARK_THEME
 
 
 class A2StyleBuilder(QtCore.QObject):
     def __init__(self, style_name=None):
         super(A2StyleBuilder, self).__init__()
         if style_name is None:
-            style_name = DEFAULT_STYLE
-
+            style_name = get()
         self._user_scale = None
         self._last_style = None
         self._css_values = {}
@@ -32,16 +63,17 @@ class A2StyleBuilder(QtCore.QObject):
         return local_scale
 
     def load_style(self, style_name):
-        template_path = os.path.join(STYLE_PATH, style_name, DEFAULTS_NAME)
+        a2 = a2core.get()
+        template_path = os.path.join(a2.paths.theme, style_name, DEFAULTS_NAME)
         self.defaults = a2util.json_read(template_path)
-        with open(os.path.join(STYLE_PATH, style_name, TEMPLATE_NAME)) as fobj:
-            self.template = fobj.read()
+        target_template = Path(os.path.join(a2.paths.theme, style_name, TEMPLATE_NAME))
+        self.template = target_template.read_text()
 
     def get(self, value_name, default=None):
         """
         Get a specific value from the calculated ones.
         :param str value_name: Name of the value to retrieve.
-        :param float default: Default value in case there is None among the caluculated ones.
+        :param float default: Default value in case there is None among the calculated ones.
         :rtype: float
         """
         return self._css_values.get(value_name, default)

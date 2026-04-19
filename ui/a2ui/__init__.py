@@ -13,7 +13,7 @@ import a2dev.ui
 import a2core
 import a2util
 import a2mod
-import a2style
+import a2theme
 
 import a2widget.tools
 import a2ui.module_cfg
@@ -502,14 +502,14 @@ class A2Window(QtWidgets.QMainWindow):
             self._style = self.rebuild_css()
         return self._style
 
-    def rebuild_css(self, user_scale=None) -> a2style.A2StyleBuilder:
+    def rebuild_css(self, user_scale=None) -> a2theme.A2StyleBuilder:
         if user_scale is None:
             user_scale = self.a2.db.get('ui_scale') or 1.0
         else:
             self.a2.db.set('ui_scale', user_scale)
 
         if self._style is None:
-            self._style = a2style.A2StyleBuilder(self.a2.db.get('ui_theme'))
+            self._style = a2theme.A2StyleBuilder(self.a2.db.get('ui_theme'))
 
         css_template = self._style.get_style(user_scale)
         self.app.setStyleSheet(css_template)
