@@ -17,6 +17,10 @@ theme_get() {
     return theme_get_system()
 }
 
+/**
+ * Get user set theme from database if available or from global var `a2_theme` if set.
+ * @returns {(String)}
+ */
 theme_get_user() {
     if IsSet(a2) {
         theme := a2.db.get("theme", "a2")
@@ -28,6 +32,10 @@ theme_get_user() {
     return ""
 }
 
+/**
+ * Get system "theme" name. As in: is set to "light" or "dark"?
+ * @returns {(String)}
+ */
 theme_get_system() {
     if windows_is_dark()
         return "dark"
@@ -36,7 +44,7 @@ theme_get_system() {
 
 /**
  * Set the theme to be used.
- * @param {(String)} theme_name - Name of the theme to take.
+ * @param {(String)} [theme_name] - Name of the theme to take.
  * Leave empty to return to system theme (Default)
  */
 theme_set(theme_name := "") {
@@ -50,7 +58,7 @@ theme_set(theme_name := "") {
         return
     }
 
-    theme_path := IsSet(a2) ? path_join(a2.paths.resources, theme_name) : path_join(path_dirname(A_LineFile, 4), 'theme', theme_name)
+    theme_path := theme_get_path(theme_name)
     if !path_is_dir(theme_path)
         throw Error("No such theme '" theme_name "'!")
 
@@ -63,9 +71,38 @@ theme_set(theme_name := "") {
     a2_theme := theme_name
 }
 
-theme_is_dark() {
-    theme_name := theme_get()
-    theme_path := IsSet(a2) ? path_join(a2.paths.resources, theme_name) : path_join(path_dirname(A_LineFile, 4), 'theme', theme_name)
-    config := Jxon_Read(path_join(theme_path, 'config.json'))
+/**
+ * Lookup set theme config for its 'is_dark' flag.
+ * For things that we cannot set directly with colors but need Windows support like window title bars and menus.
+ * @param {(String)} [theme_name] - Optional name of theme to get colors from. (Default: auto gets theme name).
+ * @returns {(Boolean)}
+ */
+theme_is_dark(theme_name := "") {
+    if theme_name == ""
+        theme_name := theme_get()
+    config := Jxon_Read(path_join(theme_get_path(theme_name), 'config.json'))
     return config['is_dark']
+}
+
+/**
+ *
+ * @param {(String)} [theme_name] - Optional name of theme to get colors from. (Default: auto gets theme name).
+ * @returns {(Object)}
+ */
+theme_get_colors(theme_name := "") {
+    if theme_name == ""
+        theme_name := theme_get()
+    color_map := Jxon_Read(path_join(theme_get_path(theme_name), 'colors.json'))
+    color_obj := {}
+    for key, value in color_map {
+        color_obj.%key% := LTrim(value, "#")
+    }
+    return color_obj
+}
+
+
+theme_get_path(theme_name) {
+    if IsSet(a2)
+        return path_join(a2.paths.resources, theme_name)
+    return path_join(path_dirname(A_LineFile, 4), 'theme', theme_name)
 }

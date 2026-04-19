@@ -79,9 +79,10 @@ class A2Dialog {
         ; Total width of the dialog.
         this.width := opts.HasProp("w") ? opts.w : 480
         ; Theme mode. `dark` false is "light".
-        this.dark := opts.HasProp("dark") ? opts.dark : theme_is_dark()
+        theme_name := theme_get()
+        this.dark := opts.HasProp("dark") ? opts.dark : theme_is_dark(theme_name)
         ; Color Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
-        this.c := a2dlg_colors(this.dark)
+        this.c := theme_get_colors(theme_name)
         if opts.HasProp("font") {
             if opts.font.HasProp("face")
                 this.font_face := opts.font.face
@@ -830,39 +831,6 @@ a2dlg_make_button(ctrl, bg := "", fg := "") {
     ; Synchronous full repaint - button never flashes with the default look
     DllCall("InvalidateRect", "Ptr", hwnd, "Ptr", 0, "Int", 1)
     DllCall("UpdateWindow", "Ptr", hwnd)
-}
-
-/**
- * Return the standard a2 color scheme object.
- * @param {(Boolean)} dark - True for the dark palette, false for light.
- * @returns  Object with keys: bg, text, sub, sep, ok, warn, err, btn_bg, acc_fg
- */
-a2dlg_colors(dark) {
-    if (dark)
-        return {
-            bg: "202020",
-            sub_bg: "181818",
-            text: "E8E8E8",
-            sub: "888888",
-            sep: "444444",
-            ok: "36EC95",
-            warn: "fff540",
-            err: "FF5050",
-            btn_bg: "2D2D2D",
-            acc_fg: "1A1A1A"
-        }
-    return {
-        bg: "F0F0F0",
-        sub_bg: "E8E8E8",
-        text: "1A1A1A",
-        sub: "666666",
-        sep: "C8C8C8",
-        ok: "1A9E60",
-        warn: "ccb100",
-        err: "CC2020",
-        btn_bg: "D8D8D8",
-        acc_fg: "F8F8F8"
-    }
 }
 
 /**
