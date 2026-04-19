@@ -1,6 +1,7 @@
 """
 Handle Qt Designer file updating, compilation and patching.
 """
+
 import subprocess
 
 import os
@@ -21,9 +22,10 @@ TRANSLATE = '(QCoreApplication.translate('
 LINE_LEN = 95
 Q_MEMBERS = {}
 MEMBERS_Q = {}
+CODING_HEADER = '# -*- coding: utf-8 -*-\n'
 
 
-def check_module(module, force=False):
+def check_module(module, force: bool = False) -> None:
     """
     Recompile a ui xml file to Python if out-of-date.
 
@@ -46,6 +48,7 @@ def check_module(module, force=False):
         return
 
     log.debug('%s needs compile! (age: %is)', ui_file_path, time_diff)
+    no_translate(ui_file_path)
     call_uic(ui_file_path, py_file_path)
 
     UIPatcher(ui_file_path, py_file_path)
@@ -98,12 +101,14 @@ class UIPatcher:
     [x] remove #if/#endif comments
     [x] remove # setupUi and # retranslateUi comments
     [x] remove retranslateUi and its call if empty
+    [x] remove redundant utf-8 coding line
     [x] remove unneeded empty lines
     [x] make it class Name: instead of old-school class Name(object):
     [x] get rid of broad * imports
     [x] `"` and `u"` to `'` (make it black/brunette compliant)
         (I'd rather leave this to black/brunette itself, but maybe in a separate
         (process that auto-checks for updated ui-files.)
+    [x] pipe it through ruff in the end.
     """
 
     def __init__(self, ui_name, py_file_path):
@@ -113,6 +118,9 @@ class UIPatcher:
 
         with open(py_file_path, encoding='utf8') as file_obj:
             self.lines = file_obj.readlines()
+
+        if self.lines[0] == CODING_HEADER:
+            self.lines.pop(0)
 
         self.doc_block = self._fix_doc_string()
         self.imports_block = self._fix_imports_block()
@@ -392,6 +400,18 @@ def _test():
     ui_file_path = get_ui_file_path(py_file_path)
     call_uic(ui_file_path, py_file_path)
     UIPatcher(ui_file_path, py_file_path)
+
+
+def no_translate(ui_file_path):
+    import a2util
+
+    xml_code = a2util.load_utf8(ui_file_path)
+    fixed = xml_code.replace('<string>', '<string notr="true">')
+    if fixed == xml_code:
+        return False
+
+    a2util.write_utf8(ui_file_path, fixed)
+    return True
 
 
 if __name__ == '__main__':
