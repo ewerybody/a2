@@ -9,6 +9,7 @@ import os
 import sys
 import time
 
+import a2db
 import a2log
 import a2path
 
@@ -58,14 +59,12 @@ class A2Obj:
         self.paths: Paths = Paths()
         self.urls = URLs(self.paths.a2_urls)
         self.log = a2output.get_logwriter()
-        self._db = None
+        self._db: a2db.A2db | None = None
         self._version = None
         self._updates = {}
         log.info('A2Obj initialized!')
 
     def start_up(self):
-        import a2db
-
         self.log.set_data_path(self.paths.data)
         self._db = a2db.A2db(self.paths.db)
         self._enabled = None
@@ -179,7 +178,7 @@ class A2Obj:
         request.install_opener(opener)
 
     @property
-    def db(self):
+    def db(self) -> a2db.A2db:
         """Return the database instance. Make sure to start up if None yet."""
         if self._db is None:
             self.start_up()
@@ -329,6 +328,7 @@ class Paths:
         self.a2uiexe = join(self.a2, 'a2ui.exe')
         self.widgets = join(self.ui, 'a2widget')
         self.elements = join(self.ui, 'a2element')
+        self.theme = join(self.a2, 'theme')
 
         self.lib: str = join(self.a2, 'lib')
         self.defaults: str = join(self.lib, 'defaults')
@@ -455,46 +455,6 @@ class Paths:
             if not os.path.isfile(cleanup_path):
                 continue
             os.unlink(cleanup_path)
-
-
-def get_logger(name: str):
-    # make sure logging is initialized
-    if not logging.root.handlers:
-        logging.basicConfig()
-
-    # make bend name == __main__-runs to actual module name
-    if name == '__main__':
-        try:
-            frame = sys._getframe(1)
-            print('frame.f_code.co_filename: %s' % frame.f_code.co_filename)
-            dirpath, base = os.path.split(frame.f_code.co_filename)
-            name = os.path.splitext(base)[0]
-            if name == '__init__':
-                name = os.path.basename(dirpath)
-        except AttributeError:
-            pass
-
-    new_log = logging.getLogger(name)
-    new_log.setLevel(LOG_LEVEL)
-    return new_log
-
-
-def set_loglevel(debug: bool = False):
-    level = [logging.INFO, logging.DEBUG][debug]
-    for name, logger in log.manager.loggerDict.items():
-        if name.startswith(NAME) and isinstance(logger, logging.Logger):
-            try:
-                logger.setLevel(level)
-                log.debug('"%s" Log level DEBUG: active', name)
-                log.info('"%s" Log level INFO: active', name)
-            except AttributeError as error:
-                if not isinstance(logger, logging.PlaceHolder):
-                    log.info(
-                        'Could not set log level on logger object "%s": %s',
-                        name,
-                        str(logger),
-                    )
-                    log.error(error)
 
 
 def is_dev_mode():
