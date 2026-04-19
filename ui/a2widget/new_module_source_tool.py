@@ -1,7 +1,4 @@
-"""
-@created: 20.09.2016
-@author: eric
-"""
+import a2log
 import a2core
 import a2util
 from a2widget.a2input_dialog import A2InputDialog
@@ -16,13 +13,12 @@ class NewModuleSourceTool(A2InputDialog):
         self.main = main
         self.source_names = [m.lower() for m in self.a2.module_sources]
         super(NewModuleSourceTool, self).__init__(
-            self.main, 'New Module Source', self.check_name,
-            msg='Name the new module source:', text='my_module_source')
+            self.main, 'New Module Source', self.check_name, msg='Name the new module source:', text='my_module_source'
+        )
 
     def check_name(self, name):
         """
         Runs on keystroke when creating new module source
         to give way to okaying creation.
         """
-        return a2util.standard_name_check(
-            name, self.source_names, 'The name "%s" is already in use!')
+        return a2util.standard_name_check(name, self.source_names, 'The name "%s" is already in use!')

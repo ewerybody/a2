@@ -1,6 +1,7 @@
 from functools import partial
 from PySide6 import QtGui, QtCore, QtWidgets
 
+import a2log
 import a2mod
 import a2uic
 import a2ctrl

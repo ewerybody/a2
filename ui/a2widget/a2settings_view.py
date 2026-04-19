@@ -1,6 +1,7 @@
 """
 Objects for the the a2 settings tabs.
 """
+
 import os
 import sys
 import time
@@ -9,6 +10,7 @@ import datetime
 from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2ahk
+import a2log
 import a2uic
 import a2core
 import a2util
@@ -125,8 +127,8 @@ class A2Settings(QtWidgets.QWidget):
 
         build_func(widget)
         # if isinstance(widget, QtWidgets.QWidget):
-            # widget.sizeHint = self._size_hint
-            # widget.setSizeHint(self._size_hint())
+        # widget.sizeHint = self._size_hint
+        # widget.setSizeHint(self._size_hint())
 
     def _size_hint(self):
         """For building the tab widgets dynamically. Default sizeHint is WAY too big!
@@ -229,11 +231,7 @@ class DataPathUiHandler(QtCore.QObject):
             action.setData(path)
 
         self.menu.addAction(icons.folder2, 'Browse ...', self.browse)
-        if (
-            self.is_dev
-            and os.path.isdir(self.dev_data_path)
-            and self.dev_data_path != self.a2.paths.data
-        ):
+        if self.is_dev and os.path.isdir(self.dev_data_path) and self.dev_data_path != self.a2.paths.data:
             self.menu.addAction(icons.folder2, 'Use Dev Location', self.use_dev)
 
         self.menu.popup(QtGui.QCursor.pos())
@@ -300,9 +298,7 @@ class IntegrationUIHandler(QtCore.QObject):
     @property
     def cmds(self):
         if self._cmds is None:
-            self._cmds = a2util.json_read(
-                os.path.join(self.a2.paths.ui, 'a2widget', 'integration_ui.json')
-            )
+            self._cmds = a2util.json_read(os.path.join(self.a2.paths.ui, 'a2widget', 'integration_ui.json'))
         return self._cmds
 
 

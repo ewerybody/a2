@@ -2,6 +2,7 @@ import traceback
 
 from PySide6 import QtCore, QtWidgets, QtGui
 
+import a2log
 import a2mod
 import a2uic
 import a2core
@@ -80,9 +81,7 @@ class A2ModuleView(QtWidgets.QWidget):
             config = self.main.mod.config
             module_user_cfg = self.main.mod.get_user_cfg()
             self.ui.icon_label.show()
-            self.ui.icon_label.setPixmap(
-                self.main.mod.icon.pixmap(self.main.style.get('icon_size'))
-            )
+            self.ui.icon_label.setPixmap(self.main.mod.icon.pixmap(self.main.style.get('icon_size')))
 
         if config:
             if config[0].get('typ') != 'nfo':
@@ -177,9 +176,7 @@ class A2ModuleView(QtWidgets.QWidget):
         self.add_button_layer.setContentsMargins(spacing, 0, 0, 0)
         self.add_button_layer.addWidget(self.add_button)
         self.ui.mod_view_grid.addLayout(self.add_button_layer, 1, 0, 1, 1)
-        self.add_button_layer.setAlignment(
-            self.add_button, QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeft
-        )
+        self.add_button_layer.setAlignment(self.add_button, QtCore.Qt.AlignBottom | QtCore.Qt.AlignLeft)
 
         self._set_widget(self._editor)
         self._set_editing(True)
@@ -272,7 +269,7 @@ class A2ModuleView(QtWidgets.QWidget):
                 if widget.cfg['name'] == name:
                     widget.check()
                     return
-            except (AttributeError, KeyError):
+            except AttributeError, KeyError:
                 pass
 
     def draw_settings(self):
@@ -332,9 +329,7 @@ class A2ModuleView(QtWidgets.QWidget):
         import a2dev, os
 
         if os.path.isfile(self.main.mod.config_file):
-            dialog = a2dev.OkDiffDialog(
-                self.main, 'Config Changed!', a2dev.MSG_CFG_DIFF, self.main.mod.config_file
-            )
+            dialog = a2dev.OkDiffDialog(self.main, 'Config Changed!', a2dev.MSG_CFG_DIFF, self.main.mod.config_file)
         else:
             dialog = a2dev.OkDiffDialog(self.main, 'Trash New Config?!', a2dev.MSG_CFG_NEW)
 

@@ -1,11 +1,13 @@
 """
 Editor stuff for module source package meta data.
 """
+
 import os
 from copy import deepcopy
 
 from PySide6 import QtWidgets, QtCore
 
+import a2log
 import a2uic
 import a2core
 import a2ctrl

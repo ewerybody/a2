@@ -1,7 +1,7 @@
 from PySide6 import QtCore, QtWidgets
 
+import a2log
 import a2uic
-import a2core
 
 from . import scope_dialog_ui
 from .hotkey_widget import Vars
