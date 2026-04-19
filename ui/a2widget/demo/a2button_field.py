@@ -34,7 +34,6 @@ class Demo(QtWidgets.QMainWindow):
 
 
 def show():
-    # app = QtWidgets.QApplication([__file__, '-platform', 'windows:darkmode=2'])
     app = QtWidgets.QApplication([])
     win = Demo()
     win.show()
