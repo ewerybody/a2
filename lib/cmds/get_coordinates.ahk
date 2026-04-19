@@ -1,41 +1,40 @@
-﻿; get_coordinates
-#Persistent
-msg := "`nLeft Mouse Button To Pick`nEscape To Cancel"
-a2tip(msg)
+﻿; get_coordinates.ahk
+#Include <a2tip>
+#Include <cursor>
+
+Persistent
+MSG := "`nLeft Mouse Button To Pick`nEscape To Cancel"
+a2tip(MSG, -1)
 cursor_set_cross()
-CoordMode, Mouse, Screen
+CoordMode("Mouse", "Screen")
 
-SetTimer, WatchCursor, 50
+SetTimer(WatchCursor, 50)
 
-Escape::Gosub, Exit
-LButton::Gosub, PickCoordinates
-
+Escape::Exit
+~LButton::PickCoordinates
 return
 
-WatchCursor:
-    text := get_coords_str() . msg
-    ;ToolTip, %text%
-    global eZttText
-    eZttText := text
-return
+WatchCursor() {
+    text := get_coords_str() MSG
+    global a2tip_message
+    a2tip_message := text
+}
 
 get_coords_str() {
-    MouseGetPos, mx, my
+    MouseGetPos(&mx, &my)
     data := mx ", " my
     return data
 }
 
-PickCoordinates:
-    SetTimer, WatchCursor, Off
+PickCoordinates() {
+    SetTimer(WatchCursor, 0)
     cursor_reset()
-    global eZttText
     data := get_coords_str()
-    FileAppend, %data%, *
-    eZttText := data
-    a2tip(data, 0.5,, 1)
-Return
+    FileAppend(data, "*")
+    Exit()
+}
 
-Exit:
+Exit() {
     cursor_reset()
     ExitApp
-Return
+}
