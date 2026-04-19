@@ -7,6 +7,7 @@ from pathlib import Path
 import rich.progress
 
 import a2util
+import a2dev.build.icons_stub
 import a2dev.dependency.inkscape
 
 import PIL.Image
@@ -60,6 +61,7 @@ def main(force=False):
     ink_proc.wait()
 
     _create_ahk_icon_lib()
+    a2dev.build.icons_stub.main()
 
     print(f'took {time.perf_counter() - t0:.2f}s all in all.')
 
@@ -156,7 +158,7 @@ def _process_todos(
     ink_proc: subprocess.Popen,
     progress: rich.progress.Progress,
     task_name: str,
-    sizes: tuple[int, ...]
+    sizes: tuple[int, ...],
 ) -> None:
     if not todos:
         return
@@ -220,4 +222,5 @@ def _create_ahk_icon_lib():
 
 
 if __name__ == '__main__':
-    main(force=True)
+    # main(force=True)
+    main()
