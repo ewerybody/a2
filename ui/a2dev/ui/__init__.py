@@ -4,12 +4,13 @@ import traceback
 from PySide6 import QtWidgets, QtCore
 
 import a2ahk
+import a2log
 import a2core
 import a2util
 from a2widget import a2input_dialog
 
 SEMVER_URL = 'https://semver.org'
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 class OkDiffDialog(a2input_dialog.A2ConfirmDialog):

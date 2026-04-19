@@ -7,10 +7,11 @@ import os
 import sys
 from importlib import reload
 
+import a2log
 import a2core
 from PySide6 import QtCore, QtGui, QtWidgets, QtSvg
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 ROOT_PATH = os.path.abspath(os.path.join(a2core.__file__, '..', '..'))
 UI_FILE_SUFFIX = '_ui'

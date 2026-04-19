@@ -17,7 +17,7 @@ import a2ctrl.connect
 from a2ctrl import Icons
 from a2widget import a2module_source, a2hotkey
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 class A2Settings(QtWidgets.QWidget):

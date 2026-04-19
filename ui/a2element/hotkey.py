@@ -19,6 +19,7 @@ A hotkey configuration can have a lot of stuff to it:
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
+import a2log
 import a2uic
 import a2core
 import a2ctrl.connect
@@ -29,7 +30,7 @@ from a2widget.a2hotkey.hotkey_common import Vars, SEND_MODES, strip_mode
 from a2widget.a2more_button import A2MoreButton
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 class Draw(DrawCtrl):

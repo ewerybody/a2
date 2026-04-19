@@ -5,14 +5,14 @@ in the main menu bar under module.
 import traceback
 from PySide6 import QtGui
 
+import a2log
 import a2uic
 import a2ctrl
-import a2core
 from a2element import EditCtrl
 from a2widget import local_script, a2error_dialog
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 MENU_ITEM_PREFIX = 'a2_menu_item_'
 MENU_ITEM_TEMPLATE = '''# a2 menu item script "{name}"
 

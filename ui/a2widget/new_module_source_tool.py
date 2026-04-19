@@ -7,7 +7,7 @@ import a2util
 from a2widget.a2input_dialog import A2InputDialog
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 class NewModuleSourceTool(A2InputDialog):

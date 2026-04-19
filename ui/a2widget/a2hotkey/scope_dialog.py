@@ -7,7 +7,7 @@ from . import scope_dialog_ui
 from .hotkey_widget import Vars
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 INCLUDE_MSG = 'Include "nothing" Deactivates the scope!'
 EXCLUDE_MSG = 'Exclude "nothing" makes it global!'
 

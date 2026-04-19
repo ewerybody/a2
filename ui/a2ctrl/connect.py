@@ -3,7 +3,7 @@ from functools import partial
 
 from PySide6 import QtWidgets
 
-import a2core
+import a2log
 import a2element.hotkey
 from a2widget.a2button_field import A2ButtonField
 from a2widget.a2coords_field import A2CoordsField
@@ -12,7 +12,7 @@ from a2widget.a2path_field import A2PathField
 from a2widget.a2text_field import A2CodeField, A2TextField
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 def cfg_controls(cfg, ui_object, prefix='cfg_'):

@@ -1,9 +1,9 @@
 import a2ahk
 from PySide6 import QtGui, QtCore, QtWidgets
 from .dialogs import _HotkeyDialogBase
-import a2core
+import a2log
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 LEAVE_CLOSE_TIMEOUT = 1000
 STYLE_BAD = '* {color:#F00}'
 STYLE_GOOD = '* {color:#0F0}'

@@ -1,4 +1,4 @@
-import a2core
+import a2log
 from a2element.common import DrawCtrl, EditCtrl, DrawCtrlMixin
 
 
@@ -21,7 +21,7 @@ DISPLAY_ELEMENTS = [
 ]
 
 _UI_DATA = None
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 def get_list(force=False):

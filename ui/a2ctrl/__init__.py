@@ -4,13 +4,14 @@ a2ctrl - basic functionality for all the a2element building blocks
 import os
 import sys
 import traceback
-from importlib import reload, import_module
+from importlib import import_module
 
+import a2log
 import a2core
 from a2ctrl.icons import Ico, Icons
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 NO_DRAW_TYPES = ['exit', 'include', 'init']
 ELEMENTS_PACKAGE = 'a2element'
 LOCAL_ELEMENT_ID = 'a2_local_element'

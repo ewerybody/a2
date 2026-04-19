@@ -1,10 +1,10 @@
 ﻿import os
 import inspect
 
-import a2uic
 import a2ahk
+import a2log
+import a2uic
 import a2ctrl
-import a2core
 import a2util
 import a2ctrl.connect
 from a2widget.a2hotkey import hotkey_common
@@ -12,7 +12,7 @@ from a2widget.a2hotkey import hotkey_common
 from PySide6 import QtGui, QtCore, QtWidgets
 
 
-log = a2core.get_logger('keyboard_base')
+log = a2log.get('keyboard_base')
 BASE_MODIFIERS = ['alt', 'ctrl', 'shift', 'win']
 SIDES = 'lr'
 DB_KEY_MOUSE = 'hotkey_dialog_show_mouse'
@@ -353,15 +353,15 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         self._look_for_unlisted_keys()
 
     def _look_for_unlisted_keys(self):
-        for objname in dir(self.ui):
-            if objname in _IGNORE_BUTTONS:
+        for obj_name in dir(self.ui):
+            if obj_name in _IGNORE_BUTTONS:
                 continue
 
-            obj = getattr(self.ui, objname)
+            obj = getattr(self.ui, obj_name)
             if not isinstance(obj, QtWidgets.QPushButton):
                 continue
-            if objname not in self.key_dict:
-                log.error('NOT IN!: %s' % objname)
+            if obj_name not in self.key_dict:
+                log.error('NOT IN!: %s' % obj_name)
 
     def build_keyboard(self, keyboard_id):
         from . import layouts
@@ -373,9 +373,9 @@ class KeyboardDialogBase(QtWidgets.QDialog):
         try:
             css_values = self.a2.win.style.get_value_dict()
         except AttributeError:
-            import a2style
+            import a2theme
 
-            style = a2style.A2StyleBuilder()
+            style = a2theme.A2StyleBuilder()
             style.get_style()
             css_values = style.get_value_dict()
 

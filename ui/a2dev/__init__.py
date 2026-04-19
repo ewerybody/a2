@@ -4,12 +4,13 @@ import os
 import sys
 
 import a2dl
+import a2log
 import a2core
 import a2util
 
 _TASK_MSG = 'browse for a %s executable'
 _QUEST_MSG = 'Do you want to %s now?'
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 MSG_CFG_DIFF = (
     'The module configuration appears to have changed!\n'
     'Do you really want to exit and discard the changes?\n\n'

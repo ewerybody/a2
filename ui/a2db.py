@@ -24,10 +24,10 @@ import sqlite3
 from contextlib import contextmanager
 from collections.abc import Iterator
 
-import a2core
+import a2log
 
-log = a2core.get_logger(__name__)
-_DEFAULT_TABLE = a2core.NAME
+log = a2log.get(__name__)
+_DEFAULT_TABLE = a2log.NAME
 
 
 class A2db:
@@ -86,9 +86,7 @@ class A2db:
                     log.error('there is no key "%s" in section "%s"', key, table)
                     return None
 
-                log.error(
-                    'Error getting data from key "%s" from table "%s"', key, table
-                )
+                log.error('Error getting data from key "%s" from table "%s"', key, table)
                 raise error
 
     def set(self, key, value, table=_DEFAULT_TABLE, _table_create_flag=False):
@@ -118,9 +116,7 @@ class A2db:
                     return
 
                 if _table_create_flag:
-                    raise RuntimeError(
-                        'a2db table creation was already attempted, failed again!'
-                    )
+                    raise RuntimeError('a2db table creation was already attempted, failed again!')
                 else:
                     log.debug('creating table and retry...')
                     self._create_table(table)
@@ -196,9 +192,7 @@ class A2db:
                     changed = True
                 elif value_name in current:
                     # value is default
-                    log.debug(
-                        'value "%s" is default (%s).. deleting...', value_name, value
-                    )
+                    log.debug('value "%s" is default (%s).. deleting...', value_name, value)
                     del current[value_name]
                     changed = True
             if changed:
@@ -261,14 +255,10 @@ class A2db:
                 return cur.fetchall()
 
             except Exception as err:
-                raise Exception(
-                    'statement execution fail: "%s\nerror: %s' % (statement, err)
-                )
+                raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def _create_table(self, table):
-        statement = (
-            f'create table "{table}" (id integer primary key, key TEXT, value TEXT)'
-        )
+        statement = f'create table "{table}" (id integer primary key, key TEXT, value TEXT)'
         log.debug('create_table statement:\n\t%s', statement)
         self._commit(statement)
 
@@ -282,16 +272,12 @@ class A2db:
                 con.commit()
 
             except Exception as err:
-                raise Exception(
-                    'statement execution fail: "%s\nerror: %s' % (statement, err)
-                )
+                raise Exception('statement execution fail: "%s\nerror: %s' % (statement, err))
 
     def _get_digest(self):
         with self._connection():
             tables = sorted(self.tables())
-            header = ('\n\n{line}table "%s"\n  id - key - value\n{line}  ').format(
-                line='-' * 40 + '\n'
-            )
+            header = ('\n\n{line}table "%s"\n  id - key - value\n{line}  ').format(line='-' * 40 + '\n')
             text = 'database dump from %s\n' % self._file
             text += '%i tables: %s' % (len(tables), ', '.join(tables))
             for t in tables:
@@ -313,6 +299,7 @@ class A2db:
         if is_owner:
             self._con = sqlite3.connect(self._file)
             self._cur = self._con.cursor()
+        assert self._con is not None and self._cur is not None
         try:
             yield self._con, self._cur
         finally:

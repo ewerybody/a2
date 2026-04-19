@@ -10,7 +10,7 @@ import a2modsource
 from a2widget import a2input_dialog, hover_widget, busy_icon
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 MOD_COUNT_TEXT = '%i modules, %i enabled'
 UPDATE_LABEL = 'Check for Updates'
 DEV_LABEL = 'Cannot update dev source'

@@ -8,12 +8,13 @@ import sys
 import shutil
 
 import a2ahk
+import a2log
 import a2path
 import a2core
 import a2util
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 CONFIG_FILENAME = 'a2module.json'
 USER_CFG_KEY = 'user_cfg'
 NEW_MODULE_DESC = (

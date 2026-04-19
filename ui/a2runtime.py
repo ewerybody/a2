@@ -7,11 +7,12 @@ import enum
 import subprocess
 
 import a2ahk
+import a2log
 import a2core
 import a2path
 import a2util
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 A2_DATA = '%a2data%'
 PACKAGE_LIB = '.lib'

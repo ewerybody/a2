@@ -6,7 +6,7 @@ import a2uic
 import a2ctrl
 import a2core
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 _CFG_PREFIX = 'modlist_'
 SHOW_ENABLED = 'show_enabled_only'
 ARRANG_PACKG = 'arrange_by_package'

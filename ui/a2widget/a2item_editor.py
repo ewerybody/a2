@@ -23,22 +23,22 @@ from collections import OrderedDict
 
 from PySide6 import QtCore, QtWidgets
 
+import a2log
 import a2uic
-import a2core
 import a2util
 import a2ctrl.connect
 from a2ctrl.icons import Icons
 from a2widget import a2item_editor_ui
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 #: Minimum number of to automatically show the search field.
 SEARCH_FIELD_MIN_ITEMS = 10
 DEFAULT_ITEM_FLAGS = (
-    QtCore.Qt.ItemIsSelectable
-    | QtCore.Qt.ItemIsEditable
-    | QtCore.Qt.ItemIsDragEnabled
-    | QtCore.Qt.ItemIsEnabled
+    QtCore.Qt.ItemFlag.ItemIsSelectable
+    | QtCore.Qt.ItemFlag.ItemIsEditable
+    | QtCore.Qt.ItemFlag.ItemIsDragEnabled
+    | QtCore.Qt.ItemFlag.ItemIsEnabled
 )
 
 
@@ -77,8 +77,8 @@ class A2ItemEditor(QtWidgets.QWidget):
         self.update_filter()
 
     def _setup_ui(self):
-        self.ui.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
-        self.ui.config_layout.setContentsMargins(0, 0, 0, 0)
+        self.config_layout = QtWidgets.QFormLayout(self.ui.config_widget)
+        self.config_layout.setContentsMargins(0, 0, 0, 0)
 
         self.ui.item_list.itemChanged.connect(self.check_item_change)
         self.ui.item_list.context_menu_requested.connect(self.list_menu_called.emit)
@@ -139,7 +139,7 @@ class A2ItemEditor(QtWidgets.QWidget):
     def add_row(self, *args):
         if isinstance(args, tuple) and len(args) == 1 and isinstance(args[0], str):
             args = (QtWidgets.QLabel(args[0], self),)
-        self.ui.config_layout.addRow(*args)
+        self.config_layout.addRow(*args)
 
     def enlist_widget(self, value_name, widget, set_function, default_value):
         """Connect a widget to be filled with data from `value_name` on selection."""

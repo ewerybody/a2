@@ -6,6 +6,7 @@ import os
 import time
 from functools import partial
 
+import a2log
 import a2uic
 import a2dev
 import a2dev.ui
@@ -18,7 +19,7 @@ import a2widget.tools
 import a2ui.module_cfg
 from PySide6 import QtGui, QtCore, QtWidgets
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 RESTART_DELAY = 300
 RUNTIME_WATCH_INTERVAL = 1000
 DEFAULT_WIN_SIZE = (700, 480)

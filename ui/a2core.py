@@ -8,14 +8,11 @@ to make functionality available without passing the main ui object.
 import os
 import sys
 import time
-import logging
 
+import a2log
 import a2path
 
-# Only spot where this is set! Use a2core.get_logger() anywhere else!
-LOG_LEVEL = logging.INFO
-log = logging.getLogger(__name__)
-log.setLevel(LOG_LEVEL)
+log = a2log.get(__name__)
 
 A2DEFAULT_HOTKEY = 'Win+Shift+A'
 _A2TAGS = {}

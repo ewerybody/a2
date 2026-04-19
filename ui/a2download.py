@@ -1,10 +1,10 @@
 """Stuff for downloads from the internets."""
-from PySide6 import QtCore, QtNetwork
+from PySide6 import QtCore
 
-import a2core
+import a2log
 import qdl
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 GITHUB_URL = 'github.com'

@@ -4,13 +4,14 @@ from collections import OrderedDict
 from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2ahk
+import a2log
 import a2util
 import a2core
 import a2ctrl.connect
 from a2widget.a2hotkey import scope_widget_ui
 from a2widget.a2hotkey.hotkey_widget import Vars
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 SCOPE_ITEMS = ['titles', 'classes', 'processes']
 AHK_TYPES = ['ahk_class', 'ahk_exe']
 MAX_LABEL_LEN = 80
@@ -159,8 +160,9 @@ class ScopeWidget(QtWidgets.QWidget):
         import a2runtime
 
         collector = a2runtime.collect_includes(a2runtime.IncludeType.hotkeys)
-        scopes = list(collector.hotkeys.hotkeys_scope_incl.keys())
-        scopes.extend(collector.hotkeys.hotkeys_scope_excl.keys())
+        assert collector.hotkeys is not None
+        scopes = list(collector.hotkeys.hotkeys_scope_incl)
+        scopes.extend(collector.hotkeys.hotkeys_scope_excl)
 
         for scope in sorted(scopes, key=lambda s: s.lower()):
             action = menu.addAction(scope[:MAX_LABEL_LEN], self._add_scope_from_action)

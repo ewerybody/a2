@@ -4,11 +4,13 @@ Finally an own little module all things icons.
 
 import os
 from PySide6 import QtGui, QtCore, QtSvg
+
+import a2log
 import a2core
 import a2path
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 ICO_PATH = None
 DEFAULT_ALPHA = 0.6
 LOW_ALPHA = 0.25

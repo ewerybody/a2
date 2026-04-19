@@ -13,7 +13,7 @@ import a2ctrl.connect
 import a2download
 from a2widget import a2input_dialog, modsource_editor_ui
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 class ModuleSourceEditor(a2input_dialog.A2ConfirmDialog):

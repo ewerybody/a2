@@ -12,6 +12,7 @@ import traceback
 
 from a2qt import QtCore
 
+import a2log
 import a2path
 import a2core
 import a2util
@@ -31,7 +32,7 @@ MSG_BACKUP_ERROR = 'Error Backing up %s'
 MSG_COPY_ERROR = 'Error Copying Update (%s)'
 MSG_NOT_EMPTY_ERROR = 'Error preparing folder: Not empty but no previous version found!'
 MSG_INSTALL = 'Installing %s'
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 def get(main, modules_path):

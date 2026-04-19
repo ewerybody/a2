@@ -3,9 +3,10 @@ import json
 import urllib.request
 from typing import Any, Callable
 
-import a2core
 
-log = a2core.get_logger(__name__)
+import a2log
+
+log = a2log.get(__name__)
 __version__ = (0, 1, 0)
 __version_info__ = '0.1.0'
 
@@ -133,4 +134,5 @@ if __name__ == '__main__':
     import pytest
 
     from test import test_a2dl
+
     pytest.main([test_a2dl.__file__, '-v'])

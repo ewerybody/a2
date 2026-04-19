@@ -1,12 +1,12 @@
 from PySide6 import QtCore, QtWidgets
 
 import a2ahk
+import a2log
 import a2ctrl
-import a2core
 from a2widget.a2more_button import A2MoreButton
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 
 
 class A2CoordsField(QtWidgets.QWidget):

@@ -10,7 +10,7 @@ import a2util
 import a2path
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 MULTI_MODULE_DESC = 'Multiple modules selected. Here goes some useful info in the future...'
 EMPTY_MODULE_DESC = 'Module Config is currently empty! imagine awesome layout here ...'
 

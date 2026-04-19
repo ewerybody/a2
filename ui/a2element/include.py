@@ -1,15 +1,15 @@
 import os
-import a2ctrl
-import a2core
 
 from PySide6 import QtWidgets
 
+import a2log
+import a2ctrl
 from a2element import EditCtrl
 from a2widget.local_script import ScriptSelector
 from a2element._edit import LocalAHKScriptsMenu
 
 
-log = a2core.get_logger(__name__)
+log = a2log.get(__name__)
 ISSUE_FILE_MISSING = 'The file "%s" cannot be found! Cannot include missing file!'
 
 
