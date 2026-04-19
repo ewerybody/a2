@@ -20,6 +20,8 @@ from functools import partial
 
 from PySide6 import QtWidgets, QtCore, QtNetwork
 
+ERROR_ALREADY_EXISTS = 0xB7
+
 
 def main():
     """The main entrypoint for the whole thing."""
@@ -31,12 +33,7 @@ def main():
         # Make sure the Qt platform plugin can be found.
         _qt_path = sys.modules[QtCore.Qt.__module__].__file__
         if _qt_path is not None:
-            os.environ['QT_PLUGIN_PATH'] = os.path.abspath(
-                os.path.join(_qt_path, '..', 'plugins')
-            )
-
-        # TODO: make a dedicated dark theme
-        # sys.argv.extend(('-platform', 'windows:darkmode=0'))
+            os.environ['QT_PLUGIN_PATH'] = os.path.abspath(os.path.join(_qt_path, '..', 'plugins'))
 
         app = A2App()
         app.exec()
@@ -50,15 +47,10 @@ def main():
             file_obj.write(error_msg)
 
 
-ERROR_ALREADY_EXISTS = 0xB7
-
-
 def _get_sid(pid: int) -> int:
     """Return the Windows session ID for the given process ID."""
     sid = ctypes.wintypes.DWORD()
-    result = windll.kernel32.ProcessIdToSessionId(
-        ctypes.wintypes.DWORD(pid), ctypes.byref(sid)
-    )
+    result = windll.kernel32.ProcessIdToSessionId(ctypes.wintypes.DWORD(pid), ctypes.byref(sid))
     if not result:
         raise OSError(3, 'No such process')
     return sid.value
@@ -293,9 +285,7 @@ class A2App(QSingleApplication):
                 error,
                 traceback.format_exc().strip(),
             )
-            QtWidgets.QMessageBox.critical(
-                None, title, msg + '\n\nPress Ctrl+C to copy this message.'
-            )
+            QtWidgets.QMessageBox.critical(None, title, msg + '\n\nPress Ctrl+C to copy this message.')
             raise RuntimeError(msg)
 
     def app_msg_get(self, msg: str):
