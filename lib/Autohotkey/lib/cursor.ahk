@@ -13,10 +13,11 @@ cursor_set(target_id, system_id := 0) {
 
 cursor_set_cross() {
     win_cross := A_WinDir . "\cursors\" . "cross_rl.cur"
+    cross_id := IsSet(IDC_CROSS) ? IDC_CROSS : 32515
     If FileExist(win_cross)
         cursor_id := cursor_load_file(win_cross)
     Else
-        cursor_id := cursor_load_id(IDC_CROSS)
+        cursor_id := cursor_load_id(cross_id)
     cursor_set(cursor_id)
 }
 
