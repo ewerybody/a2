@@ -21,10 +21,10 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
 
         self.setup_ui()
 
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Enter), self, self.ok)
-        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Escape), self, self.close)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key.Key_Enter), self, self.ok)
+        QtGui.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key.Key_Escape), self, self.close)
 
-        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint)
+        self.setWindowFlags(QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.CustomizeWindowHint)
 
         self._close_timer = QtCore.QTimer()
         self._close_timer.setInterval(LEAVE_CLOSE_TIMEOUT)
@@ -86,7 +86,7 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
                 modifier[0] = modifier[0][1:]
             bad_modifier = [k for k in modifier if k not in a2ahk.MODIFIERS]
             if bad_modifier:
-                msg = 'Modifyer not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(bad_modifier)
+                msg = 'Modifier not one of Win, Ctrl, Alt or Shift! (%s)' % ', '.join(bad_modifier)
             else:
                 okay_state = True
 
@@ -105,8 +105,8 @@ class HotkeyDialog1(QtWidgets.QWidget, _HotkeyDialogBase):
         cursor_pos = QtGui.QCursor.pos()
         pos = self.pos()
         dialog_size = _dialog_size if _dialog_size else (200, 100)
-        pos.setX(cursor_pos.x() - (dialog_size[0] / 2))
-        pos.setY(cursor_pos.y() - (dialog_size[1] / 2))
+        pos.setX(int(cursor_pos.x() - (dialog_size[0] / 2)))
+        pos.setY(int(cursor_pos.y() - (dialog_size[1] / 2)))
         self.move(pos)
 
     def leaveEvent(self, event):
