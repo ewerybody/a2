@@ -16,7 +16,8 @@ ICO_PATH = None
 DEFAULT_ALPHA = 1
 LOW_ALPHA = 0.25
 DEFAULT_NAME = f'{a2core.NAME}icon'
-ICON_FORMATS = '.ico', '.svg', '.png'
+ICO_FORMAT = '.ico'
+ICON_FORMATS = ICO_FORMAT, '.svg', '.png'
 ICON_TYPES = tuple(DEFAULT_NAME + ext for ext in ICON_FORMATS)
 ICON_OBJ_INST_ERROR = 'Icons() has already been instantiated!\nGet it with .inst()'
 _PLACEHOLDER_ICON = 'placeholder'
@@ -31,7 +32,7 @@ class Ico(QtGui.QIcon):
     * have a tinted version if needed.
     """
 
-    ico_path = None
+    ico_path = ''
 
     def __init__(self, ico_name, size=512, alpha=None):
         """
@@ -54,13 +55,9 @@ class Ico(QtGui.QIcon):
         if os.path.isfile(ico_name):
             self.path = ico_name
         else:
-            if Ico.ico_path is None:
-                Ico.ico_path = os.path.join(a2core.get().paths.a2, 'theme', a2theme.get(), '%s.ico')
-
-            self.path = Ico.ico_path % ico_name
-            if not os.path.isfile(self.path):
-                log.error('SVG_icon: could not find path to "%s"!', ico_name)
-                return
+            if not Ico.ico_path:
+                Ico.ico_path = os.path.join(a2core.get().paths.a2, 'theme')
+            self.path = self._find_path(ico_name)
 
         ext = os.path.splitext(self.path)[1].lower()
         if ext == '.svg':
@@ -93,6 +90,16 @@ class Ico(QtGui.QIcon):
             self._image = self._load_path_to_image(self._image)
             self._painter = QtGui.QPainter(self._image)
 
+    def _find_path(self, ico_name: str) -> str:
+        path = os.path.join(Ico.ico_path, f'{ico_name}{ICO_FORMAT}')
+        if os.path.isfile(path):
+            return path
+        path = os.path.join(Ico.ico_path, a2theme.get(), f'{ico_name}{ICO_FORMAT}')
+        if os.path.isfile(path):
+            return path
+        log.error('Ico: could not find path to "%s"!', ico_name)
+        return ''
+
     def _load_path_to_image(self, image):
         image.load(self.path)
         if image.format() == QtGui.QImage.Format.Format_Indexed8:
@@ -114,7 +121,7 @@ class Ico(QtGui.QIcon):
         return self._tinted
 
 
-class Uico(Ico):
+class U_ico(Ico):
     """Ico variant with hardcoded specs.
     This is mainly for general icons with a default alpha
     that makes them fit onto random backgrounds and menus.
@@ -157,8 +164,8 @@ class _Icons:
         if not name.startswith('_'):
             if obj is self._ico_placeholder:
                 icon = Ico(name)
-            elif obj is self._uico_placeholder:
-                icon = Uico(name)
+            elif obj is self._u_ico_placeholder:
+                icon = U_ico(name)
             else:
                 return obj
             setattr(self, name, icon)
@@ -170,7 +177,7 @@ class _Icons:
         if self._instance:
             raise RuntimeError(ICON_OBJ_INST_ERROR)
         self._ico_placeholder = QtGui.QIcon()
-        self._uico_placeholder = QtGui.QIcon()
+        self._u_ico_placeholder = QtGui.QIcon()
 
         # Icons start
         self.a2 = self._ico_placeholder
@@ -182,26 +189,26 @@ class _Icons:
         self.github = self._ico_placeholder
         self.telegram = self._ico_placeholder
 
-        self.arrow_left = self._uico_placeholder
-        self.arrow_right = self._uico_placeholder
-        self.check = self._uico_placeholder
-        self.checkbox_hover = self._uico_placeholder
-        self.checkbox_off = self._uico_placeholder
-        self.checkbox_on = self._uico_placeholder
-        self.clear = self._uico_placeholder
-        self.copy = self._uico_placeholder
-        self.folder = self._uico_placeholder
-        self.locate = self._uico_placeholder
-        self.more = self._uico_placeholder
-        self.number = self._uico_placeholder
-        self.paste = self._uico_placeholder
-        self.placeholder = self._uico_placeholder
-        self.select_list = self._uico_placeholder
-        self.switch = self._uico_placeholder
-        self.to_clipboard = self._uico_placeholder
-        self.trash = self._uico_placeholder
-        self.volume_down = self._uico_placeholder
-        self.volume_up = self._uico_placeholder
+        self.arrow_left = self._u_ico_placeholder
+        self.arrow_right = self._u_ico_placeholder
+        self.check = self._u_ico_placeholder
+        self.checkbox_hover = self._u_ico_placeholder
+        self.checkbox_off = self._u_ico_placeholder
+        self.checkbox_on = self._u_ico_placeholder
+        self.clear = self._u_ico_placeholder
+        self.copy = self._u_ico_placeholder
+        self.folder = self._u_ico_placeholder
+        self.locate = self._u_ico_placeholder
+        self.more = self._u_ico_placeholder
+        self.number = self._u_ico_placeholder
+        self.paste = self._u_ico_placeholder
+        self.placeholder = self._u_ico_placeholder
+        self.select_list = self._u_ico_placeholder
+        self.switch = self._u_ico_placeholder
+        self.to_clipboard = self._u_ico_placeholder
+        self.trash = self._u_ico_placeholder
+        self.volume_down = self._u_ico_placeholder
+        self.volume_up = self._u_ico_placeholder
         # Icons end
 
 

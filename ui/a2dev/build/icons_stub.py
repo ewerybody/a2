@@ -41,7 +41,7 @@ def main(debug=False):
                 lines.append(f'{indent}self.{name} = self._{_PLACEHOLDER_CODE}')
             lines.append('')
             for name in sorted(lib_icons):
-                lines.append(f'{indent}self.{name} = self._u{_PLACEHOLDER_CODE}')
+                lines.append(f'{indent}self.{name} = self._u_{_PLACEHOLDER_CODE}')
 
         if line.endswith('# Icons end'):
             in_icons = False
