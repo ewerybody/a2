@@ -1,0 +1,113 @@
+"""
+Form generated from reading UI file 'a2combo_demo.ui'
+
+Created by: Qt User Interface Compiler version 6.10.2
+
+WARNING! All changes made in this file will be lost when recompiling UI file!
+"""
+
+from PySide6.QtWidgets import QComboBox, QHBoxLayout, QLabel, QMenuBar, QScrollArea, QStatusBar, QVBoxLayout, QWidget
+from PySide6.QtCore import QMetaObject, QRect, QSize, Qt
+
+from a2widget.a2combo import A2Combo
+
+
+class Ui_MainWindow:
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName('MainWindow')
+        MainWindow.setWindowTitle('MainWindow')
+        self.central_widget = QWidget(MainWindow)
+        self.central_widget.setObjectName('central_widget')
+        self.central_widget.setMinimumSize(QSize(600, 600))
+        self.horizontalLayout = QHBoxLayout(self.central_widget)
+        self.horizontalLayout.setObjectName('horizontalLayout')
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName('verticalLayout')
+        self.label = QLabel(self.central_widget)
+        self.label.setObjectName('label')
+        self.label.setText(
+            '<html><head/><body><p><span style=" font-weight:700;">A2Combo</span> - scrolling wont stick to combos</p></body></html>'
+        )
+        self.verticalLayout.addWidget(self.label)
+        self.scrollArea = QScrollArea(self.central_widget)
+        self.scrollArea.setObjectName('scrollArea')
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName('scrollAreaWidgetContents')
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 270, 920))
+        self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_4.setObjectName('verticalLayout_4')
+        self.label_3 = QLabel(self.scrollAreaWidgetContents)
+        self.label_3.setObjectName('label_3')
+        self.label_3.setMinimumSize(QSize(0, 400))
+        self.label_3.setText('Hover Cursor here\nand Scroll down ... vvvvvvvvvv')
+        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.verticalLayout_4.addWidget(self.label_3)
+        self.a_combo1 = A2Combo(self.scrollAreaWidgetContents)
+        self.a_combo1.setObjectName('a_combo1')
+        self.verticalLayout_4.addWidget(self.a_combo1)
+        self.a_combo2 = A2Combo(self.scrollAreaWidgetContents)
+        self.a_combo2.setObjectName('a_combo2')
+        self.verticalLayout_4.addWidget(self.a_combo2)
+        self.a_combo3 = A2Combo(self.scrollAreaWidgetContents)
+        self.a_combo3.setObjectName('a_combo3')
+        self.verticalLayout_4.addWidget(self.a_combo3)
+        self.label_5 = QLabel(self.scrollAreaWidgetContents)
+        self.label_5.setObjectName('label_5')
+        self.label_5.setMinimumSize(QSize(0, 400))
+        self.label_5.setText('Hover Cursor here\nand Scroll up ^^^^^^ ...')
+        self.label_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.verticalLayout_4.addWidget(self.label_5)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.verticalLayout.addWidget(self.scrollArea)
+        self.horizontalLayout.addLayout(self.verticalLayout)
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName('verticalLayout_2')
+        self.label_2 = QLabel(self.central_widget)
+        self.label_2.setObjectName('label_2')
+        self.label_2.setText(
+            '<html><head/><body><p><span style=" font-weight:700;">QComboBox</span> - scrolling sticks to combos</p></body></html>'
+        )
+        self.verticalLayout_2.addWidget(self.label_2)
+        self.scrollArea_2 = QScrollArea(self.central_widget)
+        self.scrollArea_2.setObjectName('scrollArea_2')
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_2 = QWidget()
+        self.scrollAreaWidgetContents_2.setObjectName('scrollAreaWidgetContents_2')
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 270, 920))
+        self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_3.setObjectName('verticalLayout_3')
+        self.label_4 = QLabel(self.scrollAreaWidgetContents_2)
+        self.label_4.setObjectName('label_4')
+        self.label_4.setMinimumSize(QSize(0, 400))
+        self.label_4.setText('Hover Cursor here\nand Scroll down ...\n')
+        self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.verticalLayout_3.addWidget(self.label_4)
+        self.combo3 = QComboBox(self.scrollAreaWidgetContents_2)
+        self.combo3.setObjectName('combo3')
+        self.verticalLayout_3.addWidget(self.combo3)
+        self.combo2 = QComboBox(self.scrollAreaWidgetContents_2)
+        self.combo2.setObjectName('combo2')
+        self.verticalLayout_3.addWidget(self.combo2)
+        self.combo1 = QComboBox(self.scrollAreaWidgetContents_2)
+        self.combo1.setObjectName('combo1')
+        self.verticalLayout_3.addWidget(self.combo1)
+        self.label_6 = QLabel(self.scrollAreaWidgetContents_2)
+        self.label_6.setObjectName('label_6')
+        self.label_6.setMinimumSize(QSize(0, 400))
+        self.label_6.setText('Hover Cursor here\nand Scroll up ^^^^^^ ...')
+        self.label_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.verticalLayout_3.addWidget(self.label_6)
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_2.addWidget(self.scrollArea_2)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+        MainWindow.setCentralWidget(self.central_widget)
+        self.menubar = QMenuBar(MainWindow)
+        self.menubar.setObjectName('menubar')
+        self.menubar.setGeometry(QRect(0, 0, 600, 33))
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName('statusbar')
+        MainWindow.setStatusBar(self.statusbar)
+        QMetaObject.connectSlotsByName(MainWindow)

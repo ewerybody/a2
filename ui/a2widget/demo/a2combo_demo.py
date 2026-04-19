@@ -1,42 +1,24 @@
-import a2ctrl.connect
-from a2widget.a2combo import A2Combo
-from PySide6 import QtGui, QtCore, QtWidgets
+import a2uic
+from a2widget.demo import a2combo_demo_ui
+from PySide6 import QtCore, QtWidgets
 
 LIST_ITEMS = 'mango banana apple kiwi apple strawberry'.split()
+
 
 class ComboDemo(QtWidgets.QMainWindow):
     dict_changed = QtCore.Signal(tuple)
 
     def __init__(self):
         super().__init__()
-        sa = QtWidgets.QScrollArea(self)
-        sa.setWidgetResizable(True)
-        self.setCentralWidget(sa)
-        w = QtWidgets.QWidget(sa)
-        sa.setWidget(w)
-        vlay = QtWidgets.QVBoxLayout(w)
+        a2uic.check_module(a2combo_demo_ui)
+        self.ui = a2combo_demo_ui.Ui_MainWindow()
+        self.ui.setupUi(self)
 
-        spacer_widget1 = QtWidgets.QLabel('Hover Cursor here\nand Scroll down ...\nvvvvvvvv', self)
-        spacer_widget1.setMinimumHeight(200)
-        vlay.addWidget(spacer_widget1)
-
-        self.c = A2Combo()
-        self.c.addItems(LIST_ITEMS)
-        # self.c.changed.connect(self.change_received)
-
-        self.c2 = A2Combo()
-        self.c2.addItems(LIST_ITEMS)
-
-        self.c3 = A2Combo()
-        self.c3.addItems(LIST_ITEMS)
-        # a2ctrl.connect.control(self.c3, 'some_coords', self.some_dict, self.dict_changed)
-
-        for w in self.c, self.c2, self.c3:
-            vlay.addWidget(w)
-
-        spacer_widget2 = QtWidgets.QWidget(self)
-        spacer_widget2.setMinimumHeight(300)
-        vlay.addWidget(spacer_widget2)
+        for i in range(1, 4):
+            this_combo = getattr(self.ui, f'combo{i}')
+            this_combo.addItems(LIST_ITEMS)
+            this_combo = getattr(self.ui, f'a_combo{i}')
+            this_combo.addItems(LIST_ITEMS)
 
 
 def show():

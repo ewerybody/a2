@@ -1,7 +1,7 @@
 """
 A combobox that doesn't accidentally change if you scroll over it.
 
-Scolling a layout with a combobox underneath the cursor never
+Scrolling a layout with a combobox underneath the cursor never
 triggers enterEvent! But we wouldn't want to have these as valued
 inputs anyway. So there is now a timestamp set on enter.
 So hovering and changing the value via wheel still works while
@@ -17,15 +17,15 @@ HOVER_TIMEOUT = 0.4
 class A2Combo(QtWidgets.QComboBox):
     def __init__(self, *args, **kwargs):
         super(A2Combo, self).__init__(*args, **kwargs)
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
         self._in_time = None
 
     def focusInEvent(self, event):
-        self.setFocusPolicy(QtCore.Qt.WheelFocus)
+        self.setFocusPolicy(QtCore.Qt.FocusPolicy.WheelFocus)
         super(A2Combo, self).focusInEvent(event)
 
     def focusOutEvent(self, event):
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setFocusPolicy(QtCore.Qt.FocusPolicy.StrongFocus)
         super(A2Combo, self).focusOutEvent(event)
 
     def enterEvent(self, event: QtGui.QEnterEvent) -> None:
