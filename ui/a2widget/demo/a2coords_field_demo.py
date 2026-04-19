@@ -7,9 +7,10 @@ from a2widget.a2coords_field import A2CoordsField
 class CoordsFieldDemo(QtWidgets.QMainWindow):
     def __init__(self):
         super(CoordsFieldDemo, self).__init__()
+        self.setWindowFlag(QtCore.Qt.WindowType.WindowStaysOnTopHint, True)
         w = QtWidgets.QWidget(self)
         self.setCentralWidget(w)
-        vlay = QtWidgets.QVBoxLayout(w)
+        v_layout = QtWidgets.QVBoxLayout(w)
 
         self.c = A2CoordsField()
         self.c.changed_to.connect(self.change_received)
@@ -21,18 +22,18 @@ class CoordsFieldDemo(QtWidgets.QMainWindow):
         self.show_current_timer.timeout.connect(self.show_current_pos)
         self.show_current_timer.start()
 
-        self.some_dict = {'some_coords': (23, 42), 'something_else': 'blaaa'}
+        self.some_dict = {'some_coords': (23, 42), 'something_else': 'bla bla bla'}
         self.c3 = A2CoordsField()
         a2ctrl.connect.control(self.c3, 'some_coords', self.some_dict)
         self.c3.changed.connect(self.show_dict_change)
 
-        for l, w in [
+        for label, widget in [
             ('Simple field:', self.c),
             ('Constantly updated:', self.c2),
             ('Dictionary connected:', self.c3),
         ]:
-            vlay.addWidget(QtWidgets.QLabel(l))
-            vlay.addWidget(w)
+            v_layout.addWidget(QtWidgets.QLabel(label))
+            v_layout.addWidget(widget)
 
     def show_current_pos(self):
         self.c2.set_value(QtGui.QCursor.pos())
@@ -49,7 +50,7 @@ def show():
     app = QtWidgets.QApplication([])
     win = CoordsFieldDemo()
     win.show()
-    app.exec_()
+    app.exec()
 
 
 if __name__ == '__main__':

@@ -81,9 +81,9 @@ class A2CoordsField(QtWidgets.QWidget):
 
     def show_menu(self, menu):
         for func, icon in [
-            (self.copy, a2ctrl.Icons.copy),
+            (self.copy, a2ctrl.Icons.to_clipboard),
             (self.paste, a2ctrl.Icons.paste),
-            (self.pick, a2ctrl.Icons.number),
+            (self.pick, a2ctrl.Icons.locate),
         ]:
             menu.addAction(icon, func.__name__.title() + ' Coordinates', func)
 
@@ -113,9 +113,9 @@ class A2CoordsField(QtWidgets.QWidget):
 
         try:
             if ',' in text:
-                x, y = text.split(',')
+                x, y = text.split(',', maxsplit=1)
             elif ' ' in text:
-                x, y = text.split()
+                x, y = text.split(maxsplit=1)
             else:
                 log.error('No separator found to split values!')
                 return
