@@ -1,5 +1,4 @@
 import os
-import winreg
 from pathlib import Path
 
 import a2ahk
@@ -12,6 +11,7 @@ EXE_PATH = os.path.join('bin', f'{INKSCAPE}.exe')
 THIS_DIR = Path(__file__).parent.resolve()
 PATH_FILE_NAME = f'_ {INKSCAPE}_path.txt'
 PATH_FILE = THIS_DIR / PATH_FILE_NAME
+DEFAULT_ICON = a2toolbox.reg.DEFAULT_ICON
 
 
 def get_path() -> Path:
@@ -32,12 +32,10 @@ def get_path() -> Path:
         paths.append(this_exe)
 
     try:
-        svg_handler = a2toolbox.reg.read_value('.svg', hkey=winreg.HKEY_CLASSES_ROOT)
-        keys = a2toolbox.reg.read_keys(svg_handler, hkey=winreg.HKEY_CLASSES_ROOT)
-        if 'DefaultIcon' in keys:
-            path = a2toolbox.reg.read_value(
-                os.path.join(svg_handler, 'DefaultIcon'), hkey=winreg.HKEY_CLASSES_ROOT
-            ).strip('"')
+        svg_handler = a2toolbox.reg.read_value('.svg', hkey=a2toolbox.reg.HKCR)
+        keys = a2toolbox.reg.read_keys(svg_handler, hkey=a2toolbox.reg.HKCR)
+        if DEFAULT_ICON in keys:
+            path = a2toolbox.reg.read_value(os.path.join(svg_handler, DEFAULT_ICON), hkey='CR').strip('"')
             if is_inkscape_exe(path) and not any(a2path.is_same(p, path) for p in paths):
                 paths.append(path)
     except FileNotFoundError:
