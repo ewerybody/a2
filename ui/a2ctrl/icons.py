@@ -8,26 +8,25 @@ from PySide6 import QtGui, QtCore, QtSvg
 import a2log
 import a2core
 import a2path
+import a2theme
 
 
 log = a2log.get(__name__)
 ICO_PATH = None
-DEFAULT_ALPHA = 0.6
+DEFAULT_ALPHA = 1
 LOW_ALPHA = 0.25
 DEFAULT_NAME = f'{a2core.NAME}icon'
-ICON_FORMATS = ['.svg', '.png', '.ico']
-ICON_TYPES = [DEFAULT_NAME + ext for ext in ICON_FORMATS]
+ICON_FORMATS = '.ico', '.svg', '.png'
+ICON_TYPES = tuple(DEFAULT_NAME + ext for ext in ICON_FORMATS)
 ICON_OBJ_INST_ERROR = 'Icons() has already been instantiated!\nGet it with .inst()'
-_FULL_COLOR_ICONS = ('a2*', 'autohotkey', 'github')
 _PLACEHOLDER_ICON = 'placeholder'
-_IGNORE_ICONS = ('_ *', 'telegram_join', 'css_*', 'logo_*', _PLACEHOLDER_ICON)
 Q_ICON_FORMAT = QtGui.QImage.Format.Format_ARGB32
 
 
 class Ico(QtGui.QIcon):
     """
     Handy QIcon that:
-    * recognizes names in our resources dir,
+    * recognizes names in our theme dir,
     * can directly render from svg,
     * have a tinted version if needed.
     """
@@ -56,8 +55,7 @@ class Ico(QtGui.QIcon):
             self.path = ico_name
         else:
             if Ico.ico_path is None:
-                Ico.ico_path = os.path.join(a2core.get().paths.a2, 'ui', 'res', '%s.svg')
-                # log.info('getting Ico.ico_path: %s', Ico.ico_path)
+                Ico.ico_path = os.path.join(a2core.get().paths.a2, 'theme', a2theme.get(), '%s.ico')
 
             self.path = Ico.ico_path % ico_name
             if not os.path.isfile(self.path):
@@ -182,53 +180,32 @@ class _Icons:
         self.a2x = self._ico_placeholder
         self.autohotkey = self._ico_placeholder
         self.github = self._ico_placeholder
+        self.telegram = self._ico_placeholder
 
-        self.button = self._uico_placeholder
+        self.arrow_left = self._uico_placeholder
+        self.arrow_right = self._uico_placeholder
         self.check = self._uico_placeholder
-        self.check_circle = self._uico_placeholder
+        self.checkbox_hover = self._uico_placeholder
+        self.checkbox_off = self._uico_placeholder
+        self.checkbox_on = self._uico_placeholder
         self.clear = self._uico_placeholder
-        self.cloud_download = self._uico_placeholder
-        self.code = self._uico_placeholder
-        self.combo = self._uico_placeholder
         self.copy = self._uico_placeholder
-        self.cut = self._uico_placeholder
-        self.delete = self._uico_placeholder
-        self.down = self._uico_placeholder
-        self.down_align = self._uico_placeholder
-        self.down_circle = self._uico_placeholder
-        self.edit = self._uico_placeholder
-        self.error = self._uico_placeholder
-        self.file_download = self._uico_placeholder
         self.folder = self._uico_placeholder
-        self.folder2 = self._uico_placeholder
-        self.folder_add = self._uico_placeholder
-        self.gitter = self._uico_placeholder
-        self.group = self._uico_placeholder
-        self.help = self._uico_placeholder
-        self.keyboard = self._uico_placeholder
-        self.label = self._uico_placeholder
-        self.label_plus = self._uico_placeholder
-        self.list_add = self._uico_placeholder
         self.locate = self._uico_placeholder
         self.more = self._uico_placeholder
         self.number = self._uico_placeholder
         self.paste = self._uico_placeholder
-        self.reload = self._uico_placeholder
-        self.rollback = self._uico_placeholder
-        self.scope = self._uico_placeholder
-        self.scope_exclude = self._uico_placeholder
-        self.scope_global = self._uico_placeholder
-        self.string = self._uico_placeholder
-        self.telegram = self._uico_placeholder
-        self.text = self._uico_placeholder
-        self.up = self._uico_placeholder
-        self.up_align = self._uico_placeholder
+        self.placeholder = self._uico_placeholder
+        self.select_list = self._uico_placeholder
+        self.switch = self._uico_placeholder
+        self.to_clipboard = self._uico_placeholder
+        self.trash = self._uico_placeholder
         self.volume_down = self._uico_placeholder
         self.volume_up = self._uico_placeholder
         # Icons end
 
 
-Icons = _Icons.inst()
+Icons: _Icons = _Icons.inst()
 
 
 def get(current_icon, folder, fallback=None):
@@ -250,56 +227,7 @@ def get(current_icon, folder, fallback=None):
     return current_icon
 
 
-def _update_icon_stub():
-    """Browse the resource dir for icons and add it to this file."""
-    from fnmatch import fnmatch
-
-    with open(__file__) as file_obj:
-        content = file_obj.read()
-
-    lines = []
-    full_color = set()
-    lib_icons = set()
-    in_icons = False
-
-    for line in content.split('\n'):
-        if line.endswith('# Icons start'):
-            lines.append(line)
-
-            in_icons = True
-            res_path = os.path.abspath(os.path.join(__file__, '..', '..', 'res'))
-            for icon_item in a2path.iter_types(res_path, ICON_FORMATS):
-                if any(fnmatch(icon_item.base, name) for name in _IGNORE_ICONS):
-                    continue
-
-                if any(fnmatch(icon_item.base, name) for name in _FULL_COLOR_ICONS):
-                    full_color.add(icon_item.base)
-                else:
-                    lib_icons.add(icon_item.base)
-
-            indent = ' ' * 8
-            for name in sorted(full_color):
-                lines.append(f'{indent}self.{name} = self._ico_placeholder')
-            lines.append('')
-            for name in sorted(lib_icons):
-                lines.append(f'{indent}self.{name} = self._uico_placeholder')
-
-        if line.endswith('# Icons end'):
-            in_icons = False
-        if in_icons:
-            continue
-        lines.append(line)
-
-    new_content = '\n'.join(lines)
-    num_icons = len(full_color) + len(lib_icons)
-    if new_content != content:
-        new_name = __file__ + ' _ changed'
-        with open(new_name, 'w') as file_obj:
-            file_obj.write(new_content)
-        print(f'Total of {num_icons} icons written into the code.look into {new_name} to see the changes!')
-    else:
-        print(f'Nothing changed! All {num_icons} icons already listed!')
-
-
 if __name__ == '__main__':
-    _update_icon_stub()
+    import a2dev.build.icons_stub
+
+    a2dev.build.icons_stub.main()
