@@ -1,13 +1,13 @@
 {
-    "cancel": "Abbrechen",
-    "yes": "Ja",
-    "no": "Nein",
-    "close": "Schließen",
-    "current": "aktuell",
-    "copy": "Kopieren",
-    "paste": "Einfügen",
-    "show_in_web": "Im Web-Browser Anzeigen",
-    "explore": "Im Explorer Anzeigen",
-    "to_clipboard": "In Clipboard Kopieren",
-    "ask_net_connection": "Sind Sie mit dem Internet verbunden?"
+    "ask_net_connection":"Sind Sie mit dem Internet verbunden?",
+    "cancel":"Abbrechen",
+    "close":"Schließen",
+    "copy":"Kopieren",
+    "current":"aktuell",
+    "explore":"In Explorer anzeigen",
+    "no":"Nein",
+    "paste":"Einfügen",
+    "show_in_web":"Im Web-Browser Anzeigen",
+    "to_clipboard":"In Clipboard Kopieren",
+    "yes":"Ja"
 }
