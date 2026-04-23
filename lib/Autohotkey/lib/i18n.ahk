@@ -20,7 +20,8 @@ i18n_locale(caller_file, _language := "") {
     return _i18n_load(
         i18n_dir "\en.json",
         i18n_dir "\" _language ".json",
-        "locale at '" module_dir "'"
+        "Locale at '" module_dir "'",
+        caller_file
     )
 }
 
@@ -37,10 +38,11 @@ i18n_domain(domain, caller_file := "", _language := "") {
 
     ; For **testing purposed** this can be forced to use a dedicated language.
     _language := i18n_get_language(_language)
+    caller_module := caller_file ? ' at "' path_dirname(caller_file) '"' : ""
     return _i18n_load(
         i18n_dir "\en\" domain ".json",
         i18n_dir "\" _language "\" domain ".json",
-        "domain '" domain "'"
+        "Domain '" domain "'"
     )
 }
 
@@ -87,9 +89,18 @@ i18n_get_system_language() {
     return SubStr(StrGet(buf), 1, 2)
 }
 
-_i18n_load(en_path, lang_path, error_context) {
-    if !FileExist(en_path)
-        throw Error('No english i18n-file at "' en_path '"! We ALWAYS need a basic english file!')
+_i18n_load(en_path, lang_path, error_context, caller_file := "") {
+    base_name := path_basename(en_path)
+    if !FileExist(en_path) {
+        this_error := Error(
+            'No such i18n-file "' base_name '"!',
+            'Missing: "' en_path '"! We ALWAYS need a basic english file!',
+            error_context
+        )
+        if caller_file && path_is_file(caller_file)
+            this_error.File := caller_file
+        throw this_error
+    }
 
     en_obj := Jxon_Read(en_path)
 
