@@ -35,6 +35,16 @@
 #Include <windows>
 
 /**
+ *
+ * @param title
+ * @param opts
+ * @returns {A2Dialog}
+ */
+a2dlg(title, opts := {}) {
+    return A2Dialog(title, opts)
+}
+
+/**
  * A2Dialog - composable dialog builder
  */
 class A2Dialog {
@@ -68,6 +78,7 @@ class A2Dialog {
      *
      * @param {(String)} title - Dialog Window title.
      * @param {(Object)} opts - Options: {w, pad, flags, theme, dark, font: {face, size}}
+     * @returns {A2Dialog}
      */
     __New(title, opts := {}) {
         _a2dlg_init()
@@ -164,9 +175,11 @@ class A2Dialog {
      * @param {(String)} [color] - Optional 6-digit RRGGBB hex color for the icon
      * @param {(String)} [subtext] - Optional muted line below the label
      * @param {(Object)} [opts] - Optional options {
-     *  active: {Boolean} to dim the control on creation.,
-     *  glyph_color: {String} extra color for the glyph if it should be different.,
-     *  glyph_size: {Integer} extra size to make the glyph appear bigger or smaller
+     *  - `active`: {Boolean} to dim the control on creation.,
+     *  - `glyph_color`: {String} extra color for the glyph if it should be different.,
+     *  - `glyph_size`: {Integer} extra size to make the glyph appear bigger or smaller.
+     *  - `text_size`: {Integer} extra size to make the text appear bigger or smaller.
+     *  - `sub_size`: {Integer} extra size to make the sub text appear bigger or smaller.
      *  }
      * @returns  {glyph: ctrl, text: ctrl, items: [glyph_ctrl, text_ctrl]} - either can be updated later
      */
@@ -187,7 +200,8 @@ class A2Dialog {
         if opts.HasProp("active") and !opts.active
             glyph_ctrl.SetFont("c" this.c.sub)
 
-        this.gui.SetFont("s" this.font_size " w" this.font_weight_normal " c" color, this.font_face)
+        text_size := opts.HasProp("text_size") ? opts.text_size : this.font_size
+        this.gui.SetFont("s" text_size " w" this.font_weight_normal " c" color, this.font_face)
         msg_x := pad * 2 + glyph_box
         msg_w := this.width - pad - msg_x
         text_ctrl := this.gui.AddText("x" msg_x " y" y " w" msg_w " Wrap", text)
@@ -195,7 +209,8 @@ class A2Dialog {
         this.space(Max(_a2dlg_get_height(glyph_ctrl), _a2dlg_get_height(text_ctrl) + 4))
 
         if subtext {
-            this.gui.SetFont("s" (this.font_size - 1) " c" this.c.sub, this.font_face)
+            sub_size := opts.HasProp("sub_size") ? opts.sub_size : this.font_size - 1
+            this.gui.SetFont("s" sub_size " c" this.c.sub, this.font_face)
             this.gui.AddText("x" msg_x " y" this.height " w" msg_w, subtext)
             this.space(20)
         }
@@ -285,6 +300,9 @@ class A2Dialog {
             opts := "x" this.pad " y" this.height " " (max_width ? " w" w " " : "") pos_opts
             return {opts: opts, x: this.pad, y: this.height, w: w}
         }
+        if !IsObject(ctrl)
+            throw Error('Need Object align next to! Received: "' Type(ctrl) '"')
+
         ctrl.GetPos(&last_x, &last_y, &last_w)
         last_right := last_x + last_w + this.gap
         if last_right > this.width
@@ -293,6 +311,7 @@ class A2Dialog {
                 '  type: ' Type(ctrl) ' x: ' last_x ' w: ' last_w '`n'
                 'will put it outside of the dialogs width (' this.width ')!'
             )
+
         w := this.width - last_x - last_w - this.pad * 2
         x := last_x + last_w + this.gap
         opts := "x" x " y" last_y " " (max_width ? " w" w " " : "") pos_opts
@@ -869,6 +888,7 @@ a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
     dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok()
     _a2dlg_resolve(dlg, center_on_window)
+    WinWaitClose("ahk_id " dlg.hwnd)
 }
 
 /**
@@ -879,12 +899,14 @@ a2dlg_info(msg, title := "a2 Information", dark := -1, center_on_window := 0) {
  * @param {(Boolean)} dark - Force dark/light theme; omit to follow the system setting
  * @param {(Integer)} [center_on_window] - Optional handle of a window to center the dialog on.
  */
-a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_window := 0) {
+a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_window := 0, select_line := 0) {
     dlg := _a2dlg_make(title, msg, "❌", "err", 420, dark, &center_on_window)
     dlg.msg := msg
 
     if (error_detail != "") {
-        dlg.code_box(error_detail, 3,, read_only := true, bottom_line_color:=dlg.c.err)
+        num_lines := Max(Min(string_count(error_detail, "`n"), 10), 3)
+        dlg.width += 200
+        code_ctrl := dlg.code_box(error_detail, num_lines,, read_only := true, bottom_line_color:=dlg.c.err)
         dlg.msg .= "`n" error_detail
         dlg.space(6)
         dlg.sep()
@@ -892,6 +914,9 @@ a2dlg_error(msg, title := "a2 Error", error_detail := "", dark := -1, center_on_
     dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok(, , , bg := dlg.c.err, fg := "F8F8F8")
     _a2dlg_resolve(dlg, center_on_window)
+    if (error_detail && select_line != 0)
+        a2dlg_select_line(error_detail, select_line, code_ctrl.Hwnd)
+    WinWaitClose("ahk_id " dlg.hwnd)
 }
 
 /**
@@ -948,11 +973,24 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_
     dlg.btn_ok_cancel(, () => dlg.result := edit.Value)
     edit.Focus()
     _a2dlg_resolve(dlg, center_on_window)
+    WinWaitClose("ahk_id " dlg.hwnd)
     return dlg.cancelled ? "" : dlg.result
 }
 
+
+a2dlg_select_line(text, line_nr, handle) {
+    pos_start := InStr(text, "`n",,,line_nr - 2)
+    pos_end := InStr(text, "`n",,,line_nr - 1)
+    EM_SET_SEL := 0xB1
+    SendMessage(EM_SET_SEL, pos_start, pos_end, handle)
+}
+
+
 ; Helper functions -------------------------------------------------------------
 
+/**
+ * @returns {A2Dialog}
+ */
 _a2dlg_make(title, msg, glyph, glyph_color, w, dark := -1, &center_on_window := 0) {
     if (center_on_window == 1)
         center_on_window := WinExist('A')
@@ -973,7 +1011,6 @@ _a2dlg_resolve(dlg, center_on_window) {
         dlg.show(,center_on_window)
     else
         dlg.show()
-    WinWaitClose("ahk_id " dlg.hwnd)
 }
 
 _a2dlg_confirm(msg, title, ok_label, cancel_label := "", dark := -1, center_on_window := 0) {
@@ -982,6 +1019,7 @@ _a2dlg_confirm(msg, title, ok_label, cancel_label := "", dark := -1, center_on_w
     dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok_cancel(, , ok_label, cancel_label)
     _a2dlg_resolve(dlg, center_on_window)
+    WinWaitClose("ahk_id " dlg.hwnd)
     return !dlg.cancelled
 }
 
