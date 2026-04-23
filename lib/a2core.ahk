@@ -3,6 +3,16 @@
 #include <path>
 
 /**
+ * DX Helper to get class passed.
+ * @param data_dir
+ * @returns {A2Core_Class}
+ */
+_a2_core_get(data_dir) {
+    return A2Core_Class(data_dir)
+}
+
+
+/**
  * a2 global object definition
  */
 Class A2Core_Class {
@@ -41,7 +51,7 @@ Class A2Core_Class {
         this.cfg := {}
 
         this._check_sqlite()
-        this.db := _Ca2DB(data_path)
+        this.db := _a2_core_get_db(data_path)
     }
 
     _check_sqlite() {
@@ -65,6 +75,15 @@ Class A2Core_Class {
         ini_code := "[Main]`nDllPath=" dll_path
         FileAppend(ini_code, ini_path)
     }
+}
+
+/**
+ * DX Helper to get class passed.
+ * @param data_path
+ * @returns {_Ca2DB}
+ */
+_a2_core_get_db(data_path) {
+    return _Ca2DB(data_path)
 }
 
 
