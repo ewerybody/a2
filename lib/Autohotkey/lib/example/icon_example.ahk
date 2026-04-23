@@ -60,5 +60,7 @@ dlg.esc_to_close()
 
 pick_dialog_icon(*) {
     result := icon_pick(dlg.hwnd)
+    if !result
+        return
     dlg.set_icon(result.file, result.idx)
 }
