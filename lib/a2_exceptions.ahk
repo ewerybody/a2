@@ -89,83 +89,83 @@ a2_on_startup_exception(popup_text, root_script_path) {
  *     }
  *   ```
  * @param {(String)} title
- * @param {(Error)} exception - Exception object with the members:
+ * @param {Error} exception - Exception object with the members:
  *   .Extra, .File, .Line, .Message, .Stack, .What
  * @param {(String)} mode
  */
 _a2_exceptions_handle(title, exception, mode := "") {
     code_lines := _get_neighbor_lines(exception.File, exception.Line, 3)
-
-    ; msg := "There was an exception thrown:`n`n" A_Tab exception.Message "`n`n"
-    ; if (exception.What)
-    ;     msg .= 'What: "' exception.What '"`n'
-    ; if (exception.Extra)
-    ;     msg .= 'Context: "' exception.Extra '"`n'
-    ; msg .= "`n" "file: " path_basename(exception.File) ", Line: " exception.Line ":`n`n"
-    ; ; msg .= code_lines "`n`n"
-    ; msg .= "file path: " exception.File
-    ; title := title ": " exception.Message
-
     cursor_reset()
 
     opts := { w: 680, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
     dlg := a2dlg(title, opts)
-    dlg.text('There was an exception thrown:')
+    dlg.text('There was an ' Type(exception) ' thrown:')
     dlg.space(4)
     row := dlg.glyph_row("❌", exception.Message,,, {text_size: dlg.font_size + 5, glyph_size: dlg.font_size + 8, glyph_color: dlg.c.err})
     dlg.space(4)
     ; dlg.sep()
-    dlg.label(exception.What '`n' 'Context: "' exception.Extra '"`n')
+    if exception.What
+        dlg.label(exception.What)
+    if exception.Extra
+        dlg.label('Context: "' exception.Extra '"')
 
     num_lines := Max(Min(string_count(code_lines, "`n"), 10), 3)
     code_ctrl := dlg.code_box(code_lines, num_lines,, read_only := true, bottom_line_color:=dlg.c.err)
     dlg.space(6)
 
-    if (exception.Stack) {
-        dlg.heading("Call Stack: ")
-        root := IsSet(a2) ? a2.paths.a2 : path_dirname(A_LineFile, 3) "\"
-        root_len := StrLen(root)
-        lines := StrSplit(exception.Stack, "`n")
-        for i, line in lines {
-            pos := InStr(line, ".ahk (")
-            if pos == 0
-                continue
-            path := SubStr(line, 1, pos + 4)
-            pos_num_end := InStr(line, ") ",, pos + 6)
-            rest := SubStr(line, pos_num_end + 1)
-
-            context_end := InStr(rest, "]")
-            context := SubStr(rest, 2, context_end)
-            rest := string_strip(SubStr(rest, context_end + 1))
-
-            line_nr := SubStr(line, pos + 6, pos_num_end - pos - 6)
-            rel_path := string_startswith(path, root) ? SubStr(path, root_len) : path
-            text := lines.Length - i - 1 ': <a href="' path '" id="file">' rel_path ' ( ' line_nr ' )</a>'
-            text .= " in " context
-            dlg.gui.SetFont("s" dlg.font_size " w" dlg.font_weight_normal " c" dlg.c.text, dlg.font_face)
-            link_ctrl := dlg.add("Link", "+Wrap",, text)
-            link_ctrl.OnEvent("Click", _stack_link_click)
-            link_ctrl.line_nr := line_nr
-            dlg.gui.SetFont("s" dlg.font_size " w" 10 " c" dlg.c.sub, "Consolas")
-            dlg.height -= 7
-            dlg.add('text',,, "  " rest)
-        }
-    }
+    if (exception.Stack)
+        _a2_exceptions_build_stack(dlg, exception.Stack)
 
     dlg.esc_to_close()
+    dlg.btn_ok(, , , bg := dlg.c.err, fg := "F8F8F8")
     dlg.show()
     a2dlg_select_line(code_lines, 4, code_ctrl.Hwnd)
     WinWaitClose("ahk_id " dlg.hwnd)
 }
 
-_stack_link_click(ctrl, ID, HREF) {
+/**
+ * @param {A2Dialog} dlg
+ * @param {(String)} stack
+ */
+_a2_exceptions_build_stack(dlg, stack) {
+    dlg.heading("Call Stack: ")
+    root := IsSet(a2) ? a2.paths.a2 : path_dirname(A_LineFile, 3) "\"
+    root_len := StrLen(root)
+    lines := StrSplit(stack, "`n")
+    for i, line in lines {
+        pos := InStr(line, ".ahk (")
+        if pos == 0
+            continue
+        path := SubStr(line, 1, pos + 4)
+        pos_num_end := InStr(line, ") ",, pos + 6)
+        rest := SubStr(line, pos_num_end + 1)
+
+        context_end := InStr(rest, "]")
+        context := SubStr(rest, 2, context_end)
+        rest := string_strip(SubStr(rest, context_end + 1))
+
+        line_nr := SubStr(line, pos + 6, pos_num_end - pos - 6)
+        rel_path := string_startswith(path, root) ? SubStr(path, root_len) : path
+        text := lines.Length - i - 1 ': <a href="' path '" id="file">' rel_path ' ( ' line_nr ' )</a>'
+        text .= " in " context
+        dlg.gui.SetFont("s" dlg.font_size " w" dlg.font_weight_normal " c" dlg.c.text, dlg.font_face)
+        link_ctrl := dlg.add("Link", "+Wrap",, text)
+        link_ctrl.OnEvent("Click", _a2_exceptions_stack_link_click)
+        link_ctrl.line_nr := line_nr
+        dlg.gui.SetFont("s" dlg.font_size " w" 10 " c" dlg.c.sub, "Consolas")
+        dlg.height -= 7
+        dlg.add('text',,, "  " rest)
+    }
+}
+
+_a2_exceptions_stack_link_click(ctrl, ID, HREF) {
     if ID == 'file'{
-        _open_in_editor(HREF, ctrl.line_nr)
+        _a2_exceptions_open_in_editor(HREF, ctrl.line_nr)
         return
     }
 }
 
-_open_in_editor(file_path, line) {
+_a2_exceptions_open_in_editor(file_path, line) {
     editor := a2.cfg["code_editor"]
     base := path_basename(editor)
     if !editor OR !base
