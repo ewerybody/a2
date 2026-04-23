@@ -1,7 +1,11 @@
-a2_on_runtime_exception(exception) {
+#Include <a2dlg>
+
+a2_on_runtime_exception(exception, mode := "") {
     ; Autohotkey already builds a convenient exception object at runtime.
-    _a2_exceptions_handle("a2 Runtime Error", exception)
-    Reload
+    _a2_exceptions_handle("a2 Runtime Error", exception, mode)
+    if (mode != "Return")
+        Reload()
+    return 1
 }
 
 a2_on_startup_exception(popup_text, root_script_path) {
@@ -13,7 +17,7 @@ a2_on_startup_exception(popup_text, root_script_path) {
     IN_INCL := "in " INCL_FILE
     ERR := "Error"
     INCL_ERROR := ERR " " IN_INCL
-    OTHER_ERRR := ERR " at line "
+    OTHER_ERROR := ERR " at line "
 
     exception := {}
     If string_startswith(lines[1], INCL_ERROR) {
@@ -22,8 +26,8 @@ a2_on_startup_exception(popup_text, root_script_path) {
         exception.Message := string_strip(lines[2])
         _exception_search_lines(lines, exception)
     }
-    else If string_startswith(lines[1], OTHER_ERRR) AND InStr(lines[1], IN_INCL) {
-        len_mrk := StrLen(OTHER_ERRR) + 1
+    else If string_startswith(lines[1], OTHER_ERROR) AND InStr(lines[1], IN_INCL) {
+        len_mrk := StrLen(OTHER_ERROR) + 1
         nr_end := InStr(lines[1], IN_INCL,, len_mrk)
         exception.Line := string_strip(SubStr(lines[1], len_mrk, nr_end - len_mrk))
         file := string_strip(SubStr(lines[1], nr_end + StrLen(IN_INCL)))
@@ -43,8 +47,8 @@ a2_on_startup_exception(popup_text, root_script_path) {
         exception.File := root_script_path
         _exception_search_lines(lines, exception)
     }
-    else if string_startswith(lines[1], OTHER_ERRR) {
-        len_mrk := StrLen(OTHER_ERRR) + 1
+    else if string_startswith(lines[1], OTHER_ERROR) {
+        len_mrk := StrLen(OTHER_ERROR) + 1
         nr_end := InStr(lines[1], ".",, len_mrk)
         exception.Line := string_strip(SubStr(lines[1], len_mrk, nr_end - len_mrk))
         exception.File := root_script_path
@@ -60,107 +64,135 @@ a2_on_startup_exception(popup_text, root_script_path) {
         for i, line in lines {
             msg .= i " " line "`n"
         }
-        msgbox_error("Unhandled Startup Error:`n" . msg)
+        msgbox_error("Unhandled Startup Error:`n" msg)
     }
 
     _a2_exceptions_handle("a2 Startup Error", exception)
 }
 
-_a2_exceptions_handle(title, exception) {
-    ; Handle exceptions happening after load time.
-    ; This will either open your code editor with the offending line
-    ; selected of make the UI appear with the right module showing.
-    ; command-line args for VS Code:
-    ; https://code.visualstudio.com/docs/editor/command-line
-    ; Maybe we could have a {executable: pattern} map for the different
-    ; IDEs? like {
-    ;    "Code.exe": "--reuse-window --goto \"{file}:{line}:{char}\"",
-    ;    "nodepad++.exe": "\"{file}\" -n{line} -c{char}",
-    ;    "subl.exe": "\"{file}:{line}:{char}\""
-    ;    "": "\"{file}:{line}\"",
-    ; }
-    ;
+/**
+ * Handle exceptions happening after load time.
+ *
+ * This will either open your code editor with the offending line selected or
+ * make the UI appear with the right module showing.
+ * command-line args for VS Codium/Code:
+ *  https://code.visualstudio.com/docs/editor/command-line
+ *
+ * Maybe we could have a {executable: pattern} map for the different
+ * IDEs? like::
+ *   ```
+ *     {
+ *       "VSCodium.exe/Code.exe": "--reuse-window --goto \"{file}:{line}:{char}\"",
+ *       "notepad++.exe": "\"{file}\" -n{line} -c{char}",
+ *        "sublime.exe": "\"{file}:{line}:{char}\""
+ *       "": "\"{file}:{line}\"",
+ *     }
+ *   ```
+ * @param {(String)} title
+ * @param {(Error)} exception - Exception object with the members:
+ *   .Extra, .File, .Line, .Message, .Stack, .What
+ * @param {(String)} mode
+ */
+_a2_exceptions_handle(title, exception, mode := "") {
     code_lines := _get_neighbor_lines(exception.File, exception.Line, 3)
 
-    msg := "There was an exception thrown:`n`n" A_Tab exception.Message "`n`n"
-    if (exception.Extra) {
-        msg .= 'command: "' exception.What  '"`n'
-        msg .= 'value: "' . exception.Extra . '"`n`n'
-    }
-    else
-        msg .= 'what: "' exception.What '"`n`n'
-    msg .= "file: " path_basename(exception.File) ", Line: " exception.Line ":`n`n"
-    msg .= code_lines "`n`n"
-    msg .= "file path: " exception.File
-    title := title ": " exception.Message
-    _a2ui_on_error_change_buttons(title)
+    ; msg := "There was an exception thrown:`n`n" A_Tab exception.Message "`n`n"
+    ; if (exception.What)
+    ;     msg .= 'What: "' exception.What '"`n'
+    ; if (exception.Extra)
+    ;     msg .= 'Context: "' exception.Extra '"`n'
+    ; msg .= "`n" "file: " path_basename(exception.File) ", Line: " exception.Line ":`n`n"
+    ; ; msg .= code_lines "`n`n"
+    ; msg .= "file path: " exception.File
+    ; title := title ": " exception.Message
 
-    SetTimer _a2ui_on_error_change_buttons, 50
     cursor_reset()
-    result := msgbox_yesnocancel(msg, title)
-    ; MsgBox, 16403, %title%, %msg%
 
-    If (result == "Yes")
-    {
-        editor := a2.cfg.code_editor
-        base := path_basename(editor)
-        if !editor OR !base
-            MsgBox("editor: " . editor . "`nbase: " . base)
-        file_line := exception.File ":" exception.Line
-        Run('"' . editor . '" --reuse-window --goto "' . file_line . '"')
+    opts := { w: 680, flags: "+AlwaysOnTop -MaximizeBox -MinimizeBox" }
+    dlg := a2dlg(title, opts)
+    dlg.text('There was an exception thrown:')
+    dlg.space(4)
+    row := dlg.glyph_row("❌", exception.Message,,, {text_size: dlg.font_size + 5, glyph_size: dlg.font_size + 8, glyph_color: dlg.c.err})
+    dlg.space(4)
+    ; dlg.sep()
+    dlg.label(exception.What '`n' 'Context: "' exception.Extra '"`n')
+
+    num_lines := Max(Min(string_count(code_lines, "`n"), 10), 3)
+    code_ctrl := dlg.code_box(code_lines, num_lines,, read_only := true, bottom_line_color:=dlg.c.err)
+    dlg.space(6)
+
+    if (exception.Stack) {
+        dlg.heading("Call Stack: ")
+        root := IsSet(a2) ? a2.paths.a2 : path_dirname(A_LineFile, 3) "\"
+        root_len := StrLen(root)
+        lines := StrSplit(exception.Stack, "`n")
+        for i, line in lines {
+            pos := InStr(line, ".ahk (")
+            if pos == 0
+                continue
+            path := SubStr(line, 1, pos + 4)
+            pos_num_end := InStr(line, ") ",, pos + 6)
+            rest := SubStr(line, pos_num_end + 1)
+
+            context_end := InStr(rest, "]")
+            context := SubStr(rest, 2, context_end)
+            rest := string_strip(SubStr(rest, context_end + 1))
+
+            line_nr := SubStr(line, pos + 6, pos_num_end - pos - 6)
+            rel_path := string_startswith(path, root) ? SubStr(path, root_len) : path
+            text := lines.Length - i - 1 ': <a href="' path '" id="file">' rel_path ' ( ' line_nr ' )</a>'
+            text .= " in " context
+            dlg.gui.SetFont("s" dlg.font_size " w" dlg.font_weight_normal " c" dlg.c.text, dlg.font_face)
+            link_ctrl := dlg.add("Link", "+Wrap",, text)
+            link_ctrl.OnEvent("Click", _stack_link_click)
+            link_ctrl.line_nr := line_nr
+            dlg.gui.SetFont("s" dlg.font_size " w" 10 " c" dlg.c.sub, "Consolas")
+            dlg.height -= 7
+            dlg.add('text',,, "  " rest)
+        }
     }
-    If (result == "No")
-    {
 
-        ui_func := "a2ui"
-        if IsObject(ui_func)
-            %ui_func%()
-    }
-
+    dlg.esc_to_close()
+    dlg.show()
+    a2dlg_select_line(code_lines, 4, code_ctrl.Hwnd)
+    WinWaitClose("ahk_id " dlg.hwnd)
 }
 
-_a2ui_on_error_change_buttons(_init_title := "") {
-    static title
-    if (_init_title !== "") {
-        title := _init_title
-        Return
+_stack_link_click(ctrl, ID, HREF) {
+    if ID == 'file'{
+        _open_in_editor(HREF, ctrl.line_nr)
+        return
     }
-
-    If (!WinExist(title))
-        return ; Keep waiting.
-    SetTimer , 0
-    WinActivate
-    ControlSetText "Button1", "Edit Code"
-    ControlSetText "Button2", "Open UI"
-    ControlSetText "Button4", "..."
 }
+
+_open_in_editor(file_path, line) {
+    editor := a2.cfg["code_editor"]
+    base := path_basename(editor)
+    if !editor OR !base
+        MsgBox("editor: " editor "`n" "base: " base)
+    file_line := file_path ":" line
+    Run('"' editor '" --reuse-window --goto "' file_line '"')
+}
+
 
 _get_neighbor_lines(file_path, line_nr, num_neighbor_lines) {
     start_line := line_nr - num_neighbor_lines - 1
     end_line := line_nr + num_neighbor_lines
     lines := []
     file_obj := FileOpen(file_path, "r")
-    Loop(end_line)
-    {
+    Loop(end_line) {
         this_line := file_obj.ReadLine()
         if (A_Index >= start_line and A_Index <= end_line)
             lines.push(this_line)
     }
     file_obj.close()
 
-    ; Loop(num_neighbor_lines * 2 + 1)
-    for this_line in lines
-    {
-        this_nr := start_line + A_Index
-        ; this_line := file_obj.ReadLine()
+    for this_line in lines {
         if !this_line
             Continue
         this_line := StrReplace(this_line, A_Tab, "    ")
-
-        new_line := ""
-        ; Optinal line number? But looks actually way better!
-        new_line .= this_nr ": "
-
+        this_nr := start_line + A_Index
+        new_line := this_nr ": "
         if (this_nr == line_nr)
             new_line .= "-->"
         else
@@ -170,23 +202,21 @@ _get_neighbor_lines(file_path, line_nr, num_neighbor_lines) {
         max_len := 64
         if StrLen(new_line) > max_len
             new_line := SubStr(new_line, 1, max_len - 3) "...`n"
-
         code_lines .= new_line
     }
-
     return code_lines
 }
 
 _exception_search_lines(lines, exception) {
     CMD_MARKER := "Specifically:"
-    LINE_MARKR := "--->"
+    LINE_MARKER := "--->"
 
     for i, line in lines {
         if string_startswith(line, CMD_MARKER) AND !exception.What {
             exception.What := string_unquote(string_strip(SubStr(line, StrLen(CMD_MARKER) + 1)))
         }
-        if string_startswith(line, LINE_MARKR) {
-            len_mrk := StrLen(LINE_MARKR) + 1
+        if string_startswith(line, LINE_MARKER) {
+            len_mrk := StrLen(LINE_MARKER) + 1
             len_sub := InStr(line, ":") - len_mrk
             exception.Line := string_strip(SubStr(line, len_mrk, len_sub))
             Return

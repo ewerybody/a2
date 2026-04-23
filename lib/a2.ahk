@@ -24,7 +24,7 @@ Persistent
 ; build essential paths and objects
 root_dir := path_dirname(A_ScriptDir) "\"
 data_dir := a2_get_user_data_path(root_dir)
-global a2 := A2Core_Class(data_dir)
+global a2 := _a2_core_get(data_dir)
 a2.cfg := a2_get_user_config(data_dir)
 global A2Icons
 SetWorkingDir a2.paths.a2
@@ -39,8 +39,7 @@ if a2.cfg.get("auto_reload", 1)
     SetTimer _a2_check_changes, 1000
 
 OnExit(a2ui_exit)
-; OnError("a2_on_runtime_exception")
-
+OnError(a2_on_runtime_exception)
 
 ; TODO: make this depending on user-settings!
 if windows_is_dark()
