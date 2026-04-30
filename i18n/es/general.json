@@ -1,13 +1,13 @@
 {
-    "ask_net_connection":"",
-    "cancel":"",
-    "close":"",
-    "copy":"",
-    "current":"",
-    "explore":"",
-    "no":"",
-    "paste":"",
-    "show_in_web":"",
-    "to_clipboard":"",
-    "yes":""
+    "ask_net_connection":"¿Estás conectado a Internet?",
+    "cancel":"Cancelar",
+    "close":"Cerca",
+    "copy":"Copiar",
+    "current":"actual",
+    "explore":"Mostrar en el Explorador",
+    "no":"No",
+    "paste":"Insertar",
+    "show_in_web":"Mostrar en el navegador web",
+    "to_clipboard":"Copiar al portapapeles",
+    "yes":"Sí"
 }
