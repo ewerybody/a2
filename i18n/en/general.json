@@ -1,13 +1,13 @@
 {
-    "cancel": "Cancel",
-    "yes": "Yes",
-    "no": "No",
-    "close": "Close",
-    "current": "current",
-    "copy": "Copy",
-    "paste": "Paste",
-    "show_in_web": "Show in web browser",
-    "explore": "Show in Explorer",
-    "to_clipboard": "Copy to Clipboard",
-    "ask_net_connection": "Are you connected to the internet?"
+    "ask_net_connection":"Are you connected to the internet?",
+    "cancel":"Cancel",
+    "close":"Close",
+    "copy":"Copy",
+    "current":"current",
+    "explore":"Show in Explorer",
+    "no":"No",
+    "paste":"Paste",
+    "show_in_web":"Show in web browser",
+    "to_clipboard":"Copy to Clipboard",
+    "yes":"Yes"
 }
