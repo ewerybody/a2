@@ -1,13 +1,13 @@
 {
-    "ask_net_connection":"",
-    "cancel":"",
-    "close":"",
-    "copy":"",
-    "current":"",
-    "explore":"",
-    "no":"",
-    "paste":"",
-    "show_in_web":"",
-    "to_clipboard":"",
-    "yes":""
+    "ask_net_connection":"Apakah Anda terhubung ke internet?",
+    "cancel":"Batal",
+    "close":"Tutup",
+    "copy":"Salin",
+    "current":"saat ini",
+    "explore":"Tampilkan di Explorer",
+    "no":"Tidak",
+    "paste":"Tempel",
+    "show_in_web":"Tampilkan di browser web",
+    "to_clipboard":"Salin ke Clipboard",
+    "yes":"Ya"
 }
