@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - run: cinst autohotkey.install
+        shell: cmd
+      - run: npm install
+        shell: cmd
+      - run: npm test
+        shell: cmd
