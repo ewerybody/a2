@@ -1,13 +1,13 @@
 {
-    "ask_net_connection":"",
-    "cancel":"",
-    "close":"",
-    "copy":"",
-    "current":"",
-    "explore":"",
-    "no":"",
-    "paste":"",
-    "show_in_web":"",
-    "to_clipboard":"",
-    "yes":""
+    "ask_net_connection":"Вы подключены к интернету?",
+    "cancel":"Отменить",
+    "close":"Закрыть",
+    "copy":"Скопировать",
+    "current":"текущий",
+    "explore":"Показать в Проводнике",
+    "no":"Нет",
+    "paste":"Вставить",
+    "show_in_web":"Показать в браузере",
+    "to_clipboard":"Скопировать в буфер обмена",
+    "yes":"Да"
 }
