@@ -1,12 +1,12 @@
 #include %A_ScriptDir%\..\..\_a2dev_find_py.ahk
 #include %A_ScriptDir%\..\..\a2_globals.ahk
+#include <a2dlg>
 #include <string>
 #include <path>
-#include <msgbox>
 
 py_dir := path_dirname(a2dev_get_py())
 if (!py_dir) {
-    msgbox_error('Could not get "py_dir" from "path_dirname(a2dev_get_py())"')
+    a2dlg_error('Could not get "py_dir" from "path_dirname(a2dev_get_py())"')
     ExitApp
 }
 
@@ -27,7 +27,7 @@ for _, rel_path in files
 
     version_prefix := "__version__ = "
     if !string_startswith(version, version_prefix) {
-        msgbox_error("Cannot get version from " rel_path "!`nExpected line: >" version_prefix "<`nFound: " version)
+        a2dlg_error("Cannot get version from " rel_path "!`nExpected line: >" version_prefix "<`nFound: " version)
         ExitApp
     }
 
@@ -42,6 +42,6 @@ if (!version) {
     msg := "Unable to find any of those:`n  "
     msg .= string_join(files, "`n  ") . "`n"
     msg .= "Make sure at least one is installed!"
-    msgbox_error(msg, 'No PySide Found!')
+    a2dlg_error(msg, 'No PySide Found!')
 } else
     FileAppend version, "*"

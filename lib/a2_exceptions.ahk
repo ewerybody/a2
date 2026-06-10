@@ -64,7 +64,7 @@ a2_on_startup_exception(popup_text, root_script_path) {
         for i, line in lines {
             msg .= i " " line "`n"
         }
-        msgbox_error("Unhandled Startup Error:`n" msg)
+        a2dlg_error("Unhandled Startup Error:`n" msg)
     }
 
     _a2_exceptions_handle("a2 Startup Error", exception)

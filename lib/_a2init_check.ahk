@@ -9,7 +9,7 @@ _init_get_lib_path() {
         if path_is_dir(lib_path)
             return lib_path
         else
-            msgbox_error("_init_get_lib_path() should either be in _source or in the root and have a lib subdir :/"
+            a2dlg_error("_init_get_lib_path() should either be in _source or in the root and have a lib subdir :/"
                 , "Where am I?!?")
     }
 }

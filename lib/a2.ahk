@@ -67,7 +67,7 @@ a2ui(*) {
             py_exe := python_get_path()
     }
     if !FileExist(py_exe) {
-        msgbox_error("There is no Python runtime to execute the UI with!`n", "a2UI Startup Error")
+        a2dlg_error("There is no Python runtime to execute the UI with!`n", "a2UI Startup Error")
         Return
     }
 

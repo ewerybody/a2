@@ -1,8 +1,9 @@
 ﻿; to create of remove a desktop link to the a2 ui
-#include <msgbox>
+#include <a2dlg>
+
 If A_Args.Length != 2
 {
-    msgbox_error("Need 2 arguments to set Desktop link!")
+    a2dlg_error("Need 2 arguments to set Desktop link!")
     Return
 }
 
@@ -11,7 +12,7 @@ state := A_Args[2]
 
 If (!DirExist(a2dir))
 {
-    msgbox_error("a2dir: " . a2dir . " ??")
+    a2dlg_error("a2dir: " . a2dir . " ??")
     Return
 }
 

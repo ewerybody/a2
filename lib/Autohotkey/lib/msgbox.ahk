@@ -16,10 +16,6 @@ msgbox_info(msg, title := "INFO") {
     MsgBox(msg, title, 64) ; Iconi
 }
 
-msgbox_yesnocancel(msg, title) {
-    return MsgBox(msg, title, 19)
-}
-
 msgbox_accepted(msg, title) {
     result := msgbox(msg, title, 33)
     return result == "OK"

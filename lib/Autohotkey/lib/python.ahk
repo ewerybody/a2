@@ -1,4 +1,5 @@
 ﻿; a2 Autohotkey python lib
+#Include <a2dlg>
 
 ; Run given python script with given arguments in first found Python executable and return its output.
 python_get_output(py_file, args := "") {
@@ -8,7 +9,7 @@ python_get_output(py_file, args := "") {
     exec := shell.Exec(cmd)
     errors := exec.StdErr.ReadAll()
     if (errors) {
-        msgbox_error(errors, "python_get_output-ERROR")
+        a2dlg_error(errors, "python_get_output-ERROR")
         return
     }
 
@@ -38,8 +39,11 @@ _py_get_path(exe_type) {
     if (py_path != "")
         Return py_path
 
-    MsgBox_error("Could not find a Python installation!`nSupported versions include: " string_join(PYTHON_SUPPORTED_VERSIONS)
-        , "No Matching Python Version!")
+    a2dlg_error(
+        "Could not find a Python installation!`nSupported versions include: "
+        string_join(PYTHON_SUPPORTED_VERSIONS)
+        , "No Matching Python Version!"
+    )
 }
 
 ; Loop over supported Python versions to find according registry entries.

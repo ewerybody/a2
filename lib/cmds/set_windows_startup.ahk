@@ -1,8 +1,9 @@
 ﻿; set_windows_startup
-#include <msgbox>
+#include <a2dlg>
+
 If A_Args.Length != 2
 {
-    msgbox_error("Need 2 arguments to set startup links!")
+    a2dlg_error("Need 2 arguments to set startup links!")
     Return
 }
 a2dir := A_Args[1]
@@ -10,7 +11,7 @@ state := A_Args[2]
 
 If (!DirExist(a2dir))
 {
-    msgbox_error("a2dir: " . a2dir . " ??")
+    a2dlg_error("a2dir: " . a2dir . " ??")
     Return
 }
 

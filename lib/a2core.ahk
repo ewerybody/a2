@@ -232,7 +232,7 @@ Class _Ca2DB {
         sql := "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;"
 
         If !this.db_object.GetTable(sql, &TB)  {
-            msgbox_error("Could not perform a2.db.tables:`n" this.db_object.ErrorMsg, "SQLite Error")
+            a2dlg_error("Could not perform a2.db.tables:`n" this.db_object.ErrorMsg, "SQLite Error")
             Return []
         }
 
@@ -258,7 +258,7 @@ Class _Ca2DB {
         Table := ""
         sql := "SELECT value FROM '" table_name "' WHERE key = '" key "'"
         If !this.db_object.GetTable(SQL, &Table)
-            msgbox_error("Msg:`t" . this.db_object.ErrorMsg . "`nCode:`t" . this.db_object.ErrorCode, "SQLite Error")
+            a2dlg_error("Msg:`t" . this.db_object.ErrorMsg . "`nCode:`t" . this.db_object.ErrorCode, "SQLite Error")
         If (Table.HasRows)
             result := Table.Rows[1][1]
 

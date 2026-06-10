@@ -61,5 +61,5 @@ clipboard_empty() {
         A_Clipboard := ""
         Sleep 20
     }
-    msgbox_error("Could not empty the clipboard after 10 tries :/ (clipboard: '" . A_Clipboard . "'')")
+    a2dlg_error("Could not empty the clipboard after 10 tries :/ (clipboard: '" . A_Clipboard . "'')")
 }

@@ -54,7 +54,7 @@ move_atomic(source_dir, target_dir, relative_paths) {
             done_items.Push(rel_path)
         else
         {
-            ; msgbox_error("Could not move " rel_path " from/to:`n" source_dir "`n" target_dir)
+            ; a2dlg_error("Could not move " rel_path " from/to:`n" source_dir "`n" target_dir)
             rollback_result := move_atomic(target_dir, source_dir, done_items)
             return source "`n" target
         }
