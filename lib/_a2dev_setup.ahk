@@ -1,12 +1,12 @@
 ﻿#NoTrayIcon
 #include <path>
+#include <a2icon>
 #include _a2dev_find_py.ahk
 
 ahk_executable_path := path_join(A_ScriptDir, "Autohotkey", "Autohotkey.exe")
 py_executable_path := a2dev_get_py()
 root_path := path_dirname(A_ScriptDir)
-icon_path := path_join(root_path, "ui", "res", "a2.ico")
-TraySetIcon(icon_path)
+icon_path := A2Icons.a2
 
 A2DevUI := Gui("+DPIScale +Resize +MinSize640x180")
 
