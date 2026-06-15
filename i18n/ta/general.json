@@ -1,13 +1,13 @@
 {
-    "ask_net_connection":"",
-    "cancel":"",
-    "close":"",
-    "copy":"",
-    "current":"",
-    "explore":"",
-    "no":"",
-    "paste":"",
-    "show_in_web":"",
-    "to_clipboard":"",
-    "yes":""
+    "ask_net_connection":"நீங்கள் இணையத்துடன் இணைக்கப்பட்டுள்ளீர்களா?",
+    "cancel":"ரத்துசெய்",
+    "close":"மூடு",
+    "copy":"நகலெடு",
+    "current":"மின்னோட்ட்ம், ஓட்டம்",
+    "explore":"எக்ச்ப்ளோரரில் காட்டு",
+    "no":"இல்லை",
+    "paste":"ஒட்டு",
+    "show_in_web":"இணைய உலாவியில் காட்டு",
+    "to_clipboard":"இடைநிலைப்பலகைக்கு நகலெடுக்கவும்",
+    "yes":"ஆம்"
 }
