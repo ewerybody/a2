@@ -1,13 +1,13 @@
 {
-    "ask_net_connection":"",
-    "cancel":"",
-    "close":"",
-    "copy":"",
-    "current":"",
-    "explore":"",
-    "no":"",
-    "paste":"",
-    "show_in_web":"",
-    "to_clipboard":"",
-    "yes":""
+    "ask_net_connection":"هل أنت متصل بالانترنت؟",
+    "cancel":"الغاء",
+    "close":"اغلاق",
+    "copy":"نسخ",
+    "current":"الحالة",
+    "explore":"اظهار بالمتصفح",
+    "no":"لا",
+    "paste":"لصق",
+    "show_in_web":"اظهار بصفحة المتصفح",
+    "to_clipboard":"النسخ لقائمة المنسوخات",
+    "yes":"نعم"
 }
