@@ -21,7 +21,7 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 [Who is it for? ❓](#who-is-it-for)
 
 
-## Who is it for? ❓
+## Who is it for?❓
 
 ### Everyday Computer people looking to automate/simplify working with Windows.
 * Simple setup and management of scripts
