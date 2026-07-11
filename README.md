@@ -18,7 +18,7 @@ See [the Wiki](https://github.com/ewerybody/a2/wiki) for more information especi
 * [How to develop a2](../../wiki/How-to-develop-a2).
 
 
-[Who is it for? ❓](#who-is-it-for-)
+[Who is it for? ❓](#who-is-it-for)
 
 
 ## Who is it for? ❓
