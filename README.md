@@ -1,9 +1,9 @@
-# a2 [![Join the chat on Telegram](ui/res/telegram_join.svg)](https://t.me/a2script_de)
+# a2 [![Signal badge](theme/signal_join.svg)](https://signal.group/#CjQKIDSnyXtLOHcK9QyaSabhvmVTndc48OtnPiCRskUb1iKUEhBsykC41kH8y8uTg_5nG6Fc) [![Join the chat on Telegram](theme/telegram_join.svg)](https://t.me/a2script_de)
 
 > [!NOTE]
 > # 🚧 Missing progress here? 🚧
-> ## True, this branch is pretty outdated! 
-> 
+> ## True, this branch is pretty outdated!
+>
 > A lot of progress is happening in [the ahk2-branch](https://github.com/ewerybody/a2/tree/ahk2?tab=readme-ov-file#a2-ahk2-wip)
 > Though we're not there yet.\
 > It's a lot of work. We'll update you here asap! ✌️
