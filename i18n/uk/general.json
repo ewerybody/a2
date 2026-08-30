@@ -1,13 +1,13 @@
 {
-    "ask_net_connection":"",
-    "cancel":"",
-    "close":"",
-    "copy":"",
-    "current":"",
-    "explore":"",
-    "no":"",
-    "paste":"",
-    "show_in_web":"",
-    "to_clipboard":"",
-    "yes":""
+    "ask_net_connection":"У вас є підключення до Інтернету?",
+    "cancel":"Скасувати",
+    "close":"Закрити",
+    "copy":"Копіювати",
+    "current":"поточний",
+    "explore":"Показати у Провіднику",
+    "no":"Ні",
+    "paste":"Вставити",
+    "show_in_web":"Відкрити у веб-браузері",
+    "to_clipboard":"Скопіювати в буфер обміну",
+    "yes":"Так"
 }
