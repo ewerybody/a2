@@ -979,8 +979,8 @@ a2dlg_input(msg, title := "a2 Input", default_text := "", dark := -1, center_on_
 
 
 a2dlg_select_line(text, line_nr, handle) {
-    pos_start := InStr(text, "`n",,,line_nr - 2)
-    pos_end := InStr(text, "`n",,,line_nr - 1)
+    pos_start := InStr(text, "`n",,,line_nr - 1) + 1
+    pos_end := InStr(text, "`n",,,line_nr) + 2
     EM_SET_SEL := 0xB1
     SendMessage(EM_SET_SEL, pos_start, pos_end, handle)
 }

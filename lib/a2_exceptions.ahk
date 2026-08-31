@@ -103,11 +103,15 @@ _a2_exceptions_handle(title, exception, mode := "") {
     dlg.space(4)
     row := dlg.glyph_row("❌", exception.Message,,, {text_size: dlg.font_size + 5, glyph_size: dlg.font_size + 8, glyph_color: dlg.c.err})
     dlg.space(4)
-    ; dlg.sep()
-    if exception.What
-        dlg.label(exception.What)
-    if exception.Extra
+    dlg.msg := exception.Message
+    if (exception.What) {
+        dlg.label("What:" exception.What)
+        dlg.msg .= '`nWhat:"' exception.What "'"
+    }
+    if (exception.Extra) {
         dlg.label('Context: "' exception.Extra '"')
+        dlg.msg .= '`nContext:"' exception.Extra '"'
+    }
 
     num_lines := Max(Min(string_count(code_lines, "`n"), 10), 3)
     code_ctrl := dlg.code_box(code_lines, num_lines,, read_only := true, bottom_line_color:=dlg.c.err)
@@ -117,6 +121,7 @@ _a2_exceptions_handle(title, exception, mode := "") {
         _a2_exceptions_build_stack(dlg, exception.Stack)
 
     dlg.esc_to_close()
+    dlg.ctrl_c_to_copy_msg()
     dlg.btn_ok(, , , bg := dlg.c.err, fg := "F8F8F8")
     dlg.show()
     a2dlg_select_line(code_lines, 4, code_ctrl.Hwnd)
@@ -176,8 +181,8 @@ _a2_exceptions_open_in_editor(file_path, line) {
 
 
 _get_neighbor_lines(file_path, line_nr, num_neighbor_lines) {
-    start_line := line_nr - num_neighbor_lines - 1
-    end_line := line_nr + num_neighbor_lines
+    start_line := line_nr - num_neighbor_lines
+    end_line := line_nr + num_neighbor_lines + 1
     lines := []
     file_obj := FileOpen(file_path, "r")
     Loop(end_line) {
@@ -191,12 +196,12 @@ _get_neighbor_lines(file_path, line_nr, num_neighbor_lines) {
         if !this_line
             Continue
         this_line := StrReplace(this_line, A_Tab, "    ")
-        this_nr := start_line + A_Index
+        this_nr := start_line + A_Index - 1
         new_line := this_nr ": "
         if (this_nr == line_nr)
             new_line .= "-->"
         else
-            new_line .= "     "
+            new_line .= "   "
         new_line .= this_line "`n"
 
         max_len := 64
