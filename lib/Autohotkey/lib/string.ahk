@@ -259,3 +259,13 @@ string_count(string, what_to_count, case_sense := 0) {
 string_count_lines(string) {
     return string_count(string, "`n") + 1
 }
+
+
+; Return a Buffer object containing the string.
+string_buffer(str, encoding) {
+    ; Calculate required size and allocate a buffer.
+    buf := Buffer(StrPut(str, encoding))
+    ; Copy or convert the string.
+    StrPut(str, buf, encoding)
+    return buf
+}
