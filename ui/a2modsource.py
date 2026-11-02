@@ -4,21 +4,20 @@ So, a module always comes with a package. These can come from arbitrary location
 Basically just locally or from an FTP, github, another URL, network location ...
 They can be enabled/disabled individually affecting all their child modules.
 """
+
 import os
+import shutil
 import sys
 import time
-import shutil
 import traceback
 
-from a2qt import QtCore
-
-import a2log
-import a2path
 import a2core
-import a2util
 import a2ctrl.icons
 import a2download
-
+import a2log
+import a2path
+import a2util
+from PySide6 import QtCore
 
 CONFIG_FILENAME = 'a2modsource.json'
 STALE_CONFIG_TIMEOUT = 0.5
@@ -58,7 +57,7 @@ def get(main, modules_path):
     return modsource_dict
 
 
-class ModSource(object):
+class ModSource:
     def __init__(self, a2, name):
         self.a2 = a2
         self.name = name
@@ -78,7 +77,7 @@ class ModSource(object):
         mods_in_path = a2path.get_dir_names_except(self.path, '.*')
         self.mod_count = len(mods_in_path)
         if self.mod_count == 0:
-            log.debug('No modules in module source: %s' % self.path)
+            log.debug('No modules in module source: %s', self.path)
 
         if state is None:
             state = self.enabled
@@ -130,12 +129,8 @@ class ModSource(object):
         except FileNotFoundError:
             self._config_load_error = MSG_NO_CFG_FILE
 
-        except Exception as error:
-            msg = 'Error loading config file for "%s" (%s)\n' '  %s' % (
-                self.name,
-                self.config_file,
-                error,
-            )
+        except Exception as error:  # noqa: BLE001
+            msg = f'Error loading config file for "{self.name}" ({self.config_file})\n  {error}'
             self._config_load_error = msg
             log.error(msg)
         return {}
@@ -219,7 +214,7 @@ class ModSource(object):
 
         # if backed up: remove the current package
         else:
-            log.info('backed up already!\n' '    removing: %s %s', self.name, this_version)
+            log.info('backed up already!\n    removing: %s %s', self.name, this_version)
             self.remove()
 
         return not os.path.isdir(self.path)
@@ -296,12 +291,7 @@ class ModSourceCheckThread(QtCore.QThread):
     data_fetched = QtCore.Signal(dict)
     update_error = QtCore.Signal(str)
 
-    def __init__(
-        self,
-        parent: QtCore.QObject,
-        mod_source: ModSource | None = None,
-        check_url: str | None = None
-    ):
+    def __init__(self, parent: QtCore.QObject, mod_source: ModSource | None = None, check_url: str | None = None):
         super(ModSourceCheckThread, self).__init__(parent)
         self.mod_source = mod_source
         self.check_url = check_url
@@ -633,6 +623,5 @@ def clear_source_path(mod_source: ModSource, status_cb=None):
         mod_source.remove()
     except PermissionError as error:
         raise PermissionError(
-            'Cannot clear target package path!\n'
-            f'Please make sure this path is not blocked!\n\n  {mod_source.path}'
+            f'Cannot clear target package path!\nPlease make sure this path is not blocked!\n\n  {mod_source.path}'
         ) from error
