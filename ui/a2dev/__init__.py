@@ -1,7 +1,9 @@
 """a2 Developer stuff."""
+from importlib import import_module
 
 import os
 import sys
+from pathlib import Path
 
 import a2dl
 import a2log
@@ -19,7 +21,6 @@ MSG_CFG_DIFF = (
 MSG_CFG_NEW = 'The module configuration appears to be new!\nDo you really want to exit and discard the changes?'
 
 
-# pylint: disable=too-many-instance-attributes
 class DevSettings:
     """Developer settings holder."""
 
@@ -118,7 +119,7 @@ def check_py_version():
         except ValueError:
             continue
 
-        if version <= sys.version_info:
+        if version <= sys.version_info[:3]:
             continue
 
         if version[:2] > sys.version_info[:2]:
@@ -141,25 +142,35 @@ def check_py_version():
     return versions
 
 
-def check_pyside_version():
-    import a2qt
+def get_pyside_path() -> Path:
+    a2 = a2core.get()
+    site_packs_dir = Path(a2.paths.a2) / '.venv' / 'Lib' / 'site-packages'
+    for item in site_packs_dir.glob('PySide*'):
+        if item.name[-1].isdigit():
+            return item
+    raise RuntimeError(f'No PySide found in site-packages dir!\n  {site_packs_dir}')
 
-    url = 'https://pypi.org/pypi/PySide{}/json'.format(a2qt.QT_VERSION)
-    data = a2dl.read_json(url)
+
+def check_pyside_versions():
+    pyside_dir = get_pyside_path()
+    if not (pyside_dir / '_config.py'):
+        raise RuntimeError(f'Unable to find PySide `_config.py` file to get version from:!\n  {pyside_dir}')
+    pyside_config = import_module(f'{pyside_dir.name}._config')
+
+    url = 'https://pypi.org/pypi/PySide{}/json'.format(pyside_config.version_info[0])
     versions = []
-    for version_str in data.get('releases', {}).keys():
+    for version_str in a2dl.read_json(url).get('releases', ''):
         try:
             version = tuple(int(i) for i in version_str.split('.'))
         except ValueError:
             continue
-        if version > a2qt.VERSION:
+        if version > pyside_config.version_info:
             versions.append(version)
-    return versions
+    return pyside_config.version, versions
 
 
 def check_dev_updates():
     import a2ahk
-    import a2qt
     import a2dev.dependency.autohotkey
 
     def str_ver(version):
@@ -200,13 +211,12 @@ def check_dev_updates():
     yield 'python', str_ver(sys.version_info), new_version
 
     log.info('Checking PySide version ...')
-    new_version = None
-    for version in check_pyside_version():
-        new_version = str_ver(version)
-        log.info('New PySide version: %s', new_version)
-    if new_version is None:
-        log.info('PySide is up-to-date at %s', str_ver(a2qt.VERSION))
-    yield 'pyside', str_ver(a2qt.VERSION), new_version
+    current_version, new_versions = check_pyside_versions()
+    for version in new_versions:
+        log.info('New PySide version: %s', version)
+    if not new_versions:
+        log.info('PySide is up-to-date at %s', current_version)
+    yield 'pyside', current_version, new_versions
 
 
 def build_package():

@@ -1,6 +1,7 @@
 """
 Handle Qt Designer file updating, compilation and patching.
 """
+from types import ModuleType
 
 import subprocess
 
@@ -8,6 +9,7 @@ import os
 import sys
 from importlib import reload
 
+import a2dev
 import a2log
 import a2core
 from PySide6 import QtCore, QtGui, QtWidgets, QtSvg
@@ -25,13 +27,13 @@ MEMBERS_Q = {}
 CODING_HEADER = '# -*- coding: utf-8 -*-\n'
 
 
-def check_module(module, force: bool = False) -> None:
+def check_module(module: ModuleType, force: bool = False) -> None:
     """
     Recompile a ui xml file to Python if out-of-date.
 
     :param module module: Module object to check.
     """
-    if not a2core.is_dev_mode():
+    if not a2core.is_dev_mode() or module.__file__ is None:
         return
 
     if getattr(sys, 'frozen', False):
@@ -82,10 +84,7 @@ def call_uic(ui_file_path, py_file_path):
     ui_relative = os.path.relpath(ui_file_path, ROOT_PATH)
     os.chdir(ROOT_PATH)
 
-    import subprocess
-    import a2qt
-
-    uic_path = os.path.join(a2qt.QT_PATH, 'uic.exe')
+    uic_path = a2dev.get_pyside_path() / 'uic.exe'
     subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', py_file_path])
 
     os.chdir(curr_cwd)
@@ -95,8 +94,7 @@ class UIPatcher:
     """
     Patch compiled ui file to fix a couple of problems there are with
     the default uic executable. See #219. Done:
-    [x] make use of a2qt wrapper instead of PySideX
-    [x] remove main-obj resizes (!!!!!)
+    [x] remove main-obj resizes
     [x] make a proper doc-string instead of comments block
     [x] remove #if/#endif comments
     [x] remove # setupUi and # retranslateUi comments
@@ -105,13 +103,13 @@ class UIPatcher:
     [x] remove unneeded empty lines
     [x] make it class Name: instead of old-school class Name(object):
     [x] get rid of broad * imports
-    [x] `"` and `u"` to `'` (make it black/brunette compliant)
-        (I'd rather leave this to black/brunette itself, but maybe in a separate
+    [x] `"` and `u"` to `'` (make it ruff compliant)
+        (I'd rather leave this to ruff itself, but maybe in a separate
         (process that auto-checks for updated ui-files.)
     [x] pipe it through ruff in the end.
     """
 
-    def __init__(self, ui_name, py_file_path):
+    def __init__(self, ui_name: str, py_file_path: str):
         self.ui_name = ui_name
         self.py_file_path = py_file_path
         _get_q_members()
