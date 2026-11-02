@@ -3,16 +3,16 @@ WIP: I was looking for clues for the error messaging about the dialog could
 not be resized. Turns out if `wordWrap` is turned `True` this will arise!
 So long, let's try to avoid wordWrap in these dialogs.
 """
+
 from PySide6 import QtCore, QtWidgets
 
 import a2uic
 import a2widget.tools
 from a2widget import a2input_dialog_ui
 
-SIZABLE_FLAGS = QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint
-FIXED_FLAGS = (
-    QtCore.Qt.Window | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.MSWindowsFixedSizeDialogHint
-)
+WindowType = QtCore.Qt.WindowType
+SIZABLE_FLAGS = WindowType.Window | WindowType.WindowCloseButtonHint
+FIXED_FLAGS = WindowType.Window | WindowType.WindowCloseButtonHint | WindowType.MSWindowsFixedSizeDialogHint
 
 
 class A2ConfirmDialog(QtWidgets.QDialog):
@@ -35,7 +35,7 @@ class A2ConfirmDialog(QtWidgets.QDialog):
         self.ui.a2ok_button.clicked.connect(self.okay)
         self.ui.a2cancel_button.clicked.connect(self.reject)
 
-        self.ui.label.setTextFormat(QtCore.Qt.RichText)
+        self.ui.label.setTextFormat(QtCore.Qt.TextFormat.RichText)
         self.ui.label.setText(msg.replace('\n', '<br>'))
 
         self.rejected.connect(self.canceled.emit)

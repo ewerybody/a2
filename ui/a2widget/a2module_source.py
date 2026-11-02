@@ -4,6 +4,7 @@ Stuff for the module source widget in main settings.
 from PySide6 import QtGui, QtCore, QtWidgets
 
 import a2uic
+import a2log
 import a2core
 import a2ctrl
 import a2modsource
