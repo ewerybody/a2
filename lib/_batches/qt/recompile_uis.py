@@ -2,19 +2,21 @@
 Recompile All found .ui files in the repository.
 """
 
-import os
-import sys
 import inspect
+import os
 import subprocess
+import sys
+from importlib import import_module
 from pathlib import Path
 from pprint import pprint
-from importlib import import_module
 from xml.etree import ElementTree
 
-from _ensure_a2_path import A2_PATH, A2UI_PATH
+import _ensure_a2_path
 import a2uic
 import a2widget
 from PySide6 import QtWidgets
+
+A2_PATH, A2UI_PATH = _ensure_a2_path.A2_PATH, _ensure_a2_path.A2UI_PATH
 
 
 def main():
@@ -45,15 +47,13 @@ def main():
 
             py_path = os.path.join(os.path.dirname(ui_path), py_file)
             try:
-                # with open(os.path.join(dir_path, py_file), 'w') as pyf_obj:
-                #     compileUi(ui_path, pyf_obj)
                 subprocess.call([uic_path, '-g', 'python', ui_relative, '-o', py_path])
+            except subprocess.CalledProcessError as error:
+                print(f'ERROR: {error}')
+                continue
 
-            except Exception as error:
-                print('error: %s' % error)
-                error
             a2uic.UIPatcher(ui_path, py_path)
-            print('py_file recompiled:', py_path)
+            print(f'py_file recompiled: {py_path}')
 
     os.chdir(curr_cwd)
 
@@ -70,19 +70,20 @@ def _fixml(ui_path, a2widget_classes):
             continue
         proposed_mod = a2widget_classes.get(class_node.text)
         if proposed_mod != header_node.text and header_node.text is not None:
-            print('header: %s' % header_node.text)
-            print('class: %s' % class_node.text)
+            print(f'header: {header_node.text}')
+            print(f'class: {class_node.text}')
             header_parts = header_node.text.split('.')
             if header_parts[0] == a2widget.__name__:
                 if len(header_parts) == 1:
                     changes.append(f'{header_node.text} > {proposed_mod}')
                     header_node.text = proposed_mod
                 else:
-                    header_parts
+                    raise RuntimeError(f'Multiple header_parts! \n{header_parts}')
+
     if not changes:
-        print('seems alright: %s' % ui_path)
+        print(f'seems alright: {ui_path}')
     else:
-        print('changed ui_file: %s\n  %s' % (ui_path, '\n  '.join(changes)))
+        print(f'changed ui_file: {ui_path}\n  {"\n  ".join(changes)}')
         xml.write(ui_path)
 
 
@@ -91,7 +92,7 @@ def _get_a2_widget_classes(a2widget_path: Path) -> dict[str, str]:
     for dir_item, _, file_names in a2widget_path.walk():
         for name in file_names:
             item = dir_item / name
-            if not item.suffix.lower() == '.py' or not item.stem.endswith('_ui'):
+            if item.suffix.lower() != '.py' or not item.stem.endswith('_ui'):
                 continue
             if dir_item == a2widget_path:
                 mod_name = f'{a2widget.__name__}.{item.stem}'
@@ -105,7 +106,6 @@ def _get_a2_widget_classes(a2widget_path: Path) -> dict[str, str]:
             try:
                 mod = import_module(mod_name, a2widget.__name__)
             except ImportError as error:
-                # raise error
                 print(f'Error importing "{mod_name}":\n {error = }\n {item}')
                 continue
 
