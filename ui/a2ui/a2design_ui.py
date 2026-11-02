@@ -1,19 +1,18 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2design.ui'
 
-Created by: Qt User Interface Compiler version 6.10.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtGui import QAction, QFont
-from a2qt.QtWidgets import QMenu, QMenuBar, QSplitter, QVBoxLayout, QWidget
-from a2qt.QtCore import QMetaObject, QRect, QSize, Qt
+from PySide6.QtGui import QAction, QFont
+from PySide6.QtWidgets import QMenu, QMenuBar, QSplitter, QVBoxLayout, QWidget
+from PySide6.QtCore import QMetaObject, QRect, QSize, Qt
 
 from a2widget.a2module_list import A2ModuleList
 from a2widget.a2module_view import A2ModuleView
+
 
 class Ui_a2MainWindow:
     def setupUi(self, a2MainWindow):

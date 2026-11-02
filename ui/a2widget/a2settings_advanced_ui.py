@@ -1,19 +1,32 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2settings_advanced.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QCheckBox, QComboBox, QFormLayout, QFrame, QGroupBox, QHBoxLayout, 
-    QLabel, QLineEdit, QPushButton, QScrollArea, QSizePolicy, QSpinBox, QVBoxLayout, QWidget)
-from a2qt.QtCore import QMetaObject, QRect, QSize, Qt
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QFormLayout,
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
+    QSpinBox,
+    QVBoxLayout,
+    QWidget,
+)
+from PySide6.QtCore import QMetaObject, QRect, QSize, Qt
 
 from a2widget.a2path_field import A2PathField
 from a2widget.a2slider import A2Slider
+
 
 class Ui_Form:
     def setupUi(self, Form):
@@ -32,7 +45,7 @@ class Ui_Form:
         self.ui_scale_label = QLabel(self.a2scroll_area_background)
         self.ui_scale_label.setObjectName('ui_scale_label')
         self.ui_scale_label.setText('UI Scale:')
-        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.ui_scale_label)
+        self.formLayout_3.setWidget(0, QFormLayout.ItemRole.LabelRole, self.ui_scale_label)
         self.ui_scale_slider = A2Slider(self.a2scroll_area_background)
         self.ui_scale_slider.setObjectName('ui_scale_slider')
         self.ui_scale_slider.setDecimals(2)
@@ -40,7 +53,7 @@ class Ui_Form:
         self.ui_scale_slider.setMaximum(2.000000000000000)
         self.ui_scale_slider.setSingleStep(0.050000000000000)
         self.ui_scale_slider.setValue(1.000000000000000)
-        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.ui_scale_slider)
+        self.formLayout_3.setWidget(0, QFormLayout.ItemRole.FieldRole, self.ui_scale_slider)
         self.hotkey_box = QGroupBox(self.a2scroll_area_background)
         self.hotkey_box.setObjectName('hotkey_box')
         self.hotkey_box.setTitle('Hotkey Dialog')
@@ -50,18 +63,18 @@ class Ui_Form:
         self.label_7 = QLabel(self.hotkey_box)
         self.label_7.setObjectName('label_7')
         self.label_7.setText('Style:')
-        self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.label_7)
+        self.formLayout_4.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_7)
         self.hk_dialog_style = QComboBox(self.hotkey_box)
         self.hk_dialog_style.setObjectName('hk_dialog_style')
-        self.formLayout_4.setWidget(0, QFormLayout.FieldRole, self.hk_dialog_style)
+        self.formLayout_4.setWidget(0, QFormLayout.ItemRole.FieldRole, self.hk_dialog_style)
         self.label_13 = QLabel(self.hotkey_box)
         self.label_13.setObjectName('label_13')
         self.label_13.setText('Keyboard Layout:')
-        self.formLayout_4.setWidget(1, QFormLayout.LabelRole, self.label_13)
+        self.formLayout_4.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_13)
         self.hk_dialog_layout = QComboBox(self.hotkey_box)
         self.hk_dialog_layout.setObjectName('hk_dialog_layout')
-        self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.hk_dialog_layout)
-        self.formLayout_3.setWidget(2, QFormLayout.SpanningRole, self.hotkey_box)
+        self.formLayout_4.setWidget(1, QFormLayout.ItemRole.FieldRole, self.hk_dialog_layout)
+        self.formLayout_3.setWidget(2, QFormLayout.ItemRole.SpanningRole, self.hotkey_box)
         self.dev_box = QGroupBox(self.a2scroll_area_background)
         self.dev_box.setObjectName('dev_box')
         self.dev_box.setTitle('a2 dev mode')
@@ -75,72 +88,72 @@ class Ui_Form:
         self.formLayout_2 = QFormLayout(self.dev_widget)
         self.formLayout_2.setObjectName('formLayout_2')
         self.formLayout_2.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_2.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.formLayout_2.setLabelAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
         self.label_4 = QLabel(self.dev_widget)
         self.label_4.setObjectName('label_4')
         self.label_4.setText('Author Name:')
-        self.formLayout_2.setWidget(0, QFormLayout.LabelRole, self.label_4)
+        self.formLayout_2.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_4)
         self.author_name = QLineEdit(self.dev_widget)
         self.author_name.setObjectName('author_name')
         self.author_name.setText('')
-        self.formLayout_2.setWidget(0, QFormLayout.FieldRole, self.author_name)
+        self.formLayout_2.setWidget(0, QFormLayout.ItemRole.FieldRole, self.author_name)
         self.label_6 = QLabel(self.dev_widget)
         self.label_6.setObjectName('label_6')
         self.label_6.setText('Author Homepage:')
-        self.formLayout_2.setWidget(1, QFormLayout.LabelRole, self.label_6)
+        self.formLayout_2.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_6)
         self.author_url = QLineEdit(self.dev_widget)
         self.author_url.setObjectName('author_url')
         self.author_url.setText('')
-        self.formLayout_2.setWidget(1, QFormLayout.FieldRole, self.author_url)
+        self.formLayout_2.setWidget(1, QFormLayout.ItemRole.FieldRole, self.author_url)
         self.label_5 = QLabel(self.dev_widget)
         self.label_5.setObjectName('label_5')
         self.label_5.setText('Default Code Editor:')
-        self.formLayout_2.setWidget(2, QFormLayout.LabelRole, self.label_5)
+        self.formLayout_2.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_5)
         self.code_editor = A2PathField(self.dev_widget)
         self.code_editor.setObjectName('code_editor')
         self.code_editor.setText('')
-        self.formLayout_2.setWidget(2, QFormLayout.FieldRole, self.code_editor)
+        self.formLayout_2.setWidget(2, QFormLayout.ItemRole.FieldRole, self.code_editor)
         self.label_8 = QLabel(self.dev_widget)
         self.label_8.setObjectName('label_8')
         self.label_8.setText('Autohotkey Executable:')
-        self.formLayout_2.setWidget(3, QFormLayout.LabelRole, self.label_8)
+        self.formLayout_2.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_8)
         self.autohotkey = A2PathField(self.dev_widget)
         self.autohotkey.setObjectName('autohotkey')
         self.autohotkey.setEnabled(False)
         self.autohotkey.setText('')
-        self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.autohotkey)
+        self.formLayout_2.setWidget(3, QFormLayout.ItemRole.FieldRole, self.autohotkey)
         self.label_9 = QLabel(self.dev_widget)
         self.label_9.setObjectName('label_9')
         self.label_9.setText('JSON Indent:')
-        self.formLayout_2.setWidget(4, QFormLayout.LabelRole, self.label_9)
+        self.formLayout_2.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_9)
         self.json_indent = QSpinBox(self.dev_widget)
         self.json_indent.setObjectName('json_indent')
         self.json_indent.setMaximumSize(QSize(70, 16777215))
-        self.formLayout_2.setWidget(4, QFormLayout.FieldRole, self.json_indent)
+        self.formLayout_2.setWidget(4, QFormLayout.ItemRole.FieldRole, self.json_indent)
         self.auto_reload = QCheckBox(self.dev_widget)
         self.auto_reload.setObjectName('auto_reload')
         self.auto_reload.setText('Auto-Reload Runtime On Script Changes')
-        self.formLayout_2.setWidget(5, QFormLayout.FieldRole, self.auto_reload)
+        self.formLayout_2.setWidget(5, QFormLayout.ItemRole.FieldRole, self.auto_reload)
         self.line = QFrame(self.dev_widget)
         self.line.setObjectName('line')
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
         self.line.setSizePolicy(sizePolicy)
         self.line.setMinimumSize(QSize(100, 0))
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
-        self.formLayout_2.setWidget(10, QFormLayout.SpanningRole, self.line)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
+        self.formLayout_2.setWidget(10, QFormLayout.ItemRole.SpanningRole, self.line)
         self.label_2 = QLabel(self.dev_widget)
         self.label_2.setObjectName('label_2')
         self.label_2.setText('User Data:')
-        self.formLayout_2.setWidget(11, QFormLayout.LabelRole, self.label_2)
+        self.formLayout_2.setWidget(11, QFormLayout.ItemRole.LabelRole, self.label_2)
         self.data_folder = A2PathField(self.dev_widget)
         self.data_folder.setObjectName('data_folder')
         self.data_folder.setEnabled(False)
         self.data_folder.setText('')
-        self.formLayout_2.setWidget(11, QFormLayout.FieldRole, self.data_folder)
+        self.formLayout_2.setWidget(11, QFormLayout.ItemRole.FieldRole, self.data_folder)
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName('horizontalLayout_4')
         self.button_set_user_dir_standard = QPushButton(self.dev_widget)
@@ -151,18 +164,18 @@ class Ui_Form:
         self.button_set_user_dir_custom.setObjectName('button_set_user_dir_custom')
         self.button_set_user_dir_custom.setText('Set Override Path')
         self.horizontalLayout_4.addWidget(self.button_set_user_dir_custom)
-        self.formLayout_2.setLayout(12, QFormLayout.FieldRole, self.horizontalLayout_4)
+        self.formLayout_2.setLayout(12, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_4)
         self.label_10 = QLabel(self.dev_widget)
         self.label_10.setObjectName('label_10')
         self.label_10.setText('Python Executable:')
-        self.formLayout_2.setWidget(13, QFormLayout.LabelRole, self.label_10)
+        self.formLayout_2.setWidget(13, QFormLayout.ItemRole.LabelRole, self.label_10)
         self.python_executable = A2PathField(self.dev_widget)
         self.python_executable.setObjectName('python_executable')
         self.python_executable.setEnabled(False)
         self.python_executable.setText('')
-        self.formLayout_2.setWidget(13, QFormLayout.FieldRole, self.python_executable)
+        self.formLayout_2.setWidget(13, QFormLayout.ItemRole.FieldRole, self.python_executable)
         self.verticalLayout_3.addWidget(self.dev_widget)
-        self.formLayout_3.setWidget(5, QFormLayout.SpanningRole, self.dev_box)
+        self.formLayout_3.setWidget(5, QFormLayout.ItemRole.SpanningRole, self.dev_box)
         self.proxy_box = QGroupBox(self.a2scroll_area_background)
         self.proxy_box.setObjectName('proxy_box')
         self.proxy_box.setTitle('Use a Proxy')
@@ -174,8 +187,8 @@ class Ui_Form:
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName('horizontalLayout_2')
         self.proxy_http = QComboBox(self.proxy_box)
-        self.proxy_http.addItem(u"http://")
-        self.proxy_http.addItem(u"https://")
+        self.proxy_http.addItem('http://')
+        self.proxy_http.addItem('https://')
         self.proxy_http.setObjectName('proxy_http')
         self.proxy_http.setCurrentText('http://')
         self.horizontalLayout_2.addWidget(self.proxy_http)
@@ -209,14 +222,12 @@ class Ui_Form:
         self.proxy_port.setPlaceholderText('port')
         self.horizontalLayout_2.addWidget(self.proxy_port)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
-        self.formLayout_3.setWidget(6, QFormLayout.SpanningRole, self.proxy_box)
+        self.formLayout_3.setWidget(6, QFormLayout.ItemRole.SpanningRole, self.proxy_box)
         self.startup_tooltips = QCheckBox(self.a2scroll_area_background)
         self.startup_tooltips.setObjectName('startup_tooltips')
         self.startup_tooltips.setText('Enable Startup Tooltips')
-        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.startup_tooltips)
+        self.formLayout_3.setWidget(1, QFormLayout.ItemRole.FieldRole, self.startup_tooltips)
         self.scrollArea.setWidget(self.a2scroll_area_background)
         self.verticalLayout.addWidget(self.scrollArea)
-        self.retranslateUi(Form)
         QMetaObject.connectSlotsByName(Form)
-    def retranslateUi(self, Form):
-        self.proxy_server.setText("")
+        self.proxy_server.setText('')

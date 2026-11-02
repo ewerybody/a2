@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'numpad.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QGridLayout, QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
-from a2qt.QtCore import QMetaObject, QSize, Qt
+from PySide6.QtWidgets import QGridLayout, QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout, QWidget
+from PySide6.QtCore import QMetaObject, QSize, Qt
+
 
 class Ui_Numpad:
     def setupUi(self, Numpad):
@@ -90,7 +89,7 @@ class Ui_Numpad:
         self.numpadadd.setMinimumSize(QSize(0, 120))
         self.numpadadd.setText('+')
         self.verticalLayout_2.addWidget(self.numpadadd, 0, Qt.AlignTop)
-        self.verticalSpacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.verticalLayout_2.addItem(self.verticalSpacer)
         self.gridLayout.addLayout(self.verticalLayout_2, 2, 3, 2, 1)
         self.verticalLayout = QVBoxLayout()
@@ -100,7 +99,7 @@ class Ui_Numpad:
         self.numpadenter.setMinimumSize(QSize(0, 90))
         self.numpadenter.setText('Enter')
         self.verticalLayout.addWidget(self.numpadenter)
-        self.verticalSpacer_2 = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.verticalLayout.addItem(self.verticalSpacer_2)
         self.gridLayout.addLayout(self.verticalLayout, 4, 3, 2, 1)
         self.gridLayout.setRowStretch(0, 1)

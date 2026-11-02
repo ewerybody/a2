@@ -1,18 +1,17 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2module_source.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QToolButton, QVBoxLayout, QWidget
-from a2qt.QtCore import QMetaObject, QSize, Qt
-from a2qt.QtGui import QFont
+from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QToolButton, QVBoxLayout, QWidget
+from PySide6.QtCore import QMetaObject, QSize, Qt
+from PySide6.QtGui import QFont
 
 from a2widget.a2more_button import A2MoreButton
+
 
 class Ui_Form:
     def setupUi(self, Form):

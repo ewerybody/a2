@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2input_dialog.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
-from a2qt.QtCore import QCoreApplication, QMetaObject
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtCore import QCoreApplication, QMetaObject
+
 
 class Ui_A2InputDialog:
     def setupUi(self, A2InputDialog):
@@ -34,8 +33,6 @@ class Ui_A2InputDialog:
         self.horizontalLayout.setStretch(0, 1)
         self.main_layout.addLayout(self.horizontalLayout)
         QWidget.setTabOrder(self.a2ok_button, self.a2cancel_button)
-        self.retranslateUi(A2InputDialog)
         QMetaObject.connectSlotsByName(A2InputDialog)
-    def retranslateUi(self, A2InputDialog):
         self.a2ok_button.setText(QCoreApplication.translate('A2InputDialog', 'OK', None))
         self.a2cancel_button.setText(QCoreApplication.translate('A2InputDialog', 'Cancel', None))

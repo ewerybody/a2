@@ -1,16 +1,15 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'cursor_block.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import QGridLayout, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
-from a2qt.QtGui import QFont
-from a2qt.QtCore import QMetaObject
+from PySide6.QtWidgets import QGridLayout, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtGui import QFont
+from PySide6.QtCore import QMetaObject
+
 
 class Ui_CursorBlock:
     def setupUi(self, CursorBlock):

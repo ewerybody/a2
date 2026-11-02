@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'mouse.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, QWidget
-from a2qt.QtCore import QMetaObject, QSize, Qt
+from PySide6.QtWidgets import QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, QWidget
+from PySide6.QtCore import QMetaObject, QSize, Qt
+
 
 class Ui_Mouse:
     def setupUi(self, Mouse):
@@ -75,7 +74,7 @@ class Ui_Mouse:
         self.verticalLayout.addWidget(self.inner_widget)
         self._mouse_body = QPushButton(Mouse)
         self._mouse_body.setObjectName('_mouse_body')
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self._mouse_body.sizePolicy().hasHeightForWidth())

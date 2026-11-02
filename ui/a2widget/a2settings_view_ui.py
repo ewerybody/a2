@@ -1,19 +1,30 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2settings_view.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QCheckBox, QFormLayout, QGroupBox, QHBoxLayout, QLabel, QPushButton, 
-    QSizePolicy, QSpacerItem, QTabWidget, QTextEdit, QVBoxLayout, QWidget)
-from a2qt.QtCore import QMetaObject, Qt
-from a2qt.QtGui import QFont
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QFormLayout,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QTabWidget,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+from PySide6.QtCore import QMetaObject, Qt
+from PySide6.QtGui import QFont
 
 from a2widget.a2hotkey import A2Hotkey
+
 
 class Ui_a2settings:
     def setupUi(self, a2settings):
@@ -31,28 +42,28 @@ class Ui_a2settings:
         self.formLayout = QFormLayout()
         self.formLayout.setObjectName('formLayout')
         self.formLayout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.formLayout.setLabelAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
         self.label_3 = QLabel(self.main_tab)
         self.label_3.setObjectName('label_3')
         self.label_3.setText('Open a2 Dialog')
-        self.label_3.setAlignment(Qt.AlignBottom|Qt.AlignHCenter)
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_3)
+        self.label_3.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_3)
         self.a2hotkey = A2Hotkey(self.main_tab)
         self.a2hotkey.setObjectName('a2hotkey')
         self.a2hotkey.setEnabled(True)
         self.a2hotkey.setText('Win+Shift+A')
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.a2hotkey)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.a2hotkey)
         self.remember_selection = QCheckBox(self.main_tab)
         self.remember_selection.setObjectName('remember_selection')
         self.remember_selection.setText('Remember last selected Module')
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.remember_selection)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.remember_selection)
         self.groupBox = QGroupBox(self.main_tab)
         self.groupBox.setObjectName('groupBox')
         self.groupBox.setTitle('Integration')
         self.integrations_layout = QVBoxLayout(self.groupBox)
         self.integrations_layout.setObjectName('integrations_layout')
         self.integrations_layout.setContentsMargins(11, 25, 11, 11)
-        self.formLayout.setWidget(2, QFormLayout.SpanningRole, self.groupBox)
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.SpanningRole, self.groupBox)
         self.module_source_box = QGroupBox(self.main_tab)
         self.module_source_box.setObjectName('module_source_box')
         self.module_source_box.setTitle('Module Sources')
@@ -74,24 +85,24 @@ class Ui_a2settings:
         self.horizontalLayout.setObjectName('horizontalLayout')
         self.a2add_button = QPushButton(self.module_source_box)
         self.a2add_button.setObjectName('a2add_button')
-        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.a2add_button.sizePolicy().hasHeightForWidth())
         self.a2add_button.setSizePolicy(sizePolicy)
         self.a2add_button.setText('Add Source')
         self.horizontalLayout.addWidget(self.a2add_button)
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(self.horizontalSpacer)
         self.mod_source_box_layout.addLayout(self.horizontalLayout)
-        self.formLayout.setWidget(4, QFormLayout.SpanningRole, self.module_source_box)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.SpanningRole, self.module_source_box)
         self.verticalLayout.addLayout(self.formLayout)
-        self.a2settings_tab.addTab(self.main_tab, "")
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.main_tab), u"a2 Settings")
+        self.a2settings_tab.addTab(self.main_tab, '')
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.main_tab), 'a2 Settings')
         self.advanced_tab = QWidget()
         self.advanced_tab.setObjectName('advanced_tab')
-        self.a2settings_tab.addTab(self.advanced_tab, "")
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.advanced_tab), u"Advanced")
+        self.a2settings_tab.addTab(self.advanced_tab, '')
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.advanced_tab), 'Advanced')
         self.database_tab = QWidget()
         self.database_tab.setObjectName('database_tab')
         self.verticalLayout_5 = QVBoxLayout(self.database_tab)
@@ -103,21 +114,21 @@ class Ui_a2settings:
         self.db_printout = QTextEdit(self.database_tab)
         self.db_printout.setObjectName('db_printout')
         font = QFont()
-        font.setFamilies([u"Consolas"])
+        font.setFamilies(['Consolas'])
         font.setPointSize(10)
         self.db_printout.setFont(font)
         self.db_printout.setReadOnly(True)
         self.verticalLayout_5.addWidget(self.db_printout)
-        self.a2settings_tab.addTab(self.database_tab, "")
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.database_tab), u"Database View")
+        self.a2settings_tab.addTab(self.database_tab, '')
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.database_tab), 'Database View')
         self.licenses_tab = QWidget()
         self.licenses_tab.setObjectName('licenses_tab')
-        self.a2settings_tab.addTab(self.licenses_tab, "")
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.licenses_tab), u"Licenses")
+        self.a2settings_tab.addTab(self.licenses_tab, '')
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.licenses_tab), 'Licenses')
         self.console_tab = QWidget()
         self.console_tab.setObjectName('console_tab')
-        self.a2settings_tab.addTab(self.console_tab, "")
-        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), u"Console")
+        self.a2settings_tab.addTab(self.console_tab, '')
+        self.a2settings_tab.setTabText(self.a2settings_tab.indexOf(self.console_tab), 'Console')
         self.a2settings_view_layout.addWidget(self.a2settings_tab)
         self.a2settings_tab.setCurrentIndex(0)
         QMetaObject.connectSlotsByName(a2settings)

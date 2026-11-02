@@ -1,17 +1,26 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2module_view.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QCheckBox, QGridLayout, QHBoxLayout, QLabel, QPushButton, 
-    QScrollArea, QSizePolicy, QToolButton, QVBoxLayout, QWidget)
-from a2qt.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
-from a2qt.QtGui import QFont
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
+    QToolButton,
+    QVBoxLayout,
+    QWidget,
+)
+from PySide6.QtCore import QCoreApplication, QMetaObject, QRect, QSize, Qt
+from PySide6.QtGui import QFont
+
 
 class Ui_A2ModuleView:
     def setupUi(self, A2ModuleView):
@@ -36,7 +45,7 @@ class Ui_A2ModuleView:
         self.a2_mod_name = QLabel(self.head_widget)
         self.a2_mod_name.setObjectName('a2_mod_name')
         font = QFont()
-        font.setFamilies([u"Segoe UI"])
+        font.setFamilies(['Segoe UI'])
         font.setPointSize(11)
         font.setBold(True)
         self.a2_mod_name.setFont(font)
@@ -46,7 +55,7 @@ class Ui_A2ModuleView:
         self.mod_version = QLabel(self.head_widget)
         self.mod_version.setObjectName('mod_version')
         font1 = QFont()
-        font1.setFamilies([u"Segoe UI"])
+        font1.setFamilies(['Segoe UI'])
         font1.setPointSize(10)
         self.mod_version.setFont(font1)
         self.mod_version.setText('v0.0')
@@ -58,7 +67,7 @@ class Ui_A2ModuleView:
         self.horizontalLayout.addWidget(self.mod_author, 0, Qt.AlignBottom)
         self.a2mod_view_source_label = QLabel(self.head_widget)
         self.a2mod_view_source_label.setObjectName('a2mod_view_source_label')
-        sizePolicy = QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.a2mod_view_source_label.sizePolicy().hasHeightForWidth())
@@ -100,7 +109,7 @@ class Ui_A2ModuleView:
         self.a2edit_okcancel_layout.addWidget(self.a2edit_tool_button)
         self.a2cancel_button = QPushButton(self.a2edit_okcancel_widget)
         self.a2cancel_button.setObjectName('a2cancel_button')
-        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.a2cancel_button.sizePolicy().hasHeightForWidth())
@@ -112,9 +121,7 @@ class Ui_A2ModuleView:
         self.a2edit_okcancel_layout.setStretch(0, 3)
         self.a2edit_okcancel_layout.setStretch(2, 1)
         self.mod_view_grid.addWidget(self.a2edit_okcancel_widget, 2, 0, 1, 1)
-        self.retranslateUi(A2ModuleView)
         QMetaObject.connectSlotsByName(A2ModuleView)
-    def retranslateUi(self, A2ModuleView):
-        self.mod_check.setText("")
-        self.icon_label.setText("")
+        self.mod_check.setText('')
+        self.icon_label.setText('')
         self.a2edit_tool_button.setText(QCoreApplication.translate('A2ModuleView', '...', None))

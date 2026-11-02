@@ -1,19 +1,29 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'modsource_editor.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QCheckBox, QFormLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, 
-    QSizePolicy, QSpacerItem, QSpinBox, QVBoxLayout, QWidget)
-from a2qt.QtCore import QCoreApplication, QMetaObject, Qt
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QFormLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QSpinBox,
+    QVBoxLayout,
+    QWidget,
+)
+from PySide6.QtCore import QCoreApplication, QMetaObject, Qt
 
 from a2widget.a2text_field import A2CodeField
 from a2widget.busy_icon import BusyIcon
+
 
 class Ui_ModSourceUi:
     def setupUi(self, ModSourceUi):
@@ -21,10 +31,10 @@ class Ui_ModSourceUi:
             ModSourceUi.setObjectName('ModSourceUi')
         self.formLayout = QFormLayout(ModSourceUi)
         self.formLayout.setObjectName('formLayout')
-        self.formLayout.setLabelAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
+        self.formLayout.setLabelAlignment(Qt.AlignRight | Qt.AlignTop | Qt.AlignTrailing)
         self.news = A2CodeField(ModSourceUi)
         self.news.setObjectName('news')
-        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.news)
+        self.formLayout.setWidget(3, QFormLayout.ItemRole.FieldRole, self.news)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName('horizontalLayout')
         self.version_semantic = QWidget(ModSourceUi)
@@ -48,15 +58,15 @@ class Ui_ModSourceUi:
         self.version_str_check = QCheckBox(ModSourceUi)
         self.version_str_check.setObjectName('version_str_check')
         self.horizontalLayout.addWidget(self.version_str_check)
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         self.horizontalLayout.addItem(self.horizontalSpacer)
-        self.formLayout.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout)
+        self.formLayout.setLayout(2, QFormLayout.ItemRole.FieldRole, self.horizontalLayout)
         self.label_2 = QLabel(ModSourceUi)
         self.label_2.setObjectName('label_2')
-        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.label_2)
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.label_2)
         self.label_3 = QLabel(ModSourceUi)
         self.label_3.setObjectName('label_3')
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.label_3)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_3)
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName('horizontalLayout_2')
         self.maintainer = QLineEdit(ModSourceUi)
@@ -68,30 +78,30 @@ class Ui_ModSourceUi:
         self.maintainer_at = QLineEdit(ModSourceUi)
         self.maintainer_at.setObjectName('maintainer_at')
         self.horizontalLayout_2.addWidget(self.maintainer_at)
-        self.formLayout.setLayout(1, QFormLayout.FieldRole, self.horizontalLayout_2)
+        self.formLayout.setLayout(1, QFormLayout.ItemRole.FieldRole, self.horizontalLayout_2)
         self.label_5 = QLabel(ModSourceUi)
         self.label_5.setObjectName('label_5')
-        self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label_5)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_5)
         self.description = QLineEdit(ModSourceUi)
         self.description.setObjectName('description')
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.description)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.FieldRole, self.description)
         self.url = QLineEdit(ModSourceUi)
         self.url.setObjectName('url')
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.url)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.FieldRole, self.url)
         self.update_url = QLineEdit(ModSourceUi)
         self.update_url.setObjectName('update_url')
-        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.update_url)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.FieldRole, self.update_url)
         self.label_7 = QLabel(ModSourceUi)
         self.label_7.setObjectName('label_7')
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label_7)
+        self.formLayout.setWidget(4, QFormLayout.ItemRole.LabelRole, self.label_7)
         self.label_6 = QLabel(ModSourceUi)
         self.label_6.setObjectName('label_6')
-        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.label_6)
+        self.formLayout.setWidget(5, QFormLayout.ItemRole.LabelRole, self.label_6)
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName('verticalLayout')
         self.label = QLabel(ModSourceUi)
         self.label.setObjectName('label')
-        self.label.setAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
+        self.label.setAlignment(Qt.AlignRight | Qt.AlignTop | Qt.AlignTrailing)
         self.verticalLayout.addWidget(self.label, 0, Qt.AlignTop)
         self.busy_icon = BusyIcon(ModSourceUi)
         self.busy_icon.setObjectName('busy_icon')
@@ -100,9 +110,10 @@ class Ui_ModSourceUi:
         self.github_commits_btn.setObjectName('github_commits_btn')
         self.verticalLayout.addWidget(self.github_commits_btn)
         self.verticalLayout.setStretch(2, 1)
-        self.formLayout.setLayout(3, QFormLayout.LabelRole, self.verticalLayout)
+        self.formLayout.setLayout(3, QFormLayout.ItemRole.LabelRole, self.verticalLayout)
         self.retranslateUi(ModSourceUi)
         QMetaObject.connectSlotsByName(ModSourceUi)
+
     def retranslateUi(self, ModSourceUi):
         ModSourceUi.setWindowTitle(QCoreApplication.translate('ModSourceUi', 'Form', None))
         self.version_str_check.setText(QCoreApplication.translate('ModSourceUi', 'String', None))
@@ -113,5 +124,5 @@ class Ui_ModSourceUi:
         self.label_7.setText(QCoreApplication.translate('ModSourceUi', 'url', None))
         self.label_6.setText(QCoreApplication.translate('ModSourceUi', 'update url', None))
         self.label.setText(QCoreApplication.translate('ModSourceUi', 'news', None))
-        self.busy_icon.setText("")
+        self.busy_icon.setText('')
         self.github_commits_btn.setText(QCoreApplication.translate('ModSourceUi', 'Get from\nGitHub\ncommits', None))

@@ -1,19 +1,26 @@
-# -*- coding: utf-8 -*-
-
 """
 Form generated from reading UI file 'a2module_list.ui'
 
-Created by: Qt User Interface Compiler version 6.4.2
+Created by: Qt User Interface Compiler version 6.12.0
 
 WARNING! All changes made in this file will be lost when recompiling UI file!
 """
 
-from a2qt.QtWidgets import (QAbstractItemView, QGroupBox, QHBoxLayout, QLabel, QLineEdit, 
-    QPushButton, QTreeWidgetItem, QVBoxLayout)
-from a2qt.QtCore import Property, QMetaObject, Qt
+from PySide6.QtWidgets import (
+    QAbstractItemView,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QTreeWidgetItem,
+    QVBoxLayout,
+)
+from PySide6.QtCore import Property, QMetaObject, Qt
 
 from a2widget.a2modlist import A2ModList
 from a2widget.a2more_button import A2MoreButton
+
 
 class Ui_ModuleList:
     def setupUi(self, ModuleList):
@@ -50,12 +57,12 @@ class Ui_ModuleList:
         self.module_list_layout.addWidget(self.a2modlist_label_group)
         self.a2module_list_widget = A2ModList(ModuleList)
         __qtreewidgetitem = QTreeWidgetItem()
-        __qtreewidgetitem.setText(0, u"1");
+        __qtreewidgetitem.setText(0, '1')
         self.a2module_list_widget.setHeaderItem(__qtreewidgetitem)
         self.a2module_list_widget.setObjectName('a2module_list_widget')
         self.a2module_list_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.a2module_list_widget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.a2module_list_widget.setProperty("showDropIndicator", False)
+        self.a2module_list_widget.setProperty('showDropIndicator', False)
         self.a2module_list_widget.setAlternatingRowColors(True)
         self.a2module_list_widget.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.a2module_list_widget.setIndentation(0)
@@ -63,7 +70,5 @@ class Ui_ModuleList:
         self.a2module_list_widget.setColumnCount(1)
         self.a2module_list_widget.header().setVisible(False)
         self.module_list_layout.addWidget(self.a2module_list_widget)
-        self.retranslateUi(ModuleList)
         QMetaObject.connectSlotsByName(ModuleList)
-    def retranslateUi(self, ModuleList):
-        self.a2modlist_label_group.setTitle("")
+        self.a2modlist_label_group.setTitle('')
