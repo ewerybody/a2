@@ -1,7 +1,7 @@
+import importlib
+import json
 import os
 import sys
-import json
-import importlib
 
 import PySide2 as pack1
 import PySide6 as pack2
@@ -70,15 +70,15 @@ def get_file_contents(packs):
 
         packname = qpack + '.py'
         pack_path = os.path.join(WRAPPER_DIR, packname)
-        print('%s' % qpack)
+        print(qpack)
         for subpack, items in p1items.items():
             if items == '*':
-                print('  %s: * everything' % (subpack))
+                print(f'  {subpack}: * everything')
                 p1code += IMPORT_LINE.format(side=P1, pack=subpack, mod='*')
 
             else:
                 p1code += IMPORT_LINE.format(side=P1, pack=subpack, mod=get_wrapped_string(items))
-                print('  %s: %i' % (subpack, len(items)))
+                print(f'  {subpack}: {len(items)}')
 
         if qpack == 'QtCore':
             p2code += IMPORT_LINE.format(side=P2, pack=qpack, mod='__version__, __version_info__')
@@ -109,7 +109,7 @@ def get_wrapped_string(items, indents=2, linelen=80):
 
 def get_imported_pyside_modules():
     psmods = []
-    for s in sys.modules.keys():
+    for s in sys.modules:
         if s.startswith(P1):
             parts = s.split('.', 1)
             if len(parts) == 1 or len(parts) == 2 and parts[1].startswith('Q'):
@@ -118,18 +118,18 @@ def get_imported_pyside_modules():
 
 
 def imp_all__(pack, modlist):
-    print('Importing: %s' % pack.__name__)
+    print(f'Importing: {pack.__name__}')
     psmods = get_imported_pyside_modules()
     for qmod in modlist:
         modpath = pack.__name__ + '.' + qmod
         if modpath not in psmods:
             try:
                 importlib.import_module(modpath)
-                print('  Imported: %s' % modpath)
+                print(f'  Imported: {modpath}')
             except ImportError as error:
-                print(' Error importing: %s\n  %s' % (modpath, error))
+                print(f' Error importing: {modpath}\n  {error}')
         else:
-            print('  Already imported: %s' % modpath)
+            print(f'  Already imported: {modpath}')
 
 
 def get__all__lists():
@@ -149,8 +149,8 @@ def get__all__lists():
         if 'QtUiTools' not in pack:
             pack.append('QtUiTools')
 
-    print('p1_all:\n  %s' % p1_all)
-    print('p2_all:\n  %s' % p2_all)
+    print(f'p1_all:\n  {p1_all}')
+    print(f'p2_all:\n  {p2_all}')
     return p1_all, p2_all
 
 
@@ -178,30 +178,29 @@ def gather_allnames(p1_all, p2_all):
 def check_uniqueness(allnames):
     print('Analysis: .................................')
     for packname in SIDES:
-        print('%s:' % packname)
+        print(f'{packname}:')
         if 'multiples' in allnames[packname]:
-            print(' items in multiple packs: %i' % len(allnames[packname]['multiples']))
+            print(f' items in multiple packs: {len(allnames[packname]["multiples"])}')
         else:
             print(' No item names in multiple packages!')
-        print(' All unique items: %i' % len(allnames[packname]['uniques']))
-        print(' across these %i packages:' % len(allnames[packname]['qpacks']))
+        print(f' All unique items: {len(allnames[packname]["uniques"])}')
+        print(f' across these {len(allnames[packname]["qpacks"])} packages:')
         for qpack, qpack_list in allnames[packname]['qpacks'].items():
-            print('   %s: %i' % (qpack, len(qpack_list)))
+            print(f'   {qpack}: {len(qpack_list)}')
 
     p1s = set(allnames[P1]['uniques'])
     p2s = set(allnames[P2]['uniques'])
     p2only = p2s.difference(p1s)
-    print('Items excusive to %s: %i\n  %s' % (P2, len(p2only), ', '.join(p2only)))
+    print(f'Items exclusive to {P2}: {len(p2only)}\n  {", ".join(p2only)}')
     p1only = p1s.difference(p2s)
-    print('Items exclusive to %s: %i\n  %s' % (P1, len(p1only), ', '.join(p1only)))
-
+    print(f'Items exclusive to {P1}: {len(p1only)}\n  {", ".join(p1only)}')
     print('... Analysis finished!\n')
     return p1s, p2s
 
 
 def check_same_name_items(allnames, p1s, p2s):
     items_in_both = p1s.intersection(p2s)
-    print('Items in both: %i' % len(items_in_both))
+    print(f'Items in both: {len(items_in_both)}')
     still_in_place = {}
     moved = {}
     moved_how = {}
@@ -215,10 +214,10 @@ def check_same_name_items(allnames, p1s, p2s):
             key = '>'.join(moved[item])
             moved_how.setdefault(key, 0)
             moved_how[key] += 1
-    print('Items still in same package: %i' % len(still_in_place))
-    print('Items moved: %i' % len(moved))
+    print(f'Items still in same package: {len(still_in_place)}')
+    print(f'Items moved: {len(moved)}')
     for label, count in moved_how.items():
-        print('  %s: %i' % (label, count))
+        print(f'  {label}: {count}')
 
     items_in_both = {'same_pack': still_in_place, 'moved': moved}
     return items_in_both
@@ -261,27 +260,22 @@ def get_function_changes(items_in_both):
             p1members = dir(getattr(sys.modules[P1 + '.' + pack_name1], name))
             p2members = dir(getattr(sys.modules[P2 + '.' + pack_name2], name))
             old_members = set(p1members).difference(p2members)
-            #            if 'trUtf8' in old_members:
-            #                old_members.remove('trUtf8')
 
             new_members = set(p2members).difference(p1members)
             if old_members or new_members:
-                # print('Members changed: %s %s' % (pack_name, name))
                 changes.setdefault(pack_name2, {}).setdefault(name, {})
                 if old_members:
-                    # print('  members removed %i: %s' % (len(old_members), ','.join(old_members)))
                     changes[pack_name2][name]['removed'] = list(old_members)
                     num_changes += len(old_members)
                 if new_members:
-                    # print('  members added %i: %s' % (len(new_members), ','.join(new_members)))
                     changes[pack_name2][name]['added'] = list(new_members)
                     num_changes += len(new_members)
 
-    print('num_changes tracked: %s' % num_changes)
+    print(f'num_changes tracked: {num_changes}')
     file_path = os.path.join(THIS_DIR, CHANGES_NAME)
     with open(file_path, 'w') as fob:
         json.dump(changes, fob, indent=2, sort_keys=True)
-    print('  written to: %s\n' % file_path)
+    print(f'  written to: {file_path}\n')
 
 
 def add_renames(files):
@@ -316,9 +310,7 @@ def add_renames(files):
         content = files.get(file_path) + '\n'
         for member, renames_list in members.items():
             for new_name, old_name in renames_list:
-                content += FUNC_RENAME_TMP.format(
-                    i=IND, member=member, new_name=new_name, old_name=old_name
-                )
+                content += FUNC_RENAME_TMP.format(i=IND, member=member, new_name=new_name, old_name=old_name)
         files[file_path] = content
 
 

@@ -3,8 +3,8 @@ Script to search the code for usage of a PySide package
 to prepare for porting to a new PySide package ...
 """
 
-import os
 import importlib
+import os
 from pprint import pprint
 
 # rename to unique `pyside_package`
@@ -23,7 +23,6 @@ MEMBER_PACKS = {}
 
 def main():
     print('py_packs:', PY_PACKS)
-    global PAK_MEMBERS, MEMBER_PACKS
     for pack_name in PY_PACKS:
         q_mod = importlib.import_module(f'{pyside_package.__name__}.{pack_name}')
         members = [m for m in dir(q_mod) if not m.startswith('_')]
@@ -38,10 +37,9 @@ def main():
         'change_count': 0,
         'member_changes': 0,
         'pack_changes': 0,
-        'packs_used': set()
+        'packs_used': set(),
     }
 
-    # ui_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', 'ui'))
     ui_path = os.path.abspath(os.path.join(__file__, '..', '..', '..', '..', 'ui'))
     check_files(ui_path, stats)
 
@@ -68,7 +66,6 @@ def check_files(path, stats):
         q_packs = set()
         try:
             lines, needs_unicode = get_lines(this_path)
-            # print(f'checking {len(lines)} lines in file {this_path} ...')
             change_file = False
             for i, line in iter_lines(lines):
                 try:
@@ -80,14 +77,13 @@ def check_files(path, stats):
                         stats['member_changes'] += changes.get('member', 0)
                         stats['pack_changes'] += changes.get('pack', 0)
                         if not line.startswith('from'):
-                            print('line changed:\n  %s\n  %s' % (line, new_line))
+                            print(f'line changed:\n  {line}\n  {new_line}')
 
                     if this_q_packs:
                         q_packs.update(this_q_packs)
 
                 except Exception as error:
-                    print(f'problems with File: "{this_path}", line {i}')
-                    raise error
+                    raise RuntimeError(f'problems with File: "{this_path}", line {i}\n{error}') from error
 
                 if line.strip().startswith(FROM_IMPORT):
                     import_lines.append(i)
@@ -96,13 +92,11 @@ def check_files(path, stats):
                 if len(import_lines) > 1:
                     raise RuntimeError('Multiple import lines?!?!', import_lines, this_path)
 
-                current_packs = [
-                    p.strip() for p in lines[import_lines[0]][len(FROM_IMPORT) :].split(',')
-                ]
+                current_packs = [p.strip() for p in lines[import_lines[0]][len(FROM_IMPORT) :].split(',')]
 
                 if q_packs != set(current_packs):
-                    new_line  = FROM_IMPORT + ', '.join(q_packs)
-                    print('imports line changed:\n  %s\n  %s' % (lines[import_lines[0]], new_line))
+                    new_line = FROM_IMPORT + ', '.join(q_packs)
+                    print(f'imports line changed:\n  {lines[import_lines[0]]}\n  {new_line}')
                     lines[import_lines[0]] = new_line
                     change_file = True
                     stats['change_count'] += 1
@@ -120,8 +114,7 @@ def check_files(path, stats):
                 stats['changed_files'] += 1
 
         except Exception as error:
-            print(f'problems with File: {this_path}')
-            raise error
+            raise RuntimeError(f'problems with File: {this_path}\n{error}') from error
 
         stats['packs_used'].update(q_packs)
 
@@ -207,13 +200,12 @@ def fix_moved_members(pak, line, pos0):
         rest_of_line = line[pos2 + 1 :]
         member_name = get_member(rest_of_line)
         if not member_name:
-            member_name
+            raise RuntimeError('Count not get member_name!')
 
         if member_name not in PAK_MEMBERS[pak] and member_name not in IGNORE_MEMBERS:
             try:
                 new_pak = MEMBER_PACKS[member_name]
             except KeyError:
-                # raise RuntimeError(f'Name "{member_name}" not under any of the packs!')
                 print(f'\nWARNING!: Name "{member_name}" not under any of the packs!\n')
                 return changed, line, pos0, []
 
