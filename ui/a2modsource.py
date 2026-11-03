@@ -1,5 +1,5 @@
 """
-All about a2 module sources aka packages.
+All about a2 packages aka "module sources".
 So, a module always comes with a package. These can come from arbitrary locations.
 Basically just locally or from an FTP, github, another URL, network location ...
 They can be enabled/disabled individually affecting all their child modules.
@@ -103,10 +103,10 @@ class ModSource:
         log.info('Refreshing module package: "%s" ...', self.name)
         # self.a2.paths.modules
         my_mods = []
-        for name, pymod in sys.modules.items():
-            if not hasattr(pymod, '__file__'):
+        for name, py_mod in sys.modules.items():
+            if not hasattr(py_mod, '__file__'):
                 continue
-            if pymod.__file__ is not None and not pymod.__file__.startswith(self.path):
+            if py_mod.__file__ is not None and not py_mod.__file__.startswith(self.path):
                 continue
             my_mods.append(name)
 
@@ -204,13 +204,13 @@ class ModSource:
         if this_version is None:
             return False
 
-        version_tmpath = os.path.join(self.backup_path, this_version)
+        version_tmp_path = os.path.join(self.backup_path, this_version)
 
         # not yet backed up: move current version to temp
-        if not os.path.isdir(version_tmpath):
+        if not os.path.isdir(version_tmp_path):
             log.info('backing up %s %s', self.name, this_version)
             os.makedirs(self.backup_path, exist_ok=True)
-            os.rename(self.path, version_tmpath)
+            os.rename(self.path, version_tmp_path)
 
         # if backed up: remove the current package
         else:
@@ -367,7 +367,7 @@ def get_remote_cfg(update_url, main_branch=None):
 
 def get_github_cfg(url):
     """
-    For githup we should look at the "latest" release first.
+    For GitHub we should look at the "latest" release first.
     Then all the releases.
     And only then at the raw main branch settings file.^
     """
@@ -444,8 +444,8 @@ class ModSourceFetchThread(QtCore.QThread):
         self.failed.emit(str(msg))
         self.quit()
 
-    def _download_status(self, blocknum, blocksize, fullsize):
-        """Used as 'reporthook' callback for url request"""
+    def _download_status(self, blocknum, blocksize, full_size):
+        """Used as 'report-hook' callback for url request"""
         if not blocknum:
             return
 
@@ -453,8 +453,8 @@ class ModSourceFetchThread(QtCore.QThread):
 
         if not self._download_size:
             # not all headers contain a "content-length"
-            if fullsize != -1:
-                self._download_size = fullsize
+            if full_size != -1:
+                self._download_size = full_size
             elif self.remote_data is not None and 'zip_size' in self.remote_data:
                 self._download_size = self.remote_data.get('zip_size')
 
@@ -493,7 +493,7 @@ def fetch(mod_source, version, url=None, status_cb=None, download_cb=None):
         return
 
     pack_basename = '%s.zip' % version
-    temp_packpath = os.path.join(mod_source.backup_path, pack_basename)
+    tmp_pack_path = os.path.join(mod_source.backup_path, pack_basename)
     temp_new_version = os.path.join(mod_source.backup_path, version)
 
     if not os.path.isdir(temp_new_version):
@@ -503,14 +503,14 @@ def fetch(mod_source, version, url=None, status_cb=None, download_cb=None):
         os.makedirs(mod_source.backup_path, exist_ok=True)
 
         if update_url.startswith('http') or 'github.com/' in update_url:
-            download_update(update_url, pack_basename, temp_packpath, download_cb)
+            download_update(update_url, pack_basename, tmp_pack_path, download_cb)
         else:
-            copy_update(update_url, pack_basename, temp_packpath)
+            copy_update(update_url, pack_basename, tmp_pack_path)
 
         if status_cb is not None:
             status_cb(MSG_UNPACK % (mod_source.name, version))
 
-        unpack_update(temp_packpath, temp_new_version)
+        unpack_update(tmp_pack_path, temp_new_version)
 
     new_version_dir = get_root_path(temp_new_version)
 
@@ -539,7 +539,7 @@ def backup_version(mod_source: ModSource, old_version):
         raise RuntimeError(MSG_BACKUP_ERROR % old_version) from Exception
 
 
-def download_update(update_url, pack_basename, temp_packpath, callback=None):
+def download_update(update_url, pack_basename, tmp_pack_path, callback=None):
     if 'github.com/' in update_url:
         owner, repo = a2download.get_github_owner_repo(update_url)
         update_url = '/'.join(['https://github.com', owner, repo, 'archive'])
@@ -549,38 +549,38 @@ def download_update(update_url, pack_basename, temp_packpath, callback=None):
     from urllib import request
 
     try:
-        request.FancyURLopener().retrieve(update_url, temp_packpath, callback)
+        request.urlretrieve(update_url, tmp_pack_path, callback)
 
     except Exception as error:
         log.error(traceback.format_exc().strip())
         raise RuntimeError('Error retrieving package (%s)...\n  %s' % (update_url, error))
 
 
-def copy_update(update_path, pack_basename, temp_packpath):
+def copy_update(update_path, pack_basename, tmp_pack_path):
     if not os.path.exists(update_path):
         raise RuntimeError(MSG_UPDATE_URL_INVALID % update_path)
 
     try:
         remote_path = os.path.join(update_path, pack_basename)
-        shutil.copy2(remote_path, temp_packpath)
-    except Exception as error:
+        shutil.copy2(remote_path, tmp_pack_path)
+    except Exception:
         log.error(traceback.format_exc().strip())
         raise RuntimeError(MSG_COPY_ERROR % update_path)
 
 
-def unpack_update(temp_packpath, temp_new_version):
+def unpack_update(tmp_pack_path, temp_new_version):
     import zipfile
 
     try:
-        with zipfile.ZipFile(temp_packpath) as tmp_zip:
+        with zipfile.ZipFile(tmp_pack_path) as tmp_zip:
             for filename in tmp_zip.namelist():
                 tmp_zip.extract(filename, temp_new_version)
-    except zipfile.BadZipFile as error:
-        os.remove(temp_packpath)
+    except zipfile.BadZipFile:
+        os.remove(tmp_pack_path)
         log.error(traceback.format_exc().strip())
-        raise RuntimeError('Error Unpacking Update! (%s)' % temp_packpath)
+        raise RuntimeError('Error Unpacking Update! (%s)' % tmp_pack_path)
 
-    os.remove(temp_packpath)
+    os.remove(tmp_pack_path)
 
 
 def get_root_path(temp_new_version):
@@ -603,7 +603,7 @@ def create_dir(name):
 
 
 def get_default_package_cfg():
-    a2 = a2core.A2Obj.inst()
+    a2 = a2core.get()
     cfg = a2util.json_read(os.path.join(a2.paths.defaults, 'default_package.json'))
     return cfg
 
