@@ -12,12 +12,38 @@ import tempfile
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).parent
-AHK_EXE = SCRIPT_DIR.parent.parent / 'AutoHotkey.exe'
+LIB_PATH = SCRIPT_DIR.parent.parent
+if sys.platform == 'darwin':
+    RUNTIME = Path('~/.local/bin/keysharp').expanduser()
+elif sys.platform == 'win32':
+    RUNTIME = LIB_PATH / 'AutoHotkey.exe'
 RUNNER_LIB = SCRIPT_DIR / 'a2test.ahk'
 INDENTATION = ' '
 
 # Tree node type: {'methods': [str, ...], 'children': {str: node}}
 TestNode = dict
+
+
+def main() -> int:
+    if not RUNTIME.is_file():
+        print(f'Runtime not found: {RUNTIME}', file=sys.stderr)
+        return 1
+
+    test_files = sorted(SCRIPT_DIR.glob('*.test.ahk'))
+    if not test_files:
+        print('No *.test.ahk files found.')
+        return 0
+
+    failed = 0
+    for test_file in test_files:
+        print(f'\n=== {test_file.name} ===')
+        failed += run_test_file(test_file)
+
+    if failed:
+        print(f'FAILED ({failed} file(s) with errors)')
+    else:
+        print(f'All {len(test_files)} AHK tests passed!')
+    return 1 if failed else 0
 
 
 def parse_test_structure(source: str) -> TestNode:
@@ -76,9 +102,7 @@ def _generate_calls(tree: TestNode, ahk_prefix: str, level: int) -> tuple[list[s
         ahk_path = f'{ahk_prefix}.{cls_name}' if ahk_prefix else cls_name
         lines.append(f'A2TestClass("{cls_name}", "{indent}")')
         for method in node['methods']:
-            lines.append(
-                f'_failures += A2Test("{method}", () => {ahk_path}().{method}(), "{method_indent}")'
-            )
+            lines.append(f'_failures += A2Test("{method}", () => {ahk_path}().{method}(), "{method_indent}")')
             tests += 1
         sub_lines, sub_tests = _generate_calls(node['children'], ahk_path, level + 1)
         lines.extend(sub_lines)
@@ -99,50 +123,28 @@ def run_test_file(test_file: Path) -> int:
     script = (
         '#Requires AutoHotkey v2.0\n'
         '#NoTrayIcon\n'
-        '#ErrorStdOut "UTF-8"\n'
+        # '#ErrorStdOut "UTF-8"\n'
         f'#Include "{RUNNER_LIB}"\n'
         f'#Include "{test_file}"\n'
-        '_failures := 0\n'
-        + '\n'.join(calls) + '\n'
+        '_failures := 0\n' + '\n'.join(calls) + '\n'
         f'A2Results(_failures, {num_tests})\n'
         'ExitApp(_failures > 0 ? 1 : 0)\n'
     )
 
-    with tempfile.NamedTemporaryFile(
-        suffix='.ahk', mode='w', encoding='utf-8', delete=False
-    ) as file_obj:
+    with tempfile.NamedTemporaryFile(suffix='.ahk', mode='w', encoding='utf-8', delete=False) as file_obj:
         tmp = Path(file_obj.name)
         file_obj.write(script)
 
     try:
-        exitcode, result = subprocess.getstatusoutput([AHK_EXE, tmp], encoding='utf-8')
+        # result = subprocess.getstatusoutput([RUNTIME, tmp], encoding='utf-8')
+        result = subprocess.check_output([RUNTIME, tmp], text=True, cwd=LIB_PATH)
         if result:
             print(result)
-        return 0 if exitcode == 0 else 1
+        return 0
+    except subprocess.CalledProcessError:
+        return 1
     finally:
         tmp.unlink(missing_ok=True)
-
-
-def main() -> int:
-    if not AHK_EXE.exists():
-        print(f'AutoHotkey not found: {AHK_EXE}', file=sys.stderr)
-        return 1
-
-    test_files = sorted(SCRIPT_DIR.glob('*.test.ahk'))
-    if not test_files:
-        print('No *.test.ahk files found.')
-        return 0
-
-    failed = 0
-    for test_file in test_files:
-        print(f'\n=== {test_file.name} ===')
-        failed += run_test_file(test_file)
-
-    if failed:
-        print(f'FAILED ({failed} file(s) with errors)')
-    else:
-        print(f'All {len(test_files)} AHK tests passed!')
-    return 1 if failed else 0
 
 
 if __name__ == '__main__':
